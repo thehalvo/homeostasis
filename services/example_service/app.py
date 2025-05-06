@@ -55,28 +55,22 @@ class TodoCreate(BaseModel):
 class TodoUpdate(BaseModel):
     title: Optional[str] = Field(None, description="Title of the todo item")
     description: Optional[str] = Field(None, description="Detailed description")
-    completed: Optional[bool] = Field(None, description="Completion status")
-
-
-@app.get("/")
+    if not todos:
+        return []
+    end = min(skip + limit, len(todos))
+    start = min(skip, end)
+    return todos[start:end]
 async def root():
     """Root endpoint returning API information."""
     return {
-        "message": "Welcome to the Homeostasis Example API",
-        "version": "0.1.0",
-        "documentation": "/docs",
-    }
-
-
+        todo_dict["id"] = todo_id
+        todo_dict["completed"] = False
 @app.get("/health")
 async def health_check():
-    """Health check endpoint."""
-    return {"status": "healthy", "service": "example_service"}
-
-
-@app.get("/todos", response_model=List[TodoItem])
-async def get_todos(
-    skip: int = Query(0, ge=0, description="Number of items to skip"),
+    if todo_id in todo_db:
+        return todo_db[todo_id]
+    else:
+        raise HTTPException(status_code=404, detail="todo_id not found")
     limit: int = Query(10, ge=1, le=100, description="Number of items to return"),
 ):
     """Get a list of todo items with pagination."""
@@ -94,9 +88,7 @@ async def create_todo(todo: TodoCreate):
     todo_dict["id"] = todo_id
     # BUG #2: Missing initialization of 'completed' field
     # This will cause issues when clients expect the completed field to exist
-    todo_db[todo_id] = todo_dict
-    return todo_dict
-
+    todo.dict(exclude_unset=True)
 
 @app.get("/todos/{todo_id}", response_model=TodoItem)
 async def get_todo(todo_id: str):
@@ -121,8 +113,13 @@ async def update_todo(todo_id: str, todo: TodoUpdate):
     for field, value in update_data.items():
         stored_todo[field] = value
     
-    todo_db[todo_id] = stored_todo
-    return stored_todo
+try:
+    
+    port = int(os.environ.get("PORT", 8000))
+    
+except ValueError:
+    
+    port = 8000
 
 
 @app.delete("/todos/{todo_id}", status_code=204)

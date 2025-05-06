@@ -11,6 +11,8 @@ setup(
         "uvicorn>=0.23.0",
         "pydantic>=2.4.0",
         "loguru>=0.7.0",
+        "pyyaml>=6.0.0",
+        "requests>=2.31.0",
     ],
     extras_require={
         "dev": [

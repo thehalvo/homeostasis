@@ -120,59 +120,6 @@ def extract_errors(log_file: Path = LOG_FILE,
                 # Skip lines with invalid JSON
                 continue
     
-    return errors$', line)
-                if not json_match:
-                    continue
-                    
-                json_str = json_match.group(1)
-                error_data = json.loads(json_str)
-                
-                # Apply filters
-                
-                # Check timestamp if start_time or end_time provided
-                if start_time or end_time:
-                    try:
-                        timestamp = datetime.fromisoformat(error_data.get("timestamp", ""))
-                        
-                        if start_time and timestamp < start_time:
-                            continue
-                            
-                        if end_time and timestamp > end_time:
-                            continue
-                    except (ValueError, TypeError):
-                        # Skip entries with invalid timestamps
-                        continue
-                
-                # Check service name if provided
-                if service_name and error_data.get("service") != service_name:
-                    continue
-                
-                # Check exception type if provided
-                if exception_types:
-                    # Check in both the top-level exception_type and in error_details.exception_type
-                    error_type = error_data.get("exception_type")
-                    error_details = error_data.get("error_details", {})
-                    error_details_type = error_details.get("exception_type") if error_details else None
-                    
-                    if not (error_type in exception_types or error_details_type in exception_types):
-                        continue
-                
-                # Check tags if provided
-                if tags:
-                    error_tags = error_data.get("tags", [])
-                    # Skip if not all required tags are present
-                    if not all(tag in error_tags for tag in tags):
-                        continue
-                
-                # If all filters passed, add the error to the list
-                errors.append(error_data)
-                
-                if len(errors) >= limit:
-                    break
-            except json.JSONDecodeError:
-                # Skip lines with invalid JSON
-                continue
-    
     return errors
 
 

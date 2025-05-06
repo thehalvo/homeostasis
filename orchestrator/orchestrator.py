@@ -26,7 +26,7 @@ sys.path.insert(0, str(project_root))
 # Import modules
 from modules.monitoring.logger import MonitoringLogger
 from modules.monitoring.extractor import get_latest_errors, get_error_summary
-from modules.analysis.analyzer import Analyzer
+from modules.analysis.analyzer import Analyzer, AnalysisStrategy
 from modules.patch_generation.patcher import PatchGenerator
 
 
@@ -50,7 +50,9 @@ class Orchestrator:
         self.logger = MonitoringLogger("orchestrator", log_level=log_level)
         
         # Initialize components
-        self.analyzer = Analyzer(use_ai=self.config["analysis"]["ai_based"]["enabled"])
+        # Convert boolean to strategy string
+        strategy = AnalysisStrategy.AI_FALLBACK if self.config["analysis"]["ai_based"]["enabled"] else AnalysisStrategy.RULE_BASED_ONLY
+        self.analyzer = Analyzer(strategy=strategy)
         self.patch_generator = PatchGenerator()
         
         # Create necessary directories

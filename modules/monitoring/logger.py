@@ -61,12 +61,20 @@ class MonitoringLogger:
         
         # Add environment variables (excluding sensitive ones)
         env_vars = {}
-        excluded_env_vars = ['API_KEY', 'SECRET', 'PASSWORD', 'TOKEN', 'CREDENTIAL']
+        # Extended list of sensitive environment variable patterns
+        excluded_env_vars = [
+            'API_KEY', 'SECRET', 'PASSWORD', 'TOKEN', 'CREDENTIAL', 
+            'APIKEY', 'AUTH', 'PRIVATE', 'KEY', 'CERT', 'SALT', 
+            'PASSPHRASE', 'ACCESS_KEY', 'PWD', 'LOGIN', 'STRIPE'
+        ]
         for key, value in os.environ.items():
             # Skip sensitive environment variables
             if any(excluded in key.upper() for excluded in excluded_env_vars):
+                # Mask the value completely 
                 continue
             env_vars[key] = value
+            
+        # Remove sensitive values even if not caught by the key filter
         self.system_info["environment_variables"] = env_vars
         
         # Configure logging
