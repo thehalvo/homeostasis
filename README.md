@@ -2,6 +2,18 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+```
+╔═════════════════════════════════════════════════════════════╗
+║                                                             ║
+║  ☆ ★    $ git push origin homeostasis-fix             ✓     ║
+║  ↑                                                          ║
+║  ✗     WE DON'T WANT YOUR STARS                             ║
+║                                                 ┌────────┐  ║
+║  →     WE WANT YOUR PRs                         │APPROVED│  ║
+║                                                 └────────┘  ║
+╚═════════════════════════════════════════════════════════════╝
+```
+
 ## Vision
 
 Homeostasis is an open-source framework that mimics biological self-repair mechanisms in software systems. Just as living organisms heal injuries autonomously, Homeostasis enables applications to detect failures, generate fixes, and deploy them without human intervention.
