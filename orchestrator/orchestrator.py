@@ -14,6 +14,7 @@ import subprocess
 import sys
 import time
 import yaml
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple, Generator
@@ -87,6 +88,10 @@ class Orchestrator:
         backups_dir = project_root / self.config["deployment"]["backup_dir"]
         backups_dir.parent.mkdir(exist_ok=True)
         backups_dir.mkdir(exist_ok=True)
+        
+        # Create sessions directory for storing applied patches metadata
+        sessions_dir = project_root / "sessions"
+        sessions_dir.mkdir(exist_ok=True)
     
     def start_service(self) -> None:
         """Start the monitored service."""
@@ -253,7 +258,7 @@ class Orchestrator:
         
         return patches
     
-    def apply_patches(self, patches: List[Dict[str, Any]]) -> List[str]:
+    def apply_patches(self, patches: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
         Apply patches to the codebase.
 
@@ -261,7 +266,7 @@ class Orchestrator:
             patches: List of patches to apply
 
         Returns:
-            List of successfully applied patch IDs
+            List of successfully applied patches with metadata
         """
         self.logger.info(f"Applying {len(patches)} patches")
         
@@ -292,7 +297,14 @@ class Orchestrator:
             success = self.patch_generator.apply_patch(patch, project_root)
             
             if success:
-                applied_patches.append(patch["patch_id"])
+                # Store patch information with backup path for potential rollback
+                patch_info = {
+                    "patch_id": patch["patch_id"],
+                    "file_path": patch["file_path"],
+                    "backup_path": str(backup_path) if self.config["patch_generation"]["backup_original_files"] else None,
+                    "timestamp": timestamp
+                }
+                applied_patches.append(patch_info)
                 self.logger.info(f"Successfully applied patch {patch['patch_id']}")
             else:
                 self.logger.error(f"Failed to apply patch {patch['patch_id']}")
@@ -419,13 +431,25 @@ class Orchestrator:
         if not applied_patches:
             self.logger.warning("No patches applied, self-healing failed")
             return False
+            
+        # Store the applied patches in a session file for potential rollback
+        self._store_session_patches(applied_patches)
         
         # Run tests
         tests_passed = self.run_tests()
         
         if not tests_passed:
             self.logger.warning("Tests failed, rolling back changes")
-            # TODO: Implement rollback
+            
+            # Check if auto-rollback is enabled in the config
+            if self.config.get("rollback", {}).get("enabled", True) and \
+               self.config.get("rollback", {}).get("auto_rollback_on_failure", True):
+                rollback_success = self._rollback_changes(applied_patches)
+                if not rollback_success:
+                    self.logger.error("Rollback failed, system may be in an inconsistent state")
+            else:
+                self.logger.info("Auto-rollback disabled in config, skipping rollback")
+                
             return False
         
         # Deploy changes
@@ -438,6 +462,167 @@ class Orchestrator:
         self.logger.info("Self-healing cycle completed successfully")
         return True
     
+    def _store_session_patches(self, applied_patches: List[Dict[str, Any]]) -> None:
+        """
+        Store information about applied patches in a session file for potential rollback.
+        Also cleans up old sessions based on config settings.
+
+        Args:
+            applied_patches: List of successfully applied patches with metadata
+        """
+        if not applied_patches:
+            return
+
+        # Create a session ID based on timestamp
+        session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+        sessions_dir = project_root / "sessions"
+        session_file = sessions_dir / f"session_{session_id}.json"
+
+        # Store session information
+        session_data = {
+            "session_id": session_id,
+            "timestamp": datetime.now().isoformat(),
+            "patches": applied_patches
+        }
+
+        try:
+            with open(session_file, "w") as f:
+                json.dump(session_data, f, indent=2)
+            self.logger.info(f"Stored session information in {session_file}")
+            
+            # Clean up old sessions if needed
+            self._cleanup_old_sessions()
+        except Exception as e:
+            self.logger.exception(e, message=f"Failed to store session information")
+
+    def _cleanup_old_sessions(self) -> None:
+        """
+        Clean up old sessions based on the max_sessions_to_keep config setting.
+        """
+        # Get the max sessions to keep from config
+        max_sessions = self.config.get("rollback", {}).get("max_sessions_to_keep", 10)
+        
+        sessions_dir = project_root / "sessions"
+        if not sessions_dir.exists():
+            return
+            
+        # Get all session files sorted by modification time (oldest first)
+        session_files = sorted(sessions_dir.glob("session_*.json"), key=lambda p: p.stat().st_mtime)
+        
+        # If we have more sessions than the max, delete the oldest ones
+        if len(session_files) > max_sessions:
+            sessions_to_delete = session_files[:-max_sessions]  # Keep only the newest max_sessions
+            for session_file in sessions_to_delete:
+                try:
+                    session_file.unlink()  # Delete the file
+                    self.logger.debug(f"Deleted old session file: {session_file.name}")
+                except Exception as e:
+                    self.logger.exception(e, message=f"Failed to delete old session file: {session_file.name}")
+    
+    def _get_latest_session(self) -> Optional[Dict[str, Any]]:
+        """
+        Get the latest session information for rollback.
+
+        Returns:
+            Dictionary with session information or None if no session is found
+        """
+        sessions_dir = project_root / "sessions"
+        if not sessions_dir.exists():
+            return None
+
+        # Find the latest session file
+        session_files = sorted(sessions_dir.glob("session_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+        if not session_files:
+            return None
+
+        # Read the latest session file
+        try:
+            with open(session_files[0], "r") as f:
+                session_data = json.load(f)
+            return session_data
+        except Exception as e:
+            self.logger.exception(e, message=f"Failed to read session information from {session_files[0]}")
+            return None
+
+    def _rollback_changes(self, applied_patches: List[Dict[str, Any]]) -> bool:
+        """
+        Roll back changes by restoring backup files.
+
+        Args:
+            applied_patches: List of patches to roll back
+
+        Returns:
+            True if rollback was successful, False otherwise
+        """
+        if not applied_patches:
+            self.logger.warning("No patches to roll back")
+            return True
+
+        success = True
+        self.logger.info(f"Rolling back {len(applied_patches)} patches")
+
+        for patch_info in applied_patches:
+            patch_id = patch_info.get("patch_id")
+            file_path = patch_info.get("file_path")
+            backup_path = patch_info.get("backup_path")
+
+            if not backup_path or not Path(backup_path).exists():
+                self.logger.warning(f"No backup found for patch {patch_id}, cannot roll back")
+                success = False
+                continue
+
+            try:
+                # Restore the original file from backup
+                target_path = project_root / file_path
+                shutil.copy2(backup_path, target_path)
+                self.logger.info(f"Restored {file_path} from backup {backup_path}")
+            except Exception as e:
+                self.logger.exception(e, message=f"Failed to roll back patch {patch_id}")
+                success = False
+
+        return success
+
+    def rollback_latest_session(self) -> bool:
+        """
+        Roll back the latest session.
+
+        Returns:
+            True if rollback was successful, False otherwise
+        """
+        # Get the latest session information
+        session_data = self._get_latest_session()
+        if not session_data:
+            self.logger.warning("No session found to roll back")
+            return False
+
+        # Extract patches from the session
+        patches = session_data.get("patches", [])
+        if not patches:
+            self.logger.warning("No patches found in session to roll back")
+            return False
+
+        # Roll back the patches
+        self.logger.info(f"Rolling back session {session_data['session_id']} with {len(patches)} patches")
+        rollback_success = self._rollback_changes(patches)
+
+        # Restart the service after rollback if needed
+        if rollback_success and self.config["deployment"]["restart_service"]:
+            self.logger.info("Restarting service after rollback")
+            self.stop_service()
+            self.start_service()
+
+            # Check if the service is healthy after restart
+            for _ in range(3):  # Try a few times
+                if self.check_service_health():
+                    self.logger.info("Service is healthy after rollback and restart")
+                    return True
+                time.sleep(1)
+
+            self.logger.error("Service is not healthy after rollback and restart")
+            return False
+
+        return rollback_success
+
     def demo_known_bugs(self) -> None:
         """Run a demonstration of fixing known bugs."""
         self.logger.info("Running demonstration of fixing known bugs")
@@ -519,6 +704,11 @@ def main():
         action="store_true",
         help="Run in demonstration mode"
     )
+    parser.add_argument(
+        "--rollback", "-r",
+        action="store_true",
+        help="Roll back the latest session"
+    )
     
     args = parser.parse_args()
     
@@ -531,7 +721,14 @@ def main():
     
     # Initialize and run the orchestrator
     orchestrator = Orchestrator(config_path, log_level=args.log_level)
-    orchestrator.run(demo_mode=args.demo)
+    
+    if args.rollback:
+        # Roll back the latest session
+        success = orchestrator.rollback_latest_session()
+        exit(0 if success else 1)
+    else:
+        # Run the orchestrator normally
+        orchestrator.run(demo_mode=args.demo)
 
 
 if __name__ == "__main__":

@@ -50,6 +50,12 @@ deployment:
   restart_service: true
   backup_before_deployment: true
   backup_dir: "logs/backups"
+  
+# Rollback settings
+rollback:
+  enabled: true
+  auto_rollback_on_failure: true
+  max_sessions_to_keep: 10  # Maximum number of rollback sessions to keep
 
 # Known bugs (for demonstration)
 known_bugs:
