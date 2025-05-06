@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Error Log Schema",
-  "description": "Schema for error logs captured by Homeostasis monitoring module",
+  "title": "Enhanced Error Log Schema",
+  "description": "Enhanced schema for error logs captured by Homeostasis monitoring module",
   "type": "object",
   "required": [
     "timestamp",
@@ -28,20 +28,120 @@
       "type": "string",
       "description": "Error message"
     },
-    "exception_type": {
-      "type": "string",
-      "description": "Type of exception"
+    "system_info": {
+      "type": "object",
+      "description": "System information",
+      "properties": {
+        "hostname": {
+          "type": "string",
+          "description": "Host name"
+        },
+        "os_name": {
+          "type": "string",
+          "description": "Operating system name"
+        },
+        "platform": {
+          "type": "string",
+          "description": "Platform information"
+        },
+        "python_version": {
+          "type": "string",
+          "description": "Python version"
+        },
+        "processor": {
+          "type": "string",
+          "description": "Processor information"
+        },
+        "architecture": {
+          "type": "string",
+          "description": "System architecture"
+        },
+        "service_name": {
+          "type": "string",
+          "description": "Name of the service"
+        },
+        "environment_variables": {
+          "type": "object",
+          "description": "Environment variables (excluding sensitive ones)"
+        }
+      }
     },
-    "traceback": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Stack trace for the error"
+    "call_location": {
+      "type": "object",
+      "description": "Location where the log was called",
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "File path"
+        },
+        "function": {
+          "type": "string",
+          "description": "Function name"
+        },
+        "line_number": {
+          "type": "integer",
+          "description": "Line number"
+        }
+      }
     },
-    "error_id": {
-      "type": "string",
-      "description": "Unique identifier for the error"
+    "error_details": {
+      "type": "object",
+      "description": "Detailed information about the error",
+      "properties": {
+        "exception_type": {
+          "type": "string",
+          "description": "Type of exception"
+        },
+        "message": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "traceback": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Stack trace for the error"
+        },
+        "detailed_frames": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string",
+                "description": "File path"
+              },
+              "line": {
+                "type": "integer",
+                "description": "Line number"
+              },
+              "function": {
+                "type": "string",
+                "description": "Function name"
+              },
+              "locals": {
+                "type": "object",
+                "description": "Local variables in the frame"
+              },
+              "globals": {
+                "type": "object",
+                "description": "Global variables in the frame"
+              }
+            }
+          },
+          "description": "Detailed information about each frame in the traceback"
+        },
+        "error_id": {
+          "type": "string",
+          "description": "Unique identifier for the error"
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the error occurred"
+        }
+      }
     },
     "request_info": {
       "type": "object",
@@ -55,13 +155,51 @@
           "type": "string",
           "description": "Request path"
         },
+        "client_ip": {
+          "type": "string",
+          "description": "Client IP address"
+        },
+        "user_agent": {
+          "type": "string",
+          "description": "User agent"
+        },
         "params": {
           "type": "object",
           "description": "Request parameters"
         },
+        "query": {
+          "type": "object",
+          "description": "Query parameters"
+        },
         "headers": {
           "type": "object",
-          "description": "Request headers"
+          "description": "Request headers (excluding sensitive headers)"
+        },
+        "duration_ms": {
+          "type": "number",
+          "description": "Request duration in milliseconds"
+        },
+        "request_id": {
+          "type": "string",
+          "description": "Unique request identifier"
+        }
+      }
+    },
+    "response_info": {
+      "type": "object",
+      "description": "Information about the HTTP response",
+      "properties": {
+        "status_code": {
+          "type": "integer",
+          "description": "HTTP status code"
+        },
+        "headers": {
+          "type": "object",
+          "description": "Response headers (excluding sensitive headers)"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "description": "Response size in bytes"
         }
       }
     },
@@ -69,23 +207,16 @@
       "type": "object",
       "description": "Additional context about the error"
     },
-    "system_info": {
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags associated with the log entry for easier categorization and filtering"
+    },
+    "metadata": {
       "type": "object",
-      "description": "System information",
-      "properties": {
-        "os": {
-          "type": "string",
-          "description": "Operating system"
-        },
-        "python_version": {
-          "type": "string",
-          "description": "Python version"
-        },
-        "hostname": {
-          "type": "string",
-          "description": "Hostname"
-        }
-      }
+      "description": "Additional metadata about the log entry"
     }
   }
 }

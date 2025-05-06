@@ -1,0 +1,90 @@
+{
+  "name": "SQL Database Errors",
+  "description": "Common SQL database errors",
+  "rules": [
+    {
+      "id": "sql_syntax_error",
+      "pattern": "sqlite3.OperationalError: (?:near \"([^\"]*)\": )?syntax error",
+      "type": "OperationalError",
+      "description": "SQL syntax error in the query",
+      "root_cause": "sql_syntax_error",
+      "suggestion": "Review the SQL query for syntax errors",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["database", "sql", "syntax"]
+    },
+    {
+      "id": "sql_table_doesnt_exist",
+      "pattern": "sqlite3.OperationalError: no such table: ([a-zA-Z0-9_]+)",
+      "type": "OperationalError",
+      "description": "Referenced table does not exist in the database",
+      "root_cause": "sql_table_missing",
+      "suggestion": "Create the table or check the table name for typos",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["database", "sql", "schema"]
+    },
+    {
+      "id": "sql_column_doesnt_exist",
+      "pattern": "sqlite3.OperationalError: no such column: ([a-zA-Z0-9_]+)",
+      "type": "OperationalError",
+      "description": "Referenced column does not exist in the table",
+      "root_cause": "sql_column_missing",
+      "suggestion": "Add the column to the table or check the column name for typos",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["database", "sql", "schema"]
+    },
+    {
+      "id": "sql_unique_constraint_failed",
+      "pattern": "sqlite3.IntegrityError: UNIQUE constraint failed: ([^)]+)",
+      "type": "IntegrityError",
+      "description": "Attempted to insert a duplicate value into a column with a unique constraint",
+      "root_cause": "sql_unique_constraint_violation",
+      "suggestion": "Check for existing records before inserting or update the existing record instead",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["database", "sql", "integrity"]
+    },
+    {
+      "id": "sql_fk_constraint_failed",
+      "pattern": "sqlite3.IntegrityError: FOREIGN KEY constraint failed",
+      "type": "IntegrityError",
+      "description": "Foreign key constraint violation in the database operation",
+      "root_cause": "sql_foreign_key_constraint_violation",
+      "suggestion": "Ensure the referenced record exists in the parent table before operating on the child table",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["database", "sql", "integrity", "foreign-key"]
+    },
+    {
+      "id": "psql_duplicate_key_error",
+      "pattern": "psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint \"([^\"]+)\"",
+      "type": "UniqueViolation",
+      "description": "Attempted to insert a duplicate value into a column with a unique constraint in PostgreSQL",
+      "root_cause": "psql_unique_constraint_violation",
+      "suggestion": "Check for existing records before inserting or update the existing record instead",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["database", "postgresql", "integrity"]
+    },
+    {
+      "id": "mysql_duplicate_entry",
+      "pattern": "MySQLdb._exceptions.IntegrityError: \\(1062, \"Duplicate entry '([^']+)' for key '([^']+)'\"\\)",
+      "type": "IntegrityError",
+      "description": "Attempted to insert a duplicate value into a column with a unique constraint in MySQL",
+      "root_cause": "mysql_unique_constraint_violation",
+      "suggestion": "Check for existing records before inserting or update the existing record instead",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["database", "mysql", "integrity"]
+    }
+  ]
+}

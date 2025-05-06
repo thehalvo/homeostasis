@@ -1,0 +1,82 @@
+{
+  "name": "Django Common Errors",
+  "description": "Common errors encountered in Django applications",
+  "rules": [
+    {
+      "id": "django_settings_import_error",
+      "pattern": "ImportError: Could not import settings '([^']*)'",
+      "type": "ImportError",
+      "description": "Django cannot import the settings module",
+      "root_cause": "django_settings_missing",
+      "suggestion": "Ensure that the settings module exists and is in your PYTHONPATH",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["django", "settings", "import"],
+      "examples": [
+        "ImportError: Could not import settings 'myproject.settings'",
+        "ImportError: Could not import settings 'app.settings.production'"
+      ]
+    },
+    {
+      "id": "django_migration_error",
+      "pattern": "django.db.migrations.exceptions.NodeNotFoundError: Node '([^']*)' from migration '([^']*)' in ([^']*) not found",
+      "type": "NodeNotFoundError",
+      "description": "Django migration dependency not found",
+      "root_cause": "django_migration_dependency_missing",
+      "suggestion": "Run 'python manage.py makemigrations' to create missing migrations",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["django", "migration", "database"],
+      "examples": [
+        "django.db.migrations.exceptions.NodeNotFoundError: Node '0001_initial' from migration '0002_auto_20200101_0000' in app1 not found"
+      ]
+    },
+    {
+      "id": "django_template_doesnt_exist",
+      "pattern": "django.template.exceptions.TemplateDoesNotExist: ([^']*)",
+      "type": "TemplateDoesNotExist",
+      "description": "Django template file is missing",
+      "root_cause": "django_template_missing",
+      "suggestion": "Check the template directory and create the missing template file",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["django", "template", "frontend"],
+      "examples": [
+        "django.template.exceptions.TemplateDoesNotExist: myapp/index.html"
+      ]
+    },
+    {
+      "id": "django_field_error",
+      "pattern": "django.core.exceptions.FieldError: Cannot resolve keyword '([^']*)' into field",
+      "type": "FieldError",
+      "description": "Invalid field name used in a query",
+      "root_cause": "django_invalid_field",
+      "suggestion": "Check the model definition for the correct field name",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["django", "database", "query"],
+      "examples": [
+        "django.core.exceptions.FieldError: Cannot resolve keyword 'name' into field"
+      ]
+    },
+    {
+      "id": "django_permission_denied",
+      "pattern": "django.core.exceptions.PermissionDenied: ([^']*)",
+      "type": "PermissionDenied",
+      "description": "User does not have permission to perform the action",
+      "root_cause": "django_permission_denied",
+      "suggestion": "Check user permissions or adjust the permission requirements",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["django", "permissions", "security"],
+      "examples": [
+        "django.core.exceptions.PermissionDenied: You don't have permission to view this object"
+      ]
+    }
+  ]
+}

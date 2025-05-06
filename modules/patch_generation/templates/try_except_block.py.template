@@ -1,0 +1,20 @@
+# Template for adding a try-except block around code
+# The following variables will be replaced:
+# - {{ code_block }}: The original code block to wrap in try-except
+# - {{ exception_type }}: The exception type to catch
+# - {{ error_message }}: The error message for the exception
+# - {{ recovery_action }}: Code to run when the exception is caught
+# - {{ indent }}: The indentation to use (default: 4 spaces)
+# - {{ log_error }}: Whether to include error logging (true/false)
+
+# Original code:
+# {{ code_block }}
+
+# Fixed code with try-except block:
+try:
+{{ code_block }}
+except {{ exception_type }} as e:
+{% if log_error == "true" %}
+    logger.error(f"{{ error_message }}: {str(e)}")
+{% endif %}
+    {{ recovery_action }}

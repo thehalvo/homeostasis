@@ -1,0 +1,18 @@
+# Template for replacing a function with an improved implementation
+# The following variables will be replaced:
+# - {{ function_name }}: The name of the function to replace
+# - {{ function_signature }}: The function signature including parameters and return type
+# - {{ improved_implementation }}: The improved function implementation
+# - {{ docstring }}: The docstring for the function
+# - {{ original_code }}: The original function code (for reference)
+
+# Original function:
+# def {{ function_name }}{{ function_signature }}:
+#     {{ original_code }}
+
+# Improved implementation:
+def {{ function_name }}{{ function_signature }}:
+    """
+    {{ docstring }}
+    """
+    {{ improved_implementation }}
