@@ -93,3 +93,4 @@ temp/
 
 # Deployment
 .netlify
+**/.claude/settings.local.json
