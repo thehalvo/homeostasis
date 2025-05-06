@@ -1,0 +1,257 @@
+## Homeostasis System Architecture
+
+This text file contains ASCII representations and descriptions of the Homeostasis architecture diagrams.
+These can be converted to actual diagrams using tools like draw.io, Mermaid, or any diagramming tool.
+
+### 1. High-Level System Architecture
+
+```
++------------------------------------------+
+|                                          |
+|          Application Services            |
+|  +--------+  +--------+  +--------+      |
+|  |Service1|  |Service2|  |Service3|      |
+|  +--------+  +--------+  +--------+      |
+|         |        |          |            |
++---------v--------v----------v------------+
+          |        |          |
+          v        v          v
++------------------------------------------+
+|                                          |
+|        Homeostasis Framework             |
+|  +----------------------------------+    |
+|  |                                  |    |
+|  |  +------------+                  |    |
+|  |  | Monitoring |                  |    |
+|  |  |   Module   |                  |    |
+|  |  +-----+------+                  |    |
+|  |        |                         |    |
+|  |        v                         |    |
+|  |  +-----+------+                  |    |
+|  |  |  Analysis  |                  |    |
+|  |  |   Module   |                  |    |
+|  |  +-----+------+                  |    |
+|  |        |                         |    |
+|  |        v                         |    |
+|  |  +-----+------+                  |    |
+|  |  |   Patch    |                  |    |
+|  |  | Generation |                  |    |
+|  |  +-----+------+                  |    |
+|  |        |                         |    |
+|  |        v                         |    |
+|  |  +-----+------+                  |    |
+|  |  |  Testing   |                  |    |
+|  |  |   Module   |                  |    |
+|  |  +-----+------+                  |    |
+|  |        |                         |    |
+|  |  +-----v------+                  |    |
+|  |  |    Hot     |                  |    |
+|  |  |   Swap     |                  |    |
+|  |  +------------+                  |    |
+|  |                                  |    |
+|  |           Orchestrator           |    |
+|  +----------------------------------+    |
+|                                          |
++------------------------------------------+
+```
+
+### 2. Component Interaction Flow
+
+```
++-------------+     +-------------+     +-------------+
+| Application |     | Monitoring  |     |  Errors DB  |
+|  Services   |---->|   Module    |---->| (Optional)  |
++-------------+     +-------------+     +-------------+
+                          |
+                          v
+                    +-------------+     +-------------+
+                    |  Analysis   |---->|  Rule &     |
+                    |   Module    |     | Pattern DB  |
+                    +-------------+     +-------------+
+                          |
+                          v
+                    +-------------+     +-------------+
+                    |    Patch    |---->| Template &  |
+                    | Generation  |     |  Patch DB   |
+                    +-------------+     +-------------+
+                          |
+                          v
++-----------------+  +-------------+
+| Test Environment|<-|   Testing   |
+| (Containerized) |  |   Module    |
++-----------------+  +-------------+
+                          |
+                          v
+                    +-------------+
+                    |  Deployment |
+                    |    Module   |
+                    +-------------+
+                          |
+                          v
+                    +-------------+
+                    | Application |
+                    |  Services   |
+                    +-------------+
+```
+
+### 3. Self-Healing Process Flow
+
+```
++-------------------+
+| Error Detection   |
+| - Log monitoring  |
+| - Exception catch |
+| - Health checks   |
++--------+----------+
+         |
+         v
++-------------------+
+| Error Analysis    |
+| - Rule matching   |
+| - Root cause      |
+| - AI-based        |
++--------+----------+
+         |
+         v
++-------------------+
+| Solution Creation |
+| - Template use    |
+| - Code patching   |
+| - Dynamic fixes   |
++--------+----------+
+         |
+         v
++-------------------+
+| Test & Validate   |
+| - Unit tests      |
+| - Integration     |
+| - Regression      |
++--------+----------+
+         |
+         v
++-------------------+
+| Deploy Solution   |
+| - Hot swap        |
+| - Container update|
+| - Safe rollback   |
++--------+----------+
+         |
+         v
++-------------------+
+| Monitor & Verify  |
+| - Success tracking|
+| - Regression watch|
+| - Learning loop   |
++-------------------+
+```
+
+### 4. Module Architecture - Monitoring
+
+```
++------------------------------------------------------+
+|  Monitoring Module                                   |
+|                                                      |
+|  +-----------------+     +---------------------+     |
+|  | Log Interceptors|---->| Log Standardization |     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
+|  +-----------------+     +---------------------+     |
+|  | Error Listeners |---->| Error Classification|     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
+|  +-----------------+     +---------------------+     |
+|  | Metric Trackers |---->| Metric Aggregation  |     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
+|                          +---------------------+     |
+|                          | Event Publication   |     |
+|                          +---------------------+     |
+|                                    |                 |
++------------------------------------|-----------------+
+                                     v
+                          +---------------------+
+                          | Analysis Module     |
+                          +---------------------+
+```
+
+### 5. Module Architecture - Analysis
+
+```
++------------------------------------------------------+
+|  Analysis Module                                     |
+|                                                      |
+|  +-----------------+     +---------------------+     |
+|  | Error Receiver  |---->| Pattern Matching    |     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
+|  +-----------------+     +---------------------+     |
+|  | Rules Engine    |---->| Root Cause Analysis |     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
+|  +-----------------+     +---------------------+     |
+|  | AI Analysis     |---->| Solution Proposal   |     |
+|  | (Future)        |     | Generation          |     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
++------------------------------------|-----------------+
+                                     v
+                          +---------------------+
+                          | Patch Generation    |
+                          +---------------------+
+```
+
+### 6. Module Architecture - Patch Generation
+
+```
++------------------------------------------------------+
+|  Patch Generation Module                             |
+|                                                      |
+|  +-----------------+     +---------------------+     |
+|  | Solution        |---->| Template Selection  |     |
+|  | Requirements    |     |                     |     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
+|  +-----------------+     +---------------------+     |
+|  | Code Retrieval  |---->| Code Modification   |     |
+|  | & Context       |     | Generation          |     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
+|  +-----------------+     +---------------------+     |
+|  | Diff Generation |---->| Patch Creation      |     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
++------------------------------------|-----------------+
+                                     v
+                          +---------------------+
+                          | Testing Module      |
+                          +---------------------+
+```
+
+### 7. Orchestrator Flow
+
+```
++------------------------------------------------------+
+|  Orchestrator                                        |
+|                                                      |
+|  +-----------------+     +---------------------+     |
+|  | Configuration   |---->| Module Coordination |     |
+|  | Management      |     |                     |     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
+|  +-----------------+     +---------------------+     |
+|  | Event Handling  |---->| Workflow Execution  |     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
+|  +-----------------+     +---------------------+     |
+|  | State Management|---->| Recovery & Rollback |     |
+|  +-----------------+     +---------------------+     |
+|                                    |                 |
+|  +-----------------+     +---------------------+     |
+|  | Deployment      |---->| Validation          |     |
+|  | Coordination    |     |                     |     |
+|  +-----------------+     +---------------------+     |
+|                                                      |
++------------------------------------------------------+
+```
+
+These ASCII diagrams serve as placeholders for creating proper diagrams using appropriate diagramming tools. They show the key components and interactions of the Homeostasis self-healing system.

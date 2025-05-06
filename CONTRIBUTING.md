@@ -89,6 +89,15 @@ All submissions require review:
 - Document new features thoroughly
 - Use clear, concise language
 
+## Specialized Contribution Guides
+
+For more detailed guidance on contributing to specific components of Homeostasis, please refer to these specialized guides:
+
+- [Contributing Rules](docs/contributing-rules.md) - How to create and submit rule patterns for the analysis module
+- [Contributing Patch Templates](docs/contributing-templates.md) - How to design and submit code fix templates
+- [Contributing Monitoring Extensions](docs/contributing-monitoring.md) - How to extend the monitoring capabilities
+- [Contributing Analysis Components](docs/contributing-analysis.md) - How to enhance the error analysis capabilities
+
 ## Community
 
 - Join our discussions in the [GitHub Discussions](https://github.com/your-username/homeostasis/discussions) section
