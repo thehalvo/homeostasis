@@ -37,7 +37,7 @@ Homeostasis implements a self-healing cycle through six interconnected modules:
 5. **Validation & Observation**: Verifies fixes through comprehensive test suites
 6. **Hot Swap / Replacement**: Safely replaces broken components with fixed versions
 
-![Homeostasis Architecture](docs/assets/architecture-placeholder.png)
+For detailed architecture diagrams, see [Homeostasis Architecture](docs/assets/architecture-diagram.txt)
 
 ## Quick Start
 
