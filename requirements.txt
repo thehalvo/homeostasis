@@ -8,7 +8,7 @@ loguru==0.7.2
 
 # Testing
 pytest==7.4.3
-httpx==0.25.1
+httpx==0.28.1
 
 # Development
 black==23.10.1
