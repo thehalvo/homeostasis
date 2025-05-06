@@ -1,0 +1,13 @@
+# Template for fixing KeyError
+# The following variables will be replaced:
+# - {{ key_name }}: The name of the key that caused the error
+# - {{ dict_name }}: The name of the dictionary being accessed
+
+# Original code (with error):
+# return {{ dict_name }}[{{ key_name }}]
+
+# Fixed code:
+if {{ key_name }} in {{ dict_name }}:
+    return {{ dict_name }}[{{ key_name }}]
+else:
+    raise HTTPException(status_code=404, detail="{{ key_name }} not found")

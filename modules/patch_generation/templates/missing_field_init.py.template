@@ -1,0 +1,11 @@
+# Template for fixing missing field initialization
+# The following variables will be replaced:
+# - {{ field_name }}: The name of the field that is missing
+# - {{ default_value }}: The default value for the field
+
+# Original code (with error):
+# {{ dict_name }}["{{ other_field }}"] = {{ other_value }}
+
+# Fixed code:
+{{ dict_name }}["{{ other_field }}"] = {{ other_value }}
+{{ dict_name }}["{{ field_name }}"] = {{ default_value }}

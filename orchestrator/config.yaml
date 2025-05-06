@@ -1,0 +1,75 @@
+# Homeostasis Orchestrator Configuration
+
+# General settings
+general:
+  project_root: "." # Relative to where the orchestrator is run from
+  log_level: "INFO"
+  environment: "development" # "development", "staging", or "production"
+
+# Service settings
+service:
+  name: "example_service"
+  path: "services/example_service"
+  start_command: "uvicorn app:app --reload --port 8000"
+  stop_command: "kill -9 $(lsof -ti:8000)" # Unix-specific, will need adjustment for Windows
+  health_check_url: "http://localhost:8000/health"
+  health_check_timeout: 5 # seconds
+  log_file: "logs/homeostasis.log"
+
+# Monitoring settings
+monitoring:
+  enabled: true
+  log_level: "INFO"
+  watch_patterns:
+    - "*.log"
+    - "logs/*.log"
+  check_interval: 5 # seconds
+
+# Analysis settings
+analysis:
+  rule_based:
+    enabled: true
+  ai_based:
+    enabled: false # Set to true to enable AI-based analysis (currently a stub)
+
+# Patch generation settings
+patch_generation:
+  templates_dir: "modules/patch_generation/templates"
+  generated_patches_dir: "logs/patches"
+  backup_original_files: true
+
+# Testing settings
+testing:
+  enabled: true
+  test_command: "pytest tests/"
+  test_timeout: 30 # seconds
+
+# Deployment settings
+deployment:
+  enabled: true
+  restart_service: true
+  backup_before_deployment: true
+  backup_dir: "logs/backups"
+
+# Known bugs (for demonstration)
+known_bugs:
+  - id: "bug_1"
+    description: "Missing error handling for non-existent IDs"
+    file: "services/example_service/app.py"
+    confidence: "high"
+  - id: "bug_2"
+    description: "Missing field initialization"
+    file: "services/example_service/app.py"
+    confidence: "high"
+  - id: "bug_3"
+    description: "Incorrect dict parameter"
+    file: "services/example_service/app.py"
+    confidence: "high"
+  - id: "bug_4"
+    description: "Unsafe list slicing"
+    file: "services/example_service/app.py"
+    confidence: "high"
+  - id: "bug_5"
+    description: "Unsafe environment variable conversion"
+    file: "services/example_service/app.py"
+    confidence: "high"

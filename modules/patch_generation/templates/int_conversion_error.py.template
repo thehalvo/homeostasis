@@ -1,0 +1,14 @@
+# Template for fixing int conversion errors
+# The following variables will be replaced:
+# - {{ var_name }}: The name of the variable being converted
+# - {{ default_value }}: The default value to use if conversion fails
+# - {{ env_var }}: The environment variable name
+
+# Original code (with error):
+# {{ var_name }} = int({{ env_var }}.get("{{ env_var_name }}", {{ default_value }}))
+
+# Fixed code:
+try:
+    {{ var_name }} = int({{ env_var }}.get("{{ env_var_name }}", {{ default_value }}))
+except ValueError:
+    {{ var_name }} = {{ default_value }}

@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Error Log Schema",
+  "description": "Schema for error logs captured by Homeostasis monitoring module",
+  "type": "object",
+  "required": [
+    "timestamp",
+    "service",
+    "level",
+    "message"
+  ],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp"
+    },
+    "service": {
+      "type": "string",
+      "description": "Name of the service that generated the error"
+    },
+    "level": {
+      "type": "string",
+      "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+      "description": "Log level"
+    },
+    "message": {
+      "type": "string",
+      "description": "Error message"
+    },
+    "exception_type": {
+      "type": "string",
+      "description": "Type of exception"
+    },
+    "traceback": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Stack trace for the error"
+    },
+    "error_id": {
+      "type": "string",
+      "description": "Unique identifier for the error"
+    },
+    "request_info": {
+      "type": "object",
+      "description": "Information about the HTTP request",
+      "properties": {
+        "method": {
+          "type": "string",
+          "description": "HTTP method"
+        },
+        "path": {
+          "type": "string",
+          "description": "Request path"
+        },
+        "params": {
+          "type": "object",
+          "description": "Request parameters"
+        },
+        "headers": {
+          "type": "object",
+          "description": "Request headers"
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional context about the error"
+    },
+    "system_info": {
+      "type": "object",
+      "description": "System information",
+      "properties": {
+        "os": {
+          "type": "string",
+          "description": "Operating system"
+        },
+        "python_version": {
+          "type": "string",
+          "description": "Python version"
+        },
+        "hostname": {
+          "type": "string",
+          "description": "Hostname"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+# Template for fixing list index errors
+# The following variables will be replaced:
+# - {{ list_name }}: The name of the list being indexed
+# - {{ start_index }}: The start index for slicing
+# - {{ end_index }}: The end index for slicing
+
+# Original code (with error):
+# return {{ list_name }}[{{ start_index }}:{{ end_index }}]
+
+# Fixed code:
+if not {{ list_name }}:
+    return []
+    
+end = min({{ end_index }}, len({{ list_name }}))
+start = min({{ start_index }}, end)
+return {{ list_name }}[start:end]
