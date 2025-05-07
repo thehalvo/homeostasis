@@ -1,0 +1,397 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Homeostasis Rule System Analysis</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                    margin: 20px;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    color: #333;
+                }
+                h1, h2, h3 {
+                    color: #2c3e50;
+                }
+                .container {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 20px;
+                    margin: 20px 0;
+                }
+                .card {
+                    background-color: #f9f9f9;
+                    border-radius: 5px;
+                    padding: 15px;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                    flex: 1 1 calc(50% - 20px);
+                    min-width: 300px;
+                }
+                .bar-container {
+                    margin: 10px 0;
+                    width: 100%;
+                }
+                .bar-label {
+                    display: inline-block;
+                    width: 120px;
+                    margin-right: 10px;
+                    text-align: right;
+                }
+                .bar-outer {
+                    display: inline-block;
+                    width: calc(100% - 220px);
+                    background-color: #eee;
+                    height: 20px;
+                    border-radius: 2px;
+                    vertical-align: middle;
+                }
+                .bar-inner {
+                    height: 100%;
+                    border-radius: 2px;
+                }
+                .bar-value {
+                    display: inline-block;
+                    width: 80px;
+                    margin-left: 10px;
+                }
+                .severity-critical { background-color: #e74c3c; }
+                .severity-high { background-color: #e67e22; }
+                .severity-medium { background-color: #f1c40f; }
+                .severity-low { background-color: #3498db; }
+                .severity-info { background-color: #2ecc71; }
+                
+                .criticality-critical { background-color: #e74c3c; }
+                .criticality-high { background-color: #e67e22; }
+                .criticality-medium { background-color: #f1c40f; }
+                .criticality-low { background-color: #3498db; }
+                
+                .complexity-complex { background-color: #e74c3c; }
+                .complexity-moderate { background-color: #f1c40f; }
+                .complexity-simple { background-color: #2ecc71; }
+                .complexity-unknown { background-color: #95a5a6; }
+                
+                .reliability-high { background-color: #2ecc71; }
+                .reliability-medium { background-color: #f1c40f; }
+                .reliability-low { background-color: #e74c3c; }
+                
+                .tag-chart .bar-inner { background-color: #3498db; }
+                
+                .stacked-bar {
+                    height: 30px;
+                    width: 100%;
+                    margin: 10px 0;
+                    display: flex;
+                    border-radius: 3px;
+                    overflow: hidden;
+                }
+                .stacked-segment {
+                    height: 100%;
+                }
+                .stacked-legend {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    margin: 10px 0;
+                }
+                .legend-item {
+                    display: flex;
+                    align-items: center;
+                }
+                .legend-color {
+                    width: 15px;
+                    height: 15px;
+                    margin-right: 5px;
+                    border-radius: 2px;
+                }
+                .coverage-summary {
+                    margin-top: 20px;
+                    padding: 10px;
+                    background-color: #f8f9fa;
+                    border-left: 4px solid #6c757d;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 15px 0;
+                }
+                th, td {
+                    padding: 8px;
+                    text-align: left;
+                    border-bottom: 1px solid #ddd;
+                }
+                th {
+                    background-color: #f2f2f2;
+                }
+                tr:hover {
+                    background-color: #f5f5f5;
+                }
+                .dependency-graph {
+                    font-family: monospace;
+                    white-space: pre;
+                    background-color: #f8f9fa;
+                    padding: 15px;
+                    border-radius: 5px;
+                    overflow-x: auto;
+                }
+                .circular-dependencies {
+                    color: #e74c3c;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Homeostasis Rule System Analysis</h1>
+            
+            <div class="container">
+                <div class="card">
+                    <h2>Overview</h2>
+                    <p><strong>Total Rules:</strong> 86</p>
+                    <p><strong>Rules with Examples:</strong> 79 (91.9%)</p>
+                    <p><strong>Total Examples:</strong> 144</p>
+                    <p><strong>Examples per Rule:</strong> 1.67</p>
+                </div>
+                
+                <div class="card">
+                    <h2>Rule Type Distribution</h2>
+                    <div class="stacked-bar">
+                        
+                    </div>
+                    <div class="stacked-legend">
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="container">
+                <div class="card">
+                    <h2>Category Distribution</h2>
+                    
+            <div class="bar-container">
+                <span class="bar-label">python</span>
+                <span class="bar-outer">
+                    <div class="bar-inner severity-medium" style="width: 100.0%;"></div>
+                </span>
+                <span class="bar-value">48</span>
+            </div>
+            
+            <div class="bar-container">
+                <span class="bar-label">database</span>
+                <span class="bar-outer">
+                    <div class="bar-inner severity-medium" style="width: 68.75%;"></div>
+                </span>
+                <span class="bar-value">33</span>
+            </div>
+            
+            <div class="bar-container">
+                <span class="bar-label">django</span>
+                <span class="bar-outer">
+                    <div class="bar-inner severity-medium" style="width: 10.416666666666668%;"></div>
+                </span>
+                <span class="bar-value">5</span>
+            </div>
+            
+                </div>
+                
+                <div class="card">
+                    <h2>Severity Distribution</h2>
+                    
+                <div class="bar-container">
+                    <span class="bar-label">critical</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner severity-critical" style="width: 5.88235294117647%;"></div>
+                    </span>
+                    <span class="bar-value">3</span>
+                </div>
+                
+                <div class="bar-container">
+                    <span class="bar-label">high</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner severity-high" style="width: 100.0%;"></div>
+                    </span>
+                    <span class="bar-value">51</span>
+                </div>
+                
+                <div class="bar-container">
+                    <span class="bar-label">medium</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner severity-medium" style="width: 62.745098039215684%;"></div>
+                    </span>
+                    <span class="bar-value">32</span>
+                </div>
+                
+                    
+                    <h3>Stacked View</h3>
+                    <div class="stacked-bar">
+                        <div class="stacked-segment severity-critical" style="width: 3.488372093023256%;"></div><div class="stacked-segment severity-high" style="width: 59.30232558139535%;"></div><div class="stacked-segment severity-medium" style="width: 37.2093023255814%;"></div>
+                    </div>
+                    <div class="stacked-legend">
+                        
+                <div class="legend-item">
+                    <div class="legend-color severity-critical"></div>
+                    <span>critical: 3</span>
+                </div>
+                
+                <div class="legend-item">
+                    <div class="legend-color severity-high"></div>
+                    <span>high: 51</span>
+                </div>
+                
+                <div class="legend-item">
+                    <div class="legend-color severity-medium"></div>
+                    <span>medium: 32</span>
+                </div>
+                
+                    </div>
+                </div>
+            </div>
+            
+            <div class="container">
+                <div class="card">
+                    <h2>Criticality Distribution</h2>
+                    
+                </div>
+                
+                <div class="card">
+                    <h2>Complexity Distribution</h2>
+                    
+                </div>
+            </div>
+            
+            <div class="container">
+                <div class="card">
+                    <h2>Reliability Distribution</h2>
+                    
+                </div>
+                
+                <div class="card">
+                    <h2>Top Tags</h2>
+                    <div class="tag-chart">
+                        
+                <div class="bar-container">
+                    <span class="bar-label">python</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner" style="width: 100.0%;"></div>
+                    </span>
+                    <span class="bar-value">48</span>
+                </div>
+                
+                <div class="bar-container">
+                    <span class="bar-label">database</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner" style="width: 72.91666666666666%;"></div>
+                    </span>
+                    <span class="bar-value">35</span>
+                </div>
+                
+                <div class="bar-container">
+                    <span class="bar-label">sqlalchemy</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner" style="width: 54.166666666666664%;"></div>
+                    </span>
+                    <span class="bar-value">26</span>
+                </div>
+                
+                <div class="bar-container">
+                    <span class="bar-label">orm</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner" style="width: 33.33333333333333%;"></div>
+                    </span>
+                    <span class="bar-value">16</span>
+                </div>
+                
+                <div class="bar-container">
+                    <span class="bar-label">migration</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner" style="width: 22.916666666666664%;"></div>
+                    </span>
+                    <span class="bar-value">11</span>
+                </div>
+                
+                <div class="bar-container">
+                    <span class="bar-label">concurrency</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner" style="width: 20.833333333333336%;"></div>
+                    </span>
+                    <span class="bar-value">10</span>
+                </div>
+                
+                <div class="bar-container">
+                    <span class="bar-label">alembic</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner" style="width: 20.833333333333336%;"></div>
+                    </span>
+                    <span class="bar-value">10</span>
+                </div>
+                
+                <div class="bar-container">
+                    <span class="bar-label">integrity</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner" style="width: 16.666666666666664%;"></div>
+                    </span>
+                    <span class="bar-value">8</span>
+                </div>
+                
+                <div class="bar-container">
+                    <span class="bar-label">syntax</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner" style="width: 16.666666666666664%;"></div>
+                    </span>
+                    <span class="bar-value">8</span>
+                </div>
+                
+                <div class="bar-container">
+                    <span class="bar-label">dependency</span>
+                    <span class="bar-outer">
+                        <div class="bar-inner" style="width: 16.666666666666664%;"></div>
+                    </span>
+                    <span class="bar-value">8</span>
+                </div>
+                
+                    </div>
+                </div>
+            </div>
+            
+            <div class="container">
+                <div class="card">
+                    <h2>Example Coverage</h2>
+                    <div class="bar-container">
+                        <span class="bar-label">Coverage</span>
+                        <span class="bar-outer">
+                            <div class="bar-inner severity-medium" style="width: 91.9%;"></div>
+                        </span>
+                        <span class="bar-value">79/86</span>
+                    </div>
+                    
+                    <div class="coverage-summary">
+                        <p><strong>Rules with examples:</strong> 79 out of 86 (91.9%)</p>
+                        <p><strong>Total examples:</strong> 144</p>
+                        <p><strong>Average examples per rule:</strong> 1.67</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Potential Issues</h2>
+                    <h3>Rule Conflicts</h3>
+                    <p>No conflicts detected.</p>
+                    
+                    <h3>Circular Dependencies</h3>
+                    <p>No circular dependencies detected.</p>
+                </div>
+            </div>
+            
+            <div class="container">
+                <div class="card" style="flex: 1 1 100%;">
+                    <h2>Dependency Graph</h2>
+                    <div class="dependency-graph">
+                        No rule dependencies found.
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>Generated by Homeostasis Rule Visualization Tool</p>
+            </footer>
+        </body>
+        </html>
+        

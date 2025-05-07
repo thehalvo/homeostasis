@@ -1,0 +1,469 @@
+{
+  "name": "SQLAlchemy ORM Errors",
+  "description": "Rules for detecting SQLAlchemy ORM-related errors",
+  "rules": [
+    {
+      "id": "sqlalchemy_no_such_column",
+      "pattern": "sqlalchemy.exc.OperationalError: \\(.*\\) no such column: ([^\\s]+)",
+      "type": "OperationalError",
+      "description": "SQLAlchemy query references a column that doesn't exist in the database",
+      "root_cause": "sqlalchemy_missing_column",
+      "suggestion": "Check the column name and ensure the database schema matches your model definitions. You may need to run migrations.",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "schema",
+        "column"
+      ],
+      "examples": [
+        "sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: user.username",
+        "sqlalchemy.exc.OperationalError: (mysql.connector.errors.ProgrammingError) 1054 (42S22): Unknown column 'posts.content' in 'field list'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_no_such_table",
+      "pattern": "sqlalchemy.exc.OperationalError: \\(.*\\) no such table: ([^\\s]+)",
+      "type": "OperationalError",
+      "description": "SQLAlchemy query references a table that doesn't exist in the database",
+      "root_cause": "sqlalchemy_missing_table",
+      "suggestion": "Check the table name and ensure the database schema matches your model definitions. You may need to run migrations or create the table.",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "schema",
+        "table"
+      ],
+      "examples": [
+        "sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: users",
+        "sqlalchemy.exc.OperationalError: (mysql.connector.errors.ProgrammingError) 1146 (42S02): Table 'mydatabase.posts' doesn't exist"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_table_exists",
+      "pattern": "sqlalchemy.exc.OperationalError: \\(.*\\) table ([^\\s]+) already exists",
+      "type": "OperationalError",
+      "description": "Attempt to create a table that already exists in the database",
+      "root_cause": "sqlalchemy_table_already_exists",
+      "suggestion": "Use 'create_all(checkfirst=True)' to avoid this error or drop the table first if you need to recreate it",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "schema",
+        "table"
+      ],
+      "examples": [
+        "sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) table users already exists",
+        "sqlalchemy.exc.OperationalError: (mysql.connector.errors.DatabaseError) 1050 (42S01): Table 'users' already exists"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_unique_violation",
+      "pattern": "sqlalchemy.exc.IntegrityError: \\(.*\\) (UNIQUE constraint failed|duplicate key value violates unique constraint|Duplicate entry)",
+      "type": "IntegrityError",
+      "description": "SQLAlchemy operation violates a unique constraint in the database",
+      "root_cause": "sqlalchemy_unique_constraint_violation",
+      "suggestion": "Check for existing records before inserting or use get_or_create pattern to handle potential duplicates",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "integrity",
+        "unique"
+      ],
+      "examples": [
+        "sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.email",
+        "sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint \"users_email_key\"",
+        "sqlalchemy.exc.IntegrityError: (MySQLdb._exceptions.IntegrityError) (1062, \"Duplicate entry 'test@example.com' for key 'users.email'\")"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_foreign_key_violation",
+      "pattern": "sqlalchemy.exc.IntegrityError: \\(.*\\) (FOREIGN KEY constraint failed|foreign key constraint|violates foreign key constraint)",
+      "type": "IntegrityError",
+      "description": "SQLAlchemy operation violates a foreign key constraint in the database",
+      "root_cause": "sqlalchemy_foreign_key_constraint_violation",
+      "suggestion": "Ensure the referenced record exists in the parent table before creating or updating the child record",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "integrity",
+        "foreign-key"
+      ],
+      "examples": [
+        "sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) FOREIGN KEY constraint failed",
+        "sqlalchemy.exc.IntegrityError: (psycopg2.errors.ForeignKeyViolation) insert or update on table \"comments\" violates foreign key constraint \"comments_post_id_fkey\"",
+        "sqlalchemy.exc.IntegrityError: (MySQLdb._exceptions.IntegrityError) (1452, 'Cannot add or update a child row: a foreign key constraint fails')"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_not_null_violation",
+      "pattern": "sqlalchemy.exc.IntegrityError: \\(.*\\) (NOT NULL constraint failed|null value in column|cannot be null)",
+      "type": "IntegrityError",
+      "description": "SQLAlchemy operation attempts to insert a null value into a column with a NOT NULL constraint",
+      "root_cause": "sqlalchemy_not_null_constraint_violation",
+      "suggestion": "Ensure all required fields have values before inserting or updating records",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "integrity",
+        "not-null"
+      ],
+      "examples": [
+        "sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint failed: users.email",
+        "sqlalchemy.exc.IntegrityError: (psycopg2.errors.NotNullViolation) null value in column \"email\" violates not-null constraint",
+        "sqlalchemy.exc.IntegrityError: (MySQLdb._exceptions.IntegrityError) (1048, \"Column 'email' cannot be null\")"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_check_constraint_violation",
+      "pattern": "sqlalchemy.exc.IntegrityError: \\(.*\\) (CHECK constraint failed|check constraint|violates check constraint)",
+      "type": "IntegrityError",
+      "description": "SQLAlchemy operation violates a CHECK constraint in the database",
+      "root_cause": "sqlalchemy_check_constraint_violation",
+      "suggestion": "Validate data before inserting it to ensure it meets the CHECK constraint conditions",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "integrity",
+        "check-constraint"
+      ],
+      "examples": [
+        "sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) CHECK constraint failed: age >= 18",
+        "sqlalchemy.exc.IntegrityError: (psycopg2.errors.CheckViolation) new row for relation \"users\" violates check constraint \"users_age_check\"",
+        "sqlalchemy.exc.IntegrityError: (MySQLdb._exceptions.IntegrityError) (3819, 'Check constraint 'users_chk_1' is violated.')"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_invalid_column_name",
+      "pattern": "sqlalchemy.exc.InvalidRequestError: Column '([^']+)' is not available",
+      "type": "InvalidRequestError",
+      "description": "SQLAlchemy query references a column that doesn't exist in the ORM model",
+      "root_cause": "sqlalchemy_invalid_column_reference",
+      "suggestion": "Check the column name and ensure it exists in your ORM model definition",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "column"
+      ],
+      "examples": [
+        "sqlalchemy.exc.InvalidRequestError: Column 'User.username' is not available",
+        "sqlalchemy.exc.InvalidRequestError: Column 'email_address' is not available, perhaps you meant to reference the following columns: ['email']?"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_no_such_relationship",
+      "pattern": "sqlalchemy.exc.InvalidRequestError: Could not find a property named '([^']+)'",
+      "type": "InvalidRequestError",
+      "description": "SQLAlchemy query references a relationship that doesn't exist in the ORM model",
+      "root_cause": "sqlalchemy_invalid_relationship",
+      "suggestion": "Check the relationship name and ensure it's defined in your ORM model",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "relationship"
+      ],
+      "examples": [
+        "sqlalchemy.exc.InvalidRequestError: Could not find a property named 'comments'",
+        "sqlalchemy.exc.InvalidRequestError: Could not find a property named 'author'; User.author does not exist"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_data_type_error",
+      "pattern": "sqlalchemy.exc.DataError: \\(.*\\) (invalid input syntax for|out of range|error in|data too long)",
+      "type": "DataError",
+      "description": "SQLAlchemy operation failed due to a data type mismatch or constraint",
+      "root_cause": "sqlalchemy_data_type_mismatch",
+      "suggestion": "Validate and convert data to the correct type before inserting it into the database",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "data-type"
+      ],
+      "examples": [
+        "sqlalchemy.exc.DataError: (psycopg2.errors.InvalidDatetimeFormat) invalid input syntax for type timestamp: \"not-a-date\"",
+        "sqlalchemy.exc.DataError: (psycopg2.errors.NumericValueOutOfRange) integer out of range",
+        "sqlalchemy.exc.DataError: (MySQLdb._exceptions.DataError) (1406, \"Data too long for column 'name' at row 1\")"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_detached_instance",
+      "pattern": "sqlalchemy.orm.exc.DetachedInstanceError: Instance '([^']+)' is not bound to a Session",
+      "type": "DetachedInstanceError",
+      "description": "Attempted to access relationship attributes on a detached SQLAlchemy instance",
+      "root_cause": "sqlalchemy_detached_instance",
+      "suggestion": "Re-associate the instance with a session using session.add() or query with joined loading",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "session"
+      ],
+      "examples": [
+        "sqlalchemy.orm.exc.DetachedInstanceError: Instance '<User at 0x7f9b3c7d8d30>' is not bound to a Session; attribute refresh operation cannot proceed",
+        "sqlalchemy.orm.exc.DetachedInstanceError: Parent instance '<Post at 0x7f9b3c7d8d30>' is not bound to a Session; lazy load operation of attribute 'comments' cannot proceed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_no_result_found",
+      "pattern": "sqlalchemy.orm.exc.NoResultFound",
+      "type": "NoResultFound",
+      "description": "SQLAlchemy query.one() found no results where one was expected",
+      "root_cause": "sqlalchemy_empty_result",
+      "suggestion": "Use query.first() instead of query.one() when the result might not exist, or add error handling for NoResultFound",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "query"
+      ],
+      "examples": [
+        "sqlalchemy.orm.exc.NoResultFound",
+        "sqlalchemy.orm.exc.NoResultFound: No row was found for one()"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_multiple_results_found",
+      "pattern": "sqlalchemy.orm.exc.MultipleResultsFound",
+      "type": "MultipleResultsFound",
+      "description": "SQLAlchemy query.one() found multiple results where only one was expected",
+      "root_cause": "sqlalchemy_multiple_results",
+      "suggestion": "Use query.first() to get just one result or modify your query to filter more specifically",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "query"
+      ],
+      "examples": [
+        "sqlalchemy.orm.exc.MultipleResultsFound",
+        "sqlalchemy.orm.exc.MultipleResultsFound: Multiple rows were found for one()"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_flush_error",
+      "pattern": "sqlalchemy.exc.FlushError: (?:Can't flush|Cannot flush)",
+      "type": "FlushError",
+      "description": "SQLAlchemy session flush operation failed due to invalid or inconsistent data",
+      "root_cause": "sqlalchemy_flush_error",
+      "suggestion": "Ensure all model instances are properly initialized and constraints are satisfied before flushing the session",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "session",
+        "flush"
+      ],
+      "examples": [
+        "sqlalchemy.exc.FlushError: Can't flush None value for column users.email",
+        "sqlalchemy.exc.FlushError: Cannot flush - a child row with foreign key (\"posts_user_id_fkey\") fails, referencing \"users\""
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_object_deleted",
+      "pattern": "sqlalchemy.orm.exc.ObjectDeletedError: Instance '([^']+)' has been deleted",
+      "type": "ObjectDeletedError",
+      "description": "Attempted to access an SQLAlchemy object that has been deleted from the database",
+      "root_cause": "sqlalchemy_deleted_object_access",
+      "suggestion": "Check if the object exists before attempting to access it or refresh the object from the database",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "session",
+        "delete"
+      ],
+      "examples": [
+        "sqlalchemy.orm.exc.ObjectDeletedError: Instance '<User at 0x7f9b3c7d8d30>' has been deleted",
+        "sqlalchemy.orm.exc.ObjectDeletedError: Instance '<Post at 0x7f9b3c7d8d30>' has been deleted, not refreshing (configure expire_on_commit=False to enable)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlalchemy_stale_data",
+      "pattern": "sqlalchemy.orm.exc.StaleDataError",
+      "type": "StaleDataError",
+      "description": "SQLAlchemy detected a data inconsistency between the session and the database",
+      "root_cause": "sqlalchemy_stale_data",
+      "suggestion": "Refresh the object from the database or implement optimistic locking with version counters",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "orm",
+        "session",
+        "concurrency"
+      ],
+      "examples": [
+        "sqlalchemy.orm.exc.StaleDataError: UPDATE statement on table 'users' expected to update 1 row(s); 0 were matched.",
+        "sqlalchemy.orm.exc.StaleDataError: DELETE statement on table 'posts' expected to delete 1 row(s); 0 were matched."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

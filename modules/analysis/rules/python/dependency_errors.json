@@ -1,0 +1,254 @@
+{
+  "name": "Python Dependency Errors",
+  "description": "Rules for detecting Python package, dependency, and version-related errors",
+  "rules": [
+    {
+      "id": "python_importerror_cannot_import_name",
+      "pattern": "ImportError: cannot import name '([^']*)' from '([^']*)'",
+      "type": "ImportError",
+      "description": "Trying to import a specific name that doesn't exist in the module",
+      "root_cause": "nonexistent_import_name",
+      "suggestion": "Check the module documentation for the correct name or verify the package version",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "import",
+        "module",
+        "dependency"
+      ],
+      "examples": [
+        "ImportError: cannot import name 'load_model' from 'tensorflow'",
+        "ImportError: cannot import name 'JSONDecodeError' from 'json'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_attributeerror_module",
+      "pattern": "AttributeError: module '([^']*)' has no attribute '([^']*)'",
+      "type": "AttributeError",
+      "description": "Trying to access an attribute of a module that doesn't exist",
+      "root_cause": "module_attribute_missing",
+      "suggestion": "Check the module documentation or update the package version",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "module",
+        "attribute",
+        "dependency"
+      ],
+      "examples": [
+        "AttributeError: module 'pandas' has no attribute 'read_excel'",
+        "AttributeError: module 'os' has no attribute 'makedirs'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_versionerror",
+      "pattern": "(?:AttributeError|ImportError|ModuleNotFoundError).*?(?:requires|expecting).*?(?:version|Python) ([\\d\\.]+)",
+      "type": "Error",
+      "description": "Using a feature that requires a different Python version",
+      "root_cause": "version_incompatibility",
+      "suggestion": "Update Python version or adapt code to be compatible with your current version",
+      "category": "python",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "python",
+        "version",
+        "compatibility"
+      ],
+      "examples": [
+        "ImportError: This module requires Python 3.6 or higher",
+        "AttributeError: module 'asyncio' requires Python 3.7 or newer"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_pip_dependency_error",
+      "pattern": "ERROR: No matching distribution found for ([^\\s]+)",
+      "type": "PipError",
+      "description": "Pip couldn't find a package that satisfies the requirements",
+      "root_cause": "missing_package",
+      "suggestion": "Check the package name and version constraints or look for alternative packages",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "pip",
+        "package",
+        "dependency"
+      ],
+      "examples": [
+        "ERROR: No matching distribution found for tensorflow==2.3.0",
+        "ERROR: No matching distribution found for django-rest-framework>=3.11.0,<3.12.0"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_pip_version_conflict",
+      "pattern": "ERROR: Cannot install ([^\\s]+) and ([^\\s]+) because these package versions have conflicting dependencies",
+      "type": "PipError",
+      "description": "Package version conflict during installation",
+      "root_cause": "package_conflict",
+      "suggestion": "Use a virtual environment or adjust version constraints to resolve conflicts",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "pip",
+        "package",
+        "dependency",
+        "conflict"
+      ],
+      "examples": [
+        "ERROR: Cannot install tensorflow==1.15.0 and pytorch==1.7.0 because these package versions have conflicting dependencies"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_binary_incompatibility",
+      "pattern": "ImportError: ([^:]+): cannot open shared object file: No such file or directory",
+      "type": "ImportError",
+      "description": "Missing system library for a Python package",
+      "root_cause": "missing_system_dependency",
+      "suggestion": "Install the required system libraries using your OS package manager",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "library",
+        "system",
+        "dependency"
+      ],
+      "examples": [
+        "ImportError: libGL.so.1: cannot open shared object file: No such file or directory",
+        "ImportError: libcudart.so.10.0: cannot open shared object file: No such file or directory"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_dependency_unsatisfied",
+      "pattern": "(?:ImportError|ModuleNotFoundError):.*?(?:requires|depends on) ([^\\s,]+)",
+      "type": "ImportError",
+      "description": "Missing dependency for a Python package",
+      "root_cause": "missing_dependency",
+      "suggestion": "Install the required dependency using pip",
+      "category": "python",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "python",
+        "import",
+        "dependency"
+      ],
+      "examples": [
+        "ImportError: scipy requires numpy>=1.13.3",
+        "ModuleNotFoundError: plotly requires pandas"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_importerror_circular",
+      "pattern": "ImportError: cannot import name '([^']*)' from partially initialized module '([^']*)' \\(most likely due to a circular import\\)",
+      "type": "ImportError",
+      "description": "Circular import detected between modules",
+      "root_cause": "circular_import",
+      "suggestion": "Refactor the imports to break the cycle or move the import inside a function",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "import",
+        "circular",
+        "dependency"
+      ],
+      "examples": [
+        "ImportError: cannot import name 'User' from partially initialized module 'models' (most likely due to a circular import)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_virtualenv_error",
+      "pattern": "ModuleNotFoundError:.*?virtual environment",
+      "type": "ModuleNotFoundError",
+      "description": "Virtual environment issue causing module import failures",
+      "root_cause": "virtualenv_issue",
+      "suggestion": "Activate the virtual environment or reinstall the required packages",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "python",
+        "virtualenv",
+        "environment",
+        "dependency"
+      ],
+      "examples": [
+        "ModuleNotFoundError: No module named 'django' in the virtual environment"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -12,7 +12,19 @@
       "category": "database",
       "severity": "high",
       "confidence": "high",
-      "tags": ["database", "sql", "syntax"]
+      "tags": [
+        "database",
+        "sql",
+        "syntax"
+      ],
+      "examples": [],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     },
     {
       "id": "sql_table_doesnt_exist",
@@ -24,7 +36,19 @@
       "category": "database",
       "severity": "high",
       "confidence": "high",
-      "tags": ["database", "sql", "schema"]
+      "tags": [
+        "database",
+        "sql",
+        "schema"
+      ],
+      "examples": [],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     },
     {
       "id": "sql_column_doesnt_exist",
@@ -36,7 +60,19 @@
       "category": "database",
       "severity": "high",
       "confidence": "high",
-      "tags": ["database", "sql", "schema"]
+      "tags": [
+        "database",
+        "sql",
+        "schema"
+      ],
+      "examples": [],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     },
     {
       "id": "sql_unique_constraint_failed",
@@ -48,7 +84,19 @@
       "category": "database",
       "severity": "medium",
       "confidence": "high",
-      "tags": ["database", "sql", "integrity"]
+      "tags": [
+        "database",
+        "sql",
+        "integrity"
+      ],
+      "examples": [],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     },
     {
       "id": "sql_fk_constraint_failed",
@@ -60,7 +108,20 @@
       "category": "database",
       "severity": "medium",
       "confidence": "high",
-      "tags": ["database", "sql", "integrity", "foreign-key"]
+      "tags": [
+        "database",
+        "sql",
+        "integrity",
+        "foreign-key"
+      ],
+      "examples": [],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     },
     {
       "id": "psql_duplicate_key_error",
@@ -72,7 +133,19 @@
       "category": "database",
       "severity": "medium",
       "confidence": "high",
-      "tags": ["database", "postgresql", "integrity"]
+      "tags": [
+        "database",
+        "postgresql",
+        "integrity"
+      ],
+      "examples": [],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     },
     {
       "id": "mysql_duplicate_entry",
@@ -84,7 +157,19 @@
       "category": "database",
       "severity": "medium",
       "confidence": "high",
-      "tags": ["database", "mysql", "integrity"]
+      "tags": [
+        "database",
+        "mysql",
+        "integrity"
+      ],
+      "examples": [],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     }
   ]
 }

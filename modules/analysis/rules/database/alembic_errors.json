@@ -1,0 +1,293 @@
+{
+  "name": "Alembic Migration Errors",
+  "description": "Rules for detecting Alembic database migration errors with SQLAlchemy",
+  "rules": [
+    {
+      "id": "alembic_revision_error",
+      "pattern": "alembic.util.exc.CommandError: Can't locate revision identified by '([^']*)'",
+      "type": "CommandError",
+      "description": "Alembic cannot find the specified migration revision",
+      "root_cause": "alembic_missing_revision",
+      "suggestion": "Check that the specified revision exists in the versions directory and that you are using the correct revision identifier",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "alembic",
+        "migration"
+      ],
+      "examples": [
+        "alembic.util.exc.CommandError: Can't locate revision identified by '3a1c35e0212a'",
+        "alembic.util.exc.CommandError: Can't locate revision identified by 'head'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "alembic_multiple_heads",
+      "pattern": "alembic.util.exc.CommandError: Multiple head revisions are present",
+      "type": "CommandError",
+      "description": "Alembic detected multiple head revisions in the migration history",
+      "root_cause": "alembic_multiple_heads",
+      "suggestion": "Run 'alembic merge heads' to create a merge migration, or specify a specific head revision",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "alembic",
+        "migration"
+      ],
+      "examples": [
+        "alembic.util.exc.CommandError: Multiple head revisions are present; please specify the head revision on which the new revision should be based, or perform a merge."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "alembic_stamp_error",
+      "pattern": "alembic.util.exc.CommandError: Can't stamp database with '([^']*)'; (?:database is not upgradeable|database isn't upgradeable)",
+      "type": "CommandError",
+      "description": "Cannot stamp the database with the specified revision",
+      "root_cause": "alembic_stamp_error",
+      "suggestion": "Ensure the database is initialized and that the alembic_version table exists and is accessible",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "alembic",
+        "migration"
+      ],
+      "examples": [
+        "alembic.util.exc.CommandError: Can't stamp database with 'head'; database isn't upgradeable.",
+        "alembic.util.exc.CommandError: Can't stamp database with '3a1c35e0212a'; database is not upgradeable."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "alembic_script_error",
+      "pattern": "alembic.script.revision.ScriptDirectory: (?:Error|Exception) processing (?:file|script) ([^:]*)",
+      "type": "ScriptError",
+      "description": "Error while processing an Alembic migration script",
+      "root_cause": "alembic_script_error",
+      "suggestion": "Check the syntax and imports in the migration script. Ensure all referenced models and dependencies are available.",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "alembic",
+        "migration",
+        "script"
+      ],
+      "examples": [
+        "alembic.script.revision.ScriptDirectory: Error processing file versions/3a1c35e0212a_add_user_table.py",
+        "alembic.script.revision.ScriptDirectory: Exception processing script versions/3a1c35e0212a_add_user_table.py"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "alembic_autogenerate_error",
+      "pattern": "alembic.util.exc.CommandError: Target database is not up to date.",
+      "type": "CommandError",
+      "description": "Cannot auto-generate a migration because the database is not at the latest revision",
+      "root_cause": "alembic_database_not_current",
+      "suggestion": "Upgrade the database to the latest revision with 'alembic upgrade head' before generating a new migration",
+      "category": "database",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "alembic",
+        "migration",
+        "autogenerate"
+      ],
+      "examples": [
+        "alembic.util.exc.CommandError: Target database is not up to date."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "alembic_revision_clash",
+      "pattern": "alembic.util.exc.CommandError: (?:Message:|Rev:) ([^\\s]+)\\s+(?:already exists|already exists in file)",
+      "type": "CommandError",
+      "description": "A revision with the same identifier already exists",
+      "root_cause": "alembic_duplicate_revision",
+      "suggestion": "Use a different revision identifier or delete the conflicting migration file if appropriate",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "alembic",
+        "migration",
+        "revision"
+      ],
+      "examples": [
+        "alembic.util.exc.CommandError: Message: 3a1c35e0212a already exists in file versions/3a1c35e0212a_add_user_table.py",
+        "alembic.util.exc.CommandError: Rev: 3a1c35e0212a already exists"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "alembic_migration_context_error",
+      "pattern": "alembic.util.exc.CommandError: No migrations directory has been configured",
+      "type": "CommandError",
+      "description": "Alembic is missing the migrations directory configuration",
+      "root_cause": "alembic_missing_migrations_dir",
+      "suggestion": "Configure the migrations directory in alembic.ini or use the -d option to specify the directory",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "alembic",
+        "migration",
+        "configuration"
+      ],
+      "examples": [
+        "alembic.util.exc.CommandError: No migrations directory has been configured"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "alembic_config_error",
+      "pattern": "alembic.config.Config: (?:Error:|Exception:) Config file ([^\\s]+) does not exist",
+      "type": "ConfigError",
+      "description": "The specified Alembic configuration file does not exist",
+      "root_cause": "alembic_missing_config",
+      "suggestion": "Ensure the alembic.ini file exists or specify the correct path with the -c option",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "alembic",
+        "migration",
+        "configuration"
+      ],
+      "examples": [
+        "alembic.config.Config: Error: Config file alembic.ini does not exist",
+        "alembic.config.Config: Exception: Config file custom/path/alembic.ini does not exist"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "alembic_schema_error",
+      "pattern": "sqlalchemy.exc.NoSuchTableError: (?:Table ')?([^']+)(?:' doesn't exist)?",
+      "type": "NoSuchTableError",
+      "description": "Alembic migration references a table that doesn't exist in the database",
+      "root_cause": "alembic_missing_table",
+      "suggestion": "Ensure the table is created before referencing it in a migration, or modify the migration to handle the case when the table doesn't exist",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "alembic",
+        "migration",
+        "schema"
+      ],
+      "examples": [
+        "sqlalchemy.exc.NoSuchTableError: Table 'users' doesn't exist",
+        "sqlalchemy.exc.NoSuchTableError: alembic_version"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "alembic_history_error",
+      "pattern": "alembic.util.exc.CommandError: (?:Can't determine current revision|No revision files|Invalid starting revision|No such revision|No revisions found)",
+      "type": "CommandError",
+      "description": "Error in the Alembic migration history or revision specification",
+      "root_cause": "alembic_revision_history_error",
+      "suggestion": "Check that the alembic_version table exists and has valid data, or initialize the database with 'alembic stamp head'",
+      "category": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "alembic",
+        "migration",
+        "history"
+      ],
+      "examples": [
+        "alembic.util.exc.CommandError: Can't determine current revision; please specify --head or revise your database.",
+        "alembic.util.exc.CommandError: No revision files found using directory versions",
+        "alembic.util.exc.CommandError: Invalid starting revision specified '3a1c35e0212a'",
+        "alembic.util.exc.CommandError: No such revision or branch '3a1c35e0212a'",
+        "alembic.util.exc.CommandError: No revisions found at revision 'head'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -12,11 +12,22 @@
       "category": "django",
       "severity": "high",
       "confidence": "high",
-      "tags": ["django", "settings", "import"],
+      "tags": [
+        "django",
+        "settings",
+        "import"
+      ],
       "examples": [
         "ImportError: Could not import settings 'myproject.settings'",
         "ImportError: Could not import settings 'app.settings.production'"
-      ]
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     },
     {
       "id": "django_migration_error",
@@ -28,10 +39,21 @@
       "category": "django",
       "severity": "high",
       "confidence": "high",
-      "tags": ["django", "migration", "database"],
+      "tags": [
+        "django",
+        "migration",
+        "database"
+      ],
       "examples": [
         "django.db.migrations.exceptions.NodeNotFoundError: Node '0001_initial' from migration '0002_auto_20200101_0000' in app1 not found"
-      ]
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     },
     {
       "id": "django_template_doesnt_exist",
@@ -43,10 +65,21 @@
       "category": "django",
       "severity": "medium",
       "confidence": "high",
-      "tags": ["django", "template", "frontend"],
+      "tags": [
+        "django",
+        "template",
+        "frontend"
+      ],
       "examples": [
         "django.template.exceptions.TemplateDoesNotExist: myapp/index.html"
-      ]
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     },
     {
       "id": "django_field_error",
@@ -58,10 +91,21 @@
       "category": "django",
       "severity": "medium",
       "confidence": "high",
-      "tags": ["django", "database", "query"],
+      "tags": [
+        "django",
+        "database",
+        "query"
+      ],
       "examples": [
         "django.core.exceptions.FieldError: Cannot resolve keyword 'name' into field"
-      ]
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     },
     {
       "id": "django_permission_denied",
@@ -73,10 +117,21 @@
       "category": "django",
       "severity": "high",
       "confidence": "high",
-      "tags": ["django", "permissions", "security"],
+      "tags": [
+        "django",
+        "permissions",
+        "security"
+      ],
       "examples": [
         "django.core.exceptions.PermissionDenied: You don't have permission to view this object"
-      ]
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     }
   ]
 }

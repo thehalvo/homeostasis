@@ -14,6 +14,16 @@ This module analyzes errors and logs to identify the root cause of issues and su
 - Category-based rule organization
 - JSON/YAML rule definition format
 
+## Recent Enhancements
+
+- **Expanded Rule Sets**: Added 50+ new rules for common Python errors and exceptions
+- **Enhanced Categorization System**: Added criticality, complexity, and reliability metrics
+- **Confidence Scoring Algorithm**: Improved match accuracy with multi-factor scoring
+- **Rule Management CLI**: New command-line tool for rule testing and management
+- **Rule Dependency Resolution**: Support for complex error chains and dependencies
+- **Conflict Detection**: Automatic detection of conflicting or overlapping rules
+- **Visualization Support**: Tools for viewing rule coverage and effectiveness
+
 ## Components
 
 ### Rule-Based Analyzer
@@ -36,6 +46,67 @@ The rule configuration system allows dynamic loading and management of error ana
 - Rule severity levels and confidence indicators
 - Detailed rule metadata including examples and descriptions
 - External rule file loading from configurable directories
+
+### Rule Categories and Organization
+
+Rules are organized into categories:
+- **Python**: Common Python exceptions and errors
+- **Framework-specific**: FastAPI, Flask, Django
+- **Database**: SQL and ORM-related errors
+- **Network**: Network-related errors
+- **Authentication/Authorization**: Security-related errors
+- **Custom**: User-defined rules
+
+### Enhanced Rule Properties
+
+Each rule now includes:
+- Regular expression pattern to match against errors
+- Error type identification
+- Root cause classification
+- Suggested fix
+- Confidence and severity levels
+- Tags for organization
+- Example error messages
+
+Enhanced rules also include:
+- **Criticality levels**: critical, high, medium, low
+- **Complexity levels**: simple, moderate, complex, unknown
+- **Reliability levels**: high, medium, low
+- **Dependency information**: for complex error chains
+
+### Confidence Scoring System
+
+The enhanced confidence scoring system evaluates rule matches based on:
+- **Context relevance**: How well the rule matches the error context
+- **Pattern specificity**: How specific and precise the rule pattern is
+- **Match strength**: How strongly the pattern matches the error
+- **Pattern quality**: Inherent quality of the rule pattern
+
+This provides more accurate analysis and can handle ambiguous error cases by ranking possible matches.
+
+### Rule Management CLI
+
+The command-line interface provides tools for managing and testing rules:
+
+```bash
+# Show rule statistics
+./rule_cli.py stats
+
+# Show rule details
+./rule_cli.py show <rule_id>
+
+# Create a new rule
+./rule_cli.py create --pattern "Error: (.*)" --type "Error" --description "Generic error" \
+  --root-cause "unknown_error" --suggestion "Check the error message for details" \
+  --category "custom" --rule-set "my_rules"
+
+# Test rules
+./rule_cli.py test --use-examples
+./rule_cli.py test --error "KeyError: 'user_id'"
+
+# Analyze an error
+./rule_cli.py analyze "KeyError: 'user_id'"
+```
 
 ### AI-Based Analysis
 
@@ -156,6 +227,72 @@ with open(rules_file, "w") as f:
 
 # Load rules from a file
 loaded_rule_set = RuleLoader.load_from_file(rules_file)
+```
+
+### Using Enhanced Rules and Confidence Scoring
+
+```python
+from modules.analysis.rule_categories import (
+    EnhancedRule, RuleCriticality, RuleComplexity, RuleReliability,
+    RuleSource, RuleType
+)
+from modules.analysis.rule_confidence import (
+    ContextualRuleAnalyzer, ConfidenceScorer
+)
+
+# Create an enhanced rule
+enhanced_rule = EnhancedRule(
+    pattern=r"KeyError: '([^']*)'",
+    type="KeyError",
+    description="Dictionary key not found",
+    root_cause="missing_dict_key",
+    suggestion="Check if the key exists before accessing it",
+    criticality=RuleCriticality.HIGH,
+    complexity=RuleComplexity.SIMPLE,
+    reliability=RuleReliability.HIGH,
+    tags=["python", "dictionary", "data-structure"]
+)
+
+# Use contextual analyzer with confidence scoring
+analyzer = ContextualRuleAnalyzer([enhanced_rule])
+error_text = "KeyError: 'user_id'"
+
+error_context = {
+    "exception_type": "KeyError",
+    "detailed_frames": [
+        {
+            "file": "app.py",
+            "line": 42,
+            "function": "get_user",
+            "locals": {
+                "request_data": {"username": "test"}
+            }
+        }
+    ]
+}
+
+analysis = analyzer.analyze_error(error_text, error_context)
+
+print(f"Confidence Score: {analysis['confidence_score']:.2f}")
+print(f"Factors: {analysis['confidence_factors']}")
+if "alternative_matches" in analysis:
+    print("Alternative matches found")
+```
+
+### Using Rule Dependencies
+
+```python
+from modules.analysis.rule_categories import RuleDependency
+
+# Check for circular dependencies
+dependency_checker = RuleDependency(rules)
+circular_deps = dependency_checker.detect_circular_dependencies()
+
+# Get dependent rules
+dependent_rules = dependency_checker.get_dependent_rules("rule_id")
+
+# Get prerequisite rules
+prerequisites = dependency_checker.get_prerequisites("rule_id")
 ```
 
 ## AI Model Types

@@ -1,0 +1,282 @@
+{
+  "name": "Python Concurrency Errors",
+  "description": "Rules for detecting Python concurrency, threading, and asyncio errors",
+  "rules": [
+    {
+      "id": "python_runtimeerror_asyncio",
+      "pattern": "RuntimeError: There is no current event loop in thread '([^']*)'",
+      "type": "RuntimeError",
+      "description": "Attempting to use asyncio without an event loop in the current thread",
+      "root_cause": "asyncio_no_event_loop",
+      "suggestion": "Set the event loop for the current thread using asyncio.set_event_loop() or use asyncio.new_event_loop()",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "concurrency",
+        "event-loop"
+      ],
+      "examples": [
+        "RuntimeError: There is no current event loop in thread 'Thread-1'",
+        "RuntimeError: There is no current event loop in thread 'ThreadPoolExecutor-0_0'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_asyncio_cancelled",
+      "pattern": "asyncio.CancelledError",
+      "type": "CancelledError",
+      "description": "Asyncio task or coroutine was cancelled",
+      "root_cause": "asyncio_task_cancelled",
+      "suggestion": "Add proper exception handling for CancelledError in async functions",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "concurrency",
+        "cancellation"
+      ],
+      "examples": [
+        "asyncio.CancelledError"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_asyncio_timeout",
+      "pattern": "asyncio.TimeoutError",
+      "type": "TimeoutError",
+      "description": "Asyncio operation timed out",
+      "root_cause": "asyncio_timeout",
+      "suggestion": "Increase timeout or implement retry logic for asyncio operations",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "concurrency",
+        "timeout"
+      ],
+      "examples": [
+        "asyncio.TimeoutError"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_runtimeerror_coroutine",
+      "pattern": "RuntimeError: coroutine '([^']*)' was never awaited",
+      "type": "RuntimeError",
+      "description": "Asyncio coroutine was not awaited, causing it to never execute",
+      "root_cause": "unawaited_coroutine",
+      "suggestion": "Use 'await' keyword before calling a coroutine function",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "concurrency",
+        "coroutine"
+      ],
+      "examples": [
+        "RuntimeError: coroutine 'fetch_data' was never awaited",
+        "RuntimeError: coroutine 'process_request' was never awaited"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_runtimeerror_await",
+      "pattern": "RuntimeError: 'await' outside (async (?:def|for|with|function))",
+      "type": "RuntimeError",
+      "description": "Using 'await' keyword outside an async function",
+      "root_cause": "await_outside_async",
+      "suggestion": "Only use 'await' inside functions defined with 'async def'",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "concurrency",
+        "syntax"
+      ],
+      "examples": [
+        "RuntimeError: 'await' outside async function",
+        "RuntimeError: 'await' outside async def"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_runtimeerror_generator",
+      "pattern": "RuntimeError: generator (raised|already) (StopIteration|running)",
+      "type": "RuntimeError",
+      "description": "Error in generator or coroutine execution",
+      "root_cause": "generator_runtime_error",
+      "suggestion": "Check for StopIteration inside generators or ensure generators aren't reentered",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "generator",
+        "iteration"
+      ],
+      "examples": [
+        "RuntimeError: generator raised StopIteration",
+        "RuntimeError: generator already running"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_threading_deadlock",
+      "pattern": "RuntimeError: cannot (join|start) current thread",
+      "type": "RuntimeError",
+      "description": "Thread operation caused a deadlock",
+      "root_cause": "threading_deadlock",
+      "suggestion": "Avoid joining the current thread or starting an already active thread",
+      "category": "python",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "threading",
+        "concurrency",
+        "deadlock"
+      ],
+      "examples": [
+        "RuntimeError: cannot join current thread",
+        "RuntimeError: cannot start a thread twice"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_deadlock",
+      "pattern": "deadlock detected",
+      "type": "Exception",
+      "description": "Deadlock detected in concurrent operations",
+      "root_cause": "concurrency_deadlock",
+      "suggestion": "Review lock acquisition order and ensure proper lock release",
+      "category": "python",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "concurrency",
+        "threading",
+        "locks",
+        "deadlock"
+      ],
+      "examples": [
+        "Exception: deadlock detected"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_concurrent_futures_timeout",
+      "pattern": "concurrent.futures.TimeoutError",
+      "type": "TimeoutError",
+      "description": "Operation in a concurrent.futures executor timed out",
+      "root_cause": "executor_timeout",
+      "suggestion": "Increase timeout or optimize the task to complete faster",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "concurrency",
+        "futures",
+        "timeout"
+      ],
+      "examples": [
+        "concurrent.futures.TimeoutError"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_runtimeerror_future",
+      "pattern": "RuntimeError: (?:Future|Task) <([^>]+)> attached to a different (?:loop|event loop)",
+      "type": "RuntimeError",
+      "description": "Mixing asyncio futures from different event loops",
+      "root_cause": "asyncio_event_loop_mismatch",
+      "suggestion": "Ensure all asyncio operations for a Task use the same event loop",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "concurrency",
+        "event-loop"
+      ],
+      "examples": [
+        "RuntimeError: Task <Task pending> attached to a different loop",
+        "RuntimeError: Future <Future pending> attached to a different event loop"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,248 @@
+{
+  "name": "Python Syntax Errors",
+  "description": "Rules for detecting Python syntax and parsing errors",
+  "rules": [
+    {
+      "id": "python_syntaxerror_invalid_syntax",
+      "pattern": "SyntaxError: invalid syntax",
+      "type": "SyntaxError",
+      "description": "Invalid Python syntax that cannot be parsed",
+      "root_cause": "invalid_python_syntax",
+      "suggestion": "Check the line number for syntax errors like missing parentheses, quotes, or colons",
+      "category": "python",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "python",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "SyntaxError: invalid syntax"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_syntaxerror_eol",
+      "pattern": "SyntaxError: (unexpected )?EOF while parsing",
+      "type": "SyntaxError",
+      "description": "Unexpected end of file while parsing Python code",
+      "root_cause": "unexpected_end_of_file",
+      "suggestion": "Check for unclosed parentheses, brackets, braces, or quotes",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "SyntaxError: EOF while parsing",
+        "SyntaxError: unexpected EOF while parsing"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_syntaxerror_unclosed_string",
+      "pattern": "SyntaxError: EOL while scanning string literal",
+      "type": "SyntaxError",
+      "description": "Unclosed string literal in Python code",
+      "root_cause": "unclosed_string",
+      "suggestion": "Ensure all string quotes are properly closed",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "syntax",
+        "string"
+      ],
+      "examples": [
+        "SyntaxError: EOL while scanning string literal"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_indentationerror",
+      "pattern": "IndentationError: (unexpected indent|unindent does not match any outer indentation level|expected an indented block)",
+      "type": "IndentationError",
+      "description": "Incorrect indentation in Python code",
+      "root_cause": "incorrect_indentation",
+      "suggestion": "Check the indentation and ensure it's consistent (use spaces or tabs, but not both)",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "syntax",
+        "indentation"
+      ],
+      "examples": [
+        "IndentationError: unexpected indent",
+        "IndentationError: unindent does not match any outer indentation level",
+        "IndentationError: expected an indented block"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_taberror",
+      "pattern": "TabError: inconsistent use of tabs and spaces in indentation",
+      "type": "TabError",
+      "description": "Mixed use of tabs and spaces for indentation",
+      "root_cause": "mixed_tabs_spaces",
+      "suggestion": "Use either tabs or spaces consistently for indentation, not both",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "syntax",
+        "indentation"
+      ],
+      "examples": [
+        "TabError: inconsistent use of tabs and spaces in indentation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_nameerror",
+      "pattern": "NameError: name '([^']*)' is not defined",
+      "type": "NameError",
+      "description": "Using a variable that hasn't been defined",
+      "root_cause": "undefined_variable",
+      "suggestion": "Check for typos in variable names or ensure the variable is defined before use",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "variable",
+        "scope"
+      ],
+      "examples": [
+        "NameError: name 'data' is not defined",
+        "NameError: name 'config' is not defined"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_importerror",
+      "pattern": "ImportError: No module named '?([^']*)'?",
+      "type": "ImportError",
+      "description": "Trying to import a module that doesn't exist",
+      "root_cause": "module_not_found",
+      "suggestion": "Check that the module is installed and the name is spelled correctly",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "import",
+        "module"
+      ],
+      "examples": [
+        "ImportError: No module named 'requests'",
+        "ImportError: No module named yaml"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_modulenotfounderror",
+      "pattern": "ModuleNotFoundError: No module named '([^']*)'",
+      "type": "ModuleNotFoundError",
+      "description": "Trying to import a module that doesn't exist (Python 3.6+)",
+      "root_cause": "module_not_found",
+      "suggestion": "Install the required module using pip or check for typos in the import statement",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "import",
+        "module"
+      ],
+      "examples": [
+        "ModuleNotFoundError: No module named 'pandas'",
+        "ModuleNotFoundError: No module named 'tensorflow'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_syntaxerror_f_string",
+      "pattern": "SyntaxError: f-string: (.*)",
+      "type": "SyntaxError",
+      "description": "Error in f-string formatting (Python 3.6+)",
+      "root_cause": "invalid_f_string",
+      "suggestion": "Check f-string syntax for missing or unbalanced braces",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "syntax",
+        "f-string",
+        "formatting"
+      ],
+      "examples": [
+        "SyntaxError: f-string: expecting '}'",
+        "SyntaxError: f-string: unterminated string"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

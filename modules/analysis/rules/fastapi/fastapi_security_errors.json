@@ -1,0 +1,205 @@
+{
+  "name": "FastAPI Security Errors",
+  "description": "Rules for detecting FastAPI security-related errors and exceptions",
+  "rules": [
+    {
+      "id": "fastapi_not_authenticated",
+      "pattern": "fastapi\\.security\\.HTTPException: (Not authenticated|Could not validate credentials)",
+      "type": "HTTPException",
+      "description": "Authentication failed in FastAPI security dependency",
+      "root_cause": "fastapi_auth_failure",
+      "suggestion": "Check that authentication tokens are properly provided and valid, and that security dependencies are correctly configured",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "security",
+        "authentication",
+        "auth"
+      ],
+      "examples": [
+        "fastapi.security.HTTPException: Not authenticated",
+        "fastapi.security.HTTPException: Could not validate credentials"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_invalid_token",
+      "pattern": "(InvalidTokenError|ExpiredSignatureError|DecodeError|PyJWTError|JWTError)(?:: (.*))?",
+      "type": "TokenError",
+      "description": "JWT token validation error in FastAPI security",
+      "root_cause": "fastapi_invalid_jwt",
+      "suggestion": "Check JWT token format, expiration, signature, and secret key configuration",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "security",
+        "jwt",
+        "authentication"
+      ],
+      "examples": [
+        "InvalidTokenError: Token is invalid",
+        "ExpiredSignatureError: Signature has expired",
+        "JWTError: Invalid token format"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_unauthorized",
+      "pattern": "fastapi\\.exceptions\\.HTTPException: 403(?:: (.*)?)?",
+      "type": "HTTPException",
+      "description": "Authorization failed in FastAPI (403 Forbidden)",
+      "root_cause": "fastapi_authorization_failure",
+      "suggestion": "Check that the authenticated user has appropriate permissions for the requested resource or action",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "security",
+        "authorization",
+        "permissions"
+      ],
+      "examples": [
+        "fastapi.exceptions.HTTPException: 403: Forbidden",
+        "fastapi.exceptions.HTTPException: 403: Not enough permissions"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_oauth2_error",
+      "pattern": "fastapi\\.security\\.(OAuth2Error|OAuth2PasswordRequestError)(?:: (.*))?",
+      "type": "OAuth2Error",
+      "description": "OAuth2 authentication error in FastAPI security",
+      "root_cause": "fastapi_oauth2_failure",
+      "suggestion": "Check OAuth2 flow configuration and ensure correct client credentials and authorization parameters",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "security",
+        "oauth2",
+        "authentication"
+      ],
+      "examples": [
+        "fastapi.security.OAuth2Error: Invalid client",
+        "fastapi.security.OAuth2PasswordRequestError: Missing Authorization header"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_invalid_scope",
+      "pattern": "ScopeError: (Not enough permissions|Invalid scope|Scope not found)",
+      "type": "ScopeError",
+      "description": "OAuth2 scope validation error in FastAPI",
+      "root_cause": "fastapi_scope_error",
+      "suggestion": "Check that the OAuth2 access token contains the required scopes for the operation",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "security",
+        "oauth2",
+        "scope",
+        "permissions"
+      ],
+      "examples": [
+        "ScopeError: Not enough permissions",
+        "ScopeError: Invalid scope"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_missing_auth_header",
+      "pattern": "(?:Missing required|Invalid value in) (?:Authorization|authentication) header",
+      "type": "AuthenticationError",
+      "description": "Missing or invalid Authorization header in FastAPI request",
+      "root_cause": "fastapi_auth_header_missing",
+      "suggestion": "Ensure the Authorization header is correctly formatted (e.g., 'Bearer <token>') and included in the request",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "security",
+        "authentication",
+        "header"
+      ],
+      "examples": [
+        "Missing required Authorization header",
+        "Invalid value in Authorization header"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_csrf_error",
+      "pattern": "(?:CSRF|Cross-Site Request Forgery) (token missing|token invalid|attack detected)",
+      "type": "CSRFError",
+      "description": "CSRF protection error in FastAPI",
+      "root_cause": "fastapi_csrf_error",
+      "suggestion": "Ensure CSRF tokens are correctly configured, generated, and validated, especially in form submissions",
+      "category": "fastapi",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "security",
+        "csrf",
+        "middleware"
+      ],
+      "examples": [
+        "CSRF token missing",
+        "CSRF token invalid",
+        "Cross-Site Request Forgery attack detected"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

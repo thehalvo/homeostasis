@@ -1,0 +1,202 @@
+{
+  "name": "FastAPI Database Errors",
+  "description": "Rules for detecting FastAPI database integration errors",
+  "rules": [
+    {
+      "id": "fastapi_db_connection_error",
+      "pattern": "(?:Error connecting to|Could not connect to) (?:database|DB)(?:: (.*))?",
+      "type": "DatabaseConnectionError",
+      "description": "FastAPI application failed to connect to database",
+      "root_cause": "fastapi_db_connection_failure",
+      "suggestion": "Check database connection settings, credentials, and ensure the database server is running and accessible",
+      "category": "fastapi",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "database",
+        "connection",
+        "dependency"
+      ],
+      "examples": [
+        "Error connecting to database: Connection refused",
+        "Could not connect to DB: Authentication failed"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_db_session_dependency_error",
+      "pattern": "(?:Error|Exception) in database dependency(?:: (.*))?",
+      "type": "DatabaseDependencyError",
+      "description": "Error in FastAPI database dependency injection",
+      "root_cause": "fastapi_db_dependency_error",
+      "suggestion": "Check the database session dependency configuration in FastAPI, especially the yield or context manager handling",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "database",
+        "dependency",
+        "session"
+      ],
+      "examples": [
+        "Error in database dependency: Session is closed",
+        "Exception in database dependency: Connection pool exhausted"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_orm_model_error",
+      "pattern": "(?:SQLAlchemy|SqlAlchemy|ORM)(?:Error|Exception): (.*)",
+      "type": "ORMError",
+      "description": "Error in ORM model or query in FastAPI application",
+      "root_cause": "fastapi_orm_error",
+      "suggestion": "Review the SQLAlchemy model definitions and queries for mistakes in relationships, column types, or SQL syntax",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "fastapi",
+        "database",
+        "sqlalchemy",
+        "orm"
+      ],
+      "examples": [
+        "SQLAlchemyError: Column not found",
+        "ORMException: Invalid relationship reference"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_transaction_error",
+      "pattern": "(?:Transaction|Session) (error|already closed|rollback|aborted)(?:: (.*))?",
+      "type": "TransactionError",
+      "description": "Database transaction error in FastAPI application",
+      "root_cause": "fastapi_db_transaction_error",
+      "suggestion": "Ensure proper transaction management, including commit and rollback handling, and check for session lifecycle issues",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "database",
+        "transaction",
+        "session"
+      ],
+      "examples": [
+        "Transaction error: Already in transaction",
+        "Session already closed: Cannot execute query"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_async_db_error",
+      "pattern": "(?:AsyncSession|AsyncEngine|AsyncConnection) (error|exception)(?:: (.*))?",
+      "type": "AsyncDBError",
+      "description": "Error with async database operations in FastAPI",
+      "root_cause": "fastapi_async_db_error",
+      "suggestion": "Ensure correct async SQLAlchemy usage, including proper await statements and async context managers",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "database",
+        "async",
+        "sqlalchemy"
+      ],
+      "examples": [
+        "AsyncSession error: Operation is not valid with autocommit=True",
+        "AsyncEngine exception: Engine is already disposed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_database_constraint_error",
+      "pattern": "(?:Constraint violation|UniqueViolation|IntegrityError)(?:: (.*))?",
+      "type": "ConstraintError",
+      "description": "Database constraint violation in FastAPI application",
+      "root_cause": "fastapi_db_constraint_violation",
+      "suggestion": "Check for duplicate key violations, foreign key constraints, or other integrity issues before database operations",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "database",
+        "constraint",
+        "integrity"
+      ],
+      "examples": [
+        "Constraint violation: duplicate key value violates unique constraint",
+        "IntegrityError: FOREIGN KEY constraint failed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_tortoise_orm_error",
+      "pattern": "tortoise\\.exceptions\\.(.*Error|.*Exception)(?:: (.*))?",
+      "type": "TortoiseORMError",
+      "description": "Error in Tortoise ORM operations in FastAPI",
+      "root_cause": "fastapi_tortoise_orm_error",
+      "suggestion": "Check Tortoise ORM model definitions, operations, and connection configuration",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "database",
+        "tortoise",
+        "orm"
+      ],
+      "examples": [
+        "tortoise.exceptions.OperationalError: table not found",
+        "tortoise.exceptions.ConfigurationError: DB connection not initialized"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

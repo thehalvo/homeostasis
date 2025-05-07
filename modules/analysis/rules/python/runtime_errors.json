@@ -1,0 +1,272 @@
+{
+  "name": "Python Runtime Errors",
+  "description": "Rules for detecting Python runtime errors and advanced exceptions",
+  "rules": [
+    {
+      "id": "python_recursionerror",
+      "pattern": "RecursionError: maximum recursion depth exceeded",
+      "type": "RecursionError",
+      "description": "Exceeded the maximum recursion depth, often due to infinite recursion",
+      "root_cause": "infinite_recursion",
+      "suggestion": "Check the base case of recursive functions or consider an iterative approach",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "recursion",
+        "performance"
+      ],
+      "examples": [
+        "RecursionError: maximum recursion depth exceeded",
+        "RecursionError: maximum recursion depth exceeded in comparison"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_memoryerror",
+      "pattern": "MemoryError",
+      "type": "MemoryError",
+      "description": "Ran out of memory during program execution",
+      "root_cause": "memory_exhaustion",
+      "suggestion": "Optimize memory usage or process data in smaller chunks",
+      "category": "python",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "memory",
+        "performance"
+      ],
+      "examples": [
+        "MemoryError"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_timeouterror",
+      "pattern": "TimeoutError: (.*)",
+      "type": "TimeoutError",
+      "description": "Operation timed out",
+      "root_cause": "operation_timeout",
+      "suggestion": "Implement retry logic or increase timeout limits",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "timeout",
+        "async"
+      ],
+      "examples": [
+        "TimeoutError: The operation timed out",
+        "TimeoutError: [Errno 60] Operation timed out"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_osrerror",
+      "pattern": "OSError: \\[Errno (\\d+)\\] (.*)",
+      "type": "OSError",
+      "description": "Operating system error occurred",
+      "root_cause": "os_error",
+      "suggestion": "Check system resources and permissions",
+      "category": "python",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "python",
+        "os",
+        "system"
+      ],
+      "examples": [
+        "OSError: [Errno 13] Permission denied",
+        "OSError: [Errno 28] No space left on device"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_permissionerror",
+      "pattern": "PermissionError: \\[Errno 13\\] Permission denied: '([^']*)'",
+      "type": "PermissionError",
+      "description": "Insufficient permissions to access a file or resource",
+      "root_cause": "permission_denied",
+      "suggestion": "Check file permissions or run the script with appropriate privileges",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "permission",
+        "file"
+      ],
+      "examples": [
+        "PermissionError: [Errno 13] Permission denied: '/etc/passwd'",
+        "PermissionError: [Errno 13] Permission denied: 'config.ini'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_connectionerror",
+      "pattern": "ConnectionError: (.*)",
+      "type": "ConnectionError",
+      "description": "Error connecting to a remote service or endpoint",
+      "root_cause": "connection_failed",
+      "suggestion": "Check network connectivity and service availability",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "network",
+        "connection"
+      ],
+      "examples": [
+        "ConnectionError: Connection refused",
+        "ConnectionError: Failed to establish a new connection"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_connectionrefusederror",
+      "pattern": "ConnectionRefusedError: \\[Errno (\\d+)\\] Connection refused",
+      "type": "ConnectionRefusedError",
+      "description": "Connection was actively refused by the remote server",
+      "root_cause": "connection_refused",
+      "suggestion": "Verify the server is running and listening on the specified port",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "network",
+        "connection"
+      ],
+      "examples": [
+        "ConnectionRefusedError: [Errno 111] Connection refused"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_blockingio",
+      "pattern": "BlockingIOError: \\[Errno (\\d+)\\] (.*)",
+      "type": "BlockingIOError",
+      "description": "I/O operation would block on a non-blocking object",
+      "root_cause": "blocking_io",
+      "suggestion": "Use asynchronous I/O or implement proper handling for non-blocking operations",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "io",
+        "async"
+      ],
+      "examples": [
+        "BlockingIOError: [Errno 11] Resource temporarily unavailable"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_unicodeerror",
+      "pattern": "UnicodeError: (.*)",
+      "type": "UnicodeError",
+      "description": "Error related to Unicode encoding or decoding",
+      "root_cause": "unicode_processing_error",
+      "suggestion": "Specify the correct encoding when dealing with text data",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "python",
+        "unicode",
+        "encoding"
+      ],
+      "examples": [
+        "UnicodeError: 'ascii' codec can't encode character u'\\xf1'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_unicodedecodeerror",
+      "pattern": "UnicodeDecodeError: '([^']*)' codec can't decode byte(s?) (.*) in position (\\d+)(?:-\\d+)?: (.*)",
+      "type": "UnicodeDecodeError",
+      "description": "Error decoding bytes to Unicode text",
+      "root_cause": "unicode_decode_error",
+      "suggestion": "Use the correct encoding when reading text or use error handlers like 'ignore' or 'replace'",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "unicode",
+        "encoding"
+      ],
+      "examples": [
+        "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+        "UnicodeDecodeError: 'ascii' codec can't decode bytes in position 0-1: ordinal not in range(128)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,276 @@
+{
+  "name": "Python Common Exceptions",
+  "description": "Rules for detecting common Python exceptions",
+  "rules": [
+    {
+      "id": "python_keyerror",
+      "pattern": "KeyError: '?([^']*)'?",
+      "type": "KeyError",
+      "description": "Accessing a dictionary key that doesn't exist",
+      "root_cause": "dict_key_not_exists",
+      "suggestion": "Check if the key exists before accessing it using dict.get(key) or 'key in dict' syntax",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "dictionary",
+        "data-structure"
+      ],
+      "examples": [
+        "KeyError: 'user_id'",
+        "KeyError: 'config'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_indexerror",
+      "pattern": "IndexError: list index out of range",
+      "type": "IndexError",
+      "description": "Accessing a list index that is out of bounds",
+      "root_cause": "list_index_out_of_bounds",
+      "suggestion": "Check the list length before accessing an index using len() or wrap in a try-except block",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "list",
+        "data-structure"
+      ],
+      "examples": [
+        "IndexError: list index out of range"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_attributeerror",
+      "pattern": "AttributeError: '([^']*)' object has no attribute '([^']*)'",
+      "type": "AttributeError",
+      "description": "Accessing an attribute that doesn't exist on an object",
+      "root_cause": "attribute_not_exists",
+      "suggestion": "Check if the attribute exists using hasattr() or verify the object type",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "objects",
+        "attributes"
+      ],
+      "examples": [
+        "AttributeError: 'NoneType' object has no attribute 'append'",
+        "AttributeError: 'dict' object has no attribute 'items'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_typeerror_subscriptable",
+      "pattern": "TypeError: '([^']*)' object is not subscriptable",
+      "type": "TypeError",
+      "description": "Trying to access an object like a container when it doesn't support that operation",
+      "root_cause": "type_not_subscriptable",
+      "suggestion": "Verify the object type before subscription (using [], e.g., object[key])",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "type",
+        "container"
+      ],
+      "examples": [
+        "TypeError: 'NoneType' object is not subscriptable",
+        "TypeError: 'function' object is not subscriptable"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_typeerror_iterable",
+      "pattern": "TypeError: '([^']*)' object is not iterable",
+      "type": "TypeError",
+      "description": "Trying to iterate over an object that doesn't support iteration",
+      "root_cause": "type_not_iterable",
+      "suggestion": "Ensure the object is a sequence (list, tuple, etc.) before iteration",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "type",
+        "iteration"
+      ],
+      "examples": [
+        "TypeError: 'int' object is not iterable",
+        "TypeError: 'NoneType' object is not iterable"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_typeerror_callable",
+      "pattern": "TypeError: '([^']*)' object is not callable",
+      "type": "TypeError",
+      "description": "Trying to call an object that isn't a function or method",
+      "root_cause": "type_not_callable",
+      "suggestion": "Verify the object is a function or method before calling it",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "type",
+        "callable"
+      ],
+      "examples": [
+        "TypeError: 'list' object is not callable",
+        "TypeError: 'str' object is not callable"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_typeerror_arguments",
+      "pattern": "TypeError: ([^(]*\\(\\)) takes (\\d+) positional arguments? but (\\d+) (?:were|was) given",
+      "type": "TypeError",
+      "description": "Function or method called with incorrect number of arguments",
+      "root_cause": "incorrect_argument_count",
+      "suggestion": "Check the function signature and provide the correct number of arguments",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "type",
+        "arguments",
+        "function"
+      ],
+      "examples": [
+        "TypeError: process_data() takes 2 positional arguments but 3 were given",
+        "TypeError: calculate() takes 1 positional argument but 0 were given"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_valueerror_int",
+      "pattern": "ValueError: invalid literal for int\\(\\) with base (\\d+): '([^']*)'",
+      "type": "ValueError",
+      "description": "Converting a string to an integer that is not a valid integer",
+      "root_cause": "invalid_int_conversion",
+      "suggestion": "Validate input or add error handling before converting strings to integers",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "value",
+        "conversion",
+        "integer"
+      ],
+      "examples": [
+        "ValueError: invalid literal for int() with base 10: 'abc'",
+        "ValueError: invalid literal for int() with base 10: ''"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_zerodivisionerror",
+      "pattern": "ZeroDivisionError: division by zero",
+      "type": "ZeroDivisionError",
+      "description": "Dividing by zero",
+      "root_cause": "division_by_zero",
+      "suggestion": "Add a check to ensure the denominator is not zero before division",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "arithmetic",
+        "division"
+      ],
+      "examples": [
+        "ZeroDivisionError: division by zero"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_filenotfounderror",
+      "pattern": "FileNotFoundError: \\[Errno 2\\] No such file or directory: '([^']*)'",
+      "type": "FileNotFoundError",
+      "description": "Trying to open a file that doesn't exist",
+      "root_cause": "file_not_found",
+      "suggestion": "Check if the file exists using os.path.exists() before opening it",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "file",
+        "io"
+      ],
+      "examples": [
+        "FileNotFoundError: [Errno 2] No such file or directory: 'config.json'",
+        "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/data.csv'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

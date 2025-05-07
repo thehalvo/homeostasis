@@ -1,0 +1,332 @@
+{
+  "name": "FastAPI Common Errors",
+  "description": "Rules for detecting FastAPI-specific errors and exceptions",
+  "rules": [
+    {
+      "id": "fastapi_validation_error",
+      "pattern": "pydantic.error_wrappers.ValidationError: (\\d+) validation errors?",
+      "type": "ValidationError",
+      "description": "Request data failed Pydantic validation in FastAPI",
+      "root_cause": "fastapi_validation_failure",
+      "suggestion": "Check the request body against the expected model schema and ensure all required fields are present with correct types",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "pydantic",
+        "validation",
+        "request"
+      ],
+      "examples": [
+        "pydantic.error_wrappers.ValidationError: 1 validation error for UserCreate\nemail\n  value is not a valid email address (type=value_error.email)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_http_exception",
+      "pattern": "fastapi\\.exceptions\\.HTTPException: (\\d{3})(?:: (.*))?",
+      "type": "HTTPException",
+      "description": "FastAPI HTTP exception with status code",
+      "root_cause": "fastapi_http_error",
+      "suggestion": "Check the error details for the specific issue. For status code errors, verify authentication, permissions, or resource existence as appropriate",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "http",
+        "exception",
+        "status-code"
+      ],
+      "examples": [
+        "fastapi.exceptions.HTTPException: 404: Not found",
+        "fastapi.exceptions.HTTPException: 401: Not authenticated"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_request_validation_error",
+      "pattern": "fastapi\\.exceptions\\.RequestValidationError",
+      "type": "RequestValidationError",
+      "description": "FastAPI request validation error for path, query or other parameters",
+      "root_cause": "fastapi_request_validation",
+      "suggestion": "Check the query parameters and path parameters against the API specification. Ensure all required parameters are present with correct types",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "validation",
+        "request",
+        "parameters"
+      ],
+      "examples": [
+        "fastapi.exceptions.RequestValidationError: 1 validation error for Request\npath -> user_id\n  value is not a valid integer (type=type_error.integer)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_missing_dependency",
+      "pattern": "fastapi\\.exceptions\\.FastAPIError: Dependency \"([^\"]+)\" not found",
+      "type": "FastAPIError",
+      "description": "Missing or incorrectly configured dependency in FastAPI",
+      "root_cause": "fastapi_missing_dependency",
+      "suggestion": "Check that all dependencies are properly defined and imported in your FastAPI application",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "injection"
+      ],
+      "examples": [
+        "fastapi.exceptions.FastAPIError: Dependency \"db_session\" not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_dependency_exception",
+      "pattern": "Exception in dependency ([^\\s]+) +Error: (.*)",
+      "type": "Exception",
+      "description": "Exception occurred in a FastAPI dependency function",
+      "root_cause": "fastapi_dependency_error",
+      "suggestion": "Check the error in the dependency function and handle exceptions properly",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "exception"
+      ],
+      "examples": [
+        "Exception in dependency get_db\nError: Database connection failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_missing_route",
+      "pattern": "fastapi\\.exceptions\\.FastAPIError: No route exists for ([^\\s]+)",
+      "type": "FastAPIError",
+      "description": "No route exists for the requested path in FastAPI",
+      "root_cause": "fastapi_missing_route",
+      "suggestion": "Check the URL path and ensure that the route is correctly defined in your FastAPI application",
+      "category": "fastapi",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "routing",
+        "url"
+      ],
+      "examples": [
+        "fastapi.exceptions.FastAPIError: No route exists for /api/v1/users/{id}"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_response_validation_error",
+      "pattern": "ResponseValidationError: (?:Response body|Field required)",
+      "type": "ResponseValidationError",
+      "description": "FastAPI response model validation error",
+      "root_cause": "fastapi_response_validation",
+      "suggestion": "Ensure your route handler returns data that matches the response_model structure, including all required fields with correct types",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "validation",
+        "response",
+        "pydantic"
+      ],
+      "examples": [
+        "ResponseValidationError: Response body failed validation",
+        "ResponseValidationError: Field required (type=value_error.missing)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_cors_error",
+      "pattern": "(CORS request blocked|Access-Control-Allow-Origin).*",
+      "type": "CORSError",
+      "description": "Cross-Origin Resource Sharing (CORS) policy error in FastAPI",
+      "root_cause": "fastapi_cors_misconfiguration",
+      "suggestion": "Configure CORS middleware properly with appropriate origins, methods, and headers for your FastAPI application",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "fastapi",
+        "cors",
+        "security",
+        "middleware"
+      ],
+      "examples": [
+        "CORS request blocked: The 'Access-Control-Allow-Origin' header has a value that is not equal to the supplied origin",
+        "Access-Control-Allow-Origin missing in response"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_background_task_error",
+      "pattern": "Error in background task: (.*)",
+      "type": "BackgroundTaskError",
+      "description": "Error in FastAPI background task execution",
+      "root_cause": "fastapi_background_task_failure",
+      "suggestion": "Add error handling to background tasks and ensure they can run independently of the main request flow",
+      "category": "fastapi",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "background",
+        "task",
+        "concurrency"
+      ],
+      "examples": [
+        "Error in background task: Connection refused",
+        "Error in background task: Database timeout"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_middleware_error",
+      "pattern": "Exception in middleware processing: (.*)",
+      "type": "MiddlewareError",
+      "description": "Exception occurred in FastAPI middleware chain",
+      "root_cause": "fastapi_middleware_failure",
+      "suggestion": "Check the middleware implementation for errors, especially in methods like __call__ or dispatch",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "fastapi",
+        "middleware",
+        "exception"
+      ],
+      "examples": [
+        "Exception in middleware processing: JWT token invalid",
+        "Exception in middleware processing: Rate limit exceeded"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_starlette_error",
+      "pattern": "starlette\\.exceptions\\.(.*Error|.*Exception)",
+      "type": "StarletteError",
+      "description": "Error in the underlying Starlette framework used by FastAPI",
+      "root_cause": "fastapi_starlette_error",
+      "suggestion": "Check Starlette documentation for the specific error type and ensure configuration is correct",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "fastapi",
+        "starlette",
+        "framework"
+      ],
+      "examples": [
+        "starlette.exceptions.HTTPException: 500 Internal Server Error",
+        "starlette.exceptions.WebSocketException: Cannot send after close"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_websocket_error",
+      "pattern": "WebSocket(Error|Exception|Disconnect): (.*)",
+      "type": "WebSocketError",
+      "description": "Error in FastAPI WebSocket connection or handling",
+      "root_cause": "fastapi_websocket_failure",
+      "suggestion": "Add proper error handling and connection lifecycle management to WebSocket endpoints",
+      "category": "fastapi",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "websocket",
+        "realtime",
+        "connection"
+      ],
+      "examples": [
+        "WebSocketDisconnect: Client disconnected",
+        "WebSocketException: Cannot send after websocket disconnect"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}
