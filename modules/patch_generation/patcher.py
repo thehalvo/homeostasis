@@ -16,6 +16,16 @@ from modules.patch_generation.diff_utils import (
     identify_code_block, extract_code_block, get_code_context
 )
 
+# Import hierarchical template system
+from modules.patch_generation.template_system import BaseTemplate, TemplateManager
+
+# Import indentation utilities
+from modules.patch_generation.indent_utils import (
+    detect_indentation_style, get_line_indentation, get_block_indentation,
+    normalize_indentation, apply_indentation, preserve_relative_indentation,
+    adjust_indentation_for_context, indent_aware_replace, generate_line_indentation_map
+)
+
 # Templates directory
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
@@ -23,6 +33,9 @@ TEMPLATES_DIR = Path(__file__).parent / "templates"
 class PatchTemplate:
     """
     Class representing a patch template for a specific error type.
+    
+    This class is maintained for backward compatibility. New code should use
+    the BaseTemplate class from template_system.py.
     """
 
     def __init__(self, name: str, template_path: Path):
@@ -36,6 +49,9 @@ class PatchTemplate:
         self.name = name
         self.template_path = template_path
         self.template = self._load_template()
+        
+        # Create a BaseTemplate instance for more advanced rendering
+        self._base_template = BaseTemplate(name, file_path=template_path)
     
     def _load_template(self) -> str:
         """
@@ -51,12 +67,20 @@ class PatchTemplate:
         """
         Render the template with the provided variables.
 
+        This method uses the hierarchical template system for rendering,
+        falling back to the old implementation if needed.
+
         Args:
             variables: Dictionary of variable names and values to substitute
 
         Returns:
             Rendered template as a string
         """
+        # Use the hierarchical template system if available
+        if self._base_template:
+            return self._base_template.render(variables)
+        
+        # Legacy implementation as fallback
         result = self.template
         
         # Replace each variable
@@ -102,6 +126,11 @@ class PatchGenerator:
             templates_dir: Directory containing patch templates
         """
         self.templates_dir = templates_dir
+        
+        # Initialize the template manager for hierarchical templates
+        self.template_manager = TemplateManager(templates_dir)
+        
+        # Load legacy templates for backward compatibility
         self.templates = self._load_templates()
         
         # Mappings from error types to templates
@@ -110,25 +139,52 @@ class PatchGenerator:
             "list_index_out_of_bounds": "list_index_error.py.template",
             "invalid_int_conversion": "int_conversion_error.py.template",
             "exception_handling_needed": "try_except_block.py.template",
-            "function_needs_improvement": "function_replacement.py.template"
+            "function_needs_improvement": "function_replacement.py.template",
+            "transaction_error": "transaction_error.py.template"
+        }
+        
+        # Framework detection patterns
+        self.framework_patterns = {
+            "fastapi": [
+                r'from\s+fastapi\s+import',
+                r'app\s*=\s*FastAPI\('
+            ],
+            "django": [
+                r'from\s+django',
+                r'from\s+rest_framework',
+                r'class\s+\w+View\(.*View\)'
+            ],
+            "sqlalchemy": [
+                r'from\s+sqlalchemy',
+                r'from\s+sqlalchemy\.orm',
+                r'session\.commit\(',
+                r'Base\s*=\s*declarative_base\(\)'
+            ],
+            "flask": [
+                r'from\s+flask\s+import',
+                r'app\s*=\s*Flask\('
+            ]
         }
         
         # Templates that support multi-line patching
         self.multiline_templates = {
             "try_except_block.py.template",
-            "function_replacement.py.template"
+            "function_replacement.py.template",
+            "transaction_error.py.template"
         }
         
         # Additional mappings specific to FastAPI bugs
         self.known_bugs_mapping = {
             "bug_1": {  # Missing error handling for non-existent IDs in get_todo
-                "template": "keyerror_fix.py.template",
+                "template": "fastapi:keyerror_fix.py.template",  # Now using framework-specific template
                 "variables": {
                     "key_name": "todo_id",
-                    "dict_name": "todo_db"
+                    "dict_name": "todo_db",
+                    "status_code": "404"
                 },
                 "file_path": "services/example_service/app.py",
-                "line_range": (73, 79)
+                "line_range": (73, 79),
+                "framework": "fastapi"
             },
             "bug_2": {  # Missing completed field initialization
                 "template": "missing_field_init.py.template",
@@ -140,7 +196,8 @@ class PatchGenerator:
                     "other_value": "todo_id"
                 },
                 "file_path": "services/example_service/app.py",
-                "line_range": (65, 70)
+                "line_range": (65, 70),
+                "framework": "fastapi"
             },
             "bug_3": {  # Incorrect parameter in dict() method
                 "template": "dict_missing_param.py.template",
@@ -149,7 +206,8 @@ class PatchGenerator:
                     "dict_method": "dict"
                 },
                 "file_path": "services/example_service/app.py",
-                "line_range": (90, 92)
+                "line_range": (90, 92),
+                "framework": "fastapi"
             },
             "bug_4": {  # Unsafe list slicing
                 "template": "list_index_error.py.template",
@@ -159,7 +217,8 @@ class PatchGenerator:
                     "end_index": "skip + limit"
                 },
                 "file_path": "services/example_service/app.py",
-                "line_range": (58, 61)
+                "line_range": (58, 61),
+                "framework": "fastapi"
             },
             "bug_5": {  # Unsafe environment variable conversion
                 "template": "int_conversion_error.py.template",
@@ -170,13 +229,16 @@ class PatchGenerator:
                     "env_var_name": "PORT"
                 },
                 "file_path": "services/example_service/app.py",
-                "line_range": (115, 117)
+                "line_range": (115, 117),
+                "framework": "fastapi"
             }
         }
     
     def _load_templates(self) -> Dict[str, PatchTemplate]:
         """
-        Load all templates from the templates directory.
+        Load legacy templates from the templates directory.
+        
+        Used for backward compatibility with existing code.
 
         Returns:
             Dictionary of template names to PatchTemplate objects
@@ -188,6 +250,33 @@ class PatchGenerator:
             templates[template_name] = PatchTemplate(template_name, template_file)
         
         return templates
+        
+    def detect_framework(self, file_path: Path) -> Optional[str]:
+        """
+        Detect which framework a file is using based on code patterns.
+        
+        Args:
+            file_path: Path to the code file
+            
+        Returns:
+            Framework name if detected, None otherwise
+        """
+        if not file_path.exists():
+            return None
+            
+        try:
+            with open(file_path, "r") as f:
+                content = f.read()
+                
+            # Check each framework's patterns
+            for framework, patterns in self.framework_patterns.items():
+                for pattern in patterns:
+                    if re.search(pattern, content):
+                        return framework
+        except Exception as e:
+            print(f"Error detecting framework: {e}")
+            
+        return None
     
     def generate_patch_from_analysis(self, analysis: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
@@ -200,32 +289,63 @@ class PatchGenerator:
             Patch details if a suitable template is found, None otherwise
         """
         root_cause = analysis.get("root_cause")
+        file_path = analysis.get("file_path")
         
         # Try to find a matching template
         template_name = self.error_template_mapping.get(root_cause)
-        if not template_name or template_name not in self.templates:
+        if not template_name:
             return None
+        
+        # Detect the framework if a file path is provided
+        framework = None
+        if file_path:
+            framework = self.detect_framework(Path(file_path))
+            
+        # Try to find the most appropriate template using the template manager
+        template = None
+        
+        if framework:
+            # Try framework-specific template first
+            framework_template_id = f"{framework}:{template_name}"
+            template = self.template_manager.get_template(framework_template_id)
+            
+        # Fall back to generic template if no framework-specific template was found
+        if not template:
+            template = self.template_manager.get_template(template_name)
+            
+        # If still no template found, try legacy templates
+        if not template and template_name in self.templates:
+            template = self.templates[template_name]
+        elif not template:
+            return None
+            
+        # Determine if this is a multi-line patch template
+        is_multiline = template_name in self.multiline_templates
         
         # For a generic error, we can't determine the variables or code location
         # without more context, so return a template example with placeholders
-        template = self.templates[template_name]
-        
-        # Determine if this is a multi-line patch template
-        is_multiline = template_name in self.multiline_templates
+        if isinstance(template, BaseTemplate):
+            example_code = template.get_block("main")
+            context_variables = [var["name"] for var in template.metadata.get("variables", [])]
+        else:
+            # Legacy template handling
+            example_code = template.template
+            context_variables = self._get_template_variables(template_name)
         
         result = {
             "template_name": template_name,
             "root_cause": root_cause,
             "patch_type": "example",
-            "example_code": template.template,
+            "example_code": example_code,
             "note": "This is an example patch. You need to manually apply it to the code.",
-            "is_multiline": is_multiline
+            "is_multiline": is_multiline,
+            "framework": framework
         }
         
         # Add additional information for multi-line patches
         if is_multiline:
             result["needs_code_context"] = True
-            result["context_variables"] = self._get_template_variables(template_name)
+            result["context_variables"] = context_variables
         
         return result
     
@@ -244,14 +364,25 @@ class PatchGenerator:
         
         bug_info = self.known_bugs_mapping[bug_id]
         template_name = bug_info["template"]
+        framework = bug_info.get("framework")
         
-        if template_name not in self.templates:
+        # Try to find the template using the hierarchical template system
+        template = self.template_manager.get_template(template_name)
+        
+        # If not found and it's a legacy template name, try the legacy templates
+        if not template and ":" not in template_name and template_name in self.templates:
+            template = self.templates[template_name]
+        elif not template:
             return None
         
-        template = self.templates[template_name]
-        rendered_code = template.render(bug_info["variables"])
+        # Render the template with the provided variables
+        if isinstance(template, BaseTemplate):
+            rendered_code = template.render(bug_info["variables"])
+        else:
+            rendered_code = template.render(bug_info["variables"])
         
-        return {
+        # Build the patch information
+        patch = {
             "bug_id": bug_id,
             "template_name": template_name,
             "file_path": bug_info["file_path"],
@@ -261,6 +392,12 @@ class PatchGenerator:
             "patch_code": rendered_code,
             "patch_id": str(uuid.uuid4())
         }
+        
+        # Include framework information if available
+        if framework:
+            patch["framework"] = framework
+        
+        return patch
     
     def generate_patches_for_all_known_bugs(self) -> List[Dict[str, Any]]:
         """
@@ -302,8 +439,9 @@ class PatchGenerator:
         
         # Read the file
         with open(file_path, "r") as f:
-            lines = f.readlines()
-            original_content = "".join(lines)
+            original_content = f.read()
+            
+        lines = original_content.splitlines()
         
         # Extract the code comment lines that explain the bug
         # from the patch code (lines starting with #)
@@ -316,76 +454,93 @@ class PatchGenerator:
         code_lines = [line for line in patch_code.split("\n") 
                     if not line.strip().startswith("#") and line.strip()]
         
-        if not is_multiline:
-            # Simple line replacement (original behavior)
-            # Format the code to match the file's indentation
-            if line_range[0] <= len(lines):
-                # Get the indentation of the first line in the range
-                first_line = lines[line_range[0] - 1]  # Adjust for 0-based indexing
-                indent_match = re.match(r'^(\s+)', first_line)
-                indentation = indent_match.group(1) if indent_match else ""
-                
-                # Apply indentation to each line of the patch code
-                formatted_code_lines = [indentation + line for line in code_lines]
-                formatted_code = "\n".join(formatted_code_lines) + "\n"
-                
-                # Replace the lines in the file with the patch
-                lines[line_range[0] - 1:line_range[1]] = [formatted_code]
-                
-                # Write the modified file
-                with open(file_path, "w") as f:
-                    f.writelines(lines)
-                
-                return True
-        else:
-            # Multi-line patch with advanced handling
-            try:
+        # Create a backup of the file
+        backup_path = file_path.with_suffix(file_path.suffix + ".bak")
+        shutil.copy2(file_path, backup_path)
+        
+        try:
+            if not is_multiline:
+                # Simple line replacement with improved indentation handling
+                if line_range[0] <= len(lines):
+                    # Extract the target line and surrounding context
+                    start_idx = max(0, line_range[0] - 3)
+                    end_idx = min(len(lines), line_range[1] + 3)
+                    context_lines = lines[start_idx:end_idx]
+                    context_block = "\n".join(context_lines)
+                    
+                    # Get indentation from the context
+                    target_line = lines[line_range[0] - 1]  # Adjust for 0-based indexing
+                    target_indentation = get_line_indentation(target_line)
+                    
+                    # Join the code lines
+                    code_block = "\n".join(code_lines)
+                    
+                    # Apply appropriate indentation to the code block
+                    formatted_code = adjust_indentation_for_context(
+                        code_block, 
+                        context_block,
+                        {0: target_indentation}  # Start with target line indentation
+                    )
+                    
+                    # Replace the lines in the file
+                    new_lines = lines.copy()
+                    new_lines[line_range[0] - 1:line_range[1]] = formatted_code.splitlines()
+                    new_content = "\n".join(new_lines)
+                    
+                    # Write the modified content back to the file
+                    with open(file_path, "w") as f:
+                        f.write(new_content)
+                    
+                    # Generate a diff for reference and include it in the patch metadata
+                    diff = generate_diff(original_content, new_content, 
+                                      filename=str(file_path.relative_to(project_root)))
+                    patch["diff"] = diff
+                    
+                    # Clean up the backup if successful
+                    if backup_path.exists():
+                        backup_path.unlink()
+                    
+                    return True
+            else:
+                # Multi-line patch with advanced indentation handling
                 # Extract the code block to be replaced
                 start_line, end_line = line_range
                 
                 # If we need to expand the line range to get a complete code block
                 if patch.get("expand_line_range", False):
                     # Identify the code block containing the specified line
-                    with open(file_path, "r") as f:
-                        file_content = f.read()
                     focus_line = (start_line + end_line) // 2  # Use middle line as focus
-                    expanded_range = identify_code_block(file_content, focus_line)
+                    expanded_range = identify_code_block(original_content, focus_line)
                     start_line, end_line = expanded_range
                 
                 # Get the original code block
                 original_block = extract_code_block(file_path, (start_line, end_line))
                 
-                # Format the patch code with proper indentation
-                first_line = lines[start_line - 1]  # Adjust for 0-based indexing
-                indent_match = re.match(r'^(\s+)', first_line)
-                base_indentation = indent_match.group(1) if indent_match else ""
+                # Normalize the patch code to remove any indentation
+                normalized_patch = normalize_indentation("\n".join(code_lines))
                 
-                # Apply base indentation to each line while preserving relative indentation
-                formatted_code_lines = []
-                for line in code_lines:
-                    if line.strip():  # Not an empty line
-                        # Preserve relative indentation beyond the base indentation
-                        relative_indent_match = re.match(r'^(\s+)', line)
-                        relative_indent = relative_indent_match.group(1) if relative_indent_match else ""
-                        code_content = line.lstrip()
-                        formatted_code_lines.append(base_indentation + code_content)
-                    else:
-                        formatted_code_lines.append(line)  # Keep empty lines as is
+                # Generate an indentation map for the file
+                line_indent_map = generate_line_indentation_map(file_path)
                 
-                formatted_code = "\n".join(formatted_code_lines)
+                # Get base indentation from the first line of the block
+                base_indentation = line_indent_map.get(start_line, "")
                 
-                # Create a backup of the file
-                backup_path = file_path.with_suffix(file_path.suffix + ".bak")
-                shutil.copy2(file_path, backup_path)
+                # Extract context for indentation analysis
+                context_start = max(1, start_line - 5)
+                context_end = min(len(lines), end_line + 5)
+                context_block = "\n".join(lines[context_start-1:context_end])
+                
+                # Apply context-aware indentation to the patch code
+                formatted_code = adjust_indentation_for_context(
+                    normalized_patch,
+                    context_block,
+                    {0: base_indentation}  # Start with base indentation
+                )
                 
                 # Apply the patch by replacing the entire block
-                with open(file_path, "r") as f:
-                    content = f.read()
-                
-                # Replace the specific range of lines
-                lines_before = content.splitlines()[:start_line - 1]
-                lines_after = content.splitlines()[end_line:]
-                new_content = "\n".join(lines_before + [formatted_code] + lines_after)
+                new_lines = lines.copy()
+                new_lines[start_line-1:end_line] = formatted_code.splitlines()
+                new_content = "\n".join(new_lines)
                 
                 # Write the modified content back to the file
                 with open(file_path, "w") as f:
@@ -402,14 +557,13 @@ class PatchGenerator:
                 
                 return True
                 
-            except Exception as e:
-                # If anything goes wrong, restore from backup if it exists
-                backup_path = file_path.with_suffix(file_path.suffix + ".bak")
-                if backup_path.exists():
-                    shutil.copy2(backup_path, file_path)
-                    backup_path.unlink()
-                print(f"Error applying multi-line patch: {e}")
-                return False
+        except Exception as e:
+            # If anything goes wrong, restore from backup if it exists
+            if backup_path.exists():
+                shutil.copy2(backup_path, file_path)
+                backup_path.unlink()
+            print(f"Error applying patch: {e}")
+            return False
         
         return False
 
@@ -454,40 +608,63 @@ class PatchGenerator:
         """
         # Check if we have a template for this error type
         template_name = self.error_template_mapping.get(error_type)
-        if not template_name or template_name not in self.templates:
+        if not template_name:
+            return None
+            
+        # Detect the framework if possible
+        framework = self.detect_framework(file_path)
+        
+        # Try to get the most appropriate template using the hierarchical template system
+        template = None
+        template_id = template_name
+        
+        if framework:
+            # Try framework-specific template first
+            framework_template_id = f"{framework}:{template_name}"
+            template = self.template_manager.get_template(framework_template_id)
+            if template:
+                template_id = framework_template_id
+        
+        # Fall back to generic template if no framework-specific template was found
+        if not template:
+            template = self.template_manager.get_template(template_name)
+            
+        # If still no template found, try legacy templates
+        if not template and template_name in self.templates:
+            template = self.templates[template_name]
+        elif not template:
             return None
             
         # Check if this is a multi-line template
         if template_name not in self.multiline_templates:
             return None
             
-        template = self.templates[template_name]
-        
         # If code_block variable is needed but not provided, extract it from the file
-        if "code_block" in self._get_template_variables(template_name) and "code_block" not in variables:
+        required_variables = []
+        if isinstance(template, BaseTemplate):
+            required_variables = [var["name"] for var in template.metadata.get("variables", [])]
+        else:
+            required_variables = self._get_template_variables(template_name)
+            
+        if "code_block" in required_variables and "code_block" not in variables:
             try:
                 code_block = extract_code_block(file_path, line_range)
-                # Adjust indentation for template (remove common indent)
-                code_lines = code_block.splitlines()
-                if code_lines:
-                    # Find minimum indentation across non-empty lines
-                    indents = [len(line) - len(line.lstrip()) for line in code_lines if line.strip()]
-                    if indents:
-                        min_indent = min(indents)
-                        # Remove that amount of indentation from each line
-                        code_lines = [line[min_indent:] if line.strip() else line for line in code_lines]
-                        code_block = "\n".join(code_lines)
-                variables["code_block"] = code_block
+                # Normalize indentation for template using our utility
+                normalized_code = normalize_indentation(code_block)
+                variables["code_block"] = normalized_code
             except Exception as e:
                 print(f"Error extracting code block: {e}")
                 return None
         
         # Render the template with the provided variables
-        rendered_code = template.render(variables)
+        if isinstance(template, BaseTemplate):
+            rendered_code = template.render(variables)
+        else:
+            rendered_code = template.render(variables)
         
         # Create the patch
-        return {
-            "template_name": template_name,
+        patch = {
+            "template_name": template_id,
             "file_path": str(file_path),
             "line_range": line_range,
             "variables": variables,
@@ -497,6 +674,12 @@ class PatchGenerator:
             "is_multiline": True,
             "expand_line_range": variables.get("expand_line_range", "false") == "true"
         }
+        
+        # Include framework information if available
+        if framework:
+            patch["framework"] = framework
+        
+        return patch
 
 
 if __name__ == "__main__":

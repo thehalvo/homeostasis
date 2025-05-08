@@ -1,0 +1,17 @@
+# Template for adding parameter validation
+# The following variables will be replaced:
+# - {{ parameter_name }}: The name of the parameter to check
+# - {{ check_code }}: The condition to check (e.g., "if param is None:")
+# - {{ default_value }}: Default value to use if parameter is missing/invalid
+# - {{ parameter_type }}: The expected type of the parameter
+# - {{ raise_error }}: Whether to raise an error (true/false)
+# - {{ error_type }}: Type of error to raise (e.g., ValueError)
+# - {{ error_message }}: Error message to use
+
+{{ check_code }}
+{% if raise_error == "true" %}
+    raise {{ error_type }}("{{ error_message }}")
+{% else %}
+    # Provide a default value
+    {{ parameter_name }} = {{ default_value }}
+{% endif %}

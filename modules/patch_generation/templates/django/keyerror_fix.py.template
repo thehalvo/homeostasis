@@ -1,0 +1,26 @@
+# extends keyerror_fix.py.template
+# Template for fixing KeyError in Django applications
+# Applicable for: Django views, form methods, model methods
+# The following variables will be replaced:
+# - {{ key_name }}: The name of the key that caused the error
+# - {{ dict_name }}: The name of the dictionary being accessed
+# - {{ redirect_url }}: Optional URL to redirect to
+
+{% block main %}
+# Original code (with error):
+# return {{ dict_name }}[{{ key_name }}]
+
+# Fixed code with Django-specific error handling:
+if {{ key_name }} in {{ dict_name }}:
+    return {{ dict_name }}[{{ key_name }}]
+else:
+    {% if redirect_url %}
+    from django.shortcuts import redirect
+    from django.contrib import messages
+    messages.error(request, f"{{ key_name }} not found")
+    return redirect("{{ redirect_url }}")
+    {% else %}
+    from django.http import Http404
+    raise Http404(f"{{ key_name }} not found")
+    {% endif %}
+{% endblock %}

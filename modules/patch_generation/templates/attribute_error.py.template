@@ -1,0 +1,27 @@
+# Template for fixing AttributeError
+# The following variables will be replaced:
+# - {{ object_name }}: The name of the object with missing attribute
+# - {{ attribute_name }}: The name of the missing attribute
+# - {{ error_message }}: Error message for the exception
+# - {{ default_value }}: Default value to use for the attribute
+# - {{ object_type }}: Type of the object (if known)
+# - {{ class_has_attribute }}: Whether the class has a similar attribute (true/false)
+# - {{ similar_attributes }}: List of similar attributes that might be intended
+# - {{ suggested_attribute }}: The best matching attribute from similar_attributes
+
+# Check if the attribute exists before trying to access it
+if hasattr({{ object_name }}, "{{ attribute_name }}"):
+    # Original code:
+    # ... {{ object_name }}.{{ attribute_name }} ...
+{% if class_has_attribute == "true" and similar_attributes is defined %}
+else:
+    # The attribute might be misspelled
+    # Similar attributes found: {{ similar_attributes|join(", ") }}
+    # Using most similar attribute: {{ suggested_attribute }}
+    return {{ object_name }}.{{ suggested_attribute }}
+{% else %}
+else:
+    # Provide a default implementation or value
+    # Custom handler for missing attribute
+    return {{ default_value }}
+{% endif %}

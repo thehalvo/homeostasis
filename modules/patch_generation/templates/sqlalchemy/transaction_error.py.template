@@ -1,0 +1,31 @@
+# extends transaction_error.py.template
+# Template for handling SQLAlchemy transaction errors
+# Applicable for: SQLAlchemy ORM operations, session management
+# The following variables will be replaced:
+# - {{ code_block }}: The original code block to wrap in transaction handling
+# - {{ session_var }}: The name of the session variable
+# - {{ exception_types }}: Comma-separated list of exception types to catch
+# - {{ error_message }}: The error message for the exception
+# - {{ recovery_action }}: Code to run when the exception is caught
+# - {{ log_error }}: Whether to include error logging (true/false)
+
+{% block imports %}
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError, DataError
+{% if log_error == "true" %}
+import logging
+logger = logging.getLogger(__name__)
+{% endif %}
+{% endblock %}
+
+{% block transaction_start %}
+# No explicit transaction start needed for SQLAlchemy
+# The session automatically starts a transaction
+{% endblock %}
+
+{% block transaction_commit %}
+{{ session_var }}.commit()
+{% endblock %}
+
+{% block transaction_rollback %}
+{{ session_var }}.rollback()
+{% endblock %}

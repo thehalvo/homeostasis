@@ -1,0 +1,5 @@
+# Template for adding missing imports
+# The following variables will be replaced:
+# - {{ import_statement }}: The import statement to add
+
+{{ import_statement }}

@@ -1,0 +1,23 @@
+# extends keyerror_fix.py.template
+# Template for fixing KeyError in FastAPI applications
+# Applicable for: FastAPI route handlers, dependency functions
+# The following variables will be replaced:
+# - {{ key_name }}: The name of the key that caused the error
+# - {{ dict_name }}: The name of the dictionary being accessed
+# - {{ response_type }}: Optional response model type
+# - {{ status_code }}: Optional status code (default: 404)
+
+{% block main %}
+# Original code (with error):
+# return {{ dict_name }}[{{ key_name }}]
+
+# Fixed code with FastAPI-specific error handling:
+if {{ key_name }} in {{ dict_name }}:
+    return {{ dict_name }}[{{ key_name }}]
+else:
+    from fastapi import HTTPException, status
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"{{ key_name }} with value {{{ key_name }}} not found"
+    )
+{% endblock %}

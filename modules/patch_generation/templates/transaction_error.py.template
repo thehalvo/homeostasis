@@ -1,0 +1,46 @@
+# Template for handling database transaction errors
+# This is an abstract base template for database transaction error handling
+# The following variables will be replaced:
+# - {{ code_block }}: The original code block to wrap in transaction handling
+# - {{ transaction_import }}: The specific import for the transaction module
+# - {{ exception_types }}: Comma-separated list of exception types to catch
+# - {{ error_message }}: The error message for the exception
+# - {{ recovery_action }}: Code to run when the exception is caught
+# - {{ log_error }}: Whether to include error logging (true/false)
+
+{% block imports %}
+{{ transaction_import }}
+{% if log_error == "true" %}
+import logging
+logger = logging.getLogger(__name__)
+{% endif %}
+{% endblock %}
+
+{% block main %}
+# Original code:
+# {{ code_block }}
+
+# Fixed code with transaction handling:
+try:
+    # Start transaction
+    {% block transaction_start %}
+    # Transaction start code goes here (framework-specific)
+    {% endblock %}
+    
+    {{ code_block }}
+    
+    # Commit transaction
+    {% block transaction_commit %}
+    # Transaction commit code goes here (framework-specific)
+    {% endblock %}
+except ({{ exception_types }}) as e:
+    # Rollback transaction
+    {% block transaction_rollback %}
+    # Transaction rollback code goes here (framework-specific)
+    {% endblock %}
+    
+    {% if log_error == "true" %}
+    logger.error(f"{{ error_message }}: {str(e)}")
+    {% endif %}
+    {{ recovery_action }}
+{% endblock %}
