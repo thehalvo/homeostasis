@@ -1,2 +1,0 @@
-This is a placeholder file for the Homeostasis architecture diagram.
-The actual diagram will be added in a future update.
