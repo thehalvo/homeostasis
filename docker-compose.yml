@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Base testing service - serves as a template for others
+  test-base:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./logs:/app/logs
+      - ./sessions:/app/sessions
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=test
+    command: ["pytest", "tests/"]
+    networks:
+      - homeostasis-network
+    # Don't start this service automatically - it's a template
+    profiles: ["never-start"]
+
+  # Service for running unit tests
+  test-unit:
+    extends: test-base
+    command: ["pytest", "tests/", "-m", "unit", "-v"]
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=test
+      - TEST_LEVEL=unit
+
+  # Service for running integration tests
+  test-integration:
+    extends: test-base
+    command: ["pytest", "tests/", "-m", "integration", "-v"]
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=test
+      - TEST_LEVEL=integration
+
+  # Service for running system tests
+  test-system:
+    extends: test-base
+    command: ["pytest", "tests/", "-m", "system", "-v"]
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=test
+      - TEST_LEVEL=system
+      
+  # Example service (the service being tested)
+  example-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./logs:/app/logs
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=test
+    command: ["uvicorn", "services.example_service.app:app", "--host", "0.0.0.0", "--port", "8000"]
+    networks:
+      - homeostasis-network
+
+networks:
+  homeostasis-network:
+    driver: bridge

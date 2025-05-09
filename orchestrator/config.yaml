@@ -24,6 +24,17 @@ monitoring:
     - "*.log"
     - "logs/*.log"
   check_interval: 5 # seconds
+  post_deployment:
+    enabled: true
+    check_interval: 60 # seconds after deployment to monitor for issues
+    metrics:
+      - "response_time"
+      - "error_rate"
+      - "memory_usage"
+    alert_thresholds:
+      error_rate: 0.05 # 5% error rate
+      response_time: 500 # 500ms
+      memory_usage: 512 # 512MB
 
 # Analysis settings
 analysis:
@@ -43,6 +54,52 @@ testing:
   enabled: true
   test_command: "pytest tests/"
   test_timeout: 30 # seconds
+  parallel:
+    enabled: true
+    max_workers: 4
+  containers:
+    enabled: true
+    use_cache: true
+    resource_limits:
+      cpu: "1.0" # CPU cores
+      memory: "1g" # Memory limit
+  graduated_testing:
+    enabled: true
+    levels:
+      - "unit"
+      - "integration"
+      - "system"
+    commands:
+      unit: "pytest tests/ -m unit -v"
+      integration: "pytest tests/ -m integration -v"
+      system: "pytest tests/ -m system -v"
+    timeouts:
+      unit: 30
+      integration: 60
+      system: 120
+    resource_limits:
+      unit:
+        cpu: "0.5"
+        memory: "512m"
+      integration:
+        cpu: "1.0"
+        memory: "1g"
+      system:
+        cpu: "2.0"
+        memory: "2g"
+  regression:
+    enabled: true
+    # Generate regression tests for fixed errors
+    generate_test_cases: true
+    save_path: "tests/generated"
+  metrics:
+    enabled: true
+    collect:
+      - "test_duration"
+      - "memory_usage"
+      - "success_rate"
+    store_history: true
+    history_limit: 100 # Number of test runs to keep
 
 # Deployment settings
 deployment:

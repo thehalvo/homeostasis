@@ -1,0 +1,21 @@
+# Generated test for {{ error_type }}
+import unittest
+from {{ module_path }} import {{ function_name }}
+
+class Test{{ test_class_name }}(unittest.TestCase):
+    def test_{{ test_name }}(self):
+        """Test for {{ error_description }}"""
+        # Setup
+        {{ setup_code }}
+        
+        # Test
+        {% if expect_exception %}
+        with self.assertRaises({{ exception_type }}):
+            {{ test_code }}
+        {% else %}
+        result = {{ test_code }}
+        self.assertTrue({{ assertion }})
+        {% endif %}
+
+if __name__ == "__main__":
+    unittest.main()

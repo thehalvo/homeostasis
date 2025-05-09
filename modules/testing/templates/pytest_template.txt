@@ -1,0 +1,17 @@
+# Generated test for {{ error_type }}
+import pytest
+from {{ module_path }} import {{ function_name }}
+
+def test_{{ test_name }}():
+    """Test for {{ error_description }}"""
+    # Setup
+    {{ setup_code }}
+    
+    # Test
+    {% if expect_exception %}
+    with pytest.raises({{ exception_type }}):
+        {{ test_code }}
+    {% else %}
+    result = {{ test_code }}
+    assert {{ assertion }}
+    {% endif %}
