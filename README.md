@@ -153,13 +153,15 @@ When running the demo for the first time, you might encounter these issues:
 
 ## Project Status
 
-Homeostasis is actively being developed with significant progress on core components:
+Homeostasis is actively being developed, here are some recent updates:
 
 - **Rules Engine**: Implemented 80+ detection rules for Python errors including framework-specific rules for Django, FastAPI, and SQLAlchemy
 - **Template System**: Developed a hierarchical template system with inheritance and specialization for precise patching
 - **Testing Environment**: Created Docker container management, parallel test execution, and regression test generation
 - **Monitoring**: Implemented post-deployment monitoring hooks and feedback loops for fix quality improvement
 - **Analysis**: Added AST-based code analysis for context-aware patching and function signature analysis
+- **Advanced Analysis**: Completed ML-based error classification, causal chain analysis for cascading errors, environmental factor correlation, and APM tool integration
+- **Machine Learning**: Added error classification models, training data collection system, and confidence-based hybrid (rules + ML) analysis
 
 ## Contributing
 

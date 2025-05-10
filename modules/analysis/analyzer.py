@@ -1,14 +1,28 @@
 """
 Enhanced analyzer interface for combining different analysis approaches.
+
+This module provides a comprehensive interface for error analysis, supporting:
+1. Rule-based analysis (pattern matching)
+2. Machine learning-based analysis
+3. LLM-based analysis
+4. Hybrid approaches combining multiple methods
 """
 from typing import Dict, List, Optional, Any, Tuple, Union
 import os
+import logging
 
 from .rule_based import RuleBasedAnalyzer, FASTAPI_ERROR_PATTERNS
 from .ai_stub import (
     AIAnalyzer, AIModelType, AIModelConfig, 
     get_available_models, AVAILABLE_MODELS, create_ensemble_analyzer
 )
+from .ml_analyzer import (
+    MLAnalyzer, HybridAnalyzer, MLAnalysisMode,
+    get_available_analysis_modes
+)
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 class AnalysisStrategy:
@@ -18,6 +32,8 @@ class AnalysisStrategy:
     AI_ENHANCED = "ai_enhanced"  # Always use AI and combine with rule-based
     AI_PRIMARY = "ai_primary"  # Use AI as primary, rule-based as fallback
     ENSEMBLE = "ensemble"  # Use ensemble of all available methods
+    ML_BASED = "ml_based"  # Use machine learning-based analysis
+    HYBRID = "hybrid"  # Use hybrid approach combining rule-based, ML, and LLM
 
 
 class Analyzer:
@@ -27,7 +43,9 @@ class Analyzer:
 
     def __init__(self, strategy: str = AnalysisStrategy.RULE_BASED_ONLY, 
                 ai_model_type: str = "stub",
-                api_key: Optional[str] = None):
+                api_key: Optional[str] = None,
+                ml_mode: str = "parallel",
+                use_llm: bool = False):
         """
         Initialize the analyzer with enhanced options.
 
@@ -35,42 +53,62 @@ class Analyzer:
             strategy: Analysis strategy to use
             ai_model_type: Type of AI model to use when AI is enabled
             api_key: API key for external AI services (if needed)
+            ml_mode: ML analysis mode when ML-based or hybrid strategy is used
+            use_llm: Whether to use LLM in hybrid strategy
         """
-        # Initialize rule-based analyzer
-        self.rule_analyzer = RuleBasedAnalyzer(additional_patterns=FASTAPI_ERROR_PATTERNS)
-        
-        # Store strategy and parameters
         self.strategy = strategy
-        self.ai_model_type = ai_model_type
         
-        # Initialize AI analyzer if needed
-        self.ai_analyzer = None
-        if strategy != AnalysisStrategy.RULE_BASED_ONLY:
-            # Use provided API key or try environment variable
-            api_key = api_key or os.environ.get("AI_API_KEY")
+        # Initialize appropriate analyzer based on strategy
+        if strategy == AnalysisStrategy.ML_BASED:
+            # Use the ML analyzer 
+            self.analyzer = MLAnalyzer(mode=ml_mode)
+            logger.info(f"Initialized ML analyzer with mode: {ml_mode}")
+        elif strategy == AnalysisStrategy.HYBRID:
+            # Use the hybrid analyzer
+            self.analyzer = HybridAnalyzer(
+                ml_mode=ml_mode,
+                use_llm=use_llm,
+                llm_api_key=api_key
+            )
+            logger.info(f"Initialized hybrid analyzer (ML mode: {ml_mode}, LLM: {use_llm})")
+        else:
+            # Use the traditional analyzer
+            # Initialize rule-based analyzer
+            self.rule_analyzer = RuleBasedAnalyzer(additional_patterns=FASTAPI_ERROR_PATTERNS)
             
-            if strategy == AnalysisStrategy.ENSEMBLE:
-                # Create ensemble analyzer with multiple models
-                self.ai_analyzer = create_ensemble_analyzer()
-            else:
-                # Create single model analyzer
-                model_config = AVAILABLE_MODELS.get(ai_model_type)
-                if model_config:
-                    # Clone the config and update API key
-                    config_dict = vars(model_config)
-                    config_dict["api_key"] = api_key
-                    model_config = AIModelConfig(**config_dict)
-                    
-                    self.ai_analyzer = AIAnalyzer(
-                        model_type=ai_model_type,
-                        api_key=api_key,
-                        endpoint=model_config.endpoint,
-                        model_path=model_config.model_path,
-                        parameters=model_config.parameters
-                    )
+            # Store strategy and parameters
+            self.ai_model_type = ai_model_type
+            
+            # Initialize AI analyzer if needed
+            self.ai_analyzer = None
+            if strategy != AnalysisStrategy.RULE_BASED_ONLY:
+                # Use provided API key or try environment variable
+                api_key = api_key or os.environ.get("AI_API_KEY")
+                
+                if strategy == AnalysisStrategy.ENSEMBLE:
+                    # Create ensemble analyzer with multiple models
+                    self.ai_analyzer = create_ensemble_analyzer()
                 else:
-                    # Fallback to stub model
-                    self.ai_analyzer = AIAnalyzer()
+                    # Create single model analyzer
+                    model_config = AVAILABLE_MODELS.get(ai_model_type)
+                    if model_config:
+                        # Clone the config and update API key
+                        config_dict = vars(model_config)
+                        config_dict["api_key"] = api_key
+                        model_config = AIModelConfig(**config_dict)
+                        
+                        self.ai_analyzer = AIAnalyzer(
+                            model_type=ai_model_type,
+                            api_key=api_key,
+                            endpoint=model_config.endpoint,
+                            model_path=model_config.model_path,
+                            parameters=model_config.parameters
+                        )
+                    else:
+                        # Fallback to stub model
+                        self.ai_analyzer = AIAnalyzer()
+            
+            logger.info(f"Initialized traditional analyzer with strategy: {strategy}")
     
     def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -82,6 +120,11 @@ class Analyzer:
         Returns:
             Analysis results
         """
+        # Use ML or hybrid analyzer if applicable
+        if self.strategy in [AnalysisStrategy.ML_BASED, AnalysisStrategy.HYBRID]:
+            return self.analyzer.analyze_error(error_data)
+        
+        # For traditional strategies, use the original logic
         # Always run rule-based analysis for all strategies
         rule_analysis = self.rule_analyzer.analyze_error(error_data)
         rule_confidence = rule_analysis.get("confidence", "low")
@@ -188,7 +231,9 @@ class Analyzer:
 
 def analyze_error_from_log(error_log: Dict[str, Any], 
                            strategy: str = AnalysisStrategy.RULE_BASED_ONLY,
-                           ai_model_type: str = "stub") -> Dict[str, Any]:
+                           ai_model_type: str = "stub",
+                           ml_mode: str = "parallel",
+                           use_llm: bool = False) -> Dict[str, Any]:
     """
     Utility function to analyze a single error log entry with enhanced options.
 
@@ -196,11 +241,18 @@ def analyze_error_from_log(error_log: Dict[str, Any],
         error_log: Error log data
         strategy: Analysis strategy to use
         ai_model_type: Type of AI model to use when AI is enabled
+        ml_mode: ML analysis mode when ML-based or hybrid strategy is used
+        use_llm: Whether to use LLM in hybrid strategy
 
     Returns:
         Analysis results
     """
-    analyzer = Analyzer(strategy=strategy, ai_model_type=ai_model_type)
+    analyzer = Analyzer(
+        strategy=strategy, 
+        ai_model_type=ai_model_type,
+        ml_mode=ml_mode,
+        use_llm=use_llm
+    )
     return analyzer.analyze_error(error_log)
 
 
@@ -216,7 +268,9 @@ def get_available_strategies() -> List[str]:
         AnalysisStrategy.AI_FALLBACK,
         AnalysisStrategy.AI_ENHANCED,
         AnalysisStrategy.AI_PRIMARY,
-        AnalysisStrategy.ENSEMBLE
+        AnalysisStrategy.ENSEMBLE,
+        AnalysisStrategy.ML_BASED,
+        AnalysisStrategy.HYBRID
     ]
 
 
@@ -230,7 +284,23 @@ def get_available_ai_models() -> List[str]:
     return get_available_models()
 
 
+def get_available_ml_modes() -> List[str]:
+    """
+    Get a list of available ML analysis modes.
+
+    Returns:
+        List of available ML mode names
+    """
+    return get_available_analysis_modes()
+
+
 if __name__ == "__main__":
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    
     # Example usage with enhanced options
     print("Analysis Module Demo")
     print("===================")
@@ -266,11 +336,17 @@ if __name__ == "__main__":
     for model in get_available_ai_models():
         print(f"- {model}")
     
+    print("\nAvailable ML Modes:")
+    for mode in get_available_ml_modes():
+        print(f"- {mode}")
+    
     # Demo each strategy
     strategies = [
         AnalysisStrategy.RULE_BASED_ONLY,
         AnalysisStrategy.AI_FALLBACK,
-        AnalysisStrategy.AI_PRIMARY
+        AnalysisStrategy.AI_PRIMARY,
+        AnalysisStrategy.ML_BASED,
+        AnalysisStrategy.HYBRID
     ]
     
     for strategy in strategies:
@@ -281,20 +357,30 @@ if __name__ == "__main__":
         result = analyzer.analyze_error(error_data)
         
         print(f"Analysis Method: {result.get('analysis_method', 'Unknown')}")
-        print(f"Root Cause: {result.get('root_cause', 'Unknown')}")
-        print(f"Description: {result.get('description', 'No description')}")
-        print(f"Suggestion: {result.get('suggestion', 'No suggestion')}")
+        
+        if "root_cause" in result:
+            print(f"Root Cause: {result.get('root_cause', 'Unknown')}")
+        elif "error_type" in result:
+            print(f"Error Type: {result.get('error_type', 'Unknown')}")
+        
         print(f"Confidence: {result.get('confidence', result.get('confidence_score', 0.0))}")
+        
+        if "primary_method" in result:
+            print(f"Primary Method: {result.get('primary_method', 'Unknown')}")
     
     # Example of using utility function
     print("\n\nUsing utility function")
     print("---------------------")
     result = analyze_error_from_log(
-        error_data,
-        strategy=AnalysisStrategy.AI_ENHANCED,
-        ai_model_type="stub"
+        error_log=error_data,
+        strategy=AnalysisStrategy.HYBRID,
+        ml_mode="parallel",
+        use_llm=False
     )
     print(f"Analysis Method: {result.get('analysis_method', 'Unknown')}")
     print(f"Primary Method: {result.get('primary_method', 'Unknown')}")
-    print(f"Root Cause: {result.get('root_cause', 'Unknown')}")
-    print(f"Confidence: {result.get('confidence', 0.0)}")
+    if "root_cause" in result:
+        print(f"Root Cause: {result.get('root_cause', 'Unknown')}")
+    elif "error_type" in result:
+        print(f"Error Type: {result.get('error_type', 'Unknown')}")
+    print(f"Confidence: {result.get('confidence', result.get('confidence_score', 0.0))}")
