@@ -1,0 +1,307 @@
+{
+  "name": "Node.js Specific Errors",
+  "description": "Rules for detecting Node.js specific errors and exceptions",
+  "rules": [
+    {
+      "id": "nodejs_module_not_found",
+      "pattern": "Error: Cannot find module '([^']+)'",
+      "type": "ModuleNotFoundError",
+      "description": "Node.js could not find the specified module",
+      "root_cause": "nodejs_module_missing",
+      "suggestion": "Ensure the module is installed (npm install) or check the import path for typos",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "nodejs",
+        "module",
+        "import"
+      ],
+      "examples": [
+        "Error: Cannot find module 'express'",
+        "Error: Cannot find module '../utils/helpers'"
+      ],
+      "metadata": {
+        "environment": "Node.js"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nodejs_port_in_use",
+      "pattern": "Error: listen EADDRINUSE:?(?: address already in use)?(?:[\\s\\S]*?)(\\d+)",
+      "type": "PortInUseError",
+      "description": "Node.js server could not bind to port because it's already in use",
+      "root_cause": "nodejs_port_already_in_use",
+      "suggestion": "Use a different port, terminate the process using the port, or implement dynamic port allocation",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "nodejs",
+        "network",
+        "server"
+      ],
+      "examples": [
+        "Error: listen EADDRINUSE: address already in use :::3000",
+        "Error: listen EADDRINUSE 127.0.0.1:8080"
+      ],
+      "metadata": {
+        "environment": "Node.js"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nodejs_connection_refused",
+      "pattern": "Error: connect ECONNREFUSED(?: [\\d.:]+)?",
+      "type": "ConnectionRefusedError",
+      "description": "Connection to a service was refused",
+      "root_cause": "nodejs_connection_refused",
+      "suggestion": "Check if the target service is running, verify the connection settings (host, port), implement retry logic with backoff",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "nodejs",
+        "network",
+        "connection"
+      ],
+      "examples": [
+        "Error: connect ECONNREFUSED 127.0.0.1:27017",
+        "Error: connect ECONNREFUSED"
+      ],
+      "metadata": {
+        "environment": "Node.js"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nodejs_fs_no_such_file",
+      "pattern": "Error: ENOENT:? no such file or directory(?:[^']*'([^']+)')?",
+      "type": "FileNotFoundError",
+      "description": "File or directory does not exist",
+      "root_cause": "nodejs_file_not_found",
+      "suggestion": "Check if the file exists before accessing it, verify file paths, or add error handling to create missing files/directories",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "nodejs",
+        "filesystem",
+        "io"
+      ],
+      "examples": [
+        "Error: ENOENT: no such file or directory, open 'config.json'",
+        "Error: ENOENT: no such file or directory, stat '/var/www/app/logs'"
+      ],
+      "metadata": {
+        "environment": "Node.js"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nodejs_fs_permission_denied",
+      "pattern": "Error: EACCES:? permission denied(?:[^']*'([^']+)')?",
+      "type": "PermissionError",
+      "description": "Permission denied when accessing a file or directory",
+      "root_cause": "nodejs_permission_denied",
+      "suggestion": "Check file permissions, ensure the application has necessary access rights, or use a different location for files",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "nodejs",
+        "filesystem",
+        "permissions"
+      ],
+      "examples": [
+        "Error: EACCES: permission denied, access '/etc/passwd'",
+        "Error: EACCES: permission denied, mkdir '/var/log/app'"
+      ],
+      "metadata": {
+        "environment": "Node.js"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nodejs_unhandled_rejection",
+      "pattern": "UnhandledPromiseRejectionWarning: ([\\s\\S]+?)(?:\\n|$)",
+      "type": "UnhandledPromiseRejection",
+      "description": "Unhandled Promise rejection in Node.js",
+      "root_cause": "nodejs_unhandled_promise_rejection",
+      "suggestion": "Add proper error handling to Promise chains using .catch() or try/catch with async/await",
+      "category": "javascript",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "nodejs",
+        "promise",
+        "async"
+      ],
+      "examples": [
+        "(node:12345) UnhandledPromiseRejectionWarning: Error: Database connection failed",
+        "UnhandledPromiseRejectionWarning: Unhandled promise rejection"
+      ],
+      "metadata": {
+        "environment": "Node.js"
+      },
+      "criticality": "critical",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nodejs_event_loop_blocked",
+      "pattern": "WARNING:? Event loop blocked for (\\d+)ms",
+      "type": "EventLoopBlockedWarning",
+      "description": "Node.js event loop was blocked for too long",
+      "root_cause": "nodejs_event_loop_blocked",
+      "suggestion": "Move CPU-intensive operations to worker threads or child processes, break up long operations into smaller chunks",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "nodejs",
+        "performance",
+        "event-loop"
+      ],
+      "examples": [
+        "WARNING: Event loop blocked for 123ms",
+        "Event loop blocked for 2450ms"
+      ],
+      "metadata": {
+        "environment": "Node.js"
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nodejs_memory_warning",
+      "pattern": "WARNING:? Heap memory usage threshold exceeded: (\\d+)% \\((\\d+)/(\\d+)\\)",
+      "type": "MemoryWarning",
+      "description": "Node.js application is using too much memory",
+      "root_cause": "nodejs_memory_usage_high",
+      "suggestion": "Check for memory leaks, large data structures, memory usage patterns, or increase Node.js memory limit",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "nodejs",
+        "memory",
+        "performance"
+      ],
+      "examples": [
+        "WARNING: Heap memory usage threshold exceeded: 90% (1800MB/2000MB)",
+        "Heap memory usage threshold exceeded: 85% (850MB/1000MB)"
+      ],
+      "metadata": {
+        "environment": "Node.js"
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nodejs_esm_import_error",
+      "pattern": "Error \\[ERR_REQUIRE_ESM\\]: (require\\(\\) of ES Module [^\\n]+ not supported)",
+      "type": "ESMImportError",
+      "description": "ES Module import error in Node.js",
+      "root_cause": "nodejs_esm_require_conflict",
+      "suggestion": "Use ESM import syntax (import x from 'y') instead of require(), or configure the package.json with 'type': 'module'",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "nodejs",
+        "esm",
+        "modules"
+      ],
+      "examples": [
+        "Error [ERR_REQUIRE_ESM]: require() of ES Module '/path/to/module.mjs' not supported.",
+        "Error [ERR_REQUIRE_ESM]: require() of ES Module './utils.js' not supported. Instead change the require to a dynamic import() which is available in all CommonJS modules."
+      ],
+      "metadata": {
+        "environment": "Node.js",
+        "node_version": "12+"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nodejs_uncaught_exception",
+      "pattern": "(?:process.)?uncaughtException(?: (.+?): (.+))?",
+      "type": "UncaughtException",
+      "description": "Node.js caught an uncaught exception at the process level",
+      "root_cause": "nodejs_uncaught_exception",
+      "suggestion": "Add proper error handling, implement a global error handler using process.on('uncaughtException')",
+      "category": "javascript",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "nodejs",
+        "process",
+        "exception"
+      ],
+      "examples": [
+        "[ERROR] uncaughtException Error: Something failed",
+        "process.uncaughtException TypeError: Cannot read property 'method' of undefined"
+      ],
+      "metadata": {
+        "environment": "Node.js"
+      },
+      "criticality": "critical",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

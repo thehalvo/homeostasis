@@ -1,0 +1,344 @@
+{
+  "name": "AI/ML Library Error Patterns",
+  "description": "Rules for detecting common errors in AI/ML libraries like scikit-learn, TensorFlow, and PyTorch",
+  "rules": [
+    {
+      "id": "tensorflow_shape_error",
+      "pattern": "tensorflow\\.python\\.framework\\.errors_impl\\.InvalidArgumentError: .*shapes: \\[([^\\]]+)\\] \\[([^\\]]+)\\]",
+      "type": "InvalidArgumentError",
+      "description": "TensorFlow operation received tensors with incompatible shapes",
+      "root_cause": "tensorflow_incompatible_shapes",
+      "suggestion": "Check tensor shapes with tensor.shape, ensure inputs are compatible, and reshape tensors or adjust model architecture if needed",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "tensorflow",
+        "shape",
+        "tensor"
+      ],
+      "examples": [
+        "tensorflow.python.framework.errors_impl.InvalidArgumentError: Incompatible shapes: [32,10] vs. [32,5] [Op:Add]",
+        "InvalidArgumentError: Dimensions must be equal, but are 10 and 5 for 'MatMul' with shapes: [32,10] [5,20]"
+      ],
+      "metadata": {
+        "library": "tensorflow"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "tensorflow_gpu_memory",
+      "pattern": "tensorflow\\.python\\.framework\\.errors_impl\\.ResourceExhaustedError: .*OOM when allocating tensor with shape\\[?([^\\]]+)\\]?",
+      "type": "ResourceExhaustedError",
+      "description": "TensorFlow ran out of GPU memory during operation",
+      "root_cause": "tensorflow_gpu_memory_exhausted",
+      "suggestion": "Reduce batch size, simplify model architecture, use mixed precision training, enable memory growth with tf.config.experimental.set_memory_growth, or use gradient checkpointing to save memory",
+      "category": "python",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "tensorflow",
+        "gpu",
+        "memory",
+        "oom"
+      ],
+      "examples": [
+        "tensorflow.python.framework.errors_impl.ResourceExhaustedError: OOM when allocating tensor with shape[32,1024,1024]",
+        "ResourceExhaustedError: 2 root error(s) found. OOM when allocating tensor"
+      ],
+      "metadata": {
+        "library": "tensorflow"
+      },
+      "criticality": "critical",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "tensorflow_dtype_error",
+      "pattern": "(?:tensorflow\\.python\\.framework\\.errors_impl\\.)?InvalidArgumentError: .*cannot convert string to float",
+      "type": "InvalidArgumentError",
+      "description": "TensorFlow attempted to perform operations on incompatible data types",
+      "root_cause": "tensorflow_dtype_mismatch",
+      "suggestion": "Check input data types and ensure they match the expected types. Convert strings to numeric values before feeding to the model, and use tf.cast() when necessary to convert between compatible numeric types.",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "tensorflow",
+        "dtype",
+        "conversion"
+      ],
+      "examples": [
+        "tensorflow.python.framework.errors_impl.InvalidArgumentError: cannot convert string to float: 'unknown'",
+        "InvalidArgumentError: Expected float but got int32 [Op:Add]"
+      ],
+      "metadata": {
+        "library": "tensorflow"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "pytorch_cuda_error",
+      "pattern": "(?:RuntimeError: CUDA error:|RuntimeError: CUDA out of memory)",
+      "type": "RuntimeError",
+      "description": "PyTorch encountered a CUDA error, typically out of memory",
+      "root_cause": "pytorch_cuda_error",
+      "suggestion": "Reduce batch size, simplify model architecture, free unused tensors explicitly with del, use torch.cuda.empty_cache(), or enable gradient checkpointing to save memory",
+      "category": "python",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "pytorch",
+        "cuda",
+        "gpu",
+        "memory"
+      ],
+      "examples": [
+        "RuntimeError: CUDA out of memory. Tried to allocate 20.00 MiB (GPU 0; 4.00 GiB total capacity)",
+        "RuntimeError: CUDA error: device-side assert triggered"
+      ],
+      "metadata": {
+        "library": "pytorch"
+      },
+      "criticality": "critical",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "pytorch_shape_error",
+      "pattern": "RuntimeError: (?:The size of tensor a \\(\\d+\\) must match the size of tensor b \\(\\d+\\)|Expected \\d+ dimensions, got \\d+|shapes \\w+ \\[([^\\]]+)\\] \\[([^\\]]+)\\])",
+      "type": "RuntimeError",
+      "description": "PyTorch operation received tensors with incompatible shapes",
+      "root_cause": "pytorch_incompatible_shapes",
+      "suggestion": "Check tensor shapes with tensor.shape or tensor.size(), use tensor.view() or tensor.reshape() to adjust dimensions, and ensure your model architecture accommodates the data dimensions",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "pytorch",
+        "shape",
+        "tensor"
+      ],
+      "examples": [
+        "RuntimeError: The size of tensor a (10) must match the size of tensor b (5) at non-singleton dimension 1",
+        "RuntimeError: Expected 4-dimensional input for 4-dimensional weight 64 3 7 7, but got 3-dimensional input of size [32, 3, 224] instead"
+      ],
+      "metadata": {
+        "library": "pytorch"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "pytorch_device_error",
+      "pattern": "RuntimeError: Expected (?:all|input) tensors to be on the same device",
+      "type": "RuntimeError",
+      "description": "PyTorch operation attempted to combine tensors on different devices (CPU/GPU)",
+      "root_cause": "pytorch_mixed_devices",
+      "suggestion": "Ensure all tensors are on the same device using tensor.to(device) before operations, check model and input devices with model.device and tensor.device, and be consistent with device placement",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "pytorch",
+        "device",
+        "gpu",
+        "cpu"
+      ],
+      "examples": [
+        "RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!",
+        "RuntimeError: Expected input tensors to be on the same device"
+      ],
+      "metadata": {
+        "library": "pytorch"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sklearn_dimension_error",
+      "pattern": "ValueError: (?:Expected 2D array, got (?:1|scalar|0)D array|X has \\d+ features, but \\w+ is expecting \\d+ features)",
+      "type": "ValueError",
+      "description": "scikit-learn received input data with incompatible dimensions",
+      "root_cause": "sklearn_invalid_input_dimensions",
+      "suggestion": "Reshape your input data to match the expected format, use numpy.reshape() or X.reshape(-1, 1) for single features, and ensure feature counts match between training and prediction",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "scikit-learn",
+        "dimension",
+        "array",
+        "feature"
+      ],
+      "examples": [
+        "ValueError: Expected 2D array, got 1D array instead: array=[1. 2. 3.].",
+        "ValueError: X has 10 features, but RandomForestClassifier is expecting 5 features."
+      ],
+      "metadata": {
+        "library": "scikit-learn"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sklearn_fit_error",
+      "pattern": "(?:NotFittedError: This [\\w\\s]+ instance is not fitted yet|ValueError: This [\\w\\s]+ instance is not fitted yet. Call 'fit' with appropriate arguments before using this estimator)",
+      "type": "NotFittedError",
+      "description": "Attempted to use a scikit-learn model before fitting it to data",
+      "root_cause": "sklearn_model_not_fitted",
+      "suggestion": "Call model.fit(X, y) before using model.predict(), model.transform(), or any other methods that require a fitted model, and ensure the fit operation completes successfully",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "scikit-learn",
+        "fitting",
+        "model",
+        "estimator"
+      ],
+      "examples": [
+        "NotFittedError: This RandomForestClassifier instance is not fitted yet.",
+        "ValueError: This StandardScaler instance is not fitted yet. Call 'fit' with appropriate arguments before using this estimator."
+      ],
+      "metadata": {
+        "library": "scikit-learn"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sklearn_value_error",
+      "pattern": "ValueError: (?:y should be a (?:1d array|\\d+d array)|Found array with \\d+ sample\\(s\\) \\(shape=.+\\) while a minimum of \\d+ is required)",
+      "type": "ValueError",
+      "description": "scikit-learn received invalid input data, typically related to target shape or insufficient samples",
+      "root_cause": "sklearn_invalid_input_format",
+      "suggestion": "Ensure target labels 'y' are in the correct format (typically 1D array for classification), check that you have sufficient training samples, and verify data shapes with X.shape and y.shape",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "scikit-learn",
+        "input",
+        "shape",
+        "samples"
+      ],
+      "examples": [
+        "ValueError: y should be a 1d array, got an array of shape (100, 2) instead.",
+        "ValueError: Found array with 1 sample(s) (shape=(1, 10)) while a minimum of 2 is required."
+      ],
+      "metadata": {
+        "library": "scikit-learn"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "keras_input_shape_error",
+      "pattern": "ValueError: (?:Input \\d+ of layer \"\\w+\" is incompatible with the layer: expected shape=\\((None|\\?|\\d+)(?:, ?(?:None|\\?|\\d+))+\\), found shape=\\((None|\\?|\\d+)(?:, ?(?:None|\\?|\\d+))+\\)|Input 0 of layer \\w+ is incompatible with the layer: expected min_ndim=\\d+, found ndim=\\d+)",
+      "type": "ValueError",
+      "description": "Keras model received input with incompatible shape",
+      "root_cause": "keras_incompatible_input_shape",
+      "suggestion": "Check and adjust the input shapes to match the model's expected input shape, verify model.input_shape, and ensure preprocessing steps produce the correct dimensions",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "keras",
+        "tensorflow",
+        "input",
+        "shape"
+      ],
+      "examples": [
+        "ValueError: Input 0 of layer \"dense\" is incompatible with the layer: expected shape=(None, 128), found shape=(None, 64)",
+        "ValueError: Input 0 of layer sequential is incompatible with the layer: expected min_ndim=4, found ndim=3"
+      ],
+      "metadata": {
+        "library": "keras"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "huggingface_tokenizer_error",
+      "pattern": "ValueError: (?:Token indices sequence length is longer than the specified maximum sequence length|your inputs have a sequence length [\\d,]+ but were cropped to [\\d,]+)",
+      "type": "ValueError",
+      "description": "Hugging Face tokenizer received text that exceeds the maximum sequence length",
+      "root_cause": "huggingface_sequence_too_long",
+      "suggestion": "Truncate input sequences with tokenizer(text, truncation=True, max_length=max_len), use a sliding window approach for long texts, or set a larger max_length if your model supports it",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "huggingface",
+        "transformers",
+        "tokenizer",
+        "sequence"
+      ],
+      "examples": [
+        "ValueError: Token indices sequence length is longer than the specified maximum sequence length for this model (514 > 512)",
+        "ValueError: your inputs have a sequence length of 700, but were cropped to 512."
+      ],
+      "metadata": {
+        "library": "transformers"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

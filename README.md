@@ -162,6 +162,9 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Analysis**: Added AST-based code analysis for context-aware patching and function signature analysis
 - **Advanced Analysis**: Completed ML-based error classification, causal chain analysis for cascading errors, environmental factor correlation, and APM tool integration
 - **Machine Learning**: Added error classification models, training data collection system, and confidence-based hybrid (rules + ML) analysis
+- **Framework Support**: Expanded framework support with Django middleware, Flask blueprint-specific error handling, FastAPI dependency analysis, and ASGI framework support
+- **Python Ecosystem**: Added support for Python 3.11+ features, Celery tasks, asyncio-specific error detection, NumPy/Pandas error handling, and AI/ML library error detection
+- **Multi-Language Support**: Implemented language-agnostic error schema with support for JavaScript/Node.js and Java through a pluggable adapter architecture
 
 ## Contributing
 

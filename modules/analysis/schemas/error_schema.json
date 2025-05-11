@@ -1,0 +1,237 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Homeostasis Multi-Language Error Schema",
+  "description": "A standardized schema for representing errors across different programming languages and frameworks",
+  "type": "object",
+  "required": [
+    "timestamp",
+    "error_id",
+    "error_type",
+    "language",
+    "message"
+  ],
+  "properties": {
+    "error_id": {
+      "description": "Unique identifier for this error instance",
+      "type": "string",
+      "format": "uuid"
+    },
+    "timestamp": {
+      "description": "Time when the error occurred",
+      "type": "string",
+      "format": "date-time"
+    },
+    "language": {
+      "description": "Programming language where the error occurred",
+      "type": "string",
+      "enum": ["python", "javascript", "typescript", "java", "csharp", "go", "ruby", "php", "rust", "other"]
+    },
+    "language_version": {
+      "description": "Version of the programming language",
+      "type": "string"
+    },
+    "error_type": {
+      "description": "Type or class of the error (e.g., TypeError, SyntaxError)",
+      "type": "string"
+    },
+    "message": {
+      "description": "Error message text",
+      "type": "string"
+    },
+    "stack_trace": {
+      "description": "Stack trace information, formatted according to the language convention",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file", "line", "function"],
+            "properties": {
+              "file": {
+                "type": "string",
+                "description": "File path where the error occurred"
+              },
+              "line": {
+                "type": "integer",
+                "description": "Line number in the file"
+              },
+              "column": {
+                "type": "integer",
+                "description": "Column position in the line"
+              },
+              "function": {
+                "type": "string",
+                "description": "Function or method name"
+              },
+              "context": {
+                "type": "string",
+                "description": "Code context around the error"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "framework": {
+      "description": "Framework or library where the error occurred",
+      "type": "string"
+    },
+    "framework_version": {
+      "description": "Version of the framework or library",
+      "type": "string"
+    },
+    "runtime": {
+      "description": "Runtime environment (e.g., Node.js, JVM, CPython)",
+      "type": "string"
+    },
+    "runtime_version": {
+      "description": "Version of the runtime environment",
+      "type": "string"
+    },
+    "platform": {
+      "description": "Operating system or platform",
+      "type": "string"
+    },
+    "context": {
+      "description": "Additional context for the error",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "request": {
+      "description": "Information about the HTTP request, if applicable",
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string",
+          "description": "HTTP method (GET, POST, PUT, etc.)"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the request"
+        },
+        "headers": {
+          "type": "object",
+          "description": "Request headers",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "params": {
+          "type": "object",
+          "description": "URL or query parameters",
+          "additionalProperties": true
+        },
+        "body": {
+          "description": "Request body (if applicable)",
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "user": {
+      "description": "User or client information, if applicable",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "User identifier"
+        },
+        "ip": {
+          "type": "string",
+          "description": "User IP address"
+        },
+        "user_agent": {
+          "type": "string",
+          "description": "User agent string"
+        }
+      }
+    },
+    "process": {
+      "description": "Process information",
+      "type": "object",
+      "properties": {
+        "pid": {
+          "type": "integer",
+          "description": "Process ID"
+        },
+        "memory_usage": {
+          "type": "number",
+          "description": "Memory usage in MB"
+        },
+        "cpu_usage": {
+          "type": "number",
+          "description": "CPU usage percentage"
+        },
+        "uptime": {
+          "type": "number",
+          "description": "Process uptime in seconds"
+        }
+      }
+    },
+    "environment": {
+      "description": "Environment variables or configuration",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "additional_data": {
+      "description": "Language-specific additional error data",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "error_code": {
+      "description": "Error code or identifier used by the language or framework",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "severity": {
+      "description": "Error severity level",
+      "type": "string",
+      "enum": ["debug", "info", "warning", "error", "critical", "fatal"]
+    },
+    "tags": {
+      "description": "Tags for categorizing the error",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "related_errors": {
+      "description": "References to related errors (e.g., for cascading failures)",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "handled": {
+      "description": "Whether the error was handled or unhandled",
+      "type": "boolean"
+    },
+    "recovery_action": {
+      "description": "What action was taken to recover from this error, if any",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

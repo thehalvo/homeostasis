@@ -1,0 +1,277 @@
+{
+  "name": "JavaScript Common Errors",
+  "description": "Rules for detecting common JavaScript errors and exceptions",
+  "rules": [
+    {
+      "id": "js_typeerror_undefined",
+      "pattern": "TypeError: Cannot (read|set) property '([^']+)' of (undefined|null)",
+      "type": "TypeError",
+      "description": "Accessing properties on null or undefined",
+      "root_cause": "js_property_access_on_undefined",
+      "suggestion": "Use optional chaining (obj?.property) or check if the object exists before accessing properties",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "typescript",
+        "property-access",
+        "undefined"
+      ],
+      "examples": [
+        "TypeError: Cannot read property 'id' of undefined",
+        "TypeError: Cannot set property 'name' of null"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_typeerror_not_a_function",
+      "pattern": "TypeError: ([^\\s]+) is not a function",
+      "type": "TypeError",
+      "description": "Attempting to call something that's not a function",
+      "root_cause": "js_not_a_function",
+      "suggestion": "Check that the variable or property is actually a function before calling it",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "typescript",
+        "function-call",
+        "type-error"
+      ],
+      "examples": [
+        "TypeError: someObject.method is not a function",
+        "TypeError: undefined is not a function"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_reference_error",
+      "pattern": "ReferenceError: ([^\\s]+) is not defined",
+      "type": "ReferenceError",
+      "description": "Using a variable that doesn't exist in the current scope",
+      "root_cause": "js_undefined_reference",
+      "suggestion": "Check variable spelling and ensure it's declared before use, or add the missing import",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "typescript",
+        "variable",
+        "scope"
+      ],
+      "examples": [
+        "ReferenceError: someVar is not defined",
+        "ReferenceError: require is not defined"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_syntax_error",
+      "pattern": "SyntaxError: ([^\\n]+)",
+      "type": "SyntaxError",
+      "description": "JavaScript syntax error",
+      "root_cause": "js_syntax_error",
+      "suggestion": "Fix the syntax error in the code, check for missing brackets, commas, or other syntax issues",
+      "category": "javascript",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "typescript",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "SyntaxError: Unexpected token )",
+        "SyntaxError: missing ) after argument list"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      },
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_rangeerror",
+      "pattern": "RangeError: ([^\\n]+)",
+      "type": "RangeError",
+      "description": "Value is outside the allowed range",
+      "root_cause": "js_range_error",
+      "suggestion": "Ensure values are within valid ranges, especially for array indices and numeric parameters",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "typescript",
+        "range",
+        "numeric"
+      ],
+      "examples": [
+        "RangeError: Maximum call stack size exceeded",
+        "RangeError: Invalid array length"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_type_error_conversion",
+      "pattern": "TypeError: ([^\\s]+) (is not|cannot be converted to) ([a-zA-Z]+)",
+      "type": "TypeError",
+      "description": "Type conversion error in JavaScript",
+      "root_cause": "js_type_conversion_error",
+      "suggestion": "Make sure you're using the correct type or convert explicitly before the operation",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "typescript",
+        "type-conversion",
+        "coercion"
+      ],
+      "examples": [
+        "TypeError: object is not iterable",
+        "TypeError: 'undefined' cannot be converted to an object"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_promise_rejection",
+      "pattern": "Uncaught \\(in promise\\) ([\\s\\S]+)",
+      "type": "UnhandledPromiseRejection",
+      "description": "Unhandled rejection in a Promise",
+      "root_cause": "js_unhandled_promise_rejection",
+      "suggestion": "Add .catch() handlers to Promises or use try/catch with async/await",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "typescript",
+        "promise",
+        "async"
+      ],
+      "examples": [
+        "Uncaught (in promise) TypeError: Cannot read property 'data' of undefined",
+        "Uncaught (in promise) Error: Network request failed"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_memory_error",
+      "pattern": "JavaScript heap out of memory",
+      "type": "MemoryError",
+      "description": "JavaScript process ran out of memory",
+      "root_cause": "js_memory_limit_exceeded",
+      "suggestion": "Check for memory leaks, large data structures, or increase Node.js memory limit with --max-old-space-size flag",
+      "category": "javascript",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "typescript",
+        "memory",
+        "nodejs"
+      ],
+      "examples": [
+        "FATAL ERROR: JavaScript heap out of memory",
+        "<--- Last few GCs --->\n[...]\n<--- JS stacktrace --->\nFATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory"
+      ],
+      "metadata": {
+        "environment": "Node.js"
+      },
+      "criticality": "critical",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_async_error",
+      "pattern": "Error: (The operation (?:was|has been) aborted|(?:Aborted|Timeout|Network|Connection)(?:\\s+\\w+)*)",
+      "type": "AsyncOperationError",
+      "description": "Asynchronous operation failed or was aborted",
+      "root_cause": "js_async_operation_failure",
+      "suggestion": "Implement retry logic for network operations, add proper error handling for asynchronous code",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "javascript",
+        "typescript",
+        "async",
+        "network"
+      ],
+      "examples": [
+        "Error: The operation was aborted",
+        "Error: Network request failed",
+        "Error: Timeout exceeded"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

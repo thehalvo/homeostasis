@@ -1,0 +1,300 @@
+{
+  "name": "FastAPI Dependency Errors",
+  "description": "Rules for detecting dependency injection related errors in FastAPI applications",
+  "rules": [
+    {
+      "id": "fastapi_missing_dependency_function",
+      "pattern": "TypeError: '([^']+)' object is not callable(?:\\s*\\n\\s*.+Depends\\(([^)]+)\\))?",
+      "type": "TypeError",
+      "description": "FastAPI dependency is not a callable function or class",
+      "root_cause": "fastapi_non_callable_dependency",
+      "suggestion": "Ensure that the object passed to Depends() is a function, a class with __call__ method, or another callable object",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "injection",
+        "callable"
+      ],
+      "examples": [
+        "TypeError: 'dict' object is not callable\n  File \"app.py\", line 45, in router_function\n    commons = Depends(settings)"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_dependency_signature_error",
+      "pattern": "TypeError: ([^:]+:\\s*)?([\\w_\\.]+)\\(\\) (?:got an unexpected keyword argument|missing a required argument|takes [0-9]+ positional arguments? but [0-9]+ (?:were|was) given)(?:\\s*'([^']+)')?",
+      "type": "TypeError",
+      "description": "Function signature error in FastAPI dependency function",
+      "root_cause": "fastapi_dependency_signature_mismatch",
+      "suggestion": "Check the function signature of the dependency function to ensure it matches the parameters being passed. Verify required parameters are provided and parameter names are correct",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "signature",
+        "parameters"
+      ],
+      "examples": [
+        "TypeError: get_db() got an unexpected keyword argument 'user_id'",
+        "TypeError: authenticate_user() missing a required argument 'password'"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_circular_dependency",
+      "pattern": "RecursionError: maximum recursion depth exceeded(?:\\s*\\n\\s*.+resolve_dependencies)?",
+      "type": "RecursionError",
+      "description": "Circular dependency found in FastAPI dependencies",
+      "root_cause": "fastapi_circular_dependency",
+      "suggestion": "Check for circular references in your dependency chain. Break the cycle by refactoring dependencies to avoid depending on each other",
+      "category": "fastapi",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "circular",
+        "recursion"
+      ],
+      "examples": [
+        "RecursionError: maximum recursion depth exceeded\n  File \"fastapi/dependencies/utils.py\", line 78, in resolve_dependencies"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "critical",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_dependency_validation_error",
+      "pattern": "pydantic.error_wrappers.ValidationError(?:.+Depends\\(([^)]+)\\))?",
+      "type": "ValidationError",
+      "description": "Parameter validation failed in FastAPI dependency function",
+      "root_cause": "fastapi_dependency_validation_error",
+      "suggestion": "Check input parameters against the type annotations and validators in the dependency function. Ensure all required fields are present with correct types",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "validation",
+        "pydantic"
+      ],
+      "examples": [
+        "pydantic.error_wrappers.ValidationError: 1 validation error for QueryParams\nskip\n  value is not a valid integer (type=type_error.integer)"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_dependency_exception",
+      "pattern": "Exception in dependency ([\\w_\\.]+)(?:\\s*\\n\\s*.+\\n\\s*)?([\\w_\\.]+Error|[\\w_\\.]+Exception): (.*)",
+      "type": "DependencyException",
+      "description": "Exception was raised inside a FastAPI dependency function",
+      "root_cause": "fastapi_dependency_exception",
+      "suggestion": "Add proper error handling inside the dependency function. Consider using try/except blocks and returning appropriate HTTP responses for known error cases",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "exception",
+        "error-handling"
+      ],
+      "examples": [
+        "Exception in dependency get_db\n  File \"app/dependencies.py\", line 25\nSQLAlchemyError: Database connection error"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_dependency_not_found",
+      "pattern": "(?:ImportError|ModuleNotFoundError|AttributeError)(?:.+Depends\\(([^)]+)\\))?",
+      "type": "ImportError",
+      "description": "FastAPI dependency function or module could not be found or imported",
+      "root_cause": "fastapi_dependency_not_found",
+      "suggestion": "Check import statements and ensure the dependency function exists. Verify the module path and function name are correct",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "import",
+        "module"
+      ],
+      "examples": [
+        "ImportError: cannot import name 'get_current_user' from 'app.dependencies'"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_dependency_yield_error",
+      "pattern": "RuntimeError: (Async context manager expected|.+async for.+asynchronous generator|.+yield from.+in async function)",
+      "type": "RuntimeError",
+      "description": "Error in FastAPI dependency using yield for cleanup",
+      "root_cause": "fastapi_dependency_yield_error",
+      "suggestion": "Make sure dependencies using 'yield' match async/sync usage correctly. Use 'yield' in regular functions and 'async with' with 'yield' in async functions",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "yield",
+        "async"
+      ],
+      "examples": [
+        "RuntimeError: Async context manager expected",
+        "RuntimeError: asynchronous generator 'get_async_db' cannot be used in 'yield from'"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_dependency_scope_error",
+      "pattern": "RuntimeError: Dependency requested with incorrect scope(?:: ([^.]+))?",
+      "type": "RuntimeError",
+      "description": "FastAPI dependency being used with incorrect scope (request, session, etc.)",
+      "root_cause": "fastapi_dependency_scope_error",
+      "suggestion": "Check the scope parameter of Depends() calls. Make sure WebSocket dependencies aren't used in HTTP routes and vice versa",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "scope",
+        "websocket"
+      ],
+      "examples": [
+        "RuntimeError: Dependency requested with incorrect scope: websocket",
+        "RuntimeError: Dependency requested with incorrect scope: http"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_dependency_resource_error",
+      "pattern": "(ResourceWarning|ResourceClosingError)(?:.+dependency ([\\w_\\.]+))?: (.*)",
+      "type": "ResourceWarning",
+      "description": "Resource not properly closed or managed in FastAPI dependency",
+      "root_cause": "fastapi_dependency_resource_leak",
+      "suggestion": "Use contextlib.contextmanager, 'with' statements, or 'yield' in dependencies to ensure proper resource cleanup. Make sure database connections and file handles are properly closed",
+      "category": "fastapi",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "resource",
+        "cleanup"
+      ],
+      "examples": [
+        "ResourceWarning: unclosed file in dependency get_file_handler: <_io.TextIOWrapper name='data.csv' mode='r' encoding='utf8'>",
+        "ResourceClosingError: Error closing resource in database_connection"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fastapi_incorrect_dependency_usage",
+      "pattern": "TypeError: ([\\w_]+)\\(\\) missing 'self' parameter",
+      "type": "TypeError",
+      "description": "Instance method used directly as a FastAPI dependency without binding to instance",
+      "root_cause": "fastapi_unbound_method_dependency",
+      "suggestion": "Use a function, a class with __call__, or pass a bound method (e.g., instance.method instead of Class.method) to Depends()",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "method",
+        "class"
+      ],
+      "examples": [
+        "TypeError: authenticate() missing 'self' parameter"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

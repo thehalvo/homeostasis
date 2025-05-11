@@ -1,0 +1,251 @@
+{
+  "name": "Python 3.11+ Features",
+  "description": "Rules for detecting errors related to Python 3.11+ features and enhancements",
+  "rules": [
+    {
+      "id": "python_311_exception_group",
+      "pattern": "ExceptionGroup\\(['\"](.*)['\"], \\[(.*?)\\]\\)",
+      "type": "ExceptionGroup",
+      "description": "Exception group containing multiple exceptions (Python 3.11+)",
+      "root_cause": "multiple_exceptions_raised",
+      "suggestion": "Handle exception groups using the except* syntax, and consider handling each nested exception individually",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python3.11",
+        "exception",
+        "exceptiongroup",
+        "multiple-exceptions"
+      ],
+      "examples": [
+        "ExceptionGroup('2 exceptions were raised', [ValueError('Invalid value'), TypeError('Invalid type')])"
+      ],
+      "metadata": {
+        "python_version": "3.11+",
+        "pep": "PEP 654"
+      },
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_311_except_star_syntax_error",
+      "pattern": "SyntaxError: multiple exception types must be parenthesized \\(except\\* (.*)\\)",
+      "type": "SyntaxError",
+      "description": "Incorrect syntax in an except* statement (Python 3.11+)",
+      "root_cause": "except_star_syntax_error",
+      "suggestion": "Parenthesize multiple exception types in the except* statement: except* (ExceptionType1, ExceptionType2):",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python3.11",
+        "syntax",
+        "except-star",
+        "exceptiongroup"
+      ],
+      "examples": [
+        "SyntaxError: multiple exception types must be parenthesized (except* ValueError, TypeError)"
+      ],
+      "metadata": {
+        "python_version": "3.11+",
+        "pep": "PEP 654"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_311_exception_note",
+      "pattern": "([\\w.]+): (.*?)\\s+\\(Note: (.*)\\)",
+      "type": "EnhancedException",
+      "description": "Exception with additional contextual notes (Python 3.11+)",
+      "root_cause": "exception_with_notes",
+      "suggestion": "Check both the exception message and the added notes for diagnostic information",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "python3.11",
+        "exception",
+        "notes",
+        "context"
+      ],
+      "examples": [
+        "ValueError: Invalid input (Note: Expected numerical value)",
+        "ConnectionError: Failed to connect (Note: Server may be down)"
+      ],
+      "metadata": {
+        "python_version": "3.11+",
+        "pep": "PEP 678"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_311_detailed_traceback",
+      "pattern": "([\\w.]+): (.*?)\\n\\s+(.*)\\n\\s+\\^+\\s+~+\\s+",
+      "type": "DetailedTraceback",
+      "description": "More precise traceback with caret notation pointing to exact expression (Python 3.11+)",
+      "root_cause": "fine_grained_error_location",
+      "suggestion": "Focus on the specific expression marked by the carets in the traceback",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python3.11",
+        "traceback",
+        "precise-error",
+        "caret-notation"
+      ],
+      "examples": [
+        "TypeError: unsupported operand type(s) for +: 'int' and 'str'\n    result = number + text\n             ~~~~~~^~~~~"
+      ],
+      "metadata": {
+        "python_version": "3.11+",
+        "pep": "PEP 657"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_311_self_type_error",
+      "pattern": "TypeError: (.*)Self(.*)",
+      "type": "TypeError",
+      "description": "Error related to the Self type annotation (Python 3.11+)",
+      "root_cause": "self_type_annotation_error",
+      "suggestion": "Ensure the Self type annotation is used correctly within a class context and not in standalone functions",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "python3.11",
+        "type-annotation",
+        "self-type",
+        "typing"
+      ],
+      "examples": [
+        "TypeError: Cannot use Self outside of a class definition",
+        "TypeError: Self requires a generic class to be used as a type argument"
+      ],
+      "metadata": {
+        "python_version": "3.11+",
+        "pep": "PEP 673"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_311_tomllib_error",
+      "pattern": "tomllib\\.(TOMLDecodeError|InvalidCharError|UnexpectedEofError): (.*)",
+      "type": "TOMLError",
+      "description": "Error parsing TOML configuration files with the built-in tomllib module (Python 3.11+)",
+      "root_cause": "toml_parsing_error",
+      "suggestion": "Check the TOML file syntax against the TOML specification, paying attention to the specific error message",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python3.11",
+        "toml",
+        "configuration",
+        "parsing"
+      ],
+      "examples": [
+        "tomllib.TOMLDecodeError: Invalid key (at line 5, column 3)",
+        "tomllib.UnexpectedEofError: Unexpected end of file"
+      ],
+      "metadata": {
+        "python_version": "3.11+",
+        "pep": "PEP 680"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_311_task_group_error",
+      "pattern": "asyncio\\.(TaskGroupError|InvalidStateError|CancelledError)(?:: )?(.*)",
+      "type": "AsyncIOTaskGroupError",
+      "description": "Error in asyncio.TaskGroup, introduced in Python 3.11",
+      "root_cause": "asyncio_task_group_error",
+      "suggestion": "Handle task cancellation and errors properly in asyncio.TaskGroup contexts",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python3.11",
+        "asyncio",
+        "taskgroup",
+        "concurrency"
+      ],
+      "examples": [
+        "asyncio.TaskGroupError: unhandled exception during TaskGroup.aclose()",
+        "asyncio.CancelledError: Task was cancelled"
+      ],
+      "metadata": {
+        "python_version": "3.11+",
+        "pep": "PEP 654"
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_311_variadic_generics_error",
+      "pattern": "TypeError: (.*)[Tt]ype[Vv]ar\\w*\\((.*), (.*?)\\)(.*)",
+      "type": "TypeError",
+      "description": "Error related to TypeVarTuple and other variadic generics (Python 3.11+)",
+      "root_cause": "variadic_generics_error",
+      "suggestion": "Check the usage of TypeVarTuple and ensure it's properly unpacked with * when used as a type annotation",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "python3.11",
+        "typing",
+        "generics",
+        "type-variable"
+      ],
+      "examples": [
+        "TypeError: TypeVarTuple must be used as TypeVarTuple(*Ts), not TypeVarTuple(Ts)",
+        "TypeError: Expected an unpacked TypeVarTuple"
+      ],
+      "metadata": {
+        "python_version": "3.11+",
+        "pep": "PEP 646"
+      },
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,347 @@
+{
+  "name": "Python AsyncIO Error Patterns",
+  "description": "Rules for detecting common asyncio-related errors and exceptions",
+  "rules": [
+    {
+      "id": "asyncio_timeout_error",
+      "pattern": "asyncio\\.TimeoutError: (.*)",
+      "type": "TimeoutError",
+      "description": "Operation exceeded the specified timeout duration",
+      "root_cause": "asyncio_operation_timeout",
+      "suggestion": "Increase the timeout value, optimize the operation, or implement retry logic with exponential backoff",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "timeout",
+        "concurrency"
+      ],
+      "examples": [
+        "asyncio.TimeoutError",
+        "asyncio.TimeoutError: The operation has exceeded the given deadline"
+      ],
+      "metadata": {
+        "asyncio_specific": true,
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "asyncio_cancelled_error",
+      "pattern": "asyncio\\.CancelledError(?:: (.*))?",
+      "type": "CancelledError",
+      "description": "Asynchronous task was cancelled",
+      "root_cause": "asyncio_task_cancelled",
+      "suggestion": "Handle task cancellation gracefully with try/except blocks, cleanup resources properly when tasks are cancelled",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "cancellation",
+        "concurrency"
+      ],
+      "examples": [
+        "asyncio.CancelledError",
+        "asyncio.CancelledError: The task has been cancelled"
+      ],
+      "metadata": {
+        "asyncio_specific": true,
+        "requires_contextualization": true
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "asyncio_invalid_state_error",
+      "pattern": "asyncio\\.InvalidStateError: (.*)",
+      "type": "InvalidStateError",
+      "description": "Task or Future in an invalid state for the requested operation",
+      "root_cause": "asyncio_invalid_state",
+      "suggestion": "Ensure proper task state management, check task or future state before performing operations on them",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "state",
+        "concurrency"
+      ],
+      "examples": [
+        "asyncio.InvalidStateError: invalid state",
+        "asyncio.InvalidStateError: Result is already set"
+      ],
+      "metadata": {
+        "asyncio_specific": true,
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "asyncio_incomplete_read_error",
+      "pattern": "asyncio\\.IncompleteReadError(?:: (.*))? \\(expected: (\\d+), got: (\\d+)\\)",
+      "type": "IncompleteReadError",
+      "description": "Stream read operation did not complete fully",
+      "root_cause": "asyncio_incomplete_read",
+      "suggestion": "Implement retry logic, handle partial data reads appropriately, and consider connection stability issues",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "streaming",
+        "io"
+      ],
+      "examples": [
+        "asyncio.IncompleteReadError (expected: 1024, got: 512)",
+        "asyncio.IncompleteReadError: Incomplete read (expected: 1024, got: 0)"
+      ],
+      "metadata": {
+        "asyncio_specific": true,
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "asyncio_limit_overrun_error",
+      "pattern": "asyncio\\.LimitOverrunError(?:: (.*))? \\(consumed: (\\d+)\\)",
+      "type": "LimitOverrunError",
+      "description": "Stream buffer size limit reached while searching for a separator",
+      "root_cause": "asyncio_stream_buffer_limit_exceeded",
+      "suggestion": "Increase the buffer size limit, handle smaller chunks of data, or use more granular read operations",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "streaming",
+        "buffer"
+      ],
+      "examples": [
+        "asyncio.LimitOverrunError (consumed: 2048)",
+        "asyncio.LimitOverrunError: Separator is not found, and chunk exceed the limit (consumed: 65536)"
+      ],
+      "metadata": {
+        "asyncio_specific": true,
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "asyncio_sendfile_error",
+      "pattern": "asyncio\\.SendfileNotAvailableError(?:: (.*))?",
+      "type": "SendfileNotAvailableError",
+      "description": "The sendfile syscall is not available or not supported by the current platform/file descriptor combination",
+      "root_cause": "asyncio_sendfile_not_available",
+      "suggestion": "Implement a fallback mechanism that uses regular file IO operations instead of relying on sendfile",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "file",
+        "io"
+      ],
+      "examples": [
+        "asyncio.SendfileNotAvailableError",
+        "asyncio.SendfileNotAvailableError: sendfile syscall is not supported"
+      ],
+      "metadata": {
+        "asyncio_specific": true,
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "asyncio_not_awaited_coroutine",
+      "pattern": "RuntimeWarning: coroutine '([^']+)' was never awaited",
+      "type": "RuntimeWarning",
+      "description": "A coroutine was created but never awaited, which means it was never executed",
+      "root_cause": "asyncio_coroutine_not_awaited",
+      "suggestion": "Ensure all coroutines are properly awaited. Use 'await', 'asyncio.create_task()', or 'asyncio.gather()' to schedule coroutine execution",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "coroutine",
+        "await"
+      ],
+      "examples": [
+        "RuntimeWarning: coroutine 'fetch_data' was never awaited",
+        "RuntimeWarning: coroutine 'process_request' was never awaited"
+      ],
+      "metadata": {
+        "asyncio_specific": true,
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "asyncio_event_loop_closed",
+      "pattern": "RuntimeError: Event loop (is closed|stopped|closed before Future|cannot be created in a thread|already running)",
+      "type": "RuntimeError",
+      "description": "Attempted operation on a closed, stopped, or mismanaged event loop",
+      "root_cause": "asyncio_event_loop_management_error",
+      "suggestion": "Ensure proper event loop lifecycle management. Don't close loops prematurely, don't attempt to use closed loops, and handle thread-related event loop operations carefully",
+      "category": "python",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "event-loop",
+        "concurrency"
+      ],
+      "examples": [
+        "RuntimeError: Event loop is closed",
+        "RuntimeError: Event loop stopped before Future completed",
+        "RuntimeError: Event loop cannot be created in a thread that already has a running event loop"
+      ],
+      "metadata": {
+        "asyncio_specific": true,
+        "requires_contextualization": true
+      },
+      "criticality": "critical",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "asyncio_long_running_callback",
+      "pattern": "RuntimeWarning: (Executing <.*> took [\\d.]+ seconds|The loop callback was never called|A long-running callback blocked the event loop for [\\d.]+ seconds)",
+      "type": "RuntimeWarning",
+      "description": "Slow or blocked callback is interfering with the event loop performance",
+      "root_cause": "asyncio_event_loop_blocked",
+      "suggestion": "Identify and optimize long-running operations. Move CPU-bound tasks to separate threads or processes using executors",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "performance",
+        "event-loop"
+      ],
+      "examples": [
+        "RuntimeWarning: Executing <Task finished name='Task-2' coro=<process_data() done>> took 5.43 seconds",
+        "RuntimeWarning: A long-running callback blocked the event loop for 10.5 seconds"
+      ],
+      "metadata": {
+        "asyncio_specific": true,
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "asyncio_task_exception_never_retrieved",
+      "pattern": "Task exception was never retrieved(?:: future|\\s*\\n\\s*(.+): (.+))",
+      "type": "RuntimeWarning",
+      "description": "A task raised an exception that was never retrieved or handled",
+      "root_cause": "asyncio_unhandled_task_exception",
+      "suggestion": "Always await tasks and handle exceptions, or use add_done_callback to process exceptions from fire-and-forget tasks",
+      "category": "python",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "asyncio",
+        "exception",
+        "task"
+      ],
+      "examples": [
+        "Task exception was never retrieved\n future: <Task finished name='Task-5' coro=<main() done, defined at main.py:7> exception=ZeroDivisionError('division by zero')>",
+        "Task exception was never retrieved: ValueError: Invalid input parameter"
+      ],
+      "metadata": {
+        "asyncio_specific": true,
+        "requires_contextualization": true
+      },
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "asyncio_gather_exceptions",
+      "pattern": "(?:Uncaught exception)?(?:Exception combining results from gather)?(.*asyncio\\.gather.*?)\\n([\\s\\S]+?)\\n(.*)",
+      "type": "Exception",
+      "description": "Unhandled exceptions from multiple tasks executed with asyncio.gather",
+      "root_cause": "asyncio_gather_unhandled_exceptions",
+      "suggestion": "Use return_exceptions=True with asyncio.gather() or handle exceptions with try/except around gather calls",
+      "category": "python",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "python",
+        "asyncio",
+        "gather",
+        "exception"
+      ],
+      "examples": [
+        "Exception combining results from gather\n  File \"main.py\", line 42, in main\n    results = await asyncio.gather(task1(), task2())\n  File \"task.py\", line 15, in task2\n    raise ValueError('Invalid data')\nValueError: Invalid data"
+      ],
+      "metadata": {
+        "asyncio_specific": true,
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

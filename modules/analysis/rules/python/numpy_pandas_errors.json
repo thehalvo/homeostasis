@@ -1,0 +1,343 @@
+{
+  "name": "NumPy and Pandas Error Patterns",
+  "description": "Rules for detecting common NumPy and Pandas data analysis errors",
+  "rules": [
+    {
+      "id": "numpy_broadcasting_error",
+      "pattern": "ValueError: operands could not be broadcast together with shapes? ([\\(\\d,\\s\\)]+) (?:and|,) ([\\(\\d,\\s\\)]+)",
+      "type": "ValueError",
+      "description": "NumPy arrays couldn't be broadcast together due to incompatible shapes",
+      "root_cause": "numpy_broadcasting_shape_mismatch",
+      "suggestion": "Ensure array shapes are compatible for broadcasting, reshape arrays as needed, or use np.reshape() or array.reshape() to adjust dimensions",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "numpy",
+        "broadcasting",
+        "shape",
+        "array"
+      ],
+      "examples": [
+        "ValueError: operands could not be broadcast together with shapes (3,4) and (2,4)",
+        "ValueError: operands could not be broadcast together with shapes (100,3) (50,)"
+      ],
+      "metadata": {
+        "library": "numpy"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "numpy_dimension_error",
+      "pattern": "numpy\\.AxisError:? (?:axis|dimension) (\\d+) (?:is|was) out of bounds for array of dimension (\\d+)",
+      "type": "AxisError",
+      "description": "Attempted to access a dimension or axis that doesn't exist in a NumPy array",
+      "root_cause": "numpy_invalid_axis",
+      "suggestion": "Check the actual dimensions of your array with array.ndim or array.shape, and use valid axis values within those bounds",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "numpy",
+        "axis",
+        "dimension",
+        "array"
+      ],
+      "examples": [
+        "numpy.AxisError: axis 3 is out of bounds for array of dimension 2",
+        "AxisError: axis 2 was out of bounds for array of dimension 2"
+      ],
+      "metadata": {
+        "library": "numpy"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "numpy_invalid_indexing",
+      "pattern": "IndexError: index (\\d+) is out of bounds for (?:axis|dimension) (\\d+) with size (\\d+)",
+      "type": "IndexError",
+      "description": "NumPy array index is out of bounds for the specified dimension",
+      "root_cause": "numpy_index_out_of_bounds",
+      "suggestion": "Check array dimensions using array.shape and ensure all indices are within bounds. Remember that NumPy arrays are zero-indexed.",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "numpy",
+        "indexing",
+        "array"
+      ],
+      "examples": [
+        "IndexError: index 5 is out of bounds for axis 0 with size 3",
+        "IndexError: index 10 is out of bounds for dimension 1 with size 5"
+      ],
+      "metadata": {
+        "library": "numpy"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "numpy_memory_error",
+      "pattern": "(?:MemoryError|numpy\\.core\\._exceptions\\._ArrayMemoryError)(?:: (Unable to allocate [\\d.]+ (?:KiB|MiB|GiB) for an array with shape \\([\\d, ]+\\) and data type [\\w\\d]+))?",
+      "type": "MemoryError",
+      "description": "NumPy couldn't allocate enough memory for a large array operation",
+      "root_cause": "numpy_memory_allocation_failed",
+      "suggestion": "Reduce array sizes, process data in smaller chunks, use sparse matrices or memory-mapped files (np.memmap) for large datasets, or increase available system memory",
+      "category": "python",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "numpy",
+        "memory",
+        "array",
+        "allocation"
+      ],
+      "examples": [
+        "MemoryError: Unable to allocate 10.0 GiB for an array with shape (1000000000,) and data type float64",
+        "numpy.core._exceptions._ArrayMemoryError"
+      ],
+      "metadata": {
+        "library": "numpy"
+      },
+      "criticality": "critical",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "numpy_linear_algebra_error",
+      "pattern": "numpy\\.linalg\\.LinAlgError: (.*)",
+      "type": "LinAlgError",
+      "description": "NumPy linear algebra operation failed",
+      "root_cause": "numpy_linear_algebra_failure",
+      "suggestion": "Check matrix properties (singular matrices can't be inverted), ensure matrices have the correct dimensions for the operation, and consider using np.linalg.pinv for pseudo-inverse of singular matrices",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "numpy",
+        "linear-algebra",
+        "matrix"
+      ],
+      "examples": [
+        "numpy.linalg.LinAlgError: Singular matrix",
+        "numpy.linalg.LinAlgError: Last 2 dimensions of the array must be square"
+      ],
+      "metadata": {
+        "library": "numpy"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "pandas_key_error",
+      "pattern": "pandas\\.(?:errors\\.)?KeyError: (?:['\"](.*)['\"]|([^\\s]+))",
+      "type": "KeyError",
+      "description": "Accessing a column or index label that does not exist in a Pandas dataframe or series",
+      "root_cause": "pandas_invalid_column_or_index",
+      "suggestion": "Check available columns with df.columns or indices with df.index.tolist(), and verify spelling or case of the column/index name",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "pandas",
+        "dataframe",
+        "column",
+        "index"
+      ],
+      "examples": [
+        "pandas.errors.KeyError: 'customer_id'",
+        "KeyError: 'timestamp'"
+      ],
+      "metadata": {
+        "library": "pandas"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "pandas_value_error_concat",
+      "pattern": "ValueError: No objects to concatenate",
+      "type": "ValueError",
+      "description": "Attempted to concatenate an empty sequence of pandas objects",
+      "root_cause": "pandas_empty_concat_list",
+      "suggestion": "Ensure the list of dataframes or series passed to pd.concat() is not empty, and check any filtering operations that might result in empty lists",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "pandas",
+        "concat",
+        "dataframe"
+      ],
+      "examples": [
+        "ValueError: No objects to concatenate"
+      ],
+      "metadata": {
+        "library": "pandas"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "pandas_merge_error",
+      "pattern": "ValueError: You are trying to merge on (?:object|\\w+) and (?:object|\\w+) columns(?:\\. If you wish to proceed you should use pd\\.concat)?",
+      "type": "ValueError",
+      "description": "pandas merge operation failed due to incompatible column types",
+      "root_cause": "pandas_merge_incompatible_types",
+      "suggestion": "Ensure the merge columns have compatible data types using df['column'].dtype, convert types as needed with astype(), and check for whitespace or numeric/string mismatches",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "pandas",
+        "merge",
+        "dataframe",
+        "types"
+      ],
+      "examples": [
+        "ValueError: You are trying to merge on object and int64 columns. If you wish to proceed you should use pd.concat",
+        "ValueError: You are trying to merge on object and object columns"
+      ],
+      "metadata": {
+        "library": "pandas"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "pandas_index_error",
+      "pattern": "IndexingError: (Too many indexers|Unalignable boolean Series provided as indexer \\(index of the boolean Series and of the indexed object do not match\\))",
+      "type": "IndexingError",
+      "description": "Invalid indexing operation in pandas",
+      "root_cause": "pandas_invalid_indexing",
+      "suggestion": "Check your indexing syntax, ensure boolean masks have the same length as the dataframe, and verify that you're using the right number of indexers for your data dimensions",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "pandas",
+        "indexing",
+        "dataframe"
+      ],
+      "examples": [
+        "IndexingError: Too many indexers",
+        "IndexingError: Unalignable boolean Series provided as indexer (index of the boolean Series and of the indexed object do not match)"
+      ],
+      "metadata": {
+        "library": "pandas"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "pandas_file_not_found",
+      "pattern": "(?:FileNotFoundError|EmptyDataError|ParserError):?\\s+(?:File (.*) does not exist|Empty data passed|Error tokenizing data|.*No columns to parse)",
+      "type": "FileNotFoundError",
+      "description": "Pandas couldn't read the specified file or the file is empty or malformed",
+      "root_cause": "pandas_invalid_input_file",
+      "suggestion": "Verify the file path is correct, check that the file exists and has proper permissions, ensure the file is not empty, and validate its format matches the pandas reader function",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "pandas",
+        "file",
+        "io",
+        "parsing"
+      ],
+      "examples": [
+        "FileNotFoundError: File b'data.csv' does not exist",
+        "EmptyDataError: Empty data passed",
+        "ParserError: Error tokenizing data. C error: EOF inside string starting at line 1"
+      ],
+      "metadata": {
+        "library": "pandas"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "pandas_groupby_error",
+      "pattern": "(?:ValueError|DataError):? (?:Grouper for '([^']+)' not 1-dimensional|No numeric types to aggregate|.*Grouper and axis must be same length)",
+      "type": "ValueError",
+      "description": "Error in pandas groupby operation",
+      "root_cause": "pandas_groupby_error",
+      "suggestion": "Ensure the groupby columns exist and contain valid data, verify there are numeric columns to aggregate, and check grouper dimensionality",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "pandas",
+        "groupby",
+        "aggregation"
+      ],
+      "examples": [
+        "ValueError: Grouper for 'date' not 1-dimensional",
+        "DataError: No numeric types to aggregate",
+        "ValueError: Grouper and axis must be same length"
+      ],
+      "metadata": {
+        "library": "pandas"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

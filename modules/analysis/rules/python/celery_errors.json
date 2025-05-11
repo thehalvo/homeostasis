@@ -1,0 +1,309 @@
+{
+  "name": "Celery Task Errors",
+  "description": "Rules for detecting errors in Celery distributed task systems",
+  "rules": [
+    {
+      "id": "celery_task_timeout",
+      "pattern": "(?:celery\\.exceptions\\.SoftTimeLimitExceeded|SoftTimeLimitExceeded)(?:: (.*))?",
+      "type": "SoftTimeLimitExceeded",
+      "description": "Celery task exceeded its soft time limit",
+      "root_cause": "celery_task_soft_timeout",
+      "suggestion": "Optimize the task to complete faster, increase the soft_time_limit in the task decorator, or break the task into smaller chunks",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "celery",
+        "timeout",
+        "performance"
+      ],
+      "examples": [
+        "celery.exceptions.SoftTimeLimitExceeded",
+        "SoftTimeLimitExceeded: Task timed out"
+      ],
+      "metadata": {
+        "framework": "celery"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "celery_task_hard_timeout",
+      "pattern": "(?:celery\\.exceptions\\.TimeLimitExceeded|TimeLimitExceeded)(?:: (.*))?",
+      "type": "TimeLimitExceeded",
+      "description": "Celery task exceeded its hard time limit and was forcibly terminated",
+      "root_cause": "celery_task_hard_timeout",
+      "suggestion": "Optimize the task to complete faster, increase the time_limit in the task decorator, or break the task into smaller chunks. This is more severe than soft timeouts as it forces termination.",
+      "category": "python",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "celery",
+        "timeout",
+        "termination",
+        "performance"
+      ],
+      "examples": [
+        "celery.exceptions.TimeLimitExceeded",
+        "TimeLimitExceeded: Task exceeded time limit"
+      ],
+      "metadata": {
+        "framework": "celery"
+      },
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "celery_task_max_retries",
+      "pattern": "(?:celery\\.exceptions\\.MaxRetriesExceededError|MaxRetriesExceededError)(?::? (.*))?",
+      "type": "MaxRetriesExceededError",
+      "description": "Celery task has reached its maximum number of retries",
+      "root_cause": "celery_max_retries_exceeded",
+      "suggestion": "Increase max_retries in the task decorator, address the underlying cause of failures, or implement a custom retry policy",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "celery",
+        "retry",
+        "failure"
+      ],
+      "examples": [
+        "celery.exceptions.MaxRetriesExceededError",
+        "MaxRetriesExceededError: Task failed after 3 retries"
+      ],
+      "metadata": {
+        "framework": "celery"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "celery_retry_countdown",
+      "pattern": "Task ([a-zA-Z0-9_\\-\\.]+) raised unexpected: (.*?)\nRetrying in (\\d+(?:\\.\\d+)?)s",
+      "type": "TaskRetry",
+      "description": "Celery task has failed and will be retried after a delay",
+      "root_cause": "celery_task_retry",
+      "suggestion": "Check for transient errors that are causing retries and address the underlying issue to prevent repeated retries",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "celery",
+        "retry",
+        "delay"
+      ],
+      "examples": [
+        "Task myapp.tasks.process_data raised unexpected: ConnectionError('Failed to connect')\nRetrying in 60s",
+        "Task tasks.send_email raised unexpected: SMTPError\nRetrying in 300s"
+      ],
+      "metadata": {
+        "framework": "celery"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "celery_task_not_registered",
+      "pattern": "(?:celery\\.exceptions\\.NotRegistered|NotRegistered):? ([A-Za-z0-9_\\-\\.]+)",
+      "type": "NotRegistered",
+      "description": "Attempted to execute a task that isn't registered with the current Celery app",
+      "root_cause": "celery_task_not_registered",
+      "suggestion": "Ensure the task is properly imported and registered, check for typos in the task name, and verify the Celery app configuration",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "celery",
+        "configuration",
+        "import"
+      ],
+      "examples": [
+        "celery.exceptions.NotRegistered: myapp.tasks.process_data",
+        "NotRegistered: tasks.send_notification"
+      ],
+      "metadata": {
+        "framework": "celery"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "celery_task_rejected",
+      "pattern": "(?:celery\\.exceptions\\.Reject|Reject)(?::? (.*))?",
+      "type": "Reject",
+      "description": "Task was rejected and will be discarded (not retried)",
+      "root_cause": "celery_task_rejected",
+      "suggestion": "Check the task implementation for explicit rejections, and verify if the rejection criteria are correct",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "celery",
+        "rejection",
+        "discard"
+      ],
+      "examples": [
+        "celery.exceptions.Reject: Task rejected due to invalid input",
+        "Reject: Permanent failure"
+      ],
+      "metadata": {
+        "framework": "celery"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "celery_worker_connection_error",
+      "pattern": "(?:kombu\\.exceptions\\.OperationalError|OperationalError):? (.*(?:connection|broker|amqp|redis|rabbitmq).*)",
+      "type": "OperationalError",
+      "description": "Connection error with the Celery message broker (RabbitMQ, Redis, etc.)",
+      "root_cause": "celery_broker_connection_error",
+      "suggestion": "Check broker connection settings, ensure the message broker is running, and implement connection retry logic with backoff",
+      "category": "python",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "celery",
+        "broker",
+        "connection",
+        "kombu"
+      ],
+      "examples": [
+        "kombu.exceptions.OperationalError: [Errno 111] Connection refused",
+        "OperationalError: Error connecting to redis://localhost:6379/0: Connection refused"
+      ],
+      "metadata": {
+        "framework": "celery"
+      },
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "celery_worker_lost",
+      "pattern": "Task ([A-Za-z0-9_\\-\\.]+)\\[([0-9a-f\\-]+)\\] (?:raised|received) unexpected:? (.*WorkerLostError.*)",
+      "type": "WorkerLostError",
+      "description": "Celery worker executing the task was terminated or crashed",
+      "root_cause": "celery_worker_lost",
+      "suggestion": "Check worker logs for crashes, increase worker memory limits if needed, and ensure the worker is properly configured for task resource requirements",
+      "category": "python",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "celery",
+        "worker",
+        "crash",
+        "termination"
+      ],
+      "examples": [
+        "Task app.tasks.process_data[abc123] raised unexpected: WorkerLostError('Worker exited prematurely: signal 9 (SIGKILL)')",
+        "Task tasks.generate_report[def456] received unexpected: WorkerLostError"
+      ],
+      "metadata": {
+        "framework": "celery"
+      },
+      "criticality": "critical",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "celery_task_ignored",
+      "pattern": "Task ([A-Za-z0-9_\\-\\.]+)\\[([0-9a-f\\-]+)\\] (?:ignored|skipped|will be ignored)",
+      "type": "TaskIgnored",
+      "description": "Celery task was ignored, typically due to being revoked or already completed",
+      "root_cause": "celery_task_ignored",
+      "suggestion": "Check if tasks are being revoked explicitly, verify task idempotency settings, and ensure there are no duplicate task IDs",
+      "category": "python",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "python",
+        "celery",
+        "ignored",
+        "revoked"
+      ],
+      "examples": [
+        "Task app.tasks.process_payment[abc123] ignored",
+        "Task tasks.send_notification[def456] will be ignored"
+      ],
+      "metadata": {
+        "framework": "celery"
+      },
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "celery_chord_error",
+      "pattern": "(?:celery\\.exceptions\\.ChordError|ChordError):? (.*)",
+      "type": "ChordError",
+      "description": "Error in a Celery chord workflow (group of tasks with a callback)",
+      "root_cause": "celery_chord_failure",
+      "suggestion": "Check all tasks in the chord group for failures, ensure the chord backend is properly configured, and verify the chord callback task",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "celery",
+        "chord",
+        "workflow"
+      ],
+      "examples": [
+        "celery.exceptions.ChordError: Callback task failed with exception: ValueError",
+        "ChordError: One or more tasks failed in the chord"
+      ],
+      "metadata": {
+        "framework": "celery"
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}
