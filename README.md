@@ -165,6 +165,10 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Framework Support**: Expanded framework support with Django middleware, Flask blueprint-specific error handling, FastAPI dependency analysis, and ASGI framework support
 - **Python Ecosystem**: Added support for Python 3.11+ features, Celery tasks, asyncio-specific error detection, NumPy/Pandas error handling, and AI/ML library error detection
 - **Multi-Language Support**: Implemented language-agnostic error schema with support for JavaScript/Node.js and Java through a pluggable adapter architecture
+- **Production Readiness**: Enhanced security model with RBAC, implemented approval workflows for critical changes, added rate limiting/throttling for healing actions, and developed comprehensive audit logging
+- **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities
+- **User Experience**: Released web dashboard for monitoring healing activities, implemented fix suggestion interface for human review, added configuration management UI, performance reporting, and custom rule/template editors
+- **Deployment Options**: Added canary deployment support for gradual rollout of fixes with automatic promotion/rollback based on metrics
 
 ## Contributing
 

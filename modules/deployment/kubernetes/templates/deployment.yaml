@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {name}
+  namespace: {namespace}
+  labels:
+    app: {name}
+    fix_id: {fix_id}
+spec:
+  replicas: {replicas}
+  selector:
+    matchLabels:
+      app: {name}
+      fix_id: {fix_id}
+  strategy:
+    type: {strategy_type}
+  template:
+    metadata:
+      labels:
+        app: {name}
+        fix_id: {fix_id}
+    spec:
+      serviceAccountName: {service_account}
+      containers:
+      - name: {name}
+        image: {image}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {port}
+        resources:
+          limits:
+            cpu: {cpu_limit}
+            memory: {memory_limit}
+          requests:
+            cpu: {cpu_request}
+            memory: {memory_request}
+        livenessProbe:
+          httpGet:
+            path: {liveness_path}
+            port: {liveness_port}
+          initialDelaySeconds: {liveness_delay}
+          periodSeconds: {liveness_period}
+        readinessProbe:
+          httpGet:
+            path: {readiness_path}
+            port: {readiness_port}
+          initialDelaySeconds: {readiness_delay}
+          periodSeconds: {readiness_period}
+        env:
+{environment_variables}

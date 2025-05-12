@@ -6,6 +6,94 @@ general:
   log_level: "INFO"
   environment: "development" # "development", "staging", or "production"
 
+# Security settings
+security:
+  enabled: true
+  # Authentication and authorization
+  auth:
+    enabled: true
+    token_expiry: 3600  # 1 hour
+    refresh_token_expiry: 604800  # 7 days
+  # Rate limiting for API endpoints
+  rate_limits:
+    global: [100, 60]  # 100 requests per 60 seconds globally
+    user: [20, 60]     # 20 requests per 60 seconds per user
+    ip: [50, 60]       # 50 requests per 60 seconds per IP
+  # Endpoint-specific rate limits
+  endpoint_limits:
+    "/api/fixes":
+      global: [50, 60]
+      user: [10, 60]
+    "/api/deploy":
+      global: [20, 60]
+      user: [5, 60]
+  # Rate limiting for healing actions
+  healing_rate_limits:
+    enabled: true
+    min_healing_cycle_interval: 60  # Minimum seconds between healing cycles
+    # Default limits [count, period_in_seconds]
+    limits:
+      healing_cycle: [10, 3600]     # 10 healing cycles per hour
+      patch_application: [20, 3600] # 20 patch applications per hour
+      deployment: [5, 3600]         # 5 deployments per hour
+      file: [3, 3600]               # 3 patches per file per hour
+      critical_file: [1, 3600]      # 1 patch per critical file per hour
+    # Environment-specific limits
+    environment_limits:
+      development:
+        healing_cycle: [20, 3600]   # More permissive in development
+        patch_application: [30, 3600]
+      staging:
+        healing_cycle: [15, 3600]   # Moderate in staging
+        patch_application: [25, 3600]
+      production:
+        healing_cycle: [5, 3600]    # Most restrictive in production
+        patch_application: [10, 3600]
+        deployment: [3, 3600]
+        file: [2, 3600]
+        critical_file: [1, 86400]   # Only 1 critical file patch per day in production
+    # Files considered critical (require special protection)
+    critical_files:
+      - "orchestrator/orchestrator.py"
+      - "modules/patch_generation/patcher.py"
+      - "modules/security/"
+      - "modules/deployment/"
+  # Approval workflow for critical changes
+  approval:
+    enabled: true
+    required_approvers: 1  # Number of approvers required for critical changes
+    approval_timeout: 86400  # 24 hours
+    # Fix types that require approval
+    critical_fix_types:
+      - "database_schema"
+      - "security"
+      - "authentication"
+      - "authorization"
+  # Audit logging
+  audit:
+    enabled: true
+    log_file: "logs/audit.log"
+    rotation: "daily"  # "hourly", "daily", "weekly"
+    retention: 90  # days
+    events:
+      - "login"
+      - "logout"
+      - "fix_generated"
+      - "fix_approved"
+      - "fix_rejected"
+      - "fix_deployed"
+      - "system_config_changed"
+  # Canary deployment
+  canary:
+    enabled: true
+    percentage: 10  # Percentage of traffic to route to canary
+    duration: 1800  # 30 minutes
+    success_threshold: 0.95  # 95% success rate required
+    metrics:
+      - "error_rate"
+      - "response_time"
+      - "memory_usage"
+
 # Service settings
 service:
   name: "example_service"
@@ -36,12 +124,53 @@ monitoring:
       response_time: 500 # 500ms
       memory_usage: 512 # 512MB
 
+# Comprehensive audit monitoring
+audit_monitor:
+  enabled: true
+  check_interval: 60 # Check for new audit events every 60 seconds
+  event_cache_size: 1000 # Number of recent events to keep in memory
+  activity_threshold: 10 # Events per minute threshold for anomaly detection
+  report_interval: 3600 # Generate reports every hour
+  report_format: "json" # Format for reports ("json", "text", "csv")
+  report_path: "logs/audit_reports"
+  alerts:
+    enabled: true
+    anomaly_types:
+      - "high_activity"
+      - "rapid_approval_deployment"
+      - "failed_deployments"
+    notification_channels:
+      - "log"
+      - "email"
+
+# Healing activity auditing
+healing_audit:
+  enabled: true
+  detailed_logging: true # Include detailed information in logs
+  track_execution_time: true # Track execution time for performance analysis
+  cleanup_completed_sessions: true # Remove finished sessions from memory
+
 # Analysis settings
 analysis:
   rule_based:
     enabled: true
   ai_based:
     enabled: false # Set to true to enable AI-based analysis (currently a stub)
+
+# Suggestion interface settings
+suggestion:
+  enabled: true
+  storage_dir: "logs/suggestions"
+  require_human_review: true # If true, all fixes will require human review before deployment
+  ranking:
+    metrics:
+      - "confidence"
+      - "fix_type"
+      - "historical_success"
+    weights:
+      confidence: 0.6
+      fix_type: 0.3
+      historical_success: 0.1
 
 # Patch generation settings
 patch_generation:
@@ -107,6 +236,84 @@ deployment:
   restart_service: true
   backup_before_deployment: true
   backup_dir: "logs/backups"
+  # Production deployment settings
+  production:
+    require_approval: true
+    canary_deployment: true
+    blue_green: false  # Blue-green deployment option
+    rollback_timeout: 1800  # 30 minutes, auto-rollback if issues detected
+  # Kubernetes deployment
+  kubernetes:
+    enabled: true  # Kubernetes integration is now enabled
+    namespace: "homeostasis"
+    deployment_strategy: "rolling-update"
+    service_account: "homeostasis-sa"
+    context: ""  # Leave empty to use current context, or specify a context name
+    resource_limits:
+      cpu: "1.0"
+      memory: "1g"
+      cpu_request: "0.5"  # CPU request for resources
+      memory_request: "512m"  # Memory request for resources
+    health_probes:
+      liveness:
+        path: "/health"
+        port: 8000
+        initial_delay: 10
+        period: 30
+      readiness:
+        path: "/health"
+        port: 8000
+        initial_delay: 5
+        period: 10
+    ingress:
+      enabled: true  # Enable Ingress creation
+      annotations:
+        "kubernetes.io/ingress.class": "nginx"
+        "nginx.ingress.kubernetes.io/rewrite-target": "/"
+      host_template: "{service}.homeostasis.local"  # Template for ingress hostnames
+    template_dir: "modules/deployment/kubernetes/templates"  # Location of Kubernetes YAML templates
+  # Cloud provider integration
+  cloud:
+    provider: "none"  # "aws", "gcp", "azure", or "none"
+    region: "us-west-2"
+    # AWS-specific settings
+    aws:
+      enabled: false
+      lambda_function: false
+      ecs_service: false
+      eks_cluster: false
+      role_arn: ""  # IAM role ARN for AWS services
+      # ECS-specific settings
+      ecs:
+        cluster_name: "homeostasis"
+        subnets: []  # List of subnet IDs for ECS tasks
+        security_groups: []  # List of security group IDs for ECS tasks
+      # EKS-specific settings
+      eks:
+        cluster_name: "homeostasis"
+    # GCP-specific settings
+    gcp:
+      enabled: false
+      project_id: ""  # GCP project ID
+      location: "us-central1"
+      cloud_function: false
+      cloud_run: false
+      gke_cluster: false
+      # GKE-specific settings
+      gke:
+        cluster_name: "homeostasis"
+    # Azure-specific settings
+    azure:
+      enabled: false
+      subscription_id: ""  # Azure subscription ID
+      resource_group: "homeostasis"
+      location: "eastus"
+      function_app: false
+      container_instance: false
+      aks_cluster: false
+      # AKS-specific settings
+      aks:
+        cluster_name: "homeostasis"
   
 # Rollback settings
 rollback:

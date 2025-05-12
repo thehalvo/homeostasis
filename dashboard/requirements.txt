@@ -1,0 +1,28 @@
+# Core web framework
+flask==2.3.3
+flask-cors==4.0.0
+flask-socketio==5.3.5
+
+# Security
+flask-login==0.6.2
+flask-jwt-extended==4.5.3
+flask-bcrypt==1.0.1
+
+# Data handling
+pyyaml==6.0.1
+pandas==2.1.0
+numpy==1.25.2
+
+# UI templates
+Jinja2==3.1.2
+flask-wtf==1.2.1
+
+# Database (optional - used for storing dashboard state)
+flask-sqlalchemy==3.1.1
+sqlalchemy==2.0.21
+
+# Utilities
+python-dotenv==1.0.0
+requests==2.31.0
+werkzeug==2.3.7
+cachetools==5.3.1

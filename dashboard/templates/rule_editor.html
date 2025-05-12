@@ -1,0 +1,783 @@
+{% extends "base.html" %}
+
+{% block title %}Rule Editor - Homeostasis{% endblock %}
+
+{% block extra_css %}
+<!-- CodeMirror CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/theme/monokai.min.css">
+<style>
+    .CodeMirror {
+        height: auto;
+        min-height: 300px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .invalid-feedback {
+        display: none;
+    }
+    .is-invalid + .invalid-feedback {
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            {% if rule.id %}
+            Edit Rule: {{ rule.name }}
+            {% else %}
+            Create New Rule
+            {% endif %}
+        </h1>
+        <div>
+            <a href="{{ url_for('configuration') }}#rules" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back to Rules
+            </a>
+            {% if rule.id %}
+            <button id="test-rule-btn" class="btn btn-info">
+                <i class="fas fa-vial me-1"></i> Test Rule
+            </button>
+            <button id="delete-rule-btn" class="btn btn-danger">
+                <i class="fas fa-trash me-1"></i> Delete
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="rule-editor-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button" role="tab" aria-controls="basic" aria-selected="true">Basic Information</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pattern-tab" data-bs-toggle="tab" data-bs-target="#pattern" type="button" role="tab" aria-controls="pattern" aria-selected="false">Error Pattern</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="template-tab" data-bs-toggle="tab" data-bs-target="#template" type="button" role="tab" aria-controls="template" aria-selected="false">Fix Template</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="advanced-tab" data-bs-toggle="tab" data-bs-target="#advanced" type="button" role="tab" aria-controls="advanced" aria-selected="false">Advanced</button>
+                </li>
+                {% if rule.id %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">History</button>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="card-body">
+            <form id="rule-form">
+                <input type="hidden" id="rule-id" name="id" value="{{ rule.id or '' }}">
+                
+                <div class="tab-content" id="rule-editor-tab-content">
+                    <!-- Basic Information Tab -->
+                    <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="rule-name" class="form-label">Rule Name</label>
+                                    <input type="text" class="form-control" id="rule-name" name="name" value="{{ rule.name or '' }}" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a name for this rule.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="rule-category" class="form-label">Category</label>
+                                    <select class="form-select" id="rule-category" name="category" required>
+                                        <option value="">Select a category...</option>
+                                        <option value="python" {% if rule.category == 'python' %}selected{% endif %}>Python</option>
+                                        <option value="javascript" {% if rule.category == 'javascript' %}selected{% endif %}>JavaScript</option>
+                                        <option value="database" {% if rule.category == 'database' %}selected{% endif %}>Database</option>
+                                        <option value="network" {% if rule.category == 'network' %}selected{% endif %}>Network</option>
+                                        <option value="authentication" {% if rule.category == 'authentication' %}selected{% endif %}>Authentication</option>
+                                        <option value="authorization" {% if rule.category == 'authorization' %}selected{% endif %}>Authorization</option>
+                                        <option value="validation" {% if rule.category == 'validation' %}selected{% endif %}>Validation</option>
+                                        <option value="custom" {% if rule.category == 'custom' %}selected{% endif %}>Custom</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select a category.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="rule-description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="rule-description" name="description" rows="4">{{ rule.description or '' }}</textarea>
+                                    <div class="form-text">Briefly describe what this rule detects and how it works.</div>
+                                </div>
+                                
+                                <div class="mb-3 form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="rule-enabled" name="enabled" {% if rule.enabled or rule.enabled is not defined %}checked{% endif %}>
+                                    <label class="form-check-label" for="rule-enabled">Rule Enabled</label>
+                                    <div class="form-text">When disabled, this rule will not be used for error detection.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Error Pattern Tab -->
+                    <div class="tab-pane fade" id="pattern" role="tabpanel" aria-labelledby="pattern-tab">
+                        <div class="mb-3">
+                            <label for="rule-error-type" class="form-label">Error Type</label>
+                            <select class="form-select" id="rule-error-type" name="error_type">
+                                <option value="">Any Error Type</option>
+                                <option value="AttributeError" {% if rule.error_type == 'AttributeError' %}selected{% endif %}>AttributeError</option>
+                                <option value="KeyError" {% if rule.error_type == 'KeyError' %}selected{% endif %}>KeyError</option>
+                                <option value="IndexError" {% if rule.error_type == 'IndexError' %}selected{% endif %}>IndexError</option>
+                                <option value="TypeError" {% if rule.error_type == 'TypeError' %}selected{% endif %}>TypeError</option>
+                                <option value="ValueError" {% if rule.error_type == 'ValueError' %}selected{% endif %}>ValueError</option>
+                                <option value="NameError" {% if rule.error_type == 'NameError' %}selected{% endif %}>NameError</option>
+                                <option value="ImportError" {% if rule.error_type == 'ImportError' %}selected{% endif %}>ImportError</option>
+                                <option value="SyntaxError" {% if rule.error_type == 'SyntaxError' %}selected{% endif %}>SyntaxError</option>
+                                <option value="RuntimeError" {% if rule.error_type == 'RuntimeError' %}selected{% endif %}>RuntimeError</option>
+                                <option value="ConnectionError" {% if rule.error_type == 'ConnectionError' %}selected{% endif %}>ConnectionError</option>
+                                <option value="ValidationError" {% if rule.error_type == 'ValidationError' %}selected{% endif %}>ValidationError</option>
+                                <option value="AuthenticationError" {% if rule.error_type == 'AuthenticationError' %}selected{% endif %}>AuthenticationError</option>
+                                <option value="custom" {% if rule.error_type == 'custom' %}selected{% endif %}>Custom...</option>
+                            </select>
+                            <div class="form-text">Select the error type this rule should match, or leave empty to match any error.</div>
+                        </div>
+                        
+                        <div class="mb-3" id="custom-error-type-container" style="display: none;">
+                            <label for="custom-error-type" class="form-label">Custom Error Type</label>
+                            <input type="text" class="form-control" id="custom-error-type" name="custom_error_type" value="{{ rule.custom_error_type or '' }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="rule-pattern" class="form-label">Error Pattern (Regex)</label>
+                            <textarea class="form-control code-editor" id="rule-pattern" name="pattern" required>{{ rule.pattern or '' }}</textarea>
+                            <div class="invalid-feedback">
+                                Please provide a pattern for matching errors.
+                            </div>
+                            <div class="form-text">
+                                Regular expression pattern to match error messages. Use Python regular expression syntax.
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#regex-help-modal">Need help with regex?</a>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="rule-examples" class="form-label">Example Errors</label>
+                            <textarea class="form-control" id="rule-examples" name="examples" rows="3">{{ rule.examples or '' }}</textarea>
+                            <div class="form-text">Provide sample error messages that this rule should match, one per line.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <button type="button" id="test-pattern-btn" class="btn btn-primary">
+                                <i class="fas fa-flask me-1"></i> Test Pattern
+                            </button>
+                        </div>
+                        
+                        <div id="pattern-test-results" class="mt-3" style="display: none;">
+                            <h5>Pattern Test Results</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Example</th>
+                                            <th>Result</th>
+                                            <th>Captured Groups</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pattern-test-results-body">
+                                        <!-- Results will be inserted here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Fix Template Tab -->
+                    <div class="tab-pane fade" id="template" role="tabpanel" aria-labelledby="template-tab">
+                        <div class="mb-3">
+                            <label for="rule-template" class="form-label">Fix Template</label>
+                            <select class="form-select" id="rule-template" name="template_id">
+                                <option value="">Select a template...</option>
+                                {% for template in templates %}
+                                <option value="{{ template.id }}" {% if rule.template_id == template.id %}selected{% endif %}>{{ template.name }} ({{ template.category }})</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">
+                                Select a template to use for generating fixes.
+                                <a href="{{ url_for('template_editor_new') }}" target="_blank">Create new template</a>
+                            </div>
+                        </div>
+                        
+                        <div id="template-preview" class="mb-3" {% if not rule.template_id %}style="display: none;"{% endif %}>
+                            <h5>Template Preview</h5>
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span id="template-name">{{ selected_template.name if selected_template else '' }}</span>
+                                        <a href="{{ url_for('template_editor', template_id=rule.template_id) if rule.template_id else '#' }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            Edit Template
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <pre><code id="template-content">{{ selected_template.content if selected_template else '' }}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="rule-template-parameters" class="form-label">Template Parameters</label>
+                            <textarea class="form-control code-editor" id="rule-template-parameters" name="template_parameters" rows="6">{{ rule.template_parameters|tojson(indent=2) if rule.template_parameters else '{}' }}</textarea>
+                            <div class="invalid-feedback">
+                                Invalid JSON format.
+                            </div>
+                            <div class="form-text">
+                                JSON object of parameters to pass to the template. These values override the template defaults.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Advanced Tab -->
+                    <div class="tab-pane fade" id="advanced" role="tabpanel" aria-labelledby="advanced-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="rule-confidence" class="form-label">Confidence Threshold</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="rule-confidence" name="confidence" value="{{ rule.confidence or 90 }}" min="0" max="100">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <div class="form-text">
+                                        Minimum confidence level required to apply fixes from this rule.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="rule-priority" class="form-label">Priority</label>
+                                    <select class="form-select" id="rule-priority" name="priority">
+                                        <option value="high" {% if rule.priority == 'high' %}selected{% endif %}>High</option>
+                                        <option value="medium" {% if rule.priority == 'medium' or not rule.priority %}selected{% endif %}>Medium</option>
+                                        <option value="low" {% if rule.priority == 'low' %}selected{% endif %}>Low</option>
+                                    </select>
+                                    <div class="form-text">
+                                        Priority determines the order in which rules are evaluated.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="rule-tags" class="form-label">Tags</label>
+                                    <input type="text" class="form-control" id="rule-tags" name="tags" value="{{ rule.tags|join(', ') if rule.tags else '' }}">
+                                    <div class="form-text">
+                                        Comma-separated list of tags to help with organizing and filtering rules.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3 form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="rule-approval-required" name="approval_required" {% if rule.approval_required %}checked{% endif %}>
+                                    <label class="form-check-label" for="rule-approval-required">Require Approval</label>
+                                    <div class="form-text">
+                                        When enabled, fixes generated by this rule will require manual approval before being applied.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3 form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="rule-auto-test" name="auto_test" {% if rule.auto_test or rule.auto_test is not defined %}checked{% endif %}>
+                                    <label class="form-check-label" for="rule-auto-test">Automatically Test Fixes</label>
+                                    <div class="form-text">
+                                        When enabled, generated fixes will be automatically tested before being applied.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="rule-custom-metadata" class="form-label">Custom Metadata</label>
+                            <textarea class="form-control code-editor" id="rule-custom-metadata" name="custom_metadata" rows="6">{{ rule.custom_metadata|tojson(indent=2) if rule.custom_metadata else '{}' }}</textarea>
+                            <div class="invalid-feedback">
+                                Invalid JSON format.
+                            </div>
+                            <div class="form-text">
+                                Additional JSON metadata for this rule.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- History Tab -->
+                    {% if rule.id %}
+                    <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>User</th>
+                                        <th>Action</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in rule_history %}
+                                    <tr>
+                                        <td>{{ entry.timestamp }}</td>
+                                        <td>{{ entry.user }}</td>
+                                        <td>{{ entry.action }}</td>
+                                        <td>{{ entry.details }}</td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">No history available</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mt-4 d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ url_for('configuration') }}#rules'">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Save Rule
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Regex Help Modal -->
+<div class="modal fade" id="regex-help-modal" tabindex="-1" aria-labelledby="regex-help-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="regex-help-modal-label">Regular Expression Help</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Common Patterns</h6>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Pattern</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>.</code></td>
+                            <td>Matches any character except newline</td>
+                            <td><code>a.</code> matches "ab", "ac", etc.</td>
+                        </tr>
+                        <tr>
+                            <td><code>\d</code></td>
+                            <td>Matches any digit (0-9)</td>
+                            <td><code>\d{3}</code> matches "123", "456", etc.</td>
+                        </tr>
+                        <tr>
+                            <td><code>\w</code></td>
+                            <td>Matches any word character (a-z, A-Z, 0-9, _)</td>
+                            <td><code>\w+</code> matches "abc123", "python", etc.</td>
+                        </tr>
+                        <tr>
+                            <td><code>\s</code></td>
+                            <td>Matches any whitespace character</td>
+                            <td><code>a\sb</code> matches "a b", "a\tb", etc.</td>
+                        </tr>
+                        <tr>
+                            <td><code>[...]</code></td>
+                            <td>Matches any character in the brackets</td>
+                            <td><code>[aeiou]</code> matches any vowel</td>
+                        </tr>
+                        <tr>
+                            <td><code>^</code></td>
+                            <td>Matches start of string</td>
+                            <td><code>^Error</code> matches lines starting with "Error"</td>
+                        </tr>
+                        <tr>
+                            <td><code>$</code></td>
+                            <td>Matches end of string</td>
+                            <td><code>error$</code> matches lines ending with "error"</td>
+                        </tr>
+                        <tr>
+                            <td><code>*</code></td>
+                            <td>Matches 0 or more occurrences</td>
+                            <td><code>ab*c</code> matches "ac", "abc", "abbc", etc.</td>
+                        </tr>
+                        <tr>
+                            <td><code>+</code></td>
+                            <td>Matches 1 or more occurrences</td>
+                            <td><code>ab+c</code> matches "abc", "abbc", etc.</td>
+                        </tr>
+                        <tr>
+                            <td><code>?</code></td>
+                            <td>Matches 0 or 1 occurrence</td>
+                            <td><code>ab?c</code> matches "ac" or "abc"</td>
+                        </tr>
+                        <tr>
+                            <td><code>{n}</code></td>
+                            <td>Matches exactly n occurrences</td>
+                            <td><code>a{3}</code> matches "aaa"</td>
+                        </tr>
+                        <tr>
+                            <td><code>{n,m}</code></td>
+                            <td>Matches between n and m occurrences</td>
+                            <td><code>a{2,4}</code> matches "aa", "aaa", or "aaaa"</td>
+                        </tr>
+                        <tr>
+                            <td><code>|</code></td>
+                            <td>Alternation (OR)</td>
+                            <td><code>cat|dog</code> matches "cat" or "dog"</td>
+                        </tr>
+                        <tr>
+                            <td><code>(...)</code></td>
+                            <td>Capturing group</td>
+                            <td><code>(abc)+</code> matches "abc", "abcabc", etc.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h6 class="mt-4">Error Pattern Examples</h6>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Error Type</th>
+                            <th>Pattern Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>AttributeError</td>
+                            <td><code>AttributeError: '(\w+)' object has no attribute '(\w+)'</code></td>
+                        </tr>
+                        <tr>
+                            <td>KeyError</td>
+                            <td><code>KeyError: ['"]?(\w+)['"]?</code></td>
+                        </tr>
+                        <tr>
+                            <td>TypeError</td>
+                            <td><code>TypeError: (\w+)\(\) takes (\d+) .* but (\d+) .* given</code></td>
+                        </tr>
+                        <tr>
+                            <td>IndexError</td>
+                            <td><code>IndexError: (list|tuple) index out of range</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- CodeMirror JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/addon/edit/matchbrackets.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize CodeMirror instances
+        const patternEditor = CodeMirror.fromTextArea(document.getElementById('rule-pattern'), {
+            mode: 'python',
+            theme: 'monokai',
+            lineNumbers: true,
+            matchBrackets: true,
+            indentUnit: 4,
+            tabSize: 4,
+            indentWithTabs: false,
+            lineWrapping: true
+        });
+        
+        const templateParametersEditor = CodeMirror.fromTextArea(document.getElementById('rule-template-parameters'), {
+            mode: { name: 'javascript', json: true },
+            theme: 'monokai',
+            lineNumbers: true,
+            matchBrackets: true,
+            indentUnit: 2,
+            tabSize: 2,
+            indentWithTabs: false,
+            lineWrapping: true
+        });
+        
+        const customMetadataEditor = CodeMirror.fromTextArea(document.getElementById('rule-custom-metadata'), {
+            mode: { name: 'javascript', json: true },
+            theme: 'monokai',
+            lineNumbers: true,
+            matchBrackets: true,
+            indentUnit: 2,
+            tabSize: 2,
+            indentWithTabs: false,
+            lineWrapping: true
+        });
+        
+        // Handle custom error type
+        const errorTypeSelect = document.getElementById('rule-error-type');
+        const customErrorTypeContainer = document.getElementById('custom-error-type-container');
+        
+        errorTypeSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customErrorTypeContainer.style.display = 'block';
+            } else {
+                customErrorTypeContainer.style.display = 'none';
+            }
+        });
+        
+        // Trigger initial check
+        if (errorTypeSelect.value === 'custom') {
+            customErrorTypeContainer.style.display = 'block';
+        }
+        
+        // Handle template selection
+        const templateSelect = document.getElementById('rule-template');
+        const templatePreview = document.getElementById('template-preview');
+        const templateName = document.getElementById('template-name');
+        const templateContent = document.getElementById('template-content');
+        
+        templateSelect.addEventListener('change', function() {
+            if (this.value) {
+                // Fetch template details
+                fetch(`/api/templates/${this.value}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            templateName.textContent = data.template.name;
+                            templateContent.textContent = data.template.content;
+                            document.querySelector('#template-preview a').href = `/templates/editor/${data.template.id}`;
+                            templatePreview.style.display = 'block';
+                        } else {
+                            console.error('Error fetching template:', data.message);
+                            templatePreview.style.display = 'none';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching template:', error);
+                        templatePreview.style.display = 'none';
+                    });
+            } else {
+                templatePreview.style.display = 'none';
+            }
+        });
+        
+        // Test pattern button
+        document.getElementById('test-pattern-btn').addEventListener('click', function() {
+            const pattern = patternEditor.getValue();
+            const examples = document.getElementById('rule-examples').value.split('\n').filter(line => line.trim());
+            
+            if (!pattern || examples.length === 0) {
+                alert('Please provide a pattern and at least one example error message.');
+                return;
+            }
+            
+            // Test pattern against examples
+            const results = [];
+            examples.forEach(example => {
+                try {
+                    const regex = new RegExp(pattern);
+                    const match = example.match(regex);
+                    
+                    if (match) {
+                        const groups = match.slice(1);
+                        results.push({
+                            example,
+                            result: 'Match',
+                            groups: groups.length > 0 ? groups : ['No capture groups']
+                        });
+                    } else {
+                        results.push({
+                            example,
+                            result: 'No Match',
+                            groups: []
+                        });
+                    }
+                } catch (error) {
+                    results.push({
+                        example,
+                        result: `Error: ${error.message}`,
+                        groups: []
+                    });
+                }
+            });
+            
+            // Display results
+            const resultsBody = document.getElementById('pattern-test-results-body');
+            resultsBody.innerHTML = '';
+            
+            results.forEach(result => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${result.example}</td>
+                    <td><span class="badge bg-${result.result === 'Match' ? 'success' : (result.result.startsWith('Error') ? 'danger' : 'warning')}">${result.result}</span></td>
+                    <td>${result.groups.map(group => `<span class="badge bg-info me-1">${group}</span>`).join(' ')}</td>
+                `;
+                resultsBody.appendChild(row);
+            });
+            
+            document.getElementById('pattern-test-results').style.display = 'block';
+        });
+        
+        // Form submission
+        document.getElementById('rule-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Update CodeMirror values
+            patternEditor.save();
+            templateParametersEditor.save();
+            customMetadataEditor.save();
+            
+            // Basic validation
+            let valid = true;
+            const requiredFields = ['rule-name', 'rule-category', 'rule-pattern'];
+            
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field);
+                if (!element.value.trim()) {
+                    element.classList.add('is-invalid');
+                    valid = false;
+                } else {
+                    element.classList.remove('is-invalid');
+                }
+            });
+            
+            // Validate JSON fields
+            try {
+                const templateParams = document.getElementById('rule-template-parameters').value.trim();
+                if (templateParams) {
+                    JSON.parse(templateParams);
+                }
+                document.getElementById('rule-template-parameters').classList.remove('is-invalid');
+            } catch (error) {
+                document.getElementById('rule-template-parameters').classList.add('is-invalid');
+                valid = false;
+            }
+            
+            try {
+                const customMetadata = document.getElementById('rule-custom-metadata').value.trim();
+                if (customMetadata) {
+                    JSON.parse(customMetadata);
+                }
+                document.getElementById('rule-custom-metadata').classList.remove('is-invalid');
+            } catch (error) {
+                document.getElementById('rule-custom-metadata').classList.add('is-invalid');
+                valid = false;
+            }
+            
+            if (!valid) {
+                return;
+            }
+            
+            // Collect form data
+            const formData = new FormData(this);
+            const ruleData = {};
+            
+            for (const [key, value] of formData.entries()) {
+                ruleData[key] = value;
+            }
+            
+            // Process checkbox fields
+            ruleData.enabled = document.getElementById('rule-enabled').checked;
+            ruleData.approval_required = document.getElementById('rule-approval-required').checked;
+            ruleData.auto_test = document.getElementById('rule-auto-test').checked;
+            
+            // Process JSON fields
+            ruleData.template_parameters = ruleData.template_parameters ? JSON.parse(ruleData.template_parameters) : {};
+            ruleData.custom_metadata = ruleData.custom_metadata ? JSON.parse(ruleData.custom_metadata) : {};
+            
+            // Process tags
+            ruleData.tags = ruleData.tags ? ruleData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+            
+            // Process custom error type
+            if (ruleData.error_type === 'custom') {
+                ruleData.error_type = ruleData.custom_error_type;
+            }
+            delete ruleData.custom_error_type;
+            
+            // Convert confidence to number
+            ruleData.confidence = parseInt(ruleData.confidence);
+            
+            // Send data to server
+            const isNew = !ruleData.id;
+            const url = isNew ? '/api/rules' : `/api/rules/${ruleData.id}`;
+            const method = isNew ? 'POST' : 'PUT';
+            
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ rule: ruleData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/config#rules';
+                } else {
+                    alert(`Error saving rule: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error saving rule:', error);
+                alert(`Error saving rule: ${error.message}`);
+            });
+        });
+        
+        // Delete rule button
+        const deleteButton = document.getElementById('delete-rule-btn');
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete this rule? This action cannot be undone.')) {
+                    const ruleId = document.getElementById('rule-id').value;
+                    
+                    fetch(`/api/rules/${ruleId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '/config#rules';
+                        } else {
+                            alert(`Error deleting rule: ${data.message}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting rule:', error);
+                        alert(`Error deleting rule: ${error.message}`);
+                    });
+                }
+            });
+        }
+        
+        // Test rule button
+        const testRuleButton = document.getElementById('test-rule-btn');
+        if (testRuleButton) {
+            testRuleButton.addEventListener('click', function() {
+                const ruleId = document.getElementById('rule-id').value;
+                
+                fetch(`/api/rules/${ruleId}/test`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Rule test successful! Matches: ${data.matches}, Success Rate: ${data.success_rate}%`);
+                    } else {
+                        alert(`Error testing rule: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error testing rule:', error);
+                    alert(`Error testing rule: ${error.message}`);
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

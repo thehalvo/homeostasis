@@ -1,0 +1,1397 @@
+{% extends "base.html" %}
+
+{% block title %}Performance & Impact Reports - Homeostasis{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Performance & Impact Reports</h1>
+    <p class="lead">Monitor the performance and impact of self-healing activities.</p>
+
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="list-group" id="report-tabs" role="tablist">
+                <a class="list-group-item list-group-item-action active" id="overview-tab" data-toggle="list" href="#overview" role="tab" aria-controls="overview">Overview</a>
+                <a class="list-group-item list-group-item-action" id="performance-tab" data-toggle="list" href="#performance" role="tab" aria-controls="performance">Performance Metrics</a>
+                <a class="list-group-item list-group-item-action" id="healing-tab" data-toggle="list" href="#healing" role="tab" aria-controls="healing">Healing Activities</a>
+                <a class="list-group-item list-group-item-action" id="deployment-tab" data-toggle="list" href="#deployment" role="tab" aria-controls="deployment">Deployment Impact</a>
+                <a class="list-group-item list-group-item-action" id="service-tab" data-toggle="list" href="#service" role="tab" aria-controls="service">Service Health</a>
+                <a class="list-group-item list-group-item-action" id="audit-tab" data-toggle="list" href="#audit" role="tab" aria-controls="audit">Audit Reports</a>
+                <a class="list-group-item list-group-item-action" id="export-tab" data-toggle="list" href="#export" role="tab" aria-controls="export">Export Reports</a>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Filter Options</h5>
+                </div>
+                <div class="card-body">
+                    <form id="filter-form">
+                        <div class="form-group">
+                            <label for="time-range">Time Range</label>
+                            <select class="form-control" id="time-range">
+                                <option value="1h">Last Hour</option>
+                                <option value="24h" selected>Last 24 Hours</option>
+                                <option value="7d">Last 7 Days</option>
+                                <option value="30d">Last 30 Days</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                        
+                        <div id="custom-date-range" style="display: none;">
+                            <div class="form-group">
+                                <label for="start-date">Start Date</label>
+                                <input type="date" class="form-control" id="start-date">
+                            </div>
+                            <div class="form-group">
+                                <label for="end-date">End Date</label>
+                                <input type="date" class="form-control" id="end-date">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="service-filter">Service</label>
+                            <select class="form-control" id="service-filter">
+                                <option value="all">All Services</option>
+                                {% for service in services %}
+                                <option value="{{ service.id }}">{{ service.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="environment-filter">Environment</label>
+                            <select class="form-control" id="environment-filter">
+                                <option value="all">All Environments</option>
+                                <option value="development">Development</option>
+                                <option value="testing">Testing</option>
+                                <option value="staging">Staging</option>
+                                <option value="production">Production</option>
+                            </select>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary btn-block" id="apply-filters">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="tab-content" id="report-tab-content">
+                <!-- Overview Tab -->
+                <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">System Overview</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card bg-light mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Current Status</h6>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-success">Healthy</span>
+                                                <span class="badge badge-success badge-pill">{{ overall_metrics.health_score }}%</span>
+                                            </div>
+                                            <div class="progress mt-2">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ overall_metrics.health_score }}%" aria-valuenow="{{ overall_metrics.health_score }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card bg-light mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Healing Success Rate</h6>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-info">Success Rate</span>
+                                                <span class="badge badge-info badge-pill">{{ overall_metrics.healing_success_rate }}%</span>
+                                            </div>
+                                            <div class="progress mt-2">
+                                                <div class="progress-bar bg-info" role="progressbar" style="width: {{ overall_metrics.healing_success_rate }}%" aria-valuenow="{{ overall_metrics.healing_success_rate }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-3">
+                                    <div class="card text-white bg-primary mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Total Services</h6>
+                                            <h2 class="text-center">{{ overall_metrics.total_services }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-white bg-success mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Healthy Services</h6>
+                                            <h2 class="text-center">{{ overall_metrics.healthy_services }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-white bg-warning mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Total Errors</h6>
+                                            <h2 class="text-center">{{ overall_metrics.total_errors }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-white bg-info mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Total Healed</h6>
+                                            <h2 class="text-center">{{ overall_metrics.total_healed }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-12">
+                                    <h5>Recent Activity</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Time</th>
+                                                    <th>Service</th>
+                                                    <th>Event</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for activity in recent_activities %}
+                                                <tr>
+                                                    <td>{{ activity.time }}</td>
+                                                    <td>{{ activity.service }}</td>
+                                                    <td>{{ activity.event }}</td>
+                                                    <td>
+                                                        <span class="badge badge-{{ activity.status_class }}">{{ activity.status }}</span>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics Tab -->
+                <div class="tab-pane fade" id="performance" role="tabpanel" aria-labelledby="performance-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Performance Metrics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Response Time (ms)</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="response-time-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Error Rate (%)</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="error-rate-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">CPU Usage (%)</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="cpu-usage-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Memory Usage (MB)</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="memory-usage-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <h5>Service Performance Comparison</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Service</th>
+                                                    <th>Avg. Response Time</th>
+                                                    <th>Error Rate</th>
+                                                    <th>CPU Usage</th>
+                                                    <th>Memory Usage</th>
+                                                    <th>Throughput</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for service in service_performance %}
+                                                <tr>
+                                                    <td>{{ service.name }}</td>
+                                                    <td>{{ service.response_time }} ms</td>
+                                                    <td>{{ service.error_rate }}%</td>
+                                                    <td>{{ service.cpu_usage }}%</td>
+                                                    <td>{{ service.memory_usage }} MB</td>
+                                                    <td>{{ service.throughput }} req/s</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Healing Activities Tab -->
+                <div class="tab-pane fade" id="healing" role="tabpanel" aria-labelledby="healing-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Healing Activities</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Healing Activity Over Time</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="healing-activity-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Healing Success Rate</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="healing-success-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Error Types</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="error-types-chart" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Healing Method</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="healing-method-chart" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Time to Heal</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="time-to-heal-chart" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <h5>Recent Healing Activities</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Time</th>
+                                                    <th>Service</th>
+                                                    <th>Error Type</th>
+                                                    <th>Fix Type</th>
+                                                    <th>Result</th>
+                                                    <th>Duration</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for activity in healing_activities %}
+                                                <tr>
+                                                    <td>{{ activity.time }}</td>
+                                                    <td>{{ activity.service }}</td>
+                                                    <td>{{ activity.error_type }}</td>
+                                                    <td>{{ activity.fix_type }}</td>
+                                                    <td>
+                                                        <span class="badge badge-{{ activity.result_class }}">{{ activity.result }}</span>
+                                                    </td>
+                                                    <td>{{ activity.duration }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deployment Impact Tab -->
+                <div class="tab-pane fade" id="deployment" role="tabpanel" aria-labelledby="deployment-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Deployment Impact</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Performance Before/After Healing</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="impact-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Deployment Method</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="deployment-method-chart" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Deployment Status</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="deployment-status-chart" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <h5>Recent Deployments</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Time</th>
+                                                    <th>Service</th>
+                                                    <th>Fix ID</th>
+                                                    <th>Deployment Type</th>
+                                                    <th>Status</th>
+                                                    <th>Performance Impact</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for deployment in recent_deployments %}
+                                                <tr>
+                                                    <td>{{ deployment.time }}</td>
+                                                    <td>{{ deployment.service }}</td>
+                                                    <td>{{ deployment.fix_id }}</td>
+                                                    <td>{{ deployment.type }}</td>
+                                                    <td>
+                                                        <span class="badge badge-{{ deployment.status_class }}">{{ deployment.status }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-{{ deployment.impact_class }}">{{ deployment.impact }}</span>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Health Tab -->
+                <div class="tab-pane fade" id="service" role="tabpanel" aria-labelledby="service-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Service Health</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Service Health Overview</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="service-health-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <h5>Service Status</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Service</th>
+                                                    <th>Status</th>
+                                                    <th>Response Time</th>
+                                                    <th>Error Rate</th>
+                                                    <th>Uptime</th>
+                                                    <th>Health Score</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for service in service_health %}
+                                                <tr>
+                                                    <td>{{ service.name }}</td>
+                                                    <td>
+                                                        <span class="badge badge-{{ service.status_class }}">{{ service.status }}</span>
+                                                    </td>
+                                                    <td>{{ service.response_time }} ms</td>
+                                                    <td>{{ service.error_rate }}%</td>
+                                                    <td>{{ service.uptime }}</td>
+                                                    <td>
+                                                        <div class="progress">
+                                                            <div class="progress-bar bg-{{ service.score_class }}" role="progressbar" style="width: {{ service.health_score }}%" aria-valuenow="{{ service.health_score }}" aria-valuemin="0" aria-valuemax="100">{{ service.health_score }}%</div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-12">
+                                    <h5>Service Dependencies</h5>
+                                    <div id="dependency-graph" style="height: 400px; border: 1px solid #ddd; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audit Reports Tab -->
+                <div class="tab-pane fade" id="audit" role="tabpanel" aria-labelledby="audit-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Audit Reports</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Audit Events Over Time</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="audit-events-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Event Types</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="event-types-chart" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Event Severity</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="event-severity-chart" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <h5>Audit Events</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Time</th>
+                                                    <th>User</th>
+                                                    <th>Event Type</th>
+                                                    <th>Service</th>
+                                                    <th>Severity</th>
+                                                    <th>Details</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for event in audit_events %}
+                                                <tr>
+                                                    <td>{{ event.time }}</td>
+                                                    <td>{{ event.user }}</td>
+                                                    <td>{{ event.event_type }}</td>
+                                                    <td>{{ event.service }}</td>
+                                                    <td>
+                                                        <span class="badge badge-{{ event.severity_class }}">{{ event.severity }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-info view-details" data-event-id="{{ event.id }}">View</button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Reports Tab -->
+                <div class="tab-pane fade" id="export" role="tabpanel" aria-labelledby="export-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Export Reports</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Export Options</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <form id="export-form">
+                                                <div class="form-group">
+                                                    <label for="export-report-type">Report Type</label>
+                                                    <select class="form-control" id="export-report-type">
+                                                        <option value="overview">System Overview</option>
+                                                        <option value="performance">Performance Metrics</option>
+                                                        <option value="healing">Healing Activities</option>
+                                                        <option value="deployment">Deployment Impact</option>
+                                                        <option value="service">Service Health</option>
+                                                        <option value="audit">Audit Events</option>
+                                                        <option value="all">Complete Report</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="export-format">Format</label>
+                                                    <select class="form-control" id="export-format">
+                                                        <option value="pdf">PDF</option>
+                                                        <option value="csv">CSV</option>
+                                                        <option value="json">JSON</option>
+                                                        <option value="excel">Excel</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="export-time-range">Time Range</label>
+                                                    <select class="form-control" id="export-time-range">
+                                                        <option value="1h">Last Hour</option>
+                                                        <option value="24h" selected>Last 24 Hours</option>
+                                                        <option value="7d">Last 7 Days</option>
+                                                        <option value="30d">Last 30 Days</option>
+                                                        <option value="custom">Custom Range</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div id="export-custom-date-range" style="display: none;">
+                                                    <div class="form-group">
+                                                        <label for="export-start-date">Start Date</label>
+                                                        <input type="date" class="form-control" id="export-start-date">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="export-end-date">End Date</label>
+                                                        <input type="date" class="form-control" id="export-end-date">
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-check mb-3">
+                                                    <input type="checkbox" class="form-check-input" id="include-charts" checked>
+                                                    <label class="form-check-label" for="include-charts">Include Charts</label>
+                                                </div>
+                                                
+                                                <button type="button" class="btn btn-primary btn-block" id="generate-report">Generate Report</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Scheduled Reports</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="schedule-report-type">Report Type</label>
+                                                <select class="form-control" id="schedule-report-type">
+                                                    <option value="overview">System Overview</option>
+                                                    <option value="performance">Performance Metrics</option>
+                                                    <option value="healing">Healing Activities</option>
+                                                    <option value="deployment">Deployment Impact</option>
+                                                    <option value="service">Service Health</option>
+                                                    <option value="audit">Audit Events</option>
+                                                    <option value="all">Complete Report</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="schedule-frequency">Frequency</label>
+                                                <select class="form-control" id="schedule-frequency">
+                                                    <option value="daily">Daily</option>
+                                                    <option value="weekly">Weekly</option>
+                                                    <option value="monthly">Monthly</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="schedule-format">Format</label>
+                                                <select class="form-control" id="schedule-format">
+                                                    <option value="pdf">PDF</option>
+                                                    <option value="csv">CSV</option>
+                                                    <option value="json">JSON</option>
+                                                    <option value="excel">Excel</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="schedule-email">Email To</label>
+                                                <input type="email" class="form-control" id="schedule-email" placeholder="email@example.com">
+                                            </div>
+                                            
+                                            <button type="button" class="btn btn-success btn-block" id="schedule-report">Schedule Report</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <h5>Recent Reports</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Generated</th>
+                                                    <th>Report Type</th>
+                                                    <th>Format</th>
+                                                    <th>Time Range</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for report in recent_reports %}
+                                                <tr>
+                                                    <td>{{ report.time }}</td>
+                                                    <td>{{ report.type }}</td>
+                                                    <td>{{ report.format }}</td>
+                                                    <td>{{ report.time_range }}</td>
+                                                    <td>
+                                                        <a href="{{ report.url }}" class="btn btn-sm btn-primary" download>Download</a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Event Details Modal -->
+<div class="modal fade" id="event-details-modal" tabindex="-1" role="dialog" aria-labelledby="event-details-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="event-details-title">Event Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="event-info">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Event ID:</strong> <span id="event-id"></span></p>
+                            <p><strong>Event Type:</strong> <span id="event-type"></span></p>
+                            <p><strong>Timestamp:</strong> <span id="event-timestamp"></span></p>
+                            <p><strong>User:</strong> <span id="event-user"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Service:</strong> <span id="event-service"></span></p>
+                            <p><strong>Severity:</strong> <span id="event-severity"></span></p>
+                            <p><strong>Status:</strong> <span id="event-status"></span></p>
+                            <p><strong>Source IP:</strong> <span id="event-source-ip"></span></p>
+                        </div>
+                    </div>
+                    
+                    <h6 class="mt-3">Event Details</h6>
+                    <pre id="event-details-json" class="p-3 bg-light" style="max-height: 300px; overflow-y: auto;"></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.2/dist/vis-network.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Initialize charts
+        initCharts();
+        
+        // Initialize dependency graph
+        initDependencyGraph();
+        
+        // Handle custom date range toggle
+        $('#time-range').change(function() {
+            if ($(this).val() === 'custom') {
+                $('#custom-date-range').show();
+            } else {
+                $('#custom-date-range').hide();
+            }
+        });
+        
+        $('#export-time-range').change(function() {
+            if ($(this).val() === 'custom') {
+                $('#export-custom-date-range').show();
+            } else {
+                $('#export-custom-date-range').hide();
+            }
+        });
+        
+        // Handle filter application
+        $('#apply-filters').click(function() {
+            // In a real implementation, this would refresh the data based on filters
+            showAlert('info', 'Filters applied successfully.');
+        });
+        
+        // Handle report generation
+        $('#generate-report').click(function() {
+            // In a real implementation, this would generate and download the report
+            showAlert('success', 'Report generated successfully. Download started.');
+        });
+        
+        // Handle report scheduling
+        $('#schedule-report').click(function() {
+            // In a real implementation, this would schedule the report
+            showAlert('success', 'Report scheduled successfully.');
+        });
+        
+        // Handle view details button
+        $(document).on('click', '.view-details', function() {
+            var eventId = $(this).data('event-id');
+            loadEventDetails(eventId);
+        });
+        
+        // Helper function to show alerts
+        function showAlert(type, message) {
+            var alertHtml = '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
+                            message +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                            '<span aria-hidden="true">&times;</span>' +
+                            '</button>' +
+                            '</div>';
+                            
+            $('.container').prepend(alertHtml);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(function() {
+                $('.alert').alert('close');
+            }, 5000);
+        }
+        
+        // Load event details
+        function loadEventDetails(eventId) {
+            // In a real implementation, this would fetch event details from the server
+            // For now, we'll use simulated data
+            var eventData = {
+                id: eventId,
+                event_type: 'healing_action',
+                timestamp: '2023-06-15T10:30:45.123Z',
+                user: 'system',
+                service: 'example_service',
+                severity: 'info',
+                status: 'success',
+                source_ip: '192.168.1.1',
+                details: {
+                    error_id: 'err_001',
+                    fix_id: 'fix_001',
+                    fix_type: 'code_patch',
+                    error_type: 'KeyError',
+                    error_message: "KeyError: 'user_id'",
+                    file_path: 'services/example_service/app.py:42',
+                    confidence: 0.95,
+                    duration_ms: 1250
+                }
+            };
+            
+            // Populate modal
+            $('#event-id').text(eventData.id);
+            $('#event-type').text(eventData.event_type);
+            $('#event-timestamp').text(eventData.timestamp);
+            $('#event-user').text(eventData.user);
+            $('#event-service').text(eventData.service);
+            $('#event-severity').text(eventData.severity);
+            $('#event-status').text(eventData.status);
+            $('#event-source-ip').text(eventData.source_ip);
+            $('#event-details-json').text(JSON.stringify(eventData.details, null, 2));
+            
+            // Show modal
+            $('#event-details-modal').modal('show');
+        }
+        
+        // Initialize charts
+        function initCharts() {
+            // Response Time Chart
+            var responseTimeCtx = document.getElementById('response-time-chart').getContext('2d');
+            var responseTimeChart = new Chart(responseTimeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1h ago', '50m ago', '40m ago', '30m ago', '20m ago', '10m ago', 'Now'],
+                    datasets: [{
+                        label: 'Response Time',
+                        data: [120, 125, 118, 130, 123, 115, 110],
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            
+            // Error Rate Chart
+            var errorRateCtx = document.getElementById('error-rate-chart').getContext('2d');
+            var errorRateChart = new Chart(errorRateCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1h ago', '50m ago', '40m ago', '30m ago', '20m ago', '10m ago', 'Now'],
+                    datasets: [{
+                        label: 'Error Rate',
+                        data: [5.2, 4.8, 3.5, 4.0, 2.5, 1.8, 1.2],
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            
+            // CPU Usage Chart
+            var cpuUsageCtx = document.getElementById('cpu-usage-chart').getContext('2d');
+            var cpuUsageChart = new Chart(cpuUsageCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1h ago', '50m ago', '40m ago', '30m ago', '20m ago', '10m ago', 'Now'],
+                    datasets: [{
+                        label: 'CPU Usage',
+                        data: [45, 48, 52, 50, 46, 43, 40],
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            
+            // Memory Usage Chart
+            var memoryUsageCtx = document.getElementById('memory-usage-chart').getContext('2d');
+            var memoryUsageChart = new Chart(memoryUsageCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1h ago', '50m ago', '40m ago', '30m ago', '20m ago', '10m ago', 'Now'],
+                    datasets: [{
+                        label: 'Memory Usage',
+                        data: [320, 340, 350, 365, 370, 360, 350],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            
+            // Healing Activity Chart
+            var healingActivityCtx = document.getElementById('healing-activity-chart').getContext('2d');
+            var healingActivityChart = new Chart(healingActivityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['1 Day Ago', '20h Ago', '16h Ago', '12h Ago', '8h Ago', '4h Ago', 'Now'],
+                    datasets: [{
+                        label: 'Errors Detected',
+                        data: [12, 15, 8, 10, 6, 9, 4],
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    }, {
+                        label: 'Errors Fixed',
+                        data: [10, 13, 7, 9, 5, 8, 4],
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            
+            // Healing Success Chart
+            var healingSuccessCtx = document.getElementById('healing-success-chart').getContext('2d');
+            var healingSuccessChart = new Chart(healingSuccessCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1 Day Ago', '20h Ago', '16h Ago', '12h Ago', '8h Ago', '4h Ago', 'Now'],
+                    datasets: [{
+                        label: 'Success Rate',
+                        data: [83, 87, 88, 90, 83, 89, 100],
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }]
+                    }
+                }
+            });
+            
+            // Error Types Chart
+            var errorTypesCtx = document.getElementById('error-types-chart').getContext('2d');
+            var errorTypesChart = new Chart(errorTypesCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['KeyError', 'AttributeError', 'TypeError', 'ValueError', 'Other'],
+                    datasets: [{
+                        data: [35, 25, 20, 15, 5],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            
+            // Healing Method Chart
+            var healingMethodCtx = document.getElementById('healing-method-chart').getContext('2d');
+            var healingMethodChart = new Chart(healingMethodCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Rule-Based', 'ML-Based', 'Hybrid'],
+                    datasets: [{
+                        data: [60, 15, 25],
+                        backgroundColor: [
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            
+            // Time to Heal Chart
+            var timeToHealCtx = document.getElementById('time-to-heal-chart').getContext('2d');
+            var timeToHealChart = new Chart(timeToHealCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['< 1s', '1-5s', '5-15s', '15-30s', '> 30s'],
+                    datasets: [{
+                        label: 'Time to Heal',
+                        data: [45, 30, 15, 8, 2],
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            
+            // Impact Chart
+            var impactCtx = document.getElementById('impact-chart').getContext('2d');
+            var impactChart = new Chart(impactCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Response Time (ms)', 'Error Rate (%)', 'CPU Usage (%)', 'Memory Usage (MB)'],
+                    datasets: [{
+                        label: 'Before',
+                        data: [150, 5, 60, 400],
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    }, {
+                        label: 'After',
+                        data: [110, 1, 40, 350],
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            
+            // Deployment Method Chart
+            var deploymentMethodCtx = document.getElementById('deployment-method-chart').getContext('2d');
+            var deploymentMethodChart = new Chart(deploymentMethodCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Blue-Green', 'Canary', 'Rolling'],
+                    datasets: [{
+                        data: [40, 45, 15],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            
+            // Deployment Status Chart
+            var deploymentStatusCtx = document.getElementById('deployment-status-chart').getContext('2d');
+            var deploymentStatusChart = new Chart(deploymentStatusCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Success', 'Partial Success', 'Rollback', 'Failed'],
+                    datasets: [{
+                        data: [75, 10, 10, 5],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(255, 99, 132, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            
+            // Service Health Chart
+            var serviceHealthCtx = document.getElementById('service-health-chart').getContext('2d');
+            var serviceHealthChart = new Chart(serviceHealthCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['API Service', 'Auth Service', 'Database Service', 'Cache Service', 'Worker Service'],
+                    datasets: [{
+                        label: 'Health Score',
+                        data: [95, 98, 90, 99, 92],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(75, 192, 192, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }]
+                    }
+                }
+            });
+            
+            // Audit Events Chart
+            var auditEventsCtx = document.getElementById('audit-events-chart').getContext('2d');
+            var auditEventsChart = new Chart(auditEventsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1 Day Ago', '20h Ago', '16h Ago', '12h Ago', '8h Ago', '4h Ago', 'Now'],
+                    datasets: [{
+                        label: 'Audit Events',
+                        data: [45, 60, 35, 50, 30, 40, 25],
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            
+            // Event Types Chart
+            var eventTypesCtx = document.getElementById('event-types-chart').getContext('2d');
+            var eventTypesChart = new Chart(eventTypesCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Error Detection', 'Fix Generation', 'Deployment', 'Fix Approval', 'System', 'User'],
+                    datasets: [{
+                        data: [30, 25, 20, 10, 10, 5],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            
+            // Event Severity Chart
+            var eventSeverityCtx = document.getElementById('event-severity-chart').getContext('2d');
+            var eventSeverityChart = new Chart(eventSeverityCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Info', 'Warning', 'Error', 'Critical'],
+                    datasets: [{
+                        data: [60, 25, 10, 5],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(153, 102, 255, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+        
+        // Initialize dependency graph
+        function initDependencyGraph() {
+            // Create a network
+            var container = document.getElementById('dependency-graph');
+            
+            // Create data
+            var nodes = new vis.DataSet([
+                { id: 1, label: 'API Service', color: { background: '#8BC34A' }, font: { color: '#333' } },
+                { id: 2, label: 'Auth Service', color: { background: '#4CAF50' }, font: { color: '#333' } },
+                { id: 3, label: 'Database Service', color: { background: '#FFB74D' }, font: { color: '#333' } },
+                { id: 4, label: 'Cache Service', color: { background: '#4CAF50' }, font: { color: '#333' } },
+                { id: 5, label: 'Worker Service', color: { background: '#4CAF50' }, font: { color: '#333' } }
+            ]);
+            
+            // Create edges
+            var edges = new vis.DataSet([
+                { from: 1, to: 2 },
+                { from: 1, to: 3 },
+                { from: 1, to: 4 },
+                { from: 2, to: 3 },
+                { from: 5, to: 3 },
+                { from: 5, to: 4 }
+            ]);
+            
+            // Create network
+            var data = {
+                nodes: nodes,
+                edges: edges
+            };
+            
+            var options = {
+                nodes: {
+                    shape: 'box',
+                    margin: 10,
+                    borderWidth: 1,
+                    shadow: true
+                },
+                edges: {
+                    width: 2,
+                    arrows: {
+                        to: {
+                            enabled: true,
+                            scaleFactor: 0.5
+                        }
+                    }
+                },
+                layout: {
+                    randomSeed: 2
+                },
+                physics: {
+                    enabled: true,
+                    barnesHut: {
+                        gravitationalConstant: -2000,
+                        centralGravity: 0.3,
+                        springLength: 150,
+                        springConstant: 0.04
+                    }
+                }
+            };
+            
+            // Initialize network
+            var network = new vis.Network(container, data, options);
+        }
+    });
+</script>
+{% endblock %}

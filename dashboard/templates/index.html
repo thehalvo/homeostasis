@@ -1,0 +1,548 @@
+{% extends "base.html" %}
+
+{% block title %}Homeostasis Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <!-- System Status Card -->
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-left-primary h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">System Status</div>
+                        <div class="h5 mb-0 font-weight-bold" id="system-status">Healthy</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-heartbeat fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Errors Card -->
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-left-danger h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Active Errors</div>
+                        <div class="h5 mb-0 font-weight-bold" id="active-errors-count">1</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Fixes Card -->
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-left-warning h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Active Fixes</div>
+                        <div class="h5 mb-0 font-weight-bold" id="active-fixes-count">1</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-wrench fa-2x text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Rate Card -->
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-left-success h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Fix Success Rate</div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold" id="success-rate">95%</div>
+                            </div>
+                            <div class="col">
+                                <div class="progress progress-sm mr-2">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 95%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Tabs -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="dashboard-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="errors-tab" data-bs-toggle="tab" data-bs-target="#errors-content" type="button" role="tab">
+                            <i class="fas fa-exclamation-triangle me-1"></i> Errors
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="fixes-tab" data-bs-toggle="tab" data-bs-target="#fixes-content" type="button" role="tab">
+                            <i class="fas fa-wrench me-1"></i> Fixes
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="approvals-tab" data-bs-toggle="tab" data-bs-target="#approvals-content" type="button" role="tab">
+                            <i class="fas fa-check-circle me-1"></i> Approvals
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="canary-tab" data-bs-toggle="tab" data-bs-target="#canary-content" type="button" role="tab">
+                            <i class="fas fa-forward me-1"></i> Canary
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="metrics-tab" data-bs-toggle="tab" data-bs-target="#metrics-content" type="button" role="tab">
+                            <i class="fas fa-chart-line me-1"></i> Metrics
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="config-tab" data-bs-toggle="tab" data-bs-target="#config-content" type="button" role="tab">
+                            <i class="fas fa-cogs me-1"></i> Configuration
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content" id="dashboard-tab-content">
+                    <!-- Errors Tab Content -->
+                    <div class="tab-pane fade show active" id="errors-content" role="tabpanel" aria-labelledby="errors-tab">
+                        <h5 class="card-title">Active Errors</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Timestamp</th>
+                                        <th>Service</th>
+                                        <th>Error Type</th>
+                                        <th>Message</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="errors-table-body">
+                                    <tr>
+                                        <td>err_001</td>
+                                        <td>2023-09-15 14:30:00</td>
+                                        <td>example_service</td>
+                                        <td>KeyError</td>
+                                        <td>KeyError: 'user_id'</td>
+                                        <td><span class="badge bg-success">Fixed</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>err_002</td>
+                                        <td>2023-09-15 14:45:00</td>
+                                        <td>example_service</td>
+                                        <td>AttributeError</td>
+                                        <td>AttributeError: 'NoneType' object has no attribute 'get'</td>
+                                        <td><span class="badge bg-warning">Analyzing</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">View</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Fixes Tab Content -->
+                    <div class="tab-pane fade" id="fixes-content" role="tabpanel" aria-labelledby="fixes-tab">
+                        <h5 class="card-title">Recent Fixes</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Timestamp</th>
+                                        <th>Service</th>
+                                        <th>Error ID</th>
+                                        <th>Status</th>
+                                        <th>Confidence</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fixes-table-body">
+                                    <tr>
+                                        <td>fix_001</td>
+                                        <td>2023-09-15 14:35:00</td>
+                                        <td>example_service</td>
+                                        <td>err_001</td>
+                                        <td><span class="badge bg-success">Deployed</span></td>
+                                        <td>95%</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">View</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Approvals Tab Content -->
+                    <div class="tab-pane fade" id="approvals-content" role="tabpanel" aria-labelledby="approvals-tab">
+                        <h5 class="card-title">Pending Approvals</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Timestamp</th>
+                                        <th>Fix ID</th>
+                                        <th>Error Type</th>
+                                        <th>Confidence</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="approvals-table-body">
+                                    <!-- No pending approvals -->
+                                    <tr>
+                                        <td colspan="6" class="text-center">No pending approvals</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Canary Tab Content -->
+                    <div class="tab-pane fade" id="canary-content" role="tabpanel" aria-labelledby="canary-tab">
+                        <h5 class="card-title">Active Canary Deployments</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <strong>Canary Deployment: example_service</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Fix ID:</strong> fix_001</p>
+                                        <p><strong>Status:</strong> <span class="badge bg-primary">In Progress</span></p>
+                                        <p><strong>Current Percentage:</strong> 50%</p>
+                                        <div class="progress mb-3">
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+                                        </div>
+                                        <p><strong>Metrics:</strong></p>
+                                        <ul>
+                                            <li>Error Rate: 1%</li>
+                                            <li>Success Rate: 99%</li>
+                                            <li>Response Time: 120ms</li>
+                                        </ul>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-primary">Promote</button>
+                                            <button class="btn btn-success">Complete</button>
+                                            <button class="btn btn-danger">Rollback</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <strong>Canary Metrics</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="canary-metrics-chart" width="400" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Metrics Tab Content -->
+                    <div class="tab-pane fade" id="metrics-content" role="tabpanel" aria-labelledby="metrics-tab">
+                        <h5 class="card-title">System Metrics</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <strong>Error Rate</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="error-rate-chart" width="400" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <strong>Response Time</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="response-time-chart" width="400" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <strong>Fix Success Rate</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="fix-success-chart" width="400" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <strong>Memory Usage</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="memory-usage-chart" width="400" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Configuration Tab Content -->
+                    <div class="tab-pane fade" id="config-content" role="tabpanel" aria-labelledby="config-tab">
+                        <h5 class="card-title">System Configuration</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <strong>General Settings</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <form>
+                                            <div class="mb-3">
+                                                <label for="system-name" class="form-label">System Name</label>
+                                                <input type="text" class="form-control" id="system-name" value="Homeostasis">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="log-level" class="form-label">Log Level</label>
+                                                <select class="form-select" id="log-level">
+                                                    <option value="DEBUG">DEBUG</option>
+                                                    <option value="INFO" selected>INFO</option>
+                                                    <option value="WARNING">WARNING</option>
+                                                    <option value="ERROR">ERROR</option>
+                                                    <option value="CRITICAL">CRITICAL</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="environment" class="form-label">Environment</label>
+                                                <select class="form-select" id="environment">
+                                                    <option value="development">Development</option>
+                                                    <option value="staging">Staging</option>
+                                                    <option value="production">Production</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <strong>Deployment Settings</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <form>
+                                            <div class="mb-3 form-check">
+                                                <input type="checkbox" class="form-check-input" id="canary-enabled" checked>
+                                                <label class="form-check-label" for="canary-enabled">Enable Canary Deployments</label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="canary-percentage" class="form-label">Initial Canary Percentage</label>
+                                                <input type="number" class="form-control" id="canary-percentage" value="10">
+                                            </div>
+                                            <div class="mb-3 form-check">
+                                                <input type="checkbox" class="form-check-input" id="require-approval" checked>
+                                                <label class="form-check-label" for="require-approval">Require Approval for Critical Changes</label>
+                                            </div>
+                                            <div class="mb-3 form-check">
+                                                <input type="checkbox" class="form-check-input" id="auto-rollback" checked>
+                                                <label class="form-check-label" for="auto-rollback">Auto-Rollback on Failure</label>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize charts when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Error Rate Chart
+        const errorRateCtx = document.getElementById('error-rate-chart').getContext('2d');
+        const errorRateChart = new Chart(errorRateCtx, {
+            type: 'line',
+            data: {
+                labels: ['5 min ago', '4 min ago', '3 min ago', '2 min ago', '1 min ago', 'Now'],
+                datasets: [{
+                    label: 'Error Rate (%)',
+                    data: [5, 4, 3, 2, 2, 2],
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10
+                    }
+                }
+            }
+        });
+        
+        // Response Time Chart
+        const responseTimeCtx = document.getElementById('response-time-chart').getContext('2d');
+        const responseTimeChart = new Chart(responseTimeCtx, {
+            type: 'line',
+            data: {
+                labels: ['5 min ago', '4 min ago', '3 min ago', '2 min ago', '1 min ago', 'Now'],
+                datasets: [{
+                    label: 'Response Time (ms)',
+                    data: [140, 135, 130, 128, 125, 125],
+                    borderColor: 'rgb(54, 162, 235)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Fix Success Rate Chart
+        const fixSuccessCtx = document.getElementById('fix-success-chart').getContext('2d');
+        const fixSuccessChart = new Chart(fixSuccessCtx, {
+            type: 'line',
+            data: {
+                labels: ['5 min ago', '4 min ago', '3 min ago', '2 min ago', '1 min ago', 'Now'],
+                datasets: [{
+                    label: 'Fix Success Rate (%)',
+                    data: [90, 92, 94, 95, 95, 95],
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+        
+        // Memory Usage Chart
+        const memoryUsageCtx = document.getElementById('memory-usage-chart').getContext('2d');
+        const memoryUsageChart = new Chart(memoryUsageCtx, {
+            type: 'line',
+            data: {
+                labels: ['5 min ago', '4 min ago', '3 min ago', '2 min ago', '1 min ago', 'Now'],
+                datasets: [{
+                    label: 'Memory Usage (MB)',
+                    data: [350, 355, 360, 358, 362, 365],
+                    borderColor: 'rgb(153, 102, 255)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Canary Metrics Chart
+        const canaryMetricsCtx = document.getElementById('canary-metrics-chart').getContext('2d');
+        const canaryMetricsChart = new Chart(canaryMetricsCtx, {
+            type: 'line',
+            data: {
+                labels: ['0%', '10%', '20%', '30%', '40%', '50%'],
+                datasets: [
+                    {
+                        label: 'Error Rate (%)',
+                        data: [0, 0.5, 0.8, 1.2, 1.0, 1.0],
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.1,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Response Time (ms)',
+                        data: [120, 122, 125, 123, 121, 120],
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        tension: 0.1,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Error Rate (%)'
+                        },
+                        beginAtZero: true,
+                        max: 5
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Response Time (ms)'
+                        },
+                        beginAtZero: true,
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

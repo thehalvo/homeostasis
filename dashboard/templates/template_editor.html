@@ -1,0 +1,921 @@
+{% extends "base.html" %}
+
+{% block title %}Template Editor - Homeostasis{% endblock %}
+
+{% block extra_css %}
+<!-- CodeMirror CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/theme/monokai.min.css">
+<style>
+    .CodeMirror {
+        height: auto;
+        min-height: 300px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .invalid-feedback {
+        display: none;
+    }
+    .is-invalid + .invalid-feedback {
+        display: block;
+    }
+    #template-preview-container {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 15px;
+        background-color: #f8f9fa;
+    }
+    #template-preview {
+        white-space: pre-wrap;
+        font-family: monospace;
+    }
+    .parameter-highlight {
+        background-color: #ffeeba;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            {% if template.id %}
+            Edit Template: {{ template.name }}
+            {% else %}
+            Create New Template
+            {% endif %}
+        </h1>
+        <div>
+            <a href="{{ url_for('configuration') }}#templates" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back to Templates
+            </a>
+            {% if template.id %}
+            <button id="clone-template-btn" class="btn btn-info">
+                <i class="fas fa-copy me-1"></i> Clone
+            </button>
+            <button id="delete-template-btn" class="btn btn-danger">
+                <i class="fas fa-trash me-1"></i> Delete
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="template-editor-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button" role="tab" aria-controls="basic" aria-selected="true">Basic Information</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="content-tab" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab" aria-controls="content" aria-selected="false">Template Content</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="parameters-tab" data-bs-toggle="tab" data-bs-target="#parameters" type="button" role="tab" aria-controls="parameters" aria-selected="false">Parameters</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="preview-tab" data-bs-toggle="tab" data-bs-target="#preview" type="button" role="tab" aria-controls="preview" aria-selected="false">Preview</button>
+                </li>
+                {% if template.id %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="usage-tab" data-bs-toggle="tab" data-bs-target="#usage" type="button" role="tab" aria-controls="usage" aria-selected="false">Usage</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">History</button>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="card-body">
+            <form id="template-form">
+                <input type="hidden" id="template-id" name="id" value="{{ template.id or '' }}">
+                
+                <div class="tab-content" id="template-editor-tab-content">
+                    <!-- Basic Information Tab -->
+                    <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="template-name" class="form-label">Template Name</label>
+                                    <input type="text" class="form-control" id="template-name" name="name" value="{{ template.name or '' }}" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a name for this template.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="template-category" class="form-label">Category</label>
+                                    <select class="form-select" id="template-category" name="category" required>
+                                        <option value="">Select a category...</option>
+                                        <option value="python" {% if template.category == 'python' %}selected{% endif %}>Python</option>
+                                        <option value="javascript" {% if template.category == 'javascript' %}selected{% endif %}>JavaScript</option>
+                                        <option value="django" {% if template.category == 'django' %}selected{% endif %}>Django</option>
+                                        <option value="fastapi" {% if template.category == 'fastapi' %}selected{% endif %}>FastAPI</option>
+                                        <option value="flask" {% if template.category == 'flask' %}selected{% endif %}>Flask</option>
+                                        <option value="sqlalchemy" {% if template.category == 'sqlalchemy' %}selected{% endif %}>SQLAlchemy</option>
+                                        <option value="database" {% if template.category == 'database' %}selected{% endif %}>Database</option>
+                                        <option value="authentication" {% if template.category == 'authentication' %}selected{% endif %}>Authentication</option>
+                                        <option value="custom" {% if template.category == 'custom' %}selected{% endif %}>Custom</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select a category.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="template-description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="template-description" name="description" rows="5">{{ template.description or '' }}</textarea>
+                                    <div class="form-text">Provide a clear description of what this template does and when it should be used.</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="template-tags" class="form-label">Tags</label>
+                            <input type="text" class="form-control" id="template-tags" name="tags" value="{{ template.tags|join(', ') if template.tags else '' }}">
+                            <div class="form-text">Comma-separated list of tags to help with organizing and filtering templates.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="template-parent" class="form-label">Parent Template</label>
+                            <select class="form-select" id="template-parent" name="parent_id">
+                                <option value="">None (Standalone Template)</option>
+                                {% for parent in parent_templates %}
+                                {% if parent.id != template.id %}
+                                <option value="{{ parent.id }}" {% if template.parent_id == parent.id %}selected{% endif %}>{{ parent.name }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">
+                                Inherits content from another template. You can override parts by defining them in this template.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Template Content Tab -->
+                    <div class="tab-pane fade" id="content" role="tabpanel" aria-labelledby="content-tab">
+                        <div class="mb-3">
+                            <label for="template-content" class="form-label">Template Content</label>
+                            <textarea class="form-control code-editor" id="template-content" name="content" required>{{ template.content or '' }}</textarea>
+                            <div class="invalid-feedback">
+                                Please provide content for this template.
+                            </div>
+                            <div class="form-text">
+                                Use <code>{parameter_name}</code> for replaceable parameters. Use conditional blocks with <code>{% if parameter_name %}...{% endif %}</code>.
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#template-help-modal">Need help with templates?</a>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Detected Parameters</label>
+                            <div id="detected-parameters-container" class="border rounded p-3 bg-light">
+                                <div id="detected-parameters">
+                                    <span class="text-muted">No parameters detected</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Parameters Tab -->
+                    <div class="tab-pane fade" id="parameters" role="tabpanel" aria-labelledby="parameters-tab">
+                        <div class="mb-3">
+                            <label for="template-parameters" class="form-label">Default Parameters (JSON)</label>
+                            <textarea class="form-control code-editor" id="template-parameters" name="parameters" rows="10">{{ template.parameters|tojson(indent=2) if template.parameters else '{}' }}</textarea>
+                            <div class="invalid-feedback">
+                                Invalid JSON format.
+                            </div>
+                            <div class="form-text">
+                                Define default values for template parameters as a JSON object.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <button type="button" id="add-parameter-btn" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i> Add Parameter
+                            </button>
+                        </div>
+                        
+                        <div id="parameters-table-container" class="mt-4" style="display: none;">
+                            <h5>Parameters</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Default Value</th>
+                                            <th>Description</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="parameters-table-body">
+                                        <!-- Parameters will be added here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preview Tab -->
+                    <div class="tab-pane fade" id="preview" role="tabpanel" aria-labelledby="preview-tab">
+                        <div class="mb-3">
+                            <label for="preview-parameters" class="form-label">Preview Parameters (JSON)</label>
+                            <textarea class="form-control code-editor" id="preview-parameters" rows="8">{{ template.parameters|tojson(indent=2) if template.parameters else '{}' }}</textarea>
+                            <div class="invalid-feedback">
+                                Invalid JSON format.
+                            </div>
+                            <div class="form-text">
+                                Modify the parameters to see how the template renders with different values.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <button type="button" id="render-preview-btn" class="btn btn-primary">
+                                <i class="fas fa-play me-1"></i> Render Preview
+                            </button>
+                        </div>
+                        
+                        <div id="template-preview-container" style="display: none;">
+                            <h5>Template Preview</h5>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="highlight-params">
+                                    <label class="form-check-label" for="highlight-params">Highlight Parameters</label>
+                                </div>
+                            </div>
+                            <div id="template-preview"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Usage Tab -->
+                    {% if template.id %}
+                    <div class="tab-pane fade" id="usage" role="tabpanel" aria-labelledby="usage-tab">
+                        <h5>Rules Using This Template</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Rule</th>
+                                        <th>Category</th>
+                                        <th>Parameters</th>
+                                        <th>Last Used</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usage-table-body">
+                                    {% for rule in template_usage %}
+                                    <tr>
+                                        <td>{{ rule.name }}</td>
+                                        <td>{{ rule.category }}</td>
+                                        <td>{{ rule.parameters|length if rule.parameters else 0 }} parameters</td>
+                                        <td>{{ rule.last_used or 'Never' }}</td>
+                                        <td>
+                                            <a href="{{ url_for('rule_editor', rule_id=rule.id) }}" class="btn btn-sm btn-info">
+                                                <i class="fas fa-edit me-1"></i> Edit Rule
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">No rules are using this template</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <h5 class="mt-4">Template Inheritance</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">Parent Template</div>
+                                    <div class="card-body">
+                                        {% if parent_template %}
+                                        <p>This template inherits from: <strong>{{ parent_template.name }}</strong></p>
+                                        <a href="{{ url_for('template_editor', template_id=parent_template.id) }}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-edit me-1"></i> Edit Parent Template
+                                        </a>
+                                        {% else %}
+                                        <p>This template does not inherit from any other template.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">Child Templates</div>
+                                    <div class="card-body">
+                                        {% if child_templates %}
+                                        <p>Templates inheriting from this one:</p>
+                                        <ul>
+                                            {% for child in child_templates %}
+                                            <li>
+                                                <a href="{{ url_for('template_editor', template_id=child.id) }}">{{ child.name }}</a>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% else %}
+                                        <p>No other templates inherit from this one.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- History Tab -->
+                    {% if template.id %}
+                    <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>User</th>
+                                        <th>Action</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in template_history %}
+                                    <tr>
+                                        <td>{{ entry.timestamp }}</td>
+                                        <td>{{ entry.user }}</td>
+                                        <td>{{ entry.action }}</td>
+                                        <td>{{ entry.details }}</td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">No history available</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mt-4 d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ url_for('configuration') }}#templates'">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Save Template
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Template Help Modal -->
+<div class="modal fade" id="template-help-modal" tabindex="-1" aria-labelledby="template-help-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="template-help-modal-label">Template Syntax Help</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Template Variables</h6>
+                <p>Use curly braces to include variables that will be replaced when the template is rendered:</p>
+                <pre><code>def get_value(data):
+    return data.get('{key}', {default_value})</code></pre>
+                
+                <h6>Conditional Blocks</h6>
+                <p>Use conditionals to include or exclude parts of the template:</p>
+                <pre><code>def process_item(item):
+    result = item.process()
+    {% if include_validation %}
+    if not result:
+        raise ValueError("Processing failed for {item_name}")
+    {% endif %}
+    return result</code></pre>
+                
+                <h6>Loops</h6>
+                <p>Use loops to generate repetitive code:</p>
+                <pre><code>def validate_fields(data):
+    {% for field in required_fields %}
+    if '{field}' not in data:
+        raise KeyError("Missing required field: {field}")
+    {% endfor %}</code></pre>
+                
+                <h6>Template Inheritance</h6>
+                <p>When a template inherits from a parent template, it will include all content from the parent.
+                You can override specific parts of the parent template by defining blocks with the same names:</p>
+                <pre><code>{% block error_handling %}
+try:
+    result = process_data(data)
+except Exception as e:
+    logger.error(f"Processing error: {e}")
+    raise
+{% endblock %}</code></pre>
+                
+                <h6>Common Template Patterns</h6>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Pattern</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>None check before attribute access</td>
+                            <td><pre><code>if {variable} is not None:
+    return {variable}.{attribute}
+return {default_value}</code></pre></td>
+                        </tr>
+                        <tr>
+                            <td>Dictionary get with default</td>
+                            <td><pre><code>{dictionary}.get('{key}', {default_value})</code></pre></td>
+                        </tr>
+                        <tr>
+                            <td>Try-except block</td>
+                            <td><pre><code>try:
+    {code}
+except {exception_type} as e:
+    {exception_handling}</code></pre></td>
+                        </tr>
+                        <tr>
+                            <td>Type checking</td>
+                            <td><pre><code>if not isinstance({variable}, {type}):
+    raise TypeError(f"{variable} must be a {type}")</code></pre></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Parameter Modal -->
+<div class="modal fade" id="add-parameter-modal" tabindex="-1" aria-labelledby="add-parameter-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="add-parameter-modal-label">Add Parameter</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-parameter-form">
+                    <div class="mb-3">
+                        <label for="parameter-name" class="form-label">Parameter Name</label>
+                        <input type="text" class="form-control" id="parameter-name" required>
+                        <div class="invalid-feedback">
+                            Parameter name is required and must be a valid identifier.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="parameter-type" class="form-label">Parameter Type</label>
+                        <select class="form-select" id="parameter-type">
+                            <option value="string">String</option>
+                            <option value="number">Number</option>
+                            <option value="boolean">Boolean</option>
+                            <option value="array">Array</option>
+                            <option value="object">Object</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="parameter-default" class="form-label">Default Value</label>
+                        <input type="text" class="form-control" id="parameter-default">
+                        <div class="form-text">
+                            Leave empty for no default value. For arrays and objects, use valid JSON.
+                        </div>
+                        <div class="invalid-feedback">
+                            Please provide a valid default value for the selected type.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="parameter-description" class="form-label">Description</label>
+                        <textarea class="form-control" id="parameter-description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-parameter-btn">Add Parameter</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- CodeMirror JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/addon/edit/matchbrackets.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize CodeMirror instances
+        const contentEditor = CodeMirror.fromTextArea(document.getElementById('template-content'), {
+            mode: 'python',
+            theme: 'monokai',
+            lineNumbers: true,
+            matchBrackets: true,
+            indentUnit: 4,
+            tabSize: 4,
+            indentWithTabs: false,
+            lineWrapping: true
+        });
+        
+        const parametersEditor = CodeMirror.fromTextArea(document.getElementById('template-parameters'), {
+            mode: { name: 'javascript', json: true },
+            theme: 'monokai',
+            lineNumbers: true,
+            matchBrackets: true,
+            indentUnit: 2,
+            tabSize: 2,
+            indentWithTabs: false,
+            lineWrapping: true
+        });
+        
+        const previewParametersEditor = CodeMirror.fromTextArea(document.getElementById('preview-parameters'), {
+            mode: { name: 'javascript', json: true },
+            theme: 'monokai',
+            lineNumbers: true,
+            matchBrackets: true,
+            indentUnit: 2,
+            tabSize: 2,
+            indentWithTabs: false,
+            lineWrapping: true
+        });
+        
+        // Detect parameters from template content
+        function detectParameters() {
+            const content = contentEditor.getValue();
+            const paramRegex = /{([a-zA-Z_][a-zA-Z0-9_]*)}/g;
+            const conditionalRegex = /{%\s*if\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*%}/g;
+            const loopRegex = /{%\s*for\s+\w+\s+in\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*%}/g;
+            
+            const params = new Set();
+            
+            // Extract variables
+            let match;
+            while ((match = paramRegex.exec(content)) !== null) {
+                params.add(match[1]);
+            }
+            
+            // Extract conditionals
+            while ((match = conditionalRegex.exec(content)) !== null) {
+                params.add(match[1]);
+            }
+            
+            // Extract loops
+            while ((match = loopRegex.exec(content)) !== null) {
+                params.add(match[1]);
+            }
+            
+            // Update detected parameters display
+            const container = document.getElementById('detected-parameters');
+            if (params.size > 0) {
+                container.innerHTML = '';
+                const paramsList = Array.from(params).sort();
+                
+                paramsList.forEach(param => {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge bg-primary me-2 mb-2';
+                    badge.textContent = param;
+                    container.appendChild(badge);
+                });
+                
+                // Update parameters table if needed
+                updateParametersTable(paramsList);
+            } else {
+                container.innerHTML = '<span class="text-muted">No parameters detected</span>';
+                document.getElementById('parameters-table-container').style.display = 'none';
+            }
+            
+            return params;
+        }
+        
+        // Update parameters table
+        function updateParametersTable(paramsList) {
+            try {
+                const params = JSON.parse(parametersEditor.getValue() || '{}');
+                const tableBody = document.getElementById('parameters-table-body');
+                
+                tableBody.innerHTML = '';
+                let hasParameters = false;
+                
+                // Add detected parameters from the content
+                paramsList.forEach(param => {
+                    const defaultValue = params[param] !== undefined ? params[param] : '';
+                    const type = typeof defaultValue;
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${param}</td>
+                        <td>${Array.isArray(defaultValue) ? 'array' : type}</td>
+                        <td>${JSON.stringify(defaultValue)}</td>
+                        <td>${params[param + '_description'] || ''}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary edit-param" data-param="${param}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger delete-param" data-param="${param}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                    hasParameters = true;
+                });
+                
+                // Show/hide parameters table
+                document.getElementById('parameters-table-container').style.display = hasParameters ? 'block' : 'none';
+            } catch (error) {
+                console.error('Error parsing parameters JSON:', error);
+            }
+        }
+        
+        // Detect parameters when content changes
+        contentEditor.on('change', detectParameters);
+        
+        // Trigger initial detection
+        setTimeout(detectParameters, 500);
+        
+        // Render template preview
+        document.getElementById('render-preview-btn').addEventListener('click', function() {
+            const content = contentEditor.getValue();
+            let params;
+            
+            try {
+                params = JSON.parse(previewParametersEditor.getValue() || '{}');
+                previewParametersEditor.getWrapperElement().classList.remove('is-invalid');
+            } catch (error) {
+                previewParametersEditor.getWrapperElement().classList.add('is-invalid');
+                return;
+            }
+            
+            // Simple template rendering implementation
+            let rendered = content;
+            
+            // Replace parameters
+            for (const [key, value] of Object.entries(params)) {
+                // Skip description fields
+                if (key.endsWith('_description')) continue;
+                
+                const regex = new RegExp(`{${key}}`, 'g');
+                const replacement = typeof value === 'string' ? value : JSON.stringify(value);
+                rendered = rendered.replace(regex, replacement);
+            }
+            
+            // Handle conditionals
+            const conditionalRegex = /{%\s*if\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*%}([\s\S]*?){%\s*endif\s*%}/g;
+            rendered = rendered.replace(conditionalRegex, (match, condition, block) => {
+                return params[condition] ? block : '';
+            });
+            
+            // Simple handling for loops
+            const loopRegex = /{%\s*for\s+(\w+)\s+in\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*%}([\s\S]*?){%\s*endfor\s*%}/g;
+            rendered = rendered.replace(loopRegex, (match, itemVar, arrayVar, block) => {
+                if (!Array.isArray(params[arrayVar])) return '';
+                
+                return params[arrayVar].map(item => {
+                    let itemBlock = block;
+                    const itemRegex = new RegExp(`{${itemVar}}`, 'g');
+                    return itemBlock.replace(itemRegex, item);
+                }).join('');
+            });
+            
+            // Display the preview
+            const previewContainer = document.getElementById('template-preview-container');
+            const preview = document.getElementById('template-preview');
+            
+            if (document.getElementById('highlight-params').checked) {
+                // Highlight parameters
+                rendered = rendered.replace(/{([a-zA-Z_][a-zA-Z0-9_]*)}/g, '<span class="parameter-highlight">{$1}</span>');
+            }
+            
+            preview.innerHTML = rendered;
+            previewContainer.style.display = 'block';
+        });
+        
+        // Toggle parameter highlighting
+        document.getElementById('highlight-params').addEventListener('change', function() {
+            document.getElementById('render-preview-btn').click();
+        });
+        
+        // Add parameter button
+        document.getElementById('add-parameter-btn').addEventListener('click', function() {
+            document.getElementById('add-parameter-form').reset();
+            document.getElementById('add-parameter-modal').classList.add('show');
+            $('#add-parameter-modal').modal('show');
+        });
+        
+        // Save parameter
+        document.getElementById('save-parameter-btn').addEventListener('click', function() {
+            const paramName = document.getElementById('parameter-name').value.trim();
+            const paramType = document.getElementById('parameter-type').value;
+            const paramDefault = document.getElementById('parameter-default').value.trim();
+            const paramDescription = document.getElementById('parameter-description').value.trim();
+            
+            if (!paramName || !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(paramName)) {
+                document.getElementById('parameter-name').classList.add('is-invalid');
+                return;
+            }
+            
+            document.getElementById('parameter-name').classList.remove('is-invalid');
+            
+            try {
+                let params = JSON.parse(parametersEditor.getValue() || '{}');
+                
+                // Set default value based on type
+                if (paramDefault) {
+                    try {
+                        if (paramType === 'number') {
+                            params[paramName] = Number(paramDefault);
+                        } else if (paramType === 'boolean') {
+                            params[paramName] = paramDefault.toLowerCase() === 'true';
+                        } else if (paramType === 'array' || paramType === 'object') {
+                            params[paramName] = JSON.parse(paramDefault);
+                        } else {
+                            params[paramName] = paramDefault;
+                        }
+                    } catch (error) {
+                        document.getElementById('parameter-default').classList.add('is-invalid');
+                        return;
+                    }
+                } else {
+                    // Set empty default values based on type
+                    if (paramType === 'number') {
+                        params[paramName] = 0;
+                    } else if (paramType === 'boolean') {
+                        params[paramName] = false;
+                    } else if (paramType === 'array') {
+                        params[paramName] = [];
+                    } else if (paramType === 'object') {
+                        params[paramName] = {};
+                    } else {
+                        params[paramName] = '';
+                    }
+                }
+                
+                // Add description if provided
+                if (paramDescription) {
+                    params[paramName + '_description'] = paramDescription;
+                }
+                
+                // Update parameters editor
+                parametersEditor.setValue(JSON.stringify(params, null, 2));
+                
+                // Update preview parameters
+                previewParametersEditor.setValue(JSON.stringify(params, null, 2));
+                
+                // Close modal
+                $('#add-parameter-modal').modal('hide');
+                
+                // Update parameters table
+                detectParameters();
+            } catch (error) {
+                console.error('Error updating parameters:', error);
+            }
+        });
+        
+        // Form submission
+        document.getElementById('template-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Update CodeMirror values
+            contentEditor.save();
+            parametersEditor.save();
+            
+            // Basic validation
+            let valid = true;
+            const requiredFields = ['template-name', 'template-category', 'template-content'];
+            
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field);
+                if (!element.value.trim()) {
+                    element.classList.add('is-invalid');
+                    valid = false;
+                } else {
+                    element.classList.remove('is-invalid');
+                }
+            });
+            
+            // Validate JSON fields
+            try {
+                const parameters = document.getElementById('template-parameters').value.trim();
+                if (parameters) {
+                    JSON.parse(parameters);
+                }
+                document.getElementById('template-parameters').classList.remove('is-invalid');
+            } catch (error) {
+                document.getElementById('template-parameters').classList.add('is-invalid');
+                valid = false;
+            }
+            
+            if (!valid) {
+                return;
+            }
+            
+            // Collect form data
+            const formData = new FormData(this);
+            const templateData = {};
+            
+            for (const [key, value] of formData.entries()) {
+                templateData[key] = value;
+            }
+            
+            // Process tags
+            templateData.tags = templateData.tags ? templateData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+            
+            // Process JSON fields
+            templateData.parameters = templateData.parameters ? JSON.parse(templateData.parameters) : {};
+            
+            // Send data to server
+            const isNew = !templateData.id;
+            const url = isNew ? '/api/templates' : `/api/templates/${templateData.id}`;
+            const method = isNew ? 'POST' : 'PUT';
+            
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ template: templateData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/config#templates';
+                } else {
+                    alert(`Error saving template: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error saving template:', error);
+                alert(`Error saving template: ${error.message}`);
+            });
+        });
+        
+        // Delete template button
+        const deleteButton = document.getElementById('delete-template-btn');
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete this template? This will also affect any rules using this template.')) {
+                    const templateId = document.getElementById('template-id').value;
+                    
+                    fetch(`/api/templates/${templateId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '/config#templates';
+                        } else {
+                            alert(`Error deleting template: ${data.message}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting template:', error);
+                        alert(`Error deleting template: ${error.message}`);
+                    });
+                }
+            });
+        }
+        
+        // Clone template button
+        const cloneButton = document.getElementById('clone-template-btn');
+        if (cloneButton) {
+            cloneButton.addEventListener('click', function() {
+                const templateId = document.getElementById('template-id').value;
+                
+                fetch(`/api/templates/${templateId}/clone`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = `/templates/editor/${data.template.id}`;
+                    } else {
+                        alert(`Error cloning template: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cloning template:', error);
+                    alert(`Error cloning template: ${error.message}`);
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

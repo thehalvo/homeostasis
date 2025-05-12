@@ -1,0 +1,1133 @@
+{% extends "base.html" %}
+
+{% block title %}Configuration Management - Homeostasis{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Configuration Management</h1>
+    <p class="lead">Manage and configure your Homeostasis deployment settings.</p>
+
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="list-group" id="config-tabs" role="tablist">
+                <a class="list-group-item list-group-item-action active" id="general-tab" data-toggle="list" href="#general" role="tab" aria-controls="general">General Settings</a>
+                <a class="list-group-item list-group-item-action" id="monitoring-tab" data-toggle="list" href="#monitoring" role="tab" aria-controls="monitoring">Monitoring</a>
+                <a class="list-group-item list-group-item-action" id="analysis-tab" data-toggle="list" href="#analysis" role="tab" aria-controls="analysis">Error Analysis</a>
+                <a class="list-group-item list-group-item-action" id="deployment-tab" data-toggle="list" href="#deployment" role="tab" aria-controls="deployment">Deployment</a>
+                <a class="list-group-item list-group-item-action" id="security-tab" data-toggle="list" href="#security" role="tab" aria-controls="security">Security</a>
+                <a class="list-group-item list-group-item-action" id="rules-tab" data-toggle="list" href="#rules" role="tab" aria-controls="rules">Rules</a>
+                <a class="list-group-item list-group-item-action" id="templates-tab" data-toggle="list" href="#templates" role="tab" aria-controls="templates">Templates</a>
+                <a class="list-group-item list-group-item-action" id="plugins-tab" data-toggle="list" href="#plugins" role="tab" aria-controls="plugins">Plugins</a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="tab-content" id="config-tab-content">
+                <!-- General Settings -->
+                <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">General Settings</h5>
+                            <button class="btn btn-primary btn-sm" id="save-general">Save Changes</button>
+                        </div>
+                        <div class="card-body">
+                            <form id="general-form">
+                                <div class="form-group">
+                                    <label for="system-name">System Name</label>
+                                    <input type="text" class="form-control" id="system-name" value="{{ config.system_name }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="environment">Environment</label>
+                                    <select class="form-control" id="environment">
+                                        <option value="development" {% if config.environment == 'development' %}selected{% endif %}>Development</option>
+                                        <option value="testing" {% if config.environment == 'testing' %}selected{% endif %}>Testing</option>
+                                        <option value="staging" {% if config.environment == 'staging' %}selected{% endif %}>Staging</option>
+                                        <option value="production" {% if config.environment == 'production' %}selected{% endif %}>Production</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="log-level">Log Level</label>
+                                    <select class="form-control" id="log-level">
+                                        <option value="DEBUG" {% if config.log_level == 'DEBUG' %}selected{% endif %}>Debug</option>
+                                        <option value="INFO" {% if config.log_level == 'INFO' %}selected{% endif %}>Info</option>
+                                        <option value="WARNING" {% if config.log_level == 'WARNING' %}selected{% endif %}>Warning</option>
+                                        <option value="ERROR" {% if config.log_level == 'ERROR' %}selected{% endif %}>Error</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="data-dir">Data Directory</label>
+                                    <input type="text" class="form-control" id="data-dir" value="{{ config.data_dir }}">
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="auto-healing" {% if config.auto_healing %}checked{% endif %}>
+                                    <label class="form-check-label" for="auto-healing">Enable Auto-Healing</label>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monitoring Settings -->
+                <div class="tab-pane fade" id="monitoring" role="tabpanel" aria-labelledby="monitoring-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Monitoring Settings</h5>
+                            <button class="btn btn-primary btn-sm" id="save-monitoring">Save Changes</button>
+                        </div>
+                        <div class="card-body">
+                            <form id="monitoring-form">
+                                <div class="form-group">
+                                    <label for="monitoring-interval">Monitoring Interval (seconds)</label>
+                                    <input type="number" class="form-control" id="monitoring-interval" value="{{ config.monitoring.interval }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="metrics-retention">Metrics Retention (days)</label>
+                                    <input type="number" class="form-control" id="metrics-retention" value="{{ config.monitoring.retention_days }}">
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="enable-apm" {% if config.monitoring.enable_apm %}checked{% endif %}>
+                                    <label class="form-check-label" for="enable-apm">Enable APM Integration</label>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="apm-provider">APM Provider</label>
+                                    <select class="form-control" id="apm-provider">
+                                        <option value="none" {% if config.monitoring.apm_provider == 'none' %}selected{% endif %}>None</option>
+                                        <option value="prometheus" {% if config.monitoring.apm_provider == 'prometheus' %}selected{% endif %}>Prometheus</option>
+                                        <option value="datadog" {% if config.monitoring.apm_provider == 'datadog' %}selected{% endif %}>Datadog</option>
+                                        <option value="newrelic" {% if config.monitoring.apm_provider == 'newrelic' %}selected{% endif %}>New Relic</option>
+                                        <option value="dynatrace" {% if config.monitoring.apm_provider == 'dynatrace' %}selected{% endif %}>Dynatrace</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="apm-endpoint">APM Endpoint</label>
+                                    <input type="text" class="form-control" id="apm-endpoint" value="{{ config.monitoring.apm_endpoint }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="apm-api-key">APM API Key</label>
+                                    <input type="password" class="form-control" id="apm-api-key" value="{{ config.monitoring.apm_api_key }}">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Analysis Settings -->
+                <div class="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Error Analysis Settings</h5>
+                            <button class="btn btn-primary btn-sm" id="save-analysis">Save Changes</button>
+                        </div>
+                        <div class="card-body">
+                            <form id="analysis-form">
+                                <div class="form-group">
+                                    <label for="analysis-confidence">Minimum Confidence Threshold (%)</label>
+                                    <input type="number" class="form-control" id="analysis-confidence" min="0" max="100" value="{{ config.analysis.confidence_threshold }}">
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="enable-ml" {% if config.analysis.enable_ml %}checked{% endif %}>
+                                    <label class="form-check-label" for="enable-ml">Enable Machine Learning Analysis</label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="enable-rule-based" {% if config.analysis.enable_rule_based %}checked{% endif %}>
+                                    <label class="form-check-label" for="enable-rule-based">Enable Rule-Based Analysis</label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="collect-training-data" {% if config.analysis.collect_training_data %}checked{% endif %}>
+                                    <label class="form-check-label" for="collect-training-data">Collect Training Data</label>
+                                </div>
+                                <h6 class="mt-4">Language Support</h6>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input" id="lang-python" {% if 'python' in config.analysis.languages %}checked{% endif %}>
+                                    <label class="form-check-label" for="lang-python">Python</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input" id="lang-javascript" {% if 'javascript' in config.analysis.languages %}checked{% endif %}>
+                                    <label class="form-check-label" for="lang-javascript">JavaScript</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input" id="lang-java" {% if 'java' in config.analysis.languages %}checked{% endif %}>
+                                    <label class="form-check-label" for="lang-java">Java</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input" id="lang-ruby" {% if 'ruby' in config.analysis.languages %}checked{% endif %}>
+                                    <label class="form-check-label" for="lang-ruby">Ruby</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input" id="lang-csharp" {% if 'csharp' in config.analysis.languages %}checked{% endif %}>
+                                    <label class="form-check-label" for="lang-csharp">C#</label>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deployment Settings -->
+                <div class="tab-pane fade" id="deployment" role="tabpanel" aria-labelledby="deployment-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Deployment Settings</h5>
+                            <button class="btn btn-primary btn-sm" id="save-deployment">Save Changes</button>
+                        </div>
+                        <div class="card-body">
+                            <form id="deployment-form">
+                                <div class="form-group">
+                                    <label for="deployment-strategy">Default Deployment Strategy</label>
+                                    <select class="form-control" id="deployment-strategy">
+                                        <option value="blue-green" {% if config.deployment.strategy == 'blue-green' %}selected{% endif %}>Blue-Green</option>
+                                        <option value="canary" {% if config.deployment.strategy == 'canary' %}selected{% endif %}>Canary</option>
+                                        <option value="rolling" {% if config.deployment.strategy == 'rolling' %}selected{% endif %}>Rolling</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="canary-percentage">Initial Canary Percentage</label>
+                                    <input type="number" class="form-control" id="canary-percentage" min="0" max="100" value="{{ config.deployment.canary_percentage }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="canary-interval">Canary Interval (minutes)</label>
+                                    <input type="number" class="form-control" id="canary-interval" value="{{ config.deployment.canary_interval }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="canary-step">Canary Step Size (%)</label>
+                                    <input type="number" class="form-control" id="canary-step" min="0" max="100" value="{{ config.deployment.canary_step }}">
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="auto-rollback" {% if config.deployment.auto_rollback %}checked{% endif %}>
+                                    <label class="form-check-label" for="auto-rollback">Enable Automatic Rollback</label>
+                                </div>
+                                
+                                <h6 class="mt-4">Infrastructure Providers</h6>
+                                
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Kubernetes</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-check mb-3">
+                                            <input type="checkbox" class="form-check-input" id="enable-kubernetes" {% if config.deployment.kubernetes.enabled %}checked{% endif %}>
+                                            <label class="form-check-label" for="enable-kubernetes">Enable Kubernetes</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="k8s-namespace">Namespace</label>
+                                            <input type="text" class="form-control" id="k8s-namespace" value="{{ config.deployment.kubernetes.namespace }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="k8s-context">Context</label>
+                                            <input type="text" class="form-control" id="k8s-context" value="{{ config.deployment.kubernetes.context }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Cloud Providers</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-check mb-3">
+                                            <input type="checkbox" class="form-check-input" id="enable-aws" {% if config.deployment.cloud.aws.enabled %}checked{% endif %}>
+                                            <label class="form-check-label" for="enable-aws">AWS</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input type="checkbox" class="form-check-input" id="enable-gcp" {% if config.deployment.cloud.gcp.enabled %}checked{% endif %}>
+                                            <label class="form-check-label" for="enable-gcp">Google Cloud</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input type="checkbox" class="form-check-input" id="enable-azure" {% if config.deployment.cloud.azure.enabled %}checked{% endif %}>
+                                            <label class="form-check-label" for="enable-azure">Azure</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Edge Deployment</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-check mb-3">
+                                            <input type="checkbox" class="form-check-input" id="enable-edge" {% if config.deployment.edge.enabled %}checked{% endif %}>
+                                            <label class="form-check-label" for="enable-edge">Enable Edge Deployment</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edge-provider">Edge Provider</label>
+                                            <select class="form-control" id="edge-provider">
+                                                <option value="cloudflare" {% if config.deployment.edge.provider == 'cloudflare' %}selected{% endif %}>Cloudflare</option>
+                                                <option value="akamai" {% if config.deployment.edge.provider == 'akamai' %}selected{% endif %}>Akamai</option>
+                                                <option value="fastly" {% if config.deployment.edge.provider == 'fastly' %}selected{% endif %}>Fastly</option>
+                                                <option value="cdn" {% if config.deployment.edge.provider == 'cdn' %}selected{% endif %}>Generic CDN</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Serverless</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-check mb-3">
+                                            <input type="checkbox" class="form-check-input" id="enable-serverless" {% if config.deployment.serverless.enabled %}checked{% endif %}>
+                                            <label class="form-check-label" for="enable-serverless">Enable Serverless Deployment</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="serverless-provider">Serverless Provider</label>
+                                            <select class="form-control" id="serverless-provider">
+                                                <option value="aws-lambda" {% if config.deployment.serverless.provider == 'aws-lambda' %}selected{% endif %}>AWS Lambda</option>
+                                                <option value="gcp-functions" {% if config.deployment.serverless.provider == 'gcp-functions' %}selected{% endif %}>Google Cloud Functions</option>
+                                                <option value="azure-functions" {% if config.deployment.serverless.provider == 'azure-functions' %}selected{% endif %}>Azure Functions</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Security Settings</h5>
+                            <button class="btn btn-primary btn-sm" id="save-security">Save Changes</button>
+                        </div>
+                        <div class="card-body">
+                            <form id="security-form">
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="enable-auth" {% if config.security.auth_enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="enable-auth">Enable Authentication</label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="auth-provider">Authentication Provider</label>
+                                    <select class="form-control" id="auth-provider">
+                                        <option value="local" {% if config.security.auth_provider == 'local' %}selected{% endif %}>Local</option>
+                                        <option value="oauth" {% if config.security.auth_provider == 'oauth' %}selected{% endif %}>OAuth</option>
+                                        <option value="ldap" {% if config.security.auth_provider == 'ldap' %}selected{% endif %}>LDAP</option>
+                                    </select>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="enable-rbac" {% if config.security.rbac_enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="enable-rbac">Enable Role-Based Access Control</label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="enable-audit" {% if config.security.audit_enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="enable-audit">Enable Audit Logging</label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="audit-retention">Audit Log Retention (days)</label>
+                                    <input type="number" class="form-control" id="audit-retention" value="{{ config.security.audit_retention_days }}">
+                                </div>
+                                
+                                <h6 class="mt-4">Approval Workflows</h6>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="enable-approvals" {% if config.security.approvals.enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="enable-approvals">Enable Approval Workflows</label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="approval-threshold">Required Approvers</label>
+                                    <input type="number" class="form-control" id="approval-threshold" min="1" value="{{ config.security.approvals.required_approvers }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="approval-timeout">Approval Timeout (hours)</label>
+                                    <input type="number" class="form-control" id="approval-timeout" value="{{ config.security.approvals.approval_timeout_hours }}">
+                                </div>
+                                
+                                <h6 class="mt-4">Rate Limiting</h6>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="enable-rate-limiting" {% if config.security.rate_limiting.enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="enable-rate-limiting">Enable Rate Limiting</label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="healing-cycle-limit">Healing Cycles per Hour</label>
+                                    <input type="number" class="form-control" id="healing-cycle-limit" min="1" value="{{ config.security.rate_limiting.healing_cycle_limit }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="patch-limit">Patches per Hour</label>
+                                    <input type="number" class="form-control" id="patch-limit" min="1" value="{{ config.security.rate_limiting.patch_limit }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="deployment-limit">Deployments per Hour</label>
+                                    <input type="number" class="form-control" id="deployment-limit" min="1" value="{{ config.security.rate_limiting.deployment_limit }}">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rules Management -->
+                <div class="tab-pane fade" id="rules" role="tabpanel" aria-labelledby="rules-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Rules Management</h5>
+                            <div>
+                                <a href="{{ url_for('rule_editor_new') }}" class="btn btn-success btn-sm me-2">Add Rule</a>
+                                <button class="btn btn-primary btn-sm" id="save-rules">Save Changes</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-3">
+                                <label for="rule-category-filter">Filter by Category</label>
+                                <select class="form-control" id="rule-category-filter">
+                                    <option value="all">All Categories</option>
+                                    <option value="python">Python</option>
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="database">Database</option>
+                                    <option value="network">Network</option>
+                                    <option value="authentication">Authentication</option>
+                                    <option value="authorization">Authorization</option>
+                                    <option value="validation">Validation</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Rule ID</th>
+                                            <th>Name</th>
+                                            <th>Category</th>
+                                            <th>Enabled</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rules-table-body">
+                                        {% for rule in rules %}
+                                        <tr data-rule-id="{{ rule.id }}">
+                                            <td>{{ rule.id }}</td>
+                                            <td>{{ rule.name }}</td>
+                                            <td>{{ rule.category }}</td>
+                                            <td>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input rule-toggle" id="rule-toggle-{{ rule.id }}" {% if rule.enabled %}checked{% endif %}>
+                                                    <label class="custom-control-label" for="rule-toggle-{{ rule.id }}"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('rule_editor', rule_id=rule.id) }}" class="btn btn-sm btn-info">Edit</a>
+                                                <button class="btn btn-sm btn-danger delete-rule" data-rule-id="{{ rule.id }}">Delete</button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Templates Management -->
+                <div class="tab-pane fade" id="templates" role="tabpanel" aria-labelledby="templates-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Templates Management</h5>
+                            <div>
+                                <a href="{{ url_for('template_editor_new') }}" class="btn btn-success btn-sm me-2">Add Template</a>
+                                <button class="btn btn-primary btn-sm" id="save-templates">Save Changes</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-3">
+                                <label for="template-category-filter">Filter by Category</label>
+                                <select class="form-control" id="template-category-filter">
+                                    <option value="all">All Categories</option>
+                                    <option value="python">Python</option>
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="django">Django</option>
+                                    <option value="fastapi">FastAPI</option>
+                                    <option value="flask">Flask</option>
+                                    <option value="sqlalchemy">SQLAlchemy</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Template ID</th>
+                                            <th>Name</th>
+                                            <th>Category</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="templates-table-body">
+                                        {% for template in templates %}
+                                        <tr data-template-id="{{ template.id }}">
+                                            <td>{{ template.id }}</td>
+                                            <td>{{ template.name }}</td>
+                                            <td>{{ template.category }}</td>
+                                            <td>
+                                                <a href="{{ url_for('template_editor', template_id=template.id) }}" class="btn btn-sm btn-info">Edit</a>
+                                                <button class="btn btn-sm btn-danger delete-template" data-template-id="{{ template.id }}">Delete</button>
+                                                <button class="btn btn-sm btn-secondary clone-template" data-template-id="{{ template.id }}">Clone</button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plugins Management -->
+                <div class="tab-pane fade" id="plugins" role="tabpanel" aria-labelledby="plugins-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Plugins Management</h5>
+                            <button class="btn btn-primary btn-sm" id="save-plugins">Save Changes</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Plugin</th>
+                                            <th>Version</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="plugins-table-body">
+                                        {% for plugin in plugins %}
+                                        <tr data-plugin-id="{{ plugin.id }}">
+                                            <td>{{ plugin.name }}</td>
+                                            <td>{{ plugin.version }}</td>
+                                            <td>
+                                                <span class="badge {% if plugin.enabled %}badge-success{% else %}badge-secondary{% endif %}">
+                                                    {% if plugin.enabled %}Enabled{% else %}Disabled{% endif %}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm {% if plugin.enabled %}btn-warning{% else %}btn-success{% endif %} toggle-plugin" data-plugin-id="{{ plugin.id }}">
+                                                    {% if plugin.enabled %}Disable{% else %}Enable{% endif %}
+                                                </button>
+                                                <button class="btn btn-sm btn-info configure-plugin" data-plugin-id="{{ plugin.id }}">Configure</button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rule Edit Modal -->
+<div class="modal fade" id="rule-edit-modal" tabindex="-1" role="dialog" aria-labelledby="rule-edit-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rule-edit-modal-title">Edit Rule</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="rule-edit-form">
+                    <input type="hidden" id="edit-rule-id">
+                    <div class="form-group">
+                        <label for="edit-rule-name">Name</label>
+                        <input type="text" class="form-control" id="edit-rule-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-rule-category">Category</label>
+                        <select class="form-control" id="edit-rule-category" required>
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="database">Database</option>
+                            <option value="network">Network</option>
+                            <option value="authentication">Authentication</option>
+                            <option value="authorization">Authorization</option>
+                            <option value="validation">Validation</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-rule-description">Description</label>
+                        <textarea class="form-control" id="edit-rule-description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-rule-pattern">Pattern</label>
+                        <textarea class="form-control" id="edit-rule-pattern" rows="5" required></textarea>
+                        <small class="form-text text-muted">Regular expression pattern to match errors</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-rule-confidence">Confidence (0-100)</label>
+                        <input type="number" class="form-control" id="edit-rule-confidence" min="0" max="100" value="90">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-rule-template">Fix Template</label>
+                        <select class="form-control" id="edit-rule-template">
+                            <option value="">Select a template</option>
+                            {% for template in templates %}
+                            <option value="{{ template.id }}">{{ template.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="edit-rule-enabled" checked>
+                        <label class="form-check-label" for="edit-rule-enabled">Enabled</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-rule-changes">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template Edit Modal -->
+<div class="modal fade" id="template-edit-modal" tabindex="-1" role="dialog" aria-labelledby="template-edit-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="template-edit-modal-title">Edit Template</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="template-edit-form">
+                    <input type="hidden" id="edit-template-id">
+                    <div class="form-group">
+                        <label for="edit-template-name">Name</label>
+                        <input type="text" class="form-control" id="edit-template-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-template-category">Category</label>
+                        <select class="form-control" id="edit-template-category" required>
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="django">Django</option>
+                            <option value="fastapi">FastAPI</option>
+                            <option value="flask">Flask</option>
+                            <option value="sqlalchemy">SQLAlchemy</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-template-description">Description</label>
+                        <textarea class="form-control" id="edit-template-description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-template-content">Template Content</label>
+                        <textarea class="form-control" id="edit-template-content" rows="10" required></textarea>
+                        <small class="form-text text-muted">Use {variable_name} for replaceable parameters</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-template-params">Parameters (JSON)</label>
+                        <textarea class="form-control" id="edit-template-params" rows="3"></textarea>
+                        <small class="form-text text-muted">Define parameters as a JSON object</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-template-changes">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Plugin Configuration Modal -->
+<div class="modal fade" id="plugin-config-modal" tabindex="-1" role="dialog" aria-labelledby="plugin-config-modal-title" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="plugin-config-modal-title">Configure Plugin</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="plugin-config-form">
+                    <input type="hidden" id="config-plugin-id">
+                    <!-- Plugin-specific configuration will be dynamically added here -->
+                    <div id="plugin-config-fields"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-plugin-config">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Configuration management JavaScript
+    $(document).ready(function() {
+        // Save configuration sections
+        $('#save-general').click(function() {
+            saveConfigSection('general');
+        });
+        
+        $('#save-monitoring').click(function() {
+            saveConfigSection('monitoring');
+        });
+        
+        $('#save-analysis').click(function() {
+            saveConfigSection('analysis');
+        });
+        
+        $('#save-deployment').click(function() {
+            saveConfigSection('deployment');
+        });
+        
+        $('#save-security').click(function() {
+            saveConfigSection('security');
+        });
+        
+        // Rules management
+        $('#add-rule').click(function() {
+            // Reset form
+            $('#rule-edit-form')[0].reset();
+            $('#edit-rule-id').val('new');
+            $('#rule-edit-modal-title').text('Add Rule');
+            $('#rule-edit-modal').modal('show');
+        });
+        
+        // Edit rule
+        $(document).on('click', '.edit-rule', function() {
+            var ruleId = $(this).data('rule-id');
+            loadRuleData(ruleId);
+        });
+        
+        // Delete rule
+        $(document).on('click', '.delete-rule', function() {
+            var ruleId = $(this).data('rule-id');
+            if (confirm('Are you sure you want to delete this rule?')) {
+                deleteRule(ruleId);
+            }
+        });
+        
+        // Save rule changes
+        $('#save-rule-changes').click(function() {
+            saveRuleChanges();
+        });
+        
+        // Templates management
+        $('#add-template').click(function() {
+            // Reset form
+            $('#template-edit-form')[0].reset();
+            $('#edit-template-id').val('new');
+            $('#template-edit-modal-title').text('Add Template');
+            $('#template-edit-modal').modal('show');
+        });
+        
+        // Edit template
+        $(document).on('click', '.edit-template', function() {
+            var templateId = $(this).data('template-id');
+            loadTemplateData(templateId);
+        });
+        
+        // Clone template
+        $(document).on('click', '.clone-template', function() {
+            var templateId = $(this).data('template-id');
+            cloneTemplate(templateId);
+        });
+        
+        // Delete template
+        $(document).on('click', '.delete-template', function() {
+            var templateId = $(this).data('template-id');
+            if (confirm('Are you sure you want to delete this template?')) {
+                deleteTemplate(templateId);
+            }
+        });
+        
+        // Save template changes
+        $('#save-template-changes').click(function() {
+            saveTemplateChanges();
+        });
+        
+        // Toggle plugin
+        $(document).on('click', '.toggle-plugin', function() {
+            var pluginId = $(this).data('plugin-id');
+            togglePlugin(pluginId);
+        });
+        
+        // Configure plugin
+        $(document).on('click', '.configure-plugin', function() {
+            var pluginId = $(this).data('plugin-id');
+            loadPluginConfig(pluginId);
+        });
+        
+        // Save plugin configuration
+        $('#save-plugin-config').click(function() {
+            savePluginConfig();
+        });
+        
+        // Helper functions for saving configuration
+        function saveConfigSection(section) {
+            var formData = {};
+            
+            // Gather form data
+            $('#' + section + '-form :input').each(function() {
+                var input = $(this);
+                var name = input.attr('id');
+                var value;
+                
+                if (input.is(':checkbox')) {
+                    value = input.is(':checked');
+                } else {
+                    value = input.val();
+                }
+                
+                formData[name] = value;
+            });
+            
+            // Send to server
+            $.ajax({
+                url: '/api/config/' + section,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ config: formData }),
+                success: function(response) {
+                    if (response.success) {
+                        showAlert('success', 'Configuration saved successfully');
+                    } else {
+                        showAlert('danger', 'Error saving configuration: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showAlert('danger', 'Error saving configuration: ' + error);
+                }
+            });
+        }
+        
+        // Helper functions for rule management
+        function loadRuleData(ruleId) {
+            $.ajax({
+                url: '/api/rules/' + ruleId,
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        var rule = response.rule;
+                        $('#edit-rule-id').val(rule.id);
+                        $('#edit-rule-name').val(rule.name);
+                        $('#edit-rule-category').val(rule.category);
+                        $('#edit-rule-description').val(rule.description);
+                        $('#edit-rule-pattern').val(rule.pattern);
+                        $('#edit-rule-confidence').val(rule.confidence);
+                        $('#edit-rule-template').val(rule.template_id || '');
+                        $('#edit-rule-enabled').prop('checked', rule.enabled);
+                        
+                        $('#rule-edit-modal-title').text('Edit Rule');
+                        $('#rule-edit-modal').modal('show');
+                    } else {
+                        showAlert('danger', 'Error loading rule: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showAlert('danger', 'Error loading rule: ' + error);
+                }
+            });
+        }
+        
+        function saveRuleChanges() {
+            var ruleId = $('#edit-rule-id').val();
+            var isNew = ruleId === 'new';
+            
+            var ruleData = {
+                name: $('#edit-rule-name').val(),
+                category: $('#edit-rule-category').val(),
+                description: $('#edit-rule-description').val(),
+                pattern: $('#edit-rule-pattern').val(),
+                confidence: parseInt($('#edit-rule-confidence').val()),
+                template_id: $('#edit-rule-template').val() || null,
+                enabled: $('#edit-rule-enabled').is(':checked')
+            };
+            
+            var url = isNew ? '/api/rules' : '/api/rules/' + ruleId;
+            var method = isNew ? 'POST' : 'PUT';
+            
+            $.ajax({
+                url: url,
+                type: method,
+                contentType: 'application/json',
+                data: JSON.stringify({ rule: ruleData }),
+                success: function(response) {
+                    if (response.success) {
+                        $('#rule-edit-modal').modal('hide');
+                        // Reload rules table
+                        location.reload();
+                    } else {
+                        showAlert('danger', 'Error saving rule: ' + response.message, '#rule-edit-modal');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showAlert('danger', 'Error saving rule: ' + error, '#rule-edit-modal');
+                }
+            });
+        }
+        
+        function deleteRule(ruleId) {
+            $.ajax({
+                url: '/api/rules/' + ruleId,
+                type: 'DELETE',
+                success: function(response) {
+                    if (response.success) {
+                        // Remove the rule from the table
+                        $('tr[data-rule-id="' + ruleId + '"]').remove();
+                        showAlert('success', 'Rule deleted successfully');
+                    } else {
+                        showAlert('danger', 'Error deleting rule: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showAlert('danger', 'Error deleting rule: ' + error);
+                }
+            });
+        }
+        
+        // Helper functions for template management
+        function loadTemplateData(templateId) {
+            $.ajax({
+                url: '/api/templates/' + templateId,
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        var template = response.template;
+                        $('#edit-template-id').val(template.id);
+                        $('#edit-template-name').val(template.name);
+                        $('#edit-template-category').val(template.category);
+                        $('#edit-template-description').val(template.description);
+                        $('#edit-template-content').val(template.content);
+                        $('#edit-template-params').val(JSON.stringify(template.parameters, null, 2));
+                        
+                        $('#template-edit-modal-title').text('Edit Template');
+                        $('#template-edit-modal').modal('show');
+                    } else {
+                        showAlert('danger', 'Error loading template: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showAlert('danger', 'Error loading template: ' + error);
+                }
+            });
+        }
+        
+        function saveTemplateChanges() {
+            var templateId = $('#edit-template-id').val();
+            var isNew = templateId === 'new';
+            
+            var templateData = {
+                name: $('#edit-template-name').val(),
+                category: $('#edit-template-category').val(),
+                description: $('#edit-template-description').val(),
+                content: $('#edit-template-content').val()
+            };
+            
+            // Parse parameters JSON
+            try {
+                var paramsText = $('#edit-template-params').val();
+                if (paramsText) {
+                    templateData.parameters = JSON.parse(paramsText);
+                }
+            } catch (e) {
+                showAlert('danger', 'Invalid JSON for parameters: ' + e.message, '#template-edit-modal');
+                return;
+            }
+            
+            var url = isNew ? '/api/templates' : '/api/templates/' + templateId;
+            var method = isNew ? 'POST' : 'PUT';
+            
+            $.ajax({
+                url: url,
+                type: method,
+                contentType: 'application/json',
+                data: JSON.stringify({ template: templateData }),
+                success: function(response) {
+                    if (response.success) {
+                        $('#template-edit-modal').modal('hide');
+                        // Reload templates table
+                        location.reload();
+                    } else {
+                        showAlert('danger', 'Error saving template: ' + response.message, '#template-edit-modal');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showAlert('danger', 'Error saving template: ' + error, '#template-edit-modal');
+                }
+            });
+        }
+        
+        function cloneTemplate(templateId) {
+            $.ajax({
+                url: '/api/templates/' + templateId + '/clone',
+                type: 'POST',
+                success: function(response) {
+                    if (response.success) {
+                        // Reload templates table
+                        location.reload();
+                    } else {
+                        showAlert('danger', 'Error cloning template: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showAlert('danger', 'Error cloning template: ' + error);
+                }
+            });
+        }
+        
+        function deleteTemplate(templateId) {
+            $.ajax({
+                url: '/api/templates/' + templateId,
+                type: 'DELETE',
+                success: function(response) {
+                    if (response.success) {
+                        // Remove the template from the table
+                        $('tr[data-template-id="' + templateId + '"]').remove();
+                        showAlert('success', 'Template deleted successfully');
+                    } else {
+                        showAlert('danger', 'Error deleting template: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showAlert('danger', 'Error deleting template: ' + error);
+                }
+            });
+        }
+        
+        // Helper functions for plugin management
+        function togglePlugin(pluginId) {
+            $.ajax({
+                url: '/api/plugins/' + pluginId + '/toggle',
+                type: 'POST',
+                success: function(response) {
+                    if (response.success) {
+                        // Update the plugin status in the UI
+                        var row = $('tr[data-plugin-id="' + pluginId + '"]');
+                        var enabled = response.plugin.enabled;
+                        
+                        row.find('.badge').removeClass('badge-success badge-secondary')
+                            .addClass(enabled ? 'badge-success' : 'badge-secondary')
+                            .text(enabled ? 'Enabled' : 'Disabled');
+                            
+                        row.find('.toggle-plugin').removeClass('btn-success btn-warning')
+                            .addClass(enabled ? 'btn-warning' : 'btn-success')
+                            .text(enabled ? 'Disable' : 'Enable');
+                            
+                        showAlert('success', 'Plugin ' + (enabled ? 'enabled' : 'disabled') + ' successfully');
+                    } else {
+                        showAlert('danger', 'Error toggling plugin: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showAlert('danger', 'Error toggling plugin: ' + error);
+                }
+            });
+        }
+        
+        function loadPluginConfig(pluginId) {
+            $.ajax({
+                url: '/api/plugins/' + pluginId + '/config',
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        var plugin = response.plugin;
+                        $('#config-plugin-id').val(plugin.id);
+                        
+                        // Build config form fields
+                        var fields = '';
+                        for (var key in plugin.config) {
+                            var value = plugin.config[key];
+                            var fieldType = typeof value === 'boolean' ? 'checkbox' : 'text';
+                            
+                            if (fieldType === 'checkbox') {
+                                fields += '<div class="form-check mb-3">' +
+                                          '<input type="checkbox" class="form-check-input" id="plugin-config-' + key + '" ' + (value ? 'checked' : '') + '>' +
+                                          '<label class="form-check-label" for="plugin-config-' + key + '">' + key + '</label>' +
+                                          '</div>';
+                            } else {
+                                fields += '<div class="form-group">' +
+                                          '<label for="plugin-config-' + key + '">' + key + '</label>' +
+                                          '<input type="text" class="form-control" id="plugin-config-' + key + '" value="' + value + '">' +
+                                          '</div>';
+                            }
+                        }
+                        
+                        $('#plugin-config-fields').html(fields);
+                        $('#plugin-config-modal-title').text('Configure ' + plugin.name);
+                        $('#plugin-config-modal').modal('show');
+                    } else {
+                        showAlert('danger', 'Error loading plugin configuration: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showAlert('danger', 'Error loading plugin configuration: ' + error);
+                }
+            });
+        }
+        
+        function savePluginConfig() {
+            var pluginId = $('#config-plugin-id').val();
+            var config = {};
+            
+            // Collect form data
+            $('#plugin-config-fields :input').each(function() {
+                var input = $(this);
+                var id = input.attr('id');
+                var key = id.replace('plugin-config-', '');
+                var value;
+                
+                if (input.is(':checkbox')) {
+                    value = input.is(':checked');
+                } else {
+                    value = input.val();
+                }
+                
+                config[key] = value;
+            });
+            
+            $.ajax({
+                url: '/api/plugins/' + pluginId + '/config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ config: config }),
+                success: function(response) {
+                    if (response.success) {
+                        $('#plugin-config-modal').modal('hide');
+                        showAlert('success', 'Plugin configuration saved successfully');
+                    } else {
+                        showAlert('danger', 'Error saving plugin configuration: ' + response.message, '#plugin-config-modal');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showAlert('danger', 'Error saving plugin configuration: ' + error, '#plugin-config-modal');
+                }
+            });
+        }
+        
+        // Helper function to show alerts
+        function showAlert(type, message, container) {
+            var alertHtml = '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
+                            message +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                            '<span aria-hidden="true">&times;</span>' +
+                            '</button>' +
+                            '</div>';
+                            
+            if (container) {
+                $(container).find('.modal-body').prepend(alertHtml);
+            } else {
+                $('.container').prepend(alertHtml);
+            }
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(function() {
+                $('.alert').alert('close');
+            }, 5000);
+        }
+    });
+</script>
+{% endblock %}

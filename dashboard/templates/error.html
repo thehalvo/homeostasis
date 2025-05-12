@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Homeostasis Dashboard{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="card-title mb-0">Error</h5>
+            </div>
+            <div class="card-body text-center">
+                <i class="fas fa-exclamation-triangle fa-5x text-danger mb-4"></i>
+                <h4>{{ error.code }}</h4>
+                <p class="lead">{{ error.description }}</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">Return to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

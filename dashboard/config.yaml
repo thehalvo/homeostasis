@@ -1,0 +1,64 @@
+# Homeostasis Dashboard Configuration
+
+# Server settings
+server:
+  host: '127.0.0.1'
+  port: 5000
+  debug: false
+  log_level: 'INFO'
+
+# Authentication settings
+auth:
+  enabled: true
+  session_timeout: 3600  # 1 hour
+  token_expiry: 3600     # 1 hour
+  # Default admin credentials - change in production!
+  default_users:
+    - username: 'admin'
+      password: 'admin'
+      roles: ['admin']
+    - username: 'operator'
+      password: 'operator'
+      roles: ['operator']
+    - username: 'viewer'
+      password: 'viewer'
+      roles: ['viewer']
+
+# API security settings
+api_security:
+  enabled: true
+  rate_limits:
+    global: [1000, 60]  # 1000 requests per 60 seconds globally
+    user: [200, 60]     # 200 requests per 60 seconds per user
+    ip: [500, 60]       # 500 requests per 60 seconds per IP
+
+# Homeostasis connection settings
+homeostasis:
+  orchestrator_host: '127.0.0.1'
+  orchestrator_port: 8000
+  connect_timeout: 5
+  request_timeout: 30
+
+# Dashboard settings
+dashboard:
+  title: 'Homeostasis Dashboard'
+  refresh_interval: 10  # seconds
+  theme: 'light'        # 'light' or 'dark'
+  # Customizations
+  show_metrics: true
+  show_real_time_updates: true
+  metrics_history_hours: 24
+
+# Real-time updates
+socketio:
+  enabled: true
+  ping_interval: 25
+  ping_timeout: 60
+  async_mode: 'threading'
+
+# Database settings (optional)
+database:
+  enabled: false
+  uri: 'sqlite:///dashboard.db'
+  # For production, use a proper database
+  # uri: 'postgresql://user:password@localhost:5432/homeostasis'
