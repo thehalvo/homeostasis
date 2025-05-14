@@ -1,0 +1,148 @@
+{
+  "rules": [
+    {
+      "id": "maven_dependency_not_found",
+      "pattern": "(?:Could not find artifact ([^:]+):([^:]+):([^:]+)|Could not resolve ([^\\s]+))",
+      "type": "DependencyResolutionException",
+      "description": "Maven/Gradle could not find or resolve a dependency",
+      "root_cause": "java_dependency_not_found",
+      "suggestion": "Check the dependency coordinates (groupId, artifactId, version). Verify that the dependency exists in the configured repositories. Add the correct repository if using a non-Maven Central dependency.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "build",
+      "framework": "maven"
+    },
+    {
+      "id": "maven_version_conflict",
+      "pattern": "(?:Dependency conflict|conflicting dependencies|version conflict)",
+      "type": "DependencyVersionConflict",
+      "description": "Conflicting versions of the same dependency",
+      "root_cause": "java_dependency_conflict",
+      "suggestion": "Use dependency management to enforce specific versions. In Maven, use <dependencyManagement> section to specify versions. In Gradle, use the resolution strategy or force specific versions.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "build",
+      "framework": "maven"
+    },
+    {
+      "id": "maven_invalid_pom",
+      "pattern": "(?:Invalid POM|Non-parseable POM|Failed to parse POM)",
+      "type": "InvalidPOMException",
+      "description": "The Maven POM file has syntax errors or invalid structure",
+      "root_cause": "java_invalid_pom",
+      "suggestion": "Check the XML syntax in your pom.xml file. Ensure all XML tags are properly closed and nested. Validate your POM against the XML schema if needed.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "build",
+      "framework": "maven"
+    },
+    {
+      "id": "maven_plugin_not_found",
+      "pattern": "(?:Plugin ([^:]+):([^:]+):([^:]+) not found|Plugin not found: ([^\\s]+))",
+      "type": "PluginResolutionException",
+      "description": "Maven/Gradle couldn't find the specified plugin",
+      "root_cause": "java_plugin_not_found",
+      "suggestion": "Check the plugin coordinates (groupId, artifactId, version). Verify that the plugin repository is properly configured. For custom plugins, ensure the plugin repository is included.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "build",
+      "framework": "maven"
+    },
+    {
+      "id": "maven_build_failure",
+      "pattern": "(?:Build failure|BUILD FAILED|BUILD UNSUCCESSFUL)",
+      "type": "BuildFailureException",
+      "description": "General Maven/Gradle build failure",
+      "root_cause": "java_build_failure",
+      "suggestion": "Review the complete error log to identify the specific cause. Common issues include compilation errors, test failures, dependency problems, or plugin configuration issues.",
+      "confidence": "low",
+      "severity": "high",
+      "category": "build",
+      "framework": "maven"
+    },
+    {
+      "id": "maven_compiler_error",
+      "pattern": "\\[ERROR\\] (?:.*?)\\.java:\\[(\\d+),(\\d+)\\] (.*)",
+      "type": "CompilationFailureException",
+      "description": "Java compilation error in Maven/Gradle build",
+      "root_cause": "java_compilation_error",
+      "suggestion": "Check the error message and fix the Java syntax or semantic issue. Common errors include undefined symbols, type errors, or visibility problems.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "build",
+      "framework": "maven"
+    },
+    {
+      "id": "gradle_configuration_error",
+      "pattern": "A problem occurred configuring ([^\\s]+)\\.",
+      "type": "GradleConfigurationException",
+      "description": "Error in Gradle project configuration",
+      "root_cause": "java_gradle_configuration",
+      "suggestion": "Check your build.gradle file for syntax errors or invalid configuration. Verify that all plugins and dependencies are properly declared.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "build",
+      "framework": "gradle"
+    },
+    {
+      "id": "gradle_daemon_crash",
+      "pattern": "Gradle build daemon has been stopped",
+      "type": "GradleDaemonCrashException",
+      "description": "The Gradle daemon crashed during the build",
+      "root_cause": "java_gradle_daemon_crash",
+      "suggestion": "Check if the daemon ran out of memory. Increase Gradle daemon memory with org.gradle.jvmargs=-Xmx2g in gradle.properties. Try running with --no-daemon to isolate the issue.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "build",
+      "framework": "gradle"
+    },
+    {
+      "id": "gradle_version_outdated",
+      "pattern": "(?:Minimum required Gradle version|Gradle version ([\\d\\.]+) is required)",
+      "type": "GradleVersionException",
+      "description": "The Gradle version is outdated for the project",
+      "root_cause": "java_gradle_version",
+      "suggestion": "Update your Gradle version to the required version. Update the Gradle wrapper with ./gradlew wrapper --gradle-version=X.Y.Z or update your system Gradle installation.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "build",
+      "framework": "gradle"
+    },
+    {
+      "id": "maven_missing_dependency",
+      "pattern": "(?:class ([^\\s]+) not found|cannot find symbol\\s+symbol:\\s+class\\s+([^\\s]+))",
+      "type": "ClassNotFoundException",
+      "description": "Java class not found, likely due to a missing dependency",
+      "root_cause": "java_missing_dependency",
+      "suggestion": "Identify the missing class and add the dependency that contains it to your pom.xml or build.gradle file. Use Maven Central or other repository searches to find the right dependency.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "build",
+      "framework": "maven"
+    },
+    {
+      "id": "maven_property_not_found",
+      "pattern": "(?:Property '([^']+)' not found|variable '([^']+)' not set)",
+      "type": "PropertyNotFoundException",
+      "description": "Property or variable referenced in the build file not found",
+      "root_cause": "java_missing_property",
+      "suggestion": "Define the missing property in your build file, settings file, or using -D flag for system properties. Check for typos in property references.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "build",
+      "framework": "maven"
+    },
+    {
+      "id": "maven_module_not_found",
+      "pattern": "(?:Module not found|project not found|Could not find the module)",
+      "type": "ModuleNotFoundException",
+      "description": "Referenced module in a multi-module project not found",
+      "root_cause": "java_missing_module",
+      "suggestion": "Check the module path and name in your parent POM or settings.gradle file. Ensure the module directory exists and has a proper build file.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "build",
+      "framework": "maven"
+    }
+  ]
+}

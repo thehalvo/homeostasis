@@ -1,0 +1,141 @@
+/**
+ * Template for fixing JPA transaction issues
+ * 
+ * This template provides solutions for resolving TransactionRequiredException errors.
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// OPTION 1: Add @Transactional annotation to service methods
+// This is the most common solution for Spring applications
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class EntityService {
+    
+    private final EntityRepository repository;
+    
+    @Autowired
+    public EntityService(EntityRepository repository) {
+        this.repository = repository;
+    }
+    
+    @Transactional // Add this annotation to methods that modify entities
+    public void updateEntity(Long id, String newValue) {
+        Entity entity = repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(id));
+        
+        entity.setValue(newValue);
+        // No need to explicitly call save() when using @Transactional with JPA
+        // Changes to managed entities are automatically persisted
+    }
+    
+    @Transactional(readOnly = true) // Use readOnly=true for read operations
+    public Entity getEntity(Long id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(id));
+    }
+}
+
+// OPTION 2: Configure transaction management in Spring
+// Make sure @EnableTransactionManagement is present in your configuration
+import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+@Configuration
+@EnableTransactionManagement
+public class TransactionConfig {
+    // Other configuration as needed
+}
+
+// OPTION 3: Manually manage transactions using EntityManager
+// For cases where Spring's declarative transactions are not used
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+
+public class ManualTransactionService {
+    
+    private final EntityManager entityManager;
+    
+    public ManualTransactionService(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    public void updateWithTransaction(Long id, String newValue) {
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+            
+            Entity entity = entityManager.find(Entity.class, id);
+            if (entity == null) {
+                throw new EntityNotFoundException(id);
+            }
+            
+            entity.setValue(newValue);
+            
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw e; // Re-throw the exception after rollback
+        }
+    }
+}
+
+// OPTION 4: Use Spring's TransactionTemplate for programmatic transactions
+// Useful for more fine-grained control
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.TransactionStatus;
+
+public class ProgrammaticTransactionService {
+    
+    private final TransactionTemplate transactionTemplate;
+    private final EntityRepository repository;
+    
+    public ProgrammaticTransactionService(
+            TransactionTemplate transactionTemplate,
+            EntityRepository repository) {
+        this.transactionTemplate = transactionTemplate;
+        this.repository = repository;
+    }
+    
+    public void updateWithTransactionTemplate(Long id, String newValue) {
+        transactionTemplate.execute((TransactionStatus status) -> {
+            try {
+                Entity entity = repository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException(id));
+                
+                entity.setValue(newValue);
+                
+                return null; // Return value if needed
+            } catch (Exception e) {
+                status.setRollbackOnly();
+                throw e;
+            }
+        });
+    }
+}
+
+// OPTION 5: Ensure methods are called within a transactional context
+// If you're getting errors in a method that's not directly annotated
+// but should be called from a transactional context:
+
+public class TransactionalService {
+    
+    @Transactional
+    public void outerMethod() {
+        // This contains a transaction
+        // Call methods that require a transaction from here
+        innerMethod();
+    }
+    
+    // This method will work when called from outerMethod()
+    // but will fail with TransactionRequiredException if called directly
+    private void innerMethod() {
+        // Code that requires a transaction
+    }
+}
+
+// Choose the most appropriate option based on your application architecture
+// For most Spring applications, Option 1 is the simplest and most common approach

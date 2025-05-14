@@ -1,0 +1,105 @@
+/**
+ * Template for fixing Maven/Gradle dependency issues
+ * 
+ * This template provides solutions for resolving dependency not found errors.
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// OPTION 1: Add the missing dependency to Maven pom.xml
+// Example for a typical Maven dependency:
+/*
+<dependency>
+    <groupId>org.example</groupId>
+    <artifactId>example-library</artifactId>
+    <version>1.2.3</version>
+</dependency>
+*/
+
+// OPTION 2: Add the missing dependency to Gradle build.gradle
+// Example for a typical Gradle dependency:
+/*
+dependencies {
+    implementation 'org.example:example-library:1.2.3'
+}
+*/
+
+// OPTION 3: Add a custom repository if the dependency is not in Maven Central
+// Maven example:
+/*
+<repositories>
+    <repository>
+        <id>custom-repo</id>
+        <name>Custom Repository</name>
+        <url>https://repo.example.org/maven2</url>
+    </repository>
+</repositories>
+*/
+
+// Gradle example:
+/*
+repositories {
+    mavenCentral()
+    maven {
+        url "https://repo.example.org/maven2"
+    }
+}
+*/
+
+// OPTION 4: Use dependency management for consistent versions across modules
+// Maven example:
+/*
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>example-library</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+*/
+
+// Gradle example:
+/*
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:2.7.0'
+    }
+    dependencies {
+        dependency 'org.example:example-library:1.2.3'
+    }
+}
+*/
+
+// OPTION 5: Use Gradle resolution strategy for version conflicts
+// Gradle example:
+/*
+configurations.all {
+    resolutionStrategy {
+        force 'org.example:example-library:1.2.3'
+        failOnVersionConflict()
+    }
+}
+*/
+
+// Search for the dependency on Maven Central:
+// https://search.maven.org/
+
+// Or use JitPack for GitHub repositories:
+// https://jitpack.io/
+
+// Common dependency types:
+// - implementation: Available at compile and runtime (Gradle)
+// - compile: Available at compile time, usually transitive (Maven standard, Gradle deprecated)
+// - api: Available at compile time and exposed to dependents (Gradle)
+// - runtimeOnly: Available only at runtime, not compile time (Gradle)
+// - providedCompile: Available at compile time but provided by runtime container (Gradle)
+// - provided: Available at compile time but provided by runtime container (Maven)
+// - testImplementation: Available for tests only (Gradle)
+// - testCompile: Available for tests only (Maven, Gradle deprecated)
+
+// Additional troubleshooting steps:
+// 1. Run 'mvn dependency:tree' or 'gradle dependencies' to visualize the dependency tree
+// 2. Check for version conflicts by looking at transitive dependencies
+// 3. Use --refresh-dependencies flag in Gradle to clear caches
+// 4. Check network connectivity to Maven repositories

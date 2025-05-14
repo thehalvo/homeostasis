@@ -1,0 +1,148 @@
+{
+  "rules": [
+    {
+      "id": "deadlock_detected",
+      "pattern": "(?:java\\.lang\\.Thread\\.State: BLOCKED|Found one Java-level deadlock|A potential deadlock was detected)",
+      "type": "ThreadDeadlock",
+      "description": "Deadlock detected between threads waiting for locks",
+      "root_cause": "java_deadlock",
+      "suggestion": "Identify lock ordering issues. Ensure locks are always acquired in the same order across all threads. Consider using higher-level concurrency utilities like ReentrantLock with timeout, or java.util.concurrent structures instead of synchronized blocks.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "concurrency",
+      "framework": "java"
+    },
+    {
+      "id": "concurrent_modification",
+      "pattern": "java\\.util\\.ConcurrentModificationException(?:.*?)",
+      "type": "ConcurrentModificationException",
+      "description": "Collection was modified while being iterated",
+      "root_cause": "java_concurrent_modification",
+      "suggestion": "Use thread-safe collections (ConcurrentHashMap, CopyOnWriteArrayList) or synchronize access to collections. For modifications during iteration, use Iterator.remove() instead of Collection.remove(), or use a snapshot copy for iteration.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "java"
+    },
+    {
+      "id": "illegal_monitor_state",
+      "pattern": "java\\.lang\\.IllegalMonitorStateException(?:.*?)",
+      "type": "IllegalMonitorStateException",
+      "description": "Thread attempted to wait/notify on an object without owning its monitor",
+      "root_cause": "java_monitor_state_error",
+      "suggestion": "Ensure wait(), notify(), and notifyAll() are called from within a synchronized block or method on the same object. Check that the monitor object is consistent across all synchronized sections.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "java"
+    },
+    {
+      "id": "thread_interrupted",
+      "pattern": "java\\.lang\\.InterruptedException(?:.*?)",
+      "type": "InterruptedException",
+      "description": "Thread was interrupted while waiting, sleeping, or otherwise occupied",
+      "root_cause": "java_thread_interrupted",
+      "suggestion": "Handle InterruptedException properly: either restore the interrupt status with Thread.currentThread().interrupt() or propagate the exception. Never silently catch and ignore InterruptedException.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "concurrency",
+      "framework": "java"
+    },
+    {
+      "id": "race_condition",
+      "pattern": "(?:race condition|atomicity violation|inconsistent state|thread safety violation)",
+      "type": "RaceCondition",
+      "description": "Race condition detected due to unprotected shared state access",
+      "root_cause": "java_race_condition",
+      "suggestion": "Protect shared state access with synchronized blocks, java.util.concurrent.locks, or use thread-safe data structures. Consider using atomic variables (AtomicInteger, AtomicReference) for simple cases, or volatile for visibility.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "java"
+    },
+    {
+      "id": "thread_timeout",
+      "pattern": "java\\.util\\.concurrent\\.TimeoutException(?:.*?)",
+      "type": "TimeoutException",
+      "description": "Thread operation timed out waiting for a result",
+      "root_cause": "java_thread_timeout",
+      "suggestion": "Review the timeout duration for adequacy. Check for potential deadlocks or performance bottlenecks that cause operations to timeout. Implement proper timeout handling and fallback strategies.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "java"
+    },
+    {
+      "id": "rejected_execution",
+      "pattern": "java\\.util\\.concurrent\\.RejectedExecutionException(?:.*?)",
+      "type": "RejectedExecutionException",
+      "description": "Task was rejected by a thread pool executor",
+      "root_cause": "java_task_rejected",
+      "suggestion": "Configure an appropriate RejectedExecutionHandler for the task. Increase the thread pool or queue size. Implement a backpressure mechanism or circuit breaker to prevent task overload.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "java"
+    },
+    {
+      "id": "completion_exception",
+      "pattern": "java\\.util\\.concurrent\\.ExecutionException(?:.*?)",
+      "type": "ExecutionException",
+      "description": "Exception thrown during the execution of a task submitted to an Executor",
+      "root_cause": "java_execution_error",
+      "suggestion": "Examine the cause of the ExecutionException to find the actual error in the task. Ensure robust exception handling inside tasks submitted to executors, as they can swallow exceptions otherwise.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "java"
+    },
+    {
+      "id": "thread_starvation",
+      "pattern": "(?:thread starvation|no progress in thread|thread pool saturation|thread exhaustion)",
+      "type": "ThreadStarvation",
+      "description": "Thread starvation detected, where threads are unable to make progress",
+      "root_cause": "java_thread_starvation",
+      "suggestion": "Review thread pool sizing and task management. Ensure CPU-intensive tasks don't block I/O tasks by using separate thread pools. Check for thread leaks or tasks that don't complete properly.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "java"
+    },
+    {
+      "id": "memory_consistency",
+      "pattern": "(?:memory consistency error|visibility problem|non-volatile access)",
+      "type": "MemoryConsistencyError",
+      "description": "Memory consistency issue where threads have inconsistent views of shared data",
+      "root_cause": "java_memory_consistency",
+      "suggestion": "Use volatile for shared primitive fields or consider AtomicReference for objects. Use synchronized or explicit locks for compound operations. Consider using immutable objects for shared state.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "java"
+    },
+    {
+      "id": "thread_leak",
+      "pattern": "(?:thread leak|unclosed thread|thread not terminated|growing number of threads)",
+      "type": "ThreadLeak",
+      "description": "Thread leak where threads are created but not properly terminated",
+      "root_cause": "java_thread_leak",
+      "suggestion": "Use thread pools instead of creating threads directly. Ensure proper cleanup in finally blocks. Check for daemon vs. non-daemon threads. Monitor thread creation patterns and limit maximum threads.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "java"
+    },
+    {
+      "id": "lock_contention",
+      "pattern": "(?:lock contention|high blocking time|threads waiting for lock|monitor contention)",
+      "type": "LockContention",
+      "description": "High lock contention where many threads are competing for the same locks",
+      "root_cause": "java_lock_contention",
+      "suggestion": "Reduce lock scope to minimum required code. Use finer-grained locking with multiple locks for different parts of data. Consider lock-free algorithms or concurrent collections optimized for throughput.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "concurrency",
+      "framework": "java"
+    }
+  ]
+}

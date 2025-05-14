@@ -1,0 +1,26 @@
+/**
+ * Null check template for preventing NullPointerException
+ * 
+ * This template provides a null check for the variable that caused the NPE.
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// Add null check before accessing ${NULL_CHECK_VAR}
+if (${NULL_CHECK_VAR} == null) {
+    // Choose the appropriate handling strategy:
+    
+    // Option 1: Return early (if in a method that can return)
+    // return null; // or appropriate default value
+    
+    // Option 2: Throw a more descriptive exception
+    throw new IllegalArgumentException("${NULL_CHECK_VAR} must not be null");
+    
+    // Option 3: Use a default/fallback value
+    // ${NULL_CHECK_VAR} = getDefaultValue(); // Define a method to provide a default
+    
+    // Option 4: Log the issue but continue with a safe default
+    // logger.warn("${NULL_CHECK_VAR} was null, using empty default");
+    // ${NULL_CHECK_VAR} = new ${CLASS_NAME}(); // Or other appropriate default
+}
+
+// Original code can safely proceed after this point

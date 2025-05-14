@@ -1,0 +1,32 @@
+/**
+ * Bounds check template for preventing ArrayIndexOutOfBoundsException
+ * 
+ * This template provides a bounds check for array or list access.
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// Add bounds check before accessing array/collection elements
+// Replace 'array' and 'index' with your actual variable names
+if (index >= 0 && index < array.length) {
+    // Safe to access array[index]
+    value = array[index];
+} else {
+    // Choose the appropriate handling strategy:
+    
+    // Option 1: Log and use a default value
+    logger.warn("Index {} is out of bounds (array length: {})", index, array.length);
+    value = defaultValue; // Use a sensible default
+    
+    // Option 2: Throw a more descriptive exception
+    // throw new IllegalArgumentException(
+    //     "Index " + index + " is out of bounds (valid range: 0 to " + (array.length - 1) + ")");
+    
+    // Option 3: Return early from the method
+    // return null; // or appropriate default value
+    
+    // Option 4: Clamp the index to valid bounds
+    // int safeIndex = Math.min(Math.max(0, index), array.length - 1);
+    // value = array[safeIndex];
+}
+
+// Original code can safely proceed after this point

@@ -1,0 +1,237 @@
+/**
+ * Template for fixing Java deadlock issues
+ * 
+ * This template provides solutions for resolving deadlock problems.
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// PROBLEM: Deadlocks occur when two or more threads wait forever for a lock held by another thread
+// Thread 1: locks A, then tries to lock B
+// Thread 2: locks B, then tries to lock A
+// Result: Both threads wait forever
+
+// OPTION 1: Ensure consistent lock ordering across threads
+// Always acquire locks in the same order throughout your code
+
+public class DeadlockFreeExample {
+    private final Object lockA = new Object();
+    private final Object lockB = new Object();
+    
+    // Correct lock ordering - always lock A then B
+    public void method1() {
+        synchronized (lockA) {
+            // Do something with A
+            synchronized (lockB) {
+                // Do something with both A and B
+            }
+        }
+    }
+    
+    // Same ordering as method1 - also locks A then B
+    public void method2() {
+        synchronized (lockA) {
+            // Do something with A
+            synchronized (lockB) {
+                // Do something with both A and B
+            }
+        }
+    }
+}
+
+// OPTION 2: Use java.util.concurrent.locks.Lock with tryLock()
+// Prevents deadlocks by releasing locks and retrying if can't acquire all needed locks
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class TryLockExample {
+    private final Lock lockA = new ReentrantLock();
+    private final Lock lockB = new ReentrantLock();
+    
+    public void methodWithTryLock() {
+        boolean acquiredA = false;
+        boolean acquiredB = false;
+        
+        try {
+            // Try to get both locks, with a timeout
+            acquiredA = lockA.tryLock(1, TimeUnit.SECONDS);
+            if (acquiredA) {
+                // Do something with A
+                
+                acquiredB = lockB.tryLock(1, TimeUnit.SECONDS);
+                if (acquiredB) {
+                    // Do something with both A and B
+                } else {
+                    // Couldn't get lock B, handle gracefully
+                    System.out.println("Could not acquire lock B");
+                    return;
+                }
+            } else {
+                // Couldn't get lock A, handle gracefully
+                System.out.println("Could not acquire lock A");
+                return;
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.out.println("Thread was interrupted");
+        } finally {
+            // Always release locks in reverse order of acquisition
+            if (acquiredB) {
+                lockB.unlock();
+            }
+            if (acquiredA) {
+                lockA.unlock();
+            }
+        }
+    }
+}
+
+// OPTION 3: Replace locking with concurrent collections
+// Use thread-safe collections designed for concurrent access
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class ConcurrentCollectionExample {
+    // Instead of manually locking a HashMap
+    private final ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+    
+    // Instead of manually locking an ArrayList
+    private final CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
+    
+    public void concurrentOperations() {
+        // These operations are thread-safe without external synchronization
+        map.put("key", "value");
+        Object value = map.get("key");
+        
+        list.add("item");
+        String item = list.get(0);
+    }
+}
+
+// OPTION 4: Use atomic operations for simple counters and references
+// Avoid locking for simple operations on individual variables
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+public class AtomicExample {
+    // Instead of synchronized counter
+    private final AtomicInteger counter = new AtomicInteger(0);
+    
+    // Instead of synchronized object reference
+    private final AtomicReference<String> lastValue = new AtomicReference<>("");
+    
+    public void atomicOperations() {
+        // These operations are atomic without locking
+        counter.incrementAndGet();
+        int current = counter.get();
+        
+        lastValue.set("new value");
+        String value = lastValue.get();
+        
+        // Atomic compare-and-set operations
+        boolean updated = counter.compareAndSet(current, current + 10);
+        if (updated) {
+            System.out.println("Counter was updated atomically");
+        }
+    }
+}
+
+// OPTION 5: Use higher-level concurrency utilities
+// Leverage the java.util.concurrent package for sophisticated concurrency patterns
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.CountDownLatch;
+
+public class ConcurrencyUtilExample {
+    public void betterConcurrency() {
+        // Use thread pools instead of creating threads directly
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        
+        try {
+            // Submit tasks to the executor
+            Future<String> future = executor.submit(() -> {
+                // Task code here
+                return "Task completed";
+            });
+            
+            // Get result with timeout to prevent hanging
+            String result = future.get(5, TimeUnit.SECONDS);
+            
+            // Use CountDownLatch for thread coordination
+            CountDownLatch latch = new CountDownLatch(3);
+            
+            for (int i = 0; i < 3; i++) {
+                executor.submit(() -> {
+                    try {
+                        // Task code here
+                    } finally {
+                        latch.countDown();
+                    }
+                });
+            }
+            
+            // Wait for all tasks with timeout
+            boolean completed = latch.await(10, TimeUnit.SECONDS);
+            if (!completed) {
+                System.out.println("Timed out waiting for tasks");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Always shut down the executor service
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+}
+
+// OPTION 6: Use immutable objects for shared state
+// Immutable objects are inherently thread-safe
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
+
+public class ImmutableExample {
+    // Immutable class example
+    public static final class ImmutableValue {
+        private final int value;
+        private final List<String> items;
+        
+        public ImmutableValue(int value, List<String> items) {
+            this.value = value;
+            // Create defensive copy of mutable objects
+            this.items = Collections.unmodifiableList(new ArrayList<>(items));
+        }
+        
+        public int getValue() {
+            return value;
+        }
+        
+        public List<String> getItems() {
+            return items; // Already unmodifiable
+        }
+        
+        // Create a new instance with modified value
+        public ImmutableValue withValue(int newValue) {
+            return new ImmutableValue(newValue, items);
+        }
+    }
+    
+    // Using immutable objects
+    private volatile ImmutableValue sharedState = new ImmutableValue(0, new ArrayList<>());
+    
+    public void threadSafeUpdate() {
+        // Create a new instance instead of modifying
+        sharedState = sharedState.withValue(42);
+    }
+}
+
+// Choose the most appropriate approach based on your specific scenario
+// Combine techniques as needed for complex concurrency requirements

@@ -20,6 +20,7 @@ from .language_adapters import (
     ErrorSchemaValidator
 )
 from .rule_based import RuleBasedAnalyzer
+from .language_plugin_system import get_plugin, list_plugins
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,15 @@ class LanguageRegistry:
         # Register JavaScript analyzer
         self.register_analyzer("javascript", JavaScriptAnalyzer())
         self.register_analyzer("typescript", JavaScriptAnalyzer())  # TypeScript uses the same analyzer
+        
+        # Register Java plugin if available
+        try:
+            # Get Java plugin through the plugin system
+            java_plugin = get_plugin("java")
+            if java_plugin:
+                self.register_analyzer("java", java_plugin)
+        except Exception as e:
+            logger.warning(f"Failed to load Java plugin: {e}")
     
     def register_analyzer(self, language: str, analyzer: Any):
         """
@@ -310,6 +320,26 @@ class CrossLanguageOrchestrator:
         # If language is explicitly specified
         if "language" in error_data:
             return error_data["language"].lower()
+        
+        # Check for Java-style exceptions
+        if "error_type" in error_data:
+            error_type = error_data["error_type"]
+            if error_type and isinstance(error_type, str):
+                if ('java.lang' in error_type or 
+                    'org.springframework' in error_type or
+                    'java.util' in error_type or
+                    'javax.' in error_type):
+                    return 'java'
+        
+        # Check stack trace for Java frames
+        if "stack_trace" in error_data and error_data["stack_trace"]:
+            stack_trace = error_data["stack_trace"]
+            if isinstance(stack_trace, list):
+                for frame in stack_trace:
+                    if isinstance(frame, dict) and "file" in frame and frame["file"].endswith(".java"):
+                        return "java"
+                    elif isinstance(frame, str) and ".java:" in frame:
+                        return "java"
         
         # Otherwise, try to detect using the adapter factory
         return ErrorAdapterFactory.detect_language(error_data)

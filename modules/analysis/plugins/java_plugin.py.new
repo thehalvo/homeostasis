@@ -580,17 +580,6 @@ class JavaExceptionHandler:
     
     def _load_concurrency_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Java concurrency exceptions."""
-        rules_file = Path(__file__).parent.parent / "rules" / "java" / "concurrency_errors.json"
-        
-        if rules_file.exists():
-            try:
-                with open(rules_file, 'r') as f:
-                    data = json.load(f)
-                    return data.get("rules", [])
-            except Exception as e:
-                logger.error(f"Error loading concurrency rules from {rules_file}: {e}")
-        
-        # Fallback to built-in rules if file doesn't exist or can't be loaded
         return [
             {
                 "id": "java_interrupted_exception",
@@ -667,28 +656,6 @@ class JavaExceptionHandler:
                 "suggestion": "Avoid nested synchronized blocks, always acquire locks in the same order across threads, use tryLock with timeout, or use higher-level concurrency utilities",
                 "confidence": "medium",
                 "severity": "critical",
-                "category": "concurrency"
-            },
-            {
-                "id": "java_concurrent_modification",
-                "pattern": "java\\.util\\.ConcurrentModificationException(?:.*?)",
-                "type": "ConcurrentModificationException",
-                "description": "Collection was modified while being iterated",
-                "root_cause": "java_concurrent_modification",
-                "suggestion": "Use thread-safe collections (ConcurrentHashMap, CopyOnWriteArrayList) or synchronize access to collections. For modifications during iteration, use Iterator.remove() instead of Collection.remove(), or use a snapshot copy for iteration.",
-                "confidence": "high",
-                "severity": "high",
-                "category": "concurrency"
-            },
-            {
-                "id": "java_race_condition",
-                "pattern": "(?:race condition|atomicity violation|inconsistent state|thread safety violation)",
-                "type": "RaceCondition",
-                "description": "Race condition detected due to unprotected shared state access",
-                "root_cause": "java_race_condition",
-                "suggestion": "Protect shared state access with synchronized blocks, java.util.concurrent.locks, or use thread-safe data structures. Consider using atomic variables (AtomicInteger, AtomicReference) for simple cases, or volatile for visibility.",
-                "confidence": "medium",
-                "severity": "high",
                 "category": "concurrency"
             }
         ]

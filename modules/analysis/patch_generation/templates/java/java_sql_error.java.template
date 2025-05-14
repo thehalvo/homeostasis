@@ -1,0 +1,114 @@
+/**
+ * Template for handling JDBC SQLException
+ * 
+ * This template provides solutions for handling database-related exceptions.
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// OPTION 1: Improved error handling with resource management
+// Uses try-with-resources for auto-closing connections (Java 7+)
+try (
+    Connection connection = dataSource.getConnection();
+    PreparedStatement stmt = connection.prepareStatement("SELECT * FROM table WHERE id = ?")
+) {
+    // Use prepared statements to avoid SQL injection
+    stmt.setInt(1, id);
+    
+    try (ResultSet rs = stmt.executeQuery()) {
+        // Process results safely
+        if (rs.next()) {
+            // Read data from the result set
+        }
+    }
+} catch (SQLException e) {
+    // Get detailed error information
+    int errorCode = e.getErrorCode();
+    String sqlState = e.getSQLState();
+    
+    // Handle specific SQL error codes
+    if (sqlState.equals("23505")) {
+        // Duplicate key violation
+        logger.warn("Record already exists: {}", e.getMessage());
+        // Handle appropriately
+    } else if (sqlState.startsWith("08")) {
+        // Connection error - consider retry logic
+        logger.error("Database connection error: {}", e.getMessage());
+        // Implement retry with backoff
+    } else if (sqlState.startsWith("42")) {
+        // Syntax error / invalid object
+        logger.error("SQL syntax or invalid object error: {}", e.getMessage());
+        // Log detailed query information for debugging
+    } else {
+        // General error handling
+        logger.error("Database error (Code: {}, State: {}): {}", 
+                    errorCode, sqlState, e.getMessage());
+    }
+    
+    // Choose whether to propagate or wrap the exception
+    throw new ServiceException("Database operation failed", e);
+}
+
+// OPTION 2: Connection pooling for better performance
+// Using HikariCP (add dependency: com.zaxxer:HikariCP)
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+// Set up connection pool (do this once, e.g., in a @Bean method)
+HikariConfig config = new HikariConfig();
+config.setJdbcUrl("jdbc:mysql://localhost:3306/db");
+config.setUsername("user");
+config.setPassword("password");
+config.setMaximumPoolSize(10);
+config.setMinimumIdle(5);
+config.setConnectionTimeout(30000); // 30 seconds
+config.setIdleTimeout(600000); // 10 minutes
+config.setMaxLifetime(1800000); // 30 minutes
+
+HikariDataSource dataSource = new HikariDataSource(config);
+
+// Use the pooled connections for better performance and reliability
+// This helps reduce connection-related errors
+
+// OPTION 3: Transaction management
+// Ensures database consistency and rollback on error
+Connection conn = null;
+try {
+    conn = dataSource.getConnection();
+    conn.setAutoCommit(false); // Start transaction
+    
+    // Perform multiple operations as a single transaction
+    try (PreparedStatement stmt1 = conn.prepareStatement("INSERT INTO...")) {
+        // Execute first statement
+        stmt1.executeUpdate();
+    }
+    
+    try (PreparedStatement stmt2 = conn.prepareStatement("UPDATE...")) {
+        // Execute second statement
+        stmt2.executeUpdate();
+    }
+    
+    // If all operations succeed, commit the transaction
+    conn.commit();
+} catch (SQLException e) {
+    // On error, roll back the transaction
+    if (conn != null) {
+        try {
+            conn.rollback();
+        } catch (SQLException ex) {
+            logger.error("Error during rollback", ex);
+        }
+    }
+    
+    // Handle the exception
+    logger.error("Transaction failed", e);
+    throw new ServiceException("Database transaction failed", e);
+} finally {
+    // Always close the connection
+    if (conn != null) {
+        try {
+            conn.close();
+        } catch (SQLException ex) {
+            logger.error("Error closing connection", ex);
+        }
+    }
+}

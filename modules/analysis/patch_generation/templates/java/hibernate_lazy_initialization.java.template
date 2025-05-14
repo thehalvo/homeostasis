@@ -1,0 +1,172 @@
+/**
+ * Template for fixing Hibernate LazyInitializationException
+ * 
+ * This template provides solutions for resolving lazy initialization issues.
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// OPTION 1: Use JOIN FETCH in JPQL query to eagerly load the association
+// This is the most efficient approach for specific use cases
+import javax.persistence.EntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Repository
+public class EntityRepository {
+    
+    private final EntityManager entityManager;
+    
+    @Autowired
+    public EntityRepository(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    public Entity findWithAssociations(Long id) {
+        // Use JOIN FETCH to eagerly load the associations
+        return entityManager.createQuery(
+            "SELECT e FROM Entity e " +
+            "LEFT JOIN FETCH e.collection " +     // Add JOIN FETCH for each association
+            "LEFT JOIN FETCH e.manyToOne " +
+            "WHERE e.id = :id", Entity.class)
+            .setParameter("id", id)
+            .getSingleResult();
+    }
+}
+
+// OPTION 2: Use @EntityGraph to specify which associations to load
+// Works well with Spring Data JPA
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface EntityRepository extends JpaRepository<Entity, Long> {
+    
+    @EntityGraph(attributePaths = {"collection", "manyToOne"})
+    Optional<Entity> findById(Long id);
+    
+    // Or define a named entity graph on the entity class
+    @EntityGraph(value = "Entity.withAssociations")
+    List<Entity> findByProperty(String property);
+}
+
+// And in your entity class:
+@Entity
+@NamedEntityGraph(
+    name = "Entity.withAssociations",
+    attributeNodes = {
+        @NamedAttributeNode("collection"),
+        @NamedAttributeNode("manyToOne")
+    }
+)
+public class Entity {
+    // Entity definition
+}
+
+// OPTION 3: Configure eager loading with @ManyToOne or @OneToMany annotations
+// Note: Use this cautiously as it affects all queries for this entity
+@Entity
+public class Entity {
+    
+    @Id
+    private Long id;
+    
+    @ManyToOne(fetch = FetchType.EAGER)  // Changed from LAZY to EAGER
+    private ParentEntity parent;
+    
+    @OneToMany(mappedBy = "entity", fetch = FetchType.EAGER)  // Changed from LAZY to EAGER
+    private Set<ChildEntity> children;
+    
+    // getters and setters
+}
+
+// OPTION 4: Use @Transactional on service methods to keep the session open
+// This approach is convenient but can lead to "open session in view" anti-pattern if overused
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class EntityService {
+    
+    private final EntityRepository repository;
+    
+    @Autowired
+    public EntityService(EntityRepository repository) {
+        this.repository = repository;
+    }
+    
+    @Transactional(readOnly = true)  // Keeps the Hibernate session open
+    public void processEntityWithAssociations(Long id) {
+        Entity entity = repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(id));
+        
+        // Now you can access lazy associations safely
+        Set<ChildEntity> children = entity.getChildren();
+        children.forEach(child -> {
+            // Process children
+        });
+    }
+}
+
+// OPTION 5: Use Hibernate.initialize() to explicitly initialize collections
+// More selective than eager fetching
+import org.hibernate.Hibernate;
+
+@Service
+public class EntityService {
+    
+    private final EntityRepository repository;
+    
+    @Autowired
+    public EntityService(EntityRepository repository) {
+        this.repository = repository;
+    }
+    
+    @Transactional(readOnly = true)
+    public void initializeSelectively(Long id) {
+        Entity entity = repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(id));
+        
+        // Explicitly initialize only the collections you need
+        Hibernate.initialize(entity.getChildren());
+        // Other collections remain lazy
+    }
+}
+
+// OPTION 6: Use Data Transfer Objects (DTOs) to avoid lazy loading issues
+// This is often the best approach for complex domain models
+public class EntityDTO {
+    private Long id;
+    private String name;
+    private List<ChildDTO> children;
+    
+    // getters, setters, constructors
+}
+
+@Service
+public class EntityService {
+    
+    private final EntityRepository repository;
+    
+    @Autowired
+    public EntityService(EntityRepository repository) {
+        this.repository = repository;
+    }
+    
+    @Transactional(readOnly = true)
+    public EntityDTO getEntityDTO(Long id) {
+        Entity entity = repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(id));
+        
+        // Create DTO with only needed data, initializing collections in the process
+        EntityDTO dto = new EntityDTO();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        
+        // Initialize and map children to DTOs
+        List<ChildDTO> childDTOs = entity.getChildren().stream()
+            .map(child -> new ChildDTO(child.getId(), child.getName()))
+            .collect(Collectors.toList());
+        dto.setChildren(childDTOs);
+        
+        return dto;
+    }
+}
+
+// Choose the most appropriate option based on your specific needs and architecture

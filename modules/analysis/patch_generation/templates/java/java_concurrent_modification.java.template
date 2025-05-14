@@ -1,0 +1,124 @@
+/**
+ * Template for fixing ConcurrentModificationException
+ * 
+ * This template provides solutions for safely modifying collections during iteration.
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// PROBLEM: ConcurrentModificationException occurs when a collection is modified
+// while being iterated using a foreach loop or Iterator, except when using 
+// the Iterator's own remove() method.
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+
+// OPTION 1: Use Iterator's remove() method
+// Safe way to remove elements during iteration
+public void removeWithIterator(List<String> items) {
+    Iterator<String> iterator = items.iterator();
+    while (iterator.hasNext()) {
+        String item = iterator.next();
+        if (shouldRemove(item)) {
+            iterator.remove(); // Safe removal during iteration
+        }
+    }
+}
+
+// OPTION 2: Use a copy of the collection for iteration
+// Iterate over a copy, but modify the original
+public void removeWithCopy(List<String> items) {
+    // Create a copy to iterate over
+    List<String> copy = new ArrayList<>(items);
+    
+    for (String item : copy) {
+        if (shouldRemove(item)) {
+            items.remove(item); // Safe because we're iterating over a copy
+        }
+    }
+}
+
+// OPTION 3: Use CopyOnWriteArrayList for thread-safety
+// Best for concurrent access from multiple threads
+public void useCopyOnWriteArrayList() {
+    // Thread-safe list that creates a fresh copy for every modification
+    List<String> threadSafeList = new CopyOnWriteArrayList<>();
+    threadSafeList.add("item1");
+    threadSafeList.add("item2");
+    
+    // Safe for concurrent iteration and modification
+    for (String item : threadSafeList) {
+        // Can safely remove during iteration
+        if (shouldRemove(item)) {
+            threadSafeList.remove(item);
+        }
+        
+        // Can even add items during iteration
+        if (shouldAddMore(item)) {
+            threadSafeList.add("new item");
+        }
+    }
+}
+
+// OPTION 4: Use removeIf() method (Java 8+)
+// Concise, modern way to remove elements based on a predicate
+public void useRemoveIf(List<String> items) {
+    // Atomically removes all elements that match the predicate
+    items.removeIf(item -> shouldRemove(item));
+}
+
+// OPTION 5: Use streams for filtering (Java 8+)
+// Creates a new filtered collection
+public List<String> useStreams(List<String> items) {
+    // Filter elements that should be kept (inverse of removal logic)
+    return items.stream()
+            .filter(item -> !shouldRemove(item))
+            .collect(Collectors.toList());
+    
+    // Original list remains unchanged
+    // Assign result back if you want to update the original:
+    // items.clear();
+    // items.addAll(filteredList);
+}
+
+// OPTION 6: Use traditional indexed for loop
+// Safe but limited to List implementations with indexed access
+public void useForLoop(List<String> items) {
+    // Iterate backwards to avoid index shifting problems when removing
+    for (int i = items.size() - 1; i >= 0; i--) {
+        if (shouldRemove(items.get(i))) {
+            items.remove(i);
+        }
+    }
+}
+
+// OPTION 7: Collect elements to remove first, then remove them
+// Two-phase approach: first identify, then remove
+public void collectThenRemove(List<String> items) {
+    List<String> toRemove = new ArrayList<>();
+    
+    // Phase 1: Identify items to remove
+    for (String item : items) {
+        if (shouldRemove(item)) {
+            toRemove.add(item);
+        }
+    }
+    
+    // Phase 2: Remove the identified items
+    items.removeAll(toRemove);
+}
+
+// Helper method for examples
+private boolean shouldRemove(String item) {
+    return item == null || item.isEmpty();
+}
+
+// Helper method for examples
+private boolean shouldAddMore(String item) {
+    return item != null && item.length() > 10;
+}
+
+// Choose the most appropriate option based on your specific use case
+// Consider performance implications for large collections

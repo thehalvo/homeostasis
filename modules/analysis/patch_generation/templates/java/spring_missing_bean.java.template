@@ -1,0 +1,107 @@
+/**
+ * Template for fixing Spring missing bean/autowiring issues
+ * 
+ * This template provides solutions for resolving unsatisfied dependency errors.
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// OPTION 1: Define the missing bean
+// Create a @Bean definition in a @Configuration class
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AppConfig {
+    
+    @Bean
+    public ${CLASS_NAME} ${METHOD_NAME}() {
+        // Initialize and return an instance of the required bean
+        return new ${CLASS_NAME}Impl();
+        
+        // Or if it needs dependencies:
+        // return new ${CLASS_NAME}Impl(dependency1, dependency2);
+    }
+}
+
+// OPTION 2: Ensure component scanning is properly configured
+// Make sure your @SpringBootApplication or @ComponentScan includes the right packages
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+@ComponentScan(basePackages = {
+    "com.example.base", 
+    "com.example.service", 
+    "com.example.repository"
+    // Add the package containing your missing bean
+})
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+
+// OPTION 3: Add appropriate annotation to the class
+// If the class exists but isn't recognized as a Spring bean
+import org.springframework.stereotype.Service; // or @Component, @Repository, etc.
+
+@Service // Choose the most appropriate stereotype annotation
+public class MissingServiceImpl implements MissingService {
+    // Implementation
+}
+
+// OPTION 4: Make the dependency optional
+// If the bean is optional, modify the injection to avoid errors
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class SomeService {
+    
+    private final OptionalService optionalService;
+    
+    @Autowired(required = false) // Make the dependency optional
+    public SomeService(OptionalService optionalService) {
+        this.optionalService = optionalService;
+    }
+    
+    // Or use Optional<> for more control
+    @Autowired
+    public SomeService(Optional<OptionalService> optionalService) {
+        this.optionalService = optionalService.orElse(null);
+    }
+    
+    // Then check for null before using
+    public void doSomething() {
+        if (optionalService != null) {
+            optionalService.performAction();
+        } else {
+            // Fallback behavior
+        }
+    }
+}
+
+// OPTION 5: Use @Primary for disambiguation
+// If there are multiple beans of the same type
+import org.springframework.context.annotation.Primary;
+
+@Service
+@Primary // Makes this the primary bean to inject when multiple exist
+public class PrimaryServiceImpl implements ServiceInterface {
+    // Implementation
+}
+
+// OPTION 6: Use @Qualifier for specific bean selection
+import org.springframework.beans.factory.annotation.Qualifier;
+
+@Service
+public class SomeClient {
+    
+    private final ServiceInterface service;
+    
+    @Autowired
+    public SomeClient(@Qualifier("specificServiceName") ServiceInterface service) {
+        this.service = service;
+    }
+}
+
+// Remember to choose the most appropriate option for your specific case
