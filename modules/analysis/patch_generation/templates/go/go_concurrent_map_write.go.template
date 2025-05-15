@@ -1,0 +1,11 @@
+// Option 1: Use a mutex to protect map access
+var mu sync.RWMutex
+
+// For write operations
+mu.Lock()
+m[key] = value
+mu.Unlock()
+
+// Option 2: Use sync.Map for concurrent access
+var concurrentMap sync.Map
+concurrentMap.Store(key, value)    // Write operation

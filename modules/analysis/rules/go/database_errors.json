@@ -1,0 +1,96 @@
+{
+  "description": "Go database-related error patterns for SQL, ORM libraries",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "sql_no_rows",
+      "pattern": "sql: no rows in result set",
+      "type": "sql.ErrNoRows",
+      "description": "SQL query returned no rows when one was expected",
+      "root_cause": "go_sql_no_rows",
+      "suggestion": "Check if the record exists before querying. Handle the 'no rows' case explicitly.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "database"
+    },
+    {
+      "id": "sql_connection_refused",
+      "pattern": "dial tcp ([^:]+): connect: connection refused",
+      "type": "net.OpError",
+      "description": "Database connection refused",
+      "root_cause": "go_sql_connection_refused",
+      "suggestion": "Ensure the database server is running and accessible. Check connection string parameters.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "database"
+    },
+    {
+      "id": "sql_duplicate_entry",
+      "pattern": "Error \\d+: Duplicate entry '([^']+)' for key '([^']+)'",
+      "type": "MySQL Error",
+      "description": "Duplicate key violation in MySQL",
+      "root_cause": "go_sql_duplicate_key",
+      "suggestion": "Check if the record exists before inserting, or handle the duplicate key error appropriately.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "database"
+    },
+    {
+      "id": "sql_constraint_violation",
+      "pattern": "violates (?:foreign key|unique|check) constraint",
+      "type": "PostgreSQL Error",
+      "description": "Database constraint violation in PostgreSQL",
+      "root_cause": "go_sql_constraint_violation",
+      "suggestion": "Validate data before insertion to ensure it meets database constraints.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "database"
+    },
+    {
+      "id": "sql_connection_dropped",
+      "pattern": "driver: bad connection",
+      "type": "sql.ErrBadConn",
+      "description": "Database connection was dropped or is invalid",
+      "root_cause": "go_sql_bad_connection",
+      "suggestion": "Implement connection retry logic and connection pooling. Check for network stability.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "database"
+    },
+    {
+      "id": "sql_transaction_closed",
+      "pattern": "(?:sql: transaction has already been committed or rolled back|sql: Transaction has already been committed or rolled back)",
+      "type": "sql.ErrTxDone",
+      "description": "Operation on a closed database transaction",
+      "root_cause": "go_sql_transaction_closed",
+      "suggestion": "Check transaction lifecycle management. Ensure transactions are not used after commit/rollback.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "database"
+    },
+    {
+      "id": "gorm_record_not_found",
+      "pattern": "record not found",
+      "type": "gorm.ErrRecordNotFound",
+      "description": "GORM record not found error",
+      "root_cause": "go_gorm_record_not_found",
+      "suggestion": "Check if the record exists before accessing it. Use First().Error or similar to handle the not found case.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "database",
+      "framework": "gorm"
+    },
+    {
+      "id": "gorm_field_error",
+      "pattern": "field ([\\w\\.]+) doesn't have a default value",
+      "type": "gorm.ErrInvalidField",
+      "description": "GORM required field missing",
+      "root_cause": "go_gorm_missing_required_field",
+      "suggestion": "Provide a value for the required field or make it nullable in the database schema.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "database",
+      "framework": "gorm"
+    }
+  ]
+}

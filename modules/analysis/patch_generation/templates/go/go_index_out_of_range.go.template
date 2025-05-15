@@ -1,0 +1,8 @@
+// Check array/slice bounds before accessing
+if index >= 0 && index < len(slice) {
+    // Safe to access slice[index]
+    value := slice[index]
+} else {
+    // Handle invalid index
+    return fmt.Errorf("index %d out of bounds (length %d)", index, len(slice))
+}

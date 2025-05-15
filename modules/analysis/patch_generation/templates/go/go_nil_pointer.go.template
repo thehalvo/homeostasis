@@ -1,0 +1,9 @@
+// Check if the pointer is nil before dereferencing
+if pointer == nil {
+    // Handle nil case to prevent panic
+    return fmt.Errorf("nil pointer dereference")
+    // Alternatively:
+    // return // Return early
+    // pointer = &defaultValue // Use default
+}
+// Then proceed with original code using the pointer

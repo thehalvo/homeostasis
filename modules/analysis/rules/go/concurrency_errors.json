@@ -1,0 +1,94 @@
+{
+  "description": "Go concurrency and goroutine-related error patterns",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "go_concurrent_map_write",
+      "pattern": "concurrent map writes",
+      "type": "runtime error",
+      "description": "Multiple goroutines writing to a map concurrently",
+      "root_cause": "go_concurrent_map_write",
+      "suggestion": "Use sync.Mutex to protect map access in concurrent code or use sync.Map for concurrent access.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_concurrent_map_read_write",
+      "pattern": "concurrent map read and map write",
+      "type": "runtime error",
+      "description": "Goroutines reading and writing a map concurrently",
+      "root_cause": "go_concurrent_map_read_write",
+      "suggestion": "Use sync.RWMutex to protect map access in concurrent code or use sync.Map for concurrent access.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_all_goroutines_asleep",
+      "pattern": "all goroutines are asleep - deadlock",
+      "type": "fatal error",
+      "description": "All goroutines are blocked waiting - deadlock detected",
+      "root_cause": "go_deadlock",
+      "suggestion": "Check for channel operations that are blocking without a sender/receiver, or missing unlock operations.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_mutex_unlock_unlocked",
+      "pattern": "unlock of unlocked mutex",
+      "type": "runtime error",
+      "description": "Attempted to unlock a mutex that wasn't locked",
+      "root_cause": "go_unlock_unlocked_mutex",
+      "suggestion": "Ensure the mutex is locked before attempting to unlock it. Review lock/unlock patterns and control flow.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_channel_closed",
+      "pattern": "send on closed channel",
+      "type": "runtime error",
+      "description": "Attempted to send a value on a closed channel",
+      "root_cause": "go_send_on_closed_channel",
+      "suggestion": "Check if a channel is closed before sending on it. Establish clear ownership of channel closing.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_waitgroup_negative",
+      "pattern": "negative WaitGroup counter",
+      "type": "panic",
+      "description": "sync.WaitGroup counter went negative",
+      "root_cause": "go_waitgroup_negative",
+      "suggestion": "Ensure WaitGroup.Add() is called before goroutines start and WaitGroup.Done() is called exactly once per Add() call.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_once_twice",
+      "pattern": "fatal error: sync.Once.Do\\(func\\) called twice",
+      "type": "fatal error",
+      "description": "sync.Once.Do() was called with two different functions",
+      "root_cause": "go_once_twice",
+      "suggestion": "Ensure sync.Once.Do() is always called with the same function closure.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_race_condition_detector",
+      "pattern": "WARNING: DATA RACE",
+      "type": "race detector",
+      "description": "Go race detector found a potential race condition",
+      "root_cause": "go_race_condition",
+      "suggestion": "Use proper synchronization mechanisms (mutex, channel, atomic operations) to protect shared data access across goroutines.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "goroutine"
+    }
+  ]
+}

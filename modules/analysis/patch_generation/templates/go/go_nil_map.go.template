@@ -1,0 +1,6 @@
+// Initialize map before use
+if m == nil {
+    m = make(map[KeyType]ValueType)
+}
+// Now safe to use
+m[key] = value

@@ -1,0 +1,127 @@
+{
+  "description": "Common Go error patterns and fixes",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "go_nil_pointer",
+      "pattern": "(?:nil pointer dereference|invalid memory address)",
+      "type": "runtime error",
+      "description": "Attempted to dereference a nil pointer",
+      "root_cause": "go_nil_pointer",
+      "suggestion": "Add nil checks before accessing pointers. Use safe accessor patterns.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "go_index_out_of_range",
+      "pattern": "index out of range \\[(\\d+)\\] with length (\\d+)",
+      "type": "runtime error",
+      "description": "Array or slice index out of bounds",
+      "root_cause": "go_index_out_of_range",
+      "suggestion": "Add bounds checking before accessing arrays or slices. Use len() to verify index is valid.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "runtime"
+    },
+    {
+      "id": "go_nil_map",
+      "pattern": "assignment to entry in nil map",
+      "type": "runtime error",
+      "description": "Attempted to write to a nil map",
+      "root_cause": "go_nil_map",
+      "suggestion": "Initialize maps with make(map[KeyType]ValueType) before use.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "runtime"
+    },
+    {
+      "id": "go_slice_bounds",
+      "pattern": "slice bounds out of range",
+      "type": "runtime error",
+      "description": "Attempted to create a slice with invalid bounds",
+      "root_cause": "go_slice_bounds",
+      "suggestion": "Ensure slice bounds are within the valid range (0 <= low <= high <= cap).",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "runtime"
+    },
+    {
+      "id": "go_divide_by_zero",
+      "pattern": "(?:divide by zero|division by zero)",
+      "type": "runtime error",
+      "description": "Division by zero error",
+      "root_cause": "go_divide_by_zero",
+      "suggestion": "Add checks to prevent division by zero. Validate denominators before division operations.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "runtime"
+    },
+    {
+      "id": "go_interface_nil",
+      "pattern": "interface conversion: (?:[\\w\\.]+) is nil, not ([\\w\\.]+)",
+      "type": "runtime error",
+      "description": "Attempted to type-assert a nil interface to a concrete type",
+      "root_cause": "go_nil_interface_conversion",
+      "suggestion": "Check if the interface is nil before performing type assertion. Use comma-ok syntax (value, ok := x.(Type)) to safely perform type assertions.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "runtime"
+    },
+    {
+      "id": "go_type_assertion",
+      "pattern": "interface conversion: (?:[\\w\\.]+) is ([\\w\\.]+), not ([\\w\\.]+)",
+      "type": "runtime error",
+      "description": "Type assertion to incorrect type",
+      "root_cause": "go_invalid_type_assertion",
+      "suggestion": "Use comma-ok syntax (value, ok := x.(Type)) to safely perform type assertions, or confirm the concrete type using reflection before asserting.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "runtime"
+    },
+    {
+      "id": "go_context_canceled",
+      "pattern": "context canceled",
+      "type": "context.Canceled",
+      "description": "Operation canceled due to context cancellation",
+      "root_cause": "go_context_canceled",
+      "suggestion": "Handle context cancellation explicitly in your code. This is often part of normal operation.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "core"
+    },
+    {
+      "id": "go_context_deadline_exceeded",
+      "pattern": "context deadline exceeded",
+      "type": "context.DeadlineExceeded",
+      "description": "Operation took too long and exceeded context deadline",
+      "root_cause": "go_context_deadline",
+      "suggestion": "Increase timeout duration or optimize the operation. Add appropriate error handling for timeouts.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "go_file_not_exist",
+      "pattern": "no such file or directory",
+      "type": "os.PathError",
+      "description": "Attempt to access a file that doesn't exist",
+      "root_cause": "go_file_not_exist",
+      "suggestion": "Check if the file exists before attempting to access it. Use os.Stat() or similar functions to verify file existence.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "io"
+    },
+    {
+      "id": "go_permission_denied",
+      "pattern": "permission denied",
+      "type": "os.PathError",
+      "description": "Insufficient permissions to access a file or directory",
+      "root_cause": "go_permission_denied",
+      "suggestion": "Check file permissions. Ensure the application has the necessary permissions to access the resource.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "io"
+    }
+  ]
+}

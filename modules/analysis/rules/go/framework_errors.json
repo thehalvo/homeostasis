@@ -1,0 +1,90 @@
+{
+  "description": "Go web framework (Gin, Echo) specific error patterns",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "gin_invalid_binding",
+      "pattern": "binding:.*required",
+      "type": "binding error",
+      "description": "Required field missing in Gin binding",
+      "root_cause": "gin_binding_required_field",
+      "suggestion": "Ensure required fields are provided in the request or make them optional in the struct tag.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "gin",
+      "framework": "gin"
+    },
+    {
+      "id": "gin_type_error",
+      "pattern": "json: cannot unmarshal (\\w+) into Go struct field ([\\w\\.]+) of type (\\w+)",
+      "type": "json.UnmarshalTypeError",
+      "description": "JSON type doesn't match struct field type in Gin",
+      "root_cause": "gin_json_type_mismatch",
+      "suggestion": "Ensure the JSON data type matches the struct field type, or provide custom binding logic.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "gin",
+      "framework": "gin"
+    },
+    {
+      "id": "echo_render_error",
+      "pattern": "renderer not registered for type",
+      "type": "echo.HTTPError",
+      "description": "No renderer registered for content type in Echo",
+      "root_cause": "echo_renderer_not_registered",
+      "suggestion": "Register a renderer for the content type using e.Renderer.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "echo",
+      "framework": "echo"
+    },
+    {
+      "id": "echo_invalid_binding",
+      "pattern": "code=400, message=([^:]+)",
+      "type": "echo.HTTPError",
+      "description": "Invalid request data in Echo binding",
+      "root_cause": "echo_binding_error",
+      "suggestion": "Check request format and validation rules. Ensure the request data matches the expected format.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "echo",
+      "framework": "echo"
+    },
+    {
+      "id": "echo_not_found",
+      "pattern": "code=404, message=Not Found",
+      "type": "echo.HTTPError",
+      "description": "Route not found in Echo",
+      "root_cause": "echo_route_not_found",
+      "suggestion": "Verify the route is registered correctly. Check for typos in the URL pattern.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "echo",
+      "framework": "echo"
+    },
+    {
+      "id": "http_handler_nil",
+      "pattern": "http: nil Handler",
+      "type": "http.Server",
+      "description": "Nil handler passed to HTTP server",
+      "root_cause": "go_http_nil_handler",
+      "suggestion": "Ensure a valid handler is provided to the HTTP server.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "http",
+      "framework": "standard"
+    },
+    {
+      "id": "http_listen_error",
+      "pattern": "listen (tcp|unix) ([^:]+): bind: (address already in use|permission denied)",
+      "type": "net.OpError",
+      "description": "HTTP server failed to listen on port/socket",
+      "root_cause": "go_http_listen_error",
+      "suggestion": "Ensure the port/socket is available and the application has sufficient permissions.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "http",
+      "framework": "standard"
+    }
+  ]
+}

@@ -50,6 +50,15 @@ class LanguageRegistry:
                 self.register_analyzer("java", java_plugin)
         except Exception as e:
             logger.warning(f"Failed to load Java plugin: {e}")
+            
+        # Register Go plugin if available
+        try:
+            # Get Go plugin through the plugin system
+            go_plugin = get_plugin("go")
+            if go_plugin:
+                self.register_analyzer("go", go_plugin)
+        except Exception as e:
+            logger.warning(f"Failed to load Go plugin: {e}")
     
     def register_analyzer(self, language: str, analyzer: Any):
         """
@@ -331,15 +340,26 @@ class CrossLanguageOrchestrator:
                     'javax.' in error_type):
                     return 'java'
         
-        # Check stack trace for Java frames
+        # Check for Go-style errors
+        if "goroutine_id" in error_data or "go_version" in error_data:
+            return "go"
+        
+        # Check stack trace for language-specific patterns
         if "stack_trace" in error_data and error_data["stack_trace"]:
             stack_trace = error_data["stack_trace"]
             if isinstance(stack_trace, list):
                 for frame in stack_trace:
-                    if isinstance(frame, dict) and "file" in frame and frame["file"].endswith(".java"):
-                        return "java"
-                    elif isinstance(frame, str) and ".java:" in frame:
-                        return "java"
+                    if isinstance(frame, dict):
+                        if "file" in frame:
+                            if frame["file"].endswith(".java"):
+                                return "java"
+                            elif frame["file"].endswith(".go"):
+                                return "go"
+                    elif isinstance(frame, str):
+                        if ".java:" in frame:
+                            return "java"
+                        elif ".go:" in frame or "goroutine " in frame:
+                            return "go"
         
         # Otherwise, try to detect using the adapter factory
         return ErrorAdapterFactory.detect_language(error_data)

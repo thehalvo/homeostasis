@@ -801,6 +801,315 @@ class JavaErrorAdapter(LanguageAdapter):
         return "\n".join(stack_lines)
 
 
+class GoErrorAdapter(LanguageAdapter):
+    """Adapter for Go error formats."""
+    
+    def to_standard_format(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert Go error data to the standard format.
+        
+        Args:
+            error_data: Go error data
+            
+        Returns:
+            Error data in the standard format
+        """
+        # Create a standard error object
+        standard_error = {
+            "error_id": str(uuid.uuid4()),
+            "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
+            "language": "go",
+            "error_type": error_data.get("error_type", ""),
+            "message": error_data.get("message", "")
+        }
+        
+        # Add Go version if available
+        if "go_version" in error_data:
+            standard_error["language_version"] = error_data["go_version"]
+        
+        # Handle stack trace
+        if "stack_trace" in error_data:
+            # Go stack traces can be a string or a list
+            if isinstance(error_data["stack_trace"], str):
+                # Split into lines
+                stack_lines = error_data["stack_trace"].split("\n")
+                
+                # Try to parse structured data from the stack trace
+                parsed_frames = self._parse_go_stack_trace(stack_lines)
+                
+                if parsed_frames:
+                    standard_error["stack_trace"] = parsed_frames
+                else:
+                    standard_error["stack_trace"] = stack_lines
+            elif isinstance(error_data["stack_trace"], list):
+                if all(isinstance(frame, dict) for frame in error_data["stack_trace"]):
+                    # Already in structured format
+                    standard_error["stack_trace"] = error_data["stack_trace"]
+                else:
+                    # List of strings
+                    standard_error["stack_trace"] = error_data["stack_trace"]
+        
+        # Add framework information if available
+        if "framework" in error_data:
+            standard_error["framework"] = error_data["framework"]
+            
+            if "framework_version" in error_data:
+                standard_error["framework_version"] = error_data["framework_version"]
+        
+        # Add request information if available
+        if "request" in error_data:
+            standard_error["request"] = error_data["request"]
+        
+        # Add any additional context
+        if "context" in error_data:
+            standard_error["context"] = error_data["context"]
+        
+        # Add severity if available
+        if "level" in error_data:
+            # Map Go log levels to standard format
+            level_map = {
+                "debug": "debug",
+                "info": "info",
+                "warning": "warning",
+                "warn": "warning",
+                "error": "error",
+                "fatal": "fatal",
+                "panic": "critical"
+            }
+            standard_error["severity"] = level_map.get(error_data["level"].lower(), "error")
+        
+        # Add runtime if available
+        if "runtime" in error_data:
+            standard_error["runtime"] = error_data["runtime"]
+            
+            if "runtime_version" in error_data:
+                standard_error["runtime_version"] = error_data["runtime_version"]
+        
+        # Add goroutine information if available
+        if "goroutine_id" in error_data:
+            if "additional_data" not in standard_error:
+                standard_error["additional_data"] = {}
+            standard_error["additional_data"]["goroutine_id"] = error_data["goroutine_id"]
+        
+        # Add handled flag if available
+        if "handled" in error_data:
+            standard_error["handled"] = error_data["handled"]
+        
+        # Add additional Go-specific data
+        go_specific = {}
+        for key, value in error_data.items():
+            if key not in standard_error and key not in ["stack_trace", "request", "context"] and not key.startswith("_"):
+                go_specific[key] = value
+        
+        if go_specific:
+            if "additional_data" in standard_error:
+                standard_error["additional_data"].update(go_specific)
+            else:
+                standard_error["additional_data"] = go_specific
+        
+        return standard_error
+    
+    def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data to Go-specific format.
+        
+        Args:
+            standard_error: Error data in the standard format
+            
+        Returns:
+            Error data in the Go-specific format
+        """
+        # Create a Go error object
+        go_error = {
+            "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
+            "error_type": standard_error.get("error_type", "error"),
+            "message": standard_error.get("message", "")
+        }
+        
+        # Convert severity to Go logging level
+        if "severity" in standard_error:
+            level_map = {
+                "debug": "debug",
+                "info": "info",
+                "warning": "warn",
+                "error": "error",
+                "critical": "panic",
+                "fatal": "fatal"
+            }
+            go_error["level"] = level_map.get(standard_error["severity"].lower(), "error")
+        
+        # Convert stack trace to Go format
+        if "stack_trace" in standard_error:
+            stack_trace = standard_error["stack_trace"]
+            
+            if isinstance(stack_trace, list):
+                if all(isinstance(frame, str) for frame in stack_trace):
+                    # Already in Go stack trace string format
+                    go_error["stack_trace"] = "\n".join(stack_trace)
+                elif all(isinstance(frame, dict) for frame in stack_trace):
+                    # Convert structured frames to Go stack trace format
+                    go_error["stack_trace"] = self._convert_frames_to_go_stack(
+                        standard_error.get("error_type", "error"), 
+                        standard_error.get("message", ""), 
+                        stack_trace
+                    )
+                    # Also keep the structured version
+                    go_error["stack_frames"] = stack_trace
+        
+        # Add request information if available
+        if "request" in standard_error:
+            go_error["request"] = standard_error["request"]
+        
+        # Add context information if available
+        if "context" in standard_error:
+            go_error["context"] = standard_error["context"]
+        
+        # Add Go version if available
+        if "language_version" in standard_error:
+            go_error["go_version"] = standard_error["language_version"]
+        
+        # Add framework information if available
+        if "framework" in standard_error:
+            go_error["framework"] = standard_error["framework"]
+            
+            if "framework_version" in standard_error:
+                go_error["framework_version"] = standard_error["framework_version"]
+        
+        # Add runtime information if available
+        if "runtime" in standard_error:
+            go_error["runtime"] = standard_error["runtime"]
+            
+            if "runtime_version" in standard_error:
+                go_error["runtime_version"] = standard_error["runtime_version"]
+        
+        # Add handled flag if available
+        if "handled" in standard_error:
+            go_error["handled"] = standard_error["handled"]
+        
+        # Add additional data if available
+        if "additional_data" in standard_error:
+            for key, value in standard_error["additional_data"].items():
+                # Extract goroutine_id as a top-level field
+                if key == "goroutine_id":
+                    go_error["goroutine_id"] = value
+                else:
+                    go_error[key] = value
+        
+        return go_error
+    
+    def _parse_go_stack_trace(self, stack_lines: List[str]) -> List[Dict[str, Any]]:
+        """
+        Parse a Go stack trace into structured frames.
+        
+        Args:
+            stack_lines: Go stack trace lines
+            
+        Returns:
+            Structured frames or None if parsing fails
+        """
+        frames = []
+        goroutine_id = None
+        current_function = None
+        
+        # Common Go stack trace patterns
+        # Goroutine line: goroutine N [status]:
+        # Function line: function_name(args)
+        #    path/to/file.go:line
+        goroutine_pattern = r'goroutine (\d+) \[([^\]]+)\]:'
+        function_pattern = r'([^\(]+)\(.*\)'
+        file_pattern = r'\s*([^:]+):(\d+)(?:\s+(\+0x[0-9a-f]+))?'
+        
+        try:
+            i = 0
+            while i < len(stack_lines):
+                line = stack_lines[i]
+                
+                # Check for goroutine header
+                goroutine_match = re.search(goroutine_pattern, line)
+                if goroutine_match:
+                    goroutine_id = int(goroutine_match.group(1))
+                    i += 1
+                    continue
+                
+                # Check for function name
+                func_match = re.search(function_pattern, line)
+                if func_match:
+                    current_function = func_match.group(1).strip()
+                    
+                    # Check if next line is the file location
+                    if i + 1 < len(stack_lines):
+                        file_line = stack_lines[i + 1]
+                        file_match = re.search(file_pattern, file_line)
+                        
+                        if file_match:
+                            file_path = file_match.group(1)
+                            line_num = int(file_match.group(2))
+                            
+                            # Extract package and function names
+                            func_parts = current_function.split('.')
+                            package = ".".join(func_parts[:-1]) if len(func_parts) > 1 else ""
+                            func_name = func_parts[-1] if func_parts else current_function
+                            
+                            frames.append({
+                                "package": package,
+                                "function": func_name,
+                                "file": file_path,
+                                "line": line_num,
+                                "goroutine_id": goroutine_id
+                            })
+                            
+                            i += 2  # Skip the file line
+                            continue
+                
+                i += 1
+                
+            return frames if frames else None
+        except Exception as e:
+            logger.debug(f"Failed to parse Go stack trace: {e}")
+            return None
+    
+    def _convert_frames_to_go_stack(self, error_type: str, message: str, 
+                                   frames: List[Dict[str, Any]]) -> str:
+        """
+        Convert structured frames to a Go stack trace string.
+        
+        Args:
+            error_type: Error type/name
+            message: Error message
+            frames: Structured frames
+            
+        Returns:
+            Go stack trace string
+        """
+        # Extract goroutine ID (use the first one available)
+        goroutine_id = None
+        for frame in frames:
+            if "goroutine_id" in frame:
+                goroutine_id = frame["goroutine_id"]
+                break
+        
+        # Start with the error message
+        stack_lines = [f"{error_type}: {message}"]
+        
+        # Add goroutine header if available
+        if goroutine_id is not None:
+            stack_lines.insert(0, f"goroutine {goroutine_id} [running]:")
+        
+        # Add frames
+        for frame in frames:
+            package = frame.get("package", "")
+            func_name = frame.get("function", "unknown")
+            file_path = frame.get("file", "unknown")
+            line_num = frame.get("line", 0)
+            
+            # Format like a Go stack trace
+            full_func = f"{package}.{func_name}" if package else func_name
+            stack_lines.append(f"{full_func}()")
+            stack_lines.append(f"\t{file_path}:{line_num}")
+        
+        return "\n".join(stack_lines)
+
+
 class ErrorAdapterFactory:
     """Factory for creating language-specific error adapters."""
     
@@ -826,6 +1135,8 @@ class ErrorAdapterFactory:
             return JavaScriptErrorAdapter()
         elif language == "java":
             return JavaErrorAdapter()
+        elif language == "go":
+            return GoErrorAdapter()
         else:
             raise ValueError(f"No adapter available for language: {language}")
     
@@ -853,14 +1164,25 @@ class ErrorAdapterFactory:
             key in error_data for key in ["stack_trace", "java_version", "jvm"]
         ):
             return "java"
+        elif "goroutine_id" in error_data or "go_version" in error_data:
+            return "go"
             
         # Try to detect from stack trace format
+        if "stack_trace" in error_data and isinstance(error_data["stack_trace"], str):
+            stack = error_data["stack_trace"]
+            if "goroutine " in stack and ".go:" in stack:
+                return "go"
+            elif "at " in stack and ".java:" in stack:
+                return "java"
+                
         if "stack" in error_data and isinstance(error_data["stack"], str):
             stack = error_data["stack"]
             if "at " in stack and ").js" in stack:
                 return "javascript"
             elif "at " in stack and ".java:" in stack:
                 return "java"
+            elif "goroutine " in stack and ".go:" in stack:
+                return "go"
                 
         return "unknown"
 

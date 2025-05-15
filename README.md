@@ -158,8 +158,13 @@ Homeostasis currently provides support for the following programming languages:
 - **Python**: Primary language with comprehensive support for most Python frameworks
 - **JavaScript/TypeScript**: Support for Node.js environments and common JavaScript errors 
 - **Java**: Support for Java exceptions, Spring Framework, Hibernate/JPA, and concurrency issues
+- **Go**: Support for Go runtime errors, goroutine management, and web frameworks like Gin and Echo
 
-For more information about Java integration, see [Java Integration](docs/java_integration.md).
+For more information about language integrations, see:
+- [Python Integration](docs/python_integration.md)
+- [JavaScript/TypeScript Integration](docs/javascript_integration.md)
+- [Java Integration](docs/java_integration.md)
+- [Go Integration](docs/go_integration.md)
 
 ## Project Status
 
@@ -176,6 +181,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Python Ecosystem**: Added support for Python 3.11+ features, Celery tasks, asyncio-specific error detection, NumPy/Pandas error handling, and AI/ML library error detection
 - **Multi-Language Support**: Implemented language-agnostic error schema with support for JavaScript/Node.js and Java through a pluggable adapter architecture
 - **Java Integration**: Added support for Java exceptions, Spring Framework, Hibernate/JPA, and Java concurrency issues, and Maven/Gradle build analysis
+- **Go Integration**: Added support for Go runtime errors, goroutine deadlock detection, web frameworks (Gin, Echo), and common concurrency patterns
 - **Production Readiness**: Enhanced security model with RBAC, implemented approval workflows for critical changes, added rate limiting/throttling for healing actions, and developed comprehensive audit logging
 - **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities
 - **User Experience**: Released web dashboard for monitoring healing activities, implemented fix suggestion interface for human review, added configuration management UI, performance reporting, and custom rule/template editors

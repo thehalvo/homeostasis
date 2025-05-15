@@ -1,0 +1,18 @@
+// Prevent deadlock with appropriate patterns:
+
+// 1. Use buffered channels when appropriate
+ch := make(chan Type, bufferSize)  // Prevents deadlock when producers > consumers
+
+// 2. Use select with timeout or default to avoid indefinite blocking
+select {
+case value := <-ch:
+    // Process value
+case <-time.After(5 * time.Second):
+    // Handle timeout
+default:
+    // Non-blocking alternative
+}
+
+// 3. Ensure mutex locks are properly released
+mu.Lock()
+defer mu.Unlock()  // Always unlock even if panic occurs

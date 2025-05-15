@@ -1,0 +1,17 @@
+// Option 1: Use RWMutex for concurrent reads/writes
+var mu sync.RWMutex
+
+// For write operations
+mu.Lock()
+m[key] = value
+mu.Unlock()
+
+// For read operations
+mu.RLock()
+value := m[key]
+mu.RUnlock()
+
+// Option 2: Use sync.Map for concurrent access
+var concurrentMap sync.Map
+concurrentMap.Store(key, value)        // Write operation
+value, ok := concurrentMap.Load(key)   // Read operation
