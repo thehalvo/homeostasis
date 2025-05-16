@@ -1,0 +1,222 @@
+{
+  "name": "Backend Language Integration Test Suite",
+  "description": "Test cases for validating backend language integration and cross-language capabilities",
+  "test_cases": [
+    {
+      "name": "Python KeyError Test",
+      "language": "python",
+      "error_data": {
+        "exception_type": "KeyError",
+        "message": "'user_id'",
+        "traceback": [
+          "Traceback (most recent call last):",
+          "  File \"app.py\", line 42, in get_user",
+          "    user_id = data['user_id']",
+          "KeyError: 'user_id'"
+        ],
+        "level": "ERROR",
+        "python_version": "3.9.7",
+        "framework": "FastAPI",
+        "framework_version": "0.68.0"
+      },
+      "expected_analysis": {
+        "root_cause": "key_error",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "def get_user(data):\n    user_id = data['user_id']\n    return get_user_by_id(user_id)",
+        "function_name": "get_user"
+      },
+      "tags": ["python", "key-error", "data-access"]
+    },
+    {
+      "name": "Python TypeError Test",
+      "language": "python",
+      "error_data": {
+        "exception_type": "TypeError",
+        "message": "cannot unpack non-iterable NoneType object",
+        "traceback": [
+          "Traceback (most recent call last):",
+          "  File \"processor.py\", line 78, in process_data",
+          "    name, age = get_user_details(user_id)",
+          "TypeError: cannot unpack non-iterable NoneType object"
+        ],
+        "level": "ERROR",
+        "python_version": "3.9.7"
+      },
+      "expected_analysis": {
+        "root_cause": "unpacking_none",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "def process_data(user_id):\n    name, age = get_user_details(user_id)\n    return format_user_data(name, age)",
+        "function_name": "process_data"
+      },
+      "tags": ["python", "type-error", "none-handling"]
+    },
+    {
+      "name": "JavaScript TypeError Test",
+      "language": "javascript",
+      "error_data": {
+        "name": "TypeError",
+        "message": "Cannot read property 'id' of undefined",
+        "stack": "TypeError: Cannot read property 'id' of undefined\n    at getUserId (/app/src/utils.js:45:20)\n    at processRequest (/app/src/controllers/user.js:23:15)\n    at /app/src/routes/index.js:10:12",
+        "level": "error",
+        "runtime": "Node.js",
+        "runtime_version": "14.17.5"
+      },
+      "expected_analysis": {
+        "root_cause": "undefined_property_access",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "function getUserId(user) {\n  return user.id;\n}",
+        "function_name": "getUserId"
+      },
+      "tags": ["javascript", "type-error", "undefined"]
+    },
+    {
+      "name": "JavaScript Reference Error Test",
+      "language": "javascript",
+      "error_data": {
+        "name": "ReferenceError",
+        "message": "usrData is not defined",
+        "stack": "ReferenceError: usrData is not defined\n    at saveUserData (/app/src/services/user.js:67:10)\n    at Object.updateUser (/app/src/controllers/user.js:42:8)",
+        "level": "error",
+        "runtime": "Node.js",
+        "runtime_version": "14.17.5"
+      },
+      "expected_analysis": {
+        "root_cause": "reference_error",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "function saveUserData(userData) {\n  database.save(usrData); // Typo: should be userData\n}",
+        "function_name": "saveUserData"
+      },
+      "tags": ["javascript", "reference-error", "typo"]
+    },
+    {
+      "name": "Java NullPointerException Test",
+      "language": "java",
+      "error_data": {
+        "exception_class": "java.lang.NullPointerException",
+        "message": "Cannot invoke \"String.length()\" because \"str\" is null",
+        "stack_trace": "java.lang.NullPointerException: Cannot invoke \"String.length()\" because \"str\" is null\n    at com.example.StringProcessor.processString(StringProcessor.java:42)\n    at com.example.Main.main(Main.java:25)",
+        "level": "SEVERE",
+        "java_version": "11.0.12"
+      },
+      "expected_analysis": {
+        "root_cause": "java_null_pointer",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "public int processString(String str) {\n    return str.length();\n}",
+        "method_params": "String str"
+      },
+      "tags": ["java", "null-pointer", "string-handling"]
+    },
+    {
+      "name": "Java ConcurrentModificationException Test",
+      "language": "java",
+      "error_data": {
+        "exception_class": "java.util.ConcurrentModificationException",
+        "message": "",
+        "stack_trace": "java.util.ConcurrentModificationException\n    at java.base/java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1013)\n    at java.base/java.util.ArrayList$Itr.next(ArrayList.java:967)\n    at com.example.ListProcessor.processItems(ListProcessor.java:28)",
+        "level": "SEVERE",
+        "java_version": "11.0.12"
+      },
+      "expected_analysis": {
+        "root_cause": "java_concurrent_modification",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "public void processItems(List<Item> items) {\n    for (Item item : items) {\n        if (item.isExpired()) {\n            items.remove(item);\n        }\n    }\n}",
+        "method_params": "List<Item> items"
+      },
+      "tags": ["java", "concurrent-modification", "collections"]
+    },
+    {
+      "name": "Go Nil Pointer Test",
+      "language": "go",
+      "error_data": {
+        "error_type": "runtime error",
+        "message": "nil pointer dereference",
+        "stack_trace": "goroutine 1 [running]:\nmain.processValue()\n\t/app/main.go:25\nmain.main()\n\t/app/main.go:12",
+        "level": "error",
+        "go_version": "1.17.3"
+      },
+      "expected_analysis": {
+        "root_cause": "go_nil_pointer",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "func processValue(value *User) string {\n    return value.Name\n}"
+      },
+      "tags": ["go", "nil-pointer", "struct-access"]
+    },
+    {
+      "name": "Go Concurrent Map Access Test",
+      "language": "go",
+      "error_data": {
+        "error_type": "runtime error",
+        "message": "concurrent map writes",
+        "stack_trace": "goroutine 23 [running]:\nruntime.throw(0x4b8818, 0x15)\n\t/usr/local/go/src/runtime/panic.go:774 +0x72 fp=0xc4200ba810 sp=0xc4200ba7e0 pc=0x42c082\nruntime.mapassign_faststr(0x4b9400, 0xc42008e1c0, 0x4bea35, 0xb, 0x0)\n\t/usr/local/go/src/runtime/map_faststr.go:203 +0x39b fp=0xc4200ba880 sp=0xc4200ba810 pc=0x40fccb\nmain.(*SafeCounter).Inc(0xc42008e1c0, 0x4bea35, 0xb)\n\t/app/main.go:38 +0x66 fp=0xc4200ba8d0 sp=0xc4200ba880 pc=0x48ab86",
+        "level": "fatal",
+        "go_version": "1.17.3"
+      },
+      "expected_analysis": {
+        "root_cause": "go_concurrent_map_write",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "func (c *Counter) Inc(key string) {\n    c.counters[key]++\n}"
+      },
+      "tags": ["go", "concurrency", "map-access"]
+    },
+    {
+      "name": "Spring Bean Definition Error",
+      "language": "java",
+      "error_data": {
+        "exception_class": "org.springframework.beans.factory.UnsatisfiedDependencyException",
+        "message": "Error creating bean with name 'userService': Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.example.repository.UserRepository' available",
+        "stack_trace": "org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userService': Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.example.repository.UserRepository' available\n\tat org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:800)\n\tat org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:229)",
+        "level": "ERROR",
+        "java_version": "11.0.12",
+        "framework": "spring",
+        "framework_version": "5.3.9"
+      },
+      "expected_analysis": {
+        "root_cause": "spring_missing_bean",
+        "confidence": "high",
+        "framework": "spring"
+      },
+      "context": {
+        "code_snippet": "@Service\npublic class UserServiceImpl implements UserService {\n    private final UserRepository userRepository;\n    \n    public UserServiceImpl(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n}"
+      },
+      "tags": ["java", "spring", "dependency-injection"]
+    },
+    {
+      "name": "Gin Router Error",
+      "language": "go",
+      "error_data": {
+        "error_type": "panic",
+        "message": "runtime error: invalid memory address or nil pointer dereference [recovered]",
+        "stack_trace": "panic: runtime error: invalid memory address or nil pointer dereference [recovered]\n\tpanic: runtime error: invalid memory address or nil pointer dereference\ngoroutine 17 [running]:\ngithub.com/gin-gonic/gin.CustomRecoveryWithWriter.func1(0xd56060, 0xc42021c100, 0xc420416000)\n\t/go/src/github.com/gin-gonic/gin/recovery.go:99 +0x361\npanic(0x761500, 0xfd0090)\n\t/usr/local/go/src/runtime/panic.go:543 +0x2a3\nmain.GetUserHandler(0xc4202eab00)\n\t/app/handlers/user.go:18 +0x9a",
+        "level": "fatal",
+        "go_version": "1.17.3",
+        "framework": "gin",
+        "framework_version": "1.7.2"
+      },
+      "expected_analysis": {
+        "root_cause": "go_nil_pointer",
+        "confidence": "high",
+        "framework": "gin"
+      },
+      "context": {
+        "code_snippet": "func GetUserHandler(c *gin.Context) {\n    id := c.Param(\"id\")\n    user, err := service.GetUserByID(id)\n    c.JSON(200, user)\n}"
+      },
+      "tags": ["go", "gin", "web-framework", "handler"]
+    }
+  ]
+}

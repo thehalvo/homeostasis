@@ -1,0 +1,96 @@
+{
+  "category": "collection_errors",
+  "rules": [
+    {
+      "id": "shared_index_out_of_bounds",
+      "name": "Index Out of Bounds",
+      "description": "Attempted to access an array/list/slice element with an invalid index",
+      "pattern": [
+        "(?:index out of range|out of bounds|IndexOutOfBoundsException)",
+        "(?:IndexError: list index out of range)"
+      ],
+      "root_cause": "index_out_of_bounds",
+      "suggestion": "Validate the index before accessing the collection element",
+      "applicable_languages": ["java", "go", "python", "javascript", "csharp"],
+      "language_specific_patterns": {
+        "java": "(?:java\\.lang\\.(?:ArrayIndexOutOfBoundsException|IndexOutOfBoundsException|StringIndexOutOfBoundsException))",
+        "javascript": "(?:TypeError: Cannot read property '\\d+' of|undefined is not an object)",
+        "python": "(?:IndexError: (?:list|string|tuple) index out of range)",
+        "go": "(?:index out of range \\[(\\d+)\\] with length (\\d+))",
+        "csharp": "(?:System\\.IndexOutOfRangeException)"
+      },
+      "language_specific_suggestions": {
+        "java": "Add bounds checking: if (index >= 0 && index < array.length) { ... }",
+        "javascript": "Check array bounds: if (index >= 0 && index < array.length) { ... }",
+        "python": "Verify the index is valid: if 0 <= index < len(list_obj): ...",
+        "go": "Check that the index is within bounds: if index >= 0 && index < len(slice) { ... }",
+        "csharp": "Validate index before access: if (index >= 0 && index < array.Length) { ... }"
+      },
+      "confidence": "high",
+      "severity": "medium",
+      "tags": ["array", "list", "slice", "index", "bounds"],
+      "examples": {
+        "python": {
+          "exception_type": "IndexError",
+          "message": "list index out of range",
+          "traceback": [
+            "Traceback (most recent call last):",
+            "  File \"app.py\", line 42, in get_item",
+            "    item = items[index]",
+            "IndexError: list index out of range"
+          ]
+        },
+        "java": {
+          "exception_class": "java.lang.ArrayIndexOutOfBoundsException",
+          "message": "Index 5 out of bounds for length 5",
+          "stack_trace": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n    at com.example.ArrayProcessor.getItem(ArrayProcessor.java:25)"
+        }
+      }
+    },
+    {
+      "id": "shared_key_not_found",
+      "name": "Key Not Found",
+      "description": "Attempted to access a map/dictionary/object with a non-existent key",
+      "pattern": [
+        "(?:key not found|KeyError|no such element|key doesn't exist)"
+      ],
+      "root_cause": "key_not_found",
+      "suggestion": "Check if the key exists before accessing the map/dictionary",
+      "applicable_languages": ["java", "go", "python", "javascript", "csharp"],
+      "language_specific_patterns": {
+        "java": "(?:java\\.util\\.NoSuchElementException|java\\.lang\\.NullPointerException.*\\.get\\([^\\)]+\\))",
+        "javascript": "(?:TypeError: Cannot read propert(?:y|ies) '[^']+' of|undefined is not an object)",
+        "python": "(?:KeyError: '([^']+)')",
+        "go": "(?:key not found in map|map has no key|map\\[[^\\]]+\\])",
+        "csharp": "(?:System\\.Collections\\.Generic\\.KeyNotFoundException)"
+      },
+      "language_specific_suggestions": {
+        "java": "Use containsKey() to check if the key exists, or use getOrDefault() to provide a fallback",
+        "javascript": "Use optional chaining (obj?.prop) or check with: if (key in object) or hasOwnProperty()",
+        "python": "Use dict.get(key) with a default value or check with: if key in dict_obj: ...",
+        "go": "Use value, ok := map[key]; if ok { ... }",
+        "csharp": "Use TryGetValue() or check with ContainsKey() before accessing"
+      },
+      "confidence": "high",
+      "severity": "medium",
+      "tags": ["map", "dict", "dictionary", "key"],
+      "examples": {
+        "python": {
+          "exception_type": "KeyError",
+          "message": "'user_id'",
+          "traceback": [
+            "Traceback (most recent call last):",
+            "  File \"app.py\", line 42, in get_user",
+            "    user_id = data['user_id']",
+            "KeyError: 'user_id'"
+          ]
+        },
+        "javascript": {
+          "name": "TypeError",
+          "message": "Cannot read property 'id' of undefined",
+          "stack": "TypeError: Cannot read property 'id' of undefined\n    at getUserId (/app/src/utils.js:45:20)"
+        }
+      }
+    }
+  ]
+}

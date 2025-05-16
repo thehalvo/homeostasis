@@ -254,4 +254,3 @@ These can be converted to actual diagrams using tools like draw.io, Mermaid, or 
 +------------------------------------------------------+
 ```
 
-These ASCII diagrams serve as placeholders for creating proper diagrams using appropriate diagramming tools. They show the key components and interactions of the Homeostasis self-healing system.

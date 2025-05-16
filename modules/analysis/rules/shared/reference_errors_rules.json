@@ -1,0 +1,106 @@
+{
+  "category": "reference_errors",
+  "rules": [
+    {
+      "id": "shared_null_pointer",
+      "name": "Null/Nil Pointer Dereference",
+      "description": "Attempted to dereference a null or nil pointer/reference",
+      "pattern": [
+        "(?:null pointer dereference)",
+        "(?:nil pointer dereference)",
+        "(?:NullPointerException)",
+        "(?:null reference|undefined is not an object)"
+      ],
+      "root_cause": "null_pointer_dereference",
+      "suggestion": "Check if the object is null/nil before accessing its properties or methods",
+      "applicable_languages": ["java", "go", "python", "javascript", "csharp"],
+      "language_specific_patterns": {
+        "java": "(?:java\\.lang\\.NullPointerException)",
+        "javascript": "(?:TypeError: Cannot read propert(?:y|ies) '[^']+' of (null|undefined))",
+        "python": "(?:AttributeError: 'NoneType' object has no attribute '[^']+')",
+        "go": "(?:nil pointer dereference)",
+        "csharp": "(?:System\\.NullReferenceException)"
+      },
+      "language_specific_suggestions": {
+        "java": "Add a null check: if (object != null) { ... }",
+        "javascript": "Use optional chaining (object?.property) or check if object exists: if (object) { ... }",
+        "python": "Check if object is not None before accessing attributes: if object is not None: ...",
+        "go": "Add a nil check: if object != nil { ... }",
+        "csharp": "Use null conditional operator: object?.Property or check with: if (object != null) { ... }"
+      },
+      "confidence": "high",
+      "severity": "high",
+      "tags": ["null", "nil", "reference", "pointer"],
+      "examples": {
+        "java": {
+          "exception_class": "java.lang.NullPointerException",
+          "message": "Cannot invoke \"String.length()\" because \"str\" is null",
+          "stack_trace": "java.lang.NullPointerException: Cannot invoke \"String.length()\" because \"str\" is null\n    at com.example.StringProcessor.processString(StringProcessor.java:42)\n    at com.example.Main.main(Main.java:25)"
+        },
+        "python": {
+          "exception_type": "AttributeError",
+          "message": "'NoneType' object has no attribute 'name'",
+          "traceback": [
+            "Traceback (most recent call last):",
+            "  File \"app.py\", line 42, in process_user",
+            "    username = user.name",
+            "AttributeError: 'NoneType' object has no attribute 'name'"
+          ]
+        },
+        "go": {
+          "error_type": "runtime error",
+          "message": "nil pointer dereference",
+          "stack_trace": "goroutine 1 [running]:\nmain.processValue()\n\t/app/main.go:25\nmain.main()\n\t/app/main.go:12"
+        },
+        "javascript": {
+          "name": "TypeError",
+          "message": "Cannot read property 'name' of null",
+          "stack": "TypeError: Cannot read property 'name' of null\n    at processUser (/app/src/utils.js:45:20)\n    at handleRequest (/app/src/controllers/user.js:23:15)"
+        }
+      }
+    },
+    {
+      "id": "shared_undefined_variable",
+      "name": "Undefined Variable",
+      "description": "Reference to a variable or identifier that has not been defined",
+      "pattern": [
+        "(?:undefined|undeclared|not defined|no attribute|not found)"
+      ],
+      "root_cause": "undefined_reference",
+      "suggestion": "Ensure the variable is defined and accessible in the current scope",
+      "applicable_languages": ["python", "javascript", "go", "ruby"],
+      "language_specific_patterns": {
+        "python": "(?:NameError: name '([^']+)' is not defined)",
+        "javascript": "(?:ReferenceError: ([^\\s]+) is not defined)",
+        "go": "(?:undefined: ([^\\n]+))",
+        "ruby": "(?:NameError: undefined local variable or method `([^']+)')"
+      },
+      "language_specific_suggestions": {
+        "python": "Define the variable before using it. Check for typos in the variable name.",
+        "javascript": "Declare the variable with 'let', 'const', or 'var' before use. Check for scope issues.",
+        "go": "Declare the variable or import the package where it's defined. Check for unexported identifiers.",
+        "ruby": "Make sure the variable is initialized or the method is defined and accessible."
+      },
+      "confidence": "high",
+      "severity": "medium",
+      "tags": ["variable", "reference", "undefined", "name"],
+      "examples": {
+        "python": {
+          "exception_type": "NameError",
+          "message": "name 'usrInput' is not defined",
+          "traceback": [
+            "Traceback (most recent call last):",
+            "  File \"app.py\", line 42, in process_input",
+            "    result = usrInput.strip()",
+            "NameError: name 'usrInput' is not defined"
+          ]
+        },
+        "javascript": {
+          "name": "ReferenceError",
+          "message": "userData is not defined",
+          "stack": "ReferenceError: userData is not defined\n    at processUser (/app/src/utils.js:45:20)"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "python": {
+    "language": "python",
+    "field_mappings": {
+      "error_type": ["exception_type", "type"],
+      "message": "message",
+      "stack_trace": ["traceback", "stack_trace"]
+    },
+    "stack_trace_fields": ["traceback", "stack_trace"],
+    "stack_trace_format": "list",
+    "version_fields": ["python_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:Traceback \\(most recent call last\\):)",
+      "(?:File \"[^\"]+\", line \\d+, in [^\\n]+)",
+      "(?:\\w+Error:|\\w+Exception:)"
+    ],
+    "severity_mappings": {
+      "debug": "DEBUG",
+      "info": "INFO",
+      "warning": "WARNING",
+      "error": "ERROR",
+      "critical": "CRITICAL",
+      "fatal": "FATAL"
+    }
+  },
+  "javascript": {
+    "language": "javascript",
+    "field_mappings": {
+      "error_type": ["name", "type"],
+      "message": "message",
+      "stack_trace": ["stack", "stacktrace", "stack_trace"]
+    },
+    "stack_trace_fields": ["stack", "stacktrace", "stack_trace"],
+    "stack_trace_format": "string",
+    "version_fields": ["node_version", "js_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:at \\w+ \\([^)]+\\))",
+      "(?:TypeError|ReferenceError|SyntaxError):"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "error",
+      "fatal": "fatal"
+    }
+  },
+  "java": {
+    "language": "java",
+    "field_mappings": {
+      "error_type": ["exception_class", "exception_type", "type"],
+      "message": "message",
+      "stack_trace": ["stack_trace", "stacktrace"]
+    },
+    "stack_trace_fields": ["stack_trace", "stacktrace"],
+    "stack_trace_format": "string",
+    "version_fields": ["java_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:java\\.\\w+\\.\\w+Exception:)",
+      "(?:at [\\w\\.$]+\\([^)]+\\.java:\\d+\\))",
+      "(?:Caused by:)"
+    ],
+    "severity_mappings": {
+      "debug": "fine",
+      "info": "info",
+      "warning": "warning",
+      "error": "severe",
+      "critical": "severe",
+      "fatal": "severe"
+    }
+  },
+  "go": {
+    "language": "go",
+    "field_mappings": {
+      "error_type": ["error_type", "type"],
+      "message": "message",
+      "stack_trace": ["stack_trace", "stacktrace"]
+    },
+    "stack_trace_fields": ["stack_trace", "stacktrace"],
+    "stack_trace_format": "string",
+    "version_fields": ["go_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:goroutine \\d+ \\[[^\\]]+\\]:)",
+      "(?:panic:)",
+      "(?:\\s+at .+\\.go:\\d+)"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "panic",
+      "fatal": "fatal"
+    }
+  },
+  "csharp": {
+    "language": "csharp",
+    "field_mappings": {
+      "error_type": ["exception_type", "type"],
+      "message": "message",
+      "stack_trace": ["stack_trace", "stacktrace"]
+    },
+    "stack_trace_fields": ["stack_trace", "stacktrace"],
+    "stack_trace_format": "string",
+    "version_fields": ["csharp_version", "dotnet_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:System\\.\\w+Exception:)",
+      "(?:at [\\w\\.]+ in [^:]+:\\d+)"
+    ],
+    "severity_mappings": {
+      "debug": "Debug",
+      "info": "Information",
+      "warning": "Warning",
+      "error": "Error",
+      "critical": "Critical",
+      "fatal": "Fatal"
+    }
+  },
+  "ruby": {
+    "language": "ruby",
+    "field_mappings": {
+      "error_type": ["exception_class", "type"],
+      "message": "message",
+      "stack_trace": ["backtrace", "stack_trace"]
+    },
+    "stack_trace_fields": ["backtrace", "stack_trace"],
+    "stack_trace_format": "list",
+    "version_fields": ["ruby_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:\\w+Error:)",
+      "(?:from [^:]+:\\d+:in `.+')"
+    ],
+    "severity_mappings": {
+      "debug": "DEBUG",
+      "info": "INFO",
+      "warning": "WARN",
+      "error": "ERROR",
+      "critical": "FATAL",
+      "fatal": "FATAL"
+    }
+  }
+}
