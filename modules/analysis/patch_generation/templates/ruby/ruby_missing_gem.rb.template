@@ -1,0 +1,19 @@
+# Add the missing gem to your Gemfile
+# For Gemfile:
+gem '${MATCH_1}'
+
+# Then run:
+# $ bundle install
+
+# For a specific version:
+# gem '${MATCH_1}', '~> x.y.z'
+
+# If using without Bundler:
+# 1. Install the gem:
+# $ gem install ${MATCH_1}
+# 
+# 2. Then require it in your code:
+require '${MATCH_1}'
+
+# If it's a local file, use require_relative:
+# require_relative 'path/to/${MATCH_1}'

@@ -1,0 +1,149 @@
+{
+  "language": "rust",
+  "rules": [
+    {
+      "id": "rust_actix_error",
+      "pattern": "actix.*Error|actix_web::Error|The response I/O stream reached an error",
+      "type": "ActixError",
+      "description": "Error in Actix web framework",
+      "root_cause": "rust_actix_error",
+      "suggestion": "Use proper error handling with actix_web::Error, implement ResponseError trait for custom errors, check request and response handling, and use middleware for common error cases.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "framework",
+      "framework": "actix"
+    },
+    {
+      "id": "rust_actix_extraction_error",
+      "pattern": "Failed to extract.*request|actix_web::error::PathError|actix_web::error::QueryPayloadError",
+      "type": "ActixError",
+      "description": "Failed to extract data from Actix request (path, query, JSON, etc.)",
+      "root_cause": "rust_actix_extraction",
+      "suggestion": "Implement validation for incoming data, properly handle extraction errors with custom error types, use Option or default values for optional parameters, and validate data early.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "framework",
+      "framework": "actix"
+    },
+    {
+      "id": "rust_actix_state_error",
+      "pattern": "Data.*could not be extracted from request|web::Data::extract|app_data is not configured",
+      "type": "ActixError",
+      "description": "Failed to extract application state in Actix",
+      "root_cause": "rust_actix_state",
+      "suggestion": "Ensure app state is properly configured with .app_data(), verify all required state is available before server start, use State extractor consistently, and check naming/typing of state components.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "framework",
+      "framework": "actix"
+    },
+    {
+      "id": "rust_rocket_error",
+      "pattern": "Rocket.*error|rocket::Error|rocket::response::Response error",
+      "type": "RocketError",
+      "description": "Error in Rocket web framework",
+      "root_cause": "rust_rocket_error",
+      "suggestion": "Implement proper error handling with rocket::response::Responder, use Result return types in handlers, add meaningful error messages, and use Rocket's catcher system for common HTTP errors.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "framework",
+      "framework": "rocket"
+    },
+    {
+      "id": "rust_rocket_form_error",
+      "pattern": "rocket::form::Error|Form validation error|Rocket form error",
+      "type": "RocketError",
+      "description": "Form validation or processing error in Rocket",
+      "root_cause": "rust_rocket_form",
+      "suggestion": "Add validation attributes to form structs, implement proper error handling for form submissions, provide user feedback on form errors, and consider custom validation logic for complex cases.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "framework",
+      "framework": "rocket"
+    },
+    {
+      "id": "rust_rocket_state_error",
+      "pattern": "State.*not found|missing managed state|State<.*> is missing",
+      "type": "RocketError",
+      "description": "Failed to access required state in Rocket",
+      "root_cause": "rust_rocket_state",
+      "suggestion": "Ensure all required state is added with rocket.manage() before launch, verify state type matches the requested type, and consider making state optional with State<Option<T>> where appropriate.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "framework",
+      "framework": "rocket"
+    },
+    {
+      "id": "rust_tokio_runtime_error",
+      "pattern": "tokio.*runtime.*error|tokio::task::JoinError|task failed to make progress",
+      "type": "TokioError",
+      "description": "Error with Tokio async runtime",
+      "root_cause": "rust_tokio_runtime",
+      "suggestion": "Ensure proper task management, avoid blocking operations in async code, implement timeouts for long-running operations, and use proper error handling for task failures.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "framework",
+      "framework": "tokio"
+    },
+    {
+      "id": "rust_tokio_timeout",
+      "pattern": "tokio::time::error::Elapsed|timeout elapsed|operation timed out",
+      "type": "TokioError",
+      "description": "Operation timed out in Tokio",
+      "root_cause": "rust_tokio_timeout",
+      "suggestion": "Implement proper timeout handling, consider increasing timeouts for slow operations, provide fallback mechanisms for timeout cases, and implement cancellation for timed-out operations.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "framework",
+      "framework": "tokio"
+    },
+    {
+      "id": "rust_diesel_error",
+      "pattern": "diesel::result::Error|diesel::ConnectionError|database error",
+      "type": "DieselError",
+      "description": "Database error with Diesel ORM",
+      "root_cause": "rust_diesel_error",
+      "suggestion": "Implement proper error handling for database operations, validate input data, use transactions for multi-operation consistency, and consider retry logic for transient errors.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "framework",
+      "framework": "diesel"
+    },
+    {
+      "id": "rust_diesel_connection_error",
+      "pattern": "diesel::ConnectionError|failed to establish a connection|database connection error",
+      "type": "DieselError",
+      "description": "Failed to establish database connection with Diesel",
+      "root_cause": "rust_diesel_connection",
+      "suggestion": "Verify database connection parameters, implement connection pooling, add retry logic with backoff, check database server availability, and provide meaningful error messages to users.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "framework",
+      "framework": "diesel"
+    },
+    {
+      "id": "rust_diesel_query_error",
+      "pattern": "diesel::result::Error::.*NotFound|no rows returned by a query|expected to process a row",
+      "type": "DieselError",
+      "description": "Query returned no results when results were expected",
+      "root_cause": "rust_diesel_not_found",
+      "suggestion": "Use optional for queries that might not return results (first.optional()), handle NotFound errors explicitly, implement proper user feedback, and validate input data before queries.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "framework",
+      "framework": "diesel"
+    },
+    {
+      "id": "rust_serde_error",
+      "pattern": "serde.*Error|serde_json::Error|failed to serialize|failed to deserialize",
+      "type": "SerdeError",
+      "description": "Error serializing or deserializing data with Serde",
+      "root_cause": "rust_serde_error",
+      "suggestion": "Implement proper error handling for serialization operations, validate data structures, consider custom serialization logic for complex types, and provide clear error messages for parsing failures.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "framework",
+      "framework": "serde"
+    }
+  ]
+}

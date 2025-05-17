@@ -1,0 +1,24 @@
+# Option 1: Use find_by instead of find (returns nil instead of raising exception)
+@record = ${MATCH_1}.find_by(id: params[:id])
+if @record.nil?
+  # Handle the case where the record was not found
+  flash[:alert] = "${MATCH_1} not found"
+  redirect_to ${MATCH_1.downcase}s_path and return
+end
+
+# Option 2: Use exception handling with find
+begin
+  @record = ${MATCH_1}.find(params[:id])
+rescue ActiveRecord::RecordNotFound
+  # Handle the error
+  flash[:alert] = "${MATCH_1} not found"
+  redirect_to ${MATCH_1.downcase}s_path and return
+end
+
+# Option 3: Use where.first (returns nil for no results)
+@record = ${MATCH_1}.where(id: params[:id]).first
+if @record.nil?
+  # Handle the case where the record was not found
+  flash[:alert] = "${MATCH_1} not found"
+  redirect_to ${MATCH_1.downcase}s_path and return
+end

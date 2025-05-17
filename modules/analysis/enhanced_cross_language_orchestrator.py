@@ -362,6 +362,14 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
         if language != "unknown":
             return language
         
+        # Check for Rust-specific patterns (more extensive than base class)
+        if "message" in error_data and isinstance(error_data["message"], str):
+            message = error_data["message"]
+            if ("panicked at" in message or "thread 'main'" in message or 
+                "unwrap()" in message or "Option::unwrap" in message or 
+                ".rs:" in message):
+                return "rust"
+            
         # Fall back to original detection logic
         return super()._detect_language(error_data)
     
@@ -641,6 +649,12 @@ if __name__ == "__main__":
             "error_type": "runtime error",
             "message": "nil pointer dereference",
             "stack_trace": "goroutine 1 [running]:\nmain.processValue()\n\t/app/main.go:25\nmain.main()\n\t/app/main.go:12",
+            "level": "error"
+        },
+        "rust": {
+            "error_type": "Panic",
+            "message": "thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', src/main.rs:42:14",
+            "stack_trace": "thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', src/main.rs:42:14\nstack backtrace:\n   0: std::panicking::begin_panic\n   1: core::option::Option<T>::unwrap\n   2: rust_example::process_data\n   3: rust_example::main",
             "level": "error"
         }
     }

@@ -151,5 +151,31 @@
       "critical": "FATAL",
       "fatal": "FATAL"
     }
+  },
+  "rust": {
+    "language": "rust",
+    "field_mappings": {
+      "error_type": ["error_type", "type"],
+      "message": "message",
+      "stack_trace": ["backtrace", "stack_trace"]
+    },
+    "stack_trace_fields": ["backtrace", "stack_trace"],
+    "stack_trace_format": "list",
+    "version_fields": ["rust_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:thread '.*' panicked at '.*')",
+      "(?:\\d+: .*\\s+at .*\\.rs:\\d+)",
+      "(?:error\\[E\\d+\\]:)"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "error",
+      "fatal": "fatal"
+    }
   }
 }

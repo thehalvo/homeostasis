@@ -1,0 +1,22 @@
+# Add a nil check before calling the method
+if ${MATCH_1}.nil?
+  # Handle nil case - options:
+  # 1. Return a default value
+  default_value = nil
+  return default_value
+  
+  # 2. Or raise a more descriptive error
+  # raise ArgumentError, "${MATCH_1} cannot be nil"
+  
+  # 3. Or return early
+  # return
+else
+  # Original code can proceed safely
+  ${MATCH_1}.${MATCH_2}
+end
+
+# Alternative using safe navigation operator (Ruby 2.3+)
+# result = ${MATCH_1}&.${MATCH_2}
+
+# Alternative using try (Rails only)
+# result = ${MATCH_1}.try(:${MATCH_2})

@@ -1,0 +1,36 @@
+// Replace normal arithmetic with checked operations
+// Option 1: Use checked methods and handle None
+match a.checked_add(b) {
+    Some(result) => {
+        // Use result safely
+    },
+    None => {
+        // Handle overflow case
+        // Log error, use default, or handle specifically
+        println!("Integer overflow detected");
+    }
+}
+
+// Option 2: Use saturating operations (clamps at max/min values)
+let result = a.saturating_add(b);
+
+// Option 3: Use wrapping operations (explicitly wraps around)
+let result = a.wrapping_add(b);
+
+// Option 4: Use overflowing operations (returns result and overflow flag)
+let (result, overflowed) = a.overflowing_add(b);
+if overflowed {
+    // Handle overflow case
+} else {
+    // Use result safely
+}
+
+// Option 5: For numeric parsing, use with error handling
+match str.parse::<i32>() {
+    Ok(n) => {
+        // Use parsed number
+    },
+    Err(_) => {
+        // Handle parsing error
+    }
+}

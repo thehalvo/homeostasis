@@ -1,0 +1,205 @@
+{
+  "name": "Ruby Metaprogramming Error Rules",
+  "description": "Rules for detecting and fixing common Ruby metaprogramming errors",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "ruby_method_missing_error",
+      "pattern": "NoMethodError:.*undefined method `([^']+)'.*\\(method_missing\\)",
+      "type": "NoMethodError",
+      "description": "method_missing handler failed or threw an error",
+      "root_cause": "ruby_method_missing",
+      "suggestion": "Check your method_missing implementation. Ensure it correctly handles or delegates the method call.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_const_missing_error",
+      "pattern": "NameError:.*\\(const_missing\\)",
+      "type": "NameError",
+      "description": "const_missing handler failed or threw an error",
+      "root_cause": "ruby_const_missing",
+      "suggestion": "Check your const_missing implementation. Ensure it correctly loads or resolves the constant.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_respond_to_missing_error",
+      "pattern": "(?:NoMethodError|TypeError):.*respond_to_missing\\?",
+      "type": "NoMethodError",
+      "description": "respond_to_missing? implementation error",
+      "root_cause": "ruby_respond_to_missing",
+      "suggestion": "Ensure respond_to_missing? returns a boolean and handles all methods that method_missing supports.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_define_method_error",
+      "pattern": "(?:TypeError|ArgumentError):.*define_method",
+      "type": "TypeError",
+      "description": "Error in dynamic method definition",
+      "root_cause": "ruby_define_method",
+      "suggestion": "Check arguments to define_method. The first argument should be a symbol or string, and the second should be a Proc, Method, or block.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_singleton_method_error",
+      "pattern": "TypeError: can't define singleton method.*",
+      "type": "TypeError",
+      "description": "Failed to define singleton method",
+      "root_cause": "ruby_singleton_method",
+      "suggestion": "Ensure the object can have singleton methods. Some types (e.g., Fixnum, Symbol) don't support singleton methods.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_include_object_error",
+      "pattern": "TypeError: wrong argument type (?:Class|Module) \\(expected Module\\)",
+      "type": "TypeError",
+      "description": "Attempted to include a non-module",
+      "root_cause": "ruby_include_type_error",
+      "suggestion": "Use include only with modules. For classes, consider inheritance (class Child < Parent). For objects, consider delegation.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_extend_error",
+      "pattern": "TypeError: wrong argument type .* \\(expected Module\\) for `extend'",
+      "type": "TypeError",
+      "description": "Attempted to extend with a non-module",
+      "root_cause": "ruby_extend_type_error",
+      "suggestion": "Use extend only with modules. Check that you're not trying to extend with a class or other non-module.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_prepend_error",
+      "pattern": "TypeError: wrong argument type .* \\(expected Module\\) for `prepend'",
+      "type": "TypeError",
+      "description": "Attempted to prepend with a non-module",
+      "root_cause": "ruby_prepend_type_error",
+      "suggestion": "Use prepend only with modules. Check that you're not trying to prepend with a class or other non-module.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_class_eval_error",
+      "pattern": "(?:SyntaxError|TypeError):.*\\bclas[s]?_eval\\b",
+      "type": "SyntaxError",
+      "description": "Error in class_eval string or block",
+      "root_cause": "ruby_class_eval_error",
+      "suggestion": "Check the syntax of the string or block passed to class_eval. Prefer using a block over a string for better error reporting.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_instance_eval_error",
+      "pattern": "(?:SyntaxError|TypeError):.*\\binstance_eval\\b",
+      "type": "SyntaxError",
+      "description": "Error in instance_eval string or block",
+      "root_cause": "ruby_instance_eval_error",
+      "suggestion": "Check the syntax of the string or block passed to instance_eval. Prefer using a block over a string for better error reporting.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_inherited_hook_error",
+      "pattern": "(?:NoMethodError|ArgumentError):.*\\binherited\\b",
+      "type": "NoMethodError",
+      "description": "Error in inherited callback",
+      "root_cause": "ruby_inherited_hook",
+      "suggestion": "Check your inherited method implementation. It should accept a subclass parameter and handle it correctly.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_module_inclusion_error",
+      "pattern": "(?:NoMethodError|ArgumentError):.*\\bincluded\\b",
+      "type": "NoMethodError",
+      "description": "Error in included callback",
+      "root_cause": "ruby_module_inclusion",
+      "suggestion": "Check your included method implementation. It should accept a class parameter and handle it correctly.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_module_extension_error",
+      "pattern": "(?:NoMethodError|ArgumentError):.*\\bextended\\b",
+      "type": "NoMethodError",
+      "description": "Error in extended callback",
+      "root_cause": "ruby_module_extension",
+      "suggestion": "Check your extended method implementation. It should accept an object parameter and handle it correctly.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_class_variable_error",
+      "pattern": "RuntimeError: class variable (@@[^ ]+) (not initialized|access from toplevel|of [^ ]+ is already initialized)",
+      "type": "RuntimeError",
+      "description": "Class variable access or initialization error",
+      "root_cause": "ruby_class_variable_error",
+      "suggestion": "Ensure class variables are initialized before use. Be careful with class variables in inheritance hierarchies; consider class instance variables instead.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_dynamic_constant_error",
+      "pattern": "SyntaxError: dynamic constant assignment",
+      "type": "SyntaxError",
+      "description": "Attempted to assign to a constant in a dynamic context",
+      "root_cause": "ruby_dynamic_constant",
+      "suggestion": "Use const_set for dynamic constant assignment instead of direct assignment. Remember that constants can only be defined in class/module definition context.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_attr_accessor_error",
+      "pattern": "(?:NameError|NoMethodError):.*on attr_(reader|writer|accessor)",
+      "type": "NameError",
+      "description": "Error in attr_accessor, attr_reader, or attr_writer usage",
+      "root_cause": "ruby_attr_accessor",
+      "suggestion": "Ensure attr methods are called with symbol arguments. Remember they can only be called in class/module definition context.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_send_error",
+      "pattern": "NoMethodError:.*`send'",
+      "type": "NoMethodError",
+      "description": "Error when using send to invoke a method dynamically",
+      "root_cause": "ruby_send_error",
+      "suggestion": "Check that the method name passed to send exists. Use respond_to? to verify before calling.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_public_send_error",
+      "pattern": "NoMethodError:.*`public_send'",
+      "type": "NoMethodError",
+      "description": "Error when using public_send to invoke a method dynamically",
+      "root_cause": "ruby_public_send_error",
+      "suggestion": "Check that the method name passed to public_send exists and is public. Use respond_to? to verify before calling.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    }
+  ]
+}

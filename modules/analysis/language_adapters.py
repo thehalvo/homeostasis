@@ -1110,6 +1110,578 @@ class GoErrorAdapter(LanguageAdapter):
         return "\n".join(stack_lines)
 
 
+class RubyErrorAdapter(LanguageAdapter):
+    """Adapter for Ruby error formats."""
+    
+    def to_standard_format(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert Ruby error data to the standard format.
+        
+        Args:
+            error_data: Ruby error data
+            
+        Returns:
+            Error data in the standard format
+        """
+        # Create a standard error object
+        standard_error = {
+            "error_id": str(uuid.uuid4()),
+            "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
+            "language": "ruby",
+            "error_type": error_data.get("exception_class", ""),
+            "message": error_data.get("message", "")
+        }
+        
+        # Add Ruby version if available
+        if "ruby_version" in error_data:
+            standard_error["language_version"] = error_data["ruby_version"]
+        
+        # Handle stack trace
+        if "backtrace" in error_data:
+            # Ruby backtraces can be a string or a list
+            if isinstance(error_data["backtrace"], str):
+                # Split into lines
+                stack_lines = error_data["backtrace"].split("\n")
+                
+                # Try to parse structured data from the stack trace
+                parsed_frames = self._parse_ruby_stack_trace(stack_lines)
+                
+                if parsed_frames:
+                    standard_error["stack_trace"] = parsed_frames
+                else:
+                    standard_error["stack_trace"] = stack_lines
+            elif isinstance(error_data["backtrace"], list):
+                if all(isinstance(frame, dict) for frame in error_data["backtrace"]):
+                    # Already in structured format
+                    standard_error["stack_trace"] = error_data["backtrace"]
+                else:
+                    # List of strings
+                    standard_error["stack_trace"] = error_data["backtrace"]
+        
+        # Add framework information if available
+        if "framework" in error_data:
+            standard_error["framework"] = error_data["framework"]
+            
+            if "framework_version" in error_data:
+                standard_error["framework_version"] = error_data["framework_version"]
+        
+        # Add request information if available
+        if "request" in error_data:
+            standard_error["request"] = error_data["request"]
+        
+        # Add any additional context
+        if "context" in error_data:
+            standard_error["context"] = error_data["context"]
+        
+        # Add severity if available
+        if "level" in error_data:
+            # Map Ruby log levels to standard format
+            level_map = {
+                "debug": "debug",
+                "info": "info",
+                "warn": "warning",
+                "warning": "warning",
+                "error": "error",
+                "fatal": "fatal"
+            }
+            standard_error["severity"] = level_map.get(error_data["level"].lower(), "error")
+        
+        # Add runtime if available
+        if "runtime" in error_data:
+            standard_error["runtime"] = error_data["runtime"]
+            
+            if "runtime_version" in error_data:
+                standard_error["runtime_version"] = error_data["runtime_version"]
+        
+        # Add handled flag if available
+        if "handled" in error_data:
+            standard_error["handled"] = error_data["handled"]
+        
+        # Add additional Ruby-specific data
+        ruby_specific = {}
+        for key, value in error_data.items():
+            if key not in standard_error and key not in ["backtrace", "request", "context"]:
+                ruby_specific[key] = value
+        
+        if ruby_specific:
+            standard_error["additional_data"] = ruby_specific
+        
+        return standard_error
+    
+    def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data to Ruby-specific format.
+        
+        Args:
+            standard_error: Error data in the standard format
+            
+        Returns:
+            Error data in the Ruby-specific format
+        """
+        # Create a Ruby error object
+        ruby_error = {
+            "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
+            "exception_class": standard_error.get("error_type", "RuntimeError"),
+            "message": standard_error.get("message", "")
+        }
+        
+        # Convert severity to Ruby logging level
+        if "severity" in standard_error:
+            level_map = {
+                "debug": "debug",
+                "info": "info",
+                "warning": "warn",
+                "error": "error",
+                "critical": "fatal",
+                "fatal": "fatal"
+            }
+            ruby_error["level"] = level_map.get(standard_error["severity"].lower(), "error")
+        
+        # Convert stack trace to Ruby format
+        if "stack_trace" in standard_error:
+            stack_trace = standard_error["stack_trace"]
+            
+            if isinstance(stack_trace, list):
+                if all(isinstance(frame, str) for frame in stack_trace):
+                    # Already in Ruby stack trace string format
+                    ruby_error["backtrace"] = stack_trace
+                elif all(isinstance(frame, dict) for frame in stack_trace):
+                    # Convert structured frames to Ruby stack trace format
+                    ruby_error["backtrace"] = self._convert_frames_to_ruby_backtrace(stack_trace)
+                    # Also keep the structured version
+                    ruby_error["structured_backtrace"] = stack_trace
+        
+        # Add request information if available
+        if "request" in standard_error:
+            ruby_error["request"] = standard_error["request"]
+        
+        # Add context information if available
+        if "context" in standard_error:
+            ruby_error["context"] = standard_error["context"]
+        
+        # Add Ruby version if available
+        if "language_version" in standard_error:
+            ruby_error["ruby_version"] = standard_error["language_version"]
+        
+        # Add framework information if available
+        if "framework" in standard_error:
+            ruby_error["framework"] = standard_error["framework"]
+            
+            if "framework_version" in standard_error:
+                ruby_error["framework_version"] = standard_error["framework_version"]
+        
+        # Add runtime information if available
+        if "runtime" in standard_error:
+            ruby_error["runtime"] = standard_error["runtime"]
+            
+            if "runtime_version" in standard_error:
+                ruby_error["runtime_version"] = standard_error["runtime_version"]
+        
+        # Add handled flag if available
+        if "handled" in standard_error:
+            ruby_error["handled"] = standard_error["handled"]
+        
+        # Add additional data if available
+        if "additional_data" in standard_error:
+            for key, value in standard_error["additional_data"].items():
+                ruby_error[key] = value
+        
+        return ruby_error
+    
+    def _parse_ruby_stack_trace(self, stack_lines: List[str]) -> List[Dict[str, Any]]:
+        """
+        Parse a Ruby stack trace into structured frames.
+        
+        Args:
+            stack_lines: Ruby stack trace lines
+            
+        Returns:
+            Structured frames or None if parsing fails
+        """
+        frames = []
+        
+        # Ruby stack trace patterns:
+        # app/models/user.rb:32:in `find_by_id'
+        # /path/to/file.rb:123:in `method_name'
+        # /gems/activerecord-6.1.0/lib/active_record/relation.rb:17:in `block in find'
+        frame_pattern = r'([^:]+):(\d+)(?::in\s+`([^\']+)\')?'
+        
+        try:
+            for line in stack_lines:
+                match = re.search(frame_pattern, line)
+                if match:
+                    file_path = match.group(1)
+                    line_num = int(match.group(2))
+                    method_name = match.group(3) if match.groups()[2] else ""
+                    
+                    # Attempt to extract class/module information from the file path
+                    module_name = ""
+                    file_name = os.path.basename(file_path)
+                    if file_name.endswith('.rb'):
+                        module_parts = file_name[:-3].split('_')
+                        module_name = ''.join(part.title() for part in module_parts)
+                    
+                    frames.append({
+                        "file": file_path,
+                        "line": line_num,
+                        "function": method_name,
+                        "module": module_name
+                    })
+            
+            return frames if frames else None
+        except Exception as e:
+            logger.debug(f"Failed to parse Ruby stack trace: {e}")
+            return None
+    
+    def _convert_frames_to_ruby_backtrace(self, frames: List[Dict[str, Any]]) -> List[str]:
+        """
+        Convert structured frames to a Ruby backtrace.
+        
+        Args:
+            frames: Structured frames
+            
+        Returns:
+            Ruby backtrace lines
+        """
+        backtrace_lines = []
+        
+        for frame in frames:
+            file_path = frame.get("file", "<unknown>")
+            line_num = frame.get("line", "?")
+            method_name = frame.get("function", "<unknown>")
+            
+            # Format like a Ruby backtrace
+            if method_name:
+                backtrace_lines.append(f"{file_path}:{line_num}:in `{method_name}'")
+            else:
+                backtrace_lines.append(f"{file_path}:{line_num}")
+        
+        return backtrace_lines
+
+
+class RustErrorAdapter(LanguageAdapter):
+    """Adapter for Rust error formats."""
+    
+    def to_standard_format(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert Rust error data to the standard format.
+        
+        Args:
+            error_data: Rust error data
+            
+        Returns:
+            Error data in the standard format
+        """
+        # Create a standard error object
+        standard_error = {
+            "error_id": str(uuid.uuid4()),
+            "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
+            "language": "rust",
+            "error_type": error_data.get("error_type", ""),
+            "message": error_data.get("message", "")
+        }
+        
+        # Add Rust version if available
+        if "rust_version" in error_data:
+            standard_error["language_version"] = error_data["rust_version"]
+        
+        # Handle stack trace
+        if "backtrace" in error_data:
+            # Rust backtraces can be a string or a list
+            if isinstance(error_data["backtrace"], str):
+                # Split into lines
+                stack_lines = error_data["backtrace"].split("\n")
+                
+                # Try to parse structured data from the stack trace
+                parsed_frames = self._parse_rust_stack_trace(stack_lines)
+                
+                if parsed_frames:
+                    standard_error["stack_trace"] = parsed_frames
+                else:
+                    standard_error["stack_trace"] = stack_lines
+            elif isinstance(error_data["backtrace"], list):
+                if all(isinstance(frame, dict) for frame in error_data["backtrace"]):
+                    # Already in structured format
+                    standard_error["stack_trace"] = error_data["backtrace"]
+                else:
+                    # List of strings
+                    standard_error["stack_trace"] = error_data["backtrace"]
+        
+        # Add framework information if available
+        if "framework" in error_data:
+            standard_error["framework"] = error_data["framework"]
+            
+            if "framework_version" in error_data:
+                standard_error["framework_version"] = error_data["framework_version"]
+        
+        # Add request information if available
+        if "request" in error_data:
+            standard_error["request"] = error_data["request"]
+        
+        # Add any additional context
+        if "context" in error_data:
+            standard_error["context"] = error_data["context"]
+        
+        # Add severity if available
+        if "level" in error_data:
+            # Map Rust log levels to standard format
+            level_map = {
+                "trace": "debug",
+                "debug": "debug",
+                "info": "info",
+                "warn": "warning",
+                "warning": "warning",
+                "error": "error",
+                "fatal": "fatal"
+            }
+            standard_error["severity"] = level_map.get(error_data["level"].lower(), "error")
+        
+        # Add panic information if available
+        if "is_panic" in error_data:
+            if "additional_data" not in standard_error:
+                standard_error["additional_data"] = {}
+            standard_error["additional_data"]["is_panic"] = error_data["is_panic"]
+        
+        # Add thread information if available
+        if "thread" in error_data:
+            if "additional_data" not in standard_error:
+                standard_error["additional_data"] = {}
+            standard_error["additional_data"]["thread"] = error_data["thread"]
+        
+        # Add runtime if available
+        if "runtime" in error_data:
+            standard_error["runtime"] = error_data["runtime"]
+            
+            if "runtime_version" in error_data:
+                standard_error["runtime_version"] = error_data["runtime_version"]
+        
+        # Add handled flag if available
+        if "handled" in error_data:
+            standard_error["handled"] = error_data["handled"]
+        
+        # Add additional Rust-specific data
+        rust_specific = {}
+        for key, value in error_data.items():
+            if key not in standard_error and key not in ["backtrace", "request", "context", "thread", "is_panic"]:
+                rust_specific[key] = value
+        
+        if rust_specific:
+            if "additional_data" in standard_error:
+                standard_error["additional_data"].update(rust_specific)
+            else:
+                standard_error["additional_data"] = rust_specific
+        
+        return standard_error
+    
+    def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data to Rust-specific format.
+        
+        Args:
+            standard_error: Error data in the standard format
+            
+        Returns:
+            Error data in the Rust-specific format
+        """
+        # Create a Rust error object
+        rust_error = {
+            "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
+            "error_type": standard_error.get("error_type", "Error"),
+            "message": standard_error.get("message", "")
+        }
+        
+        # Convert severity to Rust logging level
+        if "severity" in standard_error:
+            level_map = {
+                "debug": "debug",
+                "info": "info",
+                "warning": "warn",
+                "error": "error",
+                "critical": "error",
+                "fatal": "error"
+            }
+            rust_error["level"] = level_map.get(standard_error["severity"].lower(), "error")
+        
+        # Convert stack trace to Rust format
+        if "stack_trace" in standard_error:
+            stack_trace = standard_error["stack_trace"]
+            
+            if isinstance(stack_trace, list):
+                if all(isinstance(frame, str) for frame in stack_trace):
+                    # Already in Rust stack trace string format
+                    rust_error["backtrace"] = stack_trace
+                elif all(isinstance(frame, dict) for frame in stack_trace):
+                    # Convert structured frames to Rust backtrace format
+                    rust_error["backtrace"] = self._convert_frames_to_rust_backtrace(stack_trace)
+                    # Also keep the structured version
+                    rust_error["structured_backtrace"] = stack_trace
+        
+        # Add request information if available
+        if "request" in standard_error:
+            rust_error["request"] = standard_error["request"]
+        
+        # Add context information if available
+        if "context" in standard_error:
+            rust_error["context"] = standard_error["context"]
+        
+        # Add Rust version if available
+        if "language_version" in standard_error:
+            rust_error["rust_version"] = standard_error["language_version"]
+        
+        # Add framework information if available
+        if "framework" in standard_error:
+            rust_error["framework"] = standard_error["framework"]
+            
+            if "framework_version" in standard_error:
+                rust_error["framework_version"] = standard_error["framework_version"]
+        
+        # Add runtime information if available
+        if "runtime" in standard_error:
+            rust_error["runtime"] = standard_error["runtime"]
+            
+            if "runtime_version" in standard_error:
+                rust_error["runtime_version"] = standard_error["runtime_version"]
+        
+        # Add handled flag if available
+        if "handled" in standard_error:
+            rust_error["handled"] = standard_error["handled"]
+        
+        # Extract Rust-specific data from additional_data
+        if "additional_data" in standard_error:
+            for key, value in standard_error["additional_data"].items():
+                if key == "thread":
+                    rust_error["thread"] = value
+                elif key == "is_panic":
+                    rust_error["is_panic"] = value
+                else:
+                    rust_error[key] = value
+        
+        return rust_error
+    
+    def _parse_rust_stack_trace(self, stack_lines: List[str]) -> List[Dict[str, Any]]:
+        """
+        Parse a Rust stack trace into structured frames.
+        
+        Args:
+            stack_lines: Rust stack trace lines
+            
+        Returns:
+            Structured frames or None if parsing fails
+        """
+        frames = []
+        
+        # Rust stack trace patterns:
+        # Standard backtrace format:
+        # 0: module::function
+        #    at /path/to/file.rs:42
+        #
+        # Alternate format:
+        # 0: 0x7f92f72eef64 - std::panicking::begin_panic_handler::{{closure}}
+        
+        # Regular backtrace line pattern
+        line_pattern = r'^\s*(\d+):\s+(.*?)$'
+        
+        # File location pattern
+        file_pattern = r'^\s*at\s+([^:]+):(\d+)(?::(\d+))?'
+        
+        try:
+            current_frame = None
+            
+            for line in stack_lines:
+                # Try to match a new frame
+                line_match = re.match(line_pattern, line)
+                if line_match:
+                    # If we have a current frame, add it to frames
+                    if current_frame is not None:
+                        frames.append(current_frame)
+                    
+                    # Start a new frame
+                    frame_index = int(line_match.group(1))
+                    frame_info = line_match.group(2).strip()
+                    
+                    # Parse function name from frame info
+                    function_name = frame_info
+                    
+                    # Check for address format: 0x7f92f72eef64 - std::panicking::begin_panic_handler
+                    addr_match = re.match(r'(0x[0-9a-f]+)\s+-\s+(.*)', frame_info)
+                    if addr_match:
+                        function_name = addr_match.group(2).strip()
+                    
+                    # Extract module and function
+                    module_parts = function_name.split("::")
+                    if len(module_parts) > 1:
+                        module = "::".join(module_parts[:-1])
+                        func = module_parts[-1]
+                    else:
+                        module = ""
+                        func = function_name
+                    
+                    # Create the new frame
+                    current_frame = {
+                        "index": frame_index,
+                        "function": func,
+                        "module": module
+                    }
+                else:
+                    # Try to match a file location for the current frame
+                    file_match = re.match(file_pattern, line)
+                    if file_match and current_frame is not None:
+                        file_path = file_match.group(1)
+                        line_num = int(file_match.group(2))
+                        column = int(file_match.group(3)) if file_match.group(3) else None
+                        
+                        current_frame["file"] = file_path
+                        current_frame["line"] = line_num
+                        if column:
+                            current_frame["column"] = column
+            
+            # Add the last frame if there is one
+            if current_frame is not None:
+                frames.append(current_frame)
+            
+            return frames if frames else None
+        except Exception as e:
+            logger.debug(f"Failed to parse Rust stack trace: {e}")
+            return None
+    
+    def _convert_frames_to_rust_backtrace(self, frames: List[Dict[str, Any]]) -> List[str]:
+        """
+        Convert structured frames to a Rust backtrace.
+        
+        Args:
+            frames: Structured frames
+            
+        Returns:
+            Rust backtrace lines
+        """
+        backtrace_lines = []
+        
+        for i, frame in enumerate(frames):
+            module = frame.get("module", "")
+            func = frame.get("function", "<unknown>")
+            
+            # Format function with module
+            if module:
+                func_name = f"{module}::{func}"
+            else:
+                func_name = func
+            
+            # Format the frame line
+            backtrace_lines.append(f"{i}: {func_name}")
+            
+            # Add file location if available
+            file_path = frame.get("file")
+            line_num = frame.get("line")
+            if file_path and line_num:
+                column = frame.get("column")
+                if column:
+                    backtrace_lines.append(f"   at {file_path}:{line_num}:{column}")
+                else:
+                    backtrace_lines.append(f"   at {file_path}:{line_num}")
+        
+        return backtrace_lines
+
+
 class ErrorAdapterFactory:
     """Factory for creating language-specific error adapters."""
     
@@ -1137,6 +1709,10 @@ class ErrorAdapterFactory:
             return JavaErrorAdapter()
         elif language == "go":
             return GoErrorAdapter()
+        elif language == "ruby":
+            return RubyErrorAdapter()
+        elif language == "rust":
+            return RustErrorAdapter()
         else:
             raise ValueError(f"No adapter available for language: {language}")
     
@@ -1166,6 +1742,10 @@ class ErrorAdapterFactory:
             return "java"
         elif "goroutine_id" in error_data or "go_version" in error_data:
             return "go"
+        elif "exception_class" in error_data and "backtrace" in error_data:
+            return "ruby"
+        elif "rust_version" in error_data or "is_panic" in error_data:
+            return "rust"
             
         # Try to detect from stack trace format
         if "stack_trace" in error_data and isinstance(error_data["stack_trace"], str):
@@ -1183,6 +1763,26 @@ class ErrorAdapterFactory:
                 return "java"
             elif "goroutine " in stack and ".go:" in stack:
                 return "go"
+        
+        if "backtrace" in error_data:
+            # Check for Ruby backtrace format
+            if isinstance(error_data["backtrace"], list) and any(
+                isinstance(line, str) and re.search(r'\.rb:\d+:in', line) 
+                for line in error_data["backtrace"][:10] if isinstance(line, str)
+            ):
+                return "ruby"
+            elif isinstance(error_data["backtrace"], str) and ".rb:" in error_data["backtrace"]:
+                return "ruby"
+            # Check for Rust backtrace format
+            elif isinstance(error_data["backtrace"], str) and (".rs:" in error_data["backtrace"] or 
+                                                              any(pattern in error_data["backtrace"] for pattern in 
+                                                                  ["panicked at", "thread", "rust_panic"])):
+                return "rust"
+            elif isinstance(error_data["backtrace"], list) and any(
+                isinstance(line, str) and (re.search(r'\.rs:\d+', line) or "::{{closure}}" in line)
+                for line in error_data["backtrace"][:10] if isinstance(line, str)
+            ):
+                return "rust"
                 
         return "unknown"
 
@@ -1316,3 +1916,28 @@ if __name__ == "__main__":
     # Convert JavaScript to Python format
     js_to_python = convert_from_standard_format(standard_js, "python")
     logger.info(f"JavaScript converted to Python format: {json.dumps(js_to_python, indent=2)}")
+    
+    # Example Ruby error data
+    ruby_error = {
+        "timestamp": "2023-08-15T12:34:56",
+        "exception_class": "NoMethodError",
+        "message": "undefined method `[]' for nil:NilClass",
+        "backtrace": [
+            "app/controllers/users_controller.rb:25:in `show'",
+            "app/controllers/application_controller.rb:10:in `authorize_user!'",
+            "/gems/actionpack-6.1.0/lib/action_controller/metal/basic_implicit_render.rb:6:in `send_action'"
+        ],
+        "level": "error",
+        "ruby_version": "3.0.2",
+        "framework": "Rails",
+        "framework_version": "6.1.0"
+    }
+    
+    # Convert to standard format
+    ruby_adapter = RubyErrorAdapter()
+    standard_ruby = ruby_adapter.to_standard_format(ruby_error)
+    logger.info(f"Standard Ruby format: {json.dumps(standard_ruby, indent=2)}")
+    
+    # Convert Ruby to Python format
+    ruby_to_python = convert_from_standard_format(standard_ruby, "python")
+    logger.info(f"Ruby converted to Python format: {json.dumps(ruby_to_python, indent=2)}")

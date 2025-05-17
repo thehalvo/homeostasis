@@ -217,6 +217,264 @@
         "code_snippet": "func GetUserHandler(c *gin.Context) {\n    id := c.Param(\"id\")\n    user, err := service.GetUserByID(id)\n    c.JSON(200, user)\n}"
       },
       "tags": ["go", "gin", "web-framework", "handler"]
+    },
+    {
+      "name": "Ruby NoMethodError (Nil) Test",
+      "language": "ruby",
+      "error_data": {
+        "exception_class": "NoMethodError",
+        "message": "undefined method `name' for nil:NilClass",
+        "backtrace": [
+          "app/models/user.rb:25:in `display_name'",
+          "app/controllers/users_controller.rb:10:in `show'",
+          "actionpack-6.1.0/lib/action_controller/metal/basic_implicit_render.rb:6:in `send_action'"
+        ],
+        "level": "error",
+        "ruby_version": "3.0.0",
+        "framework": "Rails",
+        "framework_version": "6.1.0"
+      },
+      "expected_analysis": {
+        "root_cause": "ruby_nil_reference",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "def display_name\n  user.name\nend"
+      },
+      "tags": ["ruby", "nil-reference", "rails"]
+    },
+    {
+      "name": "Ruby ActiveRecord::RecordNotFound Test",
+      "language": "ruby",
+      "error_data": {
+        "exception_class": "ActiveRecord::RecordNotFound",
+        "message": "Couldn't find User with ID 123",
+        "backtrace": [
+          "app/controllers/users_controller.rb:10:in `show'",
+          "actionpack-6.1.0/lib/action_controller/metal/basic_implicit_render.rb:6:in `send_action'"
+        ],
+        "level": "error",
+        "ruby_version": "3.0.0",
+        "framework": "Rails",
+        "framework_version": "6.1.0"
+      },
+      "expected_analysis": {
+        "root_cause": "rails_record_not_found",
+        "confidence": "high",
+        "framework": "rails"
+      },
+      "context": {
+        "code_snippet": "def show\n  @user = User.find(params[:id])\nend",
+        "framework": "rails"
+      },
+      "tags": ["ruby", "rails", "activerecord", "record-not-found"]
+    },
+    {
+      "name": "Ruby Gem LoadError Test",
+      "language": "ruby",
+      "error_data": {
+        "exception_class": "LoadError",
+        "message": "cannot load such file -- httparty",
+        "backtrace": [
+          "/app.rb:5:in `require'",
+          "/app.rb:5:in `<main>'"
+        ],
+        "level": "error",
+        "ruby_version": "3.0.0"
+      },
+      "expected_analysis": {
+        "root_cause": "ruby_missing_gem",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "require 'httparty'\n\nresponse = HTTParty.get('https://example.com')"
+      },
+      "tags": ["ruby", "load-error", "missing-gem"]
+    },
+    {
+      "name": "Ruby Sinatra NotFound Test",
+      "language": "ruby",
+      "error_data": {
+        "exception_class": "Sinatra::NotFound",
+        "message": "Sinatra::NotFound",
+        "backtrace": [
+          "sinatra-2.2.0/lib/sinatra/base.rb:1185:in `block in route!'",
+          "app.rb:25:in `block in <class:App>'"
+        ],
+        "level": "error",
+        "ruby_version": "3.0.0",
+        "framework": "Sinatra",
+        "framework_version": "2.2.0"
+      },
+      "expected_analysis": {
+        "root_cause": "sinatra_not_found",
+        "confidence": "high",
+        "framework": "sinatra"
+      },
+      "context": {
+        "code_snippet": "get '/users/:id' do\n  user = User.find(params[:id])\n  erb :user\nend"
+      },
+      "tags": ["ruby", "sinatra", "routing", "not-found"]
+    },
+    {
+      "name": "Ruby Metaprogramming Method Missing Test",
+      "language": "ruby",
+      "error_data": {
+        "exception_class": "NoMethodError",
+        "message": "undefined method `process_call' for #<User:0x00007f8b1a8b8a90> (method_missing)",
+        "backtrace": [
+          "app/models/user.rb:25:in `method_missing'",
+          "app/controllers/users_controller.rb:10:in `show'"
+        ],
+        "level": "error",
+        "ruby_version": "3.0.0"
+      },
+      "expected_analysis": {
+        "root_cause": "ruby_method_missing",
+        "confidence": "medium",
+        "category": "metaprogramming"
+      },
+      "context": {
+        "code_snippet": "def method_missing(method_name, *args, &block)\n  if method_name.to_s.start_with?('find_by_')\n    # Custom finder method implementation\n  else\n    super\n  end\nend"
+      },
+      "tags": ["ruby", "metaprogramming", "method-missing"]
+    },
+    {
+      "name": "Rust Unwrap None Test",
+      "language": "rust",
+      "error_data": {
+        "error_type": "Panic",
+        "message": "thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', src/main.rs:15:13",
+        "backtrace": [
+          "0: rust_panic",
+          "1: core::panicking::panic_fmt",
+          "   at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library/core/src/panicking.rs:142:14",
+          "2: core::option::expect_none_failed",
+          "   at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library/core/src/option.rs:1267:5",
+          "3: core::option::Option<T>::unwrap",
+          "   at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library/core/src/option.rs:450:21",
+          "4: example::main",
+          "   at ./src/main.rs:15:13"
+        ],
+        "level": "error",
+        "rust_version": "1.65.0"
+      },
+      "expected_analysis": {
+        "root_cause": "rust_unwrap_none",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "fn get_user_name(user_id: u32) -> String {\n    let user_option = find_user(user_id);\n    let user = user_option.unwrap();\n    user.name\n}"
+      },
+      "tags": ["rust", "unwrap", "option-none"]
+    },
+    {
+      "name": "Rust Index Out of Bounds Test",
+      "language": "rust",
+      "error_data": {
+        "error_type": "Panic",
+        "message": "thread 'main' panicked at 'index out of bounds: the len is 3 but the index is 5', src/main.rs:12:17",
+        "backtrace": [
+          "0: rust_panic",
+          "1: core::panicking::panic_fmt",
+          "   at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library/core/src/panicking.rs:142:14",
+          "2: core::panicking::panic_bounds_check",
+          "   at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library/core/src/panicking.rs:280:5",
+          "3: example::get_element",
+          "   at ./src/main.rs:12:17"
+        ],
+        "level": "error",
+        "rust_version": "1.65.0"
+      },
+      "expected_analysis": {
+        "root_cause": "rust_index_out_of_bounds",
+        "confidence": "high"
+      },
+      "context": {
+        "code_snippet": "fn get_element(items: &Vec<String>, index: usize) -> &String {\n    &items[index]\n}"
+      },
+      "tags": ["rust", "index", "bounds-check"]
+    },
+    {
+      "name": "Rust Actix Web Error Test",
+      "language": "rust",
+      "error_data": {
+        "error_type": "actix_web::Error",
+        "message": "Failed to extract path parameters from request: Invalid parameter format",
+        "backtrace": [
+          "0: actix_web::extract::path::PathExtractor::extract",
+          "   at /usr/src/actix-web/src/extract/path.rs:109:18",
+          "1: actix_web::handler::Factory::handle",
+          "   at /usr/src/actix-web/src/handler.rs:273:39",
+          "2: example::handlers::get_user",
+          "   at ./src/handlers.rs:42:5"
+        ],
+        "level": "error",
+        "rust_version": "1.65.0",
+        "framework": "actix"
+      },
+      "expected_analysis": {
+        "root_cause": "rust_actix_extraction",
+        "confidence": "high",
+        "framework": "actix"
+      },
+      "context": {
+        "code_snippet": "#[get(\"/users/{user_id}\")]\nasync fn get_user(path: web::Path<u32>) -> impl Responder {\n    let user_id = path.into_inner();\n    // Handler implementation\n}"
+      },
+      "tags": ["rust", "actix", "web-framework", "extraction"]
+    },
+    {
+      "name": "Rust Deadlock Test",
+      "language": "rust",
+      "error_data": {
+        "error_type": "Deadlock",
+        "message": "all threads are blocked waiting for locks",
+        "backtrace": [
+          "0: std::sync::mutex::Mutex::lock",
+          "   at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library/std/src/sync/mutex.rs:169:16",
+          "1: example::process_data",
+          "   at ./src/main.rs:32:20",
+          "2: example::thread_function",
+          "   at ./src/main.rs:45:9"
+        ],
+        "level": "fatal",
+        "rust_version": "1.65.0"
+      },
+      "expected_analysis": {
+        "root_cause": "rust_deadlock",
+        "confidence": "high",
+        "category": "concurrency"
+      },
+      "context": {
+        "code_snippet": "fn process_data(mutex_a: &Mutex<Vec<i32>>, mutex_b: &Mutex<HashMap<i32, String>>) {\n    let mut data_a = mutex_a.lock().unwrap();\n    // Some processing\n    let mut data_b = mutex_b.lock().unwrap();\n    // More processing\n}"
+      },
+      "tags": ["rust", "concurrency", "deadlock", "mutex"]
+    },
+    {
+      "name": "Rust Tokio Runtime Error Test",
+      "language": "rust",
+      "error_data": {
+        "error_type": "TokioError",
+        "message": "JoinError: task failed to make progress due to I/O blocking operation",
+        "backtrace": [
+          "0: tokio::task::JoinHandle::await",
+          "   at /usr/src/tokio/src/task/join.rs:379:42",
+          "1: example::process_async",
+          "   at ./src/main.rs:28:25"
+        ],
+        "level": "error",
+        "rust_version": "1.65.0",
+        "framework": "tokio"
+      },
+      "expected_analysis": {
+        "root_cause": "rust_tokio_runtime",
+        "confidence": "high",
+        "framework": "tokio"
+      },
+      "context": {
+        "code_snippet": "async fn process_async() -> Result<(), Error> {\n    let blocking_task = tokio::task::spawn_blocking(|| {\n        // This is a CPU-intensive operation\n        std::thread::sleep(std::time::Duration::from_secs(5));\n        42\n    });\n    \n    let result = blocking_task.await?;\n    Ok(())\n}"
+      },
+      "tags": ["rust", "tokio", "async", "runtime"]
     }
   ]
 }

@@ -1,0 +1,170 @@
+{
+  "language": "rust",
+  "rules": [
+    {
+      "id": "rust_panic",
+      "pattern": "thread '.*' panicked at '(.*?)'",
+      "type": "Panic",
+      "description": "Runtime panic in Rust program",
+      "root_cause": "rust_panic",
+      "suggestion": "Add proper error handling with Result<T, E> instead of panicking. Check for None values with Option's methods like unwrap_or, unwrap_or_else, or match expressions.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "rust_unwrap_on_none",
+      "pattern": "panicked at '.*unwrap\\(\\).*: None'",
+      "type": "Panic",
+      "description": "Called unwrap() on a None value",
+      "root_cause": "rust_unwrap_none",
+      "suggestion": "Instead of unwrap(), use unwrap_or(), unwrap_or_else(), or match expressions to handle the None case gracefully. Consider using the ? operator with Option<T>::ok_or() for early returns.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "rust_unwrap_on_err",
+      "pattern": "panicked at '.*unwrap\\(\\).*: (.*?)'",
+      "type": "Panic",
+      "description": "Called unwrap() on an Err value",
+      "root_cause": "rust_unwrap_err",
+      "suggestion": "Instead of unwrap(), use unwrap_or(), unwrap_or_else(), or match expressions to handle the Err case gracefully. Consider using the ? operator for early returns or using proper error handling.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "rust_index_out_of_bounds",
+      "pattern": "panicked at '.*index out of bounds: the len is (\\d+) but the index is (\\d+)'",
+      "type": "Panic",
+      "description": "Attempted to access an index beyond the bounds of a collection",
+      "root_cause": "rust_index_out_of_bounds",
+      "suggestion": "Check that the index is within bounds before accessing it. Use methods like .get() that return an Option instead of direct indexing, or check indices against collection length.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "rust_integer_overflow",
+      "pattern": "panicked at '(.*?overflow.*?)'",
+      "type": "Panic",
+      "description": "Integer overflow occurred in debug mode",
+      "root_cause": "rust_integer_overflow",
+      "suggestion": "Use checked_add(), checked_sub(), checked_mul(), etc. to detect overflows, or use wrapping_add() to explicitly handle overflow with wrapping behavior. Consider using larger integer types if needed.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "rust_division_by_zero",
+      "pattern": "panicked at 'attempt to divide by zero'",
+      "type": "Panic",
+      "description": "Attempted to divide by zero",
+      "root_cause": "rust_division_by_zero",
+      "suggestion": "Check divisors before performing division. Use if statements or match expressions to handle zero divisors as special cases.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "rust_string_parse_error",
+      "pattern": "Error\\(ParseInt(Error)?\\(.*?\\)\\)",
+      "type": "ParseIntError",
+      "description": "Failed to parse string as integer",
+      "root_cause": "rust_parse_int_error",
+      "suggestion": "Handle parsing errors with match expressions, unwrap_or_default(), or unwrap_or_else(). Always validate string format before parsing or provide default values for parsing failures.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "runtime"
+    },
+    {
+      "id": "rust_borrow_after_move",
+      "pattern": "borrowed value does not live long enough|value does not live long enough|borrow of moved value",
+      "type": "CompileError",
+      "description": "Attempted to use a value after it was moved",
+      "root_cause": "rust_borrow_after_move",
+      "suggestion": "Clone the value before moving it if you need to use it again, or restructure your code to avoid the move. Consider using references (&) instead of taking ownership.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile_time"
+    },
+    {
+      "id": "rust_borrow_mut_immut",
+      "pattern": "cannot borrow .* as mutable, as it is not declared as mutable|cannot borrow .* as mutable because it is also borrowed as immutable",
+      "type": "CompileError",
+      "description": "Attempted to borrow a value as mutable when it's borrowed as immutable or not declared as mutable",
+      "root_cause": "rust_borrow_mut_immut",
+      "suggestion": "Declare the variable as mutable with 'mut' or limit the scope of immutable borrows to allow mutable borrows. Consider using interior mutability patterns like RefCell or Mutex for shared mutability.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile_time"
+    },
+    {
+      "id": "rust_slice_out_of_bounds",
+      "pattern": "panicked at '.*slice index.*out of bounds.*'",
+      "type": "Panic",
+      "description": "Attempted to access a slice with out-of-bounds indices",
+      "root_cause": "rust_slice_out_of_bounds",
+      "suggestion": "Check slice bounds before accessing, use get/get_mut to safely access slices (returns Option), or use slice patterns with match expressions to handle different slice lengths.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "rust_borrow_checker_error",
+      "pattern": "cannot borrow.*as.*because.*is not valid at this point|use of moved value|value borrowed here after move",
+      "type": "CompileError",
+      "description": "Borrow checker detected invalid use of borrowed or moved value",
+      "root_cause": "rust_borrow_checker_error",
+      "suggestion": "Restructure code to respect borrow checker rules: limit lifetimes of references, use scopes to end borrows early, use Rc/Arc for shared ownership, or clone values where appropriate.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile_time"
+    },
+    {
+      "id": "rust_file_not_found",
+      "pattern": "No such file or directory|The system cannot find the path specified",
+      "type": "IoError",
+      "description": "Attempted to access a file that doesn't exist",
+      "root_cause": "rust_file_not_found",
+      "suggestion": "Check if file exists before opening, use std::path::Path::exists(), create files that don't exist, or handle file not found errors with proper error messaging.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "io"
+    },
+    {
+      "id": "rust_permission_denied",
+      "pattern": "Permission denied",
+      "type": "IoError",
+      "description": "Permission denied for file or directory operation",
+      "root_cause": "rust_permission_denied",
+      "suggestion": "Check file permissions, run program with appropriate privileges, or handle permission errors with proper user feedback and fallback strategies.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "io"
+    },
+    {
+      "id": "rust_connection_refused",
+      "pattern": "Connection refused",
+      "type": "IoError",
+      "description": "Connection to a network resource was refused",
+      "root_cause": "rust_connection_refused",
+      "suggestion": "Verify server is running at specified address, check network connectivity, implement retry mechanism with backoff, or provide user-friendly error messages with troubleshooting steps.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "network"
+    },
+    {
+      "id": "rust_json_parse_error",
+      "pattern": "expected .* at line .* column",
+      "type": "SerdeError",
+      "description": "Failed to parse JSON data",
+      "root_cause": "rust_json_parse_error",
+      "suggestion": "Validate JSON format before parsing, provide clear error messages with line/column info, consider using more lenient parsers or custom deserialization logic for problematic fields.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    }
+  ]
+}

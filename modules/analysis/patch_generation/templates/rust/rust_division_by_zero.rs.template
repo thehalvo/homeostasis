@@ -1,0 +1,42 @@
+// Replace division with safe alternatives
+// Option 1: Check for zero before dividing
+if divisor != 0 {
+    let result = dividend / divisor;
+    // Proceed with result
+} else {
+    // Handle division by zero
+    // Log error, return default, or handle specifically
+    println!("Error: Division by zero attempted");
+    // Consider using a default value or skipping the operation
+}
+
+// Option 2: Use checked_div which returns None for division by zero
+match dividend.checked_div(divisor) {
+    Some(result) => {
+        // Use result safely
+    },
+    None => {
+        // Handle division by zero
+        println!("Error: Division by zero attempted");
+    }
+}
+
+// Option 3: For functions returning Result, return an error
+fn safe_division(dividend: i32, divisor: i32) -> Result<i32, &'static str> {
+    if divisor == 0 {
+        Err("division by zero")
+    } else {
+        Ok(dividend / divisor)
+    }
+}
+
+// Then use with match or ?
+match safe_division(x, y) {
+    Ok(result) => {
+        // Use result
+    },
+    Err(err) => {
+        // Handle error
+        println!("Error: {}", err);
+    }
+}

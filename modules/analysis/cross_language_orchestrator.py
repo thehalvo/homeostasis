@@ -59,6 +59,15 @@ class LanguageRegistry:
                 self.register_analyzer("go", go_plugin)
         except Exception as e:
             logger.warning(f"Failed to load Go plugin: {e}")
+            
+        # Register Rust plugin if available
+        try:
+            # Get Rust plugin through the plugin system
+            rust_plugin = get_plugin("rust")
+            if rust_plugin:
+                self.register_analyzer("rust", rust_plugin)
+        except Exception as e:
+            logger.warning(f"Failed to load Rust plugin: {e}")
     
     def register_analyzer(self, language: str, analyzer: Any):
         """
@@ -344,6 +353,12 @@ class CrossLanguageOrchestrator:
         if "goroutine_id" in error_data or "go_version" in error_data:
             return "go"
         
+        # Check for Rust-style errors
+        if "message" in error_data and isinstance(error_data["message"], str):
+            message = error_data["message"]
+            if ("panicked at" in message and ("unwrap()" in message or ".rs:" in message)):
+                return "rust"
+        
         # Check stack trace for language-specific patterns
         if "stack_trace" in error_data and error_data["stack_trace"]:
             stack_trace = error_data["stack_trace"]
@@ -355,11 +370,15 @@ class CrossLanguageOrchestrator:
                                 return "java"
                             elif frame["file"].endswith(".go"):
                                 return "go"
+                            elif frame["file"].endswith(".rs"):
+                                return "rust"
                     elif isinstance(frame, str):
                         if ".java:" in frame:
                             return "java"
                         elif ".go:" in frame or "goroutine " in frame:
                             return "go"
+                        elif ".rs:" in frame or "thread '" in frame or "rustc[" in frame:
+                            return "rust"
         
         # Otherwise, try to detect using the adapter factory
         return ErrorAdapterFactory.detect_language(error_data)

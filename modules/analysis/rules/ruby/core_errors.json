@@ -1,0 +1,282 @@
+{
+  "name": "Ruby Core Error Rules",
+  "description": "Rules for detecting and fixing common Ruby core language errors",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "ruby_no_method_error",
+      "pattern": "NoMethodError:.*undefined method `([^']+)' for (.*)",
+      "type": "NoMethodError",
+      "description": "Attempted to call a method that doesn't exist",
+      "root_cause": "ruby_no_method",
+      "suggestion": "Check for nil values before method calls. Use the safe navigation operator (&.) or respond_to? to prevent this error.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_nil_reference",
+      "pattern": "NoMethodError:.*undefined method `([^']+)' for nil:NilClass",
+      "type": "NoMethodError",
+      "description": "Attempted to call a method on nil",
+      "root_cause": "ruby_nil_reference",
+      "suggestion": "Add nil check before calling the method. Consider using the safe navigation operator (&.) or try() in Rails.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_name_error",
+      "pattern": "NameError: undefined local variable or method `([^']+)'",
+      "type": "NameError",
+      "description": "Referenced a variable or method that is not defined",
+      "root_cause": "ruby_undefined_name",
+      "suggestion": "Ensure the variable is defined before use. Check for typos in variable names.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_uninitialized_constant",
+      "pattern": "NameError: uninitialized constant ([A-Z][A-Za-z0-9:]*)",
+      "type": "NameError",
+      "description": "Referenced a constant that is not defined",
+      "root_cause": "ruby_undefined_constant",
+      "suggestion": "Ensure the class or module is properly required/imported. Check namespace and spelling.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_argument_error",
+      "pattern": "ArgumentError: (wrong number of arguments|given \\d+, expected \\d+)",
+      "type": "ArgumentError",
+      "description": "Method called with wrong number of arguments",
+      "root_cause": "ruby_wrong_arguments",
+      "suggestion": "Check the method signature and ensure you're providing the correct number of arguments.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_type_error",
+      "pattern": "TypeError: (no implicit conversion of|can't convert) ([A-Za-z0-9:]+) (into|to) ([A-Za-z0-9:]+)",
+      "type": "TypeError",
+      "description": "Type conversion error",
+      "root_cause": "ruby_type_conversion",
+      "suggestion": "Ensure objects are of the correct type before operations. Use explicit type conversion methods like to_s, to_i, etc.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_load_error",
+      "pattern": "LoadError: cannot load such file -- ([^\\s]+)",
+      "type": "LoadError",
+      "description": "Failed to load a required file",
+      "root_cause": "ruby_missing_file",
+      "suggestion": "Ensure the file path is correct and the file exists. Check your load path settings.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "core"
+    },
+    {
+      "id": "ruby_gem_load_error",
+      "pattern": "LoadError: cannot load such file -- ([^\\s/]+)(?:/|$)",
+      "type": "LoadError",
+      "description": "Failed to load a gem",
+      "root_cause": "ruby_missing_gem",
+      "suggestion": "Ensure the gem is in your Gemfile and has been installed. Run 'bundle install' to update dependencies.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "gems"
+    },
+    {
+      "id": "ruby_syntax_error",
+      "pattern": "SyntaxError: (.*)",
+      "type": "SyntaxError",
+      "description": "Ruby code contains syntax errors",
+      "root_cause": "ruby_syntax_error",
+      "suggestion": "Fix the syntax issue. Common issues include missing end keywords, unbalanced brackets, or incorrect indentation.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "syntax"
+    },
+    {
+      "id": "ruby_stack_level_too_deep",
+      "pattern": "SystemStackError: stack level too deep",
+      "type": "SystemStackError",
+      "description": "Stack overflow due to infinite recursion",
+      "root_cause": "ruby_stack_overflow",
+      "suggestion": "Check for infinite recursion in your code. Ensure recursive methods have proper termination conditions.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "core"
+    },
+    {
+      "id": "ruby_timeout_error",
+      "pattern": "Timeout::Error",
+      "type": "Timeout::Error",
+      "description": "Operation timed out",
+      "root_cause": "ruby_timeout",
+      "suggestion": "Increase timeout value or optimize the operation. Consider using background processing for long-running tasks.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_file_not_found",
+      "pattern": "Errno::ENOENT: No such file or directory(?: @ \\w+ - |: )(.+)",
+      "type": "Errno::ENOENT",
+      "description": "Attempted to access a file that doesn't exist",
+      "root_cause": "ruby_file_not_found",
+      "suggestion": "Check file paths and ensure the file exists before accessing. Use File.exist? to verify file existence.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "io"
+    },
+    {
+      "id": "ruby_permission_denied",
+      "pattern": "Errno::EACCES: Permission denied(?: @ \\w+ - |: )(.+)",
+      "type": "Errno::EACCES",
+      "description": "Insufficient permissions to access file or directory",
+      "root_cause": "ruby_permission_denied",
+      "suggestion": "Check file permissions and ensure your application has appropriate access rights.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "io"
+    },
+    {
+      "id": "ruby_thread_error",
+      "pattern": "ThreadError: (.+)",
+      "type": "ThreadError",
+      "description": "Error in thread operation",
+      "root_cause": "ruby_thread_error",
+      "suggestion": "Review your thread management code. Ensure proper synchronization between threads.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "concurrency"
+    },
+    {
+      "id": "ruby_deadlock_detected",
+      "pattern": "ThreadError: deadlock detected(?:.+)?",
+      "type": "ThreadError",
+      "description": "Deadlock between threads detected",
+      "root_cause": "ruby_deadlock",
+      "suggestion": "Review your synchronization strategy. Ensure resources are locked and unlocked in the correct order to prevent circular dependencies.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency"
+    },
+    {
+      "id": "ruby_connection_refused",
+      "pattern": "Errno::ECONNREFUSED: Connection refused",
+      "type": "Errno::ECONNREFUSED",
+      "description": "Failed to establish a connection",
+      "root_cause": "ruby_connection_refused",
+      "suggestion": "Ensure the service you're connecting to is running and accessible. Check hostnames, ports, and network configuration.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "network"
+    },
+    {
+      "id": "ruby_openssl_error",
+      "pattern": "OpenSSL::SSL::SSLError: (.*)",
+      "type": "OpenSSL::SSL::SSLError",
+      "description": "SSL/TLS error during secure connection",
+      "root_cause": "ruby_ssl_error",
+      "suggestion": "Check SSL certificate validity and configuration. Ensure correct CA certificates are available to the Ruby process.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "network"
+    },
+    {
+      "id": "ruby_connection_reset",
+      "pattern": "Errno::ECONNRESET: Connection reset by peer",
+      "type": "Errno::ECONNRESET",
+      "description": "Connection was reset by the remote host",
+      "root_cause": "ruby_connection_reset",
+      "suggestion": "Implement retry logic for network operations. Check for network instability or server-side issues.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "network"
+    },
+    {
+      "id": "ruby_encoding_error",
+      "pattern": "Encoding::(?:UndefinedConversion|CompatibilityError|InvalidByteSequence)Error: (.*)",
+      "type": "Encoding::Error",
+      "description": "String encoding error",
+      "root_cause": "ruby_encoding_error",
+      "suggestion": "Check string encodings and ensure compatibility when combining strings. Use force_encoding or encode with appropriate options.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_regexp_error",
+      "pattern": "RegexpError: (.*)",
+      "type": "RegexpError",
+      "description": "Invalid regular expression pattern",
+      "root_cause": "ruby_regexp_error",
+      "suggestion": "Check regular expression syntax. Test complex patterns with Regexp.new to catch syntax errors early.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_io_write_error",
+      "pattern": "IOError: (not opened for writing|closed stream)",
+      "type": "IOError",
+      "description": "Attempted to write to a closed or read-only IO object",
+      "root_cause": "ruby_io_write_error",
+      "suggestion": "Ensure the IO object is open for writing. Check if the IO has been closed prematurely.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "io"
+    },
+    {
+      "id": "ruby_float_domain_error",
+      "pattern": "FloatDomainError: (.*)",
+      "type": "FloatDomainError",
+      "description": "Floating point operation resulted in NaN or Infinity",
+      "root_cause": "ruby_float_domain_error",
+      "suggestion": "Check for division by zero or mathematical operations that might result in invalid values. Validate inputs to mathematical operations.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_zero_division_error",
+      "pattern": "ZeroDivisionError: divided by (0|zero)",
+      "type": "ZeroDivisionError",
+      "description": "Attempted to divide by zero",
+      "root_cause": "ruby_zero_division",
+      "suggestion": "Check denominators before division operations. Add guards to prevent division by zero.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_range_error",
+      "pattern": "RangeError: (.*)",
+      "type": "RangeError",
+      "description": "Value out of acceptable range",
+      "root_cause": "ruby_range_error",
+      "suggestion": "Validate values before operations. Ensure values are within expected ranges.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "ruby_frozen_error",
+      "pattern": "FrozenError: can't modify frozen (.*)",
+      "type": "FrozenError",
+      "description": "Attempted to modify a frozen object",
+      "root_cause": "ruby_frozen_object",
+      "suggestion": "Check if an object is frozen before modifying it. Make a duplicate of frozen objects if modifications are needed.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "language": "rust",
+  "rules": [
+    {
+      "id": "rust_deadlock",
+      "pattern": "deadlock detected|all threads are blocked|thread.*is waiting for.*which is waiting for",
+      "type": "Deadlock",
+      "description": "Deadlock detected in thread synchronization",
+      "root_cause": "rust_deadlock",
+      "suggestion": "Ensure consistent lock ordering across threads, limit lock scope, use a timeout with try_lock methods, implement deadlock detection, or restructure your code to avoid multiple locks.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_poison_error",
+      "pattern": "PoisonError:.*another task failed while holding the lock",
+      "type": "PoisonError",
+      "description": "Attempted to acquire a lock that was poisoned due to a panic in another thread",
+      "root_cause": "rust_mutex_poison",
+      "suggestion": "Use PoisonError::into_inner() to recover the protected data, or implement recovery mechanisms to reset data to a valid state. Consider making your operations panic-safe.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_send_on_closed_channel",
+      "pattern": "panicked at '.*sending on a closed channel'",
+      "type": "Panic",
+      "description": "Attempted to send a value on a closed channel",
+      "root_cause": "rust_closed_channel",
+      "suggestion": "Check if a channel is closed before sending, handle errors from send operations, maintain channel lifecycle carefully, and ensure receivers exist before sending.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_mpsc_disconnect",
+      "pattern": "SendError|RecvError|channel closed|disconnected channel",
+      "type": "ChannelError",
+      "description": "Sender or receiver was disconnected or closed",
+      "root_cause": "rust_channel_disconnect",
+      "suggestion": "Handle potential disconnection errors with Result returned by channel operations, implement reconnection logic, or use broadcast channels for multi-receiver scenarios.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_thread_panic",
+      "pattern": "thread '.*' panicked at '.*', .*",
+      "type": "ThreadPanic",
+      "description": "A thread panicked, which may have left shared state in an inconsistent state",
+      "root_cause": "rust_thread_panic",
+      "suggestion": "Use catch_unwind to prevent panics from unwinding across FFI boundaries, implement panic=abort for critical systems, use Result instead of panic, and add panic::set_hook to log panics.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_missing_join",
+      "pattern": "process terminated without joining thread|JoinHandle.*dropped without joining",
+      "type": "ThreadError",
+      "description": "Thread handle was dropped without joining, potentially leaving unfinished work",
+      "root_cause": "rust_missing_join",
+      "suggestion": "Always join spawned threads before program exit with handle.join(), implement proper thread lifecycle management, or use scoped threads (e.g., with crossbeam) for automatic joining.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_async_block",
+      "pattern": ".*async.*blocks.*futures.*executor",
+      "type": "AsyncError",
+      "description": "Async code is not being properly executed or blocking the executor",
+      "root_cause": "rust_async_block",
+      "suggestion": "Ensure async tasks are properly spawned on an executor, avoid blocking operations in async code, use .await on futures, and consider tokio::spawn_blocking for CPU-intensive work.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_future_not_send",
+      "pattern": "future cannot be sent between threads safely|future is not.*Send|future created in a different task",
+      "type": "CompileError",
+      "description": "Future cannot be sent across thread boundaries",
+      "root_cause": "rust_future_not_send",
+      "suggestion": "Ensure all types in your async tasks implement Send, use Arc instead of Rc, use Mutex instead of RefCell, and avoid non-Send types like raw pointers in async code.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_race_condition",
+      "pattern": "race condition|data race|multiple mutable references|unsafe.*shared access",
+      "type": "RaceCondition",
+      "description": "Possible data race or race condition detected",
+      "root_cause": "rust_race_condition",
+      "suggestion": "Use proper synchronization primitives like Mutex or RwLock, avoid interior mutability without synchronization, limit use of unsafe code, and use MIRI or thread sanitizer to detect races.",
+      "confidence": "medium",
+      "severity": "critical",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_tokio_runtime_shutdown",
+      "pattern": "Tokio.*runtime.*shut down|Runtime.*dropped|JoinError.*task failed",
+      "type": "RuntimeError",
+      "description": "Tokio runtime was shut down with active tasks",
+      "root_cause": "rust_tokio_shutdown",
+      "suggestion": "Call runtime.shutdown_timeout() and wait for tasks to complete, use task handles to join tasks, implement graceful shutdown, and use proper task cancellation patterns.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_mutex_in_async",
+      "pattern": "std::sync::Mutex.*in async|blocking operation.*async context",
+      "type": "AsyncBlockingError",
+      "description": "Using blocking Mutex or other blocking operations in async code",
+      "root_cause": "rust_mutex_in_async",
+      "suggestion": "Replace std::sync::Mutex with tokio::sync::Mutex in async code, use non-blocking alternatives for I/O, or use tokio::task::spawn_blocking for unavoidable blocking operations.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_arc_misuse",
+      "pattern": "Arc.*not.*clone|Arc without.*shared ownership",
+      "type": "DesignError",
+      "description": "Potential misuse of Arc without proper shared ownership",
+      "root_cause": "rust_arc_misuse",
+      "suggestion": "Use Arc only when multiple ownership is required, call .clone() on the Arc (not the contained value), and combine with proper synchronization for mutable access.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "concurrency"
+    }
+  ]
+}

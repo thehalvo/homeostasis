@@ -1,0 +1,47 @@
+// Option 1: Ensure consistent lock ordering
+// Always acquire locks in the same order in all code paths
+let _lock_a = mutex_a.lock().unwrap();
+let _lock_b = mutex_b.lock().unwrap();
+
+// Option 2: Use try_lock with timeout
+use std::time::Duration;
+use parking_lot::Mutex; // Consider using parking_lot for more features
+
+match mutex_a.try_lock_for(Duration::from_millis(100)) {
+    Some(lock_a) => {
+        match mutex_b.try_lock_for(Duration::from_millis(100)) {
+            Some(lock_b) => {
+                // Use both locks
+            },
+            None => {
+                // Couldn't get lock B, handle or retry
+                println!("Could not acquire lock B");
+            }
+        }
+    },
+    None => {
+        // Couldn't get lock A, handle or retry
+        println!("Could not acquire lock A");
+    }
+};
+
+// Option 3: Scope locks to minimize holding time
+{
+    let _lock_a = mutex_a.lock().unwrap();
+    // Do minimal work with lock A
+}
+// Lock A is released here
+{
+    let _lock_b = mutex_b.lock().unwrap();
+    // Do minimal work with lock B
+}
+
+// Option 4: Use a higher level synchronization primitive
+// Consider using channels instead of mutexes:
+use std::sync::mpsc::channel;
+
+let (sender, receiver) = channel();
+// Send data through channel
+sender.send(data).unwrap();
+// Receive in another thread
+let received = receiver.recv().unwrap();

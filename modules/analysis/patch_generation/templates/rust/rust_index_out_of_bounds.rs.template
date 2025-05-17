@@ -1,0 +1,34 @@
+// Replace direct indexing with safe alternatives
+// Option 1: Check bounds before indexing
+if index < collection.len() {
+    let value = collection[index];
+    // Proceed with value
+} else {
+    // Handle out-of-bounds case
+    // Log error, use default, or skip operation
+}
+
+// Option 2: Use get() which returns Option<&T>
+match collection.get(index) {
+    Some(value) => {
+        // Use value
+    },
+    None => {
+        // Handle out-of-bounds case
+        // Log error or use default
+    }
+}
+
+// Option 3: For simple cases, use get() with unwrap_or
+let value = collection.get(index).unwrap_or(&default_value);
+
+// Option 4: Use get_mut() for mutable access
+if let Some(value) = collection.get_mut(index) {
+    // Modify value
+    *value = new_value;
+} else {
+    // Handle out-of-bounds case
+}
+
+// Option 5: Use .get() with ? for early returns in functions that return Option
+let value = collection.get(index)?;
