@@ -1,0 +1,62 @@
+// Fix for DbUpdateException
+// Original code likely did not handle database update errors properly
+
+// Option 1: Wrap database operations in try-catch with proper error handling
+try
+{
+    await _context.SaveChangesAsync();
+    return Ok("Changes saved successfully");
+}
+catch (DbUpdateException ex)
+{
+    // Log the error
+    _logger.LogError(ex, "Error saving changes to database");
+    
+    // Handle specific known issues based on inner exception
+    if (ex.InnerException is SqlException sqlEx)
+    {
+        switch (sqlEx.Number)
+        {
+            case 2601: // Unique index violation
+            case 2627: // Unique constraint violation
+                return BadRequest("A record with the same key already exists.");
+            case 547:  // Constraint check violation
+                return BadRequest("The change you requested violates a database constraint.");
+            default:
+                return StatusCode(500, "A database error occurred.");
+        }
+    }
+    
+    // Generic error handling
+    return StatusCode(500, "Could not save changes to the database.");
+}
+
+// Option 2: Validate entities before saving
+// Perform validation before calling SaveChanges
+foreach (var entry in _context.ChangeTracker.Entries())
+{
+    if (entry.State == EntityState.Added || entry.State == EntityState.Modified)
+    {
+        // Validate the entity
+        var entity = entry.Entity;
+        var validationResults = new List<ValidationResult>();
+        if (!Validator.TryValidateObject(entity, new ValidationContext(entity), validationResults, true))
+        {
+            // Entity validation failed, handle it
+            var errorMessages = validationResults.Select(r => r.ErrorMessage);
+            return BadRequest(string.Join(", ", errorMessages));
+        }
+    }
+}
+
+// Then try to save with error handling
+try
+{
+    await _context.SaveChangesAsync();
+    return Ok("Changes saved successfully");
+}
+catch (Exception ex)
+{
+    _logger.LogError(ex, "Error saving changes to database");
+    return StatusCode(500, "An error occurred while saving changes.");
+}

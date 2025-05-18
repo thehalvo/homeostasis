@@ -1,0 +1,139 @@
+{
+  "name": "ASP.NET Core Errors",
+  "description": "Rules for detecting and fixing ASP.NET Core specific exceptions",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "aspnet_route_not_found",
+      "pattern": "Microsoft\\.AspNetCore\\.Routing\\.EndpointNotFoundException: No route matches the supplied values",
+      "type": "Microsoft.AspNetCore.Routing.EndpointNotFoundException",
+      "description": "No route found that matches the requested URL pattern",
+      "root_cause": "aspnetcore_route_not_found",
+      "suggestion": "Check route configuration and URL generation. Ensure routes are correctly defined in Startup.Configure() or Program.cs.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "aspnetcore",
+      "framework": "aspnetcore"
+    },
+    {
+      "id": "aspnet_model_validation",
+      "pattern": "Microsoft\\.AspNetCore\\.Mvc\\.BadRequestObjectResult: One or more validation errors occurred",
+      "type": "Microsoft.AspNetCore.Mvc.BadRequestObjectResult",
+      "description": "Model validation failed for an API request",
+      "root_cause": "aspnetcore_model_validation",
+      "suggestion": "Validate model state in controllers. Add proper validation attributes to model properties.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "aspnetcore",
+      "framework": "aspnetcore"
+    },
+    {
+      "id": "aspnet_controller_not_found",
+      "pattern": "System\\.InvalidOperationException: No action was found on the controller '([^']+)' that matches the request",
+      "type": "System.InvalidOperationException",
+      "description": "No matching action method found on the controller",
+      "root_cause": "aspnetcore_action_not_found",
+      "suggestion": "Check controller action methods. Ensure proper HTTP verb attributes are used (HttpGet, HttpPost, etc.).",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "aspnetcore",
+      "framework": "aspnetcore"
+    },
+    {
+      "id": "aspnet_cors_policy_error",
+      "pattern": "Microsoft\\.AspNetCore\\.Cors\\.Infrastructure\\.CorsMiddleware: Policy execution failed",
+      "type": "Microsoft.AspNetCore.Cors.Infrastructure.CorsException",
+      "description": "CORS policy validation failed for cross-origin request",
+      "root_cause": "aspnetcore_cors_policy_error",
+      "suggestion": "Check CORS policy configuration in Startup.cs. Ensure allowed origins, methods, and headers are configured correctly.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "aspnetcore",
+      "framework": "aspnetcore"
+    },
+    {
+      "id": "aspnet_view_not_found",
+      "pattern": "Microsoft\\.AspNetCore\\.Mvc\\.ViewEngines\\.ViewEngineResult: The view '([^']+)' was not found",
+      "type": "Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineException",
+      "description": "The requested view could not be found",
+      "root_cause": "aspnetcore_view_not_found",
+      "suggestion": "Check view name and location. Ensure the view file exists in the correct directory structure.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "aspnetcore",
+      "framework": "aspnetcore"
+    },
+    {
+      "id": "aspnet_antiforgery_token",
+      "pattern": "Microsoft\\.AspNetCore\\.Antiforgery\\.AntiforgeryValidationException: The antiforgery token could not be validated",
+      "type": "Microsoft.AspNetCore.Antiforgery.AntiforgeryValidationException",
+      "description": "Antiforgery token validation failed",
+      "root_cause": "aspnetcore_antiforgery_token",
+      "suggestion": "Ensure the form includes the antiforgery token. Use @Html.AntiForgeryToken() in Razor views or include the token in AJAX requests.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "aspnetcore",
+      "framework": "aspnetcore"
+    },
+    {
+      "id": "aspnet_user_not_authenticated",
+      "pattern": "System\\.InvalidOperationException: User is not authenticated",
+      "type": "System.InvalidOperationException",
+      "description": "Attempted to access user identity information for unauthenticated user",
+      "root_cause": "aspnetcore_user_not_authenticated",
+      "suggestion": "Check if the user is authenticated before accessing identity information. Use User.Identity.IsAuthenticated check.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "aspnetcore",
+      "framework": "aspnetcore"
+    },
+    {
+      "id": "aspnet_forbidden",
+      "pattern": "Microsoft\\.AspNetCore\\.Authorization\\.ForbidResult: User is forbidden",
+      "type": "Microsoft.AspNetCore.Authorization.AuthorizationFailureException",
+      "description": "Authorization failed for authenticated user",
+      "root_cause": "aspnetcore_authorization_failed",
+      "suggestion": "Verify the user has the required roles or claims for the action. Check authorization policy configuration.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "aspnetcore",
+      "framework": "aspnetcore"
+    },
+    {
+      "id": "di_service_not_registered",
+      "pattern": "System\\.InvalidOperationException: No service for type '([^']+)' has been registered",
+      "type": "System.InvalidOperationException",
+      "description": "Attempted to resolve service not registered in dependency injection container",
+      "root_cause": "di_service_not_registered",
+      "suggestion": "Register the service in Program.cs or Startup.ConfigureServices(). Check the service lifetime (Singleton, Scoped, Transient).",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "dependency",
+      "framework": "aspnetcore"
+    },
+    {
+      "id": "aspnet_missing_action_context",
+      "pattern": "System\\.InvalidOperationException: Action '([^']+)' does not have an attribute route",
+      "type": "System.InvalidOperationException",
+      "description": "Missing route information for controller action",
+      "root_cause": "aspnetcore_missing_route",
+      "suggestion": "Add route attributes to the controller action. Either use [Route] attribute or HTTP verb attributes with route templates.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "aspnetcore",
+      "framework": "aspnetcore"
+    },
+    {
+      "id": "aspnet_app_startup_exception",
+      "pattern": "Microsoft\\.AspNetCore\\.Hosting\\.StartupException: A fatal error occurred during startup",
+      "type": "Microsoft.AspNetCore.Hosting.StartupException",
+      "description": "Exception occurred during application startup",
+      "root_cause": "aspnetcore_startup_error",
+      "suggestion": "Check Startup.cs or Program.cs for configuration errors. Ensure all required services are properly registered.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "aspnetcore",
+      "framework": "aspnetcore"
+    }
+  ]
+}

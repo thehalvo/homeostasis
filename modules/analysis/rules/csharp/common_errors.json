@@ -1,0 +1,161 @@
+{
+  "name": "C# Common Errors",
+  "description": "Rules for detecting and fixing common C# exceptions",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "csharp_null_reference",
+      "pattern": "System\\.NullReferenceException: Object reference not set to an instance of an object",
+      "type": "System.NullReferenceException",
+      "description": "Attempted to access a member on a null object reference",
+      "root_cause": "csharp_null_reference",
+      "suggestion": "Use null-conditional operators (?.), null-coalescing operators (??), or add explicit null checks before accessing properties or methods.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "csharp_argument_null",
+      "pattern": "System\\.ArgumentNullException: Value cannot be null\\. (?:Parameter name: |Arg_ParamName_Name)?([\\w]+)",
+      "type": "System.ArgumentNullException",
+      "description": "Method received a null argument that doesn't accept null",
+      "root_cause": "csharp_argument_null",
+      "suggestion": "Ensure that the specified parameter is not null before passing it to methods. Consider using the null-coalescing operator (??) or providing default values.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "csharp_argument_out_of_range",
+      "pattern": "System\\.ArgumentOutOfRangeException: (?:Specified argument was out of the range of valid values\\.|Index was out of range\\.) (?:Parameter name: |Arg_ParamName_Name)?([\\w]+)",
+      "type": "System.ArgumentOutOfRangeException",
+      "description": "Argument provided is outside the range of acceptable values",
+      "root_cause": "csharp_argument_out_of_range",
+      "suggestion": "Verify that the argument value falls within the expected range. Add validation before calling methods with this parameter.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "csharp_format_exception",
+      "pattern": "System\\.FormatException: (?:Input string was not in a correct format|Format of the initialization string does not conform to specification)",
+      "type": "System.FormatException",
+      "description": "String format is not valid for the attempted conversion",
+      "root_cause": "csharp_format_exception",
+      "suggestion": "Use TryParse methods instead of direct parsing. Validate string format before conversion.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "csharp_invalid_cast",
+      "pattern": "System\\.InvalidCastException: (?:Unable to cast object of type|Specified cast is not valid)",
+      "type": "System.InvalidCastException",
+      "description": "Invalid type conversion or explicit cast",
+      "root_cause": "csharp_invalid_cast",
+      "suggestion": "Use 'is' or 'as' operators to safely check and convert types. Verify object types before casting.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "csharp_io_file_not_found",
+      "pattern": "System\\.IO\\.FileNotFoundException: Could not find file '([^']+)'",
+      "type": "System.IO.FileNotFoundException",
+      "description": "Referenced file does not exist at the specified path",
+      "root_cause": "csharp_file_not_found",
+      "suggestion": "Verify file paths before attempting operations. Use File.Exists() to check if files exist before accessing them.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "io"
+    },
+    {
+      "id": "csharp_directory_not_found",
+      "pattern": "System\\.IO\\.DirectoryNotFoundException: Could not find directory '([^']+)'",
+      "type": "System.IO.DirectoryNotFoundException",
+      "description": "Referenced directory does not exist at the specified path",
+      "root_cause": "csharp_directory_not_found",
+      "suggestion": "Verify directory paths before attempting operations. Use Directory.Exists() to check if directories exist before accessing them.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "io"
+    },
+    {
+      "id": "csharp_unauthorized_access",
+      "pattern": "System\\.UnauthorizedAccessException: Access to the path '([^']+)' is denied",
+      "type": "System.UnauthorizedAccessException",
+      "description": "Application does not have required permissions to access resource",
+      "root_cause": "csharp_unauthorized_access",
+      "suggestion": "Check file/directory permissions. Run the application with appropriate privileges or request only necessary access rights.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "security"
+    },
+    {
+      "id": "csharp_timeout_exception",
+      "pattern": "System\\.TimeoutException: The operation has timed out",
+      "type": "System.TimeoutException",
+      "description": "Operation did not complete within the allotted time",
+      "root_cause": "csharp_operation_timeout",
+      "suggestion": "Increase timeout values, optimize the operation, or implement asynchronous processing with longer timeouts.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "network"
+    },
+    {
+      "id": "csharp_index_out_of_range",
+      "pattern": "System\\.IndexOutOfRangeException: Index was outside the bounds of the array",
+      "type": "System.IndexOutOfRangeException",
+      "description": "Attempted to access an array element with an index outside its bounds",
+      "root_cause": "csharp_index_out_of_range",
+      "suggestion": "Check array bounds before accessing elements. Use array.Length to validate indexes.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "csharp_key_not_found",
+      "pattern": "System\\.Collections\\.Generic\\.KeyNotFoundException: The given key was not present in the dictionary",
+      "type": "System.Collections.Generic.KeyNotFoundException",
+      "description": "Attempted to retrieve a key that doesn't exist in a dictionary",
+      "root_cause": "csharp_key_not_found",
+      "suggestion": "Use TryGetValue or ContainsKey to check if a key exists before accessing it.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "csharp_object_disposed",
+      "pattern": "System\\.ObjectDisposedException: Cannot access a disposed object",
+      "type": "System.ObjectDisposedException",
+      "description": "Attempted to access an object that has been disposed",
+      "root_cause": "csharp_object_disposed",
+      "suggestion": "Check if objects are disposed before using them. Consider restructuring code to ensure proper object lifecycle management.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core"
+    },
+    {
+      "id": "csharp_task_canceled",
+      "pattern": "System\\.Threading\\.Tasks\\.TaskCanceledException: A task was canceled",
+      "type": "System.Threading.Tasks.TaskCanceledException",
+      "description": "Async operation was canceled via a cancellation token",
+      "root_cause": "csharp_task_canceled",
+      "suggestion": "Handle cancellation appropriately. Check if cancellation is expected or provide fallback behavior.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    },
+    {
+      "id": "csharp_aggregate_exception",
+      "pattern": "System\\.AggregateException: (?:One or more errors occurred|A Task's exception\\(s\\) were not observed)",
+      "type": "System.AggregateException",
+      "description": "Multiple exceptions occurred during parallel or async operations",
+      "root_cause": "csharp_multiple_errors",
+      "suggestion": "Examine InnerExceptions property to identify and handle specific exceptions. Use Task.Wait and ContinueWith with proper exception handling.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "async"
+    }
+  ]
+}

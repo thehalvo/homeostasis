@@ -1682,6 +1682,320 @@ class RustErrorAdapter(LanguageAdapter):
         return backtrace_lines
 
 
+class CSharpErrorAdapter(LanguageAdapter):
+    """Adapter for C# error formats."""
+    
+    def to_standard_format(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert C# error data to the standard format.
+        
+        Args:
+            error_data: C# error data
+            
+        Returns:
+            Error data in the standard format
+        """
+        # Create a standard error object
+        standard_error = {
+            "error_id": str(uuid.uuid4()),
+            "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
+            "language": "csharp",
+            "error_type": error_data.get("exception_type", ""),
+            "message": error_data.get("message", "")
+        }
+        
+        # Add .NET version if available
+        if "dotnet_version" in error_data:
+            standard_error["language_version"] = error_data["dotnet_version"]
+        
+        # Handle stack trace
+        if "stack_trace" in error_data:
+            # C# stack traces can be a string or a list
+            if isinstance(error_data["stack_trace"], str):
+                # Split into lines
+                stack_lines = error_data["stack_trace"].split("\n")
+                
+                # Try to parse structured data from the stack trace
+                parsed_frames = self._parse_csharp_stack_trace(stack_lines)
+                
+                if parsed_frames:
+                    standard_error["stack_trace"] = parsed_frames
+                else:
+                    standard_error["stack_trace"] = stack_lines
+            elif isinstance(error_data["stack_trace"], list):
+                if all(isinstance(frame, dict) for frame in error_data["stack_trace"]):
+                    # Already in structured format
+                    standard_error["stack_trace"] = error_data["stack_trace"]
+                else:
+                    # List of strings
+                    standard_error["stack_trace"] = error_data["stack_trace"]
+        
+        # Add framework information if available
+        if "framework" in error_data:
+            standard_error["framework"] = error_data["framework"]
+            
+            if "framework_version" in error_data:
+                standard_error["framework_version"] = error_data["framework_version"]
+        
+        # Add request information if available
+        if "request" in error_data:
+            standard_error["request"] = error_data["request"]
+        
+        # Add any additional context
+        if "context" in error_data:
+            standard_error["context"] = error_data["context"]
+        
+        # Add inner exception if available
+        if "inner_exception" in error_data:
+            if "additional_data" not in standard_error:
+                standard_error["additional_data"] = {}
+            standard_error["additional_data"]["inner_exception"] = error_data["inner_exception"]
+        
+        # Add severity if available
+        if "level" in error_data:
+            # Map C# log levels to standard format
+            level_map = {
+                "trace": "debug",
+                "debug": "debug",
+                "information": "info",
+                "warning": "warning",
+                "error": "error",
+                "critical": "critical",
+                "fatal": "fatal"
+            }
+            standard_error["severity"] = level_map.get(error_data["level"].lower(), "error")
+        
+        # Add runtime if available
+        if "runtime" in error_data:
+            standard_error["runtime"] = error_data["runtime"]
+            
+            if "runtime_version" in error_data:
+                standard_error["runtime_version"] = error_data["runtime_version"]
+        
+        # Add handled flag if available
+        if "handled" in error_data:
+            standard_error["handled"] = error_data["handled"]
+        
+        # Add additional C#-specific data
+        csharp_specific = {}
+        for key, value in error_data.items():
+            if key not in standard_error and key not in ["stack_trace", "request", "context", "inner_exception"]:
+                csharp_specific[key] = value
+        
+        if csharp_specific:
+            if "additional_data" in standard_error:
+                standard_error["additional_data"].update(csharp_specific)
+            else:
+                standard_error["additional_data"] = csharp_specific
+        
+        return standard_error
+    
+    def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data to C#-specific format.
+        
+        Args:
+            standard_error: Error data in the standard format
+            
+        Returns:
+            Error data in the C#-specific format
+        """
+        # Create a C# error object
+        csharp_error = {
+            "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
+            "exception_type": standard_error.get("error_type", "System.Exception"),
+            "message": standard_error.get("message", "")
+        }
+        
+        # Convert severity to C# logging level
+        if "severity" in standard_error:
+            level_map = {
+                "debug": "Debug",
+                "info": "Information",
+                "warning": "Warning",
+                "error": "Error",
+                "critical": "Critical",
+                "fatal": "Fatal"
+            }
+            csharp_error["level"] = level_map.get(standard_error["severity"].lower(), "Error")
+        
+        # Convert stack trace to C# format
+        if "stack_trace" in standard_error:
+            stack_trace = standard_error["stack_trace"]
+            
+            if isinstance(stack_trace, list):
+                if all(isinstance(frame, str) for frame in stack_trace):
+                    # Already in C# stack trace string format
+                    csharp_error["stack_trace"] = "\n".join(stack_trace)
+                elif all(isinstance(frame, dict) for frame in stack_trace):
+                    # Convert structured frames to C# stack trace format
+                    csharp_error["stack_trace"] = self._convert_frames_to_csharp_stack(
+                        standard_error.get("error_type", "System.Exception"), 
+                        standard_error.get("message", ""), 
+                        stack_trace
+                    )
+                    # Also keep the structured version
+                    csharp_error["structured_stack_trace"] = stack_trace
+        
+        # Add request information if available
+        if "request" in standard_error:
+            csharp_error["request"] = standard_error["request"]
+        
+        # Add context information if available
+        if "context" in standard_error:
+            csharp_error["context"] = standard_error["context"]
+        
+        # Add .NET version if available
+        if "language_version" in standard_error:
+            csharp_error["dotnet_version"] = standard_error["language_version"]
+        
+        # Add framework information if available
+        if "framework" in standard_error:
+            csharp_error["framework"] = standard_error["framework"]
+            
+            if "framework_version" in standard_error:
+                csharp_error["framework_version"] = standard_error["framework_version"]
+        
+        # Add runtime information if available
+        if "runtime" in standard_error:
+            csharp_error["runtime"] = standard_error["runtime"]
+            
+            if "runtime_version" in standard_error:
+                csharp_error["runtime_version"] = standard_error["runtime_version"]
+        
+        # Add handled flag if available
+        if "handled" in standard_error:
+            csharp_error["handled"] = standard_error["handled"]
+        
+        # Extract C#-specific data from additional_data
+        if "additional_data" in standard_error:
+            for key, value in standard_error["additional_data"].items():
+                if key == "inner_exception":
+                    csharp_error["inner_exception"] = value
+                else:
+                    csharp_error[key] = value
+        
+        return csharp_error
+    
+    def _parse_csharp_stack_trace(self, stack_lines: List[str]) -> List[Dict[str, Any]]:
+        """
+        Parse a C# stack trace into structured frames.
+        
+        Args:
+            stack_lines: C# stack trace lines
+            
+        Returns:
+            Structured frames or None if parsing fails
+        """
+        frames = []
+        
+        # C# stack trace patterns:
+        # Standard format: at Namespace.Class.Method(parameters) in File:line number
+        # Alternative: at Namespace.Class.Method(parameters) in c:\path\to\file.cs:line 42
+        # Or simpler: at Namespace.Class.Method(parameters)
+        
+        # Regular patterns - simpler approach focused on the 'in file:line' pattern
+        # First extract method signature
+        method_pattern = r'\s*at\s+([^(]+)\(([^)]*)\)'
+        # Then separately extract file location
+        file_pattern = r'\s+in\s+(.+):line\s+(\d+)'
+        
+        try:
+            for line in stack_lines:
+                # Skip empty lines
+                if not line.strip():
+                    continue
+                
+                # Extract method first
+                method_match = re.search(method_pattern, line)
+                if not method_match:
+                    continue
+                    
+                full_method = method_match.group(1)
+                parameters = method_match.group(2)
+                
+                # Extract file and line if present
+                file_match = re.search(file_pattern, line)
+                file_path = file_match.group(1) if file_match else ""
+                line_num = int(file_match.group(2)) if file_match else 0
+                
+                # Parse the full method name into namespace, class, and method
+                parts = full_method.split('.')
+                
+                if len(parts) >= 3:
+                    # Standard case: Namespace.Class.Method
+                    namespace = '.'.join(parts[:-2])
+                    class_name = parts[-2]
+                    method = parts[-1]
+                elif len(parts) == 2:
+                    # Case: Class.Method
+                    namespace = ""
+                    class_name = parts[0]
+                    method = parts[1]
+                else:
+                    # Case: Method (rare)
+                    namespace = ""
+                    class_name = ""
+                    method = full_method
+                
+                # Handle special cases like lambda expressions
+                if '<' in method and '>' in method:
+                    # This is likely a lambda or anonymous method
+                    pass  # We'll keep the method name with the angle brackets
+                
+                frames.append({
+                    "namespace": namespace,
+                    "class": class_name,
+                    "function": method,
+                    "parameters": parameters,
+                    "file": file_path,
+                    "line": line_num
+                })
+            
+            return frames if frames else None
+        except Exception as e:
+            logger.debug(f"Failed to parse C# stack trace: {e}")
+            return None
+    
+    def _convert_frames_to_csharp_stack(self, error_type: str, message: str, frames: List[Dict[str, Any]]) -> str:
+        """
+        Convert structured frames to a C# stack trace string.
+        
+        Args:
+            error_type: Error type/name
+            message: Error message
+            frames: Structured frames
+            
+        Returns:
+            C# stack trace string
+        """
+        stack_lines = [f"{error_type}: {message}"]
+        
+        for frame in frames:
+            namespace = frame.get("namespace", "")
+            class_name = frame.get("class", "")
+            method = frame.get("function", "")
+            parameters = frame.get("parameters", "")
+            file = frame.get("file", "")
+            line_num = frame.get("line", 0)
+            
+            # Build the full method name
+            if namespace and class_name:
+                full_method = f"{namespace}.{class_name}.{method}"
+            elif class_name:
+                full_method = f"{class_name}.{method}"
+            else:
+                full_method = method
+            
+            # Format the stack frame
+            if file and line_num:
+                stack_lines.append(f"   at {full_method}({parameters}) in {file}:line {line_num}")
+            else:
+                stack_lines.append(f"   at {full_method}({parameters})")
+        
+        return "\n".join(stack_lines)
+
+
 class ErrorAdapterFactory:
     """Factory for creating language-specific error adapters."""
     
@@ -1713,6 +2027,8 @@ class ErrorAdapterFactory:
             return RubyErrorAdapter()
         elif language == "rust":
             return RustErrorAdapter()
+        elif language == "csharp" or language == "c#":
+            return CSharpErrorAdapter()
         else:
             raise ValueError(f"No adapter available for language: {language}")
     
@@ -1746,6 +2062,8 @@ class ErrorAdapterFactory:
             return "ruby"
         elif "rust_version" in error_data or "is_panic" in error_data:
             return "rust"
+        elif "dotnet_version" in error_data or "exception_type" in error_data and error_data["exception_type"].startswith("System."):
+            return "csharp"
             
         # Try to detect from stack trace format
         if "stack_trace" in error_data and isinstance(error_data["stack_trace"], str):
@@ -1754,6 +2072,8 @@ class ErrorAdapterFactory:
                 return "go"
             elif "at " in stack and ".java:" in stack:
                 return "java"
+            elif "at " in stack and (re.search(r'\.cs:line \d+', stack) or "System." in stack):
+                return "csharp"
                 
         if "stack" in error_data and isinstance(error_data["stack"], str):
             stack = error_data["stack"]
@@ -1763,6 +2083,8 @@ class ErrorAdapterFactory:
                 return "java"
             elif "goroutine " in stack and ".go:" in stack:
                 return "go"
+            elif "at " in stack and (re.search(r'\.cs:line \d+', stack) or "System." in stack):
+                return "csharp"
         
         if "backtrace" in error_data:
             # Check for Ruby backtrace format

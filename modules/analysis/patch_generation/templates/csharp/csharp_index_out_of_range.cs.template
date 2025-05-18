@@ -1,0 +1,35 @@
+// Fix for IndexOutOfRangeException
+// Original code likely accessed an array or collection with an invalid index
+
+// Option 1: Add bounds checking before accessing the array
+if (index >= 0 && index < array.Length)
+{
+    var item = array[index];
+    // Process item safely
+}
+else
+{
+    // Handle invalid index case
+    // You can log an error, return a default value, or throw a more descriptive exception
+}
+
+// Option 2: Use ElementAtOrDefault extension method from LINQ
+// This returns default(T) if the index is out of range
+using System.Linq;
+
+var item = array.ElementAtOrDefault(index);
+if (item != null) // For reference types
+{
+    // Process item safely
+}
+
+// Option 3: Use a safe access helper method
+public static T GetSafeElement<T>(T[] array, int index, T defaultValue = default)
+{
+    if (array == null || index < 0 || index >= array.Length)
+    {
+        return defaultValue;
+    }
+    
+    return array[index];
+}

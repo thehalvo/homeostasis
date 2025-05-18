@@ -1,0 +1,57 @@
+// Fix for TaskCanceledException
+// Original code likely did not handle cancellation properly
+
+// Option 1: Handle cancellation in async method
+public async Task<IActionResult> ProcessAsync(CancellationToken cancellationToken = default)
+{
+    try
+    {
+        // Pass the cancellation token to all async operations
+        var result = await _service.DoWorkAsync(cancellationToken);
+        return Ok(result);
+    }
+    catch (OperationCanceledException)
+    {
+        // Log that operation was canceled
+        _logger.LogInformation("Operation was canceled by user or timeout");
+        
+        // Return appropriate response for cancellation
+        return StatusCode(499, "Request has been canceled");
+    }
+    catch (Exception ex)
+    {
+        // Handle other exceptions
+        _logger.LogError(ex, "Error processing request");
+        return StatusCode(500, "An error occurred while processing your request");
+    }
+}
+
+// Option 2: Create extension method for graceful cancellation handling
+public static async Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken)
+{
+    var tcs = new TaskCompletionSource<bool>();
+    using (cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), tcs))
+    {
+        if (task.IsCompleted || await Task.WhenAny(task, tcs.Task) == task)
+        {
+            return await task;
+        }
+        
+        throw new OperationCanceledException(cancellationToken);
+    }
+}
+
+// Usage example:
+public async Task<IActionResult> ProcessAsync(CancellationToken cancellationToken)
+{
+    try
+    {
+        // Use the extension method
+        var result = await _service.LongRunningOperationAsync().WithCancellation(cancellationToken);
+        return Ok(result);
+    }
+    catch (OperationCanceledException)
+    {
+        return StatusCode(499, "Request has been canceled");
+    }
+}

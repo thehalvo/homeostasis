@@ -1,0 +1,128 @@
+{
+  "name": "C# Async/Await Errors",
+  "description": "Rules for detecting and fixing C# async/await related exceptions",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "csharp_task_canceled",
+      "pattern": "System\\.Threading\\.Tasks\\.TaskCanceledException: A task was canceled",
+      "type": "System.Threading.Tasks.TaskCanceledException",
+      "description": "Async operation was canceled via a cancellation token",
+      "root_cause": "csharp_task_canceled",
+      "suggestion": "Handle cancellation appropriately. Check if cancellation is expected or provide fallback behavior.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    },
+    {
+      "id": "csharp_operation_canceled",
+      "pattern": "System\\.OperationCanceledException: The operation was canceled",
+      "type": "System.OperationCanceledException",
+      "description": "Operation was canceled via a cancellation token",
+      "root_cause": "csharp_operation_canceled",
+      "suggestion": "Handle cancellation appropriately. OperationCanceledException is the base class for TaskCanceledException.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    },
+    {
+      "id": "csharp_aggregate_exception",
+      "pattern": "System\\.AggregateException: (?:One or more errors occurred|A Task's exception\\(s\\) were not observed)",
+      "type": "System.AggregateException",
+      "description": "Multiple exceptions occurred during parallel or async operations",
+      "root_cause": "csharp_multiple_errors",
+      "suggestion": "Examine InnerExceptions property to identify and handle specific exceptions. Use Task.Wait and ContinueWith with proper exception handling.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "async"
+    },
+    {
+      "id": "csharp_deadlock",
+      "pattern": "System\\.Threading\\.Tasks\\.TaskSchedulerException: (?:A task was canceled|Exception of type 'System\\.Threading\\.Tasks\\.TaskSchedulerException' was thrown)",
+      "type": "System.Threading.Tasks.TaskSchedulerException",
+      "description": "Task scheduler encountered an exception, possibly due to a deadlock",
+      "root_cause": "csharp_task_scheduler_exception",
+      "suggestion": "Avoid blocking the UI thread with .Result or .Wait() on tasks. Use ConfigureAwait(false) when appropriate.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "async"
+    },
+    {
+      "id": "csharp_missing_await",
+      "pattern": "System\\.InvalidOperationException: (?:The 'await' operator can only be used within an async method|Synchronous operations are disallowed)",
+      "type": "System.InvalidOperationException",
+      "description": "Missing await in async method or synchronous operation in asynchronous context",
+      "root_cause": "csharp_missing_await",
+      "suggestion": "Add await keyword for asynchronous operations or use ConfigureAwait(false) to avoid context capture. Don't block on async operations synchronously.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    },
+    {
+      "id": "csharp_task_not_completed",
+      "pattern": "System\\.InvalidOperationException: (?:The task has not yet completed|The asynchronous operation has not completed)",
+      "type": "System.InvalidOperationException",
+      "description": "Attempted to get result of a task that hasn't completed",
+      "root_cause": "csharp_task_not_completed",
+      "suggestion": "Use await to wait for task completion instead of Task.Result. Ensure tasks complete before accessing results.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    },
+    {
+      "id": "csharp_cancel_after_token_disposed",
+      "pattern": "System\\.ObjectDisposedException: (?:The CancellationTokenSource has been disposed|Cannot access a disposed object)",
+      "type": "System.ObjectDisposedException",
+      "description": "Attempted to cancel operation after CancellationTokenSource was disposed",
+      "root_cause": "csharp_token_source_disposed",
+      "suggestion": "Ensure CancellationTokenSource is not disposed before cancellation. Use 'using' statements with appropriate scope.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    },
+    {
+      "id": "csharp_unobserved_task_exception",
+      "pattern": "System\\.AggregateException: (?:A Task's exception\\(s\\) were not observed|Unhandled exception in asynchronous operation)",
+      "type": "System.AggregateException",
+      "description": "Exception in Task was not observed, potentially causing process termination",
+      "root_cause": "csharp_unobserved_task_exception",
+      "suggestion": "Always await tasks or attach continuation to handle exceptions. Use Task.Exception property to observe exceptions.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "async"
+    },
+    {
+      "id": "csharp_sync_over_async",
+      "pattern": "System\\.Threading\\.SynchronizationLockException|System\\.Threading\\.ThreadStateException|System\\.Threading\\.ThreadAbortException",
+      "type": "System.Threading.SynchronizationLockException",
+      "description": "Synchronization issue in asynchronous code",
+      "root_cause": "csharp_sync_over_async",
+      "suggestion": "Avoid mixing synchronous and asynchronous code. Don't use lock() in async methods; use SemaphoreSlim instead.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "async"
+    },
+    {
+      "id": "csharp_context_deadlock",
+      "pattern": "System\\.Threading\\.Tasks\\.TaskCanceledException: (?:.*GetAwaiter|.*ConfigureAwait)",
+      "type": "System.Threading.Tasks.TaskCanceledException",
+      "description": "Task cancellation possibly due to context deadlock",
+      "root_cause": "csharp_context_deadlock",
+      "suggestion": "Use ConfigureAwait(false) when you don't need to return to the original synchronization context. Avoid .Result and .Wait() in UI or ASP.NET contexts.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "async"
+    },
+    {
+      "id": "csharp_task_timeout",
+      "pattern": "System\\.TimeoutException: (?:The operation has timed out|The request was canceled due to the configured HttpClient\\.Timeout)",
+      "type": "System.TimeoutException",
+      "description": "Asynchronous operation timed out",
+      "root_cause": "csharp_task_timeout",
+      "suggestion": "Implement timeout handling using CancellationTokenSource.CancelAfter or Task.WhenAny with Task.Delay. Consider increasing timeout for long-running operations.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    }
+  ]
+}

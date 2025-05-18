@@ -1,0 +1,19 @@
+// Fix for NullReferenceException
+// Original code likely did not check for null before accessing a property or method
+
+// Option 1: Add null check with conditional
+if (obj != null)
+{
+    // Access the property or method safely
+    var result = obj.Property;
+}
+
+// Option 2: Use null-conditional operator (?.) - C# 6.0+
+var safeResult = obj?.Property;
+
+// Option 3: Use null-coalescing operator (??) with null-conditional operator - C# 6.0+
+var resultWithDefault = obj?.Property ?? defaultValue;
+
+// Option 4: Use null-coalescing assignment operator (??=) - C# 8.0+
+obj ??= GetDefaultObject();
+var result = obj.Property;

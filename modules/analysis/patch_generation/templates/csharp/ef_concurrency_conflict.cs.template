@@ -1,0 +1,107 @@
+// Fix for DbUpdateConcurrencyException
+// Original code likely did not handle concurrency conflicts properly
+
+// Option 1: Add proper concurrency handling using RowVersion/Timestamp property
+// Add this property to your entity class:
+[Timestamp]
+public byte[] RowVersion { get; set; }
+
+// And handle concurrency conflicts:
+try
+{
+    await _context.SaveChangesAsync();
+    return Ok("Changes saved successfully");
+}
+catch (DbUpdateConcurrencyException ex)
+{
+    // Get the entry with concurrency conflict
+    var entry = ex.Entries.Single();
+    var databaseValues = await entry.GetDatabaseValuesAsync();
+    
+    if (databaseValues == null)
+    {
+        // The entity has been deleted by another user
+        ModelState.AddModelError(string.Empty, "The record you attempted to edit was deleted by another user.");
+        return NotFound("The record you attempted to edit was deleted by another user");
+    }
+    
+    // Option 1A: Database wins (discard client changes and reload)
+    entry.OriginalValues.SetValues(databaseValues);
+    
+    // Option 1B: Client wins (keep client changes but update version)
+    var property = entry.Metadata.FindProperty("RowVersion");
+    if (property != null)
+    {
+        var databaseVersion = (byte[])databaseValues[property.Name];
+        // Update the original version to the database version to avoid
+        // another concurrency exception on SaveChanges
+        entry.OriginalValues[property.Name] = databaseVersion;
+    }
+    
+    // Try to save again
+    try
+    {
+        await _context.SaveChangesAsync();
+        return Ok("Changes saved successfully");
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        // If it still fails, give up and show a generic error
+        return StatusCode(409, "The record was modified by another user after you got the original values. Try again.");
+    }
+}
+
+// Option 2: Implement optimistic concurrency pattern with ETag
+// In your controller:
+[HttpPut("{id}")]
+public async Task<IActionResult> UpdateEntity(int id, [FromBody] EntityDTO dto, [FromHeader(Name = "If-Match")] string etag)
+{
+    var entity = await _context.Entities.FindAsync(id);
+    if (entity == null)
+    {
+        return NotFound();
+    }
+    
+    // Convert ETag to RowVersion
+    byte[] rowVersion = null;
+    if (!string.IsNullOrEmpty(etag))
+    {
+        try
+        {
+            rowVersion = Convert.FromBase64String(etag.Replace("\"", ""));
+        }
+        catch
+        {
+            return BadRequest("Invalid ETag format");
+        }
+    }
+    else
+    {
+        return BadRequest("ETag is required for updates (If-Match header)");
+    }
+    
+    // Check concurrency
+    if (!rowVersion.SequenceEqual(entity.RowVersion))
+    {
+        return StatusCode(412, "Precondition Failed: The resource has been modified"); // 412 Precondition Failed
+    }
+    
+    // Update entity properties from DTO
+    _mapper.Map(dto, entity);
+    
+    try
+    {
+        await _context.SaveChangesAsync();
+        
+        // Return updated entity with new ETag
+        return Ok(new
+        {
+            Data = _mapper.Map<EntityDTO>(entity),
+            ETag = Convert.ToBase64String(entity.RowVersion)
+        });
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        return StatusCode(409, "Concurrency conflict detected");
+    }
+}

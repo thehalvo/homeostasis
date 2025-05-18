@@ -1,0 +1,139 @@
+{
+  "name": "Entity Framework Errors",
+  "description": "Rules for detecting and fixing Entity Framework related exceptions",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "ef_db_update_exception",
+      "pattern": "Microsoft\\.EntityFrameworkCore\\.DbUpdateException: (?:An error occurred while (saving|updating) entities|Failed executing DbCommand)",
+      "type": "Microsoft.EntityFrameworkCore.DbUpdateException",
+      "description": "Entity Framework failed to execute a database update",
+      "root_cause": "ef_db_update_failed",
+      "suggestion": "Look for constraint violations or database connectivity issues. Wrap database operations in try-catch blocks.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "entityframework",
+      "framework": "entityframework"
+    },
+    {
+      "id": "ef_db_concurrency_exception",
+      "pattern": "Microsoft\\.EntityFrameworkCore\\.DbUpdateConcurrencyException: (?:The database operation was expected to affect|Attempted to update or delete an entity|Concurrency failure)",
+      "type": "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+      "description": "Concurrency conflict during database update",
+      "root_cause": "ef_concurrency_conflict",
+      "suggestion": "Implement proper concurrency handling with RowVersion/Timestamp properties. Use optimistic concurrency patterns.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "entityframework",
+      "framework": "entityframework"
+    },
+    {
+      "id": "ef_invalid_operation",
+      "pattern": "System\\.InvalidOperationException: (?:The property|The entity type|The navigation property) '([^']+)' (?:cannot be added|is not mapped|is already being tracked)",
+      "type": "System.InvalidOperationException",
+      "description": "Invalid Entity Framework operation",
+      "root_cause": "ef_invalid_operation",
+      "suggestion": "Check your Entity Framework model configuration. Ensure entity properties are properly configured.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "entityframework",
+      "framework": "entityframework"
+    },
+    {
+      "id": "ef_db_context_disposed",
+      "pattern": "System\\.ObjectDisposedException: Cannot access a disposed object\\s+Object name: '([^']+DbContext)'",
+      "type": "System.ObjectDisposedException",
+      "description": "Attempted to use a DbContext after it was disposed",
+      "root_cause": "ef_db_context_disposed",
+      "suggestion": "Ensure DbContext is used within its lifetime scope. In ASP.NET Core, use dependency injection to manage DbContext lifecycle.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "entityframework",
+      "framework": "entityframework"
+    },
+    {
+      "id": "ef_connection_string",
+      "pattern": "Microsoft\\.Data\\.SqlClient\\.SqlException: (?:Login failed|A network-related or instance-specific error|Cannot open database)",
+      "type": "Microsoft.Data.SqlClient.SqlException",
+      "description": "Database connection error",
+      "root_cause": "ef_connection_error",
+      "suggestion": "Check connection string configuration. Verify database server is accessible and credentials are correct.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "entityframework",
+      "framework": "entityframework"
+    },
+    {
+      "id": "ef_query_exception",
+      "pattern": "System\\.InvalidOperationException: (?:The LINQ expression|could not be translated|No backing field could be found)",
+      "type": "System.InvalidOperationException",
+      "description": "Invalid LINQ query that cannot be translated to SQL",
+      "root_cause": "ef_query_translation",
+      "suggestion": "Restructure your LINQ query to use supported operations. Some .NET methods cannot be translated to SQL.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "entityframework",
+      "framework": "entityframework"
+    },
+    {
+      "id": "ef_null_reference_in_query",
+      "pattern": "System\\.NullReferenceException: Object reference not set to an instance of an object\\s+(?:.*EntityFrameworkCore.*)",
+      "type": "System.NullReferenceException",
+      "description": "Null reference in Entity Framework query",
+      "root_cause": "ef_null_navigation",
+      "suggestion": "Check navigation properties for null before accessing them in queries. Use conditional null checks or the EF.Property() method.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "entityframework",
+      "framework": "entityframework"
+    },
+    {
+      "id": "ef_multiple_result_sets",
+      "pattern": "System\\.InvalidOperationException: The connection does not support MultipleActiveResultSets",
+      "type": "System.InvalidOperationException",
+      "description": "Multiple simultaneous operations on single database connection",
+      "root_cause": "ef_multiple_result_sets",
+      "suggestion": "Add 'MultipleActiveResultSets=true' to your connection string. This allows multiple commands to be active on the same connection.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "entityframework",
+      "framework": "entityframework"
+    },
+    {
+      "id": "ef_entity_validation",
+      "pattern": "Microsoft\\.EntityFrameworkCore\\.DbUpdateException: (?:.*ValidationException|.*constraint failed)",
+      "type": "Microsoft.EntityFrameworkCore.DbUpdateException",
+      "description": "Entity validation failed during save operation",
+      "root_cause": "ef_validation_failed",
+      "suggestion": "Validate entities before saving. Add data annotations or fluent validation to entity classes.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "entityframework",
+      "framework": "entityframework"
+    },
+    {
+      "id": "ef_execution_strategy",
+      "pattern": "Microsoft\\.EntityFrameworkCore\\.Storage\\.RetryLimitExceededException",
+      "type": "Microsoft.EntityFrameworkCore.Storage.RetryLimitExceededException",
+      "description": "Database operation failed after retry limit exceeded",
+      "root_cause": "ef_retry_limit_exceeded",
+      "suggestion": "Configure execution strategy with appropriate retry policy. Check for transient database failures.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "entityframework",
+      "framework": "entityframework"
+    },
+    {
+      "id": "ef_required_navigation_missing",
+      "pattern": "Microsoft\\.EntityFrameworkCore\\.DbUpdateException: (?:.*UPDATE statement conflicted with the FOREIGN KEY constraint|INSERT statement conflicted with the FOREIGN KEY constraint)",
+      "type": "Microsoft.EntityFrameworkCore.DbUpdateException",
+      "description": "Foreign key constraint violation",
+      "root_cause": "ef_foreign_key_constraint",
+      "suggestion": "Ensure required navigation properties are set before saving. Check foreign key relationships.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "entityframework",
+      "framework": "entityframework"
+    }
+  ]
+}

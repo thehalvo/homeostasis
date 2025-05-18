@@ -161,6 +161,7 @@ Homeostasis currently provides support for the following programming languages:
 - **Go**: Support for Go runtime errors, goroutine management, and web frameworks like Gin and Echo
 - **Ruby**: Support for Ruby exceptions, Rails ActiveRecord, Sinatra/Rack, and metaprogramming patterns
 - **Rust**: Support for Rust runtime errors, memory safety issues, and frameworks like Actix, Rocket, and Tokio
+- **C#**: Support for .NET exceptions, ASP.NET Core, Entity Framework, and async patterns
 
 For more information about language integrations, see:
 - [Python Integration](docs/python_integration.md)
@@ -169,6 +170,7 @@ For more information about language integrations, see:
 - [Go Integration](docs/go_integration.md)
 - [Ruby Integration](docs/ruby_integration.md)
 - [Rust Integration](docs/rust_integration.md)
+- [C# Integration](docs/csharp_integration.md)
 
 ## Project Status
 
@@ -188,6 +190,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Go Integration**: Added support for Go runtime errors, goroutine deadlock detection, web frameworks (Gin, Echo), and common concurrency patterns
 - **Ruby Integration**: Added support for Ruby exceptions, Rails ActiveRecord errors, Sinatra/Rack frameworks, and Ruby metaprogramming patterns
 - **Rust Integration**: Added support for Rust runtime errors, memory safety issues, concurrency problems, and frameworks like Actix, Rocket, Tokio, and Diesel
+- **C# Integration**: Added support for .NET exceptions, ASP.NET Core web applications, Entity Framework database access, and async programming patterns with detailed error analysis and fix generation
 - **Backend Testing Integration**: Implemented unified testing framework for validating error detection, analysis, and healing across multiple programming languages with cross-language capabilities
 - **Production Readiness**: Enhanced security model with RBAC, implemented approval workflows for critical changes, added rate limiting/throttling for healing actions, and developed thorough audit logging
 - **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities
