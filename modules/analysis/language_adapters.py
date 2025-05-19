@@ -2029,6 +2029,8 @@ class ErrorAdapterFactory:
             return RustErrorAdapter()
         elif language == "csharp" or language == "c#":
             return CSharpErrorAdapter()
+        elif language == "php":
+            return PHPErrorAdapter()
         else:
             raise ValueError(f"No adapter available for language: {language}")
     
@@ -2064,6 +2066,11 @@ class ErrorAdapterFactory:
             return "rust"
         elif "dotnet_version" in error_data or "exception_type" in error_data and error_data["exception_type"].startswith("System."):
             return "csharp"
+        elif "php_version" in error_data or "backtrace" in error_data and any(
+            isinstance(frame, dict) and "file" in frame and ".php" in frame.get("file", "")
+            for frame in error_data["backtrace"][:10] if isinstance(frame, dict)
+        ):
+            return "php"
             
         # Try to detect from stack trace format
         if "stack_trace" in error_data and isinstance(error_data["stack_trace"], str):
@@ -2105,6 +2112,11 @@ class ErrorAdapterFactory:
                 for line in error_data["backtrace"][:10] if isinstance(line, str)
             ):
                 return "rust"
+            elif isinstance(error_data["backtrace"], list) and any(
+                isinstance(line, str) and re.search(r'\.php(?::\d+)?', line)
+                for line in error_data["backtrace"][:10] if isinstance(line, str)
+            ):
+                return "php"
                 
         return "unknown"
 
@@ -2185,6 +2197,301 @@ def extract_python_exception(exception: Exception) -> Dict[str, Any]:
     }
     
     return convert_to_standard_format(error_data, "python")
+
+
+class PHPErrorAdapter(LanguageAdapter):
+    """Adapter for PHP error formats."""
+    
+    def to_standard_format(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert PHP error data to the standard format.
+        
+        Args:
+            error_data: PHP error data
+            
+        Returns:
+            Error data in the standard format
+        """
+        # Create a standard error object
+        standard_error = {
+            "error_id": str(uuid.uuid4()),
+            "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
+            "language": "php",
+            "error_type": error_data.get("type", error_data.get("error_type", "")),
+            "message": error_data.get("message", "")
+        }
+        
+        # Add PHP version if available
+        if "php_version" in error_data:
+            standard_error["language_version"] = error_data["php_version"]
+        
+        # Handle stack trace (PHP uses "trace", "backtrace", or "stack_trace")
+        for trace_key in ["trace", "backtrace", "stack_trace"]:
+            if trace_key in error_data:
+                trace_data = error_data[trace_key]
+                standard_error["stack_trace"] = self._parse_php_stack_trace(trace_data)
+                break
+        
+        # Add file and line information (common in PHP errors)
+        if "file" in error_data and "line" in error_data:
+            file_path = error_data["file"]
+            line_number = error_data["line"]
+            
+            # If no stack trace was found, create a basic one from file/line
+            if "stack_trace" not in standard_error:
+                standard_error["stack_trace"] = [{
+                    "file": file_path,
+                    "line": line_number,
+                    "function": error_data.get("function", "")
+                }]
+        
+        # Add framework information if available
+        if "framework" in error_data:
+            standard_error["framework"] = error_data["framework"]
+            
+            if "framework_version" in error_data:
+                standard_error["framework_version"] = error_data["framework_version"]
+        
+        # Add request information if available
+        if "request" in error_data:
+            standard_error["request"] = error_data["request"]
+        
+        # Add any additional context
+        if "context" in error_data:
+            standard_error["context"] = error_data["context"]
+        
+        # Add severity if available
+        if "level" in error_data:
+            # Map PHP error levels to standard format
+            level_map = {
+                "E_NOTICE": "info",
+                "E_WARNING": "warning",
+                "E_ERROR": "error",
+                "E_PARSE": "error",
+                "E_CORE_ERROR": "critical",
+                "E_COMPILE_ERROR": "critical",
+                "E_USER_ERROR": "error",
+                "E_USER_WARNING": "warning",
+                "E_USER_NOTICE": "info",
+                "E_STRICT": "info",
+                "E_RECOVERABLE_ERROR": "error",
+                "E_DEPRECATED": "info",
+                "E_USER_DEPRECATED": "info",
+                "DEBUG": "debug",
+                "INFO": "info",
+                "WARNING": "warning",
+                "ERROR": "error",
+                "CRITICAL": "critical",
+                "ALERT": "critical",
+                "EMERGENCY": "fatal"
+            }
+            standard_error["severity"] = level_map.get(error_data["level"].upper(), "error")
+        
+        # Add handled flag if available
+        if "handled" in error_data:
+            standard_error["handled"] = error_data["handled"]
+        
+        # Add additional PHP-specific data
+        php_specific = {}
+        for key, value in error_data.items():
+            if key not in standard_error and key not in ["trace", "backtrace", "request", "context"]:
+                php_specific[key] = value
+        
+        if php_specific:
+            standard_error["additional_data"] = php_specific
+        
+        return standard_error
+    
+    def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data to PHP-specific format.
+        
+        Args:
+            standard_error: Error data in the standard format
+            
+        Returns:
+            Error data in the PHP-specific format
+        """
+        # Create a PHP error object
+        php_error = {
+            "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
+            "type": standard_error.get("error_type", "Error"),
+            "message": standard_error.get("message", "")
+        }
+        
+        # Convert severity to PHP error level
+        if "severity" in standard_error:
+            level_map = {
+                "debug": "E_NOTICE",
+                "info": "E_NOTICE",
+                "warning": "E_WARNING",
+                "error": "E_ERROR",
+                "critical": "E_CORE_ERROR",
+                "fatal": "E_CORE_ERROR"
+            }
+            php_error["level"] = level_map.get(standard_error["severity"].lower(), "E_ERROR")
+        
+        # Convert stack trace to PHP format
+        if "stack_trace" in standard_error:
+            stack_trace = standard_error["stack_trace"]
+            
+            if isinstance(stack_trace, list):
+                if all(isinstance(frame, str) for frame in stack_trace):
+                    # Plain text stack trace
+                    php_error["trace"] = stack_trace
+                elif all(isinstance(frame, dict) for frame in stack_trace):
+                    # Convert structured frames to PHP stack trace format
+                    php_error["trace"] = self._convert_frames_to_php_trace(stack_trace)
+                    
+                    # Extract file and line from the first frame
+                    if stack_trace and "file" in stack_trace[0] and "line" in stack_trace[0]:
+                        php_error["file"] = stack_trace[0]["file"]
+                        php_error["line"] = stack_trace[0]["line"]
+        
+        # Add request information if available
+        if "request" in standard_error:
+            php_error["request"] = standard_error["request"]
+        
+        # Add context information if available
+        if "context" in standard_error:
+            php_error["context"] = standard_error["context"]
+        
+        # Add PHP version if available
+        if "language_version" in standard_error:
+            php_error["php_version"] = standard_error["language_version"]
+        
+        # Add framework information if available
+        if "framework" in standard_error:
+            php_error["framework"] = standard_error["framework"]
+            
+            if "framework_version" in standard_error:
+                php_error["framework_version"] = standard_error["framework_version"]
+        
+        # Add handled flag if available
+        if "handled" in standard_error:
+            php_error["handled"] = standard_error["handled"]
+        
+        # Add additional data if available
+        if "additional_data" in standard_error:
+            for key, value in standard_error["additional_data"].items():
+                php_error[key] = value
+        
+        return php_error
+    
+    def _parse_php_stack_trace(self, stack_trace) -> List[Dict[str, Any]]:
+        """
+        Parse a PHP stack trace to a structured format.
+        
+        Args:
+            stack_trace: PHP stack trace data
+            
+        Returns:
+            Structured stack frames
+        """
+        frames = []
+        
+        if isinstance(stack_trace, list):
+            for item in stack_trace:
+                if isinstance(item, dict):
+                    # Already structured frame
+                    frame = {
+                        "file": item.get("file", ""),
+                        "line": item.get("line", 0),
+                        "function": item.get("function", "")
+                    }
+                    
+                    # Add class if available
+                    if "class" in item:
+                        frame["class"] = item["class"]
+                    
+                    # Add type if available (-> or ::)
+                    if "type" in item:
+                        frame["type"] = item["type"]
+                    
+                    # Add args if available
+                    if "args" in item:
+                        frame["args"] = item["args"]
+                    
+                    frames.append(frame)
+                elif isinstance(item, str):
+                    # Parse string format like "#0 /path/to/file.php(123): Class->method()"
+                    match = re.match(r'#\d+\s+([^(]+)\((\d+)\):\s+(?:([^->\(:]+)(?:->|::))?([^(]+)', item)
+                    if match:
+                        file_path, line_num, class_name, method = match.groups()
+                        
+                        frame = {
+                            "file": file_path.strip(),
+                            "line": int(line_num) if line_num else 0,
+                            "function": method.strip() if method else ""
+                        }
+                        
+                        if class_name:
+                            frame["class"] = class_name.strip()
+                        
+                        frames.append(frame)
+        elif isinstance(stack_trace, str):
+            # Split by lines and parse
+            lines = stack_trace.split("\n")
+            for line in lines:
+                # Skip empty lines
+                if not line.strip():
+                    continue
+                
+                # Parse "#0 /path/to/file.php(123): Class->method()" format
+                match = re.match(r'#\d+\s+([^(]+)\((\d+)\):\s+(?:([^->\(:]+)(?:->|::))?([^(]+)', line)
+                if match:
+                    file_path, line_num, class_name, method = match.groups()
+                    
+                    frame = {
+                        "file": file_path.strip(),
+                        "line": int(line_num) if line_num else 0,
+                        "function": method.strip() if method else ""
+                    }
+                    
+                    if class_name:
+                        frame["class"] = class_name.strip()
+                    
+                    frames.append(frame)
+        
+        return frames
+    
+    def _convert_frames_to_php_trace(self, frames: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Convert structured stack frames to PHP trace format.
+        
+        Args:
+            frames: Structured stack frames
+            
+        Returns:
+            PHP trace format
+        """
+        php_frames = []
+        
+        for i, frame in enumerate(frames):
+            php_frame = {
+                "file": frame.get("file", ""),
+                "line": frame.get("line", 0),
+                "function": frame.get("function", "")
+            }
+            
+            # Add class if available
+            if "class" in frame:
+                php_frame["class"] = frame["class"]
+            elif "module" in frame:
+                php_frame["class"] = frame["module"]
+            
+            # Add type (-> or ::)
+            if "type" in frame:
+                php_frame["type"] = frame["type"]
+            else:
+                php_frame["type"] = "->"  # Default to instance method
+            
+            # Add args placeholder
+            php_frame["args"] = []
+            
+            php_frames.append(php_frame)
+        
+        return php_frames
 
 
 if __name__ == "__main__":

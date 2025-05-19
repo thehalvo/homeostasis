@@ -369,6 +369,30 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
                 "unwrap()" in message or "Option::unwrap" in message or 
                 ".rs:" in message):
                 return "rust"
+                
+        # Check for PHP-specific patterns
+        if "message" in error_data and isinstance(error_data["message"], str):
+            message = error_data["message"]
+            if ("PHP Notice" in message or "PHP Warning" in message or 
+                "PHP Error" in message or "PHP Fatal error" in message or
+                "Call to undefined method" in message or 
+                "Call to undefined function" in message or
+                "Undefined variable" in message or
+                "Call to a member function" in message or
+                "SQLSTATE[" in message):
+                return "php"
+            
+        # Check for PHP stack trace format
+        if "trace" in error_data or "backtrace" in error_data:
+            trace_key = "trace" if "trace" in error_data else "backtrace"
+            trace = error_data[trace_key]
+            
+            if isinstance(trace, list) and len(trace) > 0:
+                # Check if it looks like a PHP stack trace
+                if isinstance(trace[0], dict) and "file" in trace[0] and ".php" in trace[0]["file"]:
+                    return "php"
+                elif isinstance(trace[0], str) and ".php" in trace[0]:
+                    return "php"
             
         # Fall back to original detection logic
         return super()._detect_language(error_data)
@@ -656,6 +680,28 @@ if __name__ == "__main__":
             "message": "thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', src/main.rs:42:14",
             "stack_trace": "thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', src/main.rs:42:14\nstack backtrace:\n   0: std::panicking::begin_panic\n   1: core::option::Option<T>::unwrap\n   2: rust_example::process_data\n   3: rust_example::main",
             "level": "error"
+        },
+        "php": {
+            "type": "ErrorException",
+            "message": "Undefined variable: user",
+            "file": "/var/www/html/app/Controllers/UserController.php",
+            "line": 25,
+            "trace": [
+                {
+                    "file": "/var/www/html/app/Controllers/UserController.php",
+                    "line": 25,
+                    "function": "getUserProfile",
+                    "class": "App\\Controllers\\UserController"
+                },
+                {
+                    "file": "/var/www/html/routes/web.php",
+                    "line": 16,
+                    "function": "handle",
+                    "class": "App\\Http\\Kernel"
+                }
+            ],
+            "level": "E_NOTICE",
+            "php_version": "8.1.0"
         }
     }
     

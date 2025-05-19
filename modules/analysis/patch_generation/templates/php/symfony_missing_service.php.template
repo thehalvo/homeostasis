@@ -1,0 +1,40 @@
+/**
+ * Symfony Missing Service handling template
+ * 
+ * Handles ServiceNotFoundException by providing proper service validation
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// Method 1: Check if the service exists before using it
+if ($container->has('${MATCH_1}')) {
+    $service = $container->get('${MATCH_1}');
+    // Use the service
+} else {
+    // Handle the case where the service doesn't exist
+    throw new \RuntimeException("Required service '${MATCH_1}' is not available. Please check your service configuration.");
+    // Or use a fallback service
+}
+
+// Method 2: Use service with proper error handling
+try {
+    $service = $container->get('${MATCH_1}');
+    // Use the service
+} catch (\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException $e) {
+    // Log the error
+    $logger->error("Service not found: " . $e->getMessage());
+    
+    // Option 1: Create a fallback implementation
+    // $service = new FallbackImplementation();
+    
+    // Option 2: Return a response indicating the issue
+    // return new Response('Service temporarily unavailable', Response::HTTP_SERVICE_UNAVAILABLE);
+}
+
+// Method 3: For optional services, use a null fallback or factory pattern
+// $service = $container->has('${MATCH_1}') ? $container->get('${MATCH_1}') : null;
+// if (!$service) {
+//     // Use a fallback or default implementation
+// }
+
+// Choose the most appropriate method based on your context
+// and replace the original code with it

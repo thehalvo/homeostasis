@@ -1,0 +1,60 @@
+/**
+ * PHP Type Error handling template
+ * 
+ * Prevents TypeError from incorrect argument types
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// Method 1: Add type checking before calling the function
+if (is_${MATCH_5}($value)) {
+    $result = ${MATCH_2}::${MATCH_3}($value);
+} else {
+    // Option 1: Try to convert to the correct type
+    $converted = (${MATCH_5}) $value;
+    $result = ${MATCH_2}::${MATCH_3}($converted);
+    
+    // Option 2: Handle the type error case
+    // $errorMessage = "Expected ${MATCH_5}, got " . gettype($value);
+    // throw new \InvalidArgumentException($errorMessage);
+    
+    // Option 3: Provide a fallback value
+    // $result = ${MATCH_2}::${MATCH_3}(get_default_value_for_type('${MATCH_5}'));
+}
+
+// Method 2: Use type-specific validation functions
+/**
+ * function validate_param($value, $expected_type) {
+ *     switch ($expected_type) {
+ *         case 'string':
+ *             return is_string($value) ? $value : (string) $value;
+ *         case 'int':
+ *         case 'integer':
+ *             return is_int($value) ? $value : (int) $value;
+ *         case 'float':
+ *         case 'double':
+ *             return is_float($value) ? $value : (float) $value;
+ *         case 'bool':
+ *         case 'boolean':
+ *             return is_bool($value) ? $value : (bool) $value;
+ *         case 'array':
+ *             return is_array($value) ? $value : [$value];
+ *         case 'object':
+ *             return is_object($value) ? $value : (object) $value;
+ *         default:
+ *             return $value;
+ *     }
+ * }
+ */
+// $validated_value = validate_param($value, '${MATCH_5}');
+// $result = ${MATCH_2}::${MATCH_3}($validated_value);
+
+// Method 3: Add proper type declarations to the function itself (if you own the code)
+// PHP 7+ allows for type declarations:
+/**
+ * public function ${MATCH_3}(${MATCH_5} $param) {
+ *     // Function implementation
+ * }
+ */
+
+// Choose the most appropriate method based on your context
+// and replace the original code with it

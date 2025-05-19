@@ -68,6 +68,15 @@ class LanguageRegistry:
                 self.register_analyzer("rust", rust_plugin)
         except Exception as e:
             logger.warning(f"Failed to load Rust plugin: {e}")
+            
+        # Register PHP plugin if available
+        try:
+            # Get PHP plugin through the plugin system
+            php_plugin = get_plugin("php")
+            if php_plugin:
+                self.register_analyzer("php", php_plugin)
+        except Exception as e:
+            logger.warning(f"Failed to load PHP plugin: {e}")
     
     def register_analyzer(self, language: str, analyzer: Any):
         """

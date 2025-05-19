@@ -1,0 +1,41 @@
+/**
+ * Laravel Model Not Found handling template
+ * 
+ * Prevents ModelNotFoundException from terminating the application
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// Method 1: Use try/catch with findOrFail
+try {
+    $${MODEL_VAR} = ${MODEL_CLASS}::findOrFail($id);
+    // Proceed with model operations
+} catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    // Option 1: Return a 404 response
+    return response()->json(['error' => "${MODEL_CLASS} not found"], 404);
+    
+    // Option 2: Redirect back with an error message
+    // return redirect()->back()->with('error', "${MODEL_CLASS} not found");
+    
+    // Option 3: Redirect to a specific route
+    // return redirect()->route('home')->with('error', "${MODEL_CLASS} not found");
+}
+
+// Method 2: Use find() with null check (doesn't throw an exception)
+// $${MODEL_VAR} = ${MODEL_CLASS}::find($id);
+// if ($${MODEL_VAR} === null) {
+//     // Handle the not found case
+//     return response()->json(['error' => "${MODEL_CLASS} not found"], 404);
+// }
+
+// Method 3: Use firstOrNew/firstOrCreate for cases where we want a default
+// $${MODEL_VAR} = ${MODEL_CLASS}::firstOrCreate(
+//     ['id' => $id], 
+//     [
+//         // Default values for required fields
+//         'name' => 'Default Name',
+//         // Add other default fields as needed
+//     ]
+// );
+
+// Choose the most appropriate method based on your context
+// and replace the original code with it

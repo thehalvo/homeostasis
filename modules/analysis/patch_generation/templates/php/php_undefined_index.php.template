@@ -1,0 +1,37 @@
+/**
+ * PHP undefined index error fix template
+ * 
+ * Prevents "Undefined index/offset/array key" errors
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// Method 1: Check if the array key exists before accessing
+if (isset($array['${MATCH_2}'])) {
+    $value = $array['${MATCH_2}'];
+} else {
+    // Handle the case where the key doesn't exist
+    $value = null; // or appropriate default value
+}
+
+// Method 2: Use array_key_exists for checking (works with null values too)
+// if (array_key_exists('${MATCH_2}', $array)) {
+//     $value = $array['${MATCH_2}'];
+// } else {
+//     $value = null; // or default value
+// }
+
+// Method 3: Use null coalescing operator (PHP 7+)
+// $value = $array['${MATCH_2}'] ?? null; // Replace null with appropriate default
+
+// Method 4: For nested arrays, use multiple null coalescing operators
+// $value = $array['${MATCH_2}']['subkey'] ?? null;
+
+// Method 5: For numeric indices in sequential arrays, check array bounds
+// if (is_array($array) && count($array) > ${MATCH_2}) {
+//     $value = $array[${MATCH_2}];
+// } else {
+//     $value = null; // or default value
+// }
+
+// Choose the most appropriate method based on your context
+// and replace the original code with it

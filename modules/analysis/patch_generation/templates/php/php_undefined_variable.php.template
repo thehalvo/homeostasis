@@ -1,0 +1,23 @@
+/**
+ * PHP undefined variable error fix template
+ * 
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// Method 1: Initialize the variable with a default value before use
+$${VARIABLE} = null; // or appropriate default value like '', [], 0, etc.
+
+// Method 2: Check if variable exists before using it
+if (!isset($${VARIABLE})) {
+    // Handle the case where the variable is not defined
+    $${VARIABLE} = null; // or other default value
+}
+
+// Method 3: Use null coalescing operator (PHP 7+)
+$${VARIABLE} = $${VARIABLE} ?? null; // Replace null with appropriate default
+
+// Method 4: For array values, use empty array as default
+// $${VARIABLE} = [];
+
+// Choose the most appropriate method based on your context
+// and replace the original code with it

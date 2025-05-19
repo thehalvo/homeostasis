@@ -1,0 +1,38 @@
+/**
+ * PHP null reference error fix template
+ * 
+ * Prevents "Call to a member function X() on null" errors
+ * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
+ */
+
+// Method 1: Add null check before accessing the object
+if ($object !== null) {
+    $result = $object->${METHOD}();
+} else {
+    // Handle the null case
+    $result = null; // or appropriate default value
+    // Optionally log the issue
+    // error_log("Object was null when calling ${METHOD}");
+}
+
+// Method 2: Use null safe operator (PHP 8+)
+// $result = $object?->${METHOD}();
+
+// Method 3: For potential null values in a chain, add multiple checks
+// if ($parent !== null && $parent->child !== null) {
+//     $result = $parent->child->${METHOD}();
+// }
+
+// Method 4: Use a helper function to safely call methods on potentially null objects
+/**
+ * function safe_call($obj, $method, $default = null) {
+ *     if ($obj !== null && method_exists($obj, $method)) {
+ *         return $obj->$method();
+ *     }
+ *     return $default;
+ * }
+ */
+// $result = safe_call($object, '${METHOD}');
+
+// Choose the most appropriate method based on your context
+// and replace the original code with it

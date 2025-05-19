@@ -177,5 +177,33 @@
       "critical": "error",
       "fatal": "fatal"
     }
+  },
+  "php": {
+    "language": "php",
+    "field_mappings": {
+      "error_type": ["type", "error_type", "class"],
+      "message": "message",
+      "stack_trace": ["trace", "backtrace", "stack_trace"]
+    },
+    "stack_trace_fields": ["trace", "backtrace", "stack_trace"],
+    "stack_trace_format": "list",
+    "version_fields": ["php_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:PHP (Notice|Warning|Error|Fatal error|Parse error):)",
+      "(?:Stack trace:)",
+      "(?:#\\d+ [^:]+:\\d+)",
+      "(?:Call to undefined (method|function))",
+      "(?:Uncaught (\\w+Exception|Error):)"
+    ],
+    "severity_mappings": {
+      "debug": "E_NOTICE",
+      "info": "E_NOTICE",
+      "warning": "E_WARNING",
+      "error": "E_ERROR",
+      "critical": "E_CORE_ERROR",
+      "fatal": "E_CORE_ERROR"
+    }
   }
 }
