@@ -1,0 +1,43 @@
+// Problem: Called .get on an Option that was None
+// Before:
+// val value = optionValue.get // Throws NoSuchElementException if None
+
+// Option 1: Check if the Option is defined first
+if (optionValue.isDefined) {
+  val value = optionValue.get
+  // Use value safely here
+} else {
+  // Handle the None case
+  // For example: provide a default, log an error, or return early
+}
+
+// Option 2: Use getOrElse (recommended)
+val value = optionValue.getOrElse {
+  // Provide a default value or fallback behavior
+  defaultValue // Replace with an appropriate default
+}
+
+// Option 3: Use fold for different operations on Some/None
+val result = optionValue.fold {
+  // Handle None case
+  defaultValue // Or some computation for the None case
+} { value =>
+  // Handle Some case - 'value' is the contained value
+  // transform or use the value
+  transformValue(value)
+}
+
+// Option 4: Use pattern matching for more control
+optionValue match {
+  case Some(value) => 
+    // Do something with value
+    process(value)
+  case None => 
+    // Handle empty case
+    handleEmptyCase()
+}
+
+// Option 5: Use map + getOrElse for transformation
+val transformedValue = optionValue
+  .map(value => transform(value)) // Only applied if Some
+  .getOrElse(defaultTransformedValue)

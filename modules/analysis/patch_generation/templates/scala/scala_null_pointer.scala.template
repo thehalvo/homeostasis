@@ -1,0 +1,26 @@
+// Option 1: Add null check before accessing ${NULL_CHECK_VAR}
+if (${NULL_CHECK_VAR} == null) {
+  // Handle null case - either return early, throw custom exception, or provide default
+  // return null; // Early return with default
+  // throw new IllegalArgumentException("${NULL_CHECK_VAR} must not be null");
+  // ${NULL_CHECK_VAR} = getDefaultValue(); // Provide default
+} else {
+  // Original code using ${NULL_CHECK_VAR}
+  // ${NULL_CHECK_VAR}.someMethod();
+}
+
+// Option 2: Convert to Option (preferred Scala approach)
+import scala.Option
+Option(${NULL_CHECK_VAR}) match {
+  case Some(value) => 
+    // Safe to use value
+    // value.someMethod()
+  case None => 
+    // Handle null case
+    // getDefaultValue()
+}
+
+// Option 3: Use Option with map/getOrElse for more concise code
+Option(${NULL_CHECK_VAR})
+  .map(value => /* use value safely here */)
+  .getOrElse(/* default value or action */)

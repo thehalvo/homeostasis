@@ -1,0 +1,148 @@
+{
+  "rules": [
+    {
+      "id": "scala_future_timeout",
+      "pattern": "java\\.util\\.concurrent\\.TimeoutException(?:: (.*))?",
+      "type": "TimeoutException",
+      "description": "Future operation timed out",
+      "root_cause": "scala_future_timeout",
+      "suggestion": "Increase the timeout or optimize the operation. Consider non-blocking alternatives or circuit breakers for slow operations.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "scala"
+    },
+    {
+      "id": "scala_interrupted_exception",
+      "pattern": "java\\.lang\\.InterruptedException(?:: (.*))?",
+      "type": "InterruptedException",
+      "description": "Thread was interrupted while waiting, sleeping, or otherwise occupied",
+      "root_cause": "scala_thread_interrupted",
+      "suggestion": "Ensure InterruptedException is properly handled, and the interrupt state is restored if necessary.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "concurrency",
+      "framework": "scala"
+    },
+    {
+      "id": "scala_execution_exception",
+      "pattern": "java\\.util\\.concurrent\\.ExecutionException: (.*)",
+      "type": "ExecutionException",
+      "description": "Exception thrown during the execution of a task in a Future",
+      "root_cause": "scala_future_execution_error",
+      "suggestion": "Examine the cause of the ExecutionException to find the actual error that occurred during task execution. Use Future.recover to handle expected exceptions.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "scala"
+    },
+    {
+      "id": "scala_concurrent_modification",
+      "pattern": "java\\.util\\.ConcurrentModificationException(?:.*?)",
+      "type": "ConcurrentModificationException",
+      "description": "Collection was modified while being iterated",
+      "root_cause": "scala_concurrent_modification",
+      "suggestion": "Use thread-safe collections or synchronize access to collections. Consider using immutable collections (preferred in Scala) or java.util.concurrent collections.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "scala"
+    },
+    {
+      "id": "scala_deadlock",
+      "pattern": "(?:deadlock|Deadlock).*?(detected|found)",
+      "type": "Deadlock",
+      "description": "A deadlock was detected in concurrent threads",
+      "root_cause": "scala_deadlock",
+      "suggestion": "Avoid nested synchronized blocks, always acquire locks in the same order, or use higher-level concurrency primitives. Consider using Akka actors or other message-passing models instead of locks.",
+      "confidence": "medium",
+      "severity": "critical",
+      "category": "concurrency",
+      "framework": "scala"
+    },
+    {
+      "id": "scala_future_flatmap_error",
+      "pattern": "scala\\.concurrent\\.Future\\$FlatMap\\.(?:.*?)Exception: (.*)",
+      "type": "FutureFlatMapException",
+      "description": "Error in future flatMap chain",
+      "root_cause": "scala_future_chain_error",
+      "suggestion": "Add error handling with recover/recoverWith at appropriate points in your Future chain. Consider using for-comprehensions for better readability.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "scala"
+    },
+    {
+      "id": "scala_await_on_default_execution_context",
+      "pattern": "(?:blocking in future|blocking call in future|wait in execution context)",
+      "type": "BlockingInFutureWarning",
+      "description": "Blocking operation detected in default ExecutionContext",
+      "root_cause": "scala_blocking_in_future",
+      "suggestion": "Use a dedicated ExecutionContext for blocking operations. Import scala.concurrent.blocking and wrap blocking calls in blocking { ... }.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "concurrency",
+      "framework": "scala"
+    },
+    {
+      "id": "scala_memory_visibility",
+      "pattern": "(?:memory visibility issue|variable not visible across threads)",
+      "type": "MemoryVisibilityError",
+      "description": "Threading issue related to memory visibility",
+      "root_cause": "scala_memory_visibility",
+      "suggestion": "Use @volatile annotations for shared mutable variables or synchronize access with locks. Better yet, use immutable data structures and actors.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "scala"
+    },
+    {
+      "id": "scala_promise_already_completed",
+      "pattern": "java\\.lang\\.IllegalStateException: Promise already completed",
+      "type": "IllegalStateException",
+      "description": "Attempted to complete a Promise that was already completed",
+      "root_cause": "scala_promise_already_completed",
+      "suggestion": "Ensure a Promise is only completed once. Use trySuccess/tryFailure instead of success/failure to avoid exceptions.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "concurrency",
+      "framework": "scala"
+    },
+    {
+      "id": "scala_await_not_in_future",
+      "pattern": "scala\\.runtime\\.NonLocalReturnControl: (?:.*?)await must be used inside a Future",
+      "type": "NonLocalReturnControl",
+      "description": "Await was called outside of a Future context",
+      "root_cause": "scala_await_context_error",
+      "suggestion": "Await.result/ready can only be called from outside a Future. Inside a Future, use flatMap/map/for comprehensions instead of Await.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "scala"
+    },
+    {
+      "id": "scala_task_rejection",
+      "pattern": "java\\.util\\.concurrent\\.RejectedExecutionException(?:: (.*))?",
+      "type": "RejectedExecutionException",
+      "description": "Task was rejected by an ExecutorService/thread pool",
+      "root_cause": "scala_task_rejection",
+      "suggestion": "Increase thread pool size, fix queue capacity issues, or implement backpressure. Consider using a custom RejectedExecutionHandler.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "scala"
+    },
+    {
+      "id": "scala_race_condition",
+      "pattern": "(?:race condition|inconsistent state|concurrent modification|thread safety violation)",
+      "type": "RaceCondition",
+      "description": "Race condition detected in concurrent code",
+      "root_cause": "scala_race_condition",
+      "suggestion": "Use synchronized blocks, atomic variables, or locks to coordinate access. Consider using immutable data structures or actor-based concurrency.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "concurrency",
+      "framework": "scala"
+    }
+  ]
+}

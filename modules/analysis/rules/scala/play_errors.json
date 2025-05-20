@@ -1,0 +1,148 @@
+{
+  "rules": [
+    {
+      "id": "play_application_exception",
+      "pattern": "play\\.api\\.Application\\$(?:.*?)Exception: (.*)",
+      "type": "ApplicationException",
+      "description": "Error during Play application initialization or startup",
+      "root_cause": "play_application_error",
+      "suggestion": "Check configuration files, module bindings, and startup hooks. Ensure all required dependencies are available.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "play",
+      "framework": "play"
+    },
+    {
+      "id": "play_routing_exception",
+      "pattern": "play\\.api\\.routing\\.Router\\$(?:.*?)Exception: (.*)",
+      "type": "RoutingException",
+      "description": "Error in Play router configuration or route matching",
+      "root_cause": "play_routing_error",
+      "suggestion": "Check routes file for syntax errors or conflicts. Ensure route parameters have correct types and constraints.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "play",
+      "framework": "play"
+    },
+    {
+      "id": "play_configuration_exception",
+      "pattern": "play\\.api\\.Configuration(?:.*?)Exception: (.*)",
+      "type": "ConfigurationException",
+      "description": "Error in Play Framework configuration",
+      "root_cause": "play_config_error",
+      "suggestion": "Check application.conf for syntax errors and missing required values. Verify configuration key paths when using config.get(\"path\").",
+      "confidence": "high",
+      "severity": "high",
+      "category": "play",
+      "framework": "play"
+    },
+    {
+      "id": "play_template_compilation_error",
+      "pattern": "play\\.twirl\\.api\\.(?:.*?)TemplateCompilationError: (.*)",
+      "type": "TemplateCompilationError",
+      "description": "Error compiling Twirl template",
+      "root_cause": "play_template_compilation_error",
+      "suggestion": "Check template syntax, especially for unmatched braces, unclosed tags, or type errors in Scala expressions within the template.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "play",
+      "framework": "play"
+    },
+    {
+      "id": "play_execution_context_error",
+      "pattern": "play\\.api\\.libs\\.concurrent\\.(?:.*?)Exception: (.*)",
+      "type": "ExecutionContextException",
+      "description": "Error with Play's execution context handling",
+      "root_cause": "play_execution_context_error",
+      "suggestion": "Ensure you're using the correct execution context for operations. Import play.api.libs.concurrent.Execution.Implicits._ or inject ExecutionContext.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "play",
+      "framework": "play"
+    },
+    {
+      "id": "play_form_binding_error",
+      "pattern": "play\\.api\\.data\\.FormError(?:.*?): (.*)",
+      "type": "FormError",
+      "description": "Error in form data binding or validation",
+      "root_cause": "play_form_binding_error",
+      "suggestion": "Check form field mappings and validation constraints. Ensure required fields are present and have the correct data types.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "play",
+      "framework": "play"
+    },
+    {
+      "id": "play_json_validation_error",
+      "pattern": "play\\.api\\.libs\\.json\\.JsResultException: (.*)",
+      "type": "JsResultException",
+      "description": "Error validating or parsing JSON data",
+      "root_cause": "play_json_validation_error",
+      "suggestion": "Check your JSON format or Reads implementation. Use validation.ValidationError for more detailed error messages. Consider using .validate[T].fold() pattern.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "play",
+      "framework": "play"
+    },
+    {
+      "id": "play_ws_client_error",
+      "pattern": "play\\.api\\.libs\\.ws\\.(?:.*?)Exception: (.*)",
+      "type": "WSClientException",
+      "description": "Error in Play WS client (HTTP client)",
+      "root_cause": "play_ws_client_error",
+      "suggestion": "Check URL, request parameters, and network connectivity. Handle timeouts and connection errors explicitly.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "play",
+      "framework": "play"
+    },
+    {
+      "id": "play_streaming_exception",
+      "pattern": "play\\.api\\.libs\\.streams\\.(?:.*?)Exception: (.*)",
+      "type": "StreamsException",
+      "description": "Error in Play Streams API",
+      "root_cause": "play_streaming_error",
+      "suggestion": "Check stream composition and error handling. Add appropriate recovery and restart strategies for stream failures.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "play",
+      "framework": "play"
+    },
+    {
+      "id": "play_action_composition_error",
+      "pattern": "play\\.api\\.mvc\\.ActionBuilder\\$(?:.*?)Exception: (.*)",
+      "type": "ActionBuilderException",
+      "description": "Error in Play action composition or filters",
+      "root_cause": "play_action_composition_error",
+      "suggestion": "Check action composition chain and ensure all filters handle exceptions correctly. Verify that required request attributes are available.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "play",
+      "framework": "play"
+    },
+    {
+      "id": "play_session_exception",
+      "pattern": "play\\.api\\.mvc\\.Session(?:.*?)Exception: (.*)",
+      "type": "SessionException",
+      "description": "Error handling Play session data",
+      "root_cause": "play_session_error",
+      "suggestion": "Check session configuration, secret key, and ensure session data is serializable. Avoid storing large objects in session.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "play",
+      "framework": "play"
+    },
+    {
+      "id": "play_flash_exception",
+      "pattern": "play\\.api\\.mvc\\.Flash(?:.*?)Exception: (.*)",
+      "type": "FlashException",
+      "description": "Error handling Play flash scope",
+      "root_cause": "play_flash_error",
+      "suggestion": "Ensure flash messages are only used for simple string values and check for Flash extraction errors.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "play",
+      "framework": "play"
+    }
+  ]
+}

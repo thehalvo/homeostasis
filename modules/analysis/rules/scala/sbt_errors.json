@@ -1,0 +1,148 @@
+{
+  "rules": [
+    {
+      "id": "sbt_compilation_error",
+      "pattern": "\\[error\\]\\s+(?:.*?)(?:scala|java)(?:.*?):[0-9]+:[0-9]+: (.*)",
+      "type": "CompilationError",
+      "description": "Scala or Java compilation error during SBT build",
+      "root_cause": "sbt_compilation_error",
+      "suggestion": "Check the source code at the specified location. Common issues include type mismatches, missing imports, or syntax errors.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "sbt",
+      "framework": "sbt"
+    },
+    {
+      "id": "sbt_resolution_error",
+      "pattern": "\\[error\\]\\s+(?:.*?)sbt\\.ResolveException: (.*)",
+      "type": "ResolveException",
+      "description": "SBT failed to resolve dependencies",
+      "root_cause": "sbt_dependency_resolution_error",
+      "suggestion": "Check build.sbt for correct dependency coordinates. Verify repository settings and network connectivity. Try 'sbt update' with verbose output.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "sbt",
+      "framework": "sbt"
+    },
+    {
+      "id": "sbt_missing_dependency",
+      "pattern": "\\[error\\]\\s+(?:.*?)not found: (.*)",
+      "type": "MissingDependencyError",
+      "description": "SBT couldn't find a required dependency",
+      "root_cause": "sbt_missing_dependency",
+      "suggestion": "Add the missing dependency to build.sbt, or check for typos in dependency coordinates. Verify that the repository containing the dependency is configured.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "sbt",
+      "framework": "sbt"
+    },
+    {
+      "id": "sbt_plugin_conflict",
+      "pattern": "\\[error\\]\\s+(?:.*?)sbt\\.plugins\\.(?:.*?)Exception: (.*)",
+      "type": "PluginConflictException",
+      "description": "Conflict between SBT plugins",
+      "root_cause": "sbt_plugin_conflict",
+      "suggestion": "Check for plugin version conflicts or duplicate plugin declarations. Try explicitly excluding transitive dependencies that might cause conflicts.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "sbt",
+      "framework": "sbt"
+    },
+    {
+      "id": "sbt_build_file_error",
+      "pattern": "\\[error\\]\\s+(?:.*?)build\\.sbt(?:.*?): (.*)",
+      "type": "BuildFileError",
+      "description": "Error in build.sbt file syntax or semantics",
+      "root_cause": "sbt_build_file_error",
+      "suggestion": "Check build.sbt for syntax errors, misplaced settings, or invalid expressions. Ensure settings are properly scoped to the right configuration.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "sbt",
+      "framework": "sbt"
+    },
+    {
+      "id": "sbt_version_conflict",
+      "pattern": "\\[error\\]\\s+(?:.*?)dependency conflict(?:.*?): (.*)",
+      "type": "VersionConflictException",
+      "description": "Conflicting versions of a dependency in SBT",
+      "root_cause": "sbt_version_conflict",
+      "suggestion": "Use 'dependencyTree' to visualize the conflict. Resolve by adding explicit overrides with 'dependencyOverrides += ...' or exclude conflicting transitive dependencies.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "sbt",
+      "framework": "sbt"
+    },
+    {
+      "id": "sbt_ivy_resolution_error",
+      "pattern": "\\[error\\]\\s+(?:.*?)org\\.apache\\.ivy(?:.*?)Exception: (.*)",
+      "type": "IvyException",
+      "description": "Error in Ivy dependency resolution (SBT's underlying dependency manager)",
+      "root_cause": "sbt_ivy_resolution_error",
+      "suggestion": "Check Ivy cache integrity and network connectivity. Try deleting ~/.ivy2/cache and rerunning with 'sbt -Dsbt.log.noformat=true update'.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "sbt",
+      "framework": "sbt"
+    },
+    {
+      "id": "sbt_task_definition_error",
+      "pattern": "\\[error\\]\\s+(?:.*?)sbt\\.task(?:.*?)Exception: (.*)",
+      "type": "TaskDefinitionException",
+      "description": "Error in SBT task definition or execution",
+      "root_cause": "sbt_task_definition_error",
+      "suggestion": "Check custom task definitions for syntax errors or runtime exceptions. Ensure task dependencies are correctly set up with .dependsOn.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "sbt",
+      "framework": "sbt"
+    },
+    {
+      "id": "sbt_launcher_error",
+      "pattern": "(?:error|Error)(?:.*?)sbt\\.launch(?:.*?): (.*)",
+      "type": "LauncherException",
+      "description": "Error in SBT launcher script or JVM startup",
+      "root_cause": "sbt_launcher_error",
+      "suggestion": "Check SBT launcher script permissions and JVM settings. Verify JAVA_HOME is correctly set and JVM has sufficient memory (-Xmx).",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "sbt",
+      "framework": "sbt"
+    },
+    {
+      "id": "sbt_project_loading_error",
+      "pattern": "\\[error\\]\\s+(?:.*?)Project loading failed(?:.*?): (.*)",
+      "type": "ProjectLoadingException",
+      "description": "Error loading SBT project structure",
+      "root_cause": "sbt_project_loading_error",
+      "suggestion": "Check project structure, especially settings in project/*.scala files. Ensure all plugin declarations are properly formed and project references are valid.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "sbt",
+      "framework": "sbt"
+    },
+    {
+      "id": "sbt_circular_dependency",
+      "pattern": "\\[error\\]\\s+(?:.*?)circular(?:.*?)dependency(?:.*?): (.*)",
+      "type": "CircularDependencyException",
+      "description": "Circular dependency detected in SBT project definition",
+      "root_cause": "sbt_circular_dependency",
+      "suggestion": "Check project dependencies in multi-project builds. Break circular dependencies by introducing an intermediate project or refactoring shared code.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "sbt",
+      "framework": "sbt"
+    },
+    {
+      "id": "sbt_plugin_loading_error",
+      "pattern": "\\[error\\]\\s+(?:.*?)failed to load plugin(?:.*?): (.*)",
+      "type": "PluginLoadingException",
+      "description": "Error loading SBT plugin",
+      "root_cause": "sbt_plugin_loading_error",
+      "suggestion": "Check plugin configuration in project/plugins.sbt. Verify plugin version compatibility with your SBT version and other plugins.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "sbt",
+      "framework": "sbt"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+// Option 1: Check indices before accessing elements
+if (index >= 0 && index < collection.length) {
+  // Safe to access
+  val value = collection(index)
+  // Use value
+} else {
+  // Handle invalid index
+  // throwCustomException(s"Invalid index: $index")
+  // Or provide default/fallback behavior
+  // handleInvalidIndex(index)
+}
+
+// Option 2: Use lift for collections (returns Option)
+val elementOption = collection.lift(index)
+elementOption match {
+  case Some(value) => 
+    // Use value safely
+    // process(value)
+  case None => 
+    // Handle out of bounds
+    // handleInvalidIndex(index)
+}
+
+// Option 3: More concise with getOrElse
+val safeValue = collection.lift(index).getOrElse {
+  // Provide default value or behavior
+  defaultValue // Replace with appropriate default
+}
+
+// Option 4: Check with contains for sets
+if (collection.indices.contains(index)) {
+  // Safe to access
+  val value = collection(index)
+  // Use value
+} else {
+  // Handle invalid index
+  // handleInvalidIndex(index)
+}

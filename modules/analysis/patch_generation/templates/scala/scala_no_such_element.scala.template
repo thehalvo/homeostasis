@@ -1,0 +1,39 @@
+// Option 1: Use getOrElse instead of get
+// Before:
+// val value = optionValue.get // Throws NoSuchElementException if None
+
+// After:
+val value = optionValue.getOrElse {
+  // Provide a default value or fallback behavior
+  defaultValue // Replace with appropriate default
+}
+
+// Option 2: Use pattern matching for more control
+optionValue match {
+  case Some(value) => 
+    // Do something with value
+    // process(value)
+  case None => 
+    // Handle empty case
+    // handleEmptyCase()
+}
+
+// Option 3: For collections, use headOption instead of head
+// Before:
+// val firstElement = collection.head // Throws if empty
+
+// After:
+val firstElement = collection.headOption.getOrElse {
+  // Provide a default value or handle the empty case
+  defaultElement // Replace with appropriate default
+}
+
+// Option 4: For map lookups, use get (which returns Option) or getOrElse
+// Before:
+// val lookupResult = map(key) // Throws if key not found
+
+// After:
+val lookupResult = map.get(key).getOrElse {
+  // Provide a default value or handle the missing key case
+  defaultValue // Replace with appropriate default
+}

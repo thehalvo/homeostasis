@@ -1,0 +1,58 @@
+import scala.concurrent.{Future, Await, TimeoutException}
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success, Try}
+
+// Option 1: Increase timeout duration
+// Before:
+// val result = Await.result(future, 10.seconds) // Throws TimeoutException
+
+// After:
+val result = Try(Await.result(future, 30.seconds)) match {
+  case Success(value) => 
+    // Use the result value
+    value
+  case Failure(ex: TimeoutException) => 
+    // Handle timeout specifically
+    // Log the timeout
+    // logger.error(s"Operation timed out: ${ex.getMessage}")
+    fallbackValue // Provide a fallback value
+  case Failure(ex) => 
+    // Handle other exceptions
+    // logger.error(s"Operation failed: ${ex.getMessage}")
+    throw ex // Or handle differently
+}
+
+// Option 2: Use non-blocking approach (preferred)
+future
+  .map { result =>
+    // Handle success
+    // process(result)
+  }
+  .recover {
+    case ex: TimeoutException => 
+      // Handle timeout
+      // logger.error(s"Operation timed out: ${ex.getMessage}")
+      // Return fallback value or behavior
+      fallbackValue
+    case ex => 
+      // Handle other exceptions
+      // logger.error(s"Operation failed: ${ex.getMessage}")
+      // Return fallback or rethrow
+      throw ex
+  }
+
+// Option 3: Use Future.firstCompletedOf for race with timeout
+val timeout = akka.pattern.after(10.seconds, system.scheduler)(
+  Future.failed(new TimeoutException("Operation timed out"))
+)
+
+Future.firstCompletedOf(Seq(future, timeout))
+  .recover {
+    case ex: TimeoutException => 
+      // Handle timeout
+      fallbackValue
+    case ex => 
+      // Handle other failures
+      throw ex
+  }

@@ -382,6 +382,47 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
                 "SQLSTATE[" in message):
                 return "php"
             
+        # Check for Scala-specific patterns
+        if "message" in error_data and isinstance(error_data["message"], str):
+            message = error_data["message"]
+            if ("scala.MatchError" in message or 
+                "scala.None$.get" in message or
+                "scala.Option" in message or
+                "akka." in message or
+                "play.api." in message or
+                "scala.concurrent.Future" in message):
+                return "scala"
+        
+        # Check for error_type indicating Scala
+        if "error_type" in error_data and isinstance(error_data["error_type"], str):
+            error_type = error_data["error_type"]
+            if (error_type.startswith("scala.") or 
+                error_type.startswith("akka.") or 
+                error_type.startswith("play.api.") or
+                "MatchError" in error_type):
+                return "scala"
+        
+        # Check for stack trace patterns
+        stack_trace_keys = ["stack_trace", "stacktrace", "trace", "backtrace"]
+        for key in stack_trace_keys:
+            if key in error_data:
+                trace = error_data[key]
+                
+                # Check if it's a string or list
+                if isinstance(trace, str):
+                    if ".scala:" in trace:
+                        return "scala"
+                elif isinstance(trace, list) and len(trace) > 0:
+                    # Check list items
+                    if isinstance(trace[0], str) and ".scala:" in trace[0]:
+                        return "scala"
+                    elif isinstance(trace[0], dict):
+                        # Check for Scala files in stack trace
+                        for frame in trace:
+                            file = frame.get("file", "")
+                            if isinstance(file, str) and file.endswith(".scala"):
+                                return "scala"
+            
         # Check for PHP stack trace format
         if "trace" in error_data or "backtrace" in error_data:
             trace_key = "trace" if "trace" in error_data else "backtrace"

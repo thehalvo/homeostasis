@@ -1,0 +1,160 @@
+{
+  "rules": [
+    {
+      "id": "akka_actor_not_found",
+      "pattern": "akka\\.actor\\.ActorNotFound: (.*)",
+      "type": "ActorNotFound",
+      "description": "Attempted to send a message to a non-existent actor",
+      "root_cause": "akka_actor_not_found",
+      "suggestion": "Ensure the actor exists and is still alive before sending messages. Use actorSelection and identify pattern to verify actor existence first.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_invalid_actor_state",
+      "pattern": "akka\\.actor\\.InvalidActorStateException: (.*)",
+      "type": "InvalidActorStateException",
+      "description": "Actor operation performed when the actor is in an invalid state",
+      "root_cause": "akka_invalid_actor_state",
+      "suggestion": "Check actor lifecycle. Ensure operations like watch/unwatch are performed at appropriate times. Common when accessing actors during shutdown.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_actor_killed",
+      "pattern": "akka\\.actor\\.ActorKilledException: (.*)",
+      "type": "ActorKilledException",
+      "description": "Actor was killed by explicit Kill message",
+      "root_cause": "akka_actor_killed",
+      "suggestion": "Avoid using Kill messages in production code. Use PoisonPill or a custom shutdown protocol. Ensure supervision strategy handles ActorKilledException appropriately.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_mailbox_exception",
+      "pattern": "akka\\.dispatch\\.MailboxException: (.*)",
+      "type": "MailboxException",
+      "description": "Error in actor mailbox processing",
+      "root_cause": "akka_mailbox_error",
+      "suggestion": "Check mailbox configuration and ensure there's sufficient memory. Consider using bounded mailboxes to prevent resource exhaustion.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_configuration_exception",
+      "pattern": "com\\.typesafe\\.config\\.ConfigException: (.*)",
+      "type": "ConfigException",
+      "description": "Error in Akka configuration",
+      "root_cause": "akka_config_error",
+      "suggestion": "Check your application.conf or reference.conf for syntax errors or missing required settings. Validate configurations using ConfigFactory.load() during initialization.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_actor_initialization_exception",
+      "pattern": "akka\\.actor\\.ActorInitializationException: (.*)",
+      "type": "ActorInitializationException",
+      "description": "Actor failed to initialize",
+      "root_cause": "akka_actor_init_error",
+      "suggestion": "Check the actor's constructor or preStart method for exceptions. Ensure all resources needed by the actor are available during initialization.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_dead_letter_exception",
+      "pattern": "Message \\[(.*?)\\] from .*? to .*? was not delivered",
+      "type": "DeadLetter",
+      "description": "Message was sent to a dead letter queue (undeliverable)",
+      "root_cause": "akka_dead_letter",
+      "suggestion": "Ensure the target actor exists when sending messages. Consider using ask pattern (?) with timeout handling instead of tell (!).",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_serialization_error",
+      "pattern": "akka\\.serialization\\.(?:SerializationException|DisabledJavaSerializer): (.*)",
+      "type": "SerializationException",
+      "description": "Failed to serialize or deserialize a message",
+      "root_cause": "akka_serialization_error",
+      "suggestion": "Ensure all messages implement Serializable or use a custom serializer. Configure akka.actor.allow-java-serialization=on for development (insecure for production).",
+      "confidence": "high",
+      "severity": "high",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_remote_error",
+      "pattern": "akka\\.remote\\.(.*?)Exception: (.*)",
+      "type": "RemoteException",
+      "description": "Error in Akka remote communication",
+      "root_cause": "akka_remote_error",
+      "suggestion": "Check network connectivity, hostname configuration, and serialization settings. Ensure remote systems are accessible and security settings match.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_stream_materialization_error",
+      "pattern": "akka\\.stream\\.MaterializationException: (.*)",
+      "type": "MaterializationException",
+      "description": "Error occurred during stream materialization",
+      "root_cause": "akka_stream_materialization_error",
+      "suggestion": "Check stream configuration and ensure all stages have compatible types. Look for missing materializer instances or closed materializers.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_stream_overflow",
+      "pattern": "akka\\.stream\\.BufferOverflowException(?:: (.*))?",
+      "type": "BufferOverflowException",
+      "description": "Buffer overflow in Akka Stream",
+      "root_cause": "akka_stream_buffer_overflow",
+      "suggestion": "Increase buffer size, use backpressure strategies (e.g., buffer, dropTail, dropHead), or use throttling/conflation to handle faster producers.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_actor_death_pact_exception",
+      "pattern": "akka\\.actor\\.DeathPactException: (.*)",
+      "type": "DeathPactException",
+      "description": "Watched actor terminated",
+      "root_cause": "akka_death_pact",
+      "suggestion": "Implement proper handling of Terminated messages in the watching actor. Use Patterns.gracefulStop for cleaner shutdowns.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "akka",
+      "framework": "akka"
+    },
+    {
+      "id": "akka_pattern_timeout",
+      "pattern": "akka\\.pattern\\.AskTimeoutException: (.*)",
+      "type": "AskTimeoutException",
+      "description": "Ask pattern (?) timed out waiting for response",
+      "root_cause": "akka_ask_timeout",
+      "suggestion": "Increase timeout duration, optimize the receiving actor, or use a circuit breaker. Consider if the ask pattern is appropriate or if tell (!) should be used instead.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "akka",
+      "framework": "akka"
+    }
+  ]
+}

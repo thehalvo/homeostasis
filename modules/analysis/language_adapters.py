@@ -2570,3 +2570,274 @@ if __name__ == "__main__":
     # Convert Ruby to Python format
     ruby_to_python = convert_from_standard_format(standard_ruby, "python")
     logger.info(f"Ruby converted to Python format: {json.dumps(ruby_to_python, indent=2)}")
+
+
+class ScalaErrorAdapter(LanguageAdapter):
+    """Adapter for Scala error formats."""
+    
+    def to_standard_format(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert Scala error data to the standard format.
+        
+        Args:
+            error_data: Scala error data
+            
+        Returns:
+            Error data in the standard format
+        """
+        # Create a standard error object
+        standard_error = {
+            "error_id": str(uuid.uuid4()),
+            "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
+            "language": "scala",
+            "error_type": error_data.get("error_type", ""),
+            "message": error_data.get("message", "")
+        }
+        
+        # Add Scala version if available
+        if "scala_version" in error_data:
+            standard_error["language_version"] = error_data["scala_version"]
+        
+        # Handle stack trace
+        if "stack_trace" in error_data:
+            # Scala stack traces can be a string or a list
+            if isinstance(error_data["stack_trace"], str):
+                # Split into lines
+                stack_lines = error_data["stack_trace"].split("\n")
+                
+                # Try to parse structured data from the stack trace
+                parsed_frames = self._parse_scala_stack_trace(stack_lines)
+                
+                if parsed_frames:
+                    standard_error["stack_trace"] = parsed_frames
+                else:
+                    standard_error["stack_trace"] = stack_lines
+            elif isinstance(error_data["stack_trace"], list):
+                if all(isinstance(frame, dict) for frame in error_data["stack_trace"]):
+                    # Already in structured format
+                    standard_error["stack_trace"] = error_data["stack_trace"]
+                else:
+                    # List of strings
+                    standard_error["stack_trace"] = error_data["stack_trace"]
+        
+        # Add framework information if available
+        if "framework" in error_data:
+            standard_error["framework"] = error_data["framework"]
+            
+            if "framework_version" in error_data:
+                standard_error["framework_version"] = error_data["framework_version"]
+        
+        # Add request information if available
+        if "request" in error_data:
+            standard_error["request"] = error_data["request"]
+        
+        # Add any additional context
+        if "context" in error_data:
+            standard_error["context"] = error_data["context"]
+        
+        # Add severity if available
+        if "level" in error_data:
+            # Map Scala log levels to standard format
+            level_map = {
+                "debug": "debug",
+                "info": "info",
+                "warning": "warning",
+                "warn": "warning",
+                "error": "error",
+                "fatal": "fatal"
+            }
+            standard_error["severity"] = level_map.get(error_data["level"].lower(), "error")
+        
+        # Add runtime if available
+        if "runtime" in error_data:
+            standard_error["runtime"] = error_data["runtime"]
+            
+            if "runtime_version" in error_data:
+                standard_error["runtime_version"] = error_data["runtime_version"]
+        
+        # Add JVM information if available
+        if "jvm_info" in error_data:
+            if "additional_data" not in standard_error:
+                standard_error["additional_data"] = {}
+            standard_error["additional_data"]["jvm_info"] = error_data["jvm_info"]
+        
+        # Add handled flag if available
+        if "handled" in error_data:
+            standard_error["handled"] = error_data["handled"]
+        
+        # Add additional Scala-specific data
+        scala_specific = {}
+        for key, value in error_data.items():
+            if key not in standard_error and key not in ["stack_trace", "request", "context"] and not key.startswith("_"):
+                scala_specific[key] = value
+        
+        if scala_specific:
+            if "additional_data" in standard_error:
+                standard_error["additional_data"].update(scala_specific)
+            else:
+                standard_error["additional_data"] = scala_specific
+        
+        return standard_error
+    
+    def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data to Scala-specific format.
+        
+        Args:
+            standard_error: Error data in the standard format
+            
+        Returns:
+            Error data in the Scala-specific format
+        """
+        # Create a Scala error object
+        scala_error = {
+            "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
+            "error_type": standard_error.get("error_type", "ScalaError"),
+            "message": standard_error.get("message", "")
+        }
+        
+        # Convert severity to Scala logging level
+        if "severity" in standard_error:
+            level_map = {
+                "debug": "debug",
+                "info": "info",
+                "warning": "warn",
+                "error": "error",
+                "critical": "error",
+                "fatal": "fatal"
+            }
+            scala_error["level"] = level_map.get(standard_error["severity"].lower(), "error")
+        
+        # Convert stack trace to Scala format
+        if "stack_trace" in standard_error:
+            stack_trace = standard_error["stack_trace"]
+            
+            if isinstance(stack_trace, list):
+                if all(isinstance(frame, str) for frame in stack_trace):
+                    # Already in Scala stack trace string format
+                    scala_error["stack_trace"] = "\n".join(stack_trace)
+                elif all(isinstance(frame, dict) for frame in stack_trace):
+                    # Convert structured frames to Scala stack trace format
+                    scala_error["stack_trace"] = self._convert_frames_to_scala_stack(
+                        standard_error.get("error_type", "ScalaError"), 
+                        standard_error.get("message", ""), 
+                        stack_trace
+                    )
+                    # Also keep the structured version
+                    scala_error["stack_frames"] = stack_trace
+        
+        # Add request information if available
+        if "request" in standard_error:
+            scala_error["request"] = standard_error["request"]
+        
+        # Add context information if available
+        if "context" in standard_error:
+            scala_error["context"] = standard_error["context"]
+        
+        # Add Scala version if available
+        if "language_version" in standard_error:
+            scala_error["scala_version"] = standard_error["language_version"]
+        
+        # Add framework information if available
+        if "framework" in standard_error:
+            scala_error["framework"] = standard_error["framework"]
+            
+            if "framework_version" in standard_error:
+                scala_error["framework_version"] = standard_error["framework_version"]
+        
+        # Add runtime information if available
+        if "runtime" in standard_error:
+            scala_error["runtime"] = standard_error["runtime"]
+            
+            if "runtime_version" in standard_error:
+                scala_error["runtime_version"] = standard_error["runtime_version"]
+        
+        # Add handled flag if available
+        if "handled" in standard_error:
+            scala_error["handled"] = standard_error["handled"]
+        
+        # Add additional data if available
+        if "additional_data" in standard_error:
+            # Extract JVM info as a top-level field
+            if "jvm_info" in standard_error["additional_data"]:
+                scala_error["jvm_info"] = standard_error["additional_data"]["jvm_info"]
+            
+            # Add remaining fields
+            for key, value in standard_error["additional_data"].items():
+                if key != "jvm_info":
+                    scala_error[key] = value
+        
+        return scala_error
+    
+    def _parse_scala_stack_trace(self, stack_lines: List[str]) -> List[Dict[str, Any]]:
+        """
+        Parse a Scala stack trace into structured frames.
+        
+        Args:
+            stack_lines: Stack trace lines
+            
+        Returns:
+            List of structured stack frames
+        """
+        frames = []
+        
+        # Regex pattern for Scala stack trace lines
+        # Example: at com.example.MyClass.myMethod(MyClass.scala:42)
+        pattern = r'\s*at\s+([^(]+)\.([^.]+)\(([^:]+):(\d+)\)'
+        
+        for line in stack_lines:
+            match = re.search(pattern, line)
+            if match:
+                package_class = match.group(1)
+                method = match.group(2)
+                file = match.group(3)
+                line_num = int(match.group(4))
+                
+                # Split package and class
+                parts = package_class.split(".")
+                if len(parts) > 1:
+                    package = ".".join(parts[:-1])
+                    class_name = parts[-1]
+                else:
+                    package = ""
+                    class_name = package_class
+                
+                frames.append({
+                    "package": package,
+                    "class": class_name,
+                    "function": method,
+                    "file": file,
+                    "line": line_num
+                })
+        
+        return frames if frames else []
+    
+    def _convert_frames_to_scala_stack(self, error_type: str, message: str, frames: List[Dict[str, Any]]) -> str:
+        """
+        Convert structured stack frames to a Scala stack trace string.
+        
+        Args:
+            error_type: Error type
+            message: Error message
+            frames: Structured stack frames
+            
+        Returns:
+            Scala stack trace string
+        """
+        stack_lines = [f"{error_type}: {message}"]
+        
+        for frame in frames:
+            package = frame.get("package", "")
+            class_name = frame.get("class", "")
+            method = frame.get("function", "")
+            file = frame.get("file", "")
+            line = frame.get("line", "?")
+            
+            if package:
+                full_class = f"{package}.{class_name}"
+            else:
+                full_class = class_name
+            
+            stack_lines.append(f"\tat {full_class}.{method}({file}:{line})")
+        
+        return "\n".join(stack_lines)

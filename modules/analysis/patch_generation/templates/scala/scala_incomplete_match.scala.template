@@ -1,0 +1,55 @@
+// Option 1: Add wildcard case as fallback
+${VALUE_EXPR} match {
+  case ${PATTERN1} => 
+    // Original handler for pattern 1
+    ${HANDLER1}
+  case ${PATTERN2} => 
+    // Original handler for pattern 2
+    ${HANDLER2}
+  // Add additional cases as needed
+  case _ => 
+    // Handle all other cases
+    // Fallback behavior
+    ${DEFAULT_HANDLER}
+}
+
+// Option 2: For sealed hierarchies (recommended for type safety)
+// Assuming you're working with a sealed trait/class hierarchy
+// Example structure:
+/*
+sealed trait MyType
+case class Type1(value: String) extends MyType
+case class Type2(value: Int) extends MyType
+case object Type3 extends MyType
+*/
+
+// The compiler will warn about non-exhaustive matches for sealed types
+${VALUE_EXPR} match {
+  case ${PATTERN1} => 
+    // Original handler for pattern 1
+    ${HANDLER1}
+  case ${PATTERN2} => 
+    // Original handler for pattern 2
+    ${HANDLER2}
+  // Add cases for ALL possible types in the sealed hierarchy
+  case ${PATTERN3} => 
+    // Handler for pattern 3
+    ${HANDLER3}
+  // No wildcard needed if all cases are covered
+}
+
+// Option 3: Use Option with pattern matching for nullable values
+Option(${VALUE_EXPR}) match {
+  case Some(${PATTERN1}) => 
+    // Handle pattern 1
+    ${HANDLER1}
+  case Some(${PATTERN2}) => 
+    // Handle pattern 2
+    ${HANDLER2}
+  case Some(_) => 
+    // Handle other non-null types
+    ${DEFAULT_HANDLER}
+  case None => 
+    // Handle null case
+    ${NULL_HANDLER}
+}

@@ -1,0 +1,58 @@
+import akka.actor.{ActorRef, ActorSelection, ActorIdentity, Identify}
+import scala.concurrent.duration._
+
+// Option 1: Use actorSelection and resolve to verify actor exists before sending
+// Before:
+// context.actorSelection("path/to/actor") ! SomeMessage
+
+// After:
+val selection: ActorSelection = context.actorSelection("path/to/actor")
+
+// Use the Identify-ActorIdentity pattern to check if actor exists
+selection ! Identify(1)
+
+// In the receive method, handle the ActorIdentity response:
+def receive: Receive = {
+  case ActorIdentity(1, Some(actorRef)) =>
+    // Actor exists, safe to send messages
+    actorRef ! SomeMessage
+    
+  case ActorIdentity(1, None) =>
+    // Actor doesn't exist, handle appropriately
+    log.error("Actor not found at path/to/actor")
+    // Optional: Implement fallback behavior, retry, or escalate
+}
+
+// Option 2: Use ask pattern with timeout
+import akka.pattern.ask
+import scala.concurrent.Future
+import scala.util.{Success, Failure}
+
+implicit val timeout: akka.util.Timeout = 5.seconds
+implicit val ec = context.dispatcher
+
+val selectionFuture: Future[ActorRef] = selection.resolveOne()
+selectionFuture.onComplete {
+  case Success(actorRef) =>
+    // Actor exists, safe to send messages
+    actorRef ! SomeMessage
+    
+  case Failure(ex) =>
+    // Actor doesn't exist or resolution timed out
+    log.error(s"Actor resolution failed: ${ex.getMessage}")
+    // Handle failure appropriately
+}
+
+// Option 3: Create a supervisor strategy for ActorNotFound exceptions
+import akka.actor.SupervisorStrategy
+import akka.actor.OneForOneStrategy
+
+override val supervisorStrategy = OneForOneStrategy(maxNrOfRetries = 10, withinTimeRange = 1.minute) {
+  case _: akka.actor.ActorNotFound =>
+    // Handle the exception, possibly by restarting the sender
+    log.warning("Actor not found, restarting sender")
+    SupervisorStrategy.restart
+  case t =>
+    // Use default strategy for other exceptions
+    super.supervisorStrategy.decider.applyOrElse(t, (_: Any) => SupervisorStrategy.escalate)
+}

@@ -155,7 +155,7 @@ When running the demo for the first time, you might encounter these issues:
 
 Homeostasis currently provides support for the following programming languages:
 
-- **Python**: Primary language with comprehensive support for most Python frameworks
+- **Python**: Primary language with extensive support for most Python frameworks
 - **JavaScript/TypeScript**: Support for Node.js environments and common JavaScript errors 
 - **Java**: Support for Java exceptions, Spring Framework, Hibernate/JPA, and concurrency issues
 - **Go**: Support for Go runtime errors, goroutine management, and web frameworks like Gin and Echo
@@ -163,6 +163,7 @@ Homeostasis currently provides support for the following programming languages:
 - **Rust**: Support for Rust runtime errors, memory safety issues, and frameworks like Actix, Rocket, and Tokio
 - **C#**: Support for .NET exceptions, ASP.NET Core, Entity Framework, and async patterns
 - **PHP**: Support for PHP errors, Laravel and Symfony frameworks, and database interaction issues
+- **Scala**: Support for Scala errors, functional programming patterns, Akka actor system, and Play Framework
 
 For more information about language integrations, see:
 - [Python Integration](docs/python_integration.md)
@@ -173,6 +174,7 @@ For more information about language integrations, see:
 - [Rust Integration](docs/rust_integration.md)
 - [C# Integration](docs/csharp_integration.md)
 - [PHP Integration](docs/php_integration.md)
+- [Scala Integration](docs/scala_integration.md)
 
 ## Project Status
 
@@ -194,6 +196,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Rust Integration**: Added support for Rust runtime errors, memory safety issues, concurrency problems, and frameworks like Actix, Rocket, Tokio, and Diesel
 - **C# Integration**: Added support for .NET exceptions, ASP.NET Core web applications, Entity Framework database access, and async programming patterns with detailed error analysis and fix generation
 - **PHP Integration**: Added support for PHP errors, Laravel and Symfony frameworks, database interaction issues, and common web application patterns with template-based fix generation
+- **Scala Integration**: Added support for Scala-specific errors, functional programming patterns, Akka actor system, Play Framework, and SBT build errors with specialized fix templates
 - **Backend Testing Integration**: Implemented unified testing framework for validating error detection, analysis, and healing across multiple programming languages with cross-language capabilities
 - **Production Readiness**: Enhanced security model with RBAC, implemented approval workflows for critical changes, added rate limiting/throttling for healing actions, and developed thorough audit logging
 - **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities
