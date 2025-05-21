@@ -1,0 +1,50 @@
+# Original code with potential match error
+# {:ok, result} = some_function()  # This fails if some_function returns {:error, reason}
+
+# Fix 1: Use case for more flexible pattern matching
+case ${FUNCTION_CALL} do
+  {:ok, result} ->
+    # Handle success case
+    ${SUCCESS_HANDLING}
+  
+  {:error, reason} ->
+    # Handle error case
+    ${ERROR_HANDLING}
+  
+  unexpected ->
+    # Handle unexpected values
+    ${UNEXPECTED_HANDLING}
+end
+
+# Fix 2: Use with for multi-step matches
+with {:ok, result1} <- ${FUNCTION_CALL1},
+     {:ok, result2} <- ${FUNCTION_CALL2} do
+  # All patterns matched successfully
+  ${SUCCESS_HANDLING}
+else
+  {:error, reason} ->
+    # Handle error case
+    ${ERROR_HANDLING}
+  
+  error ->
+    # Handle other cases
+    ${OTHER_ERROR_HANDLING}
+end
+
+# Fix 3: Validate structures before matching
+def extract_data(data) do
+  if is_tuple(data) and tuple_size(data) == 2 and elem(data, 0) == :ok do
+    {:ok, value} = data
+    value
+  else
+    # Handle invalid data structure
+    {:error, :invalid_data}
+  end
+end
+
+# Fix 4: Use pattern matching safely
+result = 
+  case ${FUNCTION_CALL} do
+    {:ok, value} -> value
+    other -> {:error, "Failed to match: #{inspect(other)}"}
+  end

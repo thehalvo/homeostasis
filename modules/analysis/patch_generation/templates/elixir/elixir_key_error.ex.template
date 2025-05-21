@@ -1,0 +1,28 @@
+# Original code with KeyError when trying to access a map key directly
+# map = %{foo: "bar"}
+# value = map.missing_key  # This causes a KeyError
+
+# Fix 1: Use Map.get/3 with a default value
+value = Map.get(${MAP_VARIABLE}, ${KEY_NAME}, ${DEFAULT_VALUE})
+
+# Fix 2: Use Access syntax with default value via Kernel.||/2
+value = ${MAP_VARIABLE}[${KEY_NAME}] || ${DEFAULT_VALUE}
+
+# Fix 3: Use pattern matching with a guard clause to check the map structure
+def process_map(%{${KEY_NAME} => value} = map) do
+  # Use the value directly
+  value
+end
+def process_map(map) when is_map(map) do
+  # Handle the case when the key is missing
+  ${DEFAULT_VALUE}
+end
+
+# Fix 4: Use a case statement to handle both cases
+case Map.fetch(${MAP_VARIABLE}, ${KEY_NAME}) do
+  {:ok, value} -> value
+  :error -> ${DEFAULT_VALUE}
+end
+
+# Fix 5: For keyword lists, use Keyword functions
+value = Keyword.get(${KEYWORD_LIST}, ${KEY_NAME}, ${DEFAULT_VALUE})

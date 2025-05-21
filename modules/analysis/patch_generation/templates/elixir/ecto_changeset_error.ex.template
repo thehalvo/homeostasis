@@ -1,0 +1,61 @@
+# Original code that might raise Ecto.ChangesetError
+# user_changeset = User.changeset(%User{}, params)
+# Repo.insert!(user_changeset)  # Raises if changeset is invalid
+
+# Fix 1: Check changeset validity before operations
+${CHANGESET_VARIABLE} = ${SCHEMA}.changeset(${STRUCT}, ${PARAMS})
+
+if ${CHANGESET_VARIABLE}.valid? do
+  case Repo.insert(${CHANGESET_VARIABLE}) do
+    {:ok, record} -> 
+      # Handle successful insertion
+      {:ok, record}
+    
+    {:error, changeset} ->
+      # This shouldn't happen if we checked valid? but handle it anyway
+      {:error, changeset}
+  end
+else
+  # Handle invalid changeset case
+  {:error, ${CHANGESET_VARIABLE}}
+end
+
+# Fix 2: Use with for changeset operations
+def create_${RESOURCE}(attrs) do
+  with %{valid?: true} = changeset <- ${SCHEMA}.changeset(%${SCHEMA}{}, attrs),
+       {:ok, ${RESOURCE}} <- Repo.insert(changeset) do
+    # Successful case
+    {:ok, ${RESOURCE}}
+  else
+    %{valid?: false} = changeset ->
+      # Invalid changeset - extract and format errors
+      {:error, changeset}
+    
+    {:error, changeset} ->
+      # Handle database constraint errors
+      {:error, changeset}
+  end
+end
+
+# Fix 3: Pattern match and handle errors in controller
+def create(conn, %{"${RESOURCE}" => ${RESOURCE}_params}) do
+  case ${MODULE}.create_${RESOURCE}(${RESOURCE}_params) do
+    {:ok, ${RESOURCE}} ->
+      conn
+      |> put_flash(:info, "${RESOURCE_DISPLAY} created successfully.")
+      |> redirect(to: Routes.${RESOURCE}_path(conn, :show, ${RESOURCE}))
+    
+    {:error, %Ecto.Changeset{} = changeset} ->
+      # Render the form again with error messages
+      render(conn, "new.html", changeset: changeset)
+  end
+end
+
+# Fix 4: Extract and return readable error messages
+def extract_changeset_errors(changeset) do
+  Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
+    Enum.reduce(opts, msg, fn {key, value}, acc ->
+      String.replace(acc, "%{#{key}}", to_string(value))
+    end)
+  end)
+end

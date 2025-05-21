@@ -234,5 +234,36 @@
       "critical": "critical",
       "fatal": "fatal"
     }
+  },
+  "elixir": {
+    "language": "elixir",
+    "field_mappings": {
+      "error_type": ["exception", "exception_type", "type", "error_type"],
+      "message": "message",
+      "stack_trace": ["stacktrace", "stack_trace"]
+    },
+    "stack_trace_fields": ["stacktrace", "stack_trace"],
+    "stack_trace_format": "list",
+    "version_fields": ["elixir_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:\\*\\* \\(\\w+(?:\\.\\w+)*(?:Error|Exception)\\) )",
+      "(?:\\(\\w+(?:\\.\\w+)*(?:Error|Exception)\\) )",
+      "(?:\\(FunctionClauseError\\) )",
+      "(?:\\(RuntimeError\\) )",
+      "(?:\\(Phoenix\\.[^)]+Error\\) )",
+      "(?:\\(Ecto\\.[^)]+Error\\) )",
+      "(?:[^\\(]+\\.ex:\\d+: )",
+      "(?:    \\(\\w+(?:\\.\\w+)*\\) [^:]+:\\d+: [^\\(]+\\(\\))"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "critical",
+      "fatal": "fatal"
+    }
   }
 }

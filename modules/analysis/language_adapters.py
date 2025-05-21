@@ -2841,3 +2841,314 @@ class ScalaErrorAdapter(LanguageAdapter):
             stack_lines.append(f"\tat {full_class}.{method}({file}:{line})")
         
         return "\n".join(stack_lines)
+
+
+class ElixirErrorAdapter(LanguageAdapter):
+    """Adapter for Elixir/Erlang error formats."""
+    
+    def to_standard_format(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert Elixir/Erlang error data to the standard format.
+        
+        Args:
+            error_data: Elixir/Erlang error data
+            
+        Returns:
+            Error data in the standard format
+        """
+        # Create a standard error object
+        standard_error = {
+            "error_id": str(uuid.uuid4()),
+            "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
+            "language": "elixir",
+            "error_type": error_data.get("exception", error_data.get("error_type", "")),
+            "message": error_data.get("message", "")
+        }
+        
+        # Add Elixir version if available
+        if "elixir_version" in error_data:
+            standard_error["language_version"] = error_data["elixir_version"]
+        
+        # Add Erlang version if available
+        if "erlang_version" in error_data:
+            if "additional_data" not in standard_error:
+                standard_error["additional_data"] = {}
+            standard_error["additional_data"]["erlang_version"] = error_data["erlang_version"]
+        
+        # Handle stack trace
+        if "stacktrace" in error_data:
+            stacktrace = error_data["stacktrace"]
+            
+            # Elixir stacktraces are usually already in list format
+            if isinstance(stacktrace, list):
+                if stacktrace and isinstance(stacktrace[0], dict):
+                    # Already in structured format
+                    standard_error["stack_trace"] = stacktrace
+                elif stacktrace and isinstance(stacktrace[0], str):
+                    # List of strings
+                    parsed_frames = self._parse_elixir_stack_trace(stacktrace)
+                    if parsed_frames:
+                        standard_error["stack_trace"] = parsed_frames
+                    else:
+                        standard_error["stack_trace"] = stacktrace
+            elif isinstance(stacktrace, str):
+                # Convert string to list by splitting on newlines
+                stack_lines = stacktrace.split("\n")
+                parsed_frames = self._parse_elixir_stack_trace(stack_lines)
+                if parsed_frames:
+                    standard_error["stack_trace"] = parsed_frames
+                else:
+                    standard_error["stack_trace"] = stack_lines
+        
+        # Add framework information if available
+        if "framework" in error_data:
+            standard_error["framework"] = error_data["framework"]
+            
+            if "framework_version" in error_data:
+                standard_error["framework_version"] = error_data["framework_version"]
+        
+        # Add request information if available
+        if "request" in error_data:
+            standard_error["request"] = error_data["request"]
+        
+        # Add any additional context
+        if "context" in error_data:
+            standard_error["context"] = error_data["context"]
+        
+        # Add severity if available
+        if "level" in error_data:
+            # Map Elixir log levels to standard format
+            level_map = {
+                "debug": "debug",
+                "info": "info",
+                "warn": "warning",
+                "warning": "warning",
+                "error": "error",
+                "critical": "critical",
+                "fatal": "fatal"
+            }
+            standard_error["severity"] = level_map.get(error_data["level"].lower(), "error")
+        
+        # Add OTP application/supervisor information
+        if "otp_app" in error_data:
+            if "additional_data" not in standard_error:
+                standard_error["additional_data"] = {}
+            standard_error["additional_data"]["otp_app"] = error_data["otp_app"]
+        
+        if "supervisor" in error_data:
+            if "additional_data" not in standard_error:
+                standard_error["additional_data"] = {}
+            standard_error["additional_data"]["supervisor"] = error_data["supervisor"]
+        
+        # Add runtime if available (typically BEAM VM)
+        if "runtime" in error_data:
+            standard_error["runtime"] = error_data["runtime"]
+            
+            if "runtime_version" in error_data:
+                standard_error["runtime_version"] = error_data["runtime_version"]
+        
+        # Add handled flag if available
+        if "handled" in error_data:
+            standard_error["handled"] = error_data["handled"]
+        
+        # Add additional Elixir-specific data
+        elixir_specific = {}
+        for key, value in error_data.items():
+            if key not in standard_error and key not in ["stacktrace", "request", "context"] and not key.startswith("_"):
+                elixir_specific[key] = value
+        
+        if elixir_specific:
+            if "additional_data" in standard_error:
+                standard_error["additional_data"].update(elixir_specific)
+            else:
+                standard_error["additional_data"] = elixir_specific
+        
+        return standard_error
+    
+    def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data to Elixir-specific format.
+        
+        Args:
+            standard_error: Error data in the standard format
+            
+        Returns:
+            Error data in the Elixir-specific format
+        """
+        # Create an Elixir error object
+        elixir_error = {
+            "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
+            "exception": standard_error.get("error_type", "RuntimeError"),
+            "message": standard_error.get("message", "")
+        }
+        
+        # Convert severity to Elixir logging level
+        if "severity" in standard_error:
+            level_map = {
+                "debug": "debug",
+                "info": "info",
+                "warning": "warn",
+                "error": "error",
+                "critical": "error",
+                "fatal": "fatal"
+            }
+            elixir_error["level"] = level_map.get(standard_error["severity"].lower(), "error")
+        
+        # Convert stack trace to Elixir format
+        if "stack_trace" in standard_error:
+            stack_trace = standard_error["stack_trace"]
+            
+            # Convert structured frames to Elixir stacktrace format
+            if isinstance(stack_trace, list):
+                if all(isinstance(frame, dict) for frame in stack_trace):
+                    formatted_frames = self._convert_frames_to_elixir_stacktrace(stack_trace)
+                    elixir_error["stacktrace"] = formatted_frames
+                else:
+                    # Already list of strings
+                    elixir_error["stacktrace"] = stack_trace
+        
+        # Add language version if available
+        if "language_version" in standard_error:
+            elixir_error["elixir_version"] = standard_error["language_version"]
+        
+        # Add framework information if available
+        if "framework" in standard_error:
+            elixir_error["framework"] = standard_error["framework"]
+            
+            if "framework_version" in standard_error:
+                elixir_error["framework_version"] = standard_error["framework_version"]
+        
+        # Add request information if available
+        if "request" in standard_error:
+            elixir_error["request"] = standard_error["request"]
+        
+        # Add context information if available
+        if "context" in standard_error:
+            elixir_error["context"] = standard_error["context"]
+        
+        # Add OTP application information if available
+        if "additional_data" in standard_error:
+            if "otp_app" in standard_error["additional_data"]:
+                elixir_error["otp_app"] = standard_error["additional_data"]["otp_app"]
+            
+            if "supervisor" in standard_error["additional_data"]:
+                elixir_error["supervisor"] = standard_error["additional_data"]["supervisor"]
+            
+            if "erlang_version" in standard_error["additional_data"]:
+                elixir_error["erlang_version"] = standard_error["additional_data"]["erlang_version"]
+            
+            # Add any other additional data
+            for key, value in standard_error["additional_data"].items():
+                if key not in ["otp_app", "supervisor", "erlang_version"]:
+                    elixir_error[key] = value
+        
+        # Add runtime information
+        if "runtime" in standard_error:
+            elixir_error["runtime"] = standard_error["runtime"]
+            
+            if "runtime_version" in standard_error:
+                elixir_error["runtime_version"] = standard_error["runtime_version"]
+        
+        # Add handled flag if available
+        if "handled" in standard_error:
+            elixir_error["handled"] = standard_error["handled"]
+        
+        return elixir_error
+    
+    def _parse_elixir_stack_trace(self, stack_lines: List[str]) -> List[Dict[str, Any]]:
+        """
+        Parse an Elixir stack trace into structured frames.
+        
+        Args:
+            stack_lines: Stack trace lines
+            
+        Returns:
+            List of structured stack frames
+        """
+        frames = []
+        
+        # Regex patterns for Elixir stack trace lines
+        # Example: (MyApp.SomeModule) lib/my_app/some_module.ex:42: MyApp.SomeModule.some_function/2
+        # Example: (MyApp.SomeModule) lib/my_app/some_module.ex:42: MyApp.SomeModule.some_function(arg1, arg2)
+        # Example: (MyApp.SomeModule) lib/my_app/some_module.ex:42: anonymous fn/3 in MyApp.SomeModule.some_function/1
+        
+        module_pattern = r'\s*\(([^)]+)\)\s+([^:]+):(\d+):\s+(.+)'
+        func_pattern = r'([^/]+)/(\d+)'
+        anonymous_pattern = r'anonymous fn/\d+ in ([^/]+)/\d+'
+        
+        for line in stack_lines:
+            module_match = re.search(module_pattern, line)
+            
+            if module_match:
+                module = module_match.group(1)
+                file = module_match.group(2)
+                line_num = int(module_match.group(3))
+                func_info = module_match.group(4)
+                
+                # Extract function name and arity
+                func_match = re.search(func_pattern, func_info)
+                anon_match = re.search(anonymous_pattern, func_info)
+                
+                if func_match:
+                    function = func_match.group(1)
+                    arity = func_match.group(2)
+                elif anon_match:
+                    function = f"anonymous fn in {anon_match.group(1)}"
+                    arity = "0"
+                else:
+                    # Try to extract function name from the pattern "Module.function(args)"
+                    func_call_match = re.search(r'([^(]+)\(', func_info)
+                    if func_call_match:
+                        function = func_call_match.group(1)
+                        arity = "?"
+                    else:
+                        function = func_info
+                        arity = "?"
+                
+                # Split module into namespace parts
+                parts = module.split(".")
+                namespace = ".".join(parts[:-1]) if len(parts) > 1 else ""
+                
+                frames.append({
+                    "module": module,
+                    "namespace": namespace,
+                    "function": function,
+                    "arity": arity,
+                    "file": file,
+                    "line": line_num
+                })
+        
+        return frames if frames else []
+    
+    def _convert_frames_to_elixir_stacktrace(self, frames: List[Dict[str, Any]]) -> List[str]:
+        """
+        Convert structured stack frames to Elixir stacktrace format.
+        
+        Args:
+            frames: Structured stack frames
+            
+        Returns:
+            List of stacktrace lines in Elixir format
+        """
+        stacktrace = []
+        
+        for frame in frames:
+            module = frame.get("module", "")
+            function = frame.get("function", "")
+            arity = frame.get("arity", "?")
+            file = frame.get("file", "")
+            line = frame.get("line", "?")
+            
+            # If module is missing but namespace exists, try to reconstruct it
+            if not module and "namespace" in frame:
+                if frame.get("class", ""):
+                    module = f"{frame['namespace']}.{frame['class']}" if frame["namespace"] else frame["class"]
+            
+            # Format function info with arity
+            func_info = f"{function}/{arity}" if arity != "?" else function
+            
+            # Format the stacktrace line
+            stack_line = f"    ({module}) {file}:{line}: {func_info}"
+            stacktrace.append(stack_line)
+        
+        return stacktrace

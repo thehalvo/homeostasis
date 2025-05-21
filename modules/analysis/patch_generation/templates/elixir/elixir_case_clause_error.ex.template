@@ -1,0 +1,46 @@
+# Original code with incomplete case clauses
+# case status do
+#   :ok -> "Success"
+#   :error -> "Error"
+# end
+# But status could be :pending, causing a CaseClauseError
+
+# Fix 1: Add a catch-all clause to case statements
+case ${VARIABLE} do
+  ${EXISTING_CLAUSES}
+  _ -> "Unknown status: #{inspect(${VARIABLE})}"
+end
+
+# Fix 2: Validate input before case statement
+def process_status(status) when status in [:ok, :error, :pending] do
+  case status do
+    :ok -> "Success"
+    :error -> "Error"
+    :pending -> "In progress"
+  end
+end
+def process_status(status) do
+  "Unknown status: #{inspect(status)}"
+end
+
+# Fix 3: Use cond for more flexible conditions
+cond do
+  ${VARIABLE} == :ok -> "Success"
+  ${VARIABLE} == :error -> "Error"
+  ${VARIABLE} == :pending -> "In progress"
+  true -> "Unknown status: #{inspect(${VARIABLE})}"
+end
+
+# Fix 4: Use with for multi-step validations
+with {:ok, status} <- validate_status(${VARIABLE}) do
+  case status do
+    :ok -> "Success"
+    :error -> "Error" 
+    :pending -> "In progress"
+  end
+else
+  {:error, reason} -> "Invalid status: #{reason}"
+end
+
+defp validate_status(status) when status in [:ok, :error, :pending], do: {:ok, status}
+defp validate_status(_), do: {:error, "unknown status"}

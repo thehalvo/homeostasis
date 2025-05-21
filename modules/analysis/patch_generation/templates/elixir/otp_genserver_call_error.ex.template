@@ -1,0 +1,66 @@
+# Original code that might raise an error if GenServer is not available
+# result = GenServer.call(server_pid, :get_data)  # Fails if server is down
+
+# Fix 1: Check if process is alive before call
+def safe_call(server_pid, message, default \\ nil) do
+  if Process.alive?(server_pid) do
+    try do
+      GenServer.call(server_pid, message)
+    catch
+      :exit, {:noproc, _} -> default
+      :exit, {:timeout, _} -> {:error, :timeout}
+      kind, reason -> {:error, {kind, reason}}
+    end
+  else
+    # Process is not alive
+    default
+  end
+end
+
+# Fix 2: Use try/catch for robust error handling
+try do
+  GenServer.call(${SERVER_REF}, ${MESSAGE})
+catch
+  :exit, {:noproc, _} ->
+    # Process does not exist
+    ${NOPROC_HANDLING}
+  
+  :exit, {:normal, _} ->
+    # Process terminated normally
+    ${NORMAL_EXIT_HANDLING}
+  
+  :exit, {:timeout, _} ->
+    # Call timed out
+    ${TIMEOUT_HANDLING}
+  
+  kind, reason ->
+    # Other errors
+    ${ERROR_HANDLING}
+end
+
+# Fix 3: Use whereis for registered process names
+def call_registered_server(server_name, message, default \\ nil) do
+  case Process.whereis(server_name) do
+    nil -> 
+      # Server not registered
+      default
+    
+    pid ->
+      try do
+        GenServer.call(pid, message)
+      catch
+        # Same error handling as above
+        :exit, _ -> default
+      end
+  end
+end
+
+# Fix 4: Handle timeouts by setting explicit timeout
+try do
+  # Set a longer timeout for potentially slow operations
+  GenServer.call(${SERVER_REF}, ${MESSAGE}, ${TIMEOUT_MS})
+catch
+  :exit, {:timeout, _} ->
+    # Handle timeout specifically
+    ${TIMEOUT_HANDLING}
+end

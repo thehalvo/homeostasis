@@ -164,6 +164,7 @@ Homeostasis currently provides support for the following programming languages:
 - **C#**: Support for .NET exceptions, ASP.NET Core, Entity Framework, and async patterns
 - **PHP**: Support for PHP errors, Laravel and Symfony frameworks, and database interaction issues
 - **Scala**: Support for Scala errors, functional programming patterns, Akka actor system, and Play Framework
+- **Elixir/Erlang**: Support for Elixir errors, Phoenix Framework, Ecto database errors, and OTP supervision tree issues
 
 For more information about language integrations, see:
 - [Python Integration](docs/python_integration.md)
@@ -175,6 +176,7 @@ For more information about language integrations, see:
 - [C# Integration](docs/csharp_integration.md)
 - [PHP Integration](docs/php_integration.md)
 - [Scala Integration](docs/scala_integration.md)
+- [Elixir/Erlang Integration](docs/elixir_integration.md)
 
 ## Project Status
 
@@ -197,6 +199,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **C# Integration**: Added support for .NET exceptions, ASP.NET Core web applications, Entity Framework database access, and async programming patterns with detailed error analysis and fix generation
 - **PHP Integration**: Added support for PHP errors, Laravel and Symfony frameworks, database interaction issues, and common web application patterns with template-based fix generation
 - **Scala Integration**: Added support for Scala-specific errors, functional programming patterns, Akka actor system, Play Framework, and SBT build errors with specialized fix templates
+- **Elixir/Erlang Integration**: Added support for Elixir errors, Phoenix web framework, Ecto database issues, and OTP/BEAM VM patterns with specialized fix templates for common failure patterns
 - **Backend Testing Integration**: Implemented unified testing framework for validating error detection, analysis, and healing across multiple programming languages with cross-language capabilities
 - **Production Readiness**: Enhanced security model with RBAC, implemented approval workflows for critical changes, added rate limiting/throttling for healing actions, and developed thorough audit logging
 - **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities

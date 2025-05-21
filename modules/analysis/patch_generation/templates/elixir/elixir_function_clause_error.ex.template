@@ -1,0 +1,58 @@
+# Original code with missing function clauses
+# def process_data(data) when is_map(data) do
+#   # Process map data
+# end
+# process_data("string")  # This causes a FunctionClauseError
+
+# Fix 1: Add a catch-all function clause with explicit error handling
+${FUNCTION_DEFINITION} do
+  # Process valid data
+  ${FUNCTION_BODY}
+end
+
+def ${FUNCTION_NAME}(${INVALID_INPUT_PARAMETER}) do
+  # Handle invalid input
+  {:error, :invalid_input}
+end
+
+# Fix 2: Add specific function clauses for each expected type
+def ${FUNCTION_NAME}(${PARAM_NAME}) when is_map(${PARAM_NAME}) do
+  # Process map data
+  ${MAP_HANDLING_CODE}
+end
+
+def ${FUNCTION_NAME}(${PARAM_NAME}) when is_list(${PARAM_NAME}) do
+  # Process list data
+  ${LIST_HANDLING_CODE}
+end
+
+def ${FUNCTION_NAME}(${PARAM_NAME}) when is_binary(${PARAM_NAME}) do
+  # Process string data
+  ${STRING_HANDLING_CODE}
+end
+
+def ${FUNCTION_NAME}(_) do
+  # Fallback for unexpected types
+  {:error, :invalid_data_type}
+end
+
+# Fix 3: Use pattern matching with case instead of function clauses
+def ${FUNCTION_NAME}(${PARAM_NAME}) do
+  case ${PARAM_NAME} do
+    %{} = map -> 
+      # Process map data
+      ${MAP_HANDLING_CODE}
+    
+    [_ | _] = list -> 
+      # Process list data
+      ${LIST_HANDLING_CODE}
+    
+    binary when is_binary(binary) -> 
+      # Process string data
+      ${STRING_HANDLING_CODE}
+    
+    _ -> 
+      # Fallback for unexpected types
+      {:error, :invalid_data_type}
+  end
+end
