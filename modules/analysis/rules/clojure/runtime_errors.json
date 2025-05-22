@@ -1,0 +1,232 @@
+{
+  "rules": [
+    {
+      "id": "clojure_key_not_found",
+      "pattern": "KeyError: ([^\\s]+)",
+      "type": "KeyError",
+      "description": "Key not found in map or associative collection",
+      "root_cause": "clojure_missing_key",
+      "fix_suggestions": [
+        "Use (get map key default-value) for safe key access",
+        "Check if key exists with (contains? map key)",
+        "Use (map key default) destructuring with default values",
+        "Consider using (find map key) which returns nil if not found"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["maps", "keys", "access"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_first_on_nil",
+      "pattern": "NullPointerException.*first",
+      "type": "NullPointerException",
+      "description": "Called first on nil - likely empty or nil sequence",
+      "root_cause": "clojure_nil_sequence_access",
+      "fix_suggestions": [
+        "Check for nil sequences before calling first",
+        "Use (when-let [f (first coll)] ...) for safe access",
+        "Use (some-> coll first) for nil-safe chaining",
+        "Consider using (seq coll) to check if collection is non-empty"
+      ],
+      "confidence": 0.85,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["sequences", "nil", "first"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_rest_on_nil",
+      "pattern": "NullPointerException.*rest",
+      "type": "NullPointerException",
+      "description": "Called rest on nil - likely empty or nil sequence",
+      "root_cause": "clojure_nil_sequence_rest",
+      "fix_suggestions": [
+        "Check for nil sequences before calling rest",
+        "Use (when-let [r (seq (rest coll))] ...) for safe access",
+        "Use (some-> coll rest) for nil-safe chaining",
+        "Consider using empty list () as default for nil sequences"
+      ],
+      "confidence": 0.85,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["sequences", "nil", "rest"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_count_on_nil",
+      "pattern": "NullPointerException.*count",
+      "type": "NullPointerException",
+      "description": "Called count on nil value",
+      "root_cause": "clojure_nil_count",
+      "fix_suggestions": [
+        "Check for nil before calling count: (when coll (count coll))",
+        "Use (count (or coll [])) to provide default empty collection",
+        "Use (some-> coll count) for nil-safe counting",
+        "Consider using 0 as default count for nil collections"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["collections", "nil", "count"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_seq_on_number",
+      "pattern": "IllegalArgumentException: Don't know how to create ISeq from: ([^\\s]+)",
+      "type": "IllegalArgumentException",
+      "description": "Attempted to create sequence from non-sequential type",
+      "root_cause": "clojure_invalid_seq_conversion",
+      "fix_suggestions": [
+        "Check data types before applying sequence operations",
+        "Use (sequential? x) to test if value can be sequenced",
+        "Convert data to appropriate sequential type first",
+        "Use type-specific functions for different data types"
+      ],
+      "confidence": 0.85,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["sequences", "types", "conversion"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_divide_by_zero",
+      "pattern": "ArithmeticException: Divide by zero",
+      "type": "ArithmeticException",
+      "description": "Division by zero in arithmetic operation",
+      "root_cause": "clojure_division_by_zero",
+      "fix_suggestions": [
+        "Check denominator is not zero before division",
+        "Use (when-not (zero? denominator) (/ numerator denominator))",
+        "Consider using conditional logic to handle zero denominators",
+        "Use default values or error handling for division edge cases"
+      ],
+      "confidence": 0.95,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["arithmetic", "division", "zero"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_numeric_overflow",
+      "pattern": "ArithmeticException: integer overflow",
+      "type": "ArithmeticException",
+      "description": "Integer arithmetic overflow",
+      "root_cause": "clojure_integer_overflow",
+      "fix_suggestions": [
+        "Use (unchecked-add), (unchecked-multiply) for unchecked arithmetic",
+        "Use BigInteger for large number calculations",
+        "Use floating-point arithmetic for non-integer results",
+        "Check bounds before arithmetic operations on large numbers"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["arithmetic", "overflow", "integers"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_lazy_seq_error",
+      "pattern": "RuntimeException.*lazy sequence",
+      "type": "RuntimeException",
+      "description": "Error in lazy sequence evaluation",
+      "root_cause": "clojure_lazy_sequence_error",
+      "fix_suggestions": [
+        "Use (doall) to force evaluation of lazy sequences",
+        "Check for errors in sequence generation functions",
+        "Use (take n) to limit potentially infinite sequences",
+        "Handle exceptions in lazy sequence producing functions"
+      ],
+      "confidence": 0.8,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["lazy", "sequences", "evaluation"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_reflection_warning",
+      "pattern": "Reflection warning.*call to ([^\\s]+) can't be resolved",
+      "type": "ReflectionWarning",
+      "description": "Reflection warning - type hints missing for performance",
+      "root_cause": "clojure_missing_type_hints",
+      "fix_suggestions": [
+        "Add type hints to improve performance: ^String, ^long, etc.",
+        "Use (set! *warn-on-reflection* true) to identify reflection calls",
+        "Import Java classes properly to avoid reflection",
+        "Use specific method signatures in type hints"
+      ],
+      "confidence": 0.7,
+      "severity": "low",
+      "category": "runtime",
+      "tags": ["reflection", "performance", "type-hints"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_transducer_error",
+      "pattern": "IllegalArgumentException.*transducer",
+      "type": "IllegalArgumentException",
+      "description": "Error in transducer composition or usage",
+      "root_cause": "clojure_transducer_misuse",
+      "fix_suggestions": [
+        "Check transducer composition with (comp) function",
+        "Ensure transducers are used with appropriate collection functions",
+        "Use (into) or (transduce) for transducer application",
+        "Verify transducer arity and function signatures"
+      ],
+      "confidence": 0.75,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["transducers", "composition", "collections"],
+      "frameworks": [],
+      "clojure_versions": ["1.7+", "1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_protocol_error",
+      "pattern": "IllegalArgumentException: No implementation of method: ([^\\s]+) of protocol: ([^\\s]+) found for class: ([^\\s]+)",
+      "type": "IllegalArgumentException",
+      "description": "Protocol method not implemented for given type",
+      "root_cause": "clojure_missing_protocol_implementation",
+      "fix_suggestions": [
+        "Implement the protocol method for the specific type",
+        "Use (extend-type) or (extend-protocol) to add implementations",
+        "Check if the correct protocol is being extended",
+        "Verify the method signature matches the protocol definition"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["protocols", "implementation", "types"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_multimethod_error",
+      "pattern": "IllegalArgumentException: No method in multimethod '([^']+)' for dispatch value: ([^\\s]+)",
+      "type": "IllegalArgumentException",
+      "description": "No multimethod implementation for dispatch value",
+      "root_cause": "clojure_missing_multimethod_implementation",
+      "fix_suggestions": [
+        "Add method implementation for the dispatch value using (defmethod)",
+        "Check the dispatch function logic for correct value generation",
+        "Add a default method implementation using :default",
+        "Verify dispatch values match exactly (case-sensitive)"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["multimethods", "dispatch", "implementation"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    }
+  ]
+}

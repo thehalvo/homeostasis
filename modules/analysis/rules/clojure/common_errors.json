@@ -1,0 +1,232 @@
+{
+  "rules": [
+    {
+      "id": "clojure_null_pointer",
+      "pattern": "java\\.lang\\.NullPointerException(?:: (.*))?",
+      "type": "NullPointerException",
+      "description": "Attempted to access or use a null object reference",
+      "root_cause": "clojure_null_pointer",
+      "fix_suggestions": [
+        "Add nil checks using (when-not (nil? value) ...) or (some? value)",
+        "Use conditional expressions like (when value ...)",
+        "Consider using (fnil default-value) for function arguments",
+        "Use safe navigation with (some-> value method1 method2)"
+      ],
+      "confidence": 0.9,
+      "severity": "high",
+      "category": "runtime",
+      "tags": ["nil", "null", "safety"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_arity_exception",
+      "pattern": "clojure\\.lang\\.ArityException: Wrong number of args \\((\\d+)\\) passed to: ([^\\s]+)",
+      "type": "ArityException", 
+      "description": "Function called with wrong number of arguments",
+      "root_cause": "clojure_incorrect_arity",
+      "fix_suggestions": [
+        "Check the function definition for correct number of parameters",
+        "Use multi-arity functions with different parameter counts",
+        "Consider using variadic arguments with & rest-args",
+        "Check for missing or extra arguments in function calls"
+      ],
+      "confidence": 0.95,
+      "severity": "high",
+      "category": "syntax",
+      "tags": ["arity", "arguments", "function"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_illegal_argument",
+      "pattern": "java\\.lang\\.IllegalArgumentException(?:: (.*))?",
+      "type": "IllegalArgumentException",
+      "description": "Illegal or inappropriate argument passed to a function",
+      "root_cause": "clojure_invalid_argument",
+      "fix_suggestions": [
+        "Check argument types and values before passing to functions",
+        "Use spec validation to ensure correct argument types",
+        "Add pre-conditions with {:pre []} in function definitions",
+        "Validate input data using predicates like number?, string?, etc."
+      ],
+      "confidence": 0.8,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["arguments", "validation", "types"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_class_cast",
+      "pattern": "java\\.lang\\.ClassCastException: (.*) cannot be cast to (.*)",
+      "type": "ClassCastException",
+      "description": "Attempted to cast an object to an incompatible type",
+      "root_cause": "clojure_type_cast_error",
+      "fix_suggestions": [
+        "Use type checking predicates like (instance? TargetType value)",
+        "Add type coercion functions for safe conversion",
+        "Use multi-methods for polymorphic behavior based on type",
+        "Check data types before operations using (type value)"
+      ],
+      "confidence": 0.85,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["casting", "types", "polymorphism"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_unsupported_operation",
+      "pattern": "java\\.lang\\.UnsupportedOperationException(?:: (.*))?",
+      "type": "UnsupportedOperationException",
+      "description": "Attempted operation is not supported by the object",
+      "root_cause": "clojure_unsupported_operation",
+      "fix_suggestions": [
+        "Use appropriate data structures that support the required operations",
+        "Check if collection is mutable before modification attempts",
+        "Use transient collections for efficient modifications",
+        "Convert immutable collections to mutable when needed"
+      ],
+      "confidence": 0.7,
+      "severity": "medium",
+      "category": "collections",
+      "tags": ["collections", "immutability", "operations"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_index_out_of_bounds",
+      "pattern": "java\\.lang\\.(IndexOutOfBoundsException|StringIndexOutOfBoundsException): (\\d+)",
+      "type": "IndexOutOfBoundsException",
+      "description": "Attempted to access collection element with invalid index",
+      "root_cause": "clojure_invalid_index",
+      "fix_suggestions": [
+        "Check collection size before accessing by index using (< index (count coll))",
+        "Use (get coll index default-value) for safe access",
+        "Consider using (nth coll index default-value) with default",
+        "Use (take n coll) or (drop n coll) for safer subsequence operations"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "collections",
+      "tags": ["index", "bounds", "collections"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_number_format",
+      "pattern": "java\\.lang\\.NumberFormatException: For input string: \"([^\"]+)\"",
+      "type": "NumberFormatException",
+      "description": "Failed to parse string as a number",
+      "root_cause": "clojure_invalid_number_format",
+      "fix_suggestions": [
+        "Validate string format before parsing with regex or predicates",
+        "Use (parse-long s) or (parse-double s) for safe parsing",
+        "Wrap parsing in try-catch blocks to handle errors gracefully",
+        "Use (re-matches #\"\\d+\" s) to validate numeric strings first"
+      ],
+      "confidence": 0.85,
+      "severity": "medium",
+      "category": "runtime",
+      "tags": ["parsing", "numbers", "validation"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_concurrent_modification",
+      "pattern": "java\\.util\\.ConcurrentModificationException(?:: (.*))?",
+      "type": "ConcurrentModificationException",
+      "description": "Collection was modified while being iterated",
+      "root_cause": "clojure_concurrent_modification",
+      "fix_suggestions": [
+        "Use immutable Clojure collections which are safe for concurrent access",
+        "Use atoms, refs, or agents for safe state management",
+        "Avoid modifying Java collections during iteration",
+        "Use (doall) to realize lazy sequences before modification"
+      ],
+      "confidence": 0.8,
+      "severity": "medium",
+      "category": "concurrency",
+      "tags": ["concurrency", "iteration", "modification"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_stack_overflow",
+      "pattern": "java\\.lang\\.StackOverflowError(?:: (.*))?",
+      "type": "StackOverflowError",
+      "description": "Stack overflow due to deep recursion",
+      "root_cause": "clojure_infinite_recursion",
+      "fix_suggestions": [
+        "Use loop/recur for tail recursion optimization",
+        "Consider using trampoline for mutual recursion",
+        "Add base cases to prevent infinite recursion",
+        "Use iterative approaches with reduce or iterate when possible"
+      ],
+      "confidence": 0.9,
+      "severity": "high",
+      "category": "runtime",
+      "tags": ["recursion", "tail-call", "optimization"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_out_of_memory",
+      "pattern": "java\\.lang\\.OutOfMemoryError(?:: (.*))?",
+      "type": "OutOfMemoryError",
+      "description": "JVM ran out of memory",
+      "root_cause": "clojure_memory_exhaustion",
+      "fix_suggestions": [
+        "Use lazy sequences to avoid loading all data into memory",
+        "Process data in chunks using (partition) or (partition-all)",
+        "Use transducers for memory-efficient data processing",
+        "Increase JVM heap size with -Xmx flag if needed"
+      ],
+      "confidence": 0.7,
+      "severity": "critical",
+      "category": "runtime",
+      "tags": ["memory", "lazy", "performance"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_exception_in_thread",
+      "pattern": "Exception in thread \"([^\"]+)\" ([^:]+): (.*)",
+      "type": "RuntimeException",
+      "description": "Unhandled exception in thread",
+      "root_cause": "clojure_unhandled_thread_exception",
+      "fix_suggestions": [
+        "Wrap thread operations in try-catch blocks",
+        "Use future with proper error handling",
+        "Consider using agents for asynchronous error handling",
+        "Use (Thread/setDefaultUncaughtExceptionHandler) for global handling"
+      ],
+      "confidence": 0.75,
+      "severity": "high",
+      "category": "concurrency",
+      "tags": ["threading", "exceptions", "async"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_compilation_error",
+      "pattern": "CompilerException java\\.lang\\.([^,]+), compiling:\\(([^:]+):(\\d+):(\\d+)\\)",
+      "type": "CompilerException",
+      "description": "Error during Clojure code compilation",
+      "root_cause": "clojure_compile_error",
+      "fix_suggestions": [
+        "Check syntax and parentheses matching in the source file",
+        "Ensure all required namespaces are properly required",
+        "Verify function and variable names are correctly spelled",
+        "Check for circular dependencies between namespaces"
+      ],
+      "confidence": 0.9,
+      "severity": "high",
+      "category": "syntax",
+      "tags": ["compilation", "syntax", "namespaces"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    }
+  ]
+}

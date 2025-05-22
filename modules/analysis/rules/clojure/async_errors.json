@@ -1,0 +1,175 @@
+{
+  "rules": [
+    {
+      "id": "async_blocking_in_go",
+      "pattern": "IllegalStateException.*blocking.*go block",
+      "type": "IllegalStateException",
+      "description": "Attempted to use blocking operation inside a go block",
+      "root_cause": "async_blocking_operation_in_go",
+      "fix_suggestions": [
+        "Use non-blocking operations like <! instead of <!! in go blocks",
+        "Move blocking operations outside of go blocks",
+        "Use (thread) for operations that need to block",
+        "Consider using (go-loop) with proper async operations"
+      ],
+      "confidence": 0.95,
+      "severity": "high",
+      "category": "async",
+      "tags": ["core.async", "go", "blocking"],
+      "frameworks": ["core.async"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "async_channel_closed",
+      "pattern": "IllegalStateException.*channel.*closed",
+      "type": "IllegalStateException",
+      "description": "Attempted operation on a closed channel",
+      "root_cause": "async_closed_channel_operation",
+      "fix_suggestions": [
+        "Check if channel is closed before operations",
+        "Handle nil return values from closed channels",
+        "Use (close!) only once per channel",
+        "Consider using (alts!) to handle multiple channel states"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "async",
+      "tags": ["core.async", "channels", "closed"],
+      "frameworks": ["core.async"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "async_buffer_overflow",
+      "pattern": "IllegalStateException.*buffer.*full",
+      "type": "IllegalStateException",
+      "description": "Channel buffer is full and cannot accept more values",
+      "root_cause": "async_buffer_overflow",
+      "fix_suggestions": [
+        "Increase buffer size with (chan buffer-size)",
+        "Use dropping-buffer or sliding-buffer for overflow handling",
+        "Ensure consumers are reading from channels fast enough",
+        "Consider using backpressure mechanisms"
+      ],
+      "confidence": 0.85,
+      "severity": "medium",
+      "category": "async",
+      "tags": ["core.async", "buffer", "overflow"],
+      "frameworks": ["core.async"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "async_invalid_transducer",
+      "pattern": "IllegalArgumentException.*transducer.*channel",
+      "type": "IllegalArgumentException",
+      "description": "Invalid transducer used with channel",
+      "root_cause": "async_invalid_transducer",
+      "fix_suggestions": [
+        "Ensure transducer is compatible with channel operations",
+        "Check transducer composition for correctness",
+        "Use (chan buffer-size xform) correctly",
+        "Verify transducer doesn't break core.async semantics"
+      ],
+      "confidence": 0.8,
+      "severity": "medium",
+      "category": "async",
+      "tags": ["core.async", "transducers", "channels"],
+      "frameworks": ["core.async"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "async_timeout_error",
+      "pattern": "Exception.*timeout.*channel",
+      "type": "Exception",
+      "description": "Timeout error in channel operations",
+      "root_cause": "async_operation_timeout",
+      "fix_suggestions": [
+        "Use (timeout ms) channel for time-bounded operations",
+        "Implement proper timeout handling with (alts!)",
+        "Consider increasing timeout values for slow operations",
+        "Handle timeout cases explicitly in your code"
+      ],
+      "confidence": 0.75,
+      "severity": "medium",
+      "category": "async",
+      "tags": ["core.async", "timeout", "channels"],
+      "frameworks": ["core.async"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "async_pipeline_error",
+      "pattern": "Exception.*pipeline",
+      "type": "Exception",
+      "description": "Error in core.async pipeline operation",
+      "root_cause": "async_pipeline_failure",
+      "fix_suggestions": [
+        "Check pipeline function for exceptions",
+        "Ensure pipeline parallelism is appropriate",
+        "Handle errors in pipeline transform functions",
+        "Consider using pipeline-blocking for CPU-bound operations"
+      ],
+      "confidence": 0.7,
+      "severity": "medium",
+      "category": "async",
+      "tags": ["core.async", "pipeline", "parallelism"],
+      "frameworks": ["core.async"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "async_pub_sub_error",
+      "pattern": "Exception.*(pub|sub).*topic",
+      "type": "Exception",
+      "description": "Error in core.async pub/sub operations",
+      "root_cause": "async_pub_sub_configuration",
+      "fix_suggestions": [
+        "Check pub/sub topic function for correct return values",
+        "Ensure subscription channels are properly configured",
+        "Verify topic function is deterministic",
+        "Handle unsub operations correctly"
+      ],
+      "confidence": 0.75,
+      "severity": "medium",
+      "category": "async",
+      "tags": ["core.async", "pub", "sub", "topics"],
+      "frameworks": ["core.async"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "async_mult_tap_error",
+      "pattern": "Exception.*(mult|tap)",
+      "type": "Exception",
+      "description": "Error in core.async mult/tap operations",
+      "root_cause": "async_mult_tap_misconfiguration",
+      "fix_suggestions": [
+        "Ensure source channel for mult is properly configured",
+        "Check that tapped channels are being read from",
+        "Use untap to clean up unused taps",
+        "Verify mult is created before tapping"
+      ],
+      "confidence": 0.7,
+      "severity": "medium",
+      "category": "async",
+      "tags": ["core.async", "mult", "tap"],
+      "frameworks": ["core.async"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "async_go_loop_error",
+      "pattern": "Exception.*go-loop",
+      "type": "Exception",
+      "description": "Error in go-loop execution",
+      "root_cause": "async_go_loop_failure",
+      "fix_suggestions": [
+        "Check loop termination conditions",
+        "Ensure proper recur usage in go-loop",
+        "Handle channel operations that might return nil",
+        "Add error handling within the loop body"
+      ],
+      "confidence": 0.8,
+      "severity": "medium",
+      "category": "async",
+      "tags": ["core.async", "go-loop", "iteration"],
+      "frameworks": ["core.async"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    }
+  ]
+}

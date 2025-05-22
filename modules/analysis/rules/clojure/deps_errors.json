@@ -1,0 +1,156 @@
+{
+  "rules": [
+    {
+      "id": "deps_classpath_error",
+      "pattern": "FileNotFoundException.*classpath",
+      "type": "FileNotFoundException",
+      "description": "File or resource not found on classpath",
+      "root_cause": "deps_missing_classpath_resource",
+      "fix_suggestions": [
+        "Check that required dependencies are in deps.edn or project.clj",
+        "Verify resource paths are correct",
+        "Ensure all required JARs are downloaded",
+        "Check source paths in dependency configuration"
+      ],
+      "confidence": 0.9,
+      "severity": "high",
+      "category": "deps",
+      "tags": ["dependencies", "classpath", "resources"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "deps_version_conflict",
+      "pattern": "Exception.*version.*conflict",
+      "type": "Exception",
+      "description": "Dependency version conflict detected",
+      "root_cause": "deps_version_conflict",
+      "fix_suggestions": [
+        "Use :override-deps to force specific versions",
+        "Check dependency tree with clj -Stree",
+        "Exclude conflicting transitive dependencies",
+        "Align versions of related libraries"
+      ],
+      "confidence": 0.8,
+      "severity": "medium",
+      "category": "deps",
+      "tags": ["dependencies", "versions", "conflicts"],
+      "frameworks": [],
+      "clojure_versions": ["1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "deps_download_error",
+      "pattern": "Exception.*download.*dependency",
+      "type": "Exception",
+      "description": "Failed to download dependency",
+      "root_cause": "deps_download_failure",
+      "fix_suggestions": [
+        "Check internet connection and repository accessibility",
+        "Verify Maven/Clojars repository URLs are correct",
+        "Check for typos in dependency coordinates",
+        "Try clearing local Maven cache (~/.m2/repository)"
+      ],
+      "confidence": 0.85,
+      "severity": "high",
+      "category": "deps",
+      "tags": ["dependencies", "download", "repositories"],
+      "frameworks": [],
+      "clojure_versions": ["1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "lein_plugin_error",
+      "pattern": "Exception.*leiningen.*plugin",
+      "type": "Exception",
+      "description": "Leiningen plugin error",
+      "root_cause": "lein_plugin_failure",
+      "fix_suggestions": [
+        "Check plugin configuration in project.clj",
+        "Ensure plugin version is compatible with Leiningen version",
+        "Verify plugin dependencies are available",
+        "Try updating plugin to latest version"
+      ],
+      "confidence": 0.8,
+      "severity": "medium",
+      "category": "deps",
+      "tags": ["leiningen", "plugins", "configuration"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "deps_namespace_load_error",
+      "pattern": "FileNotFoundException.*namespace",
+      "type": "FileNotFoundException",
+      "description": "Cannot load namespace - file not found",
+      "root_cause": "deps_namespace_not_found",
+      "fix_suggestions": [
+        "Check that namespace file exists in correct directory structure",
+        "Verify source paths include the namespace directory",
+        "Ensure file naming matches namespace declaration",
+        "Check for typos in require/use statements"
+      ],
+      "confidence": 0.9,
+      "severity": "high",
+      "category": "deps",
+      "tags": ["namespaces", "loading", "files"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "deps_git_dependency_error",
+      "pattern": "Exception.*git.*dependency",
+      "type": "Exception",
+      "description": "Error with Git-based dependency",
+      "root_cause": "deps_git_dependency_failure",
+      "fix_suggestions": [
+        "Check Git repository URL and accessibility",
+        "Verify SHA or tag exists in the repository",
+        "Ensure Git is installed and configured properly",
+        "Check for authentication issues with private repositories"
+      ],
+      "confidence": 0.8,
+      "severity": "medium",
+      "category": "deps",
+      "tags": ["dependencies", "git", "repositories"],
+      "frameworks": [],
+      "clojure_versions": ["1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "deps_local_dependency_error",
+      "pattern": "Exception.*local.*dependency",
+      "type": "Exception",
+      "description": "Error with local dependency",
+      "root_cause": "deps_local_dependency_failure",
+      "fix_suggestions": [
+        "Check that local dependency path exists",
+        "Verify local dependency has been built/installed",
+        "Use :local/root for deps.edn local dependencies",
+        "Check permissions on local dependency directory"
+      ],
+      "confidence": 0.85,
+      "severity": "medium",
+      "category": "deps",
+      "tags": ["dependencies", "local", "paths"],
+      "frameworks": [],
+      "clojure_versions": ["1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "deps_alias_error",
+      "pattern": "Exception.*alias.*not.*found",
+      "type": "Exception",
+      "description": "Alias not found in deps.edn configuration",
+      "root_cause": "deps_invalid_alias",
+      "fix_suggestions": [
+        "Check alias spelling in deps.edn",
+        "Verify alias is defined in correct section (:aliases)",
+        "Use clj -A to list available aliases",
+        "Check for typos in command line alias usage"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "deps",
+      "tags": ["dependencies", "aliases", "configuration"],
+      "frameworks": [],
+      "clojure_versions": ["1.9+", "1.10+", "1.11+"]
+    }
+  ]
+}

@@ -10,6 +10,13 @@ from .rule_config import Rule, RuleConfidence
 from .rule_categories import EnhancedRule
 
 
+class ConfidenceLevel(Enum):
+    """Enumeration for confidence levels."""
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
 @dataclass
 class RuleMatch:
     """

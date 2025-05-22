@@ -1,0 +1,232 @@
+{
+  "rules": [
+    {
+      "id": "clojure_reader_error",
+      "pattern": "RuntimeException: (EOF while reading|Unmatched delimiter:|Unexpected EOF)",
+      "type": "ReaderException",
+      "description": "Syntax error in Clojure code - mismatched or missing delimiters",
+      "root_cause": "clojure_syntax_error",
+      "fix_suggestions": [
+        "Check for matching parentheses, brackets, and braces",
+        "Ensure strings are properly closed with matching quotes",
+        "Use a code editor with bracket matching highlighting",
+        "Check for missing closing delimiters at end of forms"
+      ],
+      "confidence": 0.95,
+      "severity": "high",
+      "category": "syntax",
+      "tags": ["reader", "delimiters", "parentheses"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_invalid_token",
+      "pattern": "RuntimeException: Invalid token: ([^\\s]+)",
+      "type": "ReaderException",
+      "description": "Invalid token encountered by the Clojure reader",
+      "root_cause": "clojure_invalid_token",
+      "fix_suggestions": [
+        "Check for invalid characters in symbols or keywords",
+        "Ensure keywords start with : (colon)",
+        "Verify numeric literals are properly formatted",
+        "Check for proper escape sequences in strings"
+      ],
+      "confidence": 0.9,
+      "severity": "high",
+      "category": "syntax",
+      "tags": ["reader", "tokens", "symbols"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_unable_to_resolve",
+      "pattern": "CompilerException: Unable to resolve symbol: ([^\\s]+) in this context",
+      "type": "CompilerException",
+      "description": "Symbol cannot be resolved - likely undefined variable or function",
+      "root_cause": "clojure_undefined_symbol",
+      "fix_suggestions": [
+        "Check if the symbol is properly defined in current namespace",
+        "Ensure required namespaces are imported with (require) or (use)",
+        "Check for typos in symbol names",
+        "Use fully qualified names if symbol is in another namespace"
+      ],
+      "confidence": 0.95,
+      "severity": "high",
+      "category": "syntax",
+      "tags": ["symbols", "resolution", "namespaces"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_cannot_take_value",
+      "pattern": "CompilerException: ([^\\s]+) cannot be used as a function",
+      "type": "CompilerException",
+      "description": "Attempted to call something that is not a function",
+      "root_cause": "clojure_not_callable",
+      "fix_suggestions": [
+        "Check if the first element in the form is actually a function",
+        "Use (fn ...) or #(...) to create anonymous functions",
+        "Ensure you're not trying to call a value as a function",
+        "Use apply when calling a function with a collection of arguments"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "syntax",
+      "tags": ["functions", "calls", "evaluation"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_def_not_allowed",
+      "pattern": "CompilerException: def not allowed in this context",
+      "type": "CompilerException",
+      "description": "def used in invalid context - likely inside a function",
+      "root_cause": "clojure_invalid_def_context",
+      "fix_suggestions": [
+        "Move def to top-level namespace scope",
+        "Use let for local bindings instead of def",
+        "Use defn for function definitions at namespace level",
+        "Consider using binding for dynamic variables"
+      ],
+      "confidence": 0.95,
+      "severity": "medium",
+      "category": "syntax",
+      "tags": ["def", "bindings", "scope"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_duplicate_key",
+      "pattern": "IllegalArgumentException: Duplicate key: ([^\\s]+)",
+      "type": "IllegalArgumentException",
+      "description": "Duplicate key found in map literal",
+      "root_cause": "clojure_duplicate_map_key",
+      "fix_suggestions": [
+        "Remove or rename duplicate keys in map literals",
+        "Use merge or assoc to combine maps with duplicate keys",
+        "Check for accidentally repeated key-value pairs",
+        "Consider using sets if you only need unique values"
+      ],
+      "confidence": 0.95,
+      "severity": "medium",
+      "category": "syntax",
+      "tags": ["maps", "keys", "literals"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_odd_forms",
+      "pattern": "RuntimeException: Map literal must contain an even number of forms",
+      "type": "RuntimeException",
+      "description": "Map literal has odd number of forms - missing value for key",
+      "root_cause": "clojure_incomplete_map",
+      "fix_suggestions": [
+        "Ensure each key in map literal has a corresponding value",
+        "Check for missing values after keys",
+        "Use nil as placeholder value if needed",
+        "Consider using hash-map function for dynamic map creation"
+      ],
+      "confidence": 0.95,
+      "severity": "medium",
+      "category": "syntax",
+      "tags": ["maps", "literals", "key-value"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_invalid_escape",
+      "pattern": "RuntimeException: Unsupported escape character: \\\\(.)",
+      "type": "RuntimeException",
+      "description": "Invalid escape sequence in string literal",
+      "root_cause": "clojure_invalid_escape_sequence",
+      "fix_suggestions": [
+        "Use valid escape sequences: \\n \\t \\r \\\" \\\\ \\f \\b",
+        "Use raw strings or regular expressions for complex patterns",
+        "Escape backslashes with double backslash (\\\\)",
+        "Check string documentation for supported escape sequences"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "syntax",
+      "tags": ["strings", "escape", "literals"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_invalid_regex",
+      "pattern": "PatternSyntaxException: ([^\\n]+)",
+      "type": "PatternSyntaxException",
+      "description": "Invalid regular expression pattern",
+      "root_cause": "clojure_invalid_regex_pattern",
+      "fix_suggestions": [
+        "Check regular expression syntax for Java Pattern class",
+        "Escape special regex characters with backslashes",
+        "Use online regex validators to test patterns",
+        "Consider using simpler string operations if regex is complex"
+      ],
+      "confidence": 0.85,
+      "severity": "medium",
+      "category": "syntax",
+      "tags": ["regex", "patterns", "validation"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_namespace_not_found",
+      "pattern": "FileNotFoundException: Could not locate ([^\\s]+) on classpath",
+      "type": "FileNotFoundException",
+      "description": "Required namespace file not found on classpath",
+      "root_cause": "clojure_missing_namespace",
+      "fix_suggestions": [
+        "Check that the namespace file exists in the correct directory",
+        "Verify classpath includes the directory containing the namespace",
+        "Ensure file name matches namespace declaration",
+        "Check for typos in require/use statements"
+      ],
+      "confidence": 0.9,
+      "severity": "high",
+      "category": "syntax",
+      "tags": ["namespaces", "classpath", "files"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_circular_dependency",
+      "pattern": "CompilerException: Cyclic load dependency: ([^\\n]+)",
+      "type": "CompilerException",
+      "description": "Circular dependency detected between namespaces",
+      "root_cause": "clojure_circular_namespace_dependency",
+      "fix_suggestions": [
+        "Refactor namespaces to remove circular dependencies",
+        "Move shared code to a separate namespace",
+        "Use forward declarations where possible",
+        "Consider using protocols for polymorphic behavior"
+      ],
+      "confidence": 0.95,
+      "severity": "high",
+      "category": "syntax",
+      "tags": ["namespaces", "dependencies", "circular"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "clojure_invalid_keyword",
+      "pattern": "RuntimeException: Invalid keyword: ([^\\s]+)",
+      "type": "RuntimeException",
+      "description": "Invalid keyword syntax",
+      "root_cause": "clojure_malformed_keyword",
+      "fix_suggestions": [
+        "Keywords must start with a colon (:)",
+        "Use valid characters in keyword names",
+        "Avoid spaces and special characters in keywords",
+        "Use namespaced keywords for clarity (::local or :namespace/key)"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "syntax",
+      "tags": ["keywords", "syntax", "naming"],
+      "frameworks": [],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    }
+  ]
+}

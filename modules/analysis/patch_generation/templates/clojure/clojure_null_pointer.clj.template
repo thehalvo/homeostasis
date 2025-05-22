@@ -1,0 +1,42 @@
+;; Option 1: Add nil check before accessing {variable}
+(when (some? {variable})
+  ;; Safe to use {variable} here
+  ;; (.method {variable})
+  )
+
+;; Option 2: Use conditional with default value
+(if (nil? {variable})
+  ;; Handle nil case
+  (do
+    ;; Provide default behavior or value
+    ;; (throw (ex-info "Variable {variable} cannot be nil" {}))
+    ;; default-value
+    )
+  ;; Original code using {variable}
+  ;; (.method {variable})
+  )
+
+;; Option 3: Use nil-safe threading macros
+(some-> {variable}
+  ;; Chain operations safely
+  ;; .method1
+  ;; .method2
+  )
+
+;; Option 4: Use when-let for binding and nil check
+(when-let [val {variable}]
+  ;; val is guaranteed to be non-nil here
+  ;; (.method val)
+  )
+
+;; Option 5: Use fnil for function arguments
+(defn safe-function 
+  ([arg] (safe-function arg default-value))
+  ([arg default] 
+    ;; Use arg safely, with default fallback
+    (let [safe-arg (or arg default)]
+      ;; Process safe-arg
+      )))
+
+;; Or wrap the original function with fnil
+;; ((fnil original-function default-value) {variable})

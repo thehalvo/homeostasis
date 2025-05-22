@@ -1,0 +1,156 @@
+{
+  "rules": [
+    {
+      "id": "ring_missing_handler",
+      "pattern": "IllegalArgumentException: No handler found for route",
+      "type": "IllegalArgumentException",
+      "description": "No Ring handler found for the requested route",
+      "root_cause": "ring_missing_route_handler",
+      "fix_suggestions": [
+        "Check route definitions in your Ring handler",
+        "Ensure the route pattern matches the request path",
+        "Add a catch-all route for unmatched requests",
+        "Verify middleware stack is correctly configured"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "ring",
+      "tags": ["ring", "routing", "handlers"],
+      "frameworks": ["ring", "compojure"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "ring_malformed_request",
+      "pattern": "IllegalArgumentException: Request map must contain :uri",
+      "type": "IllegalArgumentException",
+      "description": "Ring request map is missing required :uri key",
+      "root_cause": "ring_invalid_request_map",
+      "fix_suggestions": [
+        "Ensure request map contains required keys: :uri, :request-method",
+        "Check middleware that might be modifying the request map",
+        "Validate request structure before passing to handlers",
+        "Use ring.mock.request for testing with proper request maps"
+      ],
+      "confidence": 0.95,
+      "severity": "high",
+      "category": "ring",
+      "tags": ["ring", "request", "validation"],
+      "frameworks": ["ring"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "compojure_route_compilation",
+      "pattern": "CompilerException.*routes",
+      "type": "CompilerException",
+      "description": "Error in Compojure route compilation",
+      "root_cause": "compojure_invalid_route_syntax",
+      "fix_suggestions": [
+        "Check Compojure route syntax for correct patterns",
+        "Ensure proper use of route macros (GET, POST, etc.)",
+        "Verify destructuring syntax in route parameters",
+        "Check for missing parentheses or brackets in routes"
+      ],
+      "confidence": 0.8,
+      "severity": "high",
+      "category": "compojure",
+      "tags": ["compojure", "routes", "compilation"],
+      "frameworks": ["compojure"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "ring_middleware_error",
+      "pattern": "IllegalArgumentException.*middleware",
+      "type": "IllegalArgumentException",
+      "description": "Error in Ring middleware configuration or execution",
+      "root_cause": "ring_middleware_misconfiguration",
+      "fix_suggestions": [
+        "Check middleware ordering - some middleware must wrap others",
+        "Ensure middleware functions return proper Ring response maps",
+        "Verify middleware is properly threading request/response",
+        "Check for middleware that might be consuming or modifying the request body"
+      ],
+      "confidence": 0.75,
+      "severity": "medium",
+      "category": "ring",
+      "tags": ["ring", "middleware", "configuration"],
+      "frameworks": ["ring"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "ring_response_format",
+      "pattern": "IllegalArgumentException: Response must be a map with :status",
+      "type": "IllegalArgumentException",
+      "description": "Ring handler returned invalid response format",
+      "root_cause": "ring_invalid_response_format",
+      "fix_suggestions": [
+        "Ensure handler returns map with :status key",
+        "Include :headers and :body keys in response map",
+        "Use ring.util.response helpers for consistent responses",
+        "Check that all code paths return valid Ring response maps"
+      ],
+      "confidence": 0.9,
+      "severity": "medium",
+      "category": "ring",
+      "tags": ["ring", "response", "format"],
+      "frameworks": ["ring"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "compojure_context_error",
+      "pattern": "IllegalArgumentException.*context",
+      "type": "IllegalArgumentException",
+      "description": "Error in Compojure context route definition",
+      "root_cause": "compojure_invalid_context",
+      "fix_suggestions": [
+        "Check context route syntax for proper string patterns",
+        "Ensure nested routes within context are properly defined",
+        "Verify context path doesn't conflict with other routes",
+        "Use defroutes to organize context routes properly"
+      ],
+      "confidence": 0.8,
+      "severity": "medium",
+      "category": "compojure",
+      "tags": ["compojure", "context", "routes"],
+      "frameworks": ["compojure"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "ring_adapter_error",
+      "pattern": "Exception.*ring.adapter",
+      "type": "Exception",
+      "description": "Error in Ring server adapter (Jetty, HTTP Kit, etc.)",
+      "root_cause": "ring_adapter_configuration",
+      "fix_suggestions": [
+        "Check server adapter configuration (port, host, etc.)",
+        "Ensure port is not already in use",
+        "Verify SSL/TLS configuration if using HTTPS",
+        "Check adapter-specific options and dependencies"
+      ],
+      "confidence": 0.7,
+      "severity": "high",
+      "category": "ring",
+      "tags": ["ring", "adapter", "server"],
+      "frameworks": ["ring"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    },
+    {
+      "id": "ring_json_parsing_error",
+      "pattern": "JsonParseException|Exception.*json",
+      "type": "JsonParseException",
+      "description": "Error parsing JSON in Ring middleware or handler",
+      "root_cause": "ring_json_parsing_failure",
+      "fix_suggestions": [
+        "Validate JSON format in request body before parsing",
+        "Use proper JSON middleware (ring.middleware.json)",
+        "Handle malformed JSON with try-catch blocks",
+        "Check Content-Type headers for JSON requests"
+      ],
+      "confidence": 0.85,
+      "severity": "medium",
+      "category": "ring",
+      "tags": ["ring", "json", "parsing"],
+      "frameworks": ["ring"],
+      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+    }
+  ]
+}

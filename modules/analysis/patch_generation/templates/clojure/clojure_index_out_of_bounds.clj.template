@@ -1,0 +1,79 @@
+;; Option 1: Check bounds before accessing collection
+(when (and (sequential? {collection}) 
+           (< {index} (count {collection}))
+           (>= {index} 0))
+  ;; Safe to access element at index
+  (nth {collection} {index}))
+
+;; Option 2: Use get with default value for safe access
+(get {collection} {index} default-value)
+
+;; Option 3: Use nth with default value
+(nth {collection} {index} default-value)
+
+;; Option 4: Check collection bounds and handle appropriately
+(cond
+  (empty? {collection})
+    ;; Handle empty collection
+    (println "Collection is empty")
+    ;; default-value
+  
+  (< {index} 0)
+    ;; Handle negative index
+    (println "Index cannot be negative:" {index})
+    ;; default-value
+  
+  (>= {index} (count {collection}))
+    ;; Handle index too large
+    (println "Index" {index} "is beyond collection size" (count {collection}))
+    ;; default-value
+  
+  :else
+    ;; Safe to access
+    (nth {collection} {index}))
+
+;; Option 5: Use take and drop for safer subsequences
+;; Instead of (nth coll index), consider:
+(first (drop {index} {collection}))
+
+;; For ranges:
+(take n (drop {index} {collection}))
+
+;; Option 6: Safe indexing function
+(defn safe-nth 
+  ([coll index] (safe-nth coll index nil))
+  ([coll index default]
+    (if (and (sequential? coll)
+             (>= index 0)
+             (< index (count coll)))
+      (nth coll index)
+      default)))
+
+;; Usage: (safe-nth {collection} {index} default-value)
+
+;; Option 7: Use subvec for vectors with bounds checking
+(when (and (vector? {collection})
+           (<= 0 {index} (dec (count {collection}))))
+  ;; For subvector from index to end
+  (subvec {collection} {index})
+  ;; For single element (equivalent to nth)
+  ;; (subvec {collection} {index} (inc {index}))
+  )
+
+;; Option 8: Use lazy sequence operations for safer processing
+(->> {collection}
+     (drop {index})      ;; Skip to index
+     (take 1)           ;; Take one element
+     (first))           ;; Get the element (nil if empty)
+
+;; Option 9: Index validation with spec (Clojure 1.9+)
+(require '[clojure.spec.alpha :as s])
+
+(s/def ::valid-index 
+  (s/and int? #(>= % 0) #(< % (count {collection}))))
+
+(defn safe-access [coll index]
+  {:pre [(s/valid? ::valid-index index)]}
+  (nth coll index))
+
+;; Usage: (safe-access {collection} {index})
