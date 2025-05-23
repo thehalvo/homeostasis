@@ -1,0 +1,20 @@
+// Fix for property access on undefined/null
+// Original issue: Cannot read property '{property}' of {nullish_value}
+
+// Option 1: Using optional chaining (ES2020+)
+if ({object}?.{property}) {
+    // Safe property access
+    result = {object}.{property};
+}
+
+// Option 2: Traditional null check (for older JavaScript)
+if ({object} && {object}.{property}) {
+    // Safe property access
+    result = {object}.{property};
+}
+
+// Option 3: Default value pattern
+result = ({object} && {object}.{property}) || defaultValue;
+
+// Option 4: Using nullish coalescing (ES2020+)
+result = {object}?.{property} ?? defaultValue;

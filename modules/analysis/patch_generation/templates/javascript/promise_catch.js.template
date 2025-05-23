@@ -1,0 +1,33 @@
+// Fix for unhandled Promise rejections
+// Original issue: Uncaught (in promise) or UnhandledPromiseRejectionWarning
+
+// Option 1: Add .catch() to Promise chain
+{promise_expression}
+    .then(result => {
+        // Handle success
+        return result;
+    })
+    .catch(error => {
+        console.error('Promise rejected:', error);
+        // Handle error appropriately
+        throw error; // Re-throw if needed
+    });
+
+// Option 2: Using async/await with try-catch
+async function handleAsync() {
+    try {
+        const result = await {promise_expression};
+        // Handle success
+        return result;
+    } catch (error) {
+        console.error('Async operation failed:', error);
+        // Handle error appropriately
+        throw error; // Re-throw if needed
+    }
+}
+
+// Option 3: Global unhandled rejection handler (for Node.js)
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    // Application specific logging, throwing an error, or other logic here
+});

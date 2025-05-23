@@ -1,0 +1,23 @@
+// Fix for 'is not a function' errors
+// Original issue: {variable} is not a function
+
+// Option 1: Type check before calling
+if (typeof {variable} === 'function') {
+    {variable}({arguments});
+} else {
+    console.warn('{variable} is not a function');
+    // Handle the case appropriately
+}
+
+// Option 2: Safe function call with fallback
+const safeCall = (fn, ...args) => {
+    return typeof fn === 'function' ? fn(...args) : undefined;
+};
+result = safeCall({variable}, {arguments});
+
+// Option 3: Default function pattern
+const {variable}Safe = {variable} || (() => {
+    console.warn('Function {variable} not available, using default');
+    return defaultValue;
+});
+{variable}Safe({arguments});

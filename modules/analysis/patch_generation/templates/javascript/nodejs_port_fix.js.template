@@ -1,0 +1,48 @@
+// Fix for Node.js port already in use errors
+// Original issue: EADDRINUSE - address already in use
+
+// Option 1: Dynamic port allocation
+const getAvailablePort = (startPort = 3000) => {
+    return new Promise((resolve, reject) => {
+        const server = require('http').createServer();
+        server.listen(startPort, (err) => {
+            if (err) {
+                if (err.code === 'EADDRINUSE') {
+                    server.close();
+                    resolve(getAvailablePort(startPort + 1));
+                } else {
+                    reject(err);
+                }
+            } else {
+                const port = server.address().port;
+                server.close();
+                resolve(port);
+            }
+        });
+    });
+};
+
+// Usage:
+const port = await getAvailablePort({desired_port});
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
+
+// Option 2: Error handling with retry
+const startServer = (port, retries = 5) => {
+    app.listen(port, (err) => {
+        if (err) {
+            if (err.code === 'EADDRINUSE' && retries > 0) {
+                console.log(`Port ${port} in use, trying ${port + 1}`);
+                startServer(port + 1, retries - 1);
+            } else {
+                console.error('Failed to start server:', err);
+                process.exit(1);
+            }
+        } else {
+            console.log(`Server running on port ${port}`);
+        }
+    });
+};
+
+startServer({desired_port});

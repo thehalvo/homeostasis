@@ -1,0 +1,36 @@
+// Fix for Node.js module not found errors
+// Original issue: Cannot find module '{module_name}'
+
+// Option 1: Check if module exists before requiring
+try {
+    const {module_var} = require('{module_name}');
+    // Use the module
+} catch (error) {
+    if (error.code === 'MODULE_NOT_FOUND') {
+        console.error('Module {module_name} not found. Please install it with: npm install {module_name}');
+        // Provide fallback or exit gracefully
+        process.exit(1);
+    } else {
+        throw error;
+    }
+}
+
+// Option 2: Dynamic import with error handling (ES modules)
+try {
+    const {module_var} = await import('{module_name}');
+    // Use the module
+} catch (error) {
+    console.error('Failed to import {module_name}:', error.message);
+    // Handle the missing module gracefully
+}
+
+// Option 3: Conditional require with fallback
+let {module_var};
+try {
+    {module_var} = require('{module_name}');
+} catch (e) {
+    console.warn('Optional module {module_name} not available, using fallback');
+    {module_var} = {
+        // Provide minimal fallback implementation
+    };
+}
