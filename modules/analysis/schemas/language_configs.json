@@ -303,5 +303,48 @@
       "critical": "error",
       "fatal": "fatal"
     }
+  },
+  "typescript": {
+    "language": "typescript",
+    "field_mappings": {
+      "error_type": ["name", "type", "code"],
+      "message": "message",
+      "stack_trace": ["stack", "stacktrace", "stack_trace"]
+    },
+    "stack_trace_fields": ["stack", "stacktrace", "stack_trace"],
+    "stack_trace_format": "string",
+    "version_fields": ["typescript_version", "ts_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:TS\\d+:)",
+      "(?:error TS\\d+:)",
+      "(?:TypeScript compilation error)",
+      "(?:tsc \\(\\d+,\\d+\\):)",
+      "(?:at.*\\.ts:\\d+:\\d+)",
+      "(?:Type '.*' is not assignable to type)",
+      "(?:Cannot find name '.*')",
+      "(?:Property '.*' does not exist on type)",
+      "(?:Cannot find module '.*')"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warning",
+      "error": "error",
+      "critical": "error",
+      "fatal": "fatal"
+    },
+    "compiler_options": {
+      "strict": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "strictFunctionTypes": true,
+      "noImplicitReturns": true,
+      "noUnusedLocals": false,
+      "noUnusedParameters": false
+    },
+    "file_extensions": [".ts", ".tsx", ".d.ts"],
+    "config_files": ["tsconfig.json", "jsconfig.json"]
   }
 }

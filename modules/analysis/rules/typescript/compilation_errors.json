@@ -1,0 +1,247 @@
+{
+  "category": "typescript_compilation_errors",
+  "description": "TypeScript compilation, transpilation, and build process errors",
+  "rules": [
+    {
+      "id": "ts_1005_expected_token",
+      "error_code": "TS1005",
+      "pattern": "TS1005:.*'([^']+)' expected",
+      "type": "syntax_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "syntax",
+      "root_cause": "typescript_syntax_error",
+      "suggestion": "Add the expected token or fix syntax error",
+      "tags": ["typescript", "syntax", "compilation", "parser"],
+      "fix_commands": [
+        "Check for missing semicolons, commas, or brackets",
+        "Verify proper TypeScript syntax",
+        "Check for mismatched parentheses or braces",
+        "Ensure proper statement termination"
+      ],
+      "examples": [
+        "';' expected",
+        "'}' expected",
+        "',' expected"
+      ]
+    },
+    {
+      "id": "ts_1127_invalid_character",
+      "error_code": "TS1127",
+      "pattern": "TS1127:.*Invalid character",
+      "type": "syntax_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "invalid_character",
+      "root_cause": "typescript_invalid_character",
+      "suggestion": "Remove or fix invalid characters in the code",
+      "tags": ["typescript", "syntax", "characters", "encoding"],
+      "fix_commands": [
+        "Check for non-printable or special characters",
+        "Verify file encoding (should be UTF-8)",
+        "Remove invisible or zero-width characters",
+        "Check for copy-paste issues from other sources"
+      ],
+      "examples": [
+        "Invalid character",
+        "Invalid character at position 42"
+      ]
+    },
+    {
+      "id": "ts_5023_unknown_compiler_option",
+      "error_code": "TS5023",
+      "pattern": "TS5023:.*Unknown compiler option '([^']+)'",
+      "type": "config_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "compiler_config",
+      "root_cause": "typescript_invalid_compiler_option",
+      "suggestion": "Remove or fix the unknown compiler option in tsconfig.json",
+      "tags": ["typescript", "config", "tsconfig", "compiler-options"],
+      "fix_commands": [
+        "Check tsconfig.json for typos in compiler options",
+        "Verify TypeScript version supports the option",
+        "Remove deprecated or invalid options",
+        "Consult TypeScript documentation for valid options"
+      ],
+      "examples": [
+        "Unknown compiler option 'allowSyntheticDefaultImports'",
+        "Unknown compiler option 'moduleResolutions'"
+      ]
+    },
+    {
+      "id": "ts_5024_compiler_option_requires_value",
+      "error_code": "TS5024",
+      "pattern": "TS5024:.*Compiler option '([^']+)' requires a value",
+      "type": "config_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "compiler_config",
+      "root_cause": "typescript_missing_option_value",
+      "suggestion": "Provide a value for the compiler option",
+      "tags": ["typescript", "config", "tsconfig", "compiler-options"],
+      "fix_commands": [
+        "Add required value to compiler option",
+        "Check TypeScript documentation for valid values",
+        "Verify option syntax in tsconfig.json"
+      ],
+      "examples": [
+        "Compiler option 'target' requires a value",
+        "Compiler option 'module' requires a value"
+      ]
+    },
+    {
+      "id": "ts_6133_declared_but_not_used",
+      "error_code": "TS6133",
+      "pattern": "TS6133:.*'([^']+)' is declared but its value is never read",
+      "type": "unused_code",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "unused_variables",
+      "root_cause": "typescript_unused_variable",
+      "suggestion": "Remove unused variable or prefix with underscore to indicate intentional non-use",
+      "tags": ["typescript", "unused", "variables", "cleanup"],
+      "fix_commands": [
+        "Remove unused variable declaration",
+        "Prefix variable with underscore (_) if intentionally unused",
+        "Use the variable in code if needed",
+        "Add // @ts-ignore comment if suppression needed"
+      ],
+      "examples": [
+        "'foo' is declared but its value is never read",
+        "'unusedParam' is declared but its value is never read"
+      ]
+    },
+    {
+      "id": "ts_import_export_errors",
+      "pattern": "TS1192:.*Module .* has no default export|TS2305:.*Module .* has no exported member",
+      "error_code": "TS1192|TS2305",
+      "type": "import_export_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "imports_exports",
+      "root_cause": "typescript_import_export_mismatch",
+      "suggestion": "Fix import/export statements to match module exports",
+      "tags": ["typescript", "imports", "exports", "modules"],
+      "fix_commands": [
+        "Use named imports instead of default import",
+        "Check module's actual exports",
+        "Use namespace import (* as name) if needed",
+        "Verify module documentation for correct import syntax"
+      ],
+      "examples": [
+        "Module 'fs' has no default export",
+        "Module 'react' has no exported member 'Component'"
+      ]
+    },
+    {
+      "id": "ts_jsx_errors",
+      "pattern": "TS2786:.*'([^']+)' cannot be used as a JSX component|TS2604:.*JSX element type .* does not have any construct",
+      "error_code": "TS2786|TS2604",
+      "type": "jsx_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "jsx",
+      "root_cause": "typescript_jsx_component_error",
+      "suggestion": "Fix JSX component type or ensure component returns valid JSX",
+      "tags": ["typescript", "jsx", "react", "components"],
+      "fix_commands": [
+        "Ensure component returns JSX.Element or ReactNode",
+        "Check component function signature",
+        "Import React properly for JSX",
+        "Verify component props interface"
+      ],
+      "examples": [
+        "'MyComponent' cannot be used as a JSX component",
+        "JSX element type 'div' does not have any construct"
+      ]
+    },
+    {
+      "id": "ts_declaration_file_errors",
+      "pattern": "TS7016:.*Could not find a declaration file for module|TS7006:.*Parameter .* implicitly has an 'any' type",
+      "error_code": "TS7016|TS7006",
+      "type": "declaration_error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "type_declarations",
+      "root_cause": "typescript_missing_declarations",
+      "suggestion": "Install type declarations or create custom declaration files",
+      "tags": ["typescript", "declarations", "types", "any"],
+      "fix_commands": [
+        "Install @types package: npm install --save-dev @types/<package>",
+        "Create custom .d.ts declaration file",
+        "Add declare module statements",
+        "Use any type with // @ts-ignore if needed temporarily"
+      ],
+      "examples": [
+        "Could not find a declaration file for module 'some-package'",
+        "Parameter 'event' implicitly has an 'any' type"
+      ]
+    },
+    {
+      "id": "ts_path_mapping_errors",
+      "pattern": "TS2307:.*Cannot find module.*baseUrl|TS5090:.*Option 'baseUrl' cannot be used",
+      "error_code": "TS2307|TS5090",
+      "type": "path_mapping_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "path_mapping",
+      "root_cause": "typescript_path_mapping_error",
+      "suggestion": "Fix path mapping configuration in tsconfig.json",
+      "tags": ["typescript", "paths", "baseUrl", "module-resolution"],
+      "fix_commands": [
+        "Check baseUrl and paths configuration in tsconfig.json",
+        "Ensure paths are relative to baseUrl",
+        "Verify actual file structure matches path mappings",
+        "Use relative imports if path mapping isn't working"
+      ],
+      "examples": [
+        "Cannot find module '@/utils' with baseUrl",
+        "Option 'baseUrl' cannot be used without 'paths'"
+      ]
+    },
+    {
+      "id": "ts_strict_mode_errors",
+      "pattern": "TS2722:.*Cannot invoke an object which is possibly 'undefined'|TS2531:.*Object is possibly 'null'",
+      "error_code": "TS2722|TS2531",
+      "type": "strict_mode_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "strict_checks",
+      "root_cause": "typescript_strict_mode_violation",
+      "suggestion": "Add proper null/undefined checks or disable strict mode",
+      "tags": ["typescript", "strict", "null-checks", "safety"],
+      "fix_commands": [
+        "Add null/undefined checks before accessing",
+        "Use optional chaining (?.) and nullish coalescing (??)",
+        "Use non-null assertion (!) if certain value exists",
+        "Disable strict flags in tsconfig.json if needed",
+        "Add type guards for runtime checking"
+      ],
+      "examples": [
+        "Cannot invoke an object which is possibly 'undefined'",
+        "Object is possibly 'null'"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+// Type assertion template for TypeScript errors
+// Usage: When you need to assert a type for TypeScript compiler
+
+// Option 1: Using 'as' syntax (recommended)
+const value = (unknownValue as TargetType);
+
+// Option 2: Using angle bracket syntax (avoid in JSX)
+const value = (<TargetType>unknownValue);
+
+// Example: Convert any to string
+const userInput = (data as string);
+
+// Example: Assert HTMLElement
+const element = (document.getElementById('myId') as HTMLElement);

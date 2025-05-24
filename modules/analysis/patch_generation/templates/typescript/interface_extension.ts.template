@@ -1,0 +1,31 @@
+// Interface extension template for TypeScript
+// Usage: When properties don't exist on types
+
+// Option 1: Extend existing interface
+interface ExistingInterface {
+    newProperty: string;
+    optionalProperty?: number;
+}
+
+// Option 2: Create new interface extending existing
+interface ExtendedInterface extends ExistingInterface {
+    additionalProperty: boolean;
+}
+
+// Option 3: Intersection types
+type CombinedType = ExistingType & {
+    newProperty: string;
+};
+
+// Option 4: Module augmentation (for third-party modules)
+declare module 'module-name' {
+    interface ExistingInterface {
+        newProperty: string;
+    }
+}
+
+// Option 5: Generic interface
+interface GenericInterface<T> {
+    data: T;
+    process(item: T): T;
+}

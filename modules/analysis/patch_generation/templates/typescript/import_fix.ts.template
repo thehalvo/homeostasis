@@ -1,0 +1,26 @@
+// Import statement templates for TypeScript
+// Usage: When dealing with module resolution errors
+
+// Default import
+import ModuleName from 'module-name';
+
+// Named imports
+import { exportedFunction, exportedVariable } from 'module-name';
+
+// Namespace import
+import * as ModuleName from 'module-name';
+
+// Mixed import
+import DefaultExport, { namedExport } from 'module-name';
+
+// Type-only import (TypeScript 3.8+)
+import type { TypeName } from 'module-name';
+
+// Dynamic import
+const module = await import('module-name');
+
+// CommonJS style (avoid in TypeScript)
+const module = require('module-name'); // Use import instead
+
+// For missing @types packages:
+// npm install --save-dev @types/module-name

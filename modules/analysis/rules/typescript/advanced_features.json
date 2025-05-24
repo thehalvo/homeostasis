@@ -1,0 +1,250 @@
+{
+  "category": "typescript_advanced_features",
+  "description": "TypeScript advanced features errors including generics, decorators, and complex types",
+  "rules": [
+    {
+      "id": "ts_generic_inference_error",
+      "pattern": "TS2344:.*Type '([^']+)' does not satisfy the constraint|TS2416:.*Property '([^']+)' in type '([^']+)' is not assignable",
+      "error_code": "TS2344|TS2416",
+      "type": "generic_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "generics",
+      "root_cause": "typescript_generic_constraint_error",
+      "suggestion": "Fix generic type constraints or provide explicit type arguments",
+      "tags": ["typescript", "generics", "constraints", "inference"],
+      "fix_commands": [
+        "Check generic type constraints",
+        "Provide explicit type arguments: <Type>",
+        "Ensure type satisfies all constraints",
+        "Use conditional types if needed",
+        "Add extends clauses to constrain types"
+      ],
+      "examples": [
+        "Type 'string' does not satisfy the constraint 'number'",
+        "Property 'length' in type 'T' is not assignable to the same property in base type"
+      ]
+    },
+    {
+      "id": "ts_conditional_type_error",
+      "pattern": "TS2589:.*Type instantiation is excessively deep|TS2590:.*Expression produces a union type that is too complex",
+      "error_code": "TS2589|TS2590",
+      "type": "conditional_type_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "conditional_types",
+      "root_cause": "typescript_complex_type_error",
+      "suggestion": "Simplify complex conditional types or use type aliases",
+      "tags": ["typescript", "conditional-types", "complexity", "performance"],
+      "fix_commands": [
+        "Break down complex conditional types into smaller parts",
+        "Use type aliases to simplify complex types",
+        "Avoid deeply recursive conditional types",
+        "Use mapped types instead of complex conditionals",
+        "Consider using utility types from TypeScript"
+      ],
+      "examples": [
+        "Type instantiation is excessively deep and possibly infinite",
+        "Expression produces a union type that is too complex to represent"
+      ]
+    },
+    {
+      "id": "ts_mapped_type_error",
+      "pattern": "TS2322:.*Type '([^']+)' is not assignable.*keyof|TS2536:.*Type '([^']+)' cannot be used to index type",
+      "error_code": "TS2322|TS2536",
+      "type": "mapped_type_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "mapped_types",
+      "root_cause": "typescript_mapped_type_error",
+      "suggestion": "Fix mapped type constraints or key types",
+      "tags": ["typescript", "mapped-types", "keyof", "indexing"],
+      "fix_commands": [
+        "Check keyof constraints in mapped types",
+        "Ensure index type is valid for the object",
+        "Use proper type guards for dynamic keys",
+        "Add constraints to mapped type parameters",
+        "Use Record<K, V> utility type if appropriate"
+      ],
+      "examples": [
+        "Type 'string' cannot be used to index type 'MyObject'",
+        "Type 'keyof T' is not assignable to type 'string'"
+      ]
+    },
+    {
+      "id": "ts_decorator_error",
+      "pattern": "TS1238:.*Unable to resolve signature of class decorator|TS1241:.*Unable to resolve signature of parameter decorator",
+      "error_code": "TS1238|TS1241",
+      "type": "decorator_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "decorators",
+      "root_cause": "typescript_decorator_signature_error",
+      "suggestion": "Fix decorator signature or enable experimental decorators",
+      "tags": ["typescript", "decorators", "experimental", "metadata"],
+      "fix_commands": [
+        "Enable experimentalDecorators in tsconfig.json",
+        "Check decorator function signature",
+        "Ensure decorator returns correct type",
+        "Install required decorator libraries",
+        "Use proper decorator factory pattern"
+      ],
+      "examples": [
+        "Unable to resolve signature of class decorator",
+        "Unable to resolve signature of parameter decorator"
+      ]
+    },
+    {
+      "id": "ts_namespace_error",
+      "pattern": "TS2503:.*Cannot find namespace '([^']+)'|TS2552:.*Cannot find name '([^']+)'.*Did you mean.*namespace",
+      "error_code": "TS2503|TS2552",
+      "type": "namespace_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "namespaces",
+      "root_cause": "typescript_namespace_not_found",
+      "suggestion": "Import namespace or declare ambient namespace",
+      "tags": ["typescript", "namespaces", "ambient", "declarations"],
+      "fix_commands": [
+        "Import namespace with import * as Name",
+        "Declare ambient namespace with declare namespace",
+        "Check namespace spelling and availability",
+        "Use module imports instead of namespaces if possible"
+      ],
+      "examples": [
+        "Cannot find namespace 'NodeJS'",
+        "Cannot find name 'React'. Did you mean the React namespace?"
+      ]
+    },
+    {
+      "id": "ts_intersection_type_error",
+      "pattern": "TS2322:.*Type '([^']+)' is not assignable to type '([^']+) & ([^']+)'",
+      "error_code": "TS2322",
+      "type": "intersection_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "intersection_types",
+      "root_cause": "typescript_intersection_assignment_error",
+      "suggestion": "Ensure object satisfies all types in intersection",
+      "tags": ["typescript", "intersection", "union", "type-composition"],
+      "fix_commands": [
+        "Ensure object has all properties from intersection types",
+        "Use type assertion if object actually satisfies intersection",
+        "Break down intersection into separate type checks",
+        "Use utility types like Partial<T> if some properties optional"
+      ],
+      "examples": [
+        "Type 'A' is not assignable to type 'A & B'",
+        "Property 'prop' is missing in type 'T' but required in type 'T & U'"
+      ]
+    },
+    {
+      "id": "ts_template_literal_error",
+      "pattern": "TS2344:.*Type '([^']+)' does not satisfy the constraint.*template literal",
+      "error_code": "TS2344",
+      "type": "template_literal_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "template_literals",
+      "root_cause": "typescript_template_literal_constraint_error",
+      "suggestion": "Fix template literal type constraints",
+      "tags": ["typescript", "template-literals", "string-manipulation", "constraints"],
+      "fix_commands": [
+        "Check template literal pattern constraints",
+        "Ensure string literal types match template",
+        "Use proper string manipulation utility types",
+        "Simplify complex template literal patterns"
+      ],
+      "examples": [
+        "Type 'hello' does not satisfy the constraint template literal pattern",
+        "Template literal type too complex to represent"
+      ]
+    },
+    {
+      "id": "ts_utility_type_error",
+      "pattern": "TS2344:.*Type '([^']+)' does not satisfy.*Pick|Omit|Record|Partial",
+      "error_code": "TS2344",
+      "type": "utility_type_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "utility_types",
+      "root_cause": "typescript_utility_type_constraint_error",
+      "suggestion": "Fix utility type usage and constraints",
+      "tags": ["typescript", "utility-types", "pick", "omit", "record"],
+      "fix_commands": [
+        "Check utility type parameters",
+        "Ensure keys exist on source type for Pick/Omit",
+        "Use keyof operator for valid keys",
+        "Verify type compatibility with utility types"
+      ],
+      "examples": [
+        "Type 'invalidKey' does not satisfy the constraint 'keyof MyType'",
+        "Type 'string' does not satisfy Record<K, V> constraint"
+      ]
+    },
+    {
+      "id": "ts_recursive_type_error",
+      "pattern": "TS2456:.*Type alias '([^']+)' circularly references itself|TS2495:.*Type '([^']+)' is not generic",
+      "error_code": "TS2456|TS2495",
+      "type": "recursive_type_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "recursive_types",
+      "root_cause": "typescript_circular_reference_error",
+      "suggestion": "Fix circular type references or use proper recursive patterns",
+      "tags": ["typescript", "recursive", "circular", "type-aliases"],
+      "fix_commands": [
+        "Break circular references with intermediate types",
+        "Use interfaces instead of type aliases for recursive types",
+        "Add proper base cases for recursive types",
+        "Use conditional types to control recursion"
+      ],
+      "examples": [
+        "Type alias 'Node' circularly references itself",
+        "Type 'MyType' is not generic but used as one"
+      ]
+    },
+    {
+      "id": "ts_infer_keyword_error",
+      "pattern": "TS1338:.*'infer' declarations are only permitted in the 'extends' clause",
+      "error_code": "TS1338",
+      "type": "infer_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "infer_keyword",
+      "root_cause": "typescript_infer_misuse",
+      "suggestion": "Use infer keyword only in conditional type extends clauses",
+      "tags": ["typescript", "infer", "conditional-types", "type-inference"],
+      "fix_commands": [
+        "Move infer to extends clause of conditional type",
+        "Use proper conditional type pattern: T extends infer U ? ... : ...",
+        "Check conditional type syntax",
+        "Use type parameters instead of infer if not in conditional type"
+      ],
+      "examples": [
+        "'infer' declarations are only permitted in the 'extends' clause of a conditional type",
+        "Cannot use 'infer' outside conditional type"
+      ]
+    }
+  ]
+}

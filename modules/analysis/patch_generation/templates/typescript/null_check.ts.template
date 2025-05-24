@@ -1,0 +1,24 @@
+// Null/undefined check template for TypeScript strict mode
+// Usage: When dealing with possibly null/undefined values
+
+// Option 1: Optional chaining (TypeScript 3.7+)
+const result = obj?.property?.method?.();
+
+// Option 2: Nullish coalescing (TypeScript 3.7+)
+const value = possiblyNullValue ?? defaultValue;
+
+// Option 3: Traditional null check
+if (obj && obj.property) {
+    // Safe to access property
+    const result = obj.property;
+}
+
+// Option 4: Type guard
+function isNotNull<T>(value: T | null | undefined): value is T {
+    return value !== null && value !== undefined;
+}
+
+if (isNotNull(value)) {
+    // TypeScript knows value is not null/undefined here
+    console.log(value.toString());
+}

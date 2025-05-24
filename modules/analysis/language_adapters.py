@@ -3496,3 +3496,307 @@ class ClojureErrorAdapter(LanguageAdapter):
                     lines.append(line_str)
         
         return "\n".join(lines)
+
+
+class TypeScriptErrorAdapter(LanguageAdapter):
+    """Adapter for TypeScript error formats."""
+    
+    def to_standard_format(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert TypeScript error data to the standard format.
+        
+        Args:
+            error_data: TypeScript error data
+            
+        Returns:
+            Error data in the standard format
+        """
+        # Create a standard error object
+        standard_error = {
+            "error_id": str(uuid.uuid4()),
+            "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
+            "language": "typescript",
+            "error_type": error_data.get("name", error_data.get("code", "TSError")),
+            "message": error_data.get("message", "")
+        }
+        
+        # Add TypeScript version if available
+        if "typescript_version" in error_data:
+            standard_error["language_version"] = error_data["typescript_version"]
+        elif "ts_version" in error_data:
+            standard_error["language_version"] = error_data["ts_version"]
+        
+        # Handle TypeScript error codes (TS2304, etc.)
+        if "code" in error_data:
+            if isinstance(error_data["code"], str) and error_data["code"].startswith("TS"):
+                standard_error["error_code"] = error_data["code"]
+                standard_error["error_type"] = error_data["code"]
+            elif isinstance(error_data["code"], int):
+                standard_error["error_code"] = f"TS{error_data['code']}"
+                standard_error["error_type"] = f"TS{error_data['code']}"
+        
+        # Handle TypeScript compiler output format
+        if "file" in error_data and "line" in error_data and "column" in error_data:
+            file_info = {
+                "file": error_data["file"],
+                "line": error_data["line"],
+                "column": error_data.get("column", 0)
+            }
+            standard_error["file_info"] = file_info
+            
+            # Create a simplified stack trace for TypeScript compilation errors
+            stack_frame = f"at {file_info['file']}:{file_info['line']}:{file_info['column']}"
+            standard_error["stack_trace"] = [stack_frame]
+        
+        # Handle stack trace from runtime TypeScript errors
+        if "stack" in error_data:
+            if isinstance(error_data["stack"], str):
+                # Split into lines
+                stack_lines = error_data["stack"].split("\n")
+                
+                # Try to parse structured data from the stack trace
+                parsed_frames = self._parse_ts_stack_trace(stack_lines)
+                
+                if parsed_frames:
+                    standard_error["stack_trace"] = parsed_frames
+                else:
+                    standard_error["stack_trace"] = stack_lines
+            elif isinstance(error_data["stack"], list):
+                # Already in a list format
+                standard_error["stack_trace"] = error_data["stack"]
+        
+        # Add severity based on TypeScript error type
+        if "severity" in error_data:
+            standard_error["severity"] = error_data["severity"]
+        else:
+            # Map TypeScript error types to severity
+            error_type = standard_error.get("error_type", "")
+            if error_type.startswith("TS"):
+                # Compilation errors are typically high severity
+                if error_type in ["TS2304", "TS2305", "TS2307", "TS2322", "TS2339"]:
+                    standard_error["severity"] = "error"
+                elif error_type in ["TS6133", "TS7006"]:
+                    standard_error["severity"] = "warning"
+                else:
+                    standard_error["severity"] = "error"
+            else:
+                standard_error["severity"] = "error"
+        
+        # Add framework information if available
+        if "framework" in error_data:
+            standard_error["framework"] = error_data["framework"]
+            
+            if "framework_version" in error_data:
+                standard_error["framework_version"] = error_data["framework_version"]
+        
+        # Add TypeScript compiler options if available
+        if "compiler_options" in error_data:
+            standard_error["compiler_options"] = error_data["compiler_options"]
+        
+        # Add tsconfig.json path if available
+        if "config_file" in error_data:
+            standard_error["config_file"] = error_data["config_file"]
+        
+        # Add any additional context
+        if "context" in error_data:
+            standard_error["context"] = error_data["context"]
+        
+        # Add request information if available
+        if "request" in error_data:
+            standard_error["request"] = error_data["request"]
+        
+        # Add handled flag if available
+        if "handled" in error_data:
+            standard_error["handled"] = error_data["handled"]
+        
+        # Add additional TypeScript-specific data
+        ts_specific = {}
+        for key, value in error_data.items():
+            if key not in standard_error and key not in ["stack", "request", "context", "file", "line", "column"]:
+                ts_specific[key] = value
+        
+        if ts_specific:
+            standard_error["additional_data"] = ts_specific
+        
+        return standard_error
+    
+    def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data to TypeScript-specific format.
+        
+        Args:
+            standard_error: Error data in the standard format
+            
+        Returns:
+            Error data in the TypeScript-specific format
+        """
+        # Create a TypeScript error object
+        ts_error = {
+            "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
+            "name": standard_error.get("error_type", "TSError"),
+            "message": standard_error.get("message", "")
+        }
+        
+        # Add TypeScript error code if available
+        if "error_code" in standard_error:
+            ts_error["code"] = standard_error["error_code"]
+        elif standard_error.get("error_type", "").startswith("TS"):
+            ts_error["code"] = standard_error["error_type"]
+        
+        # Add file information if available
+        if "file_info" in standard_error:
+            file_info = standard_error["file_info"]
+            ts_error["file"] = file_info.get("file", "")
+            ts_error["line"] = file_info.get("line", 0)
+            ts_error["column"] = file_info.get("column", 0)
+        
+        # Convert severity to TypeScript diagnostic level
+        if "severity" in standard_error:
+            severity_map = {
+                "debug": "suggestion",
+                "info": "info", 
+                "warning": "warning",
+                "error": "error",
+                "critical": "error",
+                "fatal": "error"
+            }
+            ts_error["severity"] = severity_map.get(standard_error["severity"].lower(), "error")
+        
+        # Convert stack trace to TypeScript format
+        if "stack_trace" in standard_error:
+            stack_trace = standard_error["stack_trace"]
+            
+            if isinstance(stack_trace, list):
+                if all(isinstance(frame, str) for frame in stack_trace):
+                    # Already in TypeScript stack trace string format
+                    ts_error["stack"] = "\n".join(stack_trace)
+                elif all(isinstance(frame, dict) for frame in stack_trace):
+                    # Convert structured frames to TypeScript stack trace format
+                    ts_error["stack"] = self._convert_frames_to_ts_stack(standard_error["error_type"], 
+                                                                         standard_error["message"], 
+                                                                         stack_trace)
+        
+        # Add TypeScript version if available
+        if "language_version" in standard_error:
+            ts_error["typescript_version"] = standard_error["language_version"]
+        
+        # Add compiler options if available
+        if "compiler_options" in standard_error:
+            ts_error["compiler_options"] = standard_error["compiler_options"]
+        
+        # Add config file if available
+        if "config_file" in standard_error:
+            ts_error["config_file"] = standard_error["config_file"]
+        
+        # Add framework information if available
+        if "framework" in standard_error:
+            ts_error["framework"] = standard_error["framework"]
+            
+            if "framework_version" in standard_error:
+                ts_error["framework_version"] = standard_error["framework_version"]
+        
+        # Add request information if available
+        if "request" in standard_error:
+            ts_error["request"] = standard_error["request"]
+        
+        # Add context information if available
+        if "context" in standard_error:
+            ts_error["context"] = standard_error["context"]
+        
+        # Add handled flag if available
+        if "handled" in standard_error:
+            ts_error["handled"] = standard_error["handled"]
+        
+        # Add additional data if available
+        if "additional_data" in standard_error:
+            for key, value in standard_error["additional_data"].items():
+                ts_error[key] = value
+        
+        return ts_error
+    
+    def _parse_ts_stack_trace(self, stack_lines: List[str]) -> List[Dict[str, Any]]:
+        """
+        Parse a TypeScript stack trace into structured frames.
+        
+        Args:
+            stack_lines: TypeScript stack trace lines
+            
+        Returns:
+            Structured frames or None if parsing fails
+        """
+        frames = []
+        
+        # TypeScript stack traces are similar to JavaScript but may include .ts files
+        # Chrome: at functionName (file.ts:line:column)
+        # Node.js: at functionName (file.ts:line:column)
+        # TypeScript compilation: file.ts(line,column): error TSxxxx
+        frame_patterns = [
+            r'\s*at\s+([^(]+)\s+\(([^:]+\.tsx?):(\d+):(\d+)\)',  # Chrome/Node with function and TS file
+            r'\s*at\s+([^:]+\.tsx?):(\d+):(\d+)',  # Chrome/Node without function, TS file
+            r'\s*([^@]+)@([^:]+\.tsx?):(\d+):(\d+)',  # Firefox with TS file
+            r'([^(]+)\((\d+),(\d+)\):\s*error\s+TS\d+',  # TypeScript compiler format
+            r'\s*at\s+([^(]+)\s+\(([^:]+):(\d+):(\d+)\)',  # Fallback to regular JS patterns
+            r'\s*at\s+([^:]+):(\d+):(\d+)',  # Fallback without function
+            r'\s*([^@]+)@([^:]+):(\d+):(\d+)'  # Fallback Firefox
+        ]
+        
+        try:
+            for line in stack_lines:
+                for pattern in frame_patterns:
+                    match = re.search(pattern, line)
+                    if match:
+                        groups = match.groups()
+                        
+                        if len(groups) == 4:  # Full match with function
+                            frames.append({
+                                "function": groups[0].strip(),
+                                "file": groups[1],
+                                "line": int(groups[2]),
+                                "column": int(groups[3])
+                            })
+                        elif len(groups) == 3:  # File, line, column (compilation error format)
+                            frames.append({
+                                "function": "<compilation>",
+                                "file": groups[0],
+                                "line": int(groups[1]),
+                                "column": int(groups[2])
+                            })
+                        break
+                        
+            return frames if frames else None
+        except Exception as e:
+            logger.debug(f"Failed to parse TypeScript stack trace: {e}")
+            return None
+    
+    def _convert_frames_to_ts_stack(self, error_type: str, message: str, 
+                                   frames: List[Dict[str, Any]]) -> str:
+        """
+        Convert structured frames to a TypeScript stack trace string.
+        
+        Args:
+            error_type: Error type/name
+            message: Error message
+            frames: Structured frames
+            
+        Returns:
+            TypeScript stack trace string
+        """
+        # Start with the error message
+        stack_lines = [f"{error_type}: {message}"]
+        
+        # Add frames in TypeScript format
+        for frame in frames:
+            function = frame.get("function", "unknown")
+            file_path = frame.get("file", "unknown")
+            line_num = frame.get("line", 0)
+            col_num = frame.get("column", 0)
+            
+            # Format like a TypeScript/JavaScript stack trace
+            if function == "<compilation>":
+                # Compilation error format
+                stack_lines.append(f"    at {file_path}({line_num},{col_num})")
+            else:
+                # Runtime error format
+                stack_lines.append(f"    at {function} ({file_path}:{line_num}:{col_num})")
+        
+        return "\n".join(stack_lines)

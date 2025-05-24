@@ -1,0 +1,256 @@
+{
+  "category": "typescript_type_errors",
+  "description": "TypeScript type checking and type system errors",
+  "rules": [
+    {
+      "id": "ts_2304_cannot_find_name",
+      "error_code": "TS2304",
+      "pattern": "TS2304:.*Cannot find name '([^']+)'",
+      "type": "type_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "type_error",
+      "root_cause": "typescript_undefined_identifier",
+      "suggestion": "Check if the identifier is declared, imported correctly, or install missing type definitions",
+      "tags": ["typescript", "types", "identifiers", "imports"],
+      "fix_commands": [
+        "Verify the identifier is declared in scope",
+        "Check import statements for missing imports",
+        "Install @types packages if using external libraries: npm install --save-dev @types/<library>",
+        "Add type declarations if using custom modules"
+      ],
+      "examples": [
+        "Cannot find name 'React'",
+        "Cannot find name 'process'",
+        "Cannot find name 'Buffer'"
+      ]
+    },
+    {
+      "id": "ts_2322_type_not_assignable",
+      "error_code": "TS2322",
+      "pattern": "TS2322:.*Type '([^']+)' is not assignable to type '([^']+)'",
+      "type": "type_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "type_assignment",
+      "root_cause": "typescript_type_mismatch",
+      "suggestion": "Fix type compatibility by adjusting types, using type assertions, or updating type definitions",
+      "tags": ["typescript", "types", "assignment", "compatibility"],
+      "fix_commands": [
+        "Check type compatibility between source and target",
+        "Use type assertions with 'as' keyword if safe",
+        "Update interface or type definitions",
+        "Use union types if multiple types are acceptable",
+        "Add type guards for runtime type checking"
+      ],
+      "examples": [
+        "Type 'string' is not assignable to type 'number'",
+        "Type 'null' is not assignable to type 'string'",
+        "Type '{ foo: string; }' is not assignable to type '{ bar: number; }'"
+      ]
+    },
+    {
+      "id": "ts_2339_property_not_exist",
+      "error_code": "TS2339",
+      "pattern": "TS2339:.*Property '([^']+)' does not exist on type '([^']+)'",
+      "type": "type_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "property_access",
+      "root_cause": "typescript_missing_property",
+      "suggestion": "Check if property exists, extend interface definitions, or use optional chaining",
+      "tags": ["typescript", "types", "properties", "interfaces"],
+      "fix_commands": [
+        "Verify property name spelling",
+        "Extend interface or type to include the property",
+        "Use optional chaining (?.) for optional properties",
+        "Add property to object before accessing",
+        "Use bracket notation for dynamic properties"
+      ],
+      "examples": [
+        "Property 'length' does not exist on type 'number'",
+        "Property 'foo' does not exist on type '{}'"
+      ]
+    },
+    {
+      "id": "ts_2307_module_not_found",
+      "error_code": "TS2307",
+      "pattern": "TS2307:.*Cannot find module '([^']+)'",
+      "type": "module_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "module_resolution",
+      "root_cause": "typescript_module_not_found",
+      "suggestion": "Install missing module or add type definitions",
+      "tags": ["typescript", "modules", "imports", "dependencies"],
+      "fix_commands": [
+        "Install the module: npm install <module-name>",
+        "Install type definitions: npm install --save-dev @types/<module-name>",
+        "Check import paths and file extensions",
+        "Verify module exists in node_modules",
+        "Add module declaration if no types available"
+      ],
+      "examples": [
+        "Cannot find module 'react'",
+        "Cannot find module './utils'",
+        "Cannot find module '@types/node'"
+      ]
+    },
+    {
+      "id": "ts_2345_argument_not_assignable",
+      "error_code": "TS2345",
+      "pattern": "TS2345:.*Argument of type '([^']+)' is not assignable to parameter of type '([^']+)'",
+      "type": "type_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "function_arguments",
+      "root_cause": "typescript_argument_type_mismatch",
+      "suggestion": "Fix argument type to match function parameter type",
+      "tags": ["typescript", "types", "functions", "parameters"],
+      "fix_commands": [
+        "Check function signature and parameter types",
+        "Convert argument to correct type",
+        "Use type assertion if conversion is safe",
+        "Update function parameter type if needed",
+        "Add function overloads for different argument types"
+      ],
+      "examples": [
+        "Argument of type 'string' is not assignable to parameter of type 'number'",
+        "Argument of type 'null' is not assignable to parameter of type 'string'"
+      ]
+    },
+    {
+      "id": "ts_2540_cannot_assign_readonly",
+      "error_code": "TS2540",
+      "pattern": "TS2540:.*Cannot assign to '([^']+)' because it is a read-only property",
+      "type": "type_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "readonly_property",
+      "root_cause": "typescript_readonly_assignment",
+      "suggestion": "Remove readonly modifier or create a new object with updated values",
+      "tags": ["typescript", "readonly", "immutability", "properties"],
+      "fix_commands": [
+        "Remove readonly modifier from property",
+        "Create new object with spread operator and updated values",
+        "Use Object.assign() to create modified copy",
+        "Use library utilities like lodash.merge for deep updates"
+      ],
+      "examples": [
+        "Cannot assign to 'length' because it is a read-only property",
+        "Cannot assign to 'name' because it is a read-only property"
+      ]
+    },
+    {
+      "id": "ts_2571_object_of_type_unknown",
+      "error_code": "TS2571",
+      "pattern": "TS2571:.*Object is of type 'unknown'",
+      "type": "type_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "unknown_type",
+      "root_cause": "typescript_unknown_type_access",
+      "suggestion": "Use type guards or type assertions to narrow the unknown type",
+      "tags": ["typescript", "unknown", "type-guards", "type-assertions"],
+      "fix_commands": [
+        "Use type guards (typeof, instanceof) to check type",
+        "Use type assertion with 'as' if you know the type",
+        "Use in operator to check for properties",
+        "Add runtime type checking",
+        "Use user-defined type guards"
+      ],
+      "examples": [
+        "Object is of type 'unknown'",
+        "Property 'foo' does not exist on type 'unknown'"
+      ]
+    },
+    {
+      "id": "ts_2564_only_refers_to_type",
+      "error_code": "TS2564",
+      "pattern": "TS2564:.*Property '([^']+)' has no initializer and is not definitely assigned in the constructor",
+      "type": "type_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "definite_assignment",
+      "root_cause": "typescript_uninitialized_property",
+      "suggestion": "Initialize property, use definite assignment assertion, or make property optional",
+      "tags": ["typescript", "properties", "initialization", "constructor"],
+      "fix_commands": [
+        "Initialize property with default value",
+        "Initialize property in constructor",
+        "Use definite assignment assertion (!) if guaranteed to be assigned",
+        "Make property optional with ?",
+        "Use union type with undefined"
+      ],
+      "examples": [
+        "Property 'name' has no initializer and is not definitely assigned in the constructor"
+      ]
+    },
+    {
+      "id": "ts_generic_constraint_error",
+      "pattern": "TS2344:.*Type '([^']+)' does not satisfy the constraint '([^']+)'",
+      "error_code": "TS2344",
+      "type": "generic_error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "generic_constraints",
+      "root_cause": "typescript_generic_constraint_violation",
+      "suggestion": "Ensure the generic type argument satisfies the constraint",
+      "tags": ["typescript", "generics", "constraints", "type-parameters"],
+      "fix_commands": [
+        "Check generic constraint requirements",
+        "Ensure type argument extends the constraint",
+        "Add required properties to satisfy constraint",
+        "Use conditional types if needed",
+        "Relax constraint if too restrictive"
+      ],
+      "examples": [
+        "Type 'string' does not satisfy the constraint 'number'",
+        "Type '{}' does not satisfy the constraint 'keyof T'"
+      ]
+    },
+    {
+      "id": "ts_strict_null_check_error",
+      "pattern": "TS2531:.*Object is possibly 'null'|TS2532:.*Object is possibly 'undefined'",
+      "error_code": "TS2531|TS2532",
+      "type": "null_check_error",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "category": "typescript",
+      "subcategory": "strict_null_checks",
+      "root_cause": "typescript_possible_null_undefined",
+      "suggestion": "Add null/undefined checks or use optional chaining",
+      "tags": ["typescript", "null-checks", "strict-mode", "optional-chaining"],
+      "fix_commands": [
+        "Add null/undefined check before accessing",
+        "Use optional chaining (?.) operator",
+        "Use nullish coalescing (??) operator",
+        "Use non-null assertion (!) if certain value exists",
+        "Add type guard to ensure value is not null/undefined"
+      ],
+      "examples": [
+        "Object is possibly 'null'",
+        "Object is possibly 'undefined'"
+      ]
+    }
+  ]
+}

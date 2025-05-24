@@ -156,7 +156,8 @@ When running the demo for the first time, you might encounter these issues:
 Homeostasis currently provides support for the following programming languages:
 
 - **Python**: Primary language with extensive support for most Python frameworks
-- **JavaScript/TypeScript**: Support for Node.js environments and common JavaScript errors 
+- **JavaScript**: Support for Node.js environments, browser environments, and common JavaScript errors
+- **TypeScript**: Full TypeScript support including compilation errors, type system validation, JSX/TSX handling, and framework integration 
 - **Java**: Support for Java exceptions, Spring Framework, Hibernate/JPA, and concurrency issues
 - **Go**: Support for Go runtime errors, goroutine management, and web frameworks like Gin and Echo
 - **Ruby**: Support for Ruby exceptions, Rails ActiveRecord, Sinatra/Rack, and metaprogramming patterns
@@ -169,7 +170,8 @@ Homeostasis currently provides support for the following programming languages:
 
 For more information about language integrations, see:
 - [Python Integration](docs/python_integration.md)
-- [JavaScript/TypeScript Integration](docs/javascript_integration.md)
+- [JavaScript Integration](docs/javascript_integration.md)
+- [TypeScript Integration](docs/typescript_integration.md)
 - [Java Integration](docs/java_integration.md)
 - [Go Integration](docs/go_integration.md)
 - [Ruby Integration](docs/ruby_integration.md)
@@ -194,7 +196,8 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Framework Support**: Expanded framework support with Django middleware, Flask blueprint-specific error handling, FastAPI dependency analysis, and ASGI framework support
 - **Python Ecosystem**: Added support for Python 3.11+ features, Celery tasks, asyncio-specific error detection, NumPy/Pandas error handling, and AI/ML library error detection
 - **Multi-Language Support**: Implemented language-agnostic error schema with support for JavaScript/Node.js and Java through a pluggable adapter architecture
-- **JavaScript Core Support**: Expanded JavaScript/TypeScript language plugin with browser and Node.js error handling, dependency analysis, transpilation error detection, and automated fix generation
+- **JavaScript Core Support**: Expanded JavaScript language plugin with browser and Node.js error handling, dependency analysis, transpilation error detection, and automated fix generation
+- **TypeScript Integration**: Added full TypeScript support with compilation error detection, type system error analysis, JSX/TSX handling, module resolution fixes, and framework integration for React, Angular, Vue, and Node.js
 - **Java Integration**: Added support for Java exceptions, Spring Framework, Hibernate/JPA, and Java concurrency issues, and Maven/Gradle build analysis
 - **Go Integration**: Added support for Go runtime errors, goroutine deadlock detection, web frameworks (Gin, Echo), and common concurrency patterns
 - **Ruby Integration**: Added support for Ruby exceptions, Rails ActiveRecord errors, Sinatra/Rack frameworks, and Ruby metaprogramming patterns
