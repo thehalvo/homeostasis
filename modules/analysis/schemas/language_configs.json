@@ -346,5 +346,90 @@
     },
     "file_extensions": [".ts", ".tsx", ".d.ts"],
     "config_files": ["tsconfig.json", "jsconfig.json"]
+  },
+  "react": {
+    "language": "react",
+    "field_mappings": {
+      "error_type": ["name", "type"],
+      "message": "message",
+      "stack_trace": ["stack", "stacktrace", "stack_trace"],
+      "component_stack": ["componentStack", "component_stack"]
+    },
+    "stack_trace_fields": ["stack", "stacktrace", "stack_trace"],
+    "stack_trace_format": "string",
+    "version_fields": ["react_version", "framework_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version", "react_version"],
+    "detection_patterns": [
+      "(?:Invalid hook call)",
+      "(?:Hooks can only be called)",
+      "(?:React Hook .* has a missing dependency)",
+      "(?:exhaustive-deps)",
+      "(?:Each child in a list should have a unique \"key\" prop)",
+      "(?:'React' must be in scope when using JSX)",
+      "(?:Objects are not valid as a React child)",
+      "(?:Functions are not valid as a React child)",
+      "(?:Cannot read .* of undefined.*setState)",
+      "(?:useContext must be used within.*Provider)",
+      "(?:at.*\\.(jsx|tsx):\\d+:\\d+)",
+      "(?:in (\\w+) \\(at [^)]+\\.(jsx|tsx):\\d+:\\d+\\))",
+      "(?:React.*component)",
+      "(?:Component.*React)",
+      "(?:JSX element)",
+      "(?:redux.*store)",
+      "(?:dispatch.*action)",
+      "(?:unnecessary re-renders)",
+      "(?:hydration.*mismatch)",
+      "(?:server.*component)",
+      "(?:client.*code.*server)",
+      "(?:use client)",
+      "(?:use server)"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "error",
+      "fatal": "fatal"
+    },
+    "component_stack_patterns": [
+      "(?:in (\\w+) \\(at [^)]+\\.(jsx|tsx):\\d+:\\d+\\))",
+      "(?:at (\\w+) \\([^)]+\\))"
+    ],
+    "file_extensions": [".jsx", ".tsx", ".js", ".ts"],
+    "config_files": ["package.json", "vite.config.js", "webpack.config.js", "next.config.js"],
+    "hooks": [
+      "useState", "useEffect", "useContext", "useReducer", "useCallback", 
+      "useMemo", "useRef", "useImperativeHandle", "useLayoutEffect", 
+      "useDebugValue", "useDeferredValue", "useTransition", "useId",
+      "useSyncExternalStore", "useInsertionEffect"
+    ],
+    "lifecycle_methods": [
+      "componentDidMount", "componentDidUpdate", "componentWillUnmount",
+      "shouldComponentUpdate", "getSnapshotBeforeUpdate", "componentDidCatch",
+      "getDerivedStateFromProps", "getDerivedStateFromError"
+    ],
+    "react_patterns": {
+      "hooks_rules": {
+        "only_in_function_components": true,
+        "call_at_top_level": true,
+        "no_conditional_calls": true,
+        "no_loop_calls": true,
+        "exhaustive_dependencies": true
+      },
+      "jsx_rules": {
+        "require_react_import": false,
+        "require_key_props": true,
+        "no_invalid_children": true,
+        "proper_event_handlers": true
+      },
+      "performance_rules": {
+        "avoid_inline_objects": true,
+        "use_memo_for_expensive_calculations": true,
+        "virtualize_large_lists": true,
+        "code_splitting": true
+      }
+    }
   }
 }

@@ -1,0 +1,229 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "react",
+    "description": "React Server Components and SSR error rules"
+  },
+  "rules": [
+    {
+      "id": "react_server_component_client_code",
+      "category": "server_components",
+      "subcategory": "client_code",
+      "pattern": "client.*code.*server component|browser.*API.*server",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_server_component_client_code",
+      "suggestion": "Remove client-side code from Server Components or mark component as 'use client'",
+      "fix_commands": [
+        "Add 'use client' directive at the top of the file",
+        "Move browser APIs to Client Components",
+        "Remove event handlers from Server Components",
+        "Use Server Actions for server-side interactions"
+      ],
+      "tags": ["react", "server-components", "client-code", "ssr"],
+      "examples": [
+        "Using window object in Server Component",
+        "Event handlers in Server Component"
+      ]
+    },
+    {
+      "id": "react_hydration_mismatch",
+      "category": "server_components",
+      "subcategory": "hydration",
+      "pattern": "hydration.*mismatch|server.*client.*mismatch",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_hydration_mismatch",
+      "suggestion": "Ensure server and client render the same content initially",
+      "fix_commands": [
+        "Use useEffect for client-only content",
+        "Avoid random values or timestamps in SSR",
+        "Use suppressHydrationWarning sparingly for unavoidable differences",
+        "Implement proper loading states for dynamic content"
+      ],
+      "tags": ["react", "hydration", "ssr", "server-components"],
+      "examples": [
+        "Different content rendered on server vs client",
+        "Random IDs causing hydration mismatch"
+      ]
+    },
+    {
+      "id": "react_server_action_error",
+      "category": "server_components",
+      "subcategory": "server_actions",
+      "pattern": "server action.*error|action.*server.*failed",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_server_action_error",
+      "suggestion": "Check Server Action implementation and error handling",
+      "fix_commands": [
+        "Add 'use server' directive to server actions",
+        "Implement proper error handling in server actions",
+        "Validate input data in server actions",
+        "Use try-catch blocks in server actions"
+      ],
+      "tags": ["react", "server-actions", "server-components", "error-handling"],
+      "examples": [
+        "Missing 'use server' directive",
+        "Unhandled errors in server actions"
+      ]
+    },
+    {
+      "id": "react_ssr_window_undefined",
+      "category": "server_components",
+      "subcategory": "ssr_window",
+      "pattern": "window is not defined|document is not defined",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_ssr_window_undefined",
+      "suggestion": "Check for browser globals before using them in SSR",
+      "fix_commands": [
+        "Use typeof window !== 'undefined' checks",
+        "Move browser-specific code to useEffect",
+        "Use 'use client' directive for browser-dependent components",
+        "Implement proper SSR-safe patterns"
+      ],
+      "tags": ["react", "ssr", "window", "server-components"],
+      "examples": [
+        "Accessing window during SSR",
+        "Using localStorage on server"
+      ]
+    },
+    {
+      "id": "react_streaming_suspense_missing",
+      "category": "server_components",
+      "subcategory": "streaming",
+      "pattern": "streaming.*suspense.*missing|suspense boundary.*required",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_streaming_suspense_missing",
+      "suggestion": "Add Suspense boundaries for streaming SSR",
+      "fix_commands": [
+        "Wrap async components with Suspense",
+        "Provide fallback UI for loading states",
+        "Use Suspense boundaries at appropriate levels",
+        "Implement progressive enhancement patterns"
+      ],
+      "tags": ["react", "streaming", "suspense", "server-components"],
+      "examples": [
+        "Missing Suspense boundary for async component",
+        "Streaming without proper loading states"
+      ]
+    },
+    {
+      "id": "react_client_component_serialization",
+      "category": "server_components",
+      "subcategory": "serialization",
+      "pattern": "serialization.*error|cannot.*serialize.*prop",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_client_component_serialization",
+      "suggestion": "Only pass serializable props from Server to Client Components",
+      "fix_commands": [
+        "Remove functions from props passed to Client Components",
+        "Pass plain objects and primitives only",
+        "Use Server Actions for server-side functions",
+        "Serialize complex data before passing to client"
+      ],
+      "tags": ["react", "serialization", "client-components", "props"],
+      "examples": [
+        "Passing functions as props to Client Components",
+        "Non-serializable objects in props"
+      ]
+    },
+    {
+      "id": "react_server_component_state",
+      "category": "server_components",
+      "subcategory": "state",
+      "pattern": "useState.*server component|state.*not.*allowed.*server",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_server_component_state",
+      "suggestion": "Server Components cannot use state - move to Client Component or use server-side storage",
+      "fix_commands": [
+        "Add 'use client' directive to use React state",
+        "Use server-side storage (database, session) for persistent data",
+        "Move stateful logic to Client Components",
+        "Use URL search params for server-side state"
+      ],
+      "tags": ["react", "server-components", "state", "useState"],
+      "examples": [
+        "useState in Server Component",
+        "Local state in server-rendered component"
+      ]
+    },
+    {
+      "id": "react_server_component_effects",
+      "category": "server_components",
+      "subcategory": "effects",
+      "pattern": "useEffect.*server component|effect.*not.*allowed.*server",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_server_component_effects",
+      "suggestion": "Server Components cannot use effects - move to Client Component",
+      "fix_commands": [
+        "Add 'use client' directive to use useEffect",
+        "Move side effects to Client Components",
+        "Use server-side data fetching instead of effects",
+        "Implement data fetching in Server Components directly"
+      ],
+      "tags": ["react", "server-components", "effects", "useEffect"],
+      "examples": [
+        "useEffect in Server Component",
+        "Side effects in server-rendered component"
+      ]
+    },
+    {
+      "id": "react_app_router_metadata_error",
+      "category": "server_components",
+      "subcategory": "metadata",
+      "pattern": "metadata.*error|generateMetadata.*error",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_app_router_metadata_error",
+      "suggestion": "Fix metadata generation in App Router layout or page",
+      "fix_commands": [
+        "Check generateMetadata function implementation",
+        "Ensure metadata object structure is correct",
+        "Handle async metadata generation properly",
+        "Validate metadata fields and types"
+      ],
+      "tags": ["react", "app-router", "metadata", "next.js"],
+      "examples": [
+        "Invalid metadata object structure",
+        "Error in generateMetadata function"
+      ]
+    },
+    {
+      "id": "react_server_component_import_client",
+      "category": "server_components",
+      "subcategory": "imports",
+      "pattern": "client.*component.*imported.*server|import.*client.*server",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_server_component_import_client",
+      "suggestion": "Be careful when importing Client Components into Server Components",
+      "fix_commands": [
+        "Import Client Components only when needed",
+        "Use dynamic imports for conditional Client Components",
+        "Consider component composition to reduce client boundaries",
+        "Pass server data as props to Client Components"
+      ],
+      "tags": ["react", "server-components", "client-components", "imports"],
+      "examples": [
+        "Heavy Client Component imported in Server Component",
+        "Unnecessary client boundary creation"
+      ]
+    }
+  ]
+}

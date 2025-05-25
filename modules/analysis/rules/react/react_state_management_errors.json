@@ -1,0 +1,219 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "react",
+    "description": "React state management error rules for Redux, Context, and component state"
+  },
+  "rules": [
+    {
+      "id": "redux_store_not_connected",
+      "category": "redux",
+      "subcategory": "store_connection",
+      "pattern": "Cannot read.*store|store is undefined|useSelector.*store",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "redux_store_not_connected",
+      "suggestion": "Wrap your app with Redux Provider and ensure store is properly configured",
+      "fix_commands": [
+        "Import { Provider } from 'react-redux'",
+        "Wrap App component with <Provider store={store}>",
+        "Create and configure Redux store using createStore or configureStore"
+      ],
+      "tags": ["react", "redux", "store", "provider"],
+      "examples": [
+        "useSelector called without Provider",
+        "Missing Redux store configuration"
+      ]
+    },
+    {
+      "id": "redux_action_not_dispatched",
+      "category": "redux",
+      "subcategory": "dispatch",
+      "pattern": "Action.*not dispatched|useDispatch.*undefined",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "redux_action_not_dispatched",
+      "suggestion": "Use useDispatch hook or connect mapDispatchToProps to dispatch actions",
+      "fix_commands": [
+        "const dispatch = useDispatch(); dispatch(actionCreator())",
+        "Import action creators and dispatch them properly",
+        "Check that action creators return valid action objects"
+      ],
+      "tags": ["react", "redux", "dispatch", "actions"],
+      "examples": [
+        "Calling action creator without dispatch",
+        "Missing useDispatch hook"
+      ]
+    },
+    {
+      "id": "redux_reducer_mutation",
+      "category": "redux",
+      "subcategory": "immutability",
+      "pattern": "A non-serializable value.*detected|Reducer.*mutating state",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "redux_reducer_mutation",
+      "suggestion": "Reducers must return new state objects without mutating the original state",
+      "fix_commands": [
+        "Use spread operator: return { ...state, property: newValue }",
+        "Use Array.concat() or spread for arrays instead of push/splice",
+        "Consider using Redux Toolkit's createSlice for immutable updates"
+      ],
+      "tags": ["react", "redux", "reducers", "immutability"],
+      "examples": [
+        "state.property = newValue in reducer",
+        "state.array.push(item) in reducer"
+      ]
+    },
+    {
+      "id": "context_provider_missing_value",
+      "category": "context",
+      "subcategory": "provider_value",
+      "pattern": "Context Provider.*missing value|Provider.*undefined value",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "context_provider_missing_value",
+      "suggestion": "Provide a value prop to Context Provider",
+      "fix_commands": [
+        "Add value prop to Provider: <Context.Provider value={contextValue}>",
+        "Ensure contextValue is defined and not undefined",
+        "Consider using useState or useReducer to manage context value"
+      ],
+      "tags": ["react", "context", "provider", "value"],
+      "examples": [
+        "<Context.Provider> without value prop",
+        "Provider value is undefined"
+      ]
+    },
+    {
+      "id": "context_multiple_providers",
+      "category": "context",
+      "subcategory": "multiple_providers",
+      "pattern": "Multiple.*Provider.*same context|Context.*nested providers",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "context_multiple_providers",
+      "suggestion": "Be careful with nested Context Providers - inner Provider will override outer one",
+      "fix_commands": [
+        "Check if multiple Providers are intentional",
+        "Consider combining context values if they should be shared",
+        "Use different contexts for different concerns"
+      ],
+      "tags": ["react", "context", "provider", "nesting"],
+      "examples": [
+        "Same Context Provider used multiple times in tree",
+        "Accidentally nested same Provider"
+      ]
+    },
+    {
+      "id": "state_closure_stale",
+      "category": "state",
+      "subcategory": "closure",
+      "pattern": "stale closure|state.*not updating.*callback",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_stale_closure",
+      "suggestion": "Use functional setState updates or include state in useEffect dependencies",
+      "fix_commands": [
+        "Use setState(prevState => prevState + 1) instead of setState(state + 1)",
+        "Add state to useEffect dependency array",
+        "Use useCallback with proper dependencies"
+      ],
+      "tags": ["react", "state", "closure", "useEffect"],
+      "examples": [
+        "setTimeout using stale state value",
+        "Event handler with stale state"
+      ]
+    },
+    {
+      "id": "redux_toolkit_mutation_outside_reducer",
+      "category": "redux",
+      "subcategory": "rtk_mutation",
+      "pattern": "Immer.*mutation.*outside.*reducer|RTK.*mutation",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "rtk_mutation_outside_reducer",
+      "suggestion": "Direct state mutations are only allowed inside Redux Toolkit reducers",
+      "fix_commands": [
+        "Use dispatch to update Redux state from components",
+        "Move mutation logic into reducer using createSlice",
+        "Use immutable updates in components for local state"
+      ],
+      "tags": ["react", "redux", "redux-toolkit", "mutation"],
+      "examples": [
+        "Mutating Redux state directly in component",
+        "store.getState().property = newValue"
+      ]
+    },
+    {
+      "id": "context_performance_issue",
+      "category": "context",
+      "subcategory": "performance",
+      "pattern": "Context.*causing.*re-renders|Context.*performance",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "context_performance_issue",
+      "suggestion": "Split context or memoize context value to prevent unnecessary re-renders",
+      "fix_commands": [
+        "Split large context into smaller, focused contexts",
+        "Memoize context value: const value = useMemo(() => ({ state, actions }), [state])",
+        "Use React.memo for components that consume context"
+      ],
+      "tags": ["react", "context", "performance", "re-renders"],
+      "examples": [
+        "Large context causing frequent re-renders",
+        "Context value created on every render"
+      ]
+    },
+    {
+      "id": "redux_async_action_error",
+      "category": "redux",
+      "subcategory": "async_actions",
+      "pattern": "Async action.*error|Thunk.*error|createAsyncThunk.*error",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "redux_async_action_error",
+      "suggestion": "Handle async action errors properly in reducers and components",
+      "fix_commands": [
+        "Add error handling in async thunk actions",
+        "Handle rejected actions in extraReducers",
+        "Display error states in UI components"
+      ],
+      "tags": ["react", "redux", "async", "thunk", "error-handling"],
+      "examples": [
+        "Unhandled promise rejection in thunk",
+        "Missing error state in reducer"
+      ]
+    },
+    {
+      "id": "state_batch_updates",
+      "category": "state",
+      "subcategory": "batching",
+      "pattern": "setState.*not.*batched|Multiple setState.*same render",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "react_state_batch_updates",
+      "suggestion": "React 18+ automatically batches state updates, but be aware of timing",
+      "fix_commands": [
+        "Use functional setState updates for related state changes",
+        "Consider using useReducer for complex state logic",
+        "Be aware that updates in timeouts/promises may not be batched in React 17"
+      ],
+      "tags": ["react", "state", "batching", "react-18"],
+      "examples": [
+        "Multiple setState calls in same event handler",
+        "setState in setTimeout not batched"
+      ]
+    }
+  ]
+}

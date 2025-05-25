@@ -1,0 +1,18 @@
+// Fix for missing dependencies in React hooks
+// Original pattern: useEffect(() => { ... }, [])
+// Fixed pattern: useEffect(() => { ... }, [dependency1, dependency2])
+
+useEffect(() => {
+  // ${EFFECT_BODY}
+}, [${DEPENDENCIES}]);
+
+// Alternative with useCallback:
+const memoizedCallback = useCallback(() => {
+  // ${CALLBACK_BODY}
+}, [${DEPENDENCIES}]);
+
+// Alternative with useMemo:
+const memoizedValue = useMemo(() => {
+  // ${MEMO_COMPUTATION}
+  return computedValue;
+}, [${DEPENDENCIES}]);

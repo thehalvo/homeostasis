@@ -1,0 +1,219 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "react",
+    "description": "React Hooks specific error rules and validations"
+  },
+  "rules": [
+    {
+      "id": "react_hooks_conditional_call",
+      "category": "hooks",
+      "subcategory": "conditional",
+      "pattern": "React Hook.*is called conditionally|conditional Hook call",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_conditional_hook_call",
+      "suggestion": "Hooks must be called in the same order every time - move hook calls outside conditions",
+      "fix_commands": [
+        "Move hook calls to the top level of the component",
+        "Use conditional logic inside hooks, not around them",
+        "Create separate hooks for different conditions if needed"
+      ],
+      "tags": ["react", "hooks", "conditional", "rules-of-hooks"],
+      "examples": [
+        "if (condition) { useState(value); }",
+        "early return before hook calls"
+      ]
+    },
+    {
+      "id": "react_hooks_loop_call",
+      "category": "hooks",
+      "subcategory": "loop",
+      "pattern": "React Hook.*called in a loop|Hook call in loop",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_hook_in_loop",
+      "suggestion": "Never call hooks inside loops - use arrays or objects to manage multiple values",
+      "fix_commands": [
+        "Use single useState with array/object for multiple values",
+        "Create a custom hook that manages the collection",
+        "Move hook calls outside the loop"
+      ],
+      "tags": ["react", "hooks", "loops", "rules-of-hooks"],
+      "examples": [
+        "for loop containing useState calls",
+        "map function with hook calls"
+      ]
+    },
+    {
+      "id": "react_usestate_direct_mutation",
+      "category": "hooks",
+      "subcategory": "mutation",
+      "pattern": "Direct mutation of state|setState.*mutating state directly",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_state_direct_mutation",
+      "suggestion": "Create new state objects instead of mutating existing ones",
+      "fix_commands": [
+        "Use spread operator to create new objects/arrays",
+        "Use immer library for complex state updates",
+        "Use functional setState updates for state based on previous state"
+      ],
+      "tags": ["react", "hooks", "useState", "immutability"],
+      "examples": [
+        "state.push(newItem) instead of setState([...state, newItem])",
+        "state.property = newValue"
+      ]
+    },
+    {
+      "id": "react_useeffect_missing_cleanup",
+      "category": "hooks",
+      "subcategory": "cleanup",
+      "pattern": "useEffect.*memory leak|Effect cleanup missing",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_useeffect_missing_cleanup",
+      "suggestion": "Return cleanup function from useEffect for subscriptions, timers, and async operations",
+      "fix_commands": [
+        "Return cleanup function from useEffect",
+        "Clear timeouts and intervals in cleanup",
+        "Unsubscribe from event listeners and observables"
+      ],
+      "tags": ["react", "hooks", "useEffect", "cleanup", "memory-leak"],
+      "examples": [
+        "setInterval without clearInterval",
+        "event listeners without removeEventListener"
+      ]
+    },
+    {
+      "id": "react_usecallback_missing_deps",
+      "category": "hooks",
+      "subcategory": "dependencies",
+      "pattern": "useCallback.*missing.*dependency|useCallback hook.*exhaustive-deps",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_usecallback_missing_deps",
+      "suggestion": "Include all variables used inside useCallback in the dependency array",
+      "fix_commands": [
+        "Add missing variables to useCallback dependency array",
+        "Move variables inside useCallback if they're constants",
+        "Use useRef for values that shouldn't trigger re-creation"
+      ],
+      "tags": ["react", "hooks", "useCallback", "dependencies"],
+      "examples": [
+        "useCallback using props without including them in deps",
+        "useCallback using state without including it in deps"
+      ]
+    },
+    {
+      "id": "react_usememo_missing_deps",
+      "category": "hooks",
+      "subcategory": "dependencies",
+      "pattern": "useMemo.*missing.*dependency|useMemo hook.*exhaustive-deps",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_usememo_missing_deps",
+      "suggestion": "Include all variables used inside useMemo in the dependency array",
+      "fix_commands": [
+        "Add missing variables to useMemo dependency array",
+        "Move calculations inside useMemo if they're constants",
+        "Consider if useMemo is actually needed for performance"
+      ],
+      "tags": ["react", "hooks", "useMemo", "dependencies"],
+      "examples": [
+        "useMemo computing value using props without including them in deps",
+        "useMemo using state without including it in deps"
+      ]
+    },
+    {
+      "id": "react_custom_hook_invalid_return",
+      "category": "hooks",
+      "subcategory": "custom_hooks",
+      "pattern": "Custom hook.*invalid return|Hook.*must return",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_custom_hook_invalid_return",
+      "suggestion": "Custom hooks should return values that components can use",
+      "fix_commands": [
+        "Return state and setState functions from custom hooks",
+        "Return objects or arrays with named properties",
+        "Document what the custom hook returns"
+      ],
+      "tags": ["react", "hooks", "custom-hooks", "return-value"],
+      "examples": [
+        "Custom hook not returning anything",
+        "Custom hook returning undefined"
+      ]
+    },
+    {
+      "id": "react_useref_current_null",
+      "category": "hooks",
+      "subcategory": "useRef",
+      "pattern": "Cannot read.*current.*of null|useRef.*current is null",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_useref_current_null",
+      "suggestion": "Check if ref.current exists before accessing it",
+      "fix_commands": [
+        "Add null check: if (ref.current) { ... }",
+        "Use optional chaining: ref.current?.method()",
+        "Ensure ref is attached to a DOM element"
+      ],
+      "tags": ["react", "hooks", "useRef", "null-check"],
+      "examples": [
+        "Accessing ref.current before component mount",
+        "Using ref with conditional rendering"
+      ]
+    },
+    {
+      "id": "react_usecontext_no_provider",
+      "category": "hooks",
+      "subcategory": "useContext",
+      "pattern": "useContext.*must be used within.*Provider|Context.*outside.*Provider",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_usecontext_no_provider",
+      "suggestion": "Wrap component with the appropriate Context Provider",
+      "fix_commands": [
+        "Add Context.Provider higher in the component tree",
+        "Check that Provider is wrapping the component using useContext",
+        "Verify Provider is imported and used correctly"
+      ],
+      "tags": ["react", "hooks", "useContext", "provider"],
+      "examples": [
+        "useContext called outside Provider component",
+        "Missing Provider in component tree"
+      ]
+    },
+    {
+      "id": "react_hook_wrong_component_type",
+      "category": "hooks",
+      "subcategory": "component_type",
+      "pattern": "Invalid hook call.*class component|Hooks.*only.*function components",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_hook_in_class_component",
+      "suggestion": "Hooks can only be used in function components, not class components",
+      "fix_commands": [
+        "Convert class component to function component",
+        "Use class component lifecycle methods instead of hooks",
+        "Create a custom hook and use it in a function component wrapper"
+      ],
+      "tags": ["react", "hooks", "class-component", "function-component"],
+      "examples": [
+        "useState in class component",
+        "useEffect in class component"
+      ]
+    }
+  ]
+}

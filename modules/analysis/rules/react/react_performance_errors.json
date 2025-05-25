@@ -1,0 +1,229 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "react",
+    "description": "React performance optimization and error rules"
+  },
+  "rules": [
+    {
+      "id": "react_unnecessary_rerenders",
+      "category": "performance",
+      "subcategory": "re_renders",
+      "pattern": "unnecessary re-renders|component re-rendering too often",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_unnecessary_rerenders",
+      "suggestion": "Use React.memo, useMemo, or useCallback to prevent unnecessary re-renders",
+      "fix_commands": [
+        "Wrap component with React.memo for pure components",
+        "Use useMemo for expensive calculations",
+        "Use useCallback for function props to prevent child re-renders",
+        "Split state to reduce re-render scope"
+      ],
+      "tags": ["react", "performance", "re-renders", "optimization"],
+      "examples": [
+        "Component re-rendering on every parent update",
+        "Expensive calculations running on every render"
+      ]
+    },
+    {
+      "id": "react_large_component_tree",
+      "category": "performance",
+      "subcategory": "component_tree",
+      "pattern": "component tree too large|too many components",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "react_large_component_tree",
+      "suggestion": "Break down large components into smaller, focused components",
+      "fix_commands": [
+        "Split large components into smaller ones",
+        "Use lazy loading for components not immediately visible",
+        "Implement virtualization for large lists",
+        "Consider code splitting at the route level"
+      ],
+      "tags": ["react", "performance", "component-tree", "optimization"],
+      "examples": [
+        "Single component with hundreds of lines",
+        "Deep nesting of components"
+      ]
+    },
+    {
+      "id": "react_inefficient_list_rendering",
+      "category": "performance",
+      "subcategory": "list_rendering",
+      "pattern": "inefficient list rendering|list performance",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_inefficient_list_rendering",
+      "suggestion": "Implement virtualization or pagination for large lists",
+      "fix_commands": [
+        "Use React Window or React Virtualized for large lists",
+        "Implement pagination or infinite scrolling",
+        "Add proper key props for list items",
+        "Memoize list item components"
+      ],
+      "tags": ["react", "performance", "lists", "virtualization"],
+      "examples": [
+        "Rendering thousands of list items at once",
+        "Large lists without virtualization"
+      ]
+    },
+    {
+      "id": "react_inline_object_creation",
+      "category": "performance",
+      "subcategory": "inline_objects",
+      "pattern": "inline object creation|object created in render",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_inline_object_creation",
+      "suggestion": "Move object creation outside render or use useMemo",
+      "fix_commands": [
+        "Move constant objects outside the component",
+        "Use useMemo for complex object creation",
+        "Use useCallback for inline functions",
+        "Extract object creation to custom hooks"
+      ],
+      "tags": ["react", "performance", "inline-objects", "useMemo"],
+      "examples": [
+        "style={{}} objects created on every render",
+        "Complex objects created in JSX"
+      ]
+    },
+    {
+      "id": "react_expensive_computation_in_render",
+      "category": "performance",
+      "subcategory": "expensive_computation",
+      "pattern": "expensive computation.*render|computation blocking render",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_expensive_computation_in_render",
+      "suggestion": "Move expensive computations to useMemo or useEffect",
+      "fix_commands": [
+        "Use useMemo for expensive calculations",
+        "Move computations to useEffect if they're not needed for rendering",
+        "Consider using Web Workers for heavy computations",
+        "Implement lazy evaluation patterns"
+      ],
+      "tags": ["react", "performance", "computation", "useMemo"],
+      "examples": [
+        "Heavy data processing in render function",
+        "Complex calculations without memoization"
+      ]
+    },
+    {
+      "id": "react_bundle_size_large",
+      "category": "performance",
+      "subcategory": "bundle_size",
+      "pattern": "bundle size.*large|chunk size.*large",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "react_bundle_size_large",
+      "suggestion": "Implement code splitting and lazy loading to reduce bundle size",
+      "fix_commands": [
+        "Use React.lazy() for route-based code splitting",
+        "Implement dynamic imports for heavy components",
+        "Analyze bundle with webpack-bundle-analyzer",
+        "Remove unused imports and dependencies"
+      ],
+      "tags": ["react", "performance", "bundle-size", "code-splitting"],
+      "examples": [
+        "Large initial bundle size",
+        "Heavy libraries loaded unnecessarily"
+      ]
+    },
+    {
+      "id": "react_memory_leak_listeners",
+      "category": "performance",
+      "subcategory": "memory_leak",
+      "pattern": "memory leak.*event listeners|listeners not removed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_memory_leak_listeners",
+      "suggestion": "Remove event listeners in useEffect cleanup function",
+      "fix_commands": [
+        "Return cleanup function from useEffect",
+        "Remove event listeners in cleanup",
+        "Cancel subscriptions and timeouts",
+        "Use AbortController for fetch requests"
+      ],
+      "tags": ["react", "performance", "memory-leak", "cleanup"],
+      "examples": [
+        "Event listeners not removed on unmount",
+        "Subscriptions not cancelled"
+      ]
+    },
+    {
+      "id": "react_prop_drilling",
+      "category": "performance",
+      "subcategory": "prop_drilling",
+      "pattern": "prop drilling|props passed through many levels",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "react_prop_drilling",
+      "suggestion": "Use React Context or state management library to avoid prop drilling",
+      "fix_commands": [
+        "Create Context for shared state",
+        "Use Redux or Zustand for global state",
+        "Implement compound component pattern",
+        "Use component composition to reduce prop passing"
+      ],
+      "tags": ["react", "performance", "prop-drilling", "context"],
+      "examples": [
+        "Props passed through 5+ component levels",
+        "Many components just passing props down"
+      ]
+    },
+    {
+      "id": "react_dev_tools_production",
+      "category": "performance",
+      "subcategory": "dev_tools",
+      "pattern": "React DevTools.*production|development mode.*production",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_dev_tools_production",
+      "suggestion": "Ensure React is running in production mode for deployed applications",
+      "fix_commands": [
+        "Set NODE_ENV=production in build process",
+        "Use production build of React",
+        "Remove development-only code before deployment",
+        "Enable production optimizations in bundler"
+      ],
+      "tags": ["react", "performance", "production", "dev-tools"],
+      "examples": [
+        "Development build deployed to production",
+        "React DevTools warnings in production"
+      ]
+    },
+    {
+      "id": "react_concurrent_features_blocking",
+      "category": "performance",
+      "subcategory": "concurrent_features",
+      "pattern": "blocking.*concurrent|concurrent mode.*blocked",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_concurrent_features_blocking",
+      "suggestion": "Use React 18 concurrent features like Suspense and transitions",
+      "fix_commands": [
+        "Use startTransition for non-urgent updates",
+        "Implement Suspense boundaries for loading states",
+        "Use useDeferredValue for expensive computations",
+        "Upgrade to React 18 concurrent mode"
+      ],
+      "tags": ["react", "performance", "concurrent", "react-18"],
+      "examples": [
+        "Heavy updates blocking UI",
+        "Missing Suspense boundaries"
+      ]
+    }
+  ]
+}

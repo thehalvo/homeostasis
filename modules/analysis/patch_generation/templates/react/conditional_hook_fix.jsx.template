@@ -1,0 +1,54 @@
+// Fix for conditional hook calls (violates Rules of Hooks)
+// Move conditions inside hooks, not around them
+
+// WRONG - Hook called conditionally:
+// if (${CONDITION}) {
+//   const [state, setState] = useState(${INITIAL_VALUE});
+// }
+
+// CORRECT - Hook called unconditionally, condition inside:
+const [state, setState] = useState(${INITIAL_VALUE});
+
+// Use state conditionally:
+if (${CONDITION}) {
+  // Use state here
+}
+
+// For useEffect with conditions:
+useEffect(() => {
+  if (${CONDITION}) {
+    // Effect logic here
+  }
+}, [${DEPENDENCIES}]);
+
+// Alternative pattern - conditional logic inside hook:
+const [data, setData] = useState(null);
+const [loading, setLoading] = useState(false);
+
+useEffect(() => {
+  if (${CONDITION}) {
+    setLoading(true);
+    fetchData().then(result => {
+      setData(result);
+      setLoading(false);
+    });
+  }
+}, [${DEPENDENCIES}]);
+
+// For early returns, place hook calls before return:
+function Component({ ${PROPS} }) {
+  // All hook calls must come before any early returns
+  const [state, setState] = useState(${INITIAL_VALUE});
+  const [data, setData] = useState(null);
+  
+  // Early returns come after hook calls
+  if (${EARLY_RETURN_CONDITION}) {
+    return <div>Early return content</div>;
+  }
+  
+  return (
+    <div>
+      {/* Component content */}
+    </div>
+  );
+}

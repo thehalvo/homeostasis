@@ -1,0 +1,38 @@
+// Fix for missing key props in React lists
+// Add unique keys to prevent React warnings and improve performance
+
+// Before (problematic):
+// ${ITEMS_ARRAY}.map(item => (
+//   <${COMPONENT_NAME}>${ITEM_CONTENT}</${COMPONENT_NAME}>
+// ))
+
+// After (fixed):
+${ITEMS_ARRAY}.map((item, index) => (
+  <${COMPONENT_NAME} key={${KEY_EXPRESSION}}>${ITEM_CONTENT}</${COMPONENT_NAME}>
+))
+
+// Best practices for keys:
+// 1. Use stable, unique identifiers when available:
+items.map(item => (
+  <div key={item.id}>{item.name}</div>
+))
+
+// 2. Use index only if items never reorder:
+items.map((item, index) => (
+  <div key={index}>{item.name}</div>
+))
+
+// 3. Combine multiple properties if no single unique id:
+items.map(item => (
+  <div key={`${item.category}-${item.name}`}>{item.name}</div>
+))
+
+// 4. For nested lists, ensure keys are unique across the entire list:
+categories.map(category => (
+  <div key={category.id}>
+    <h3>{category.name}</h3>
+    {category.items.map(item => (
+      <div key={`${category.id}-${item.id}`}>{item.name}</div>
+    ))}
+  </div>
+))

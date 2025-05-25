@@ -1,0 +1,49 @@
+// Fix for useEffect missing cleanup to prevent memory leaks
+// Cleanup subscriptions, timers, and async operations
+
+useEffect(() => {
+  // ${EFFECT_SETUP}
+  
+  // Return cleanup function
+  return () => {
+    // ${CLEANUP_CODE}
+  };
+}, [${DEPENDENCIES}]);
+
+// Example with timer cleanup:
+useEffect(() => {
+  const timer = setInterval(() => {
+    // Timer logic
+  }, 1000);
+  
+  return () => clearInterval(timer);
+}, []);
+
+// Example with event listener cleanup:
+useEffect(() => {
+  const handleEvent = (event) => {
+    // Handle event
+  };
+  
+  window.addEventListener('event', handleEvent);
+  
+  return () => {
+    window.removeEventListener('event', handleEvent);
+  };
+}, []);
+
+// Example with AbortController for fetch:
+useEffect(() => {
+  const controller = new AbortController();
+  
+  fetch('/api/data', { signal: controller.signal })
+    .then(response => response.json())
+    .then(data => setData(data))
+    .catch(error => {
+      if (error.name !== 'AbortError') {
+        console.error('Fetch error:', error);
+      }
+    });
+  
+  return () => controller.abort();
+}, []);

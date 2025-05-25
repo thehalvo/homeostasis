@@ -158,6 +158,7 @@ Homeostasis currently provides support for the following programming languages:
 - **Python**: Primary language with extensive support for most Python frameworks
 - **JavaScript**: Support for Node.js environments, browser environments, and common JavaScript errors
 - **TypeScript**: Full TypeScript support including compilation errors, type system validation, JSX/TSX handling, and framework integration 
+- **React**: Support for React component lifecycle errors, hooks validation, state management (Redux, Context), JSX issues, and performance optimization
 - **Java**: Support for Java exceptions, Spring Framework, Hibernate/JPA, and concurrency issues
 - **Go**: Support for Go runtime errors, goroutine management, and web frameworks like Gin and Echo
 - **Ruby**: Support for Ruby exceptions, Rails ActiveRecord, Sinatra/Rack, and metaprogramming patterns
@@ -172,6 +173,7 @@ For more information about language integrations, see:
 - [Python Integration](docs/python_integration.md)
 - [JavaScript Integration](docs/javascript_integration.md)
 - [TypeScript Integration](docs/typescript_integration.md)
+- [React Integration](docs/react_integration.md)
 - [Java Integration](docs/java_integration.md)
 - [Go Integration](docs/go_integration.md)
 - [Ruby Integration](docs/ruby_integration.md)
@@ -207,6 +209,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Scala Integration**: Added support for Scala-specific errors, functional programming patterns, Akka actor system, Play Framework, and SBT build errors with specialized fix templates
 - **Elixir/Erlang Integration**: Added support for Elixir errors, Phoenix web framework, Ecto database issues, and OTP/BEAM VM patterns with specialized fix templates for common failure patterns
 - **Clojure Integration**: Added support for Clojure JVM errors, functional programming patterns, Ring/Compojure web frameworks, core.async concurrency issues, and REPL-specific errors with Lisp-aware fix generation
+- **React Framework Support**: Added full React framework integration with component lifecycle error detection, hooks rule validation, state management healing (Redux, Context), performance optimization suggestions, server components support, and JSX error handling
 - **Backend Testing Integration**: Implemented unified testing framework for validating error detection, analysis, and healing across multiple programming languages with cross-language capabilities
 - **Production Readiness**: Enhanced security model with RBAC, implemented approval workflows for critical changes, added rate limiting/throttling for healing actions, and developed thorough audit logging
 - **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities

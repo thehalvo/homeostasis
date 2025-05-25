@@ -3800,3 +3800,295 @@ class TypeScriptErrorAdapter(LanguageAdapter):
                 stack_lines.append(f"    at {function} ({file_path}:{line_num}:{col_num})")
         
         return "\n".join(stack_lines)
+
+
+class ReactErrorAdapter(LanguageAdapter):
+    """Adapter for React framework error formats."""
+    
+    def to_standard_format(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert React error data to the standard format.
+        
+        Args:
+            error_data: React error data
+            
+        Returns:
+            Error data in the standard format
+        """
+        # Create a standard error object
+        standard_error = {
+            "error_id": str(uuid.uuid4()),
+            "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
+            "language": "react",
+            "framework": "react",
+            "error_type": error_data.get("name", error_data.get("type", "")),
+            "message": error_data.get("message", "")
+        }
+        
+        # Add React version if available
+        if "react_version" in error_data:
+            standard_error["framework_version"] = error_data["react_version"]
+        elif "framework_version" in error_data:
+            standard_error["framework_version"] = error_data["framework_version"]
+        
+        # Handle stack trace - React errors may come from JavaScript runtime
+        if "stack" in error_data:
+            standard_error["stack_trace"] = error_data["stack"]
+        elif "stacktrace" in error_data:
+            standard_error["stack_trace"] = error_data["stacktrace"]
+        elif "stack_trace" in error_data:
+            standard_error["stack_trace"] = error_data["stack_trace"]
+        
+        # Handle React-specific component stack
+        if "componentStack" in error_data:
+            standard_error["component_stack"] = error_data["componentStack"]
+        elif "component_stack" in error_data:
+            standard_error["component_stack"] = error_data["component_stack"]
+        
+        # Add React-specific error info
+        react_specific = {}
+        
+        # Error boundary information
+        if "errorInfo" in error_data:
+            react_specific["error_info"] = error_data["errorInfo"]
+        
+        # Component that caused the error
+        if "source" in error_data:
+            react_specific["error_source"] = error_data["source"]
+        
+        # React development mode information
+        if "development" in error_data:
+            react_specific["development_mode"] = error_data["development"]
+        
+        # React DevTools information
+        if "devtools" in error_data:
+            react_specific["devtools_info"] = error_data["devtools"]
+        
+        # Hook information for hook-related errors
+        if "hook" in error_data:
+            react_specific["hook_info"] = error_data["hook"]
+        
+        # JSX transform information
+        if "jsx_runtime" in error_data:
+            react_specific["jsx_runtime"] = error_data["jsx_runtime"]
+        
+        # Server component information
+        if "server_component" in error_data:
+            react_specific["server_component"] = error_data["server_component"]
+        
+        # Add framework information
+        if "bundler" in error_data:
+            react_specific["bundler"] = error_data["bundler"]
+        
+        # Add severity if available
+        if "level" in error_data:
+            # React errors typically use console levels
+            level_map = {
+                "log": "info",
+                "info": "info", 
+                "warn": "warning",
+                "warning": "warning",
+                "error": "error",
+                "assert": "error"
+            }
+            standard_error["severity"] = level_map.get(error_data["level"].lower(), "error")
+        elif "severity" in error_data:
+            standard_error["severity"] = error_data["severity"]
+        
+        # Handle React runtime environment
+        if "runtime" in error_data:
+            standard_error["runtime"] = error_data["runtime"]
+        elif "environment" in error_data:
+            standard_error["runtime"] = error_data["environment"]
+        
+        # Add request information if available (for SSR)
+        if "request" in error_data:
+            standard_error["request"] = error_data["request"]
+        
+        # Add any additional context
+        if "context" in error_data:
+            standard_error["context"] = error_data["context"]
+        
+        # Add React-specific data
+        if react_specific:
+            standard_error["additional_data"] = react_specific
+        
+        # Add any other fields not explicitly handled
+        for key, value in error_data.items():
+            if key not in [
+                "name", "type", "message", "stack", "stacktrace", "stack_trace",
+                "componentStack", "component_stack", "errorInfo", "source",
+                "development", "devtools", "hook", "jsx_runtime", "server_component",
+                "bundler", "level", "severity", "runtime", "environment", "request",
+                "context", "timestamp", "react_version", "framework_version"
+            ]:
+                if "additional_data" not in standard_error:
+                    standard_error["additional_data"] = {}
+                standard_error["additional_data"][key] = value
+        
+        return standard_error
+    
+    def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data to React-specific format.
+        
+        Args:
+            standard_error: Error data in the standard format
+            
+        Returns:
+            Error data in the React-specific format
+        """
+        # Create a React error object
+        react_error = {
+            "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
+            "name": standard_error.get("error_type", "Error"),
+            "message": standard_error.get("message", "")
+        }
+        
+        # Add React version if available
+        if "framework_version" in standard_error:
+            react_error["react_version"] = standard_error["framework_version"]
+        
+        # Convert stack trace to React/JavaScript format
+        if "stack_trace" in standard_error:
+            stack_trace = standard_error["stack_trace"]
+            
+            if isinstance(stack_trace, str):
+                react_error["stack"] = stack_trace
+            elif isinstance(stack_trace, list):
+                if all(isinstance(frame, str) for frame in stack_trace):
+                    # Join string frames
+                    react_error["stack"] = "\n".join(stack_trace)
+                elif all(isinstance(frame, dict) for frame in stack_trace):
+                    # Convert structured frames to React/JS stack format
+                    react_error["stack"] = self._convert_frames_to_react_stack(
+                        react_error["name"], react_error["message"], stack_trace
+                    )
+        
+        # Add React component stack if available
+        if "component_stack" in standard_error:
+            react_error["componentStack"] = standard_error["component_stack"]
+        
+        # Convert severity to React/console level
+        if "severity" in standard_error:
+            level_map = {
+                "debug": "log",
+                "info": "info",
+                "warning": "warn",
+                "error": "error",
+                "critical": "error",
+                "fatal": "error"
+            }
+            react_error["level"] = level_map.get(standard_error["severity"].lower(), "error")
+        
+        # Add runtime information if available
+        if "runtime" in standard_error:
+            react_error["runtime"] = standard_error["runtime"]
+        
+        # Add request information if available (for SSR)
+        if "request" in standard_error:
+            react_error["request"] = standard_error["request"]
+        
+        # Add context information if available
+        if "context" in standard_error:
+            react_error["context"] = standard_error["context"]
+        
+        # Add React-specific data from additional_data
+        if "additional_data" in standard_error:
+            additional = standard_error["additional_data"]
+            
+            # Extract React-specific fields
+            react_fields = [
+                "error_info", "error_source", "development_mode", "devtools_info",
+                "hook_info", "jsx_runtime", "server_component", "bundler"
+            ]
+            
+            for field in react_fields:
+                if field in additional:
+                    # Convert back to original field names
+                    if field == "error_info":
+                        react_error["errorInfo"] = additional[field]
+                    elif field == "error_source":
+                        react_error["source"] = additional[field]
+                    elif field == "development_mode":
+                        react_error["development"] = additional[field]
+                    elif field == "devtools_info":
+                        react_error["devtools"] = additional[field]
+                    elif field == "hook_info":
+                        react_error["hook"] = additional[field]
+                    else:
+                        react_error[field] = additional[field]
+            
+            # Add any other additional data
+            for key, value in additional.items():
+                if key not in react_fields:
+                    react_error[key] = value
+        
+        return react_error
+    
+    def _convert_frames_to_react_stack(self, error_type: str, message: str, 
+                                      frames: List[Dict[str, Any]]) -> str:
+        """
+        Convert structured frames to a React/JavaScript stack trace string.
+        
+        Args:
+            error_type: Error type/name
+            message: Error message
+            frames: Structured frames
+            
+        Returns:
+            React/JavaScript stack trace string
+        """
+        # Start with the error message
+        stack_lines = [f"{error_type}: {message}"]
+        
+        # Add frames in JavaScript/React format
+        for frame in frames:
+            function = frame.get("function", "unknown")
+            file_path = frame.get("file", "unknown")
+            line_num = frame.get("line", 0)
+            col_num = frame.get("column", 0)
+            
+            # Format like a JavaScript stack trace
+            if function == "unknown" or function == "<anonymous>":
+                stack_lines.append(f"    at {file_path}:{line_num}:{col_num}")
+            else:
+                stack_lines.append(f"    at {function} ({file_path}:{line_num}:{col_num})")
+        
+        return "\n".join(stack_lines)
+    
+    def extract_component_stack(self, error_data: Dict[str, Any]) -> Optional[List[str]]:
+        """
+        Extract React component stack from error data.
+        
+        Args:
+            error_data: React error data
+            
+        Returns:
+            List of component names in the stack, or None if not available
+        """
+        component_stack = error_data.get("componentStack") or error_data.get("component_stack")
+        
+        if not component_stack:
+            return None
+        
+        if isinstance(component_stack, str):
+            # Parse component stack string
+            # React component stacks look like:
+            # "    in ComponentName (at Component.jsx:10:5)\n    in App (at App.jsx:15:3)"
+            components = []
+            lines = component_stack.strip().split('\n')
+            
+            for line in lines:
+                line = line.strip()
+                if line.startswith('in '):
+                    # Extract component name
+                    match = re.match(r'in (\w+)', line)
+                    if match:
+                        components.append(match.group(1))
+            
+            return components if components else None
+        elif isinstance(component_stack, list):
+            return component_stack
+        
+        return None

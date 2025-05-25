@@ -1,0 +1,220 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "react",
+    "description": "Common React component and lifecycle error rules"
+  },
+  "rules": [
+    {
+      "id": "react_invalid_hook_call",
+      "category": "hooks",
+      "subcategory": "invalid_call",
+      "pattern": "Invalid hook call|Hooks can only be called inside",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_invalid_hook_call",
+      "suggestion": "Move hook calls to the top level of React function components or custom hooks",
+      "fix_commands": [
+        "Move useState, useEffect, or other hooks to the top level of the component",
+        "Ensure hooks are not called inside loops, conditions, or nested functions",
+        "Use custom hooks to encapsulate hook logic if needed"
+      ],
+      "tags": ["react", "hooks", "rules-of-hooks"],
+      "examples": [
+        "Hooks called inside conditional statements",
+        "Hooks called inside loops",
+        "Hooks called inside event handlers"
+      ]
+    },
+    {
+      "id": "react_hooks_dependency_array",
+      "category": "hooks",
+      "subcategory": "dependencies",
+      "pattern": "React Hook .* has a missing dependency|exhaustive-deps",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_missing_dependency",
+      "suggestion": "Add missing dependencies to useEffect, useCallback, or useMemo dependency arrays",
+      "fix_commands": [
+        "Add missing variables to the dependency array",
+        "Use useCallback for function dependencies",
+        "Consider moving functions inside useEffect if they're only used there"
+      ],
+      "tags": ["react", "hooks", "useEffect", "dependencies"],
+      "examples": [
+        "useEffect missing state variable in dependency array",
+        "useCallback missing prop in dependency array"
+      ]
+    },
+    {
+      "id": "react_state_update_unmounted",
+      "category": "lifecycle",
+      "subcategory": "memory_leak",
+      "pattern": "Can't perform a React state update on an unmounted component|Warning: setState.*unmounted",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_state_update_unmounted",
+      "suggestion": "Clean up async operations in useEffect cleanup or check if component is mounted",
+      "fix_commands": [
+        "Return a cleanup function from useEffect to cancel async operations",
+        "Use AbortController for fetch requests",
+        "Check component mount status before setState in async operations"
+      ],
+      "tags": ["react", "lifecycle", "memory-leak", "unmounted"],
+      "examples": [
+        "setState called after component unmounts",
+        "Async API call completing after unmount"
+      ]
+    },
+    {
+      "id": "react_key_prop_missing",
+      "category": "rendering",
+      "subcategory": "key_prop",
+      "pattern": "Warning: Each child in a list should have a unique \"key\" prop",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_missing_key_prop",
+      "suggestion": "Add unique key prop to each element in rendered lists",
+      "fix_commands": [
+        "Add key={item.id} or similar unique identifier",
+        "Use array index as key only if list items never reorder",
+        "Ensure keys are stable, predictable, and unique"
+      ],
+      "tags": ["react", "rendering", "lists", "keys"],
+      "examples": [
+        "map() function rendering without keys",
+        "Dynamic list rendering"
+      ]
+    },
+    {
+      "id": "react_jsx_not_in_scope",
+      "category": "jsx",
+      "subcategory": "import",
+      "pattern": "'React' must be in scope when using JSX|JSX element .* has no corresponding closing tag",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_jsx_scope_error",
+      "suggestion": "Import React or configure JSX transform properly",
+      "fix_commands": [
+        "Add 'import React from 'react';' at the top of the file",
+        "Configure JSX transform in Babel/TypeScript config",
+        "Use React 17+ automatic JSX transform"
+      ],
+      "tags": ["react", "jsx", "import", "scope"],
+      "examples": [
+        "JSX used without React import",
+        "JSX transform configuration issues"
+      ]
+    },
+    {
+      "id": "react_prop_types_validation",
+      "category": "props",
+      "subcategory": "validation",
+      "pattern": "Warning: Failed prop type|Invalid prop .* of type",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "react_prop_validation_failed",
+      "suggestion": "Fix prop types or passed prop values to match expected types",
+      "fix_commands": [
+        "Check PropTypes definition matches actual usage",
+        "Fix the prop value being passed to match expected type",
+        "Consider using TypeScript for better type safety"
+      ],
+      "tags": ["react", "props", "propTypes", "validation"],
+      "examples": [
+        "String passed where number expected",
+        "Object structure mismatch in props"
+      ]
+    },
+    {
+      "id": "react_render_non_element",
+      "category": "rendering",
+      "subcategory": "invalid_element",
+      "pattern": "Objects are not valid as a React child|Functions are not valid as a React child",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_invalid_child_element",
+      "suggestion": "Ensure only valid React elements are rendered",
+      "fix_commands": [
+        "Convert objects to JSX elements or strings",
+        "Call functions that return JSX instead of rendering the function itself",
+        "Use JSON.stringify() for debugging object values"
+      ],
+      "tags": ["react", "rendering", "children", "jsx"],
+      "examples": [
+        "Rendering object directly in JSX",
+        "Rendering function reference instead of function call"
+      ]
+    },
+    {
+      "id": "react_useeffect_infinite_loop",
+      "category": "hooks",
+      "subcategory": "infinite_loop",
+      "pattern": "useEffect.*infinite.*loop|too many re-renders",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_useeffect_infinite_loop",
+      "suggestion": "Fix useEffect dependency array to prevent infinite re-renders",
+      "fix_commands": [
+        "Add proper dependency array to useEffect",
+        "Memoize objects and functions used in dependencies",
+        "Move object/array creation inside useEffect if possible"
+      ],
+      "tags": ["react", "hooks", "useEffect", "infinite-loop"],
+      "examples": [
+        "useEffect with missing dependency array",
+        "Object created in render causing useEffect to re-run"
+      ]
+    },
+    {
+      "id": "react_component_not_exported",
+      "category": "components",
+      "subcategory": "export",
+      "pattern": "Element type is invalid.*expected a string.*or a class/function",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "react_component_not_exported",
+      "suggestion": "Ensure React components are properly exported and imported",
+      "fix_commands": [
+        "Add 'export default' or 'export' to component definition",
+        "Check import statement matches export type",
+        "Verify component name spelling in import/export"
+      ],
+      "tags": ["react", "components", "export", "import"],
+      "examples": [
+        "Component not exported from module",
+        "Named export imported as default export"
+      ]
+    },
+    {
+      "id": "react_event_handler_binding",
+      "category": "events",
+      "subcategory": "binding",
+      "pattern": "this is undefined|Cannot read.*of undefined.*event handler",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "react_event_handler_binding",
+      "suggestion": "Properly bind event handlers or use arrow functions",
+      "fix_commands": [
+        "Use arrow functions for event handlers",
+        "Bind methods in constructor or use bind() in render",
+        "Convert to function component with hooks"
+      ],
+      "tags": ["react", "events", "binding", "this"],
+      "examples": [
+        "Class method not bound to this",
+        "Event handler losing context"
+      ]
+    }
+  ]
+}
