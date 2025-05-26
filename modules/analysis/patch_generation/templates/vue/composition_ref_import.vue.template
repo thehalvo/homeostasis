@@ -1,0 +1,24 @@
+<!-- Fix for missing ref import in Vue Composition API -->
+<script>
+// Add this import at the top of your script
+import { ref } from 'vue'
+
+export default {
+  setup() {
+    // Example usage of ref
+    const count = ref(0)
+    const message = ref('Hello Vue 3!')
+    
+    const increment = () => {
+      count.value++
+    }
+    
+    // Return reactive data and methods
+    return {
+      count,
+      message,
+      increment
+    }
+  }
+}
+</script>

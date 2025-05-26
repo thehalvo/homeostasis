@@ -1,0 +1,30 @@
+<!-- Fix for missing lifecycle imports in Vue Composition API -->
+<script>
+// Add these imports at the top of your script
+import { ref, onMounted, onUpdated, onUnmounted } from 'vue'
+
+export default {
+  setup() {
+    const data = ref(null)
+    
+    // Example usage of lifecycle hooks
+    onMounted(() => {
+      console.log('Component mounted')
+      // Initialize component data
+    })
+    
+    onUpdated(() => {
+      console.log('Component updated')
+    })
+    
+    onUnmounted(() => {
+      console.log('Component unmounted')
+      // Cleanup resources
+    })
+    
+    return {
+      data
+    }
+  }
+}
+</script>

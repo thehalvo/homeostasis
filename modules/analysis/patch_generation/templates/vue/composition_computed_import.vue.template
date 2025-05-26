@@ -1,0 +1,26 @@
+<!-- Fix for missing computed import in Vue Composition API -->
+<script>
+// Add this import at the top of your script
+import { ref, computed } from 'vue'
+
+export default {
+  setup() {
+    const count = ref(0)
+    
+    // Example usage of computed
+    const doubledCount = computed(() => count.value * 2)
+    const isEven = computed(() => count.value % 2 === 0)
+    
+    const increment = () => {
+      count.value++
+    }
+    
+    return {
+      count,
+      doubledCount,
+      isEven,
+      increment
+    }
+  }
+}
+</script>

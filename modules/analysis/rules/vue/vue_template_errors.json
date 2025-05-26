@@ -1,0 +1,220 @@
+{
+  "metadata": {
+    "name": "Vue Template Errors",
+    "description": "Vue.js template syntax and directive specific error patterns and their fixes",
+    "version": "1.0.0",
+    "language": "vue",
+    "framework": "vue",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "vue_template_v_for_key_missing",
+      "pattern": "(?i)elements in iteration expect to have 'v-bind:key'|missing.*key.*v-for",
+      "category": "vue",
+      "subcategory": "templates",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_v_for_missing_key",
+      "suggestion": "Add a unique key attribute to v-for elements. Each item in the list should have a unique identifier.",
+      "fix_commands": [
+        "Add :key=\"item.id\" to v-for element",
+        "Use unique identifier from item data",
+        "Avoid using array index as key if list order changes"
+      ],
+      "tags": ["vue", "template", "v-for", "key"],
+      "examples": [
+        "<li v-for=\"item in items\" :key=\"item.id\">{{ item.name }}</li>"
+      ]
+    },
+    {
+      "id": "vue_template_v_if_v_for_together",
+      "pattern": "(?i)v-if.*v-for.*same element|v-for.*v-if.*same element",
+      "category": "vue",
+      "subcategory": "templates",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_v_if_v_for_same_element",
+      "suggestion": "Avoid using v-if and v-for on the same element. Use template wrapper or move v-if to child element.",
+      "fix_commands": [
+        "Move v-if to template wrapper",
+        "Use computed property to filter items",
+        "Separate v-if and v-for logic"
+      ],
+      "tags": ["vue", "template", "v-if", "v-for"],
+      "examples": [
+        "<template v-for=\"item in items\" :key=\"item.id\">\n  <li v-if=\"item.visible\">{{ item.name }}</li>\n</template>"
+      ]
+    },
+    {
+      "id": "vue_template_invalid_directive",
+      "pattern": "(?i)unknown.*directive|invalid.*directive|directive.*not found",
+      "category": "vue",
+      "subcategory": "templates",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_invalid_directive",
+      "suggestion": "Check directive name spelling and ensure custom directives are properly registered.",
+      "fix_commands": [
+        "Check directive name spelling",
+        "Register custom directive globally or locally",
+        "Import directive if using modular setup",
+        "Use built-in directives correctly"
+      ],
+      "tags": ["vue", "template", "directive", "custom"],
+      "examples": [
+        "Unknown custom directive: v-my-directive"
+      ]
+    },
+    {
+      "id": "vue_template_expression_error",
+      "pattern": "(?i)invalid.*expression|template.*expression.*error|expression.*not.*valid",
+      "category": "vue",
+      "subcategory": "templates",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_template_expression_error",
+      "suggestion": "Check template expression syntax. Ensure proper JavaScript expression syntax in template bindings.",
+      "fix_commands": [
+        "Check expression syntax",
+        "Use proper JavaScript operators",
+        "Ensure variables are available in component scope",
+        "Use methods or computed properties for complex logic"
+      ],
+      "tags": ["vue", "template", "expression", "syntax"],
+      "examples": [
+        "Invalid expression: {{ user.name.toUpperCase() }}"
+      ]
+    },
+    {
+      "id": "vue_template_slot_error",
+      "pattern": "(?i)slot.*not found|invalid.*slot|slot.*error",
+      "category": "vue",
+      "subcategory": "templates",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue_template_slot_error",
+      "suggestion": "Check slot usage and ensure slots are properly defined in parent and child components.",
+      "fix_commands": [
+        "Define named slots in child component",
+        "Use correct slot syntax in parent",
+        "Check slot name spelling",
+        "Use v-slot directive properly"
+      ],
+      "tags": ["vue", "template", "slot", "component"],
+      "examples": [
+        "<template v-slot:header>\n  <h1>Header content</h1>\n</template>"
+      ]
+    },
+    {
+      "id": "vue_template_scoped_slot_error",
+      "pattern": "(?i)scoped.*slot.*error|slot.*props.*undefined",
+      "category": "vue",
+      "subcategory": "templates",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue_template_scoped_slot_error",
+      "suggestion": "Check scoped slot usage and ensure slot props are properly passed and received.",
+      "fix_commands": [
+        "Pass data through slot props",
+        "Use slot-scope or v-slot with destructuring",
+        "Check slot prop names",
+        "Ensure data is available in child component"
+      ],
+      "tags": ["vue", "template", "scoped-slot", "props"],
+      "examples": [
+        "<template v-slot:default=\"{ item }\">\n  <span>{{ item.name }}</span>\n</template>"
+      ]
+    },
+    {
+      "id": "vue_template_v_model_error",
+      "pattern": "(?i)v-model.*error|v-model.*not.*supported|invalid.*v-model",
+      "category": "vue",
+      "subcategory": "templates",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_template_v_model_error",
+      "suggestion": "Check v-model usage. Ensure v-model is used with appropriate form elements or components.",
+      "fix_commands": [
+        "Use v-model with input elements",
+        "Implement v-model in custom components",
+        "Check component supports v-model",
+        "Use correct v-model syntax for Vue 3"
+      ],
+      "tags": ["vue", "template", "v-model", "forms"],
+      "examples": [
+        "<input v-model=\"message\" type=\"text\" />"
+      ]
+    },
+    {
+      "id": "vue_template_event_handler_error",
+      "pattern": "(?i)event.*handler.*not.*found|method.*not.*defined|handler.*undefined",
+      "category": "vue",
+      "subcategory": "templates",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_template_event_handler_error",
+      "suggestion": "Ensure event handler methods are defined in component methods, setup function, or computed properties.",
+      "fix_commands": [
+        "Define method in component methods object",
+        "Export method from setup() function",
+        "Check method name spelling",
+        "Ensure method is accessible in template scope"
+      ],
+      "tags": ["vue", "template", "events", "methods"],
+      "examples": [
+        "<button @click=\"handleClick\">Click me</button>"
+      ]
+    },
+    {
+      "id": "vue_template_binding_error",
+      "pattern": "(?i)binding.*error|property.*not.*defined|binding.*undefined",
+      "category": "vue",
+      "subcategory": "templates",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue_template_binding_error",
+      "suggestion": "Check template bindings and ensure properties are defined in component data, props, or computed properties.",
+      "fix_commands": [
+        "Define property in data or props",
+        "Use computed property for derived values",
+        "Check property name spelling",
+        "Ensure property is reactive"
+      ],
+      "tags": ["vue", "template", "binding", "data"],
+      "examples": [
+        "<span>{{ message }}</span>"
+      ]
+    },
+    {
+      "id": "vue_template_component_not_registered",
+      "pattern": "(?i)component.*not.*registered|unknown.*custom.*element",
+      "category": "vue",
+      "subcategory": "templates",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_template_component_not_registered",
+      "suggestion": "Register the component globally or locally before using it in templates.",
+      "fix_commands": [
+        "Import component: import MyComponent from './MyComponent.vue'",
+        "Register in components option: { MyComponent }",
+        "Register globally: app.component('MyComponent', MyComponent)",
+        "Check component name spelling"
+      ],
+      "tags": ["vue", "template", "component", "registration"],
+      "examples": [
+        "Unknown custom element: <my-component>"
+      ]
+    }
+  ]
+}

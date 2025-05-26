@@ -1,0 +1,212 @@
+{
+  "metadata": {
+    "name": "Vue Composition API Errors",
+    "description": "Vue.js Composition API specific error patterns and their fixes",
+    "version": "1.0.0",
+    "language": "vue",
+    "framework": "vue3",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "vue_composition_ref_not_defined",
+      "pattern": "(?i)ref is not defined|'ref' is not defined",
+      "category": "vue",
+      "subcategory": "composition",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_composition_ref_not_defined",
+      "suggestion": "Import ref from vue. Add 'import { ref } from 'vue'' at the top of your script.",
+      "fix_commands": [
+        "Add import: import { ref } from 'vue'",
+        "Use ref() to create reactive references",
+        "Access ref values with .value"
+      ],
+      "tags": ["vue", "composition-api", "ref", "import"],
+      "examples": [
+        "ReferenceError: ref is not defined"
+      ]
+    },
+    {
+      "id": "vue_composition_computed_not_defined",
+      "pattern": "(?i)computed is not defined|'computed' is not defined",
+      "category": "vue",
+      "subcategory": "composition",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_composition_computed_not_defined",
+      "suggestion": "Import computed from vue. Add 'import { computed } from 'vue'' to your imports.",
+      "fix_commands": [
+        "Add import: import { computed } from 'vue'",
+        "Use computed() for derived reactive state",
+        "Access computed values with .value"
+      ],
+      "tags": ["vue", "composition-api", "computed", "import"],
+      "examples": [
+        "ReferenceError: computed is not defined"
+      ]
+    },
+    {
+      "id": "vue_composition_watch_not_defined",
+      "pattern": "(?i)watch is not defined|'watch' is not defined",
+      "category": "vue",
+      "subcategory": "composition",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_composition_watch_not_defined",
+      "suggestion": "Import watch from vue. Add 'import { watch } from 'vue'' to your imports.",
+      "fix_commands": [
+        "Add import: import { watch } from 'vue'",
+        "Use watch() to observe reactive changes",
+        "Provide source and callback function"
+      ],
+      "tags": ["vue", "composition-api", "watch", "import"],
+      "examples": [
+        "ReferenceError: watch is not defined"
+      ]
+    },
+    {
+      "id": "vue_composition_reactive_not_defined",
+      "pattern": "(?i)reactive is not defined|'reactive' is not defined",
+      "category": "vue",
+      "subcategory": "composition",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_composition_reactive_not_defined",
+      "suggestion": "Import reactive from vue. Add 'import { reactive } from 'vue'' to your imports.",
+      "fix_commands": [
+        "Add import: import { reactive } from 'vue'",
+        "Use reactive() for complex objects",
+        "Access reactive properties directly (no .value)"
+      ],
+      "tags": ["vue", "composition-api", "reactive", "import"],
+      "examples": [
+        "ReferenceError: reactive is not defined"
+      ]
+    },
+    {
+      "id": "vue_composition_lifecycle_not_defined",
+      "pattern": "(?i)(onMounted|onUpdated|onUnmounted|onBeforeMount|onBeforeUpdate|onBeforeUnmount) is not defined",
+      "category": "vue",
+      "subcategory": "composition",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_composition_lifecycle_not_defined",
+      "suggestion": "Import lifecycle hooks from vue. Add the required lifecycle hook to your imports.",
+      "fix_commands": [
+        "Add import: import { onMounted, onUpdated, onUnmounted } from 'vue'",
+        "Use lifecycle hooks inside setup() function",
+        "Provide callback functions to lifecycle hooks"
+      ],
+      "tags": ["vue", "composition-api", "lifecycle", "import"],
+      "examples": [
+        "ReferenceError: onMounted is not defined"
+      ]
+    },
+    {
+      "id": "vue_composition_setup_return_error",
+      "pattern": "(?i)setup.*must return.*object|setup function must return",
+      "category": "vue",
+      "subcategory": "composition",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_composition_setup_return_type",
+      "suggestion": "The setup() function must return an object with properties and methods you want to expose to the template.",
+      "fix_commands": [
+        "Return an object from setup()",
+        "Include reactive data and methods in the return object",
+        "Use proper object shorthand syntax"
+      ],
+      "tags": ["vue", "composition-api", "setup", "return"],
+      "examples": [
+        "setup() function must return an object"
+      ]
+    },
+    {
+      "id": "vue_composition_ref_access_before_init",
+      "pattern": "(?i)cannot access.*before initialization|accessing.*before.*defined",
+      "category": "vue",
+      "subcategory": "composition",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue_composition_ref_access_before_init",
+      "suggestion": "Initialize reactive references before accessing them. Define refs at the beginning of setup().",
+      "fix_commands": [
+        "Define refs before using them",
+        "Initialize refs with default values",
+        "Move ref definitions to the top of setup()"
+      ],
+      "tags": ["vue", "composition-api", "ref", "initialization"],
+      "examples": [
+        "Cannot access 'count' before initialization"
+      ]
+    },
+    {
+      "id": "vue_composition_ref_value_access",
+      "pattern": "(?i)ref.*value.*undefined|.*\\.value.*undefined",
+      "category": "vue",
+      "subcategory": "composition",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue_composition_ref_value_access",
+      "suggestion": "Access ref values using .value in JavaScript, but not in templates.",
+      "fix_commands": [
+        "Use myRef.value in JavaScript code",
+        "Use myRef directly in templates",
+        "Check if ref is properly initialized"
+      ],
+      "tags": ["vue", "composition-api", "ref", "value"],
+      "examples": [
+        "Cannot read property 'value' of undefined"
+      ]
+    },
+    {
+      "id": "vue_composition_watch_invalid_source",
+      "pattern": "(?i)watch.*invalid source|watch.*expects.*function",
+      "category": "vue",
+      "subcategory": "composition",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_composition_watch_invalid_source",
+      "suggestion": "Watch sources must be refs, reactive objects, or getter functions.",
+      "fix_commands": [
+        "Use refs or reactive objects as watch sources",
+        "Wrap complex expressions in getter functions",
+        "Provide valid callback function"
+      ],
+      "tags": ["vue", "composition-api", "watch", "source"],
+      "examples": [
+        "watch() expects a getter function or ref as source"
+      ]
+    },
+    {
+      "id": "vue_composition_computed_readonly",
+      "pattern": "(?i)computed.*readonly|cannot assign.*computed",
+      "category": "vue",
+      "subcategory": "composition",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_composition_computed_readonly",
+      "suggestion": "Computed properties are readonly by default. Use writable computed or change to ref if you need to modify the value.",
+      "fix_commands": [
+        "Use ref() instead of computed() for mutable values",
+        "Create writable computed with get/set",
+        "Don't assign to computed properties directly"
+      ],
+      "tags": ["vue", "composition-api", "computed", "readonly"],
+      "examples": [
+        "Cannot assign to read only property of computed"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "metadata": {
+    "name": "Vue 3 Specific Features Errors",
+    "description": "Vue 3 specific feature error patterns and their fixes",
+    "version": "1.0.0",
+    "language": "vue",
+    "framework": "vue3",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "vue3_teleport_error",
+      "pattern": "(?i)teleport.*error|teleport.*target.*not.*found",
+      "category": "vue",
+      "subcategory": "vue3",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue3_teleport_error",
+      "suggestion": "Check Teleport target selector. Ensure the target element exists in the DOM.",
+      "fix_commands": [
+        "Verify target element exists",
+        "Use valid CSS selector for target",
+        "Ensure target is available when teleport mounts",
+        "Add disabled prop if target might not exist"
+      ],
+      "tags": ["vue3", "teleport", "target", "dom"],
+      "examples": [
+        "<Teleport to=\"#modal-target\">\n  <div>Modal content</div>\n</Teleport>"
+      ]
+    },
+    {
+      "id": "vue3_suspense_error",
+      "pattern": "(?i)suspense.*error|async.*component.*error|suspense.*fallback",
+      "category": "vue",
+      "subcategory": "vue3",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue3_suspense_error",
+      "suggestion": "Check Suspense usage with async components. Ensure proper error handling and fallback content.",
+      "fix_commands": [
+        "Provide fallback content in Suspense",
+        "Handle async component errors",
+        "Use defineAsyncComponent properly",
+        "Add error boundary for async components"
+      ],
+      "tags": ["vue3", "suspense", "async", "components"],
+      "examples": [
+        "<Suspense>\n  <template #default>\n    <AsyncComponent />\n  </template>\n  <template #fallback>\n    <div>Loading...</div>\n  </template>\n</Suspense>"
+      ]
+    },
+    {
+      "id": "vue3_fragments_error",
+      "pattern": "(?i)fragment.*error|multiple.*root.*nodes|root.*element.*required",
+      "category": "vue",
+      "subcategory": "vue3",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue3_fragments_error",
+      "suggestion": "Vue 3 supports fragments (multiple root nodes). Ensure proper fragment usage or wrap in single root if needed.",
+      "fix_commands": [
+        "Use multiple root nodes freely in Vue 3",
+        "Wrap in single element if required by parent",
+        "Check component integration with Vue 2 components",
+        "Handle attribute inheritance properly"
+      ],
+      "tags": ["vue3", "fragments", "root", "nodes"],
+      "examples": [
+        "<template>\n  <div>First root</div>\n  <div>Second root</div>\n</template>"
+      ]
+    },
+    {
+      "id": "vue3_emit_definition_error",
+      "pattern": "(?i)emit.*not.*defined|emits.*option.*missing|defineEmits.*error",
+      "category": "vue",
+      "subcategory": "vue3",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue3_emit_definition_error",
+      "suggestion": "Define emits in Vue 3 components using emits option or defineEmits in script setup.",
+      "fix_commands": [
+        "Add emits option to component",
+        "Use defineEmits() in script setup",
+        "Define emit event names",
+        "Add validation for emit payloads"
+      ],
+      "tags": ["vue3", "emit", "defineEmits", "events"],
+      "examples": [
+        "// Options API\nexport default {\n  emits: ['update', 'delete'],\n  methods: {\n    handleUpdate() {\n      this.$emit('update', data)\n    }\n  }\n}\n\n// Script setup\n<script setup>\nconst emit = defineEmits(['update', 'delete'])\nemit('update', data)\n</script>"
+      ]
+    },
+    {
+      "id": "vue3_props_definition_error",
+      "pattern": "(?i)props.*not.*defined|defineProps.*error|props.*validation.*error",
+      "category": "vue",
+      "subcategory": "vue3",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue3_props_definition_error",
+      "suggestion": "Define props in Vue 3 components using props option or defineProps in script setup.",
+      "fix_commands": [
+        "Add props option to component",
+        "Use defineProps() in script setup",
+        "Define prop types and validation",
+        "Provide default values for props"
+      ],
+      "tags": ["vue3", "props", "defineProps", "validation"],
+      "examples": [
+        "// Options API\nexport default {\n  props: {\n    message: {\n      type: String,\n      required: true\n    }\n  }\n}\n\n// Script setup\n<script setup>\nconst props = defineProps({\n  message: {\n    type: String,\n    required: true\n  }\n})\n</script>"
+      ]
+    },
+    {
+      "id": "vue3_script_setup_error",
+      "pattern": "(?i)script.*setup.*error|defineComponent.*setup.*error|setup.*syntax.*error",
+      "category": "vue",
+      "subcategory": "vue3",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue3_script_setup_error",
+      "suggestion": "Check script setup syntax. Ensure proper usage of defineProps, defineEmits, and other setup helpers.",
+      "fix_commands": [
+        "Use <script setup> syntax correctly",
+        "Import defineProps, defineEmits from vue",
+        "Return values properly from setup",
+        "Use top-level variables directly in template"
+      ],
+      "tags": ["vue3", "script-setup", "syntax", "defineComponent"],
+      "examples": [
+        "<script setup>\nimport { ref, computed } from 'vue'\n\nconst count = ref(0)\nconst doubled = computed(() => count.value * 2)\n\nfunction increment() {\n  count.value++\n}\n</script>"
+      ]
+    },
+    {
+      "id": "vue3_provide_inject_error",
+      "pattern": "(?i)provide.*inject.*error|injection.*not.*found|provide.*undefined",
+      "category": "vue",
+      "subcategory": "vue3",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue3_provide_inject_error",
+      "suggestion": "Check provide/inject usage. Ensure provided values are available and injection keys match.",
+      "fix_commands": [
+        "Provide value in parent component",
+        "Use correct injection key",
+        "Provide default value for inject",
+        "Use Symbol keys for type safety"
+      ],
+      "tags": ["vue3", "provide", "inject", "dependency-injection"],
+      "examples": [
+        "// Parent component\nconst { provide } = Vue\nprovide('message', 'Hello from parent')\n\n// Child component\nconst { inject } = Vue\nconst message = inject('message', 'Default message')"
+      ]
+    },
+    {
+      "id": "vue3_global_api_error",
+      "pattern": "(?i)Vue\\.\\w+.*not.*function|global.*api.*error|Vue.*undefined",
+      "category": "vue",
+      "subcategory": "vue3",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue3_global_api_change",
+      "suggestion": "Vue 3 changed global API. Use createApp() instead of new Vue() and app instance methods.",
+      "fix_commands": [
+        "Use createApp() instead of new Vue()",
+        "Use app.config instead of Vue.config",
+        "Use app.use() for plugins",
+        "Use app.component() for global components"
+      ],
+      "tags": ["vue3", "global-api", "createApp", "migration"],
+      "examples": [
+        "// Vue 3\nimport { createApp } from 'vue'\nconst app = createApp({})\napp.mount('#app')\n\n// Instead of Vue 2\n// new Vue({\n//   el: '#app'\n// })"
+      ]
+    },
+    {
+      "id": "vue3_reactivity_transform_error",
+      "pattern": "(?i)reactivity.*transform.*error|\\$ref.*not.*defined|\\$computed.*error",
+      "category": "vue",
+      "subcategory": "vue3",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue3_reactivity_transform_error",
+      "suggestion": "Reactivity Transform is experimental. Ensure proper configuration and usage or use standard Composition API.",
+      "fix_commands": [
+        "Enable Reactivity Transform in build config",
+        "Use standard ref() and computed() instead",
+        "Check build tool configuration",
+        "Consider using standard Composition API"
+      ],
+      "tags": ["vue3", "reactivity-transform", "experimental", "ref"],
+      "examples": [
+        "// Standard approach (recommended)\nconst count = ref(0)\n\n// Reactivity Transform (experimental)\n// let count = $ref(0)"
+      ]
+    },
+    {
+      "id": "vue3_custom_renderer_error",
+      "pattern": "(?i)custom.*renderer.*error|createRenderer.*error|renderer.*api.*error",
+      "category": "vue",
+      "subcategory": "vue3",
+      "severity": "error",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "vue3_custom_renderer_error",
+      "suggestion": "Check custom renderer implementation. Ensure proper renderer API usage for custom platforms.",
+      "fix_commands": [
+        "Implement required renderer methods",
+        "Check createRenderer configuration",
+        "Verify platform-specific implementation",
+        "Use proper renderer API"
+      ],
+      "tags": ["vue3", "custom-renderer", "api", "platform"],
+      "examples": [
+        "import { createRenderer } from '@vue/runtime-core'\n\nconst { render } = createRenderer({\n  // Platform-specific implementation\n})"
+      ]
+    }
+  ]
+}

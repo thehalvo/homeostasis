@@ -1,0 +1,54 @@
+<!-- Fix for Vue Router setup -->
+<script>
+// router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+import Home from '../views/Home.vue'
+import About from '../views/About.vue'
+
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: Home
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: About
+  },
+  {
+    path: '/user/:id',
+    name: 'User',
+    component: () => import('../views/User.vue'), // Lazy loading
+    props: true
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../views/NotFound.vue')
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+// Navigation guards
+router.beforeEach((to, from, next) => {
+  // Add authentication logic here
+  console.log(`Navigating to ${to.path}`)
+  next()
+})
+
+export default router
+
+// main.js
+// import { createApp } from 'vue'
+// import router from './router'
+// import App from './App.vue'
+// 
+// const app = createApp(App)
+// app.use(router)
+// app.mount('#app')
+</script>

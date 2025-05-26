@@ -431,5 +431,108 @@
         "code_splitting": true
       }
     }
+  },
+  "vue": {
+    "language": "vue",
+    "field_mappings": {
+      "error_type": ["name", "type"],
+      "message": "message",
+      "stack_trace": ["stack", "stacktrace", "stack_trace"],
+      "component_stack": ["componentStack", "component_stack"]
+    },
+    "stack_trace_fields": ["stack", "stacktrace", "stack_trace"],
+    "stack_trace_format": "string",
+    "version_fields": ["vue_version", "framework_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version", "vue_version"],
+    "detection_patterns": [
+      "(?:Vue warn)",
+      "(?:Vue.*component)",
+      "(?:setup\\(\\) function)",
+      "(?:ref\\(\\) is not defined)",
+      "(?:computed\\(\\) is not defined)",
+      "(?:watch\\(\\) is not defined)",
+      "(?:onMounted is not defined)",
+      "(?:reactive\\(\\) is not defined)",
+      "(?:Vuex.*store)",
+      "(?:Vue.*router)",
+      "(?:\\.vue:\\d+:\\d+)",
+      "(?:v-model)",
+      "(?:v-if|v-for|v-show)",
+      "(?:directive.*vue)",
+      "(?:vue.*directive)",
+      "(?:composition.*api)",
+      "(?:setup must return)",
+      "(?:cannot access.*before initialization)",
+      "(?:mutation.*not defined)",
+      "(?:action.*not defined)",
+      "(?:route.*not found)",
+      "(?:navigation.*cancelled)",
+      "(?:router.*not defined)",
+      "(?:store.*not defined)",
+      "(?:do not mutate vuex store state)",
+      "(?:Invalid prop)",
+      "(?:Failed to mount component)",
+      "(?:Template compilation error)",
+      "(?:Hydration.*mismatch)"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "error",
+      "fatal": "fatal"
+    },
+    "component_stack_patterns": [
+      "(?:at <(\\w+)>)",
+      "(?:in (\\w+) \\(at [^)]+\\.(vue|js|ts):\\d+:\\d+\\))"
+    ],
+    "file_extensions": [".vue", ".js", ".ts"],
+    "config_files": ["package.json", "vue.config.js", "vite.config.js", "nuxt.config.js"],
+    "composition_api_functions": [
+      "ref", "computed", "watch", "watchEffect", "reactive", "readonly", "toRef", "toRefs",
+      "onMounted", "onUpdated", "onUnmounted", "onBeforeMount", "onBeforeUpdate", "onBeforeUnmount",
+      "onActivated", "onDeactivated", "onErrorCaptured", "onRenderTracked", "onRenderTriggered",
+      "provide", "inject", "getCurrentInstance", "nextTick", "defineComponent", "defineAsyncComponent"
+    ],
+    "vuex_functions": [
+      "createStore", "useStore", "mapState", "mapGetters", "mapMutations", "mapActions",
+      "createNamespacedHelpers", "commit", "dispatch"
+    ],
+    "vue_router_functions": [
+      "createRouter", "createWebHistory", "createWebHashHistory", "createMemoryHistory",
+      "useRouter", "useRoute", "onBeforeRouteEnter", "onBeforeRouteUpdate", "onBeforeRouteLeave"
+    ],
+    "directives": [
+      "v-model", "v-if", "v-else", "v-else-if", "v-for", "v-show", "v-bind", "v-on",
+      "v-slot", "v-pre", "v-cloak", "v-once", "v-text", "v-html", "v-memo"
+    ],
+    "vue_patterns": {
+      "composition_api_rules": {
+        "import_from_vue": true,
+        "call_in_setup": true,
+        "return_from_setup": true,
+        "proper_reactivity": true
+      },
+      "template_rules": {
+        "proper_directive_syntax": true,
+        "key_in_v_for": true,
+        "avoid_v_if_with_v_for": true,
+        "proper_event_handlers": true
+      },
+      "vuex_rules": {
+        "no_direct_mutation": true,
+        "use_mutations_for_state": true,
+        "async_in_actions": true,
+        "proper_module_structure": true
+      },
+      "performance_rules": {
+        "use_v_show_for_toggle": true,
+        "avoid_inline_objects_in_template": true,
+        "use_computed_for_complex_logic": true,
+        "proper_component_splitting": true
+      }
+    }
   }
 }

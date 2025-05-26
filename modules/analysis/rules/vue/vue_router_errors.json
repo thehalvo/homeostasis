@@ -1,0 +1,221 @@
+{
+  "metadata": {
+    "name": "Vue Router Navigation Errors",
+    "description": "Vue Router specific error patterns and their fixes",
+    "version": "1.0.0",
+    "language": "vue",
+    "framework": "vue-router",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "vue_router_not_defined",
+      "pattern": "(?i)router is not defined|'router' is not defined|\\$router.*undefined",
+      "category": "vue",
+      "subcategory": "router",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_router_not_imported",
+      "suggestion": "Import and configure Vue Router. Ensure the router is properly installed in your Vue application.",
+      "fix_commands": [
+        "Import router: import router from './router'",
+        "Install in Vue app: app.use(router)",
+        "Check router configuration and export"
+      ],
+      "tags": ["vue", "vue-router", "router", "import"],
+      "examples": [
+        "ReferenceError: router is not defined"
+      ]
+    },
+    {
+      "id": "vue_route_not_found",
+      "pattern": "(?i)route.*not found|no match.*route|route.*does not exist",
+      "category": "vue",
+      "subcategory": "router",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_router_route_not_found",
+      "suggestion": "Define the route in your router configuration. Check route path and component mapping.",
+      "fix_commands": [
+        "Add route to routes array",
+        "Check route path spelling",
+        "Ensure component is imported",
+        "Verify route structure"
+      ],
+      "tags": ["vue", "vue-router", "routes", "configuration"],
+      "examples": [
+        "No match found for location with path \"/unknown\""
+      ]
+    },
+    {
+      "id": "vue_navigation_cancelled",
+      "pattern": "(?i)navigation.*cancelled|navigation.*aborted|navigation.*failed",
+      "category": "vue",
+      "subcategory": "router",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue_router_navigation_cancelled",
+      "suggestion": "Check navigation guards and ensure they call next() appropriately. Handle navigation cancellation gracefully.",
+      "fix_commands": [
+        "Check beforeEach and beforeResolve guards",
+        "Ensure next() is called in guards",
+        "Handle navigation cancellation",
+        "Check component guards"
+      ],
+      "tags": ["vue", "vue-router", "navigation", "guards"],
+      "examples": [
+        "Navigation cancelled from /home to /profile"
+      ]
+    },
+    {
+      "id": "vue_navigation_duplicate",
+      "pattern": "(?i)navigation.*duplicate|already.*same.*location|navigating.*same.*route",
+      "category": "vue",
+      "subcategory": "router",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue_router_duplicate_navigation",
+      "suggestion": "Avoid navigating to the same route. Check current route before navigation.",
+      "fix_commands": [
+        "Check current route before navigation",
+        "Use router.currentRoute to compare",
+        "Handle duplicate navigation gracefully",
+        "Add navigation guards to prevent duplicates"
+      ],
+      "tags": ["vue", "vue-router", "navigation", "duplicate"],
+      "examples": [
+        "Navigating to current location \"/home\" is not allowed"
+      ]
+    },
+    {
+      "id": "vue_router_component_not_found",
+      "pattern": "(?i)component.*not found|component.*undefined|failed.*resolve.*component",
+      "category": "vue",
+      "subcategory": "router",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_router_component_not_found",
+      "suggestion": "Ensure route components are properly imported and exported. Check component paths.",
+      "fix_commands": [
+        "Import component: import Home from './Home.vue'",
+        "Check component file path",
+        "Ensure component is exported",
+        "Use lazy loading: () => import('./Home.vue')"
+      ],
+      "tags": ["vue", "vue-router", "components", "import"],
+      "examples": [
+        "Failed to resolve component for route \"/home\""
+      ]
+    },
+    {
+      "id": "vue_router_guard_error",
+      "pattern": "(?i)error.*navigation.*guard|guard.*error|beforeEach.*error",
+      "category": "vue",
+      "subcategory": "router",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_router_navigation_guard_error",
+      "suggestion": "Check navigation guard implementation. Add error handling and ensure proper next() calls.",
+      "fix_commands": [
+        "Add try-catch in navigation guards",
+        "Always call next() in guards",
+        "Handle async operations properly",
+        "Check guard parameters (to, from, next)"
+      ],
+      "tags": ["vue", "vue-router", "guards", "error-handling"],
+      "examples": [
+        "Error in beforeEach navigation guard"
+      ]
+    },
+    {
+      "id": "vue_router_params_error",
+      "pattern": "(?i)params.*undefined|route.*params.*error|invalid.*params",
+      "category": "vue",
+      "subcategory": "router",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue_router_params_error",
+      "suggestion": "Check route parameters definition and access. Ensure params exist before using them.",
+      "fix_commands": [
+        "Check route path includes parameters",
+        "Use this.$route.params safely",
+        "Validate params exist before use",
+        "Provide default values for params"
+      ],
+      "tags": ["vue", "vue-router", "params", "validation"],
+      "examples": [
+        "Cannot read property 'id' of undefined in route params"
+      ]
+    },
+    {
+      "id": "vue_router_query_error",
+      "pattern": "(?i)query.*undefined|route.*query.*error|invalid.*query",
+      "category": "vue",
+      "subcategory": "router",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue_router_query_error",
+      "suggestion": "Check route query parameters access. Handle missing query parameters gracefully.",
+      "fix_commands": [
+        "Use this.$route.query safely",
+        "Check if query params exist",
+        "Provide default values for query params",
+        "Validate query parameter types"
+      ],
+      "tags": ["vue", "vue-router", "query", "validation"],
+      "examples": [
+        "Cannot read property 'search' of undefined in route query"
+      ]
+    },
+    {
+      "id": "vue_router_redirect_loop",
+      "pattern": "(?i)redirect.*loop|infinite.*redirect|maximum.*redirects",
+      "category": "vue",
+      "subcategory": "router",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "vue_router_redirect_loop",
+      "suggestion": "Check for infinite redirect loops in navigation guards or route configuration.",
+      "fix_commands": [
+        "Review navigation guard logic",
+        "Check redirect conditions",
+        "Avoid circular redirects",
+        "Add redirect prevention logic"
+      ],
+      "tags": ["vue", "vue-router", "redirect", "loop"],
+      "examples": [
+        "Maximum redirect reached, possible infinite loop"
+      ]
+    },
+    {
+      "id": "vue_router_lazy_loading_error",
+      "pattern": "(?i)lazy.*loading.*error|dynamic.*import.*failed|chunk.*loading.*failed",
+      "category": "vue",
+      "subcategory": "router",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "vue_router_lazy_loading_error",
+      "suggestion": "Check lazy loading configuration and ensure components can be dynamically imported.",
+      "fix_commands": [
+        "Check component file exists",
+        "Verify dynamic import syntax",
+        "Handle loading errors gracefully",
+        "Add error boundaries for lazy components"
+      ],
+      "tags": ["vue", "vue-router", "lazy-loading", "dynamic-import"],
+      "examples": [
+        "ChunkLoadError: Loading chunk 2 failed"
+      ]
+    }
+  ]
+}
