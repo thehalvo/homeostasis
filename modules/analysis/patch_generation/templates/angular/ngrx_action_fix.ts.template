@@ -1,0 +1,41 @@
+// Fix for NgRx action without type property
+// Use createAction() helper to ensure proper action structure
+
+import { createAction, props } from '@ngrx/store';
+
+// Good: Using createAction helper
+export const {{ACTION_NAME}} = createAction(
+  '[{{FEATURE_NAME}}] {{ACTION_DESCRIPTION}}'
+);
+
+// Good: Action with payload
+export const {{ACTION_NAME}}Success = createAction(
+  '[{{FEATURE_NAME}}] {{ACTION_DESCRIPTION}} Success',
+  props<{ {{PAYLOAD_TYPE}}: {{PAYLOAD_TYPE}} }>()
+);
+
+// Good: Action with error
+export const {{ACTION_NAME}}Failure = createAction(
+  '[{{FEATURE_NAME}}] {{ACTION_DESCRIPTION}} Failure',
+  props<{ error: any }>()
+);
+
+// Example usage in component:
+/*
+export class {{COMPONENT_NAME}}Component {
+  constructor(private store: Store) {}
+  
+  onButtonClick() {
+    this.store.dispatch({{ACTION_NAME}}());
+  }
+  
+  onDataSubmit(data: {{PAYLOAD_TYPE}}) {
+    this.store.dispatch({{ACTION_NAME}}Success({ {{PAYLOAD_NAME}}: data }));
+  }
+}
+*/
+
+// Action naming conventions:
+// [Source] Event - e.g., '[User] Load Users'
+// [Source] Event Success - e.g., '[User] Load Users Success'
+// [Source] Event Failure - e.g., '[User] Load Users Failure'

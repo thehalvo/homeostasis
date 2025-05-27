@@ -1,0 +1,147 @@
+{
+  "metadata": {
+    "description": "Angular Universal SSR errors and their fixes",
+    "framework": "angular",
+    "library": "@nguniversal/express-engine",
+    "version": "9+",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "angular_ssr_window_undefined",
+      "category": "angular",
+      "subcategory": "ssr",
+      "pattern": "window is not defined",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_ssr_window_not_available",
+      "suggestion": "Use isPlatformBrowser() to check if window is available",
+      "fix_commands": [
+        "Import isPlatformBrowser from @angular/common",
+        "Inject PLATFORM_ID token",
+        "Wrap window usage in isPlatformBrowser() check"
+      ],
+      "tags": ["angular", "ssr", "window", "platform"]
+    },
+    {
+      "id": "angular_ssr_document_undefined",
+      "category": "angular",
+      "subcategory": "ssr",
+      "pattern": "document is not defined",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_ssr_document_not_available",
+      "suggestion": "Use isPlatformBrowser() and inject DOCUMENT token",
+      "fix_commands": [
+        "Import isPlatformBrowser from @angular/common",
+        "Inject DOCUMENT token from @angular/common",
+        "Wrap document usage in platform checks"
+      ],
+      "tags": ["angular", "ssr", "document", "platform"]
+    },
+    {
+      "id": "angular_ssr_localstorage_undefined",
+      "category": "angular",
+      "subcategory": "ssr",
+      "pattern": "localStorage is not defined",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_ssr_localstorage_not_available",
+      "suggestion": "Use browser platform check before accessing localStorage",
+      "fix_commands": [
+        "Check if running in browser before using localStorage",
+        "Provide fallback for server-side rendering",
+        "Use a service to abstract storage access"
+      ],
+      "tags": ["angular", "ssr", "localstorage", "storage"]
+    },
+    {
+      "id": "angular_ssr_hydration_mismatch",
+      "category": "angular",
+      "subcategory": "ssr",
+      "pattern": "Hydration.*mismatch",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_ssr_hydration_mismatch",
+      "suggestion": "Ensure server and client render the same content",
+      "fix_commands": [
+        "Check for differences in server and client state",
+        "Ensure consistent data between server and client",
+        "Use TransferState for data synchronization"
+      ],
+      "tags": ["angular", "ssr", "hydration", "mismatch"]
+    },
+    {
+      "id": "angular_ssr_dom_manipulation_error",
+      "category": "angular",
+      "subcategory": "ssr",
+      "pattern": "Cannot read.*DOM.*server",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_ssr_dom_manipulation_error",
+      "suggestion": "Avoid direct DOM manipulation in SSR context",
+      "fix_commands": [
+        "Use Angular's Renderer2 instead of direct DOM access",
+        "Check platform before DOM operations",
+        "Use ViewChild and lifecycle hooks properly"
+      ],
+      "tags": ["angular", "ssr", "dom", "manipulation"]
+    },
+    {
+      "id": "angular_ssr_external_library_error",
+      "category": "angular",
+      "subcategory": "ssr",
+      "pattern": "External library.*not compatible.*SSR",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "angular_ssr_external_library_incompatible",
+      "suggestion": "Load external libraries only in browser context",
+      "fix_commands": [
+        "Use dynamic imports for browser-only libraries",
+        "Check platform before loading external scripts",
+        "Provide server-side compatible alternatives"
+      ],
+      "tags": ["angular", "ssr", "external", "library"]
+    },
+    {
+      "id": "angular_ssr_transfer_state_error",
+      "category": "angular",
+      "subcategory": "ssr",
+      "pattern": "TransferState.*not found",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_ssr_transfer_state_not_configured",
+      "suggestion": "Configure TransferState for data transfer between server and client",
+      "fix_commands": [
+        "Import BrowserTransferStateModule in browser module",
+        "Import ServerTransferStateModule in server module",
+        "Use TransferState service to share data"
+      ],
+      "tags": ["angular", "ssr", "transfer-state", "data"]
+    },
+    {
+      "id": "angular_ssr_meta_tags_error",
+      "category": "angular",
+      "subcategory": "ssr",
+      "pattern": "Meta tags.*not updating.*SSR",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "angular_ssr_meta_tags_not_updating",
+      "suggestion": "Use Angular's Meta and Title services for SSR-compatible meta tag updates",
+      "fix_commands": [
+        "Use Meta service from @angular/platform-browser",
+        "Use Title service for title updates",
+        "Ensure meta tag updates happen on server side"
+      ],
+      "tags": ["angular", "ssr", "meta", "seo"]
+    }
+  ]
+}

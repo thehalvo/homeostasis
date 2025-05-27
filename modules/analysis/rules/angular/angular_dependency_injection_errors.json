@@ -1,0 +1,180 @@
+{
+  "metadata": {
+    "description": "Angular dependency injection errors and their fixes",
+    "framework": "angular",
+    "version": "2+",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "angular_no_provider",
+      "category": "angular",
+      "subcategory": "dependency_injection",
+      "pattern": "No provider for (\w+)!",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_no_provider",
+      "suggestion": "Add the service to providers array or use providedIn: 'root'",
+      "fix_commands": [
+        "Add service to providers array in module",
+        "Use @Injectable({providedIn: 'root'}) on the service",
+        "Import the service in the module"
+      ],
+      "tags": ["angular", "dependency-injection", "provider", "service"]
+    },
+    {
+      "id": "angular_injection_token_error",
+      "category": "angular",
+      "subcategory": "dependency_injection",
+      "pattern": "No provider for InjectionToken",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_injection_token_error",
+      "suggestion": "Provide value for the InjectionToken in module providers",
+      "fix_commands": [
+        "Add { provide: TOKEN, useValue: value } to providers",
+        "Use { provide: TOKEN, useFactory: factory } for dynamic values",
+        "Ensure InjectionToken is properly defined"
+      ],
+      "tags": ["angular", "dependency-injection", "injection-token", "provider"]
+    },
+    {
+      "id": "angular_circular_dependency",
+      "category": "angular",
+      "subcategory": "dependency_injection",
+      "pattern": "Circular dependency in DI detected",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_circular_dependency",
+      "suggestion": "Remove circular dependencies or use forwardRef()",
+      "fix_commands": [
+        "Use forwardRef(() => Service) for circular dependencies",
+        "Restructure services to avoid circular references",
+        "Extract shared logic to a separate service"
+      ],
+      "tags": ["angular", "dependency-injection", "circular", "forwardref"]
+    },
+    {
+      "id": "angular_cannot_resolve_parameters",
+      "category": "angular",
+      "subcategory": "dependency_injection",
+      "pattern": "Cannot resolve all parameters for (\w+): \(\?\)",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_cannot_resolve_parameters",
+      "suggestion": "Add @Injectable() decorator and ensure all dependencies are available",
+      "fix_commands": [
+        "Add @Injectable() decorator to the class",
+        "Ensure all constructor parameters are provided",
+        "Use @Inject() for custom tokens or primitive types"
+      ],
+      "tags": ["angular", "dependency-injection", "injectable", "parameters"]
+    },
+    {
+      "id": "angular_invalid_provider",
+      "category": "angular",
+      "subcategory": "dependency_injection",
+      "pattern": "Invalid provider for the NgModule",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_invalid_provider",
+      "suggestion": "Check provider configuration in module or component",
+      "fix_commands": [
+        "Ensure provider object has proper structure",
+        "Use provide/useValue, provide/useClass, or provide/useFactory",
+        "Check for missing imports or exports"
+      ],
+      "tags": ["angular", "dependency-injection", "provider", "configuration"]
+    },
+    {
+      "id": "angular_injector_not_found",
+      "category": "angular",
+      "subcategory": "dependency_injection",
+      "pattern": "Injector.*not found",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_injector_not_found",
+      "suggestion": "Ensure component is properly instantiated within Angular context",
+      "fix_commands": [
+        "Check component is declared in a module",
+        "Ensure component is used within Angular application",
+        "Verify module imports and bootstrapping"
+      ],
+      "tags": ["angular", "dependency-injection", "injector", "context"]
+    },
+    {
+      "id": "angular_optional_injection",
+      "category": "angular",
+      "subcategory": "dependency_injection",
+      "pattern": "StaticInjectorError.*No provider for (\w+)",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_static_injector_error",
+      "suggestion": "Use @Optional() decorator for optional dependencies",
+      "fix_commands": [
+        "Add @Optional() decorator for optional dependencies",
+        "Provide default value or null check",
+        "Add provider for the dependency"
+      ],
+      "tags": ["angular", "dependency-injection", "optional", "static-injector"]
+    },
+    {
+      "id": "angular_self_injection",
+      "category": "angular",
+      "subcategory": "dependency_injection",
+      "pattern": "Cannot instantiate cyclic dependency!",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_self_injection_error",
+      "suggestion": "Use @Self(), @SkipSelf(), or @Host() decorators to control injection scope",
+      "fix_commands": [
+        "Use @SkipSelf() to skip current injector",
+        "Use @Self() to limit injection to current element",
+        "Use @Host() to limit injection to current component"
+      ],
+      "tags": ["angular", "dependency-injection", "self", "skip-self", "host"]
+    },
+    {
+      "id": "angular_multi_provider_error",
+      "category": "angular",
+      "subcategory": "dependency_injection",
+      "pattern": "Cannot mix multi providers and regular providers",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_multi_provider_error",
+      "suggestion": "Use consistent provider configuration with multi: true",
+      "fix_commands": [
+        "Use multi: true for all providers of the same token",
+        "Ensure all multi providers are arrays",
+        "Don't mix single and multi providers for same token"
+      ],
+      "tags": ["angular", "dependency-injection", "multi-provider", "provider"]
+    },
+    {
+      "id": "angular_view_destroyed_injection",
+      "category": "angular",
+      "subcategory": "dependency_injection",
+      "pattern": "ViewDestroyedError: Attempt to use a destroyed view",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_view_destroyed_error",
+      "suggestion": "Check component lifecycle and avoid accessing destroyed views",
+      "fix_commands": [
+        "Implement OnDestroy and unsubscribe from observables",
+        "Check component state before accessing views",
+        "Use takeUntil pattern for subscription management"
+      ],
+      "tags": ["angular", "dependency-injection", "view", "lifecycle", "destroy"]
+    }
+  ]
+}

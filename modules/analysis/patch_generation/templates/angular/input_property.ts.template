@@ -1,0 +1,53 @@
+// Fix for Angular property binding error
+// Add @Input() decorator to component property
+
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-{{COMPONENT_NAME_LOWER}}',
+  template: `
+    <div>
+      <h3>{{ title }}</h3>
+      <p>{{ description }}</p>
+      <span class="status" [class.active]="isActive">{{ status }}</span>
+    </div>
+  `
+})
+export class {{COMPONENT_NAME}}Component {
+  // Add @Input() decorator for properties that can be bound from parent
+  @Input() title: string = '';
+  @Input() description: string = '';
+  @Input() isActive: boolean = false;
+  @Input() status: string = 'inactive';
+  
+  // Optional: Add type safety with interfaces
+  @Input() data: {{DATA_TYPE}} | null = null;
+  
+  // Optional: Set default values
+  @Input() config: {{CONFIG_TYPE}} = {
+    // default configuration
+  };
+  
+  // Optional: Use setter for validation or transformation
+  private _value: any;
+  @Input()
+  set value(val: any) {
+    // Validate or transform the input
+    this._value = val || '';
+  }
+  get value(): any {
+    return this._value;
+  }
+}
+
+// Usage in parent template:
+/*
+<app-{{COMPONENT_NAME_LOWER}}
+  [title]="userTitle"
+  [description]="userDescription"
+  [isActive]="user.isActive"
+  [status]="user.status"
+  [data]="userData"
+  [config]="appConfig">
+</app-{{COMPONENT_NAME_LOWER}}>
+*/

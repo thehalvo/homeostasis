@@ -534,5 +534,112 @@
         "proper_component_splitting": true
       }
     }
+  },
+  "angular": {
+    "language": "angular",
+    "field_mappings": {
+      "error_type": ["name", "type"],
+      "message": "message",
+      "stack_trace": ["stack", "stacktrace", "stack_trace"],
+      "component_stack": ["componentStack", "component_stack"]
+    },
+    "stack_trace_fields": ["stack", "stacktrace", "stack_trace"],
+    "stack_trace_format": "string",
+    "version_fields": ["angular_version", "framework_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version", "angular_version"],
+    "detection_patterns": [
+      "(?:Angular warn)",
+      "(?:@angular)",
+      "(?:ng\\s)",
+      "(?:dependency injection)",
+      "(?:No provider for)",
+      "(?:InjectionToken)",
+      "(?:circular dependency)",
+      "(?:cannot resolve all parameters)",
+      "(?:NgRx)",
+      "(?:@ngrx)",
+      "(?:@Component)",
+      "(?:@Injectable)",
+      "(?:@NgModule)",
+      "(?:@Input)",
+      "(?:@Output)",
+      "(?:Cannot bind to)",
+      "(?:is not a known element)",
+      "(?:is not a known property)",
+      "(?:Expression has changed after)",
+      "(?:angular\\.core)",
+      "(?:platformBrowserDynamic)",
+      "(?:Component.*angular)",
+      "(?:template.*angular)",
+      "(?:at.*\\.component\\.ts:\\d+:\\d+)",
+      "(?:at.*\\.service\\.ts:\\d+:\\d+)",
+      "(?:at.*\\.module\\.ts:\\d+:\\d+)",
+      "(?:injector.*error)",
+      "(?:Action must have a type)",
+      "(?:Store has not been provided)",
+      "(?:Reducer returned undefined)",
+      "(?:Selector function cannot return)",
+      "(?:Effects must be an array)"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "error",
+      "fatal": "fatal"
+    },
+    "component_stack_patterns": [
+      "(?:at (\\w+Component) \\([^)]+\\.(ts|js):\\d+:\\d+\\))",
+      "(?:in (\\w+) \\(at [^)]+\\.(ts|js):\\d+:\\d+\\))"
+    ],
+    "file_extensions": [".ts", ".js", ".html"],
+    "config_files": ["angular.json", "package.json", "tsconfig.json", "nx.json"],
+    "decorators": [
+      "@Component", "@Injectable", "@NgModule", "@Input", "@Output", 
+      "@ViewChild", "@ViewChildren", "@ContentChild", "@ContentChildren",
+      "@HostBinding", "@HostListener", "@Inject", "@Optional", "@Self",
+      "@SkipSelf", "@Host", "@Attribute", "@Pipe", "@Directive"
+    ],
+    "lifecycle_hooks": [
+      "ngOnInit", "ngOnDestroy", "ngOnChanges", "ngDoCheck", "ngAfterViewInit",
+      "ngAfterViewChecked", "ngAfterContentInit", "ngAfterContentChecked"
+    ],
+    "ngrx_functions": [
+      "createAction", "createReducer", "createSelector", "createEffect",
+      "StoreModule.forRoot", "StoreModule.forFeature", "EffectsModule.forRoot",
+      "EffectsModule.forFeature", "select", "dispatch"
+    ],
+    "dependency_injection_tokens": [
+      "InjectionToken", "DOCUMENT", "WINDOW", "LOCALE_ID", "PLATFORM_ID",
+      "APP_BOOTSTRAP_LISTENER", "APP_INITIALIZER", "ANALYZE_FOR_ENTRY_COMPONENTS"
+    ],
+    "angular_patterns": {
+      "dependency_injection_rules": {
+        "require_injectable_decorator": true,
+        "provide_dependencies": true,
+        "avoid_circular_dependencies": true,
+        "use_injection_tokens": true
+      },
+      "template_rules": {
+        "safe_navigation": true,
+        "proper_property_binding": true,
+        "known_elements_only": true,
+        "known_properties_only": true
+      },
+      "ngrx_rules": {
+        "actions_must_have_type": true,
+        "reducers_must_return_state": true,
+        "effects_return_actions": true,
+        "immutable_state_updates": true
+      },
+      "performance_rules": {
+        "onpush_change_detection": true,
+        "lazy_loading_modules": true,
+        "trackby_functions": true,
+        "avoid_function_calls_in_templates": true
+      }
+    }
   }
 }

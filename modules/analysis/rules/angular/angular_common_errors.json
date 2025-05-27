@@ -1,0 +1,180 @@
+{
+  "metadata": {
+    "description": "Common Angular errors and their fixes",
+    "framework": "angular",
+    "version": "2+",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "angular_component_not_found",
+      "category": "angular",
+      "subcategory": "components",
+      "pattern": "'([^']+)' is not a known element",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_unknown_element",
+      "suggestion": "Import the component module or add the component to declarations",
+      "fix_commands": [
+        "Import the module containing the component",
+        "Add the component to declarations if it's in the same module",
+        "Check the component selector name"
+      ],
+      "tags": ["angular", "component", "module", "declaration"]
+    },
+    {
+      "id": "angular_property_binding_error",
+      "category": "angular",
+      "subcategory": "templates",
+      "pattern": "Can't bind to '([^']+)' since it isn't a known property",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_unknown_property",
+      "suggestion": "Add @Input() decorator to the property or check property name",
+      "fix_commands": [
+        "Add @Input() decorator to the target component property",
+        "Check spelling of the property name",
+        "Ensure the property is meant to be an input"
+      ],
+      "tags": ["angular", "template", "binding", "input"]
+    },
+    {
+      "id": "angular_safe_navigation_needed",
+      "category": "angular",
+      "subcategory": "templates",
+      "pattern": "Cannot read propert(y|ies) .* of (null|undefined)",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_template_property_undefined",
+      "suggestion": "Use safe navigation operator (?.) or *ngIf to check for null/undefined",
+      "fix_commands": [
+        "Use safe navigation operator: {{ user?.name }}",
+        "Use *ngIf to check existence: <div *ngIf='user'>{{ user.name }}</div>",
+        "Initialize the property in component"
+      ],
+      "tags": ["angular", "template", "safe-navigation", "null-check"]
+    },
+    {
+      "id": "angular_expression_changed_after_checked",
+      "category": "angular",
+      "subcategory": "templates",
+      "pattern": "ExpressionChangedAfterItHasBeenCheckedError",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_expression_changed_after_checked",
+      "suggestion": "Move logic to ngAfterViewInit or use setTimeout/Promise.resolve",
+      "fix_commands": [
+        "Move property updates to ngAfterViewInit lifecycle hook",
+        "Use setTimeout(() => { ... }, 0) to defer changes",
+        "Use Promise.resolve().then(() => { ... }) for async updates"
+      ],
+      "tags": ["angular", "template", "change-detection", "lifecycle"]
+    },
+    {
+      "id": "angular_component_constructor_error",
+      "category": "angular",
+      "subcategory": "components",
+      "pattern": "Cannot resolve all parameters for (\w+Component)",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_cannot_resolve_component_parameters",
+      "suggestion": "Ensure all constructor dependencies are provided and have proper decorators",
+      "fix_commands": [
+        "Add @Injectable() decorator if missing",
+        "Ensure all dependencies are provided in module",
+        "Use @Inject() decorator for custom tokens"
+      ],
+      "tags": ["angular", "component", "dependency-injection", "constructor"]
+    },
+    {
+      "id": "angular_module_import_error",
+      "category": "angular",
+      "subcategory": "modules",
+      "pattern": "Module '([^']+)' has no exported member '([^']+)'",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_module_export_not_found",
+      "suggestion": "Check the import statement and ensure the member is exported",
+      "fix_commands": [
+        "Verify the exported member name",
+        "Check the module's public API",
+        "Ensure the module is properly installed"
+      ],
+      "tags": ["angular", "module", "import", "export"]
+    },
+    {
+      "id": "angular_lifecycle_hook_error",
+      "category": "angular",
+      "subcategory": "lifecycle",
+      "pattern": "(ngOnInit|ngOnDestroy|ngOnChanges|ngDoCheck|ngAfterViewInit|ngAfterViewChecked|ngAfterContentInit|ngAfterContentChecked) is not a function",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_lifecycle_hook_not_implemented",
+      "suggestion": "Implement the lifecycle hook interface and method",
+      "fix_commands": [
+        "Implement the lifecycle interface (e.g., OnInit, OnDestroy)",
+        "Add the lifecycle method to your component",
+        "Import the interface from @angular/core"
+      ],
+      "tags": ["angular", "lifecycle", "interface", "implementation"]
+    },
+    {
+      "id": "angular_router_navigation_error",
+      "category": "angular",
+      "subcategory": "routing",
+      "pattern": "Cannot match any routes. URL Segment: '([^']+)'",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_route_not_found",
+      "suggestion": "Add the route to your routing configuration or check the URL",
+      "fix_commands": [
+        "Add route configuration for the URL segment",
+        "Check for typos in the route path",
+        "Ensure the route is imported in the routing module"
+      ],
+      "tags": ["angular", "router", "navigation", "route"]
+    },
+    {
+      "id": "angular_form_control_error",
+      "category": "angular",
+      "subcategory": "forms",
+      "pattern": "Cannot find control with (name|path): '([^']+)'",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_form_control_not_found",
+      "suggestion": "Ensure the form control is defined in the FormGroup",
+      "fix_commands": [
+        "Add the control to your FormGroup definition",
+        "Check the control name spelling",
+        "Ensure FormControl is properly initialized"
+      ],
+      "tags": ["angular", "forms", "reactive-forms", "form-control"]
+    },
+    {
+      "id": "angular_pipe_not_found",
+      "category": "angular",
+      "subcategory": "pipes",
+      "pattern": "The pipe '([^']+)' could not be found",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_pipe_not_found",
+      "suggestion": "Import the pipe module or declare the pipe in the module",
+      "fix_commands": [
+        "Import the module containing the pipe",
+        "Add the pipe to declarations if it's custom",
+        "Check the pipe name spelling"
+      ],
+      "tags": ["angular", "pipes", "module", "declaration"]
+    }
+  ]
+}

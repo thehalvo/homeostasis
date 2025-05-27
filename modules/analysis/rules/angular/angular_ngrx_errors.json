@@ -1,0 +1,215 @@
+{
+  "metadata": {
+    "description": "Angular NgRx state management errors and their fixes",
+    "framework": "angular",
+    "library": "@ngrx/store",
+    "version": "8+",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "ngrx_action_no_type",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "Action must have a type",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ngrx_action_no_type",
+      "suggestion": "Ensure all NgRx actions have a 'type' property",
+      "fix_commands": [
+        "Use createAction() helper to create actions",
+        "Ensure all action objects have a 'type' property",
+        "Follow NgRx action naming conventions: '[Feature] Action Name'"
+      ],
+      "tags": ["angular", "ngrx", "action", "type"]
+    },
+    {
+      "id": "ngrx_store_not_provided",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "Store has not been provided",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ngrx_store_not_provided",
+      "suggestion": "Import StoreModule.forRoot() in your AppModule",
+      "fix_commands": [
+        "Import StoreModule.forRoot() in AppModule",
+        "Provide initial state and reducers",
+        "Ensure Store service is injected properly"
+      ],
+      "tags": ["angular", "ngrx", "store", "module"]
+    },
+    {
+      "id": "ngrx_effects_not_array",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "Effects must be an array",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ngrx_effects_not_array",
+      "suggestion": "Ensure EffectsModule.forRoot() receives an array of effect classes",
+      "fix_commands": [
+        "Pass array of effect classes to EffectsModule.forRoot()",
+        "Use EffectsModule.forFeature() for feature effects",
+        "Import all effect classes properly"
+      ],
+      "tags": ["angular", "ngrx", "effects", "array"]
+    },
+    {
+      "id": "ngrx_selector_undefined",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "Selector function cannot return undefined",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ngrx_selector_undefined",
+      "suggestion": "Ensure selectors return a default value and handle undefined state",
+      "fix_commands": [
+        "Provide default values in selectors",
+        "Handle undefined state in selector functions",
+        "Use initial state to prevent undefined returns"
+      ],
+      "tags": ["angular", "ngrx", "selector", "undefined"]
+    },
+    {
+      "id": "ngrx_reducer_undefined",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "Reducer returned undefined",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ngrx_reducer_undefined",
+      "suggestion": "Ensure reducer always returns a state object, never undefined",
+      "fix_commands": [
+        "Use createReducer() with initial state",
+        "Ensure all action handlers return state",
+        "Add default case that returns current state"
+      ],
+      "tags": ["angular", "ngrx", "reducer", "undefined"]
+    },
+    {
+      "id": "ngrx_effect_invalid_action",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "Effect dispatched invalid action",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ngrx_effect_invalid_action",
+      "suggestion": "Ensure effects return valid action objects",
+      "fix_commands": [
+        "Return actions from effects using map() operator",
+        "Use catchError() to handle errors in effects",
+        "Ensure effect streams return action objects"
+      ],
+      "tags": ["angular", "ngrx", "effects", "action"]
+    },
+    {
+      "id": "ngrx_feature_state_not_found",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "Feature state '([^']+)' not found",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ngrx_feature_state_not_found",
+      "suggestion": "Register feature state with StoreModule.forFeature()",
+      "fix_commands": [
+        "Import StoreModule.forFeature() in feature module",
+        "Provide feature name and reducer",
+        "Ensure feature module is imported"
+      ],
+      "tags": ["angular", "ngrx", "feature", "state"]
+    },
+    {
+      "id": "ngrx_devtools_not_configured",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "StoreDevtools.*not configured",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ngrx_devtools_not_configured",
+      "suggestion": "Import StoreDevtoolsModule for development debugging",
+      "fix_commands": [
+        "Import StoreDevtoolsModule.instrument() in AppModule",
+        "Configure devtools for development environment only",
+        "Install @ngrx/store-devtools package"
+      ],
+      "tags": ["angular", "ngrx", "devtools", "debugging"]
+    },
+    {
+      "id": "ngrx_entity_adapter_error",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "EntityAdapter.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ngrx_entity_adapter_error",
+      "suggestion": "Check EntityAdapter configuration and usage",
+      "fix_commands": [
+        "Create EntityAdapter with createEntityAdapter()",
+        "Define selectId function for custom ID selection",
+        "Use adapter methods (addOne, updateOne, removeOne) properly"
+      ],
+      "tags": ["angular", "ngrx", "entity", "adapter"]
+    },
+    {
+      "id": "ngrx_runtime_checks_violation",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "State mutation detected",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ngrx_state_mutation_detected",
+      "suggestion": "Ensure state updates are immutable",
+      "fix_commands": [
+        "Use spread operator or Object.assign for updates",
+        "Never mutate state directly in reducers",
+        "Use immer or similar library for complex updates"
+      ],
+      "tags": ["angular", "ngrx", "mutation", "immutability"]
+    },
+    {
+      "id": "ngrx_effect_unhandled_error",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "Unhandled error in effect",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ngrx_effect_unhandled_error",
+      "suggestion": "Add error handling to effects with catchError operator",
+      "fix_commands": [
+        "Use catchError operator in effect pipes",
+        "Return error actions from catchError",
+        "Never let effects complete due to errors"
+      ],
+      "tags": ["angular", "ngrx", "effects", "error-handling"]
+    },
+    {
+      "id": "ngrx_selector_projection_error",
+      "category": "angular",
+      "subcategory": "ngrx",
+      "pattern": "Selector projection function error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ngrx_selector_projection_error",
+      "suggestion": "Check selector projection functions and input parameters",
+      "fix_commands": [
+        "Ensure projection function handles all input types",
+        "Add null/undefined checks in projections",
+        "Use createSelector with proper input selectors"
+      ],
+      "tags": ["angular", "ngrx", "selector", "projection"]
+    }
+  ]
+}

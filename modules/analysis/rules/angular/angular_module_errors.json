@@ -1,0 +1,146 @@
+{
+  "metadata": {
+    "description": "Angular module and lazy loading errors and their fixes",
+    "framework": "angular",
+    "version": "2+",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "angular_lazy_loading_error",
+      "category": "angular",
+      "subcategory": "modules",
+      "pattern": "Cannot find module.*loadChildren",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_lazy_loading_module_not_found",
+      "suggestion": "Check the loadChildren path and ensure the module exists",
+      "fix_commands": [
+        "Verify the module path in loadChildren",
+        "Ensure the lazy-loaded module is properly exported",
+        "Check for typos in module file name or path"
+      ],
+      "tags": ["angular", "module", "lazy-loading", "routing"]
+    },
+    {
+      "id": "angular_module_import_error",
+      "category": "angular",
+      "subcategory": "modules",
+      "pattern": "Module has no exported member",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_module_export_missing",
+      "suggestion": "Ensure the module exports the required member",
+      "fix_commands": [
+        "Add the missing export to the module",
+        "Check the import statement syntax",
+        "Verify the module's public API"
+      ],
+      "tags": ["angular", "module", "import", "export"]
+    },
+    {
+      "id": "angular_feature_module_not_imported",
+      "category": "angular",
+      "subcategory": "modules",
+      "pattern": "Component.*is not a known element",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "angular_feature_module_not_imported",
+      "suggestion": "Import the feature module containing the component",
+      "fix_commands": [
+        "Add the feature module to imports array",
+        "Ensure the component is declared in its module",
+        "Check module dependencies and exports"
+      ],
+      "tags": ["angular", "module", "feature", "component"]
+    },
+    {
+      "id": "angular_shared_module_error",
+      "category": "angular",
+      "subcategory": "modules",
+      "pattern": "Type.*is part of the declarations of 2 modules",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_duplicate_declaration",
+      "suggestion": "Move common components to a shared module or remove duplicate declarations",
+      "fix_commands": [
+        "Create a shared module for common components",
+        "Export components from shared module",
+        "Import shared module in feature modules"
+      ],
+      "tags": ["angular", "module", "shared", "declarations"]
+    },
+    {
+      "id": "angular_circular_module_dependency",
+      "category": "angular",
+      "subcategory": "modules",
+      "pattern": "Circular dependency.*modules",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_circular_module_dependency",
+      "suggestion": "Restructure modules to avoid circular dependencies",
+      "fix_commands": [
+        "Extract shared dependencies to a separate module",
+        "Use forwardRef() if necessary",
+        "Redesign module structure to eliminate cycles"
+      ],
+      "tags": ["angular", "module", "circular", "dependency"]
+    },
+    {
+      "id": "angular_core_module_multiple_imports",
+      "category": "angular",
+      "subcategory": "modules",
+      "pattern": "CoreModule has already been loaded",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_core_module_multiple_imports",
+      "suggestion": "Ensure CoreModule is only imported once in AppModule",
+      "fix_commands": [
+        "Import CoreModule only in AppModule",
+        "Add guard to prevent multiple imports",
+        "Use throwIfAlreadyLoaded guard in CoreModule constructor"
+      ],
+      "tags": ["angular", "module", "core", "singleton"]
+    },
+    {
+      "id": "angular_preloading_strategy_error",
+      "category": "angular",
+      "subcategory": "modules",
+      "pattern": "Preloading.*failed",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "angular_preloading_strategy_error",
+      "suggestion": "Check preloading strategy configuration and lazy-loaded modules",
+      "fix_commands": [
+        "Verify preloading strategy implementation",
+        "Check network connectivity for module loading",
+        "Ensure all lazy-loaded modules are accessible"
+      ],
+      "tags": ["angular", "module", "preloading", "lazy-loading"]
+    },
+    {
+      "id": "angular_module_with_providers_error",
+      "category": "angular",
+      "subcategory": "modules",
+      "pattern": "ModuleWithProviders.*missing",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "angular_module_with_providers_error",
+      "suggestion": "Use proper ModuleWithProviders typing for static methods",
+      "fix_commands": [
+        "Add ModuleWithProviders return type to static methods",
+        "Specify the module type in ModuleWithProviders<T>",
+        "Follow Angular module configuration patterns"
+      ],
+      "tags": ["angular", "module", "providers", "typing"]
+    }
+  ]
+}

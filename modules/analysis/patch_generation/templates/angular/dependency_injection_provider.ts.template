@@ -1,0 +1,36 @@
+// Fix for Angular dependency injection provider error
+// Add service to providers array or use providedIn: 'root'
+
+// Option 1: Use providedIn in service
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'  // This makes the service available app-wide
+})
+export class {{SERVICE_NAME}} {
+  // Service implementation
+}
+
+// Option 2: Add to module providers
+import { NgModule } from '@angular/core';
+import { {{SERVICE_NAME}} } from './{{SERVICE_NAME_LOWER}}.service';
+
+@NgModule({
+  providers: [
+    {{SERVICE_NAME}},
+    // ... other providers
+  ]
+})
+export class {{MODULE_NAME}} {}
+
+// Option 3: Use factory provider
+@NgModule({
+  providers: [
+    {
+      provide: {{SERVICE_NAME}},
+      useFactory: () => new {{SERVICE_NAME}}(),
+      deps: [/* dependencies */]
+    }
+  ]
+})
+export class {{MODULE_NAME}} {}

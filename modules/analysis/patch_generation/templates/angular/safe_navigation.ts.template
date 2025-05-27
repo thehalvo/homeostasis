@@ -1,0 +1,49 @@
+<!-- Fix for Angular template property access on undefined -->
+<!-- Use safe navigation operator or null checks -->
+
+<!-- Option 1: Safe navigation operator -->
+<div>{{ user?.name }}</div>
+<div>{{ user?.address?.street }}</div>
+<div>{{ user?.profile?.avatar || 'default-avatar.png' }}</div>
+
+<!-- Option 2: *ngIf to check existence -->
+<div *ngIf="user">
+  <h3>{{ user.name }}</h3>
+  <p>{{ user.email }}</p>
+  
+  <div *ngIf="user.address">
+    <p>{{ user.address.street }}</p>
+    <p>{{ user.address.city }}, {{ user.address.state }}</p>
+  </div>
+</div>
+
+<!-- Option 3: Null check with else clause -->
+<div *ngIf="user; else noUser">
+  <h3>{{ user.name }}</h3>
+</div>
+<ng-template #noUser>
+  <p>No user data available</p>
+</ng-template>
+
+<!-- Option 4: Default values in component -->
+<!-- In component TypeScript file: -->
+/*
+export class UserComponent implements OnInit {
+  user: User = {  // Initialize with default values
+    name: '',
+    email: '',
+    address: {
+      street: '',
+      city: '',
+      state: ''
+    }
+  };
+  
+  ngOnInit() {
+    // Load user data
+    this.userService.getUser().subscribe(userData => {
+      this.user = { ...this.user, ...userData };
+    });
+  }
+}
+*/
