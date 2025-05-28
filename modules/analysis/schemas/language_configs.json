@@ -641,5 +641,128 @@
         "avoid_function_calls_in_templates": true
       }
     }
+  },
+  "svelte": {
+    "language": "svelte",
+    "field_mappings": {
+      "error_type": ["name", "type"],
+      "message": "message",
+      "stack_trace": ["stack", "stacktrace", "stack_trace"],
+      "component_stack": ["componentStack", "component_stack"]
+    },
+    "stack_trace_fields": ["stack", "stacktrace", "stack_trace"],
+    "stack_trace_format": "string",
+    "version_fields": ["svelte_version", "framework_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version", "svelte_version"],
+    "detection_patterns": [
+      "(?:svelte)",
+      "(?:sveltekit)",
+      "(?:@sveltejs)",
+      "(?:\\$:)",
+      "(?:reactive statement)",
+      "(?:writable\\()",
+      "(?:readable\\()",
+      "(?:derived\\()",
+      "(?:\\.svelte:)",
+      "(?:svelte/store)",
+      "(?:svelte/transition)",
+      "(?:svelte/animate)",
+      "(?:svelte/action)",
+      "(?:\\+page\\.)",
+      "(?:\\+layout\\.)",
+      "(?:\\+error\\.)",
+      "(?:app\\.html)",
+      "(?:bind:)",
+      "(?:transition:)",
+      "(?:animate:)",
+      "(?:use:)",
+      "(?:slot=)",
+      "(?:createEventDispatcher)",
+      "(?:getContext)",
+      "(?:setContext)",
+      "(?:beforeUpdate)",
+      "(?:afterUpdate)",
+      "(?:tick\\(\\))",
+      "(?:reactive statement ran more than)",
+      "(?:cannot bind to)",
+      "(?:load function must return)",
+      "(?:cannot use goto during ssr)",
+      "(?:hydration mismatch)",
+      "(?:prerender error)",
+      "(?:fade is not defined)",
+      "(?:slide is not defined)",
+      "(?:fly is not defined)",
+      "(?:component.*not.*defined)",
+      "(?:store subscription.*leak)",
+      "(?:browser.*environment)",
+      "(?:server.*side.*rendering)"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "error",
+      "fatal": "fatal"
+    },
+    "component_stack_patterns": [
+      "(?:at (\\w+) \\([^)]+\\.(svelte|js|ts):\\d+:\\d+\\))",
+      "(?:in (\\w+) \\(at [^)]+\\.(svelte|js|ts):\\d+:\\d+\\))"
+    ],
+    "file_extensions": [".svelte", ".js", ".ts"],
+    "config_files": ["package.json", "svelte.config.js", "vite.config.js", "rollup.config.js"],
+    "store_functions": [
+      "writable", "readable", "derived", "get", "subscribe", "set", "update"
+    ],
+    "lifecycle_functions": [
+      "onMount", "onDestroy", "beforeUpdate", "afterUpdate", "tick",
+      "createEventDispatcher", "getContext", "setContext", "hasContext"
+    ],
+    "sveltekit_functions": [
+      "load", "goto", "page", "navigating", "updated", "beforeNavigate", "afterNavigate",
+      "preloadData", "preloadCode", "invalidate", "invalidateAll"
+    ],
+    "transition_functions": [
+      "fade", "slide", "scale", "draw", "fly", "blur", "crossfade"
+    ],
+    "animation_functions": [
+      "flip", "crossfade"
+    ],
+    "action_functions": [
+      "use", "action", "clickOutside", "focus", "portal"
+    ],
+    "svelte_patterns": {
+      "reactivity_rules": {
+        "avoid_circular_dependencies": true,
+        "declare_before_use": true,
+        "use_let_for_mutable": true,
+        "proper_reactive_statements": true
+      },
+      "store_rules": {
+        "import_from_svelte_store": true,
+        "unsubscribe_on_destroy": true,
+        "use_dollar_syntax": true,
+        "proper_initial_values": true
+      },
+      "component_rules": {
+        "proper_imports": true,
+        "export_props": true,
+        "proper_event_handling": true,
+        "use_slots_correctly": true
+      },
+      "sveltekit_rules": {
+        "load_returns_object": true,
+        "goto_browser_only": true,
+        "consistent_ssr_csr": true,
+        "proper_endpoint_exports": true
+      },
+      "performance_rules": {
+        "avoid_inline_handlers": true,
+        "use_stores_for_global_state": true,
+        "proper_key_attributes": true,
+        "optimize_transitions": true
+      }
+    }
   }
 }

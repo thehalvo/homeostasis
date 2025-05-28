@@ -1,0 +1,52 @@
+<script>
+  import { fade, slide, fly } from 'svelte/transition';
+  import { flip } from 'svelte/animate';
+  
+  let visible = true;
+  let items = ['item1', 'item2', 'item3'];
+</script>
+
+<!-- Basic transitions -->
+{#if visible}
+  <div transition:fade={{ duration: 300 }}>
+    Fading content
+  </div>
+{/if}
+
+{#if visible}
+  <div transition:slide={{ duration: 500 }}>
+    Sliding content
+  </div>
+{/if}
+
+{#if visible}
+  <div transition:fly={{ x: 200, duration: 400 }}>
+    Flying content
+  </div>
+{/if}
+
+<!-- List animations -->
+{#each items as item, i (item)}
+  <div animate:flip={{ duration: 200 }}>
+    {item}
+  </div>
+{/each}
+
+<!-- Custom transition -->
+<script>
+  function customTransition(node, { duration = 300 }) {
+    return {
+      duration,
+      css: t => `
+        transform: scale(${t});
+        opacity: ${t};
+      `
+    };
+  }
+</script>
+
+{#if visible}
+  <div transition:customTransition={{ duration: 500 }}>
+    Custom transition content
+  </div>
+{/if}

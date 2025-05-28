@@ -1,0 +1,56 @@
+<script>
+  // Declare variables with let (not const)
+  let inputValue = '';
+  let checked = false;
+  let selectedValue = 'option1';
+  let rangeValue = 50;
+  let textareaValue = '';
+  
+  // For component binding
+  let childComponentValue = '';
+</script>
+
+<!-- Text input binding -->
+<input 
+  type="text" 
+  bind:value={inputValue} 
+  placeholder="Enter text"
+/>
+<p>Input value: {inputValue}</p>
+
+<!-- Checkbox binding -->
+<label>
+  <input 
+    type="checkbox" 
+    bind:checked={checked}
+  />
+  Check me
+</label>
+<p>Checked: {checked}</p>
+
+<!-- Select binding -->
+<select bind:value={selectedValue}>
+  <option value="option1">Option 1</option>
+  <option value="option2">Option 2</option>
+  <option value="option3">Option 3</option>
+</select>
+<p>Selected: {selectedValue}</p>
+
+<!-- Range input binding -->
+<input 
+  type="range" 
+  min="0" 
+  max="100" 
+  bind:value={rangeValue}
+/>
+<p>Range value: {rangeValue}</p>
+
+<!-- Textarea binding -->
+<textarea 
+  bind:value={textareaValue}
+  placeholder="Enter multiline text"
+></textarea>
+<p>Textarea value: {textareaValue}</p>
+
+<!-- Component binding (if you have a child component) -->
+<!-- <ChildComponent bind:value={childComponentValue} /> -->

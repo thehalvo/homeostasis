@@ -1,0 +1,108 @@
+{
+  "version": "1.0.0",
+  "description": "Svelte reactivity system error detection rules",
+  "rules": [
+    {
+      "id": "svelte_reactive_infinite_loop",
+      "category": "svelte",
+      "subcategory": "reactivity",
+      "pattern": "(?i)reactive statement ran more than.*times|infinite.*reactive.*loop|circular.*reactive",
+      "suggestion": "Avoid circular dependencies in reactive statements",
+      "root_cause": "svelte_reactive_infinite_loop",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "reactivity", "infinite-loop"],
+      "fix_commands": [
+        "Break circular dependencies in reactive statements",
+        "Use intermediate variables to avoid direct circular references",
+        "Consider using stores for complex state management"
+      ]
+    },
+    {
+      "id": "svelte_reactive_undefined_variable",
+      "category": "svelte",
+      "subcategory": "reactivity",
+      "pattern": "(?i)\$:.*variable.*not.*defined|reactive.*statement.*undefined.*variable",
+      "suggestion": "Declare variables before using them in reactive statements",
+      "root_cause": "svelte_reactive_undefined_variable",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "reactivity", "undefined"],
+      "fix_commands": [
+        "Declare variables with let before using in reactive statements",
+        "Initialize variables with default values",
+        "Check variable scope and spelling"
+      ]
+    },
+    {
+      "id": "svelte_reactive_const_assignment",
+      "category": "svelte",
+      "subcategory": "reactivity",
+      "pattern": "(?i)assignment to constant variable.*\$:|cannot assign.*const.*reactive",
+      "suggestion": "Use let instead of const for variables that need to change in reactive statements",
+      "root_cause": "svelte_reactive_const_assignment",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "reactivity", "const"],
+      "fix_commands": [
+        "Change const to let for variables that need to be reactive",
+        "Use const only for values that never change",
+        "Consider using stores for mutable shared state"
+      ]
+    },
+    {
+      "id": "svelte_reactive_access_before_init",
+      "category": "svelte",
+      "subcategory": "reactivity",
+      "pattern": "(?i)cannot access.*before initialization.*\$:|reactive.*statement.*access.*before.*init",
+      "suggestion": "Initialize variables before using them in reactive statements",
+      "root_cause": "svelte_reactive_access_before_init",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "reactivity", "initialization"],
+      "fix_commands": [
+        "Initialize variables at declaration",
+        "Use conditional checks before accessing variables",
+        "Move reactive statements after variable declarations"
+      ]
+    },
+    {
+      "id": "svelte_reactive_unused_dependencies",
+      "category": "svelte",
+      "subcategory": "reactivity",
+      "pattern": "(?i)reactive statement.*unused.*dependencies|\$:.*unused.*variable",
+      "suggestion": "Remove unused variables from reactive statement dependencies",
+      "root_cause": "svelte_reactive_unused_dependencies",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "reactivity", "unused"],
+      "fix_commands": [
+        "Remove unused variables from reactive statement",
+        "Simplify reactive statement logic",
+        "Check if all referenced variables are necessary"
+      ]
+    },
+    {
+      "id": "svelte_reactive_missing_dependencies",
+      "category": "svelte",
+      "subcategory": "reactivity",
+      "pattern": "(?i)reactive statement.*missing.*dependencies|\$:.*should.*depend.*on",
+      "suggestion": "Include all referenced variables in reactive statement",
+      "root_cause": "svelte_reactive_missing_dependencies",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "reactivity", "dependencies"],
+      "fix_commands": [
+        "Add missing variables to reactive statement dependencies",
+        "Ensure all referenced variables trigger reactivity",
+        "Check variable scope and accessibility"
+      ]
+    }
+  ]
+}

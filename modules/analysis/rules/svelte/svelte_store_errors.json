@@ -1,0 +1,108 @@
+{
+  "version": "1.0.0",
+  "description": "Svelte store management error detection rules",
+  "rules": [
+    {
+      "id": "svelte_store_not_imported",
+      "category": "svelte",
+      "subcategory": "stores",
+      "pattern": "(?i)writable is not defined|readable is not defined|derived is not defined|.*store.*not.*defined",
+      "suggestion": "Import store functions from 'svelte/store'",
+      "root_cause": "svelte_store_not_imported",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "store", "import"],
+      "fix_commands": [
+        "Import writable, readable, or derived from 'svelte/store'",
+        "Check import statement syntax",
+        "Ensure correct store type is imported"
+      ]
+    },
+    {
+      "id": "svelte_store_subscription_leak",
+      "category": "svelte",
+      "subcategory": "stores",
+      "pattern": "(?i)store subscription.*leak|memory.*leak.*store|unsubscribe.*missing",
+      "suggestion": "Unsubscribe from stores in onDestroy or use $ syntax for auto-subscription",
+      "root_cause": "svelte_store_subscription_leak",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "store", "memory-leak"],
+      "fix_commands": [
+        "Use $ syntax for automatic subscription management",
+        "Call unsubscribe function in onDestroy",
+        "Store unsubscribe function and call it on component destruction"
+      ]
+    },
+    {
+      "id": "svelte_store_undefined_subscription",
+      "category": "svelte",
+      "subcategory": "stores",
+      "pattern": "(?i)cannot subscribe to undefined|subscribe.*undefined.*store|store.*undefined.*subscription",
+      "suggestion": "Ensure store is defined before subscribing",
+      "root_cause": "svelte_store_undefined_subscription",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "store", "undefined"],
+      "fix_commands": [
+        "Check store import and definition",
+        "Initialize store before subscribing",
+        "Verify store file path and export"
+      ]
+    },
+    {
+      "id": "svelte_store_invalid_initial_value",
+      "category": "svelte",
+      "subcategory": "stores",
+      "pattern": "(?i)store.*invalid.*initial.*value|writable.*invalid.*value|readable.*invalid.*value",
+      "suggestion": "Provide valid initial value for store creation",
+      "root_cause": "svelte_store_invalid_initial_value",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "store", "initial-value"],
+      "fix_commands": [
+        "Provide appropriate initial value for store type",
+        "Check data type compatibility",
+        "Use proper default values"
+      ]
+    },
+    {
+      "id": "svelte_derived_store_error",
+      "category": "svelte",
+      "subcategory": "stores",
+      "pattern": "(?i)derived.*store.*error|derived.*function.*invalid|derived.*dependencies",
+      "suggestion": "Check derived store dependencies and callback function",
+      "root_cause": "svelte_derived_store_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "store", "derived"],
+      "fix_commands": [
+        "Ensure all dependency stores are valid",
+        "Check derived function returns correct value",
+        "Verify callback function signature"
+      ]
+    },
+    {
+      "id": "svelte_store_update_error",
+      "category": "svelte",
+      "subcategory": "stores",
+      "pattern": "(?i)store.*update.*error|store.*set.*error|store.*modify.*error",
+      "suggestion": "Check store update and set operations",
+      "root_cause": "svelte_store_update_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "store", "update"],
+      "fix_commands": [
+        "Use proper store.set() or store.update() methods",
+        "Check update function returns valid value",
+        "Ensure store is writable before updating"
+      ]
+    }
+  ]
+}

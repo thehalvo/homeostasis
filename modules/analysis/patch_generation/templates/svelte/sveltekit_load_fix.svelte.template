@@ -1,0 +1,32 @@
+// +page.js or +layout.js
+export async function load({ params, url, fetch }) {
+  try {
+    // Fetch data for the page
+    const response = await fetch(`/api/data/${params.id}`);
+    const data = await response.json();
+    
+    // Return object with props for the component
+    return {
+      props: {
+        data,
+        title: 'Page Title'
+      }
+    };
+  } catch (error) {
+    // Return error status and message
+    return {
+      status: 500,
+      error: error.message
+    };
+  }
+}
+
+// Alternative: For static data
+export async function load() {
+  return {
+    props: {
+      staticData: 'Some static content',
+      timestamp: Date.now()
+    }
+  };
+}

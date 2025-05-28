@@ -1,0 +1,142 @@
+{
+  "version": "1.0.0",
+  "description": "SvelteKit framework error detection rules",
+  "rules": [
+    {
+      "id": "sveltekit_load_return_type",
+      "category": "svelte",
+      "subcategory": "sveltekit",
+      "pattern": "(?i)load function must return.*object|load.*return.*invalid",
+      "suggestion": "Return an object from load function with props or other data",
+      "root_cause": "sveltekit_load_return_type",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "sveltekit", "load"],
+      "fix_commands": [
+        "Return object with props property for component data",
+        "Return object with status and error for error handling",
+        "Use proper TypeScript types for load function"
+      ]
+    },
+    {
+      "id": "sveltekit_goto_ssr_error",
+      "category": "svelte",
+      "subcategory": "sveltekit",
+      "pattern": "(?i)cannot use goto during ssr|goto.*server.*side.*rendering",
+      "suggestion": "Use goto only in browser context, check browser condition",
+      "root_cause": "sveltekit_goto_ssr_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "sveltekit", "ssr", "goto"],
+      "fix_commands": [
+        "Check browser environment before using goto",
+        "Use proper navigation methods for SSR",
+        "Handle navigation in onMount or client-side events"
+      ]
+    },
+    {
+      "id": "sveltekit_layout_not_found",
+      "category": "svelte",
+      "subcategory": "sveltekit",
+      "pattern": "(?i)layout not found|__layout.*not.*found|\+layout.*not.*found",
+      "suggestion": "Create layout file or check layout file naming",
+      "root_cause": "sveltekit_layout_not_found",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "sveltekit", "layout"],
+      "fix_commands": [
+        "Create +layout.svelte file in appropriate directory",
+        "Check layout file naming conventions",
+        "Ensure layout file is in correct route directory"
+      ]
+    },
+    {
+      "id": "sveltekit_page_not_found",
+      "category": "svelte",
+      "subcategory": "sveltekit",
+      "pattern": "(?i)page not found|\+page.*not.*found|route.*not.*found",
+      "suggestion": "Create page component or check route file naming",
+      "root_cause": "sveltekit_page_not_found",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "sveltekit", "page", "routing"],
+      "fix_commands": [
+        "Create +page.svelte file for the route",
+        "Check page file naming conventions",
+        "Ensure page file is in correct route directory"
+      ]
+    },
+    {
+      "id": "sveltekit_endpoint_export_error",
+      "category": "svelte",
+      "subcategory": "sveltekit",
+      "pattern": "(?i)endpoint must export.*function|endpoint.*export.*missing|\+server.*export",
+      "suggestion": "Export GET, POST, or other HTTP method functions from endpoint",
+      "root_cause": "sveltekit_endpoint_export_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "sveltekit", "endpoint", "api"],
+      "fix_commands": [
+        "Export named functions for HTTP methods (GET, POST, etc.)",
+        "Ensure proper function signatures for endpoints",
+        "Check +server.js file structure"
+      ]
+    },
+    {
+      "id": "sveltekit_hydration_mismatch",
+      "category": "svelte",
+      "subcategory": "sveltekit",
+      "pattern": "(?i)hydration mismatch|server.*client.*mismatch|hydration.*failed",
+      "suggestion": "Ensure server and client render the same content",
+      "root_cause": "sveltekit_hydration_mismatch",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "sveltekit", "hydration", "ssr"],
+      "fix_commands": [
+        "Use browser check for client-only content",
+        "Ensure consistent data between server and client",
+        "Use {#if mounted} for client-only components"
+      ]
+    },
+    {
+      "id": "sveltekit_prerender_error",
+      "category": "svelte",
+      "subcategory": "sveltekit",
+      "pattern": "(?i)prerender.*error|prerender.*failed|static.*generation.*error",
+      "suggestion": "Check prerender configuration and page dependencies",
+      "root_cause": "sveltekit_prerender_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "sveltekit", "prerender", "static"],
+      "fix_commands": [
+        "Check prerender option in page configuration",
+        "Ensure all data is available at build time",
+        "Handle dynamic content appropriately"
+      ]
+    },
+    {
+      "id": "sveltekit_adapter_error",
+      "category": "svelte",
+      "subcategory": "sveltekit",
+      "pattern": "(?i)adapter.*error|adapter.*not.*found|adapter.*configuration",
+      "suggestion": "Check SvelteKit adapter configuration",
+      "root_cause": "sveltekit_adapter_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "sveltekit", "adapter", "config"],
+      "fix_commands": [
+        "Install appropriate adapter for deployment target",
+        "Configure adapter in svelte.config.js",
+        "Check adapter documentation for setup"
+      ]
+    }
+  ]
+}

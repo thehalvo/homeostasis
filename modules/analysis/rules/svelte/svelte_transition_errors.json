@@ -1,0 +1,74 @@
+{
+  "version": "1.0.0",
+  "description": "Svelte transition and animation error detection rules",
+  "rules": [
+    {
+      "id": "svelte_transition_not_imported",
+      "category": "svelte",
+      "subcategory": "transitions",
+      "pattern": "(?i)fade is not defined|slide is not defined|fly is not defined|transition.*not.*defined",
+      "suggestion": "Import transition functions from 'svelte/transition'",
+      "root_cause": "svelte_transition_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "transition", "import"],
+      "fix_commands": [
+        "Import transition functions from 'svelte/transition'",
+        "Check transition name spelling",
+        "Ensure correct import syntax"
+      ]
+    },
+    {
+      "id": "svelte_transition_invalid_params",
+      "category": "svelte",
+      "subcategory": "transitions",
+      "pattern": "(?i)transition.*invalid.*parameters|transition.*params.*error|transition.*options.*invalid",
+      "suggestion": "Check transition parameters and options",
+      "root_cause": "svelte_transition_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "transition", "parameters"],
+      "fix_commands": [
+        "Check transition parameter types and values",
+        "Ensure parameters match transition function signature",
+        "Verify duration, delay, and other options"
+      ]
+    },
+    {
+      "id": "svelte_animation_not_imported",
+      "category": "svelte",
+      "subcategory": "transitions",
+      "pattern": "(?i)flip is not defined|crossfade is not defined|animation.*not.*defined",
+      "suggestion": "Import animation functions from 'svelte/animate'",
+      "root_cause": "svelte_transition_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "animation", "import"],
+      "fix_commands": [
+        "Import animation functions from 'svelte/animate'",
+        "Check animation name spelling",
+        "Ensure correct import syntax"
+      ]
+    },
+    {
+      "id": "svelte_custom_transition_error",
+      "category": "svelte",
+      "subcategory": "transitions",
+      "pattern": "(?i)custom.*transition.*error|transition.*function.*invalid|transition.*return.*invalid",
+      "suggestion": "Check custom transition function implementation",
+      "root_cause": "svelte_transition_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "transition", "custom"],
+      "fix_commands": [
+        "Ensure transition function returns object with duration and css/tick",
+        "Check transition function parameters",
+        "Verify css function returns valid CSS"
+      ]
+    }
+  ]
+}

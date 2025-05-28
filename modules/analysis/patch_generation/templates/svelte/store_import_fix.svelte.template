@@ -1,0 +1,25 @@
+<script>
+  // Import store functions from svelte/store
+  import { writable, readable, derived } from 'svelte/store';
+  
+  // Create stores
+  export const count = writable(0);
+  export const name = writable('world');
+  
+  // Derived store
+  export const greeting = derived(
+    [name],
+    ([$name]) => `Hello ${$name}!`
+  );
+  
+  // Readable store (for external data sources)
+  export const time = readable(new Date(), function start(set) {
+    const interval = setInterval(() => {
+      set(new Date());
+    }, 1000);
+    
+    return function stop() {
+      clearInterval(interval);
+    };
+  });
+</script>

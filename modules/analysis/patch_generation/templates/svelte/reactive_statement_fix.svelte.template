@@ -1,0 +1,25 @@
+<script>
+  // Declare variables first
+  let input = 0;
+  let result;
+  let intermediate;
+  
+  // Avoid circular dependencies in reactive statements
+  // Instead of: $: result = calculate(input); $: input = result + 1;
+  
+  // Use this pattern:
+  $: {
+    // Calculate result based on input
+    intermediate = calculate(input);
+    result = intermediate;
+  }
+  
+  // Use conditional logic to break potential loops
+  $: if (someCondition && input < 100) {
+    input = result + 1;
+  }
+  
+  function calculate(value) {
+    return value * 2;
+  }
+</script>

@@ -1,0 +1,108 @@
+{
+  "version": "1.0.0",
+  "description": "Common Svelte framework error detection rules",
+  "rules": [
+    {
+      "id": "svelte_component_syntax_error",
+      "category": "svelte",
+      "subcategory": "components",
+      "pattern": "(?i)unexpected token.*\.svelte|syntax error.*\.svelte|parse error.*svelte",
+      "suggestion": "Check Svelte component syntax - ensure proper script, style, and markup sections",
+      "root_cause": "svelte_component_syntax_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "syntax", "component"],
+      "fix_commands": [
+        "Check for unclosed tags in template",
+        "Ensure proper script and style tag placement",
+        "Validate HTML structure in component"
+      ]
+    },
+    {
+      "id": "svelte_undefined_component",
+      "category": "svelte",
+      "subcategory": "components",
+      "pattern": "(?i)component.*not.*defined|.*svelte.*component.*undefined",
+      "suggestion": "Import the component before using it in your Svelte file",
+      "root_cause": "svelte_undefined_component",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "component", "import"],
+      "fix_commands": [
+        "Import the component: import MyComponent from './MyComponent.svelte'",
+        "Check component file path and name",
+        "Ensure component is exported properly"
+      ]
+    },
+    {
+      "id": "svelte_invalid_binding",
+      "category": "svelte",
+      "subcategory": "bindings",
+      "pattern": "(?i)cannot bind to.*|invalid.*binding|bind.*not.*supported",
+      "suggestion": "Check two-way binding syntax and ensure the property supports binding",
+      "root_cause": "svelte_binding_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "binding", "two-way"],
+      "fix_commands": [
+        "Use bind: directive for supported properties",
+        "Check if the element/component supports the binding",
+        "Ensure bound variable is declared with let"
+      ]
+    },
+    {
+      "id": "svelte_slot_error",
+      "category": "svelte",
+      "subcategory": "slots",
+      "pattern": "(?i)slot.*not.*found|invalid.*slot|slot.*undefined",
+      "suggestion": "Check slot usage and ensure slots are properly defined in components",
+      "root_cause": "svelte_slot_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "slot", "composition"],
+      "fix_commands": [
+        "Define slots in child component with <slot></slot>",
+        "Use slot=\"name\" for named slots",
+        "Check slot name spelling and availability"
+      ]
+    },
+    {
+      "id": "svelte_action_error",
+      "category": "svelte",
+      "subcategory": "actions",
+      "pattern": "(?i)action.*not.*defined|use:.*undefined|action.*error",
+      "suggestion": "Import and define Svelte actions before using them",
+      "root_cause": "svelte_action_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "action", "directive"],
+      "fix_commands": [
+        "Define action function that returns update and destroy methods",
+        "Import action before using with use: directive",
+        "Check action function signature"
+      ]
+    },
+    {
+      "id": "svelte_context_error",
+      "category": "svelte",
+      "subcategory": "context",
+      "pattern": "(?i)context.*not.*found|getContext.*undefined|setContext.*error",
+      "suggestion": "Check Svelte context API usage - ensure context is set before getting",
+      "root_cause": "svelte_context_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "context", "api"],
+      "fix_commands": [
+        "Use setContext in parent component",
+        "Use getContext in child component",
+        "Check context key consistency"
+      ]
+    }
+  ]
+}
