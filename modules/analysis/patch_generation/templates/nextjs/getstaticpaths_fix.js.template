@@ -1,0 +1,29 @@
+// Template for fixing getStaticPaths return type issues
+export async function getStaticPaths() {
+  try {
+    // Fetch list of possible IDs
+    const ids = await fetchIds();
+    
+    // Map to paths format
+    const paths = ids.map(id => ({
+      params: { /*__PARAM_NAME__*/: id.toString() },
+    }));
+    
+    return {
+      paths,
+      // Set fallback behavior:
+      // false: 404 for ungenerated paths
+      // true: shows fallback UI for ungenerated paths
+      // 'blocking': server-renders pages on first request (like SSR)
+      fallback: false,
+    };
+  } catch (error) {
+    console.error('Error fetching paths:', error);
+    
+    // Return empty paths array if fetch fails
+    return {
+      paths: [],
+      fallback: 'blocking', // Fallback to SSR on first request
+    };
+  }
+}

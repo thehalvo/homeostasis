@@ -1,0 +1,143 @@
+{
+  "version": "1.0.0",
+  "description": "Next.js data fetching error detection rules",
+  "rules": [
+    {
+      "id": "nextjs_getserversideprops_return_error",
+      "category": "nextjs",
+      "subcategory": "data_fetching",
+      "pattern": "(?i)getserversideprops.*must.*return.*object|invalid.*getserversideprops.*return|getserversideprops.*invalid.*props",
+      "suggestion": "Fix getServerSideProps return value - must return an object with a props property",
+      "root_cause": "nextjs_getserversideprops_return_type",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "data-fetching", "getServerSideProps"],
+      "fix_commands": [
+        "Return an object with { props: { ... } }",
+        "For redirects, return { redirect: { destination: '/path', permanent: false } }",
+        "For 404 pages, return { notFound: true }"
+      ]
+    },
+    {
+      "id": "nextjs_getstaticprops_return_error",
+      "category": "nextjs",
+      "subcategory": "data_fetching",
+      "pattern": "(?i)getstaticprops.*must.*return.*object|invalid.*getstaticprops.*return|getstaticprops.*invalid.*props",
+      "suggestion": "Fix getStaticProps return value - must return an object with a props property",
+      "root_cause": "nextjs_getstaticprops_return_type",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "data-fetching", "getStaticProps"],
+      "fix_commands": [
+        "Return an object with { props: { ... } }",
+        "For redirects, return { redirect: { destination: '/path', permanent: false } }",
+        "For 404 pages, return { notFound: true }",
+        "For ISR, include revalidate: seconds"
+      ]
+    },
+    {
+      "id": "nextjs_getstaticpaths_return_error",
+      "category": "nextjs",
+      "subcategory": "data_fetching",
+      "pattern": "(?i)getstaticpaths.*must.*return.*object|invalid.*getstaticpaths.*return|getstaticpaths.*invalid.*paths|fallback.*missing",
+      "suggestion": "Fix getStaticPaths return value - must return an object with paths and fallback properties",
+      "root_cause": "nextjs_getstaticpaths_return_type",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "data-fetching", "getStaticPaths"],
+      "fix_commands": [
+        "Return an object with { paths: [...], fallback: boolean|'blocking' }",
+        "Each path should be an object with params property",
+        "Fallback must be true, false, or 'blocking'"
+      ]
+    },
+    {
+      "id": "nextjs_revalidate_error",
+      "category": "nextjs",
+      "subcategory": "data_fetching",
+      "pattern": "(?i)revalidate.*must.*be.*number|invalid.*revalidate|revalidate.*cannot.*be.*negative|revalidate.*type.*error",
+      "suggestion": "Fix revalidate property - must be a positive number or false",
+      "root_cause": "nextjs_revalidate_type",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "data-fetching", "ISR"],
+      "fix_commands": [
+        "Set revalidate to a positive number (seconds)",
+        "Use revalidate: false to disable ISR",
+        "Remove revalidate property if not using ISR"
+      ]
+    },
+    {
+      "id": "nextjs_fetch_url_error",
+      "category": "nextjs",
+      "subcategory": "data_fetching",
+      "pattern": "(?i)fetch.*invalid.*url|cannot.*fetch.*absolute.*url|url.*invalid|fetch.*protocol.*missing",
+      "suggestion": "Fix fetch URL format in data fetching functions",
+      "root_cause": "nextjs_absolute_url_fetch",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "data-fetching", "fetch"],
+      "fix_commands": [
+        "Use absolute URLs with protocol for external APIs",
+        "Use relative URLs for internal API routes",
+        "For server-side internal API requests, construct full URL with host"
+      ]
+    },
+    {
+      "id": "nextjs_data_fetching_invalid_context",
+      "category": "nextjs",
+      "subcategory": "data_fetching",
+      "pattern": "(?i)context.*undefined|invalid.*context|cannot.*access.*params|context\\.params.*undefined",
+      "suggestion": "Fix usage of context in data fetching functions",
+      "root_cause": "nextjs_data_fetching_context",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["nextjs", "data-fetching", "context"],
+      "fix_commands": [
+        "Ensure data fetching function accepts context parameter",
+        "Destructure params, query, req, res from context",
+        "Check that dynamic route parameters match file name"
+      ]
+    },
+    {
+      "id": "nextjs_server_function_browser",
+      "category": "nextjs",
+      "subcategory": "data_fetching",
+      "pattern": "(?i)cannot.*getserversideprops.*browser|cannot.*getstaticprops.*browser|server.*function.*client|can't.*be.*executed.*browser",
+      "suggestion": "Don't call server-side functions from client components",
+      "root_cause": "nextjs_server_function_browser",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "data-fetching", "server-side"],
+      "fix_commands": [
+        "Move server-side functions to a separate file",
+        "Use client-side data fetching with SWR or React Query",
+        "Create an API route to fetch data client-side"
+      ]
+    },
+    {
+      "id": "nextjs_missing_id_error",
+      "category": "nextjs",
+      "subcategory": "data_fetching",
+      "pattern": "(?i)id.*missing|undefined.*id|missing.*required.*param|dynamic.*route.*missing",
+      "suggestion": "Fix missing ID or parameter in dynamic routes",
+      "root_cause": "nextjs_missing_dynamic_param",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["nextjs", "data-fetching", "routing"],
+      "fix_commands": [
+        "Check that params object contains expected properties",
+        "Verify dynamic route file name ([id].js, [slug].js)",
+        "Add fallback handling for missing parameters"
+      ]
+    }
+  ]
+}

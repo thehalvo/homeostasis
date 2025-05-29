@@ -1,0 +1,37 @@
+// Template for fixing Next.js middleware configuration
+import { NextResponse } from 'next/server';
+
+// Middleware function
+export function middleware(request) {
+  // Get the pathname
+  const { pathname } = request.nextUrl;
+  
+  // Example: Check authentication for protected routes
+  if (pathname.startsWith('/*__PROTECTED_PATH__*/')) {
+    const token = request.cookies.get('token')?.value;
+    
+    if (!token) {
+      // Redirect to login
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  }
+  
+  // Example: Rewrite for internationalization
+  if (pathname.startsWith('/*__REWRITE_PATH__*/')) {
+    // Rewrite to internal route
+    return NextResponse.rewrite(new URL('/*__TARGET_PATH__*/', request.url));
+  }
+  
+  // Continue for other routes
+  return NextResponse.next();
+}
+
+// Configure middleware matches
+export const config = {
+  // Matcher for specific paths
+  matcher: [
+    '/*__MATCHER_PATH_1__*/',
+    '/*__MATCHER_PATH_2__*/',
+    '/*__MATCHER_PATH_3__*/',
+  ],
+};

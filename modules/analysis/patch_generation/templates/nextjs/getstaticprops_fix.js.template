@@ -1,0 +1,31 @@
+// Template for fixing getStaticProps return type issues
+export async function getStaticProps(context) {
+  try {
+    // Fetch data from external API or database
+    const data = await fetchData(/*__ID_PLACEHOLDER__*/);
+    
+    // Return data as props
+    return {
+      props: {
+        data,
+        // Additional props can be added here
+      },
+      // Revalidate the page every 60 seconds (optional)
+      revalidate: 60,
+    };
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    
+    // Return notFound for 404 response
+    return {
+      notFound: true,
+    };
+    
+    // Or return error props
+    // return {
+    //   props: {
+    //     error: error.message,
+    //   },
+    // };
+  }
+}

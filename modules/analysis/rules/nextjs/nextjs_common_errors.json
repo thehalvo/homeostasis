@@ -1,0 +1,148 @@
+{
+  "version": "1.0.0",
+  "description": "Common Next.js framework error detection rules",
+  "rules": [
+    {
+      "id": "nextjs_import_error",
+      "category": "nextjs",
+      "subcategory": "configuration",
+      "pattern": "(?i)cannot.*find.*module.*next|error.*importing.*next|next.*module.*not.*found",
+      "suggestion": "Check Next.js installation and import paths",
+      "root_cause": "nextjs_import_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "import", "configuration"],
+      "fix_commands": [
+        "Ensure Next.js is installed: npm install next",
+        "Check package.json for correct Next.js dependency",
+        "Verify import paths are correct"
+      ]
+    },
+    {
+      "id": "nextjs_routing_error",
+      "category": "nextjs",
+      "subcategory": "routing",
+      "pattern": "(?i)page.*not.*found|404.*page|could.*not.*find.*route|route.*not.*found|page.*missing",
+      "suggestion": "Check Next.js page routing and file naming conventions",
+      "root_cause": "nextjs_routing_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["nextjs", "routing", "pages"],
+      "fix_commands": [
+        "Verify file naming follows Next.js conventions",
+        "Check dynamic route parameters",
+        "Ensure file exists in pages/ or app/ directory"
+      ]
+    },
+    {
+      "id": "nextjs_build_error",
+      "category": "nextjs",
+      "subcategory": "build",
+      "pattern": "(?i)failed.*to.*compile|build.*failed|cannot.*build|compilation.*error|failed.*during.*build",
+      "suggestion": "Check Next.js build configuration and code for compile-time errors",
+      "root_cause": "nextjs_build_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["nextjs", "build", "compilation"],
+      "fix_commands": [
+        "Review code for syntax errors",
+        "Check next.config.js configuration",
+        "Verify module imports and dependencies",
+        "Look for TypeScript errors"
+      ]
+    },
+    {
+      "id": "nextjs_config_error",
+      "category": "nextjs",
+      "subcategory": "configuration",
+      "pattern": "(?i)invalid.*next\\.config|next\\.config.*error|unexpected.*in.*next\\.config|configuration.*error",
+      "suggestion": "Fix Next.js configuration file syntax or options",
+      "root_cause": "nextjs_config_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "configuration", "next.config.js"],
+      "fix_commands": [
+        "Check next.config.js syntax",
+        "Verify configuration options are valid",
+        "Ensure exports are properly structured",
+        "Check for conflicting configuration options"
+      ]
+    },
+    {
+      "id": "nextjs_hydration_error",
+      "category": "nextjs",
+      "subcategory": "rendering",
+      "pattern": "(?i)hydration.*failed|text.*content.*did.*not.*match|hydration.*error|different.*content",
+      "suggestion": "Fix server/client HTML mismatch causing hydration errors",
+      "root_cause": "nextjs_hydration_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "hydration", "rendering"],
+      "fix_commands": [
+        "Ensure components render the same content on server and client",
+        "Check for date, random values or browser-only APIs",
+        "Use useEffect for client-only code",
+        "Use dynamic import with ssr:false for client-only components"
+      ]
+    },
+    {
+      "id": "nextjs_typescript_error",
+      "category": "nextjs",
+      "subcategory": "typescript",
+      "pattern": "(?i)typescript.*error.*next|type.*error.*next|ts.*error|type.*'.*'.*not.*assignable",
+      "suggestion": "Fix TypeScript type errors in Next.js codebase",
+      "root_cause": "nextjs_typescript_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["nextjs", "typescript", "types"],
+      "fix_commands": [
+        "Check TypeScript type definitions",
+        "Verify types for Next.js components and APIs",
+        "Update Next.js types with 'npm install @types/react @types/node'",
+        "Check tsconfig.json configuration"
+      ]
+    },
+    {
+      "id": "nextjs_link_error",
+      "category": "nextjs",
+      "subcategory": "components",
+      "pattern": "(?i)next\\/link.*error|invalid.*href.*link|link.*component.*error|error.*using.*link",
+      "suggestion": "Fix Next.js Link component usage",
+      "root_cause": "nextjs_link_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "link", "navigation"],
+      "fix_commands": [
+        "Ensure href prop is provided",
+        "Check that href value is valid",
+        "Verify Link component import",
+        "Remove <a> tag as direct child or use legacyBehavior prop"
+      ]
+    },
+    {
+      "id": "nextjs_environment_variable_error",
+      "category": "nextjs",
+      "subcategory": "configuration",
+      "pattern": "(?i)env.*not.*defined|environment.*variable.*missing|undefined.*process\\.env|process\\.env.*undefined",
+      "suggestion": "Fix environment variable configuration",
+      "root_cause": "nextjs_environment_variable_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["nextjs", "env", "configuration"],
+      "fix_commands": [
+        "Create or update .env.local file",
+        "Prefix variables with NEXT_PUBLIC_ for client-side access",
+        "Verify environment variable names",
+        "Check .env files for proper formatting"
+      ]
+    }
+  ]
+}

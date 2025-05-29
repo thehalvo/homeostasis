@@ -1,0 +1,58 @@
+// Template for fixing Next.js App Router components
+
+// This pattern separates server and client components correctly
+
+// page.js (Server Component)
+import { ClientComponent } from './ClientComponent';
+
+// Fetch data in Server Component
+async function fetchData() {
+  const res = await fetch('https://api.example.com/data');
+  return res.json();
+}
+
+export default async function Page() {
+  // Fetch data on the server
+  const data = await fetchData();
+  
+  // Pass data to Client Component
+  return (
+    <main>
+      <h1>Server Component</h1>
+      <ClientComponent data={data}>
+        <p>This is a server component that passes data to a client component</p>
+      </ClientComponent>
+    </main>
+  );
+}
+
+// ClientComponent.js (Client Component)
+'use client'
+
+import { useState, useEffect } from 'react';
+
+export function ClientComponent({ data, children }) {
+  const [state, setState] = useState(data);
+  const [clientState, setClientState] = useState(null);
+  
+  useEffect(() => {
+    // Client-side effects
+    console.log('Client component mounted');
+  }, []);
+  
+  return (
+    <div>
+      <h2>Client Component</h2>
+      <p>Data from server: {JSON.stringify(state)}</p>
+      <button onClick={() => setClientState('clicked')}>
+        Update Client State
+      </button>
+      {clientState && <p>Client state: {clientState}</p>}
+      
+      {/* Children from server component */}
+      <div className="server-content">
+        {children}
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,147 @@
+{
+  "version": "1.0.0",
+  "description": "Next.js App Router error detection rules",
+  "rules": [
+    {
+      "id": "nextjs_client_import_server",
+      "category": "nextjs",
+      "subcategory": "app_dir",
+      "pattern": "(?i)client.*component.*cannot.*import.*server|server.*component.*cannot.*be.*imported|client.*import.*server.*error",
+      "suggestion": "Don't import Server Components into Client Components",
+      "root_cause": "nextjs_client_import_server",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "app-router", "server-components"],
+      "fix_commands": [
+        "Use children or slots pattern to compose components",
+        "Pass server data to client components via props",
+        "Move shared logic to a separate utility file"
+      ]
+    },
+    {
+      "id": "nextjs_client_server_hook",
+      "category": "nextjs",
+      "subcategory": "app_dir",
+      "pattern": "(?i)cannot.*use.*server.*hook.*client|client.*component.*server.*hook|cookies\\(\\).*client|headers\\(\\).*client",
+      "suggestion": "Server hooks can only be used in Server Components",
+      "root_cause": "nextjs_client_server_hook",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "app-router", "hooks"],
+      "fix_commands": [
+        "Move server hooks to a Server Component",
+        "Pass data from server hook to client components via props",
+        "Use client-side alternatives where available"
+      ]
+    },
+    {
+      "id": "nextjs_app_route_conflict",
+      "category": "nextjs",
+      "subcategory": "app_dir",
+      "pattern": "(?i)route.*conflict|conflicting.*routes|overlapping.*routes|duplicate.*route|ambiguous.*route",
+      "suggestion": "Fix conflicting route definitions in app directory",
+      "root_cause": "nextjs_app_route_conflict",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "app-router", "routing"],
+      "fix_commands": [
+        "Avoid mixing page.js and route.js in the same directory",
+        "Check for route handlers that conflict with pages",
+        "Ensure dynamic segments don't conflict with static paths",
+        "Use route groups with parentheses to organize routes"
+      ]
+    },
+    {
+      "id": "nextjs_use_client_in_server",
+      "category": "nextjs",
+      "subcategory": "app_dir",
+      "pattern": "(?i)cannot.*use.*'use client'.*server|'use client'.*server.*component|use client.*directive.*error",
+      "suggestion": "Remove 'use client' directive from Server Component",
+      "root_cause": "nextjs_use_client_in_server",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "app-router", "server-components"],
+      "fix_commands": [
+        "Remove 'use client' directive",
+        "Move client-only code to a separate client component",
+        "Split component into server and client parts"
+      ]
+    },
+    {
+      "id": "nextjs_invalid_metadata",
+      "category": "nextjs",
+      "subcategory": "app_dir",
+      "pattern": "(?i)invalid.*metadata|metadata.*export|generateMetadata.*error|metadata.*function.*error",
+      "suggestion": "Fix metadata exports in layout.js or page.js",
+      "root_cause": "nextjs_invalid_metadata",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["nextjs", "app-router", "metadata"],
+      "fix_commands": [
+        "Export metadata object or generateMetadata function",
+        "Ensure metadata has valid properties",
+        "Make generateMetadata function async if using await",
+        "Check metadata nested objects format"
+      ]
+    },
+    {
+      "id": "nextjs_loading_error",
+      "category": "nextjs",
+      "subcategory": "app_dir",
+      "pattern": "(?i)loading\\.js.*error|invalid.*loading|error.*loading\\.js|suspense.*boundary",
+      "suggestion": "Fix loading.js implementation",
+      "root_cause": "nextjs_loading_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["nextjs", "app-router", "loading"],
+      "fix_commands": [
+        "Ensure loading.js exports a valid React component",
+        "Keep loading components lightweight",
+        "Don't use fetch or data fetching in loading components",
+        "Check loading component is not marked as client component"
+      ]
+    },
+    {
+      "id": "nextjs_error_boundary",
+      "category": "nextjs",
+      "subcategory": "app_dir",
+      "pattern": "(?i)error\\.js.*issue|invalid.*error|error\\.js.*component|error.*boundary.*problem",
+      "suggestion": "Fix error.js implementation",
+      "root_cause": "nextjs_error_boundary",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["nextjs", "app-router", "error-handling"],
+      "fix_commands": [
+        "Make error.js a Client Component with 'use client'",
+        "Ensure error.js accepts error and reset props",
+        "Add proper error handling and display",
+        "Implement reset functionality to retry"
+      ]
+    },
+    {
+      "id": "nextjs_layout_nesting",
+      "category": "nextjs",
+      "subcategory": "app_dir",
+      "pattern": "(?i)layout.*children|layout.*missing.*children|layout.*error.*children|invalid.*layout",
+      "suggestion": "Fix layout.js implementation and nesting",
+      "root_cause": "nextjs_layout_nesting",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["nextjs", "app-router", "layout"],
+      "fix_commands": [
+        "Ensure layout component renders children prop",
+        "Check layout component signature",
+        "Verify nested layouts are structured correctly",
+        "Check that layouts don't fetch the same data multiple times"
+      ]
+    }
+  ]
+}

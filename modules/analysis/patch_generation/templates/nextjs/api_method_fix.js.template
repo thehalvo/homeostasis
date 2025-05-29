@@ -1,0 +1,70 @@
+// Template for fixing API method handling
+export default async function handler(req, res) {
+  // Check HTTP method
+  const { method } = req;
+  
+  switch (method) {
+    case 'GET':
+      return handleGet(req, res);
+      
+    case 'POST':
+      return handlePost(req, res);
+      
+    case 'PUT':
+      return handlePut(req, res);
+      
+    case 'DELETE':
+      return handleDelete(req, res);
+      
+    default:
+      // Method not allowed for other methods
+      res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
+      return res.status(405).json({ error: `Method ${method} Not Allowed` });
+  }
+}
+
+// Handle GET requests
+async function handleGet(req, res) {
+  try {
+    const data = await fetchData(req.query);
+    return res.status(200).json({ data });
+  } catch (error) {
+    console.error('GET error:', error);
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+// Handle POST requests
+async function handlePost(req, res) {
+  try {
+    const result = await createData(req.body);
+    return res.status(201).json({ success: true, data: result });
+  } catch (error) {
+    console.error('POST error:', error);
+    return res.status(400).json({ error: error.message });
+  }
+}
+
+// Handle PUT requests
+async function handlePut(req, res) {
+  try {
+    const { id } = req.query;
+    const result = await updateData(id, req.body);
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    console.error('PUT error:', error);
+    return res.status(400).json({ error: error.message });
+  }
+}
+
+// Handle DELETE requests
+async function handleDelete(req, res) {
+  try {
+    const { id } = req.query;
+    await deleteData(id);
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('DELETE error:', error);
+    return res.status(400).json({ error: error.message });
+  }
+}

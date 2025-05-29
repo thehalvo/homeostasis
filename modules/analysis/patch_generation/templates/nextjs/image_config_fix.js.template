@@ -1,0 +1,23 @@
+// Template for fixing Next.js Image configuration in next.config.js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  images: {
+    domains: [
+      '/*__DOMAIN_PLACEHOLDER__*/',
+      'example.com',
+      'images.unsplash.com',
+    ],
+    // Optional: configure image sizes
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Optional: configure formats
+    formats: ['image/webp'],
+    // Optional: disable loader
+    // unoptimized: true,
+  },
+  // Other Next.js config options
+  /*__ADDITIONAL_CONFIG__*/
+};
+
+module.exports = nextConfig;

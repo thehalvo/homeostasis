@@ -162,6 +162,7 @@ Homeostasis currently provides support for the following programming languages:
 - **Vue.js**: Support for Vue component and directive errors, Vuex state management, Composition API, Vue Router navigation, and Vue 3 features
 - **Angular**: Support for Angular dependency injection errors, NgRx state management issues, template binding problems, module configuration, and Angular Universal SSR
 - **Svelte**: Support for Svelte component reactivity errors, SvelteKit routing and SSR issues, store management problems, transition and animation errors, and compiler optimization
+- **Next.js**: Support for Next.js data fetching methods, API routes, App Router and Pages Router, image optimization, middleware configuration, and Vercel deployment issues
 - **Java**: Support for Java exceptions, Spring Framework, Hibernate/JPA, and concurrency issues
 - **Go**: Support for Go runtime errors, goroutine management, and web frameworks like Gin and Echo
 - **Ruby**: Support for Ruby exceptions, Rails ActiveRecord, Sinatra/Rack, and metaprogramming patterns
@@ -180,6 +181,7 @@ For more information about language integrations, see:
 - [Vue Integration](docs/vue_integration.md)
 - [Angular Integration](docs/angular_integration.md)
 - [Svelte Integration](docs/svelte_integration.md)
+- [Next.js Integration](docs/nextjs_integration.md)
 - [Java Integration](docs/java_integration.md)
 - [Go Integration](docs/go_integration.md)
 - [Ruby Integration](docs/ruby_integration.md)
@@ -219,6 +221,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Vue Framework Support**: Added complete Vue.js framework integration with component and directive error handling, Vuex store issue detection, Composition API support, Vue Router navigation guard healing, Vue 3 features integration, and template syntax validation
 - **Angular Framework Support**: Added full Angular framework integration with dependency injection error handling, NgRx state management healing, template binding issue detection, module and lazy loading optimization, Angular Universal SSR error support, and specialized fix templates
 - **Svelte Framework Support**: Added complete Svelte framework integration with component reactivity error detection, SvelteKit routing and SSR healing, store management issue resolution, transition and animation debugging, compiler optimization support, two-way binding fixes, action and context API error handling, and slot composition error resolution
+- **Next.js Framework Support**: Added Next.js framework integration with data fetching error detection (getServerSideProps, getStaticProps), API route issue handling, App Router and Pages Router support, image optimization fixes, middleware configuration, and deployment error resolution
 - **Backend Testing Integration**: Implemented unified testing framework for validating error detection, analysis, and healing across multiple programming languages with cross-language capabilities
 - **Production Readiness**: Enhanced security model with RBAC, implemented approval workflows for critical changes, added rate limiting/throttling for healing actions, and developed thorough audit logging
 - **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities

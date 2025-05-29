@@ -764,5 +764,118 @@
         "optimize_transitions": true
       }
     }
+  },
+  "nextjs": {
+    "language": "nextjs",
+    "field_mappings": {
+      "error_type": ["name", "type"],
+      "message": "message",
+      "stack_trace": ["stack", "stacktrace", "stack_trace"],
+      "component_stack": ["componentStack", "component_stack"]
+    },
+    "stack_trace_fields": ["stack", "stacktrace", "stack_trace"],
+    "stack_trace_format": "string",
+    "version_fields": ["next_version", "framework_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version", "next_version"],
+    "detection_patterns": [
+      "(?:next)",
+      "(?:nextjs)",
+      "(?:next\\.js)",
+      "(?:vercel)",
+      "(?:getserversideprops)",
+      "(?:getstaticprops)",
+      "(?:getstaticpaths)",
+      "(?:next/image)",
+      "(?:next/link)",
+      "(?:next/router)",
+      "(?:next/head)",
+      "(?:next/script)",
+      "(?:middleware)",
+      "(?:_app\\.js)",
+      "(?:_document\\.js)",
+      "(?:app/(.*)/page\\.)",
+      "(?:app/(.*)/layout\\.)",
+      "(?:pages/api/)",
+      "(?:pages/\\[)",
+      "(?:server component)",
+      "(?:client component)",
+      "(?:incremental static)",
+      "(?:revalidate)",
+      "(?:notfound)",
+      "(?:fallback)",
+      "(?:route.*conflict)",
+      "(?:cannot.*find.*module.*next)",
+      "(?:hydration.*failed)",
+      "(?:environment variable)",
+      "(?:image.*optimization)",
+      "(?:use client)",
+      "(?:use server)",
+      "(?:invalid.*config)",
+      "(?:api.*resolved.*without.*response)",
+      "(?:method.*not.*allowed)",
+      "(?:load function)",
+      "(?:cannot.*import.*server)"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "error",
+      "fatal": "fatal"
+    },
+    "component_stack_patterns": [
+      "(?:at (\\w+) \\([^)]+\\.(jsx|tsx|js|ts):\\d+:\\d+\\))",
+      "(?:in (\\w+) \\(at [^)]+\\.(jsx|tsx|js|ts):\\d+:\\d+\\))"
+    ],
+    "file_extensions": [".jsx", ".tsx", ".js", ".ts"],
+    "config_files": ["next.config.js", "package.json", "tsconfig.json", "middleware.js", "next-env.d.ts"],
+    "data_fetching_functions": [
+      "getServerSideProps", "getStaticProps", "getStaticPaths", "useRouter", "usePathname",
+      "useSearchParams", "generateStaticParams", "generateMetadata", "fetch"
+    ],
+    "app_router_functions": [
+      "generateMetadata", "generateStaticParams", "notFound", "redirect",
+      "cookies", "headers", "revalidatePath", "revalidateTag"
+    ],
+    "pages_router_functions": [
+      "getServerSideProps", "getStaticProps", "getStaticPaths", "getInitialProps"
+    ],
+    "nextjs_patterns": {
+      "data_fetching_rules": {
+        "return_object_with_props": true,
+        "proper_revalidate_value": true,
+        "proper_notfound_usage": true,
+        "proper_redirect_usage": true,
+        "server_only_data_fetching": true
+      },
+      "api_route_rules": {
+        "send_response": true,
+        "handle_http_methods": true,
+        "proper_status_codes": true,
+        "set_headers_before_send": true,
+        "validate_request_data": true
+      },
+      "app_router_rules": {
+        "no_client_import_server": true,
+        "no_server_hooks_in_client": true,
+        "proper_metadata_exports": true,
+        "proper_loading_handling": true,
+        "proper_error_handling": true
+      },
+      "image_rules": {
+        "configured_domains": true,
+        "provide_dimensions": true,
+        "optimize_priority_images": true,
+        "proper_placeholder_usage": true
+      },
+      "performance_rules": {
+        "optimize_image_usage": true,
+        "proper_dynamic_imports": true,
+        "use_suspense_for_data_fetching": true,
+        "minimize_client_javascript": true
+      }
+    }
   }
 }

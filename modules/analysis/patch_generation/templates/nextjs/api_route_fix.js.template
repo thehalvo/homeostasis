@@ -1,0 +1,47 @@
+// Template for fixing API route issues
+export default async function handler(req, res) {
+  // Check HTTP method
+  const { method } = req;
+  
+  try {
+    switch (method) {
+      case 'GET':
+        // Handle GET requests
+        const data = await fetchData();
+        return res.status(200).json({ data });
+        
+      case 'POST':
+        // Handle POST requests
+        const { /*__BODY_PARAMS__*/ } = req.body;
+        
+        // Validate required parameters
+        if (!/*__REQUIRED_CHECK__*/) {
+          return res.status(400).json({ error: 'Missing required fields' });
+        }
+        
+        const result = await processData(req.body);
+        return res.status(201).json({ result });
+        
+      case 'PUT':
+        // Handle PUT requests
+        const updateResult = await updateData(req.body);
+        return res.status(200).json({ success: true, data: updateResult });
+        
+      case 'DELETE':
+        // Handle DELETE requests
+        const deleteResult = await deleteData(req.query.id);
+        return res.status(200).json({ success: true });
+        
+      default:
+        // Method not allowed for other methods
+        res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
+        return res.status(405).json({ error: `Method ${method} Not Allowed` });
+    }
+  } catch (error) {
+    console.error('API error:', error);
+    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+  
+  // Ensure all paths have a response
+  return res.status(500).json({ error: 'Unknown server error' });
+}
