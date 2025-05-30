@@ -1,0 +1,64 @@
+// app/components/{{component_name}}.js
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
+
+/**
+ * {{component_description}}
+ * Using @tracked for reactive properties in Ember Octane
+ */
+export default class {{component_class_name}}Component extends Component {
+  // Tracked properties - reactive state that updates templates
+  @tracked count = 0;
+  @tracked isActive = false;
+  @tracked items = [];
+  
+  // Derived state (computed properties as getters)
+  get doubleCount() {
+    return this.count * 2;
+  }
+  
+  get activeItems() {
+    return this.items.filter(item => item.isActive);
+  }
+  
+  get isEmpty() {
+    return this.items.length === 0;
+  }
+  
+  // Actions - use @action decorator for proper 'this' binding
+  @action
+  increment() {
+    this.count++;
+    // Direct property access, no this.set() needed
+  }
+  
+  @action
+  toggle() {
+    this.isActive = !this.isActive;
+  }
+  
+  @action
+  addItem(name) {
+    this.items = [
+      ...this.items,
+      { id: Date.now(), name, isActive: true }
+    ];
+    // Create new array to ensure reactivity
+  }
+  
+  @action
+  removeItem(itemId) {
+    this.items = this.items.filter(item => item.id !== itemId);
+  }
+  
+  @action
+  toggleItem(itemId) {
+    this.items = this.items.map(item => {
+      if (item.id === itemId) {
+        return { ...item, isActive: !item.isActive };
+      }
+      return item;
+    });
+  }
+}

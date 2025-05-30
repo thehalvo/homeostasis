@@ -1,0 +1,229 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "ember",
+    "description": "Common Ember.js error rules"
+  },
+  "rules": [
+    {
+      "id": "ember_component_not_found",
+      "category": "components",
+      "subcategory": "missing_component",
+      "pattern": "component (not found|could not be found)|No component (found|defined) for",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_template_component_not_found",
+      "suggestion": "Create the missing component or fix the component invocation",
+      "fix_commands": [
+        "Generate the component with 'ember generate component name'",
+        "Check for typos in component name",
+        "Ensure component is properly exported and registered",
+        "Verify the correct invocation syntax in templates"
+      ],
+      "tags": ["ember", "components", "templates"],
+      "examples": [
+        "Ember error: Component not found: 'user-profile'",
+        "No component named 'data-table' was found"
+      ]
+    },
+    {
+      "id": "ember_service_not_injected",
+      "category": "services",
+      "subcategory": "missing_injection",
+      "pattern": "service (is|was) not found|cannot access service|Cannot call .* of undefined.*service",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_service_not_injected",
+      "suggestion": "Inject the service properly using @service decorator",
+      "fix_commands": [
+        "Import { inject as service } from '@ember/service'",
+        "Add @service serviceName to your class",
+        "In older Ember, use serviceName: service() syntax",
+        "Ensure service name is spelled correctly"
+      ],
+      "tags": ["ember", "services", "injection"],
+      "examples": [
+        "Uncaught TypeError: Cannot read property 'fetch' of undefined at this.store.fetch",
+        "Service 'store' was not found"
+      ]
+    },
+    {
+      "id": "ember_action_not_found",
+      "category": "components",
+      "subcategory": "missing_action",
+      "pattern": "action (not found|could not be found)|undefined is not a function.*action",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_action_not_found",
+      "suggestion": "Define the action in your component or controller",
+      "fix_commands": [
+        "Add the @action decorator to your method",
+        "Define the missing action method",
+        "Check for typos in action name",
+        "Ensure correct 'this' binding in older Ember components"
+      ],
+      "tags": ["ember", "components", "actions"],
+      "examples": [
+        "Uncaught TypeError: undefined is not a function at this.actions.saveUser",
+        "Action 'submitForm' was not found"
+      ]
+    },
+    {
+      "id": "ember_computed_property_error",
+      "category": "components",
+      "subcategory": "computed_property",
+      "pattern": "computed property.*error|property.*not (found|defined).*computed",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_computed_property_error",
+      "suggestion": "Fix computed property dependencies or definition",
+      "fix_commands": [
+        "Ensure all dependencies are listed in computed property",
+        "Add getters instead of computed properties in Octane",
+        "Check that dependent properties exist",
+        "Use @tracked for properties in Octane"
+      ],
+      "tags": ["ember", "computed", "properties"],
+      "examples": [
+        "Error: Assertion Failed: Cannot call get with 'fullName' on an undefined object",
+        "Computed property 'totalPrice' cannot resolve dependencies"
+      ]
+    },
+    {
+      "id": "ember_deprecated_usage",
+      "category": "migration",
+      "subcategory": "deprecation",
+      "pattern": "DEPRECATION:.*ember|deprecated.*will be removed in (ember|version)",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_deprecated_usage",
+      "suggestion": "Update code to use newer APIs",
+      "fix_commands": [
+        "Check the Ember Deprecation Guide for migration path",
+        "Update imports to use newer module syntax",
+        "Replace deprecated methods with recommended alternatives",
+        "Run ember-cli-deprecation-workflow to manage deprecations"
+      ],
+      "tags": ["ember", "deprecation", "migration"],
+      "examples": [
+        "DEPRECATION: Using this._super() in an Ember object is deprecated",
+        "DEPRECATION: 'Ember.String.htmlSafe' will be removed in Ember 4.0"
+      ]
+    },
+    {
+      "id": "ember_import_error",
+      "category": "components",
+      "subcategory": "imports",
+      "pattern": "import.*(not found|could not be resolved)|Cannot (find|resolve) module",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_import_error",
+      "suggestion": "Fix import paths or install missing dependencies",
+      "fix_commands": [
+        "Check for typos in import paths",
+        "Verify the module is installed and in package.json",
+        "Use correct Ember module import paths",
+        "Run npm/yarn install to ensure dependencies are installed"
+      ],
+      "tags": ["ember", "imports", "modules"],
+      "examples": [
+        "Could not find module 'ember-data/model'",
+        "Cannot resolve module '@ember/component'"
+      ]
+    },
+    {
+      "id": "ember_template_syntax_error",
+      "category": "templates",
+      "subcategory": "syntax",
+      "pattern": "Error: (Parse error|Syntax error).*template|template.*syntax error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_template_syntax_error",
+      "suggestion": "Fix syntax errors in your Handlebars template",
+      "fix_commands": [
+        "Check for unclosed or mismatched {{}} braces",
+        "Ensure block helpers have closing tags",
+        "Validate correct helper syntax",
+        "Check for malformed component invocations"
+      ],
+      "tags": ["ember", "templates", "handlebars", "syntax"],
+      "examples": [
+        "Error: Parse error on line 5: Expecting 'ID', got 'INVALID'",
+        "Unclosed element 'div' at line 12"
+      ]
+    },
+    {
+      "id": "ember_helper_not_found",
+      "category": "templates",
+      "subcategory": "missing_helper",
+      "pattern": "helper (not found|could not be found)|Unknown helper",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_template_helper_not_found",
+      "suggestion": "Register the helper or fix helper invocation",
+      "fix_commands": [
+        "Generate the helper with 'ember generate helper name'",
+        "Check for typos in helper name",
+        "Ensure helper is properly exported",
+        "Import third-party helpers correctly"
+      ],
+      "tags": ["ember", "templates", "helpers"],
+      "examples": [
+        "Helper 'format-date' not found",
+        "Unknown helper 'calculate-total' in template"
+      ]
+    },
+    {
+      "id": "ember_lifecycle_hook_error",
+      "category": "components",
+      "subcategory": "lifecycle",
+      "pattern": "Cannot call.*during (rendering|destroy|init|destroy)|called at an invalid time",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_lifecycle_hook_error",
+      "suggestion": "Move code to the appropriate lifecycle hook",
+      "fix_commands": [
+        "Use didInsertElement for DOM manipulation after render",
+        "Schedule updates with Ember.run.scheduleOnce",
+        "Move data fetching to model hooks in routes",
+        "Use willDestroy for cleanup operations"
+      ],
+      "tags": ["ember", "components", "lifecycle"],
+      "examples": [
+        "Assertion Failed: You cannot update during a render or rerender",
+        "Cannot call set during destroy phase"
+      ]
+    },
+    {
+      "id": "ember_binding_error",
+      "category": "components",
+      "subcategory": "binding",
+      "pattern": "binding.*error|bind.*failed|Cannot find bound property",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_binding_error",
+      "suggestion": "Fix data binding between components",
+      "fix_commands": [
+        "Check property names in component invocation",
+        "Ensure properties are properly passed down",
+        "Use @tracked properties in Octane",
+        "Verify parent component exposes needed properties"
+      ],
+      "tags": ["ember", "components", "binding"],
+      "examples": [
+        "Error: Cannot find bound property 'user'",
+        "Binding failed: property 'items' not found"
+      ]
+    }
+  ]
+}

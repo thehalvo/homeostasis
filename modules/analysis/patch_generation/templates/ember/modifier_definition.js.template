@@ -1,0 +1,58 @@
+// app/modifiers/{{modifier_name}}.js
+import { modifier } from 'ember-modifier';
+
+/**
+ * {{modifier_description}}
+ * 
+ * @modifier {{modifier_name}}
+ * @param {HTMLElement} element - The DOM element the modifier is attached to
+ * @param {Array} positional - Positional parameters
+ * @param {Object} named - Named parameters
+ */
+export default modifier(function {{modifier_function_name}}(element, positional, named) {
+  // Extract positional parameters
+  const [eventName = 'click'] = positional;
+  
+  // Extract named parameters with defaults
+  const {
+    debounce = 200,
+    capture = false,
+    once = false,
+    passive = false
+  } = named;
+  
+  // Setup
+  let timeout;
+  
+  // Handler function
+  const handleEvent = (event) => {
+    // Clear any existing timeout for debounce
+    clearTimeout(timeout);
+    
+    // Setup debounce if needed
+    timeout = setTimeout(() => {
+      // Call the handler from named parameters
+      if (named.onEvent) {
+        named.onEvent(event, element);
+      }
+      
+      // Remove listener if once is true
+      if (once) {
+        element.removeEventListener(eventName, handleEvent);
+      }
+    }, debounce);
+  };
+  
+  // Add event listener
+  element.addEventListener(eventName, handleEvent, {
+    capture,
+    once,
+    passive
+  });
+  
+  // Cleanup function
+  return () => {
+    clearTimeout(timeout);
+    element.removeEventListener(eventName, handleEvent);
+  };
+});

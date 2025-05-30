@@ -1,0 +1,33 @@
+// app/components/{{component_name}}.js
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
+
+/**
+ * {{component_description}}
+ * 
+ * @component {{component_name}}
+ */
+export default class {{component_class_name}}Component extends Component {
+  // Tracked properties for reactive state
+  @tracked value = '';
+  
+  // Getters for derived state
+  get isValid() {
+    return this.value.length > 0;
+  }
+  
+  // Actions
+  @action
+  handleInput(event) {
+    this.value = event.target.value;
+  }
+  
+  @action
+  handleSubmit() {
+    // Handle submit
+    if (this.args.onSubmit) {
+      this.args.onSubmit(this.value);
+    }
+  }
+}

@@ -1,0 +1,229 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "ember-data",
+    "description": "Ember Data store error rules"
+  },
+  "rules": [
+    {
+      "id": "ember_data_record_not_found",
+      "category": "data",
+      "subcategory": "missing_record",
+      "pattern": "record (not found|could not be found|was not found)|no record was found|record is not in the store",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_data_record_not_found",
+      "suggestion": "Add error handling for missing records",
+      "fix_commands": [
+        "Use store.findRecord with { backgroundReload: true } for live data",
+        "Add error handling in routes that fetch records",
+        "Check record IDs before attempting to access records",
+        "Redirect to fallback route when records aren't found"
+      ],
+      "tags": ["ember", "ember-data", "store", "records"],
+      "examples": [
+        "Error: No record was found at {id: 123}",
+        "Assertion Failed: The record with id 456 is not in the store"
+      ]
+    },
+    {
+      "id": "ember_data_relationship_error",
+      "category": "data",
+      "subcategory": "relationships",
+      "pattern": "relationship (not found|could not be found|error)|has many.*not loaded|belongs to.*not loaded",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_data_relationship_not_loaded",
+      "suggestion": "Ensure relationships are properly defined and loaded",
+      "fix_commands": [
+        "Include relationships when fetching records with { include: 'relationship' }",
+        "Define inverse relationships in model definitions",
+        "Check for async vs sync relationship configurations",
+        "Preload relationships in route models"
+      ],
+      "tags": ["ember", "ember-data", "relationships"],
+      "examples": [
+        "Error: hasMany relationship 'comments' not loaded",
+        "Assertion Failed: belongsTo relationship 'author' could not be loaded"
+      ]
+    },
+    {
+      "id": "ember_data_store_not_injected",
+      "category": "data",
+      "subcategory": "store_injection",
+      "pattern": "store (not found|could not be found|is not injected|undefined)|Cannot call .* of undefined.*store",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_data_store_not_injected",
+      "suggestion": "Inject the store service properly",
+      "fix_commands": [
+        "Import { inject as service } from '@ember/service'",
+        "Add @service store to your class",
+        "In older Ember, use store: service() syntax",
+        "Use this.store after injecting it"
+      ],
+      "tags": ["ember", "ember-data", "store", "injection"],
+      "examples": [
+        "Uncaught TypeError: Cannot read property 'findRecord' of undefined",
+        "Error: store service is not injected"
+      ]
+    },
+    {
+      "id": "ember_data_adapter_error",
+      "category": "data",
+      "subcategory": "adapter",
+      "pattern": "adapter (error|failed|not found)|Could not find adapter|Error occurred in Adapter",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "ember_data_adapter_error",
+      "suggestion": "Fix adapter configuration or handle API errors",
+      "fix_commands": [
+        "Check API endpoint URLs in adapter",
+        "Add error handling for failed API requests",
+        "Configure headers and authorization correctly",
+        "Use adapter hooks for custom request processing"
+      ],
+      "tags": ["ember", "ember-data", "adapter", "api"],
+      "examples": [
+        "Error: The adapter operation failed",
+        "Could not find adapter for model: 'user'"
+      ]
+    },
+    {
+      "id": "ember_data_serializer_error",
+      "category": "data",
+      "subcategory": "serializer",
+      "pattern": "serializer (error|failed|not found)|Error normalizing response|normalizeResponse",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "ember_data_serializer_error",
+      "suggestion": "Fix serializer configuration or data normalization",
+      "fix_commands": [
+        "Check payload structure matches serializer expectations",
+        "Configure attributes and relationships in serializer",
+        "Override normalizeResponse for custom API formats",
+        "Use RESTSerializer or JSONAPISerializer appropriately"
+      ],
+      "tags": ["ember", "ember-data", "serializer", "normalization"],
+      "examples": [
+        "Error occurred while normalizing response",
+        "Could not find serializer for model: 'post'"
+      ]
+    },
+    {
+      "id": "ember_data_model_definition_error",
+      "category": "data",
+      "subcategory": "model_definition",
+      "pattern": "model (not defined|could not be found)|type.*is not defined|Cannot read property .* of undefined.*model",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_data_model_not_defined",
+      "suggestion": "Create or fix model definition",
+      "fix_commands": [
+        "Generate model with 'ember generate model name'",
+        "Define attributes and relationships in model",
+        "Check for typos in model names",
+        "Import model correctly in routes and components"
+      ],
+      "tags": ["ember", "ember-data", "model", "definition"],
+      "examples": [
+        "Error: No model was found for 'customer'",
+        "Type 'post' is not defined"
+      ]
+    },
+    {
+      "id": "ember_data_mutation_error",
+      "category": "data",
+      "subcategory": "mutation",
+      "pattern": "Cannot set.*read-only|mutation error|error saving record|failed to save|unloadRecord.*destroy",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_data_mutation_error",
+      "suggestion": "Fix record mutation or saving process",
+      "fix_commands": [
+        "Use setProperties for multiple property changes",
+        "Add error handling to save() calls with .catch()",
+        "Rollback failed transactions with record.rollbackAttributes()",
+        "Check validation errors before saving"
+      ],
+      "tags": ["ember", "ember-data", "mutation", "save"],
+      "examples": [
+        "Error occurred while saving record",
+        "Cannot set 'id' on a record that is already saved"
+      ]
+    },
+    {
+      "id": "ember_data_query_error",
+      "category": "data",
+      "subcategory": "query",
+      "pattern": "query (error|failed)|Error during findAll|store.query.*failed|queryRecord",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "ember_data_query_error",
+      "suggestion": "Fix query parameters or handle query errors",
+      "fix_commands": [
+        "Add error handling to query operations",
+        "Check query parameter format and naming",
+        "Configure adapter queryRecord method correctly",
+        "Use query options like { filter: {}, page: {} }"
+      ],
+      "tags": ["ember", "ember-data", "query", "findAll"],
+      "examples": [
+        "Error during findAll operation for type: 'post'",
+        "store.query failed with status 400"
+      ]
+    },
+    {
+      "id": "ember_data_local_storage_error",
+      "category": "data",
+      "subcategory": "persistence",
+      "pattern": "local(Storage|Adapter) (error|failed)|Unable to persist|persistence error",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_data_persistence_error",
+      "suggestion": "Fix local storage or persistence configuration",
+      "fix_commands": [
+        "Check browser localStorage permissions",
+        "Configure namespaces for local storage",
+        "Implement storage fallbacks",
+        "Use ember-data-storefront for better caching"
+      ],
+      "tags": ["ember", "ember-data", "localStorage", "persistence"],
+      "examples": [
+        "Error: Unable to persist to localStorage",
+        "LocalStorageAdapter failed to save record"
+      ]
+    },
+    {
+      "id": "ember_data_transaction_error",
+      "category": "data",
+      "subcategory": "transaction",
+      "pattern": "transaction (error|failed)|simultaneous edits|cannot commit transaction|concurrent modification",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_data_transaction_error",
+      "suggestion": "Improve transaction handling and conflict resolution",
+      "fix_commands": [
+        "Implement optimistic concurrency control",
+        "Add version tracking for records",
+        "Use transaction isolation in adapter",
+        "Add retry logic for failed transactions"
+      ],
+      "tags": ["ember", "ember-data", "transaction", "concurrency"],
+      "examples": [
+        "Error: Cannot commit transaction, record was modified",
+        "Transaction failed due to concurrent modifications"
+      ]
+    }
+  ]
+}

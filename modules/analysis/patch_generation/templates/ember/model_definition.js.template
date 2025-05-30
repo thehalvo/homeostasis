@@ -1,0 +1,43 @@
+// app/models/{{model_name}}.js
+import Model, { attr, belongsTo, hasMany } from '@ember-data/model';
+
+/**
+ * {{model_description}}
+ * 
+ * @model {{model_name}}
+ */
+export default class {{model_class_name}}Model extends Model {
+  // Attributes
+  @attr('string') title;
+  @attr('string') description;
+  @attr('number') position;
+  @attr('boolean', { defaultValue: false }) isActive;
+  @attr('date') createdAt;
+  @attr('date') updatedAt;
+  
+  // Relationships - belongsTo
+  @belongsTo('user', { async: true, inverse: '{{model_plural_name}}' }) user;
+  @belongsTo('category', { async: true, inverse: '{{model_plural_name}}' }) category;
+  
+  // Relationships - hasMany
+  @hasMany('comment', { async: true, inverse: '{{model_name}}' }) comments;
+  @hasMany('tag', { async: true }) tags;
+  
+  // Computed properties as getters
+  get isNew() {
+    return !this.createdAt;
+  }
+  
+  get formattedDate() {
+    if (!this.createdAt) return '';
+    return this.createdAt.toLocaleDateString();
+  }
+  
+  // Class methods
+  static findFeatured(store) {
+    return store.query('{{model_name}}', { 
+      filter: { isFeatured: true },
+      sort: '-createdAt'
+    });
+  }
+}

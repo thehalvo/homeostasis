@@ -1,0 +1,38 @@
+// app/helpers/{{helper_name}}.js
+import { helper } from '@ember/component/helper';
+
+/**
+ * {{helper_description}}
+ * 
+ * @helper {{helper_name}}
+ * @param {Array} positional - Positional parameters
+ * @param {Object} named - Named parameters
+ * @returns {*} Helper result
+ */
+export function {{helper_function_name}}(positional, named) {
+  // Extract positional parameters
+  const [value] = positional;
+  
+  // Extract named parameters with defaults
+  const {
+    format = 'default',
+    fallback = ''
+  } = named;
+  
+  // Helper implementation
+  if (value === undefined || value === null) {
+    return fallback;
+  }
+  
+  // Format handling
+  switch (format) {
+    case 'uppercase':
+      return String(value).toUpperCase();
+    case 'lowercase':
+      return String(value).toLowerCase();
+    default:
+      return value;
+  }
+}
+
+export default helper({{helper_function_name}});

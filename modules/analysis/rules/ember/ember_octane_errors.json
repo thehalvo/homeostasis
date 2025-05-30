@@ -1,0 +1,229 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "ember-octane",
+    "description": "Ember Octane features error rules"
+  },
+  "rules": [
+    {
+      "id": "ember_octane_tracked_property_error",
+      "category": "octane",
+      "subcategory": "tracked",
+      "pattern": "tracked property|not reactive|property did not update|@tracked|changes to .* not picked up",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_octane_tracked_properties_error",
+      "suggestion": "Add @tracked decorator to reactive properties",
+      "fix_commands": [
+        "Import { tracked } from '@glimmer/tracking'",
+        "Add @tracked before class properties that change",
+        "Replace computed properties with getters using tracked properties",
+        "Use this.property = value for direct assignment (no set() needed)"
+      ],
+      "tags": ["ember", "octane", "tracked", "reactivity"],
+      "examples": [
+        "Error: Property not reactive - changes not reflected in template",
+        "UI not updating when property changes - missing @tracked"
+      ]
+    },
+    {
+      "id": "ember_octane_action_decorator_error",
+      "category": "octane",
+      "subcategory": "action",
+      "pattern": "@action|action decorator|cannot read property .* of undefined.*action|'this' is undefined.*action",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_octane_action_error",
+      "suggestion": "Use @action decorator for event handlers",
+      "fix_commands": [
+        "Import { action } from '@ember/object'",
+        "Add @action decorator before event handler methods",
+        "Replace actions hash with @action class methods",
+        "Use {{on}} modifier with @action methods in templates"
+      ],
+      "tags": ["ember", "octane", "action", "events"],
+      "examples": [
+        "Error: 'this' is undefined in action handler",
+        "Cannot bind event - missing @action decorator"
+      ]
+    },
+    {
+      "id": "ember_octane_glimmer_component_error",
+      "category": "octane",
+      "subcategory": "glimmer",
+      "pattern": "Glimmer(Component|)|cannot read property .* of undefined.*args|this.args",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_octane_glimmer_component_error",
+      "suggestion": "Fix Glimmer component implementation",
+      "fix_commands": [
+        "Import Component from '@glimmer/component'",
+        "Access component arguments via this.args.propName",
+        "Add constructor(owner, args) { super(owner, args); } if needed",
+        "Replace didInsertElement with modifiers like {{did-insert}}"
+      ],
+      "tags": ["ember", "octane", "glimmer", "component"],
+      "examples": [
+        "Cannot read property 'userId' of undefined in this.args",
+        "Error: GlimmerComponent lifecycle hooks not available"
+      ]
+    },
+    {
+      "id": "ember_octane_args_error",
+      "category": "octane",
+      "subcategory": "args",
+      "pattern": "args (error|not found)|cannot set property of args|args is read only|cannot read property .* of undefined.*args",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_octane_args_error",
+      "suggestion": "Use this.args correctly and avoid mutating args",
+      "fix_commands": [
+        "Access component arguments via this.args.propName",
+        "Never modify this.args directly - they are read-only",
+        "Use getters for computed values based on args",
+        "Track local state with @tracked properties"
+      ],
+      "tags": ["ember", "octane", "args", "component"],
+      "examples": [
+        "Error: Cannot set property of read-only args",
+        "Cannot read property 'value' of undefined in this.args"
+      ]
+    },
+    {
+      "id": "ember_octane_modifier_error",
+      "category": "octane",
+      "subcategory": "modifier",
+      "pattern": "modifier (error|not found)|unknown modifier|Cannot find modifier|Failed to execute modifier",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_octane_modifier_error",
+      "suggestion": "Fix element modifier usage or implementation",
+      "fix_commands": [
+        "Generate modifier with 'ember generate modifier name'",
+        "Import createModifier from standard library",
+        "Check modifier syntax in templates",
+        "Use built-in modifiers like {{on}} and {{did-insert}}"
+      ],
+      "tags": ["ember", "octane", "modifier", "element"],
+      "examples": [
+        "Error: Modifier 'on-click' not found",
+        "Failed to execute modifier: incorrect parameters"
+      ]
+    },
+    {
+      "id": "ember_octane_service_injection_error",
+      "category": "octane",
+      "subcategory": "service",
+      "pattern": "@service|service decorator|service not injected|Cannot read property .* of undefined.*service",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_octane_service_injection_error",
+      "suggestion": "Use @service decorator correctly",
+      "fix_commands": [
+        "Import { inject as service } from '@ember/service'",
+        "Add @service decorators before service properties",
+        "Replace service: service() with @service syntax",
+        "Access service via this.serviceName"
+      ],
+      "tags": ["ember", "octane", "service", "injection"],
+      "examples": [
+        "Cannot read property 'fetch' of undefined in service",
+        "Error: Service not injected - missing @service decorator"
+      ]
+    },
+    {
+      "id": "ember_octane_class_inheritance_error",
+      "category": "octane",
+      "subcategory": "class",
+      "pattern": "super (error|called|missing)|must call super|super.* in constructor|super.*not called",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_octane_class_inheritance_error",
+      "suggestion": "Fix class inheritance with proper super calls",
+      "fix_commands": [
+        "Add super.init(...arguments) in init() method",
+        "Use super(owner, args) in component constructors",
+        "Call super.method(...arguments) when overriding methods",
+        "Use class fields instead of init() when possible"
+      ],
+      "tags": ["ember", "octane", "class", "inheritance"],
+      "examples": [
+        "Error: You must call super.init(...arguments) in init()",
+        "Must call super constructor in derived class before accessing 'this'"
+      ]
+    },
+    {
+      "id": "ember_octane_no_mixins_error",
+      "category": "octane",
+      "subcategory": "mixins",
+      "pattern": "mixin (error|deprecated)|Cannot use mixins with native classes|native class.*mixin",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_octane_mixins_error",
+      "suggestion": "Replace mixins with services, decorators, or composition",
+      "fix_commands": [
+        "Extract mixin functionality to a service",
+        "Use decorators for cross-cutting concerns",
+        "Create utility functions instead of mixins",
+        "Use class composition patterns instead"
+      ],
+      "tags": ["ember", "octane", "mixins", "migration"],
+      "examples": [
+        "Warning: Mixins are deprecated with native classes",
+        "Error: Cannot use Ember.Mixin with ES6 class syntax"
+      ]
+    },
+    {
+      "id": "ember_octane_get_set_error",
+      "category": "octane",
+      "subcategory": "getset",
+      "pattern": "(get|set) (deprecated|error)|use tracked properties instead of set|replace .* with tracked|native accessor",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_octane_get_set_error",
+      "suggestion": "Use direct property access instead of get/set",
+      "fix_commands": [
+        "Replace this.get('property') with this.property",
+        "Replace this.set('property', value) with this.property = value",
+        "Use @tracked for reactive properties",
+        "Replace computed() with native getters"
+      ],
+      "tags": ["ember", "octane", "get", "set", "migration"],
+      "examples": [
+        "Warning: Using get/set is deprecated in Octane",
+        "Replace this.get('property') with native property access"
+      ]
+    },
+    {
+      "id": "ember_octane_template_imports_error",
+      "category": "octane",
+      "subcategory": "imports",
+      "pattern": "template imports|Cannot import .* from templates|precompile error|hbs import",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_octane_template_imports_error",
+      "suggestion": "Fix template imports in components",
+      "fix_commands": [
+        "Use co-located component templates instead of imports",
+        "Place templates in the same directory as components",
+        "Use <template> syntax for in-component templates",
+        "Configure ember-cli-htmlbars for template imports"
+      ],
+      "tags": ["ember", "octane", "templates", "imports"],
+      "examples": [
+        "Error: Cannot import template directly",
+        "Failed to precompile hbs template import"
+      ]
+    }
+  ]
+}

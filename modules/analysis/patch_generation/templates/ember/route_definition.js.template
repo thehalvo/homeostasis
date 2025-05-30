@@ -1,0 +1,51 @@
+// app/router.js
+import EmberRouter from '@ember/routing/router';
+import config from './config/environment';
+
+export default class Router extends EmberRouter {
+  location = config.locationType;
+  rootURL = config.rootURL;
+}
+
+Router.map(function() {
+  // Define your routes here
+  this.route('{{route_name}}', { path: '/{{route_path}}' }, function() {
+    this.route('show', { path: '/:id' });
+    this.route('edit', { path: '/:id/edit' });
+    this.route('new');
+  });
+});
+
+// app/routes/{{route_name}}.js
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+
+export default class {{route_class_name}}Route extends Route {
+  @service store;
+  
+  model(params) {
+    // Optional filtering by query params
+    const queryParams = this.paramsFor('{{route_name}}');
+    
+    return this.store.findAll('{{model_name}}', {
+      reload: true,
+      include: '{{relationships}}'
+    }).catch(error => {
+      console.error('Error loading {{model_name}} records:', error);
+      return [];
+    });
+  }
+  
+  setupController(controller, model) {
+    super.setupController(controller, model);
+    controller.set('title', '{{route_title}}');
+  }
+  
+  // Actions
+  resetController(controller, isExiting) {
+    if (isExiting) {
+      // Reset controller state when navigating away
+      controller.set('page', 1);
+    }
+  }
+}

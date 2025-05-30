@@ -1,0 +1,68 @@
+// app/components/{{component_name}}.js
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
+
+/**
+ * {{component_description}}
+ * Uses Ember Data store to fetch and display data
+ */
+export default class {{component_class_name}}Component extends Component {
+  // Inject services
+  @service store;
+  @service router;
+  
+  // Tracked properties
+  @tracked records = [];
+  @tracked isLoading = false;
+  @tracked error = null;
+  
+  // Lifecycle hooks
+  constructor() {
+    super(...arguments);
+    this.loadData();
+  }
+  
+  // Methods
+  async loadData() {
+    try {
+      this.isLoading = true;
+      this.error = null;
+      
+      // Use store to fetch data
+      this.records = await this.store.findAll('{{model_name}}', {
+        include: '{{relationships}}'
+      });
+    } catch (error) {
+      this.error = error;
+      console.error('Error loading data:', error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+  
+  // Actions
+  @action
+  async createRecord() {
+    try {
+      const record = this.store.createRecord('{{model_name}}', {
+        // Default attributes
+        title: 'New Item',
+        createdAt: new Date()
+      });
+      
+      await record.save();
+      // Refresh list
+      this.loadData();
+    } catch (error) {
+      this.error = error;
+      console.error('Error creating record:', error);
+    }
+  }
+  
+  @action
+  viewDetails(id) {
+    this.router.transitionTo('{{model_name}}.show', id);
+  }
+}

@@ -1,0 +1,229 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "ember",
+    "description": "Ember.js Router and URL handling error rules"
+  },
+  "rules": [
+    {
+      "id": "ember_router_route_not_found",
+      "category": "router",
+      "subcategory": "missing_route",
+      "pattern": "route (not found|could not be found)|No route matched|No route definition|Unable to find route",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_router_route_not_found",
+      "suggestion": "Define the missing route in your router.js file",
+      "fix_commands": [
+        "Add route definition to router.js",
+        "Generate route with 'ember generate route name'",
+        "Check for typos in route name",
+        "Ensure route name matches transitionTo calls"
+      ],
+      "tags": ["ember", "router", "routes"],
+      "examples": [
+        "Error: No route matched 'users.profile'",
+        "Route 'settings' not found"
+      ]
+    },
+    {
+      "id": "ember_router_transition_error",
+      "category": "router",
+      "subcategory": "transition",
+      "pattern": "transition (error|failed|aborted|rejected)|Transition (was|has been) (aborted|rejected)|transitionTo.*failed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_router_transition_aborted",
+      "suggestion": "Handle transition errors and aborts properly",
+      "fix_commands": [
+        "Add .catch() handlers to transition promises",
+        "Fix beforeModel/model/afterModel hooks that abort transitions",
+        "Check for transition guards that reject improperly",
+        "Use intermediateTransitionTo for non-URL changing transitions"
+      ],
+      "tags": ["ember", "router", "transition"],
+      "examples": [
+        "Transition to 'profile' was aborted",
+        "Transition was rejected with: Error: Not authenticated"
+      ]
+    },
+    {
+      "id": "ember_router_dynamic_segment_error",
+      "category": "router",
+      "subcategory": "dynamic_segment",
+      "pattern": "dynamic segment|missing parameter|segment .* required|param not found|missing required parameter",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_router_dynamic_segment_error",
+      "suggestion": "Provide all required dynamic segment parameters",
+      "fix_commands": [
+        "Add missing parameters to transitionTo/link-to",
+        "Check route definition in router.js",
+        "Ensure parameters match :segment names in route path",
+        "Provide default values for optional parameters"
+      ],
+      "tags": ["ember", "router", "dynamic-segments", "parameters"],
+      "examples": [
+        "Error: Missing required parameter 'userId'",
+        "Dynamic segment 'postId' not provided"
+      ]
+    },
+    {
+      "id": "ember_router_model_hook_error",
+      "category": "router",
+      "subcategory": "model_hook",
+      "pattern": "model hook.*error|Error in model hook|error during model()|route.*model.*failed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "ember_router_model_hook_error",
+      "suggestion": "Fix errors in route model hooks",
+      "fix_commands": [
+        "Add error handling in model hooks",
+        "Check for async model hooks that don't return promises",
+        "Handle missing records properly in model hooks",
+        "Use catch blocks for failed data fetching"
+      ],
+      "tags": ["ember", "router", "model-hook"],
+      "examples": [
+        "Error occurred in route model hook",
+        "Assertion Failed: Route model hook returned undefined"
+      ]
+    },
+    {
+      "id": "ember_router_loaded_error",
+      "category": "router",
+      "subcategory": "loading_state",
+      "pattern": "loading route.*error|Error during loading state|loading error|loading template|nested loading",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_router_loading_error",
+      "suggestion": "Fix loading route and template issues",
+      "fix_commands": [
+        "Create loading.hbs templates for slow-loading routes",
+        "Implement loading substate templates",
+        "Return promises from model hooks for proper loading states",
+        "Use ember-loading-service for more control"
+      ],
+      "tags": ["ember", "router", "loading-state"],
+      "examples": [
+        "Error in loading route",
+        "Failed to resolve loading template"
+      ]
+    },
+    {
+      "id": "ember_router_error_handling_error",
+      "category": "router",
+      "subcategory": "error_handling",
+      "pattern": "error route.*failed|error template not found|error handling.*failed|error substate",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_router_error_handling_error",
+      "suggestion": "Improve route error handling",
+      "fix_commands": [
+        "Create error.hbs templates for error states",
+        "Implement error actions in routes",
+        "Use try/catch in model hooks",
+        "Return rejected promises with useful error messages"
+      ],
+      "tags": ["ember", "router", "error-handling"],
+      "examples": [
+        "Failed to load error template",
+        "Error handling in route failed"
+      ]
+    },
+    {
+      "id": "ember_router_redirect_loop",
+      "category": "router",
+      "subcategory": "redirect_loop",
+      "pattern": "redirect loop|infinite (redirect|transition)|too many redirects|exceeded maximum number of redirects",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_router_redirect_loop",
+      "suggestion": "Fix infinite redirect loops in routes",
+      "fix_commands": [
+        "Check beforeModel redirects for circular references",
+        "Add conditions to prevent repeated redirects",
+        "Use session or state checking before redirects",
+        "Consider using intermediateTransitionTo instead"
+      ],
+      "tags": ["ember", "router", "redirect", "infinite-loop"],
+      "examples": [
+        "Error: Detected redirect loop in route 'application'",
+        "Maximum number of redirects exceeded"
+      ]
+    },
+    {
+      "id": "ember_router_refresh_error",
+      "category": "router",
+      "subcategory": "refresh",
+      "pattern": "refresh (error|failed)|Error refreshing route|model refresh.*error|resetController error",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_router_refresh_error",
+      "suggestion": "Fix route refresh issues",
+      "fix_commands": [
+        "Check refreshModel behavior in queryParams",
+        "Add proper cleanup in resetController hooks",
+        "Handle async behavior in refreshed model hooks",
+        "Check controller state in route refreshes"
+      ],
+      "tags": ["ember", "router", "refresh", "resetController"],
+      "examples": [
+        "Error refreshing route 'posts'",
+        "Failed to reset controller during refresh"
+      ]
+    },
+    {
+      "id": "ember_router_url_error",
+      "category": "router",
+      "subcategory": "url",
+      "pattern": "URL (error|invalid|malformed)|Cannot generate URL|Error in URL generation|locationURL.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_router_url_error",
+      "suggestion": "Fix URL generation issues",
+      "fix_commands": [
+        "Check dynamic segments in URL generation",
+        "Configure router location type properly",
+        "Ensure root URL is correctly set",
+        "Handle URL encoding/decoding properly"
+      ],
+      "tags": ["ember", "router", "url", "location"],
+      "examples": [
+        "Error: Cannot generate URL for route 'profile'",
+        "Failed to parse location URL"
+      ]
+    },
+    {
+      "id": "ember_router_service_error",
+      "category": "router",
+      "subcategory": "service",
+      "pattern": "router service (error|not found)|Cannot read property .* of undefined.*router service|@service router",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_router_service_not_available",
+      "suggestion": "Inject and use the router service correctly",
+      "fix_commands": [
+        "Import { inject as service } from '@ember/service'",
+        "Add @service router to the class",
+        "Use this.router.transitionTo() instead of this.transitionTo()",
+        "Check router service is available before using it"
+      ],
+      "tags": ["ember", "router", "service", "injection"],
+      "examples": [
+        "Cannot read property 'transitionTo' of undefined",
+        "Router service not injected"
+      ]
+    }
+  ]
+}

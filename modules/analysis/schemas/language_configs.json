@@ -877,5 +877,137 @@
         "minimize_client_javascript": true
       }
     }
+  },
+  "ember": {
+    "language": "ember",
+    "field_mappings": {
+      "error_type": ["name", "type"],
+      "message": "message",
+      "stack_trace": ["stack", "stacktrace", "stack_trace"],
+      "component_stack": ["componentStack", "component_stack"]
+    },
+    "stack_trace_fields": ["stack", "stacktrace", "stack_trace"],
+    "stack_trace_format": "string",
+    "version_fields": ["ember_version", "framework_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version", "ember_version"],
+    "detection_patterns": [
+      "(?:ember)",
+      "(?:ember\\.js)",
+      "(?:ember-cli)",
+      "(?:ember-data)",
+      "(?:octane)",
+      "(?:glimmer)",
+      "(?:handlebars)",
+      "(?:hbs)",
+      "(?:computed\\(\\))",
+      "(?:tracked)",
+      "(?:component)",
+      "(?:template)",
+      "(?:{{|}})",
+      "(?:this\\.args)",
+      "(?:router)",
+      "(?:route)",
+      "(?:model\\(\\))",
+      "(?:store)",
+      "(?:findRecord)",
+      "(?:queryRecord)",
+      "(?:findAll)",
+      "(?:belongsTo)",
+      "(?:hasMany)",
+      "(?:adapter)",
+      "(?:serializer)",
+      "(?:service)",
+      "(?:@service)",
+      "(?:@tracked)",
+      "(?:@action)",
+      "(?:@glimmer)",
+      "(?:helpers)",
+      "(?:modifier)",
+      "(?:v-\\w+)",
+      "(?:component.*not found)",
+      "(?:helper.*not found)",
+      "(?:route.*not found)",
+      "(?:transition.*aborted)",
+      "(?:model.*error)",
+      "(?:record.*not found)",
+      "(?:relationship.*not loaded)",
+      "(?:syntax error)",
+      "(?:unclosed element)",
+      "(?:property.*not found)",
+      "(?:could not set property)"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "error",
+      "fatal": "fatal"
+    },
+    "component_stack_patterns": [
+      "(?:at (\\w+Component) \\([^)]+\\.(js|ts):\\d+:\\d+\\))",
+      "(?:in (\\w+) \\(at [^)]+\\.(js|ts|hbs):\\d+:\\d+\\))"
+    ],
+    "file_extensions": [".js", ".ts", ".hbs"],
+    "config_files": ["ember-cli-build.js", "package.json", "config/environment.js"],
+    "lifecycle_hooks": [
+      "init", "didReceiveAttrs", "didUpdateAttrs", "didRender", "didInsertElement",
+      "willDestroyElement", "willDestroy", "willRender", "willUpdate"
+    ],
+    "ember_data_functions": [
+      "findRecord", "findAll", "queryRecord", "query", "peekRecord", "peekAll",
+      "createRecord", "deleteRecord", "pushPayload", "normalize", "serialize"
+    ],
+    "router_functions": [
+      "transitionTo", "replaceWith", "intermediateTransitionTo", "refresh",
+      "beforeModel", "model", "afterModel", "activate", "deactivate",
+      "resetController", "setupController"
+    ],
+    "octane_decorators": [
+      "@tracked", "@action", "@service", "@attr", "@belongsTo", "@hasMany"
+    ],
+    "template_helpers": [
+      "each", "if", "unless", "with", "let", "in-element", "link-to", "input",
+      "textarea", "component", "yield", "hash", "array", "log", "debugger",
+      "each-in", "get", "concat", "mut", "action", "on"
+    ],
+    "ember_patterns": {
+      "component_rules": {
+        "proper_args_usage": true,
+        "tracked_properties": true,
+        "action_handlers": true,
+        "lifecycle_hooks": true,
+        "service_injection": true
+      },
+      "template_rules": {
+        "proper_syntax": true,
+        "helper_usage": true,
+        "component_invocation": true,
+        "block_params": true,
+        "conditional_rendering": true
+      },
+      "data_rules": {
+        "store_injection": true,
+        "model_definition": true,
+        "relationship_handling": true,
+        "adapter_configuration": true,
+        "serializer_configuration": true
+      },
+      "router_rules": {
+        "route_definition": true,
+        "dynamic_segments": true,
+        "transition_handling": true,
+        "model_hooks": true,
+        "loading_error_states": true
+      },
+      "octane_rules": {
+        "tracked_properties": true,
+        "class_based_components": true,
+        "modifiers_usage": true,
+        "args_access": true,
+        "getters_over_computed": true
+      }
+    }
   }
 }

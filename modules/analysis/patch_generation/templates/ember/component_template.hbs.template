@@ -1,0 +1,26 @@
+{{!-- app/components/{{component_name}}.hbs --}}
+<div class="{{component_name}}">
+  <label for="{{component_name}}-input">{{@label}}</label>
+  
+  <input 
+    id="{{component_name}}-input"
+    type="text"
+    value={{this.value}}
+    {{on "input" this.handleInput}}
+    placeholder={{@placeholder}}
+  />
+  
+  <button 
+    type="button"
+    disabled={{not this.isValid}}
+    {{on "click" this.handleSubmit}}
+  >
+    {{#if @buttonText}}
+      {{@buttonText}}
+    {{else}}
+      Submit
+    {{/if}}
+  </button>
+  
+  {{yield this.value}}
+</div>

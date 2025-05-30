@@ -1,0 +1,229 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "ember",
+    "description": "Ember.js Handlebars template error rules"
+  },
+  "rules": [
+    {
+      "id": "ember_template_syntax_error",
+      "category": "templates",
+      "subcategory": "syntax",
+      "pattern": "syntax error.*template|Parse error|Unclosed element|Error: Expecting",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_template_syntax_error",
+      "suggestion": "Fix syntax errors in your Handlebars template",
+      "fix_commands": [
+        "Check for unclosed or mismatched {{}} braces",
+        "Ensure block helpers have closing tags ({{#if}}...{{/if}})",
+        "Fix malformed expressions",
+        "Close HTML elements properly"
+      ],
+      "tags": ["ember", "templates", "handlebars", "syntax"],
+      "examples": [
+        "Error: Parse error on line 5: Expecting 'ID', got 'INVALID'",
+        "Unclosed element 'div' at line 12"
+      ]
+    },
+    {
+      "id": "ember_template_helper_not_found",
+      "category": "templates",
+      "subcategory": "missing_helper",
+      "pattern": "helper (not found|could not be found)|Unknown helper|Cannot find helper|helper.*is undefined",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_template_helper_not_found",
+      "suggestion": "Register the helper or fix helper invocation",
+      "fix_commands": [
+        "Generate the helper with 'ember generate helper name'",
+        "Check for typos in helper name",
+        "Ensure helper is properly exported",
+        "Import third-party helpers correctly"
+      ],
+      "tags": ["ember", "templates", "helpers"],
+      "examples": [
+        "Helper 'format-date' not found",
+        "Unknown helper 'calculate-total' in template"
+      ]
+    },
+    {
+      "id": "ember_template_component_not_found",
+      "category": "templates",
+      "subcategory": "missing_component",
+      "pattern": "component (not found|could not be found)|No component (found|defined) for",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_template_component_not_found",
+      "suggestion": "Create the missing component or fix the component invocation",
+      "fix_commands": [
+        "Generate the component with 'ember generate component name'",
+        "Check for typos in component name",
+        "Ensure component is properly exported and registered",
+        "Verify the correct invocation syntax in templates"
+      ],
+      "tags": ["ember", "templates", "components"],
+      "examples": [
+        "Ember error: Component not found: 'user-profile'",
+        "No component named 'data-table' was found"
+      ]
+    },
+    {
+      "id": "ember_template_modifier_not_found",
+      "category": "templates",
+      "subcategory": "missing_modifier",
+      "pattern": "modifier (not found|could not be found)|Unknown modifier|Cannot find modifier",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_template_modifier_not_found",
+      "suggestion": "Register the modifier or fix modifier invocation",
+      "fix_commands": [
+        "Generate the modifier with 'ember generate modifier name'",
+        "Check for typos in modifier name",
+        "Ensure modifier is properly exported",
+        "Import third-party modifiers correctly"
+      ],
+      "tags": ["ember", "templates", "modifiers", "octane"],
+      "examples": [
+        "Error: Modifier 'on-click' not found",
+        "Unknown modifier 'scroll-into-view' in template"
+      ]
+    },
+    {
+      "id": "ember_template_block_params_error",
+      "category": "templates",
+      "subcategory": "block_params",
+      "pattern": "block params|each only takes a single argument|error in each block|cannot read property .* of undefined.*each",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "ember_template_block_params_error",
+      "suggestion": "Fix block parameters in helpers like {{#each}} or {{#let}}",
+      "fix_commands": [
+        "Check the format of {{#each items as |item|}}",
+        "Ensure the iterated property is an array",
+        "Verify null/undefined checks before iteration",
+        "Use {{#let}} for variable binding in templates"
+      ],
+      "tags": ["ember", "templates", "each", "block-params"],
+      "examples": [
+        "Error: Each only takes a single argument",
+        "Cannot read property 'forEach' of undefined in each helper"
+      ]
+    },
+    {
+      "id": "ember_template_variable_error",
+      "category": "templates",
+      "subcategory": "variable",
+      "pattern": "cannot read property .* of (undefined|null)|variable.*is undefined|not found.*variable",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_template_variable_error",
+      "suggestion": "Ensure variables exist before using them in templates",
+      "fix_commands": [
+        "Add null/undefined checks with {{#if variable}}",
+        "Use the or helper {{or variable 'default'}}",
+        "Ensure properties are passed to components",
+        "Set default values for properties in components"
+      ],
+      "tags": ["ember", "templates", "variables"],
+      "examples": [
+        "Cannot read property 'name' of undefined",
+        "Error: Variable 'user' is undefined"
+      ]
+    },
+    {
+      "id": "ember_template_action_error",
+      "category": "templates",
+      "subcategory": "actions",
+      "pattern": "action (not found|could not be found)|unknown action|no actions handler|Cannot read property .* of undefined.*action",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "ember_template_action_error",
+      "suggestion": "Fix action handler definition or invocation",
+      "fix_commands": [
+        "Define the action in component or controller",
+        "Add @action decorator to methods in Octane",
+        "Check for typos in action names",
+        "Use {{on}} modifier in Octane templates"
+      ],
+      "tags": ["ember", "templates", "actions", "events"],
+      "examples": [
+        "Error: Action 'saveUser' was not found",
+        "Unknown action handleSubmit"
+      ]
+    },
+    {
+      "id": "ember_template_yield_error",
+      "category": "templates",
+      "subcategory": "yield",
+      "pattern": "yield (error|failed)|block not supplied|Cannot read property .* of undefined.*yield",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "ember_template_yield_error",
+      "suggestion": "Fix component block content or yield parameters",
+      "fix_commands": [
+        "Ensure block content is provided when using {{yield}}",
+        "Check yield parameters match block parameters",
+        "Add default content with {{has-block}}",
+        "Use named yields for complex components"
+      ],
+      "tags": ["ember", "templates", "yield", "blocks"],
+      "examples": [
+        "Error: Block not supplied for component expecting yield",
+        "Cannot read property of undefined in yield helper"
+      ]
+    },
+    {
+      "id": "ember_template_link_to_error",
+      "category": "templates",
+      "subcategory": "link-to",
+      "pattern": "link-to (error|failed)|Error while processing link-to|route.*not found.*link-to",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ember_template_link_to_error",
+      "suggestion": "Fix {{link-to}} usage or route definition",
+      "fix_commands": [
+        "Check route name for typos",
+        "Ensure route is defined in router.js",
+        "Check dynamic segment parameters",
+        "Use <LinkTo> component in newer Ember"
+      ],
+      "tags": ["ember", "templates", "link-to", "routing"],
+      "examples": [
+        "Error while processing link-to helper: route 'users.profile' not found",
+        "LinkTo failed: Missing required parameters"
+      ]
+    },
+    {
+      "id": "ember_template_if_unless_error",
+      "category": "templates",
+      "subcategory": "conditionals",
+      "pattern": "error in if helper|unless helper.*error|if helper requires exactly one|Cannot read property .* of undefined.*(if|unless)",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "ember_template_conditional_error",
+      "suggestion": "Fix conditional logic in templates",
+      "fix_commands": [
+        "Ensure if/unless has exactly one condition",
+        "Check condition value is not undefined",
+        "Add null checks before complex conditions",
+        "Use and/or helpers for compound conditions"
+      ],
+      "tags": ["ember", "templates", "if", "unless", "conditionals"],
+      "examples": [
+        "Error: The if helper requires exactly one argument",
+        "Cannot read property 'isActive' of undefined in if helper"
+      ]
+    }
+  ]
+}
