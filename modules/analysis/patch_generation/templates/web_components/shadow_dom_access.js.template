@@ -1,0 +1,47 @@
+class {{className}} extends HTMLElement {
+  constructor() {
+    super();
+    
+    // Create open shadow root for accessibility
+    this.shadowRoot = this.attachShadow({ mode: 'open' });
+    
+    // Set up shadow DOM content
+    this.shadowRoot.innerHTML = `
+      <style>
+        /* Styles are encapsulated within shadow DOM */
+        :host {
+          display: block;
+          /* Base component styles */
+          {{hostStyles}}
+        }
+        
+        /* Internal elements */
+        .container {
+          {{containerStyles}}
+        }
+      </style>
+      
+      <div class="container">
+        <slot></slot> <!-- Default slot for content projection -->
+      </div>
+    `;
+    
+    // Store references to shadow DOM elements for later use
+    this._container = this.shadowRoot.querySelector('.container');
+  }
+  
+  // Use shadowRoot to access elements inside shadow DOM
+  get container() {
+    return this._container;
+  }
+  
+  // Handle events properly with composed path
+  handleEvent(event) {
+    // Use composedPath() to get the original event path through shadow DOM
+    const path = event.composedPath();
+    const target = path[0]; // Original target
+    
+    // Handle the event
+    {{eventHandler}}
+  }
+}

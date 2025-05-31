@@ -1,0 +1,118 @@
+{
+  "name": "Custom Elements Error Rules",
+  "description": "Rules for detecting and fixing common Custom Elements lifecycle errors",
+  "version": "1.0.0",
+  "author": "Homeostasis Team",
+  "rules": [
+    {
+      "id": "ce_constructor_super",
+      "pattern": "failed to construct '\\w+': 1st argument is not an object, or super\\(\\) not called",
+      "category": "lifecycle",
+      "type": "constructor_error",
+      "severity": "high",
+      "suggestion": "Ensure the constructor calls super() before any other statements",
+      "root_cause": "missing_super_call_in_constructor",
+      "reliability": "high",
+      "tags": ["webcomponents", "custom-elements", "constructor"]
+    },
+    {
+      "id": "ce_connected_callback_error",
+      "pattern": "uncaught (exception|error) in connectedCallback",
+      "category": "lifecycle",
+      "type": "callback_error",
+      "severity": "high",
+      "suggestion": "Check for errors in the connectedCallback method",
+      "root_cause": "error_in_connected_callback",
+      "reliability": "high",
+      "tags": ["webcomponents", "custom-elements", "lifecycle"]
+    },
+    {
+      "id": "ce_disconnected_callback_error",
+      "pattern": "uncaught (exception|error) in disconnectedCallback",
+      "category": "lifecycle",
+      "type": "callback_error",
+      "severity": "medium",
+      "suggestion": "Check for errors in the disconnectedCallback method",
+      "root_cause": "error_in_disconnected_callback",
+      "reliability": "high",
+      "tags": ["webcomponents", "custom-elements", "lifecycle"]
+    },
+    {
+      "id": "ce_attribute_changed_callback_error",
+      "pattern": "uncaught (exception|error) in attributeChangedCallback",
+      "category": "lifecycle",
+      "type": "callback_error",
+      "severity": "medium",
+      "suggestion": "Check for errors in the attributeChangedCallback method",
+      "root_cause": "error_in_attribute_changed_callback",
+      "reliability": "high",
+      "tags": ["webcomponents", "custom-elements", "lifecycle"]
+    },
+    {
+      "id": "ce_adopted_callback_error",
+      "pattern": "uncaught (exception|error) in adoptedCallback",
+      "category": "lifecycle",
+      "type": "callback_error",
+      "severity": "low",
+      "suggestion": "Check for errors in the adoptedCallback method",
+      "root_cause": "error_in_adopted_callback",
+      "reliability": "high",
+      "tags": ["webcomponents", "custom-elements", "lifecycle"]
+    },
+    {
+      "id": "ce_observed_attributes_error",
+      "pattern": "observedAttributes (must|should) return an array",
+      "category": "lifecycle",
+      "type": "observed_attributes_error",
+      "severity": "medium",
+      "suggestion": "Ensure observedAttributes returns an array of attribute names",
+      "root_cause": "invalid_observed_attributes",
+      "reliability": "high",
+      "tags": ["webcomponents", "custom-elements", "attributes"]
+    },
+    {
+      "id": "ce_define_before_customElements",
+      "pattern": "(customElements is (undefined|not defined)|Cannot read property 'define' of (undefined|null))",
+      "category": "registry",
+      "type": "registry_error",
+      "severity": "high",
+      "suggestion": "Ensure customElements is available before defining components",
+      "root_cause": "custom_elements_registry_unavailable",
+      "reliability": "high",
+      "tags": ["webcomponents", "custom-elements", "registry"]
+    },
+    {
+      "id": "ce_already_defined",
+      "pattern": "Failed to execute 'define' on 'CustomElementRegistry': the name '.+' has already been used with this registry",
+      "category": "registry",
+      "type": "registry_error",
+      "severity": "medium",
+      "suggestion": "Element with this name is already defined. Use a different name or check for duplicate registrations",
+      "root_cause": "duplicate_element_definition",
+      "reliability": "high",
+      "tags": ["webcomponents", "custom-elements", "registry"]
+    },
+    {
+      "id": "ce_invalid_name",
+      "pattern": "Failed to execute 'define' on 'CustomElementRegistry': '.+' is not a valid custom element name",
+      "category": "registry",
+      "type": "registry_error",
+      "severity": "high",
+      "suggestion": "Custom element names must contain a hyphen (-) and follow naming conventions",
+      "root_cause": "invalid_custom_element_name",
+      "reliability": "high",
+      "tags": ["webcomponents", "custom-elements", "registry"]
+    },
+    {
+      "id": "ce_constructor_error",
+      "pattern": "custom element constructors must be classes",
+      "category": "registry",
+      "type": "registry_error",
+      "severity": "high",
+      "suggestion": "Use a class that extends HTMLElement for defining custom elements",
+      "root_cause": "invalid_constructor_type",
+      "reliability": "high",
+      "tags": ["webcomponents", "custom-elements", "registry"]
+    }
+  ]
+}

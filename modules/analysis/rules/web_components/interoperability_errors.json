@@ -1,0 +1,118 @@
+{
+  "name": "Web Component Interoperability Error Rules",
+  "description": "Rules for detecting and fixing common issues with Web Components interoperability with frameworks",
+  "version": "1.0.0",
+  "author": "Homeostasis Team",
+  "rules": [
+    {
+      "id": "react_event_binding",
+      "pattern": "react.*event.*not (working|firing|triggering)",
+      "category": "interop",
+      "type": "react_events",
+      "severity": "high",
+      "suggestion": "Use uppercase event names for React (e.g., onClick instead of onclick) and ensure events bubble and are composed",
+      "root_cause": "react_event_binding_issue",
+      "reliability": "high",
+      "tags": ["webcomponents", "interop", "react", "events"]
+    },
+    {
+      "id": "angular_binding_syntax",
+      "pattern": "angular.*(binding|property|attribute).*not (working|updating)",
+      "category": "interop",
+      "type": "angular_binding",
+      "severity": "high",
+      "suggestion": "Ensure properties reflect to attributes and dispatch events with detail objects for Angular binding",
+      "root_cause": "angular_binding_syntax_issue",
+      "reliability": "high",
+      "tags": ["webcomponents", "interop", "angular", "binding"]
+    },
+    {
+      "id": "vue_custom_event",
+      "pattern": "vue.*event.*not (detected|captured|emitted)",
+      "category": "interop",
+      "type": "vue_events",
+      "severity": "medium",
+      "suggestion": "Use kebab-case for custom events in Vue (e.g., 'custom-change' instead of 'customChange')",
+      "root_cause": "vue_custom_event_naming",
+      "reliability": "high",
+      "tags": ["webcomponents", "interop", "vue", "events"]
+    },
+    {
+      "id": "property_attribute_reflection",
+      "pattern": "(property|attribute).*not (reflecting|syncing|updating)",
+      "category": "interop",
+      "type": "property_reflection",
+      "severity": "high",
+      "suggestion": "Implement both property setters and attributeChangedCallback to keep properties and attributes in sync",
+      "root_cause": "property_attribute_reflection_missing",
+      "reliability": "high",
+      "tags": ["webcomponents", "interop", "properties", "attributes"]
+    },
+    {
+      "id": "event_bubbling_missing",
+      "pattern": "event.*not (propagating|bubbling|reaching).*parent",
+      "category": "interop",
+      "type": "event_bubbling",
+      "severity": "high",
+      "suggestion": "Set bubbles: true and composed: true when dispatching events to cross shadow DOM boundaries",
+      "root_cause": "event_bubbling_composed_missing",
+      "reliability": "high",
+      "tags": ["webcomponents", "interop", "events", "bubbling"]
+    },
+    {
+      "id": "event_detail_missing",
+      "pattern": "event.*(payload|data|detail).*not (available|accessible)",
+      "category": "interop",
+      "type": "event_detail",
+      "severity": "medium",
+      "suggestion": "Use CustomEvent with a detail object to pass data with events",
+      "root_cause": "event_detail_missing",
+      "reliability": "high",
+      "tags": ["webcomponents", "interop", "events", "detail"]
+    },
+    {
+      "id": "framework_styling_leakage",
+      "pattern": "(framework|global) styles (affecting|leaking into) (shadow|component)",
+      "category": "interop",
+      "type": "style_isolation",
+      "severity": "medium",
+      "suggestion": "Use Shadow DOM with the ::part() pseudo-element for styling hooks instead of global styles",
+      "root_cause": "style_encapsulation_breach",
+      "reliability": "medium",
+      "tags": ["webcomponents", "interop", "styles", "encapsulation"]
+    },
+    {
+      "id": "aria_role_missing",
+      "pattern": "(accessibility|aria|a11y).*role.*missing",
+      "category": "interop",
+      "type": "accessibility",
+      "severity": "medium",
+      "suggestion": "Add appropriate ARIA roles and attributes for accessibility across frameworks",
+      "root_cause": "aria_attributes_missing",
+      "reliability": "medium",
+      "tags": ["webcomponents", "interop", "accessibility", "aria"]
+    },
+    {
+      "id": "slot_content_projection",
+      "pattern": "(framework|component) content not (projected|showing|visible)",
+      "category": "interop",
+      "type": "content_projection",
+      "severity": "high",
+      "suggestion": "Use slots for content projection and ensure slot names match between frameworks and components",
+      "root_cause": "slot_content_projection_issue",
+      "reliability": "high",
+      "tags": ["webcomponents", "interop", "slots", "content"]
+    },
+    {
+      "id": "form_association_missing",
+      "pattern": "(form|input) element not (associated|connected|linked)",
+      "category": "interop",
+      "type": "form_association",
+      "severity": "high",
+      "suggestion": "Implement the ElementInternals interface with formAssociated for form integration",
+      "root_cause": "form_association_missing",
+      "reliability": "high",
+      "tags": ["webcomponents", "interop", "forms", "association"]
+    }
+  ]
+}

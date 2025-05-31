@@ -1,0 +1,268 @@
+// Web Component with Framework Interoperability Features
+class {{className}} extends HTMLElement {
+  constructor() {
+    super();
+    
+    // Create shadow DOM
+    this.attachShadow({ mode: 'open' });
+    
+    // Define template
+    if (!{{className}}.template) {
+      {{className}}.template = document.createElement('template');
+      {{className}}.template.innerHTML = `
+        <style>
+          :host {
+            display: block;
+            {{hostStyles}}
+          }
+          
+          /* Parts allow external styling */
+          .container {
+            {{containerStyles}}
+          }
+        </style>
+        
+        <div class="container" part="container">
+          <!-- Slots for flexible content projection -->
+          <slot name="header" part="header"></slot>
+          <div part="content">
+            <slot></slot>
+          </div>
+          <slot name="footer" part="footer"></slot>
+        </div>
+      `;
+    }
+    
+    // Clone template
+    this.shadowRoot.appendChild(document.importNode({{className}}.template.content, true));
+    
+    // Cache references
+    this._container = this.shadowRoot.querySelector('.container');
+    
+    // Set up for framework interoperability
+    this._setupFrameworkInterop();
+  }
+  
+  // Properties with getters/setters for framework interoperability
+  get value() {
+    return this._value;
+  }
+  
+  set value(newValue) {
+    // Avoid unnecessary renders
+    if (this._value === newValue) return;
+    
+    this._value = newValue;
+    
+    // Reflect to attribute for HTML-first frameworks
+    if (newValue == null) {
+      this.removeAttribute('value');
+    } else {
+      this.setAttribute('value', newValue);
+    }
+    
+    // Dispatch change event for framework binding
+    this._dispatchChangeEvent();
+    
+    // Update rendering
+    this._render();
+  }
+  
+  // Observed attributes for HTML usage
+  static get observedAttributes() {
+    return ['value', 'disabled', 'readonly', {{additionalAttributes}}];
+  }
+  
+  // Handle attribute changes for HTML usage
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) return;
+    
+    switch (name) {
+      case 'value':
+        // Avoid loops when property sets attribute
+        if (this._value !== newValue) {
+          this._value = newValue;
+          this._render();
+        }
+        break;
+      
+      case 'disabled':
+        this._disabled = newValue !== null;
+        this._render();
+        break;
+        
+      case 'readonly':
+        this._readonly = newValue !== null;
+        this._render();
+        break;
+        
+      // Handle other attributes
+      {{attributeHandlers}}
+    }
+  }
+  
+  // Lifecycle callbacks
+  connectedCallback() {
+    // Set up events for framework event binding
+    this._setupEventListeners();
+    
+    // Initial render
+    this._render();
+    
+    // Dispatch custom event for frameworks that need connected notifications
+    this.dispatchEvent(new CustomEvent('connected'));
+  }
+  
+  disconnectedCallback() {
+    // Clean up event listeners
+    this._teardownEventListeners();
+    
+    // Dispatch event for frameworks that need disconnect notifications
+    this.dispatchEvent(new CustomEvent('disconnected'));
+  }
+  
+  // Set up event listeners
+  _setupEventListeners() {
+    // Input events (customize based on component type)
+    this._boundInputHandler = this._handleInput.bind(this);
+    this._container.addEventListener('input', this._boundInputHandler);
+    
+    // Click events
+    this._boundClickHandler = this._handleClick.bind(this);
+    this._container.addEventListener('click', this._boundClickHandler);
+  }
+  
+  // Clean up event listeners
+  _teardownEventListeners() {
+    if (this._boundInputHandler) {
+      this._container.removeEventListener('input', this._boundInputHandler);
+    }
+    
+    if (this._boundClickHandler) {
+      this._container.removeEventListener('click', this._boundClickHandler);
+    }
+  }
+  
+  // Handle input events
+  _handleInput(event) {
+    // Update property based on user input
+    this.value = event.target.value;
+    
+    // Dispatch custom input event for frameworks
+    this._dispatchInputEvent();
+  }
+  
+  // Handle click events
+  _handleClick(event) {
+    // Handle click logic
+    {{clickHandlerLogic}}
+    
+    // Dispatch custom click event for frameworks
+    this.dispatchEvent(new CustomEvent('custom-click', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        originalEvent: event,
+        value: this.value
+      }
+    }));
+  }
+  
+  // Framework interoperability setup
+  _setupFrameworkInterop() {
+    // Initialize properties with default values
+    this._value = this.hasAttribute('value') ? this.getAttribute('value') : '';
+    this._disabled = this.hasAttribute('disabled');
+    this._readonly = this.hasAttribute('readonly');
+    
+    // For React - define custom events
+    this._defineCustomEvent('change');
+    this._defineCustomEvent('input');
+    this._defineCustomEvent('focus');
+    this._defineCustomEvent('blur');
+    
+    // For Angular - set ARIA role for accessibility
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'widget');
+    }
+  }
+  
+  // Helper to create React-compatible events
+  _defineCustomEvent(eventName) {
+    const reactEventName = `on${eventName.charAt(0).toUpperCase() + eventName.slice(1)}`;
+    
+    // Define property on the element
+    Object.defineProperty(this, reactEventName, {
+      get() {
+        return this[`_${reactEventName}`];
+      },
+      set(eventHandler) {
+        // Remove old listener if exists
+        if (this[`_${reactEventName}`]) {
+          this.removeEventListener(eventName, this[`_${reactEventName}`]);
+        }
+        
+        // Add new listener
+        if (typeof eventHandler === 'function') {
+          this[`_${reactEventName}`] = eventHandler;
+          this.addEventListener(eventName, eventHandler);
+        } else {
+          this[`_${reactEventName}`] = null;
+        }
+      }
+    });
+  }
+  
+  // Dispatch change event
+  _dispatchChangeEvent() {
+    // Standard DOM event
+    const standardEvent = new Event('change', { bubbles: true, composed: true });
+    this.dispatchEvent(standardEvent);
+    
+    // Custom event with detail for frameworks
+    const customEvent = new CustomEvent('change', {
+      bubbles: true,
+      composed: true,
+      detail: { value: this._value }
+    });
+    this.dispatchEvent(customEvent);
+  }
+  
+  // Dispatch input event
+  _dispatchInputEvent() {
+    // Standard DOM event
+    const standardEvent = new Event('input', { bubbles: true, composed: true });
+    this.dispatchEvent(standardEvent);
+    
+    // Custom event with detail for frameworks
+    const customEvent = new CustomEvent('input', {
+      bubbles: true,
+      composed: true,
+      detail: { value: this._value }
+    });
+    this.dispatchEvent(customEvent);
+  }
+  
+  // Rendering logic
+  _render() {
+    // Update component state based on properties
+    if (this._disabled) {
+      this._container.setAttribute('aria-disabled', 'true');
+      this.setAttribute('aria-disabled', 'true');
+    } else {
+      this._container.removeAttribute('aria-disabled');
+      this.removeAttribute('aria-disabled');
+    }
+    
+    if (this._readonly) {
+      this._container.setAttribute('aria-readonly', 'true');
+      this.setAttribute('aria-readonly', 'true');
+    } else {
+      this._container.removeAttribute('aria-readonly');
+      this.removeAttribute('aria-readonly');
+    }
+    
+    // Update content
+    {{renderLogic}}
+  }
+}

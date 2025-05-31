@@ -1,0 +1,100 @@
+import { LitElement, html, css } from 'lit';
+
+export class {{className}} extends LitElement {
+  // Define reactive properties
+  static properties = {
+    name: { type: String },
+    count: { type: Number },
+    active: { type: Boolean, reflect: true },
+    items: { type: Array },
+    config: { type: Object },
+    {{additionalProperties}}
+  };
+  
+  // Define styles using the css template literal tag
+  static styles = css`
+    :host {
+      display: block;
+      padding: 16px;
+      {{hostStyles}}
+    }
+    
+    :host([active]) {
+      border: 2px solid blue;
+    }
+    
+    .container {
+      {{containerStyles}}
+    }
+  `;
+  
+  constructor() {
+    super();
+    // Initialize properties with default values
+    this.name = '';
+    this.count = 0;
+    this.active = false;
+    this.items = [];
+    this.config = {};
+    {{propertyInitialization}}
+  }
+  
+  // Lifecycle methods
+  connectedCallback() {
+    super.connectedCallback();
+    // Component connected to the DOM
+    {{connectedCode}}
+  }
+  
+  disconnectedCallback() {
+    // Clean up any event listeners or resources
+    {{disconnectedCode}}
+    super.disconnectedCallback();
+  }
+  
+  // Reactive update lifecycle
+  updated(changedProperties) {
+    // React to property changes
+    if (changedProperties.has('name')) {
+      console.log(`Name changed to ${this.name}`);
+    }
+    
+    if (changedProperties.has('count')) {
+      this.handleCountChange();
+    }
+    
+    {{additionalPropertyHandlers}}
+  }
+  
+  // Event handlers
+  handleClick() {
+    this.count++;
+    this.dispatchEvent(new CustomEvent('count-changed', {
+      detail: { count: this.count },
+      bubbles: true,
+      composed: true
+    }));
+  }
+  
+  handleCountChange() {
+    // Logic for when count changes
+    {{countChangeHandler}}
+  }
+  
+  // Component template render method
+  render() {
+    return html`
+      <div class="container">
+        <h2>${this.name}</h2>
+        <p>Count: ${this.count}</p>
+        <button @click="${this.handleClick}">Increment</button>
+        
+        <ul>
+          ${this.items.map(item => html`<li>${item}</li>`)}
+        </ul>
+        
+        <slot></slot>
+      </div>
+    `;
+  }
+}

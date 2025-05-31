@@ -1009,5 +1009,107 @@
         "getters_over_computed": true
       }
     }
+  },
+  "webcomponents": {
+    "language": "webcomponents",
+    "field_mappings": {
+      "error_type": ["name", "type"],
+      "message": "message",
+      "stack_trace": ["stack", "stacktrace", "stack_trace"]
+    },
+    "stack_trace_fields": ["stack", "stacktrace", "stack_trace"],
+    "stack_trace_format": "string",
+    "version_fields": ["browser_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:custom[\\s-]element)",
+      "(?:customelements\\.define)",
+      "(?:shadow[\\s-]dom)",
+      "(?:shadowroot)",
+      "(?:attachshadow)",
+      "(?:slot)",
+      "(?:slotchange)",
+      "(?:template)",
+      "(?:connectedcallback)",
+      "(?:disconnectedcallback)",
+      "(?:attributechangedcallback)",
+      "(?:adoptedcallback)",
+      "(?:observedattributes)",
+      "(?:extends HTMLElement)",
+      "(?:lit-element)",
+      "(?:lithtml)",
+      "(?:litelement)",
+      "(?:stencil)",
+      "(?:\\bslot\\b)",
+      "(?:::part)",
+      "(?:::slotted)",
+      "(?:Failed to execute 'define' on 'CustomElementRegistry')"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "error",
+      "fatal": "fatal"
+    },
+    "file_extensions": [".js", ".ts", ".html", ".jsx", ".tsx"],
+    "config_files": ["package.json", "tsconfig.json", "rollup.config.js", "webpack.config.js"],
+    "lifecycle_methods": [
+      "constructor", "connectedCallback", "disconnectedCallback", 
+      "attributeChangedCallback", "adoptedCallback", "observedAttributes"
+    ],
+    "custom_element_features": [
+      "customElements.define", "customElements.get", "attachShadow",
+      "shadowRoot", "slot", "part", "slotchange", "template", "is"
+    ],
+    "lit_functions": [
+      "html", "css", "LitElement", "property", "state", "query", "queryAll",
+      "queryAsync", "eventOptions", "customElement", "unsafeHTML", "live",
+      "ref", "createRef", "when", "choose", "map", "repeat", "cache"
+    ],
+    "stencil_decorators": [
+      "Component", "Prop", "State", "Watch", "Element", "Method",
+      "Event", "Listen"
+    ],
+    "shadow_dom_selectors": [
+      ":host", ":host()", ":host-context()", "::slotted()", "::part()"
+    ],
+    "webcomponent_patterns": {
+      "lifecycle_rules": {
+        "super_in_constructor": true,
+        "implement_callbacks": true,
+        "declare_observed_attributes": true,
+        "handle_attribute_changes": true,
+        "cleanup_in_disconnected": true
+      },
+      "shadow_dom_rules": {
+        "proper_encapsulation": true,
+        "slot_content_distribution": true,
+        "style_encapsulation": true,
+        "part_exposure": true,
+        "event_retargeting": true
+      },
+      "performance_rules": {
+        "efficient_property_updates": true,
+        "lazy_initialization": true,
+        "limit_shadow_dom_manipulations": true,
+        "optimize_render": true
+      },
+      "lit_rules": {
+        "property_declaration": true,
+        "template_syntax": true,
+        "directive_usage": true,
+        "style_encapsulation": true
+      },
+      "stencil_rules": {
+        "component_decorator": true,
+        "prop_decorator": true,
+        "watch_decorator": true,
+        "event_decorator": true,
+        "method_decorator": true
+      }
+    }
   }
 }

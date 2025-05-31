@@ -1,0 +1,118 @@
+{
+  "name": "Shadow DOM Error Rules",
+  "description": "Rules for detecting and fixing common Shadow DOM encapsulation issues",
+  "version": "1.0.0",
+  "author": "Homeostasis Team",
+  "rules": [
+    {
+      "id": "sd_closed_mode_access",
+      "pattern": "Cannot read properties of null \\(reading 'querySelector'\\)",
+      "category": "shadow_dom",
+      "type": "closed_shadow_root",
+      "severity": "medium",
+      "suggestion": "Can't access elements inside a closed shadow root. Consider using open mode or storing references",
+      "root_cause": "closed_shadow_root_access_attempt",
+      "reliability": "medium",
+      "tags": ["webcomponents", "shadow-dom", "encapsulation"]
+    },
+    {
+      "id": "sd_style_leakage",
+      "pattern": "CSS styles (leaking|affecting) (outside|external) elements",
+      "category": "shadow_dom",
+      "type": "style_encapsulation",
+      "severity": "medium",
+      "suggestion": "Use :host selector or create styles inside shadow DOM to prevent leakage",
+      "root_cause": "css_style_leakage",
+      "reliability": "medium",
+      "tags": ["webcomponents", "shadow-dom", "css"]
+    },
+    {
+      "id": "sd_event_retargeting",
+      "pattern": "event.target (is|shows|points to) (shadow|internal) element",
+      "category": "shadow_dom",
+      "type": "event_retargeting",
+      "severity": "low",
+      "suggestion": "Use composedPath() to access original target in shadow DOM",
+      "root_cause": "event_retargeting_confusion",
+      "reliability": "medium",
+      "tags": ["webcomponents", "shadow-dom", "events"]
+    },
+    {
+      "id": "sd_slot_content",
+      "pattern": "(slotted content not|slot content missing|slot not filled)",
+      "category": "slots",
+      "type": "slot_content",
+      "severity": "medium",
+      "suggestion": "Check that elements have the correct slot attribute or that default slot is available",
+      "root_cause": "slot_content_distribution_issue",
+      "reliability": "medium",
+      "tags": ["webcomponents", "shadow-dom", "slots"]
+    },
+    {
+      "id": "sd_part_styling",
+      "pattern": "::part\\([^)]+\\) (not working|has no effect)",
+      "category": "shadow_dom",
+      "type": "part_styling",
+      "severity": "low",
+      "suggestion": "Ensure the part attribute is correctly set on the shadow DOM element",
+      "root_cause": "part_attribute_styling_issue",
+      "reliability": "medium",
+      "tags": ["webcomponents", "shadow-dom", "css", "theming"]
+    },
+    {
+      "id": "sd_query_error",
+      "pattern": "TypeError: (null|undefined) is not an object \\(evaluating '.*querySelector(All)?'\\)",
+      "category": "shadow_dom",
+      "type": "shadow_root_query",
+      "severity": "high",
+      "suggestion": "Make sure shadowRoot is initialized before querying elements",
+      "root_cause": "shadow_root_not_initialized",
+      "reliability": "high",
+      "tags": ["webcomponents", "shadow-dom", "query"]
+    },
+    {
+      "id": "sd_slot_assignment",
+      "pattern": "slotchange event not fired",
+      "category": "slots",
+      "type": "slot_event",
+      "severity": "medium",
+      "suggestion": "Check slot assignments and ensure content is properly distributed",
+      "root_cause": "slot_assignment_issue",
+      "reliability": "medium",
+      "tags": ["webcomponents", "shadow-dom", "slots", "events"]
+    },
+    {
+      "id": "sd_shadow_parts_not_exposed",
+      "pattern": "cannot style (internal|shadow) elements",
+      "category": "shadow_dom",
+      "type": "part_exposure",
+      "severity": "low",
+      "suggestion": "Use the part attribute to expose internal elements for styling",
+      "root_cause": "shadow_parts_not_exposed",
+      "reliability": "medium",
+      "tags": ["webcomponents", "shadow-dom", "css", "theming"]
+    },
+    {
+      "id": "sd_content_not_projected",
+      "pattern": "slotted content (not visible|not showing)",
+      "category": "slots",
+      "type": "content_projection",
+      "severity": "medium",
+      "suggestion": "Check slot markup and ensure light DOM content is properly assigned",
+      "root_cause": "content_not_projected",
+      "reliability": "medium",
+      "tags": ["webcomponents", "shadow-dom", "slots"]
+    },
+    {
+      "id": "sd_event_composition",
+      "pattern": "event (not propagating|not bubbling) (through|across) shadow (boundary|dom)",
+      "category": "shadow_dom",
+      "type": "event_composition",
+      "severity": "medium",
+      "suggestion": "Use the composed: true option when dispatching events to cross shadow boundaries",
+      "root_cause": "event_composition_issue",
+      "reliability": "high",
+      "tags": ["webcomponents", "shadow-dom", "events"]
+    }
+  ]
+}

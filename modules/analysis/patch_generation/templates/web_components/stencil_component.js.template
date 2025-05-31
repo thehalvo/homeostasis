@@ -1,0 +1,113 @@
+import { Component, Prop, State, Event, EventEmitter, h, Watch, Method, Host, Element } from '@stencil/core';
+
+@Component({
+  tag: '{{tagName}}',
+  styleUrl: '{{tagName}}.css',
+  shadow: true
+})
+export class {{className}} {
+  // Element reference
+  @Element() el: HTMLElement;
+  
+  // Props are custom element attributes/properties
+  @Prop() name: string = '';
+  @Prop() count: number = 0;
+  @Prop({ reflect: true, mutable: true }) active: boolean = false;
+  @Prop() config: any = {};
+  {{additionalProps}}
+  
+  // Internal state
+  @State() private internalState: string = 'initial';
+  @State() private loading: boolean = false;
+  {{additionalStates}}
+  
+  // Events
+  @Event() countChanged: EventEmitter<{count: number}>;
+  @Event() stateChanged: EventEmitter<{state: string}>;
+  {{additionalEvents}}
+  
+  // Watchers
+  @Watch('count')
+  watchCount(newValue: number, oldValue: number) {
+    console.log(`Count changed from ${oldValue} to ${newValue}`);
+    this.countChanged.emit({ count: newValue });
+    
+    // Additional logic for count changes
+    {{countWatcher}}
+  }
+  
+  @Watch('active')
+  watchActive(newValue: boolean) {
+    this.handleActiveChange(newValue);
+  }
+  
+  // Lifecycle methods
+  componentWillLoad() {
+    // Component is about to load and hasn't rendered yet
+    {{willLoadCode}}
+  }
+  
+  componentDidLoad() {
+    // Component has loaded and rendered
+    {{didLoadCode}}
+  }
+  
+  componentWillRender() {
+    // Called before every render
+    {{willRenderCode}}
+  }
+  
+  componentDidRender() {
+    // Called after every render
+    {{didRenderCode}}
+  }
+  
+  disconnectedCallback() {
+    // Component removed from the DOM
+    {{disconnectedCode}}
+  }
+  
+  // Public methods
+  @Method()
+  async setCount(value: number) {
+    this.count = value;
+    return this.count;
+  }
+  
+  @Method()
+  async toggle() {
+    this.active = !this.active;
+    return this.active;
+  }
+  
+  // Private methods
+  private handleClick = () => {
+    this.count++;
+  }
+  
+  private handleActiveChange(isActive: boolean) {
+    this.internalState = isActive ? 'active' : 'inactive';
+    
+    // Additional active change handling
+    {{activeChangeHandler}}
+  }
+  
+  // Render function
+  render() {
+    return (
+      <Host class={{ active: this.active }}>
+        <div class="container">
+          <h2>{this.name}</h2>
+          <p>Count: {this.count}</p>
+          <button onClick={this.handleClick}>Increment</button>
+          
+          <div class="state">
+            State: {this.internalState}
+          </div>
+          
+          <slot />
+        </div>
+      </Host>
+    );
+  }
+}

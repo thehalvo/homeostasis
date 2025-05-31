@@ -1,0 +1,118 @@
+{
+  "name": "Web Component Framework Integration Error Rules",
+  "description": "Rules for detecting and fixing common errors with Lit, Stencil, and other Web Component frameworks",
+  "version": "1.0.0",
+  "author": "Homeostasis Team",
+  "rules": [
+    {
+      "id": "lit_property_declaration",
+      "pattern": "property (.*) was accessed during update but is not declared",
+      "category": "lit",
+      "type": "property_error",
+      "severity": "high",
+      "suggestion": "Declare the property in the static properties object with its type",
+      "root_cause": "lit_undeclared_property",
+      "reliability": "high",
+      "tags": ["webcomponents", "lit", "properties"]
+    },
+    {
+      "id": "lit_property_change",
+      "pattern": "property change not triggering update",
+      "category": "lit",
+      "type": "reactivity_error",
+      "severity": "medium",
+      "suggestion": "Ensure the property is declared in the static properties object and use this.requestUpdate() for manual updates",
+      "root_cause": "lit_property_change_not_reactive",
+      "reliability": "medium",
+      "tags": ["webcomponents", "lit", "reactivity"]
+    },
+    {
+      "id": "lit_template_syntax",
+      "pattern": "Error parsing template",
+      "category": "lit",
+      "type": "template_error",
+      "severity": "high",
+      "suggestion": "Check Lit HTML template syntax in the render() method",
+      "root_cause": "lit_template_syntax_error",
+      "reliability": "high",
+      "tags": ["webcomponents", "lit", "templates"]
+    },
+    {
+      "id": "lit_super_update",
+      "pattern": "super.update is not a function",
+      "category": "lit",
+      "type": "lifecycle_error",
+      "severity": "high",
+      "suggestion": "Call super.update() when overriding the update() method",
+      "root_cause": "lit_missing_super_update",
+      "reliability": "high",
+      "tags": ["webcomponents", "lit", "lifecycle"]
+    },
+    {
+      "id": "stencil_decorator_missing",
+      "pattern": "(property|state|event|element|method) (.*) (not decorated|missing decorator)",
+      "category": "stencil",
+      "type": "decorator_error",
+      "severity": "high",
+      "suggestion": "Add the appropriate decorator (@Prop, @State, @Event, @Element, @Method) to the class member",
+      "root_cause": "stencil_missing_decorator",
+      "reliability": "high",
+      "tags": ["webcomponents", "stencil", "decorators"]
+    },
+    {
+      "id": "stencil_render_return",
+      "pattern": "Stencil components must return a h\\(\\) function call from the render\\(\\) function",
+      "category": "stencil",
+      "type": "render_error",
+      "severity": "high",
+      "suggestion": "Ensure the render() method returns JSX or h() function calls",
+      "root_cause": "stencil_invalid_render_return",
+      "reliability": "high",
+      "tags": ["webcomponents", "stencil", "rendering"]
+    },
+    {
+      "id": "stencil_component_tag",
+      "pattern": "Component tag name .* does not match component metadata",
+      "category": "stencil",
+      "type": "component_error",
+      "severity": "high",
+      "suggestion": "Ensure the tag name in @Component decorator matches your usage",
+      "root_cause": "stencil_tag_mismatch",
+      "reliability": "high",
+      "tags": ["webcomponents", "stencil", "component"]
+    },
+    {
+      "id": "stencil_lifecycle_order",
+      "pattern": "lifecycle method called out of order",
+      "category": "stencil",
+      "type": "lifecycle_error",
+      "severity": "medium",
+      "suggestion": "Check the order of lifecycle method calls and avoid side effects that could trigger premature rendering",
+      "root_cause": "stencil_lifecycle_order_issue",
+      "reliability": "medium",
+      "tags": ["webcomponents", "stencil", "lifecycle"]
+    },
+    {
+      "id": "wc_framework_interop",
+      "pattern": "(react|angular|vue) (wrapper|integration|binding) (error|issue|not working)",
+      "category": "interop",
+      "type": "framework_integration",
+      "severity": "medium",
+      "suggestion": "Use appropriate framework integration libraries or wrappers for Web Components",
+      "root_cause": "framework_integration_issue",
+      "reliability": "medium",
+      "tags": ["webcomponents", "interop", "framework-integration"]
+    },
+    {
+      "id": "wc_property_vs_attribute",
+      "pattern": "(property|attribute) (not updated|not synced|mismatch)",
+      "category": "interop",
+      "type": "property_reflection",
+      "severity": "medium",
+      "suggestion": "Ensure properties are properly reflected to attributes when needed",
+      "root_cause": "property_attribute_reflection_issue",
+      "reliability": "medium",
+      "tags": ["webcomponents", "interop", "properties", "attributes"]
+    }
+  ]
+}

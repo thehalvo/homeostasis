@@ -1,0 +1,118 @@
+{
+  "name": "HTML Template Error Rules",
+  "description": "Rules for detecting and fixing common HTML Template element usage errors in Web Components",
+  "version": "1.0.0",
+  "author": "Homeostasis Team",
+  "rules": [
+    {
+      "id": "template_content_not_cloned",
+      "pattern": "template content (not|never) (cloned|copied|duplicated)",
+      "category": "templates",
+      "type": "content_cloning",
+      "severity": "high",
+      "suggestion": "Use document.importNode(template.content, true) to clone template content",
+      "root_cause": "template_content_not_cloned",
+      "reliability": "high",
+      "tags": ["webcomponents", "templates", "performance"]
+    },
+    {
+      "id": "template_inefficient_creation",
+      "pattern": "createElement\\('template'\\) inside (constructor|connectedCallback)",
+      "category": "templates",
+      "type": "template_creation",
+      "severity": "medium",
+      "suggestion": "Create templates once at class level rather than per-instance",
+      "root_cause": "inefficient_template_creation",
+      "reliability": "high",
+      "tags": ["webcomponents", "templates", "performance"]
+    },
+    {
+      "id": "template_content_modified",
+      "pattern": "template\\.content\\.querySelector",
+      "category": "templates",
+      "type": "content_modification",
+      "severity": "medium",
+      "suggestion": "Avoid modifying template.content directly; clone it first",
+      "root_cause": "template_content_modified",
+      "reliability": "medium",
+      "tags": ["webcomponents", "templates", "best-practices"]
+    },
+    {
+      "id": "template_inefficient_cloning",
+      "pattern": "cloneNode\\(true\\).*template",
+      "category": "templates",
+      "type": "inefficient_cloning",
+      "severity": "low",
+      "suggestion": "Use document.importNode(template.content, true) instead of template.cloneNode(true)",
+      "root_cause": "inefficient_template_cloning",
+      "reliability": "medium",
+      "tags": ["webcomponents", "templates", "performance"]
+    },
+    {
+      "id": "template_missing_content",
+      "pattern": "cannot read property '\\w+' of undefined.*template\\.content",
+      "category": "templates",
+      "type": "missing_content",
+      "severity": "high",
+      "suggestion": "Ensure template element is properly created and has content",
+      "root_cause": "template_content_missing",
+      "reliability": "high",
+      "tags": ["webcomponents", "templates", "error"]
+    },
+    {
+      "id": "template_invalid_content_type",
+      "pattern": "cannot (clone|copy) (document fragment|node) \\(template\\.content\\)",
+      "category": "templates",
+      "type": "invalid_content",
+      "severity": "medium",
+      "suggestion": "Ensure the template contains valid HTML content",
+      "root_cause": "template_invalid_content",
+      "reliability": "medium",
+      "tags": ["webcomponents", "templates", "content"]
+    },
+    {
+      "id": "template_not_in_dom",
+      "pattern": "document\\.querySelector\\('template'\\) (returns|is) null",
+      "category": "templates",
+      "type": "template_missing",
+      "severity": "high",
+      "suggestion": "Ensure the template element exists in the DOM before trying to access it",
+      "root_cause": "template_not_in_dom",
+      "reliability": "high",
+      "tags": ["webcomponents", "templates", "dom"]
+    },
+    {
+      "id": "template_parsing_error",
+      "pattern": "error parsing template (content|html)",
+      "category": "templates",
+      "type": "parsing_error",
+      "severity": "high",
+      "suggestion": "Check for HTML syntax errors in the template content",
+      "root_cause": "template_parsing_error",
+      "reliability": "high",
+      "tags": ["webcomponents", "templates", "syntax"]
+    },
+    {
+      "id": "template_slot_mismatch",
+      "pattern": "slot '\\w+' not found in template",
+      "category": "templates",
+      "type": "slot_mismatch",
+      "severity": "medium",
+      "suggestion": "Ensure the slot name in the template matches the slot attribute in the content",
+      "root_cause": "template_slot_mismatch",
+      "reliability": "medium",
+      "tags": ["webcomponents", "templates", "slots"]
+    },
+    {
+      "id": "template_event_leak",
+      "pattern": "addEventListener.*template\\.content",
+      "category": "templates",
+      "type": "event_leak",
+      "severity": "medium",
+      "suggestion": "Do not add event listeners to template.content directly; add them to cloned nodes",
+      "root_cause": "template_event_listener_leak",
+      "reliability": "high",
+      "tags": ["webcomponents", "templates", "events", "memory-leak"]
+    }
+  ]
+}

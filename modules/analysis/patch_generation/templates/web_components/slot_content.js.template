@@ -1,0 +1,51 @@
+class {{className}} extends HTMLElement {
+  constructor() {
+    super();
+    
+    // Create shadow DOM
+    this.attachShadow({ mode: 'open' });
+    
+    // Set up shadow DOM with multiple named slots
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: block;
+        }
+        
+        /* Style slotted content */
+        ::slotted(h2) {
+          color: blue;
+        }
+      </style>
+      
+      <div class="wrapper">
+        <!-- Named slot for header content -->
+        <slot name="header">Default header content</slot>
+        
+        <!-- Default slot (unnamed) for main content -->
+        <slot>Default main content</slot>
+        
+        <!-- Named slot for footer content -->
+        <slot name="footer">Default footer content</slot>
+      </div>
+    `;
+    
+    // Listen for slotchange events
+    this.shadowRoot.querySelectorAll('slot').forEach(slot => {
+      slot.addEventListener('slotchange', (e) => {
+        this.handleSlotChange(e);
+      });
+    });
+  }
+  
+  // Handle slot content changes
+  handleSlotChange(event) {
+    const slot = event.target;
+    const nodes = slot.assignedNodes();
+    
+    console.log(`Slot "${slot.name || 'default'}" has ${nodes.length} assigned nodes`);
+    
+    // Additional slot handling logic
+    {{slotHandler}}
+  }
+}

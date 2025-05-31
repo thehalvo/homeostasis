@@ -1,0 +1,99 @@
+// Efficient HTML Template usage for Web Components
+class {{className}} extends HTMLElement {
+  constructor() {
+    super();
+    
+    // Use the template element for efficient DOM cloning
+    this.attachShadow({ mode: 'open' });
+    
+    // Define template once at class level rather than per-instance
+    if (!{{className}}.template) {
+      {{className}}.template = document.createElement('template');
+      {{className}}.template.innerHTML = `
+        <style>
+          :host {
+            display: block;
+            {{hostStyles}}
+          }
+          
+          .container {
+            {{containerStyles}}
+          }
+        </style>
+        
+        <div class="container">
+          <slot></slot>
+        </div>
+      `;
+    }
+    
+    // Clone template content for better performance
+    // Using importNode for better cross-browser compatibility
+    this.shadowRoot.appendChild(document.importNode({{className}}.template.content, true));
+    
+    // Cache DOM references for optimal access
+    this._container = this.shadowRoot.querySelector('.container');
+    
+    // Initialize content and bindings
+    this._initializeComponent();
+  }
+  
+  _initializeComponent() {
+    // Defer non-critical initialization to connected callback
+    // This ensures the component renders quickly
+    this._initialized = false;
+  }
+  
+  connectedCallback() {
+    if (!this._initialized) {
+      // Perform lazy initialization
+      this._setupEventListeners();
+      this._initialized = true;
+    }
+    
+    // Update rendering based on attributes
+    this._render();
+  }
+  
+  disconnectedCallback() {
+    // Clean up event listeners
+    this._teardownEventListeners();
+  }
+  
+  _setupEventListeners() {
+    // Set up event listeners only once
+    // Use event delegation where possible
+    this._boundClickHandler = this._handleClick.bind(this);
+    this._container.addEventListener('click', this._boundClickHandler);
+  }
+  
+  _teardownEventListeners() {
+    // Remove all event listeners to prevent memory leaks
+    if (this._boundClickHandler) {
+      this._container.removeEventListener('click', this._boundClickHandler);
+    }
+  }
+  
+  _handleClick(event) {
+    // Event handling logic
+    {{eventHandlingLogic}}
+  }
+  
+  _render() {
+    // Efficient rendering using cached DOM references
+    // Update only what changed
+    {{renderLogic}}
+  }
+  
+  static get observedAttributes() {
+    return ['{{attributes}}'];
+  }
+  
+  attributeChangedCallback(name, oldValue, newValue) {
+    // Prevent unnecessary renders
+    if (oldValue === newValue) return;
+    
+    // Handle attribute changes efficiently
+    this._render();
+  }
+}

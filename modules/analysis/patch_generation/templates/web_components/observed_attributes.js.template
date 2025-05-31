@@ -1,0 +1,78 @@
+class {{className}} extends HTMLElement {
+  constructor() {
+    super();
+    
+    // Initialize shadow DOM
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: block;
+        }
+      </style>
+      <div class="container">
+        <slot></slot>
+      </div>
+    `;
+  }
+  
+  // Define attributes to observe for changes
+  static get observedAttributes() {
+    return [
+      'name',
+      'value',
+      'disabled',
+      {{additionalAttributes}}
+    ];
+  }
+  
+  // React to attribute changes
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log(`Attribute ${name} changed from ${oldValue} to ${newValue}`);
+    
+    // Implement specific attribute behavior
+    switch (name) {
+      case 'name':
+        this.updateName(newValue);
+        break;
+      case 'value':
+        this.updateValue(newValue);
+        break;
+      case 'disabled':
+        this.updateDisabled(newValue !== null);
+        break;
+      default:
+        // Handle other attributes
+        {{attributeHandlers}}
+    }
+    
+    // Reflect changes to UI
+    this.render();
+  }
+  
+  // Helper methods for attribute changes
+  updateName(name) {
+    this._name = name;
+  }
+  
+  updateValue(value) {
+    this._value = value;
+  }
+  
+  updateDisabled(isDisabled) {
+    this._disabled = isDisabled;
+    
+    // Update internal elements based on disabled state
+    if (this._disabled) {
+      this.setAttribute('aria-disabled', 'true');
+    } else {
+      this.removeAttribute('aria-disabled');
+    }
+  }
+  
+  // Render method to update UI
+  render() {
+    // Update shadow DOM based on properties
+    {{renderLogic}}
+  }
+}

@@ -1,0 +1,30 @@
+class {{className}} extends HTMLElement {
+  constructor() {
+    // Always call super() first in constructor
+    super();
+    
+    // Initialize properties and shadow DOM here
+    {{initCode}}
+  }
+  
+  // Lifecycle callbacks
+  connectedCallback() {
+    // Called when the element is inserted into the DOM
+    {{connectedCode}}
+  }
+  
+  disconnectedCallback() {
+    // Called when the element is removed from the DOM
+    {{disconnectedCode}}
+  }
+  
+  attributeChangedCallback(name, oldValue, newValue) {
+    // Called when an observed attribute changes
+    {{attributeChangedCode}}
+  }
+  
+  static get observedAttributes() {
+    // List of attributes to observe for changes
+    return ['{{attributes}}'];
+  }
+}
