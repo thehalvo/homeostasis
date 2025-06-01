@@ -1,0 +1,273 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "css-layout",
+    "description": "CSS Grid, Flexbox, and layout debugging rules"
+  },
+  "rules": [
+    {
+      "id": "css_grid_template_error",
+      "category": "layout",
+      "subcategory": "grid",
+      "pattern": "grid-template.*error|invalid.*grid.*template|grid.*columns.*rows.*error",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "css_grid_layout_error",
+      "suggestion": "Fix CSS Grid template properties: grid-template-columns, grid-template-rows, grid-template-areas",
+      "fix_commands": [
+        "Check grid-template-columns and grid-template-rows syntax",
+        "Verify grid-template-areas matches grid structure",
+        "Ensure grid track sizes are valid (fr, px, %, auto)",
+        "Validate grid line names and positioning"
+      ],
+      "tags": ["css", "grid", "template", "layout"],
+      "examples": [
+        "Invalid track size syntax",
+        "Mismatched grid areas"
+      ]
+    },
+    {
+      "id": "css_grid_area_error",
+      "category": "layout",
+      "subcategory": "grid",
+      "pattern": "grid-area.*error|grid.*placement.*error|grid.*item.*overflow",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "css_grid_area_error",
+      "suggestion": "Fix CSS Grid area assignments and item placement",
+      "fix_commands": [
+        "Check grid-area property syntax",
+        "Verify grid area names match template areas",
+        "Ensure grid item positions are within grid bounds",
+        "Check for overlapping grid items"
+      ],
+      "tags": ["css", "grid", "area", "placement"],
+      "examples": [
+        "Grid area name mismatch",
+        "Grid item placed outside grid"
+      ]
+    },
+    {
+      "id": "css_grid_gap_error",
+      "category": "layout",
+      "subcategory": "grid",
+      "pattern": "grid-gap.*error|gap.*property.*invalid|grid.*spacing.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "css_grid_gap_error",
+      "suggestion": "Fix CSS Grid gap properties",
+      "fix_commands": [
+        "Use gap instead of grid-gap for modern browsers",
+        "Check gap value syntax (length or percentage)",
+        "Ensure browser support for gap property",
+        "Consider fallbacks for older browsers"
+      ],
+      "tags": ["css", "grid", "gap", "spacing"],
+      "examples": [
+        "Invalid gap value",
+        "Browser compatibility issues"
+      ]
+    },
+    {
+      "id": "css_flexbox_direction_error",
+      "category": "layout",
+      "subcategory": "flexbox",
+      "pattern": "flex-direction.*error|flexbox.*direction.*invalid|flex.*axis.*error",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "css_flexbox_layout_error",
+      "suggestion": "Fix CSS Flexbox direction and axis properties",
+      "fix_commands": [
+        "Check flex-direction property value (row, column, row-reverse, column-reverse)",
+        "Understand main axis vs cross axis behavior",
+        "Adjust justify-content for main axis alignment",
+        "Use align-items for cross axis alignment"
+      ],
+      "tags": ["css", "flexbox", "direction", "axis"],
+      "examples": [
+        "Invalid flex-direction value",
+        "Confusion between main and cross axis"
+      ]
+    },
+    {
+      "id": "css_flexbox_justify_error",
+      "category": "layout",
+      "subcategory": "flexbox",
+      "pattern": "justify-content.*error|flex.*justify.*invalid|main.*axis.*alignment.*error",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "css_flexbox_justify_error",
+      "suggestion": "Fix CSS Flexbox justify-content alignment",
+      "fix_commands": [
+        "Check justify-content property values",
+        "Use valid values: flex-start, flex-end, center, space-between, space-around, space-evenly",
+        "Ensure property applies to flex container, not flex items",
+        "Consider flex-direction when using justify-content"
+      ],
+      "tags": ["css", "flexbox", "justify-content", "alignment"],
+      "examples": [
+        "Invalid justify-content value",
+        "Applied to wrong element"
+      ]
+    },
+    {
+      "id": "css_flexbox_align_error",
+      "category": "layout",
+      "subcategory": "flexbox",
+      "pattern": "align-items.*error|align-content.*error|cross.*axis.*alignment.*error",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "css_flexbox_align_error",
+      "suggestion": "Fix CSS Flexbox align-items and align-content properties",
+      "fix_commands": [
+        "Check align-items for cross axis alignment of flex items",
+        "Use align-content for multi-line flex containers",
+        "Valid values: stretch, flex-start, flex-end, center, baseline",
+        "Understand difference between align-items and align-content"
+      ],
+      "tags": ["css", "flexbox", "align-items", "align-content"],
+      "examples": [
+        "Confusion between align-items and align-content",
+        "Invalid alignment value"
+      ]
+    },
+    {
+      "id": "css_flexbox_flex_property_error",
+      "category": "layout",
+      "subcategory": "flexbox",
+      "pattern": "flex.*property.*error|flex-grow.*error|flex-shrink.*error|flex-basis.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "css_flexbox_flex_property_error",
+      "suggestion": "Fix CSS Flexbox flex property usage",
+      "fix_commands": [
+        "Check flex shorthand property syntax: flex: grow shrink basis",
+        "Understand flex-grow (how much to grow)",
+        "Understand flex-shrink (how much to shrink)",
+        "Set flex-basis for initial size before growing/shrinking"
+      ],
+      "tags": ["css", "flexbox", "flex", "grow", "shrink", "basis"],
+      "examples": [
+        "Invalid flex shorthand syntax",
+        "Misunderstanding flex behavior"
+      ]
+    },
+    {
+      "id": "css_position_error",
+      "category": "layout",
+      "subcategory": "positioning",
+      "pattern": "position.*error|absolute.*relative.*error|z-index.*stacking.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "css_position_error",
+      "suggestion": "Fix CSS positioning properties",
+      "fix_commands": [
+        "Check position property values: static, relative, absolute, fixed, sticky",
+        "Ensure positioned element has positioned ancestor",
+        "Check z-index stacking context",
+        "Verify top, right, bottom, left values"
+      ],
+      "tags": ["css", "position", "absolute", "relative", "z-index"],
+      "examples": [
+        "Absolute positioning without relative parent",
+        "Z-index not working due to stacking context"
+      ]
+    },
+    {
+      "id": "css_box_model_error",
+      "category": "layout",
+      "subcategory": "box_model",
+      "pattern": "box-sizing.*error|padding.*margin.*error|width.*height.*calculation.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "low",
+      "root_cause": "css_box_model_error",
+      "suggestion": "Fix CSS box model and sizing issues",
+      "fix_commands": [
+        "Use box-sizing: border-box for predictable sizing",
+        "Check margin collapse behavior",
+        "Verify width/height calculations include padding and border",
+        "Consider using CSS calc() for complex calculations"
+      ],
+      "tags": ["css", "box-model", "box-sizing", "margin", "padding"],
+      "examples": [
+        "Unexpected element sizing",
+        "Margin collapse issues"
+      ]
+    },
+    {
+      "id": "css_responsive_error",
+      "category": "layout",
+      "subcategory": "responsive",
+      "pattern": "media.*query.*error|responsive.*layout.*error|breakpoint.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "low",
+      "root_cause": "css_responsive_error",
+      "suggestion": "Fix CSS responsive design and media queries",
+      "fix_commands": [
+        "Check media query syntax and breakpoints",
+        "Use mobile-first approach with min-width",
+        "Ensure proper viewport meta tag",
+        "Test responsive behavior at different screen sizes"
+      ],
+      "tags": ["css", "responsive", "media-query", "breakpoint"],
+      "examples": [
+        "Invalid media query syntax",
+        "Incorrect breakpoint logic"
+      ]
+    },
+    {
+      "id": "css_overflow_error",
+      "category": "layout",
+      "subcategory": "overflow",
+      "pattern": "overflow.*error|scroll.*error|content.*clipping.*error",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "css_overflow_error",
+      "suggestion": "Fix CSS overflow and scrolling issues",
+      "fix_commands": [
+        "Check overflow property values: visible, hidden, scroll, auto",
+        "Consider overflow-x and overflow-y separately",
+        "Ensure scrollable content has proper height constraints",
+        "Check for unintended content clipping"
+      ],
+      "tags": ["css", "overflow", "scroll", "clipping"],
+      "examples": [
+        "Content being clipped unexpectedly",
+        "Scrollbars not appearing when needed"
+      ]
+    },
+    {
+      "id": "css_float_clearfix_error",
+      "category": "layout",
+      "subcategory": "float",
+      "pattern": "float.*clearfix.*error|clear.*both.*error|float.*collapse.*error",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "css_float_error",
+      "suggestion": "Fix CSS float and clearfix issues (consider using Flexbox or Grid instead)",
+      "fix_commands": [
+        "Add clearfix to contain floated elements",
+        "Use clear: both after floated elements",
+        "Consider migrating to Flexbox or Grid layout",
+        "Check for collapsed container height"
+      ],
+      "tags": ["css", "float", "clearfix", "layout"],
+      "examples": [
+        "Parent container collapsing due to floated children",
+        "Missing clearfix implementation"
+      ]
+    }
+  ]
+}

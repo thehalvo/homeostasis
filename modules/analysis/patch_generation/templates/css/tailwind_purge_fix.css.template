@@ -1,0 +1,22 @@
+// tailwind.config.js
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./public/index.html",
+    // Add more file patterns as needed
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+  // Safelist classes that should never be purged
+  safelist: [
+    // Add specific classes that are generated dynamically
+    'bg-red-500',
+    'text-blue-600',
+    // Or use patterns
+    {
+      pattern: /bg-(red|green|blue)-(100|200|300|400|500|600|700|800|900)/,
+    },
+  ],
+}

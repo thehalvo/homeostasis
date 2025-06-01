@@ -165,6 +165,7 @@ Homeostasis currently provides support for the following programming languages:
 - **Next.js**: Support for Next.js data fetching methods, API routes, App Router and Pages Router, image optimization, middleware configuration, and Vercel deployment issues
 - **Ember.js**: Support for Ember components, template errors, Ember Data store, router transitions, Octane features, tracked properties, and modifiers
 - **Web Components**: Support for Custom Elements lifecycle, Shadow DOM operations, HTML templates, slot distribution, framework interoperability, and libraries like Lit and Stencil
+- **CSS Frameworks**: Support for Tailwind CSS utility class validation, CSS-in-JS libraries (Styled Components, Emotion), CSS Modules, SASS/LESS preprocessing, CSS Grid and Flexbox layouts, animations and transitions
 - **Java**: Support for Java exceptions, Spring Framework, Hibernate/JPA, and concurrency issues
 - **Go**: Support for Go runtime errors, goroutine management, and web frameworks like Gin and Echo
 - **Ruby**: Support for Ruby exceptions, Rails ActiveRecord, Sinatra/Rack, and metaprogramming patterns
@@ -228,6 +229,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Next.js Framework Support**: Added Next.js framework integration with data fetching error detection (getServerSideProps, getStaticProps), API route issue handling, App Router and Pages Router support, image optimization fixes, middleware configuration, and deployment error resolution
 - **Ember.js Framework Support**: Added Ember.js framework integration with component and template error handling, Ember Data store issue detection, router and URL handling, Octane features support (tracked properties, modifiers), and Handlebars template validation with automatic fix generation
 - **Web Components Support**: Added Web Components standards support with Custom Elements API error handling, Shadow DOM manipulation fixes, HTML template optimization, framework interoperability solutions, and specialized templates for Lit and Stencil components
+- **CSS Framework Integration**: Added CSS framework integration with Tailwind CSS optimization and error detection, CSS-in-JS library healing (Styled Components, Emotion), CSS Module and SASS/LESS issue resolution, CSS Grid and Flexbox layout debugging, animation and transition error handling, and framework-specific fix templates
 - **Backend Testing Integration**: Implemented unified testing framework for validating error detection, analysis, and healing across multiple programming languages with cross-language capabilities
 - **Production Readiness**: Enhanced security model with RBAC, implemented approval workflows for critical changes, added rate limiting/throttling for healing actions, and developed thorough audit logging
 - **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities

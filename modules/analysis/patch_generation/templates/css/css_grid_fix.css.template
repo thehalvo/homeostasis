@@ -1,0 +1,41 @@
+/* CSS Grid Layout Fix Template */
+.grid-container {
+  display: grid;
+  
+  /* Define grid template */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-rows: auto;
+  
+  /* Add gap between grid items */
+  gap: 1rem;
+  
+  /* Optional: Define grid areas */
+  grid-template-areas: 
+    "header header header"
+    "sidebar main main"
+    "footer footer footer";
+}
+
+.grid-item {
+  /* Grid item positioning */
+  grid-column: span 1;
+  grid-row: span 1;
+  
+  /* Handle overflow */
+  overflow: hidden;
+  
+  /* Optional: Assign to specific area */
+  /* grid-area: header; */
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "header"
+      "main"
+      "sidebar"
+      "footer";
+  }
+}

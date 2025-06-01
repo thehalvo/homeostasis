@@ -1111,5 +1111,101 @@
         "method_decorator": true
       }
     }
+  },
+  "css": {
+    "language": "css",
+    "field_mappings": {
+      "error_type": ["name", "type", "severity"],
+      "message": "message",
+      "stack_trace": ["stack", "stacktrace", "stack_trace"]
+    },
+    "stack_trace_fields": ["stack", "stacktrace", "stack_trace"],
+    "stack_trace_format": "string",
+    "version_fields": ["css_version", "framework_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:tailwind)",
+      "(?:styled-components)",
+      "(?:emotion)",
+      "(?:css module)",
+      "(?:sass)",
+      "(?:scss)",
+      "(?:less)",
+      "(?:postcss)",
+      "(?:css.*error)",
+      "(?:style.*error)",
+      "(?:@apply)",
+      "(?:css-in-js)",
+      "(?:grid.*error)",
+      "(?:flex.*error)",
+      "(?:animation.*error)",
+      "(?:transition.*error)",
+      "(?:Unknown utility class)",
+      "(?:class.*not.*found)",
+      "(?:purged)",
+      "(?:babel.*styled)",
+      "(?:jsx.*pragma)",
+      "(?:theme.*error)",
+      "(?:ServerStyleSheet)",
+      "(?:cache.*emotion)",
+      "(?:grid-template)",
+      "(?:justify-content)",
+      "(?:align-items)",
+      "(?:keyframes)",
+      "(?:transform.*error)",
+      "(?:\\.css:|\\..scss:|\\..sass:|\\..less:)"
+    ],
+    "severity_mappings": {
+      "debug": "debug",
+      "info": "info",
+      "warning": "warn",
+      "error": "error",
+      "critical": "error",
+      "fatal": "fatal"
+    },
+    "file_extensions": [".css", ".scss", ".sass", ".less", ".styl", ".js", ".jsx", ".ts", ".tsx"],
+    "config_files": ["tailwind.config.js", "postcss.config.js", "package.json", ".babelrc", "babel.config.js"],
+    "css_frameworks": [
+      "tailwindcss", "styled-components", "emotion", "css-modules", 
+      "sass", "less", "stylus", "postcss", "bootstrap", "material-ui"
+    ],
+    "css_patterns": {
+      "tailwind_rules": {
+        "check_class_spelling": true,
+        "verify_purge_config": true,
+        "validate_apply_directive": true,
+        "proper_config_syntax": true,
+        "jit_mode_support": true
+      },
+      "css_in_js_rules": {
+        "babel_plugin_config": true,
+        "ssr_setup": true,
+        "theme_provider": true,
+        "jsx_pragma": true,
+        "template_literal_syntax": true
+      },
+      "layout_rules": {
+        "grid_template_validation": true,
+        "flexbox_alignment": true,
+        "box_model_understanding": true,
+        "responsive_design": true,
+        "position_context": true
+      },
+      "animation_rules": {
+        "keyframes_definition": true,
+        "timing_functions": true,
+        "transform_syntax": true,
+        "performance_optimization": true,
+        "accessibility_compliance": true
+      },
+      "preprocessing_rules": {
+        "import_resolution": true,
+        "variable_scope": true,
+        "mixin_definition": true,
+        "compilation_setup": true,
+        "source_map_generation": true
+      }
+    }
   }
 }

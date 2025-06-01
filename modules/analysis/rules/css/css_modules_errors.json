@@ -1,0 +1,273 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "css-modules",
+    "description": "CSS Modules, SASS, LESS, and CSS preprocessing error rules"
+  },
+  "rules": [
+    {
+      "id": "css_modules_class_not_found",
+      "category": "css_modules",
+      "subcategory": "class_access",
+      "pattern": "CSS.*module.*class.*not.*found|undefined.*class.*name|styles\\..*undefined",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "css_modules_class_error",
+      "suggestion": "Check CSS Modules class name access and availability",
+      "fix_commands": [
+        "Verify class name exists in CSS module file",
+        "Check class name spelling and case sensitivity",
+        "Ensure CSS module is properly imported",
+        "Use camelCase for class names with hyphens"
+      ],
+      "tags": ["css-modules", "class", "import", "undefined"],
+      "examples": [
+        "styles.nonExistentClass",
+        "Accessing kebab-case class incorrectly"
+      ]
+    },
+    {
+      "id": "css_modules_import_error",
+      "category": "css_modules",
+      "subcategory": "import",
+      "pattern": "CSS.*module.*import.*error|Cannot.*resolve.*css.*module|Module.*not.*found.*\\.module\\.",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "css_modules_import_error",
+      "suggestion": "Fix CSS Modules import statement",
+      "fix_commands": [
+        "Check CSS module file path and extension",
+        "Ensure .module.css extension is used",
+        "Verify build configuration supports CSS Modules",
+        "Check file exists in correct location"
+      ],
+      "tags": ["css-modules", "import", "module-not-found", "path"],
+      "examples": [
+        "import styles from './Component.css' (should be .module.css)",
+        "Incorrect file path"
+      ]
+    },
+    {
+      "id": "css_modules_config_error",
+      "category": "css_modules",
+      "subcategory": "configuration",
+      "pattern": "CSS.*modules.*config|css-loader.*modules.*error|CSS.*modules.*not.*enabled",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "css_modules_config_error",
+      "suggestion": "Configure CSS Modules in build system properly",
+      "fix_commands": [
+        "Enable CSS Modules in webpack css-loader configuration",
+        "Check modules option in css-loader",
+        "Verify localIdentName pattern for class names",
+        "Ensure proper loader order in webpack"
+      ],
+      "tags": ["css-modules", "configuration", "webpack", "css-loader"],
+      "examples": [
+        "Missing modules: true in css-loader",
+        "Incorrect webpack configuration"
+      ]
+    },
+    {
+      "id": "sass_compilation_error",
+      "category": "css_modules",
+      "subcategory": "sass",
+      "pattern": "Sass.*error|SCSS.*compilation.*error|@import.*sass.*error|@use.*sass.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "sass_compilation_error",
+      "suggestion": "Fix SASS/SCSS compilation errors",
+      "fix_commands": [
+        "Check SASS/SCSS syntax and indentation",
+        "Verify @import and @use statements",
+        "Ensure SASS variables are properly defined",
+        "Check for missing semicolons in SCSS"
+      ],
+      "tags": ["sass", "scss", "compilation", "syntax"],
+      "examples": [
+        "Invalid SASS syntax",
+        "Missing variable definitions"
+      ]
+    },
+    {
+      "id": "sass_import_error",
+      "category": "css_modules",
+      "subcategory": "sass",
+      "pattern": "@import.*not.*found|@use.*not.*found|Sass.*file.*not.*found|partials.*not.*found",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "sass_import_error",
+      "suggestion": "Fix SASS import statements and file paths",
+      "fix_commands": [
+        "Check SASS file paths in @import/@use statements",
+        "Ensure partial files start with underscore",
+        "Verify SASS load paths configuration",
+        "Check for circular imports"
+      ],
+      "tags": ["sass", "import", "use", "partials"],
+      "examples": [
+        "@import 'missing-file'",
+        "Incorrect partial file naming"
+      ]
+    },
+    {
+      "id": "sass_variable_error",
+      "category": "css_modules",
+      "subcategory": "sass",
+      "pattern": "Sass.*variable.*undefined|\\$.*not.*found|Variable.*does.*not.*exist",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "sass_variable_error",
+      "suggestion": "Fix SASS variable definitions and usage",
+      "fix_commands": [
+        "Define SASS variables before using them",
+        "Check variable name spelling and case",
+        "Ensure variables are in proper scope",
+        "Import files containing variable definitions"
+      ],
+      "tags": ["sass", "variables", "scope", "undefined"],
+      "examples": [
+        "Using undefined $primary-color",
+        "Variable scope issues"
+      ]
+    },
+    {
+      "id": "less_compilation_error",
+      "category": "css_modules",
+      "subcategory": "less",
+      "pattern": "Less.*error|LESS.*compilation.*error|@import.*less.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "less_compilation_error",
+      "suggestion": "Fix LESS compilation errors",
+      "fix_commands": [
+        "Check LESS syntax and semicolons",
+        "Verify @import statements and paths",
+        "Ensure LESS variables are properly defined",
+        "Check mixin definitions and usage"
+      ],
+      "tags": ["less", "compilation", "syntax", "mixins"],
+      "examples": [
+        "Invalid LESS syntax",
+        "Missing mixin definitions"
+      ]
+    },
+    {
+      "id": "less_variable_error",
+      "category": "css_modules",
+      "subcategory": "less",
+      "pattern": "Less.*variable.*undefined|@.*variable.*not.*found|Variable.*@.*undefined",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "less_variable_error",
+      "suggestion": "Fix LESS variable definitions and usage",
+      "fix_commands": [
+        "Define LESS variables before using them",
+        "Check variable name with @ prefix",
+        "Ensure variables are in proper scope",
+        "Import files containing variable definitions"
+      ],
+      "tags": ["less", "variables", "scope", "undefined"],
+      "examples": [
+        "Using undefined @primary-color",
+        "Variable scope issues in LESS"
+      ]
+    },
+    {
+      "id": "postcss_plugin_error",
+      "category": "css_modules",
+      "subcategory": "postcss",
+      "pattern": "PostCSS.*plugin.*error|PostCSS.*config.*error|autoprefixer.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "postcss_plugin_error",
+      "suggestion": "Fix PostCSS plugin configuration",
+      "fix_commands": [
+        "Check PostCSS configuration file",
+        "Verify plugin installation and versions",
+        "Check plugin options and syntax",
+        "Ensure proper plugin order"
+      ],
+      "tags": ["postcss", "plugins", "configuration", "autoprefixer"],
+      "examples": [
+        "Missing PostCSS plugin",
+        "Incorrect plugin configuration"
+      ]
+    },
+    {
+      "id": "css_preprocessing_watch_error",
+      "category": "css_modules",
+      "subcategory": "watch_mode",
+      "pattern": "CSS.*watch.*error|SASS.*watch.*error|file.*watching.*failed|compilation.*not.*triggered",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "low",
+      "root_cause": "css_watch_error",
+      "suggestion": "Fix CSS preprocessing file watching",
+      "fix_commands": [
+        "Check file watcher configuration",
+        "Ensure proper file paths for watching",
+        "Restart development server",
+        "Check for file system permission issues"
+      ],
+      "tags": ["css", "watch", "file-watching", "development"],
+      "examples": [
+        "SASS files not recompiling on change",
+        "File watcher not detecting changes"
+      ]
+    },
+    {
+      "id": "css_source_map_error",
+      "category": "css_modules",
+      "subcategory": "source_maps",
+      "pattern": "source.*map.*css.*error|CSS.*source.*map.*invalid|debugging.*css.*error",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "css_source_map_error",
+      "suggestion": "Fix CSS source map generation",
+      "fix_commands": [
+        "Enable source maps in CSS build configuration",
+        "Check source map options in sass-loader or css-loader",
+        "Verify source map files are generated correctly",
+        "Ensure proper devtool configuration in webpack"
+      ],
+      "tags": ["css", "source-maps", "debugging", "development"],
+      "examples": [
+        "Missing CSS source maps",
+        "Incorrect source map configuration"
+      ]
+    },
+    {
+      "id": "css_minification_error",
+      "category": "css_modules",
+      "subcategory": "minification",
+      "pattern": "CSS.*minification.*error|cssnano.*error|CSS.*optimization.*failed",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "low",
+      "root_cause": "css_minification_error",
+      "suggestion": "Fix CSS minification and optimization",
+      "fix_commands": [
+        "Check CSS minification plugin configuration",
+        "Verify cssnano or similar plugin setup",
+        "Check for CSS syntax errors preventing minification",
+        "Ensure proper optimization options"
+      ],
+      "tags": ["css", "minification", "optimization", "cssnano"],
+      "examples": [
+        "CSS minification failing due to syntax errors",
+        "Incorrect optimization plugin configuration"
+      ]
+    }
+  ]
+}

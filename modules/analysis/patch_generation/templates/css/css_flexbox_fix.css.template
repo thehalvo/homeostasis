@@ -1,0 +1,53 @@
+/* CSS Flexbox Layout Fix Template */
+.flex-container {
+  display: flex;
+  
+  /* Define flex direction */
+  flex-direction: row; /* row | column | row-reverse | column-reverse */
+  
+  /* Main axis alignment (horizontal for row, vertical for column) */
+  justify-content: flex-start; /* flex-start | flex-end | center | space-between | space-around | space-evenly */
+  
+  /* Cross axis alignment (vertical for row, horizontal for column) */
+  align-items: stretch; /* stretch | flex-start | flex-end | center | baseline */
+  
+  /* Wrap behavior */
+  flex-wrap: nowrap; /* nowrap | wrap | wrap-reverse */
+  
+  /* Gap between items */
+  gap: 1rem;
+}
+
+.flex-item {
+  /* Flex grow (how much to grow) */
+  flex-grow: 0;
+  
+  /* Flex shrink (how much to shrink) */
+  flex-shrink: 1;
+  
+  /* Flex basis (initial size before growing/shrinking) */
+  flex-basis: auto;
+  
+  /* Shorthand: flex: grow shrink basis */
+  /* flex: 1; */ /* Common: equal distribution */
+  
+  /* Individual alignment override */
+  /* align-self: center; */
+}
+
+/* Multi-line flex containers */
+.flex-container-multiline {
+  display: flex;
+  flex-wrap: wrap;
+  
+  /* Align wrapped lines */
+  align-content: flex-start; /* Only applies when flex-wrap is wrap */
+}
+
+/* Responsive flexbox */
+@media (max-width: 768px) {
+  .flex-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

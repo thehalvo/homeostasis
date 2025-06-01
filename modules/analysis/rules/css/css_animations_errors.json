@@ -1,0 +1,273 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "css-animations",
+    "description": "CSS animation and transition error detection and optimization rules"
+  },
+  "rules": [
+    {
+      "id": "css_animation_keyframes_error",
+      "category": "animations",
+      "subcategory": "keyframes",
+      "pattern": "@keyframes.*error|keyframes.*not.*found|animation.*name.*undefined",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "css_animation_keyframes_error",
+      "suggestion": "Fix CSS @keyframes definition and animation name reference",
+      "fix_commands": [
+        "Define @keyframes before using in animation property",
+        "Check keyframes name matches animation-name property",
+        "Verify keyframes syntax and percentage values",
+        "Ensure keyframes are defined in accessible scope"
+      ],
+      "tags": ["css", "animations", "keyframes", "definition"],
+      "examples": [
+        "animation: undefined-animation 1s",
+        "Missing @keyframes definition"
+      ]
+    },
+    {
+      "id": "css_animation_syntax_error",
+      "category": "animations",
+      "subcategory": "syntax",
+      "pattern": "animation.*property.*error|invalid.*animation.*syntax|animation.*shorthand.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "css_animation_syntax_error",
+      "suggestion": "Fix CSS animation property syntax",
+      "fix_commands": [
+        "Check animation shorthand property syntax",
+        "Verify animation timing values (duration, delay)",
+        "Use valid animation timing functions",
+        "Check animation direction and fill-mode values"
+      ],
+      "tags": ["css", "animations", "syntax", "properties"],
+      "examples": [
+        "animation: 1s invalid-easing",
+        "Incorrect animation property values"
+      ]
+    },
+    {
+      "id": "css_transition_syntax_error",
+      "category": "animations",
+      "subcategory": "transitions",
+      "pattern": "transition.*property.*error|invalid.*transition.*syntax|transition.*duration.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "css_transition_syntax_error",
+      "suggestion": "Fix CSS transition property syntax",
+      "fix_commands": [
+        "Check transition property syntax",
+        "Verify transition duration and delay values",
+        "Use valid transition timing functions",
+        "Ensure transitioned properties are animatable"
+      ],
+      "tags": ["css", "transitions", "syntax", "properties"],
+      "examples": [
+        "transition: color invalid-duration",
+        "Transitioning non-animatable properties"
+      ]
+    },
+    {
+      "id": "css_animation_performance_warning",
+      "category": "animations",
+      "subcategory": "performance",
+      "pattern": "animation.*performance|layout.*thrashing|paint.*animation|composite.*layer",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "low",
+      "root_cause": "css_animation_performance_issue",
+      "suggestion": "Optimize CSS animations for better performance",
+      "fix_commands": [
+        "Use transform and opacity for better performance",
+        "Avoid animating layout properties (width, height, position)",
+        "Use will-change property to optimize for animations",
+        "Consider using CSS contain property"
+      ],
+      "tags": ["css", "animations", "performance", "optimization"],
+      "examples": [
+        "Animating width/height causing layout thrashing",
+        "Heavy paint operations in animations"
+      ]
+    },
+    {
+      "id": "css_animation_timing_error",
+      "category": "animations",
+      "subcategory": "timing",
+      "pattern": "animation.*timing.*error|invalid.*timing.*function|cubic-bezier.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "css_animation_timing_error",
+      "suggestion": "Fix CSS animation timing functions",
+      "fix_commands": [
+        "Use valid timing function keywords: ease, linear, ease-in, ease-out, ease-in-out",
+        "Check cubic-bezier() function syntax and values",
+        "Ensure timing values are within valid ranges",
+        "Consider using steps() function for discrete animations"
+      ],
+      "tags": ["css", "animations", "timing", "cubic-bezier"],
+      "examples": [
+        "cubic-bezier(1.5, 0, 0, 1) (invalid values)",
+        "Unknown timing function name"
+      ]
+    },
+    {
+      "id": "css_transform_error",
+      "category": "animations",
+      "subcategory": "transforms",
+      "pattern": "transform.*error|invalid.*transform.*function|transform.*syntax.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "css_transform_error",
+      "suggestion": "Fix CSS transform function syntax",
+      "fix_commands": [
+        "Check transform function syntax and parameters",
+        "Use valid transform functions: translate, rotate, scale, skew",
+        "Ensure proper units for transform values",
+        "Check for missing commas in transform lists"
+      ],
+      "tags": ["css", "transforms", "syntax", "functions"],
+      "examples": [
+        "transform: translateX(invalid)",
+        "Missing units in transform values"
+      ]
+    },
+    {
+      "id": "css_animation_browser_support_error",
+      "category": "animations",
+      "subcategory": "browser_support",
+      "pattern": "animation.*not.*supported|browser.*compatibility.*animation|vendor.*prefix.*animation",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "css_animation_browser_support_error",
+      "suggestion": "Add vendor prefixes and fallbacks for CSS animations",
+      "fix_commands": [
+        "Add vendor prefixes for older browsers (-webkit-, -moz-)",
+        "Provide fallbacks for unsupported features",
+        "Use autoprefixer for automatic vendor prefixing",
+        "Test animations across different browsers"
+      ],
+      "tags": ["css", "animations", "browser-support", "vendor-prefixes"],
+      "examples": [
+        "Missing -webkit- prefix for Safari",
+        "Using modern features in older browsers"
+      ]
+    },
+    {
+      "id": "css_animation_accessibility_warning",
+      "category": "animations",
+      "subcategory": "accessibility",
+      "pattern": "animation.*accessibility|prefers-reduced-motion|motion.*sensitivity",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "medium",
+      "root_cause": "css_animation_accessibility_issue",
+      "suggestion": "Improve CSS animation accessibility",
+      "fix_commands": [
+        "Respect prefers-reduced-motion media query",
+        "Provide option to disable animations",
+        "Avoid flashing or rapidly changing animations",
+        "Consider users with vestibular disorders"
+      ],
+      "tags": ["css", "animations", "accessibility", "reduced-motion"],
+      "examples": [
+        "Not respecting prefers-reduced-motion",
+        "Rapidly flashing animations"
+      ]
+    },
+    {
+      "id": "css_animation_infinite_loop_warning",
+      "category": "animations",
+      "subcategory": "infinite_animations",
+      "pattern": "animation.*infinite.*loop|endless.*animation|animation.*never.*stops",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "css_animation_infinite_loop_warning",
+      "suggestion": "Review infinite CSS animations",
+      "fix_commands": [
+        "Consider if infinite animations are necessary",
+        "Provide pause/play controls for infinite animations",
+        "Use animation-play-state to control playback",
+        "Ensure infinite animations don't impact performance"
+      ],
+      "tags": ["css", "animations", "infinite", "loop"],
+      "examples": [
+        "Unnecessary infinite spinning animations",
+        "Performance impact from infinite animations"
+      ]
+    },
+    {
+      "id": "css_3d_transform_error",
+      "category": "animations",
+      "subcategory": "3d_transforms",
+      "pattern": "3d.*transform.*error|perspective.*error|transform-style.*error|backface-visibility.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "low",
+      "root_cause": "css_3d_transform_error",
+      "suggestion": "Fix CSS 3D transform properties",
+      "fix_commands": [
+        "Set perspective property on parent element",
+        "Use transform-style: preserve-3d for 3D contexts",
+        "Check backface-visibility settings",
+        "Ensure proper 3D transform syntax"
+      ],
+      "tags": ["css", "3d-transforms", "perspective", "transforms"],
+      "examples": [
+        "Missing perspective for 3D transforms",
+        "Incorrect transform-style value"
+      ]
+    },
+    {
+      "id": "css_animation_memory_leak_warning",
+      "category": "animations",
+      "subcategory": "memory_leaks",
+      "pattern": "animation.*memory.*leak|animation.*cleanup|removeEventListener.*animation",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "css_animation_memory_leak_warning",
+      "suggestion": "Prevent CSS animation memory leaks",
+      "fix_commands": [
+        "Clean up animation event listeners",
+        "Stop animations when elements are removed",
+        "Use animation event listeners properly",
+        "Avoid creating too many simultaneous animations"
+      ],
+      "tags": ["css", "animations", "memory-leaks", "cleanup"],
+      "examples": [
+        "Not cleaning up animation event listeners",
+        "Too many concurrent animations"
+      ]
+    },
+    {
+      "id": "css_animation_gpu_acceleration_warning",
+      "category": "animations",
+      "subcategory": "gpu_acceleration",
+      "pattern": "gpu.*acceleration|hardware.*acceleration|composite.*layer.*animation",
+      "severity": "info",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "css_animation_gpu_optimization",
+      "suggestion": "Optimize CSS animations for GPU acceleration",
+      "fix_commands": [
+        "Use transform and opacity for GPU acceleration",
+        "Add will-change property for upcoming animations",
+        "Avoid animating properties that trigger layout/paint",
+        "Use transform3d() to force GPU acceleration"
+      ],
+      "tags": ["css", "animations", "gpu", "acceleration", "performance"],
+      "examples": [
+        "Animating non-composited properties",
+        "Missing will-change optimization"
+      ]
+    }
+  ]
+}

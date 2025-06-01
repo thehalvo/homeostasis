@@ -1,0 +1,33 @@
+// tailwind.config.js
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./pages/**/*.{js,jsx,ts,tsx}",
+    "./components/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Add custom colors
+        primary: {
+          50: '#eff6ff',
+          500: '#3b82f6',
+          900: '#1e3a8a',
+        },
+      },
+      fontFamily: {
+        // Add custom fonts
+        sans: ['Inter', 'sans-serif'],
+      },
+      spacing: {
+        // Add custom spacing
+        '18': '4.5rem',
+      },
+    },
+  },
+  plugins: [
+    // Add plugins as needed
+    // require('@tailwindcss/forms'),
+    // require('@tailwindcss/typography'),
+  ],
+}

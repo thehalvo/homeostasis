@@ -1,0 +1,230 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "tailwindcss",
+    "description": "Tailwind CSS framework error detection and optimization rules"
+  },
+  "rules": [
+    {
+      "id": "tailwind_unknown_class",
+      "category": "tailwind",
+      "subcategory": "class_not_found",
+      "pattern": "Unknown utility class|class.*not found|Tailwind.*class.*does not exist",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "tailwind_unknown_class",
+      "suggestion": "Check Tailwind CSS class name spelling and availability in your build configuration",
+      "fix_commands": [
+        "Verify class name exists in Tailwind CSS documentation",
+        "Check if class is included in your Tailwind build configuration",
+        "Ensure class is not purged by PurgeCSS configuration",
+        "Add custom utility to tailwind.config.js if needed"
+      ],
+      "tags": ["tailwind", "class", "purge"],
+      "examples": [
+        "bg-blue-1000 (invalid color scale)",
+        "text-xl-large (invalid size)",
+        "Custom class name misspelling"
+      ]
+    },
+    {
+      "id": "tailwind_purge_error",
+      "category": "tailwind",
+      "subcategory": "purge_config",
+      "pattern": "CSS.*purged|class.*removed.*build|PurgeCSS.*removed",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "tailwind_purge_error",
+      "suggestion": "Update Tailwind CSS purge configuration to include necessary files and classes",
+      "fix_commands": [
+        "Add file patterns to purge.content in tailwind.config.js",
+        "Use safelist to preserve specific classes",
+        "Check purge.options for custom extractors",
+        "Disable purge in development mode"
+      ],
+      "tags": ["tailwind", "purge", "build", "configuration"],
+      "examples": [
+        "Dynamic class names being purged",
+        "Conditional classes not detected by PurgeCSS"
+      ]
+    },
+    {
+      "id": "tailwind_apply_error",
+      "category": "tailwind",
+      "subcategory": "apply_directive",
+      "pattern": "@apply.*error|@apply.*unknown|Invalid.*@apply",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "tailwind_apply_error",
+      "suggestion": "Fix @apply directive usage with valid Tailwind utilities",
+      "fix_commands": [
+        "Use only utility classes with @apply directive",
+        "Check class name spelling in @apply statements",
+        "Ensure applied utilities are available in your build",
+        "Avoid using @apply with complex selectors"
+      ],
+      "tags": ["tailwind", "apply", "directive", "css"],
+      "examples": [
+        "@apply invalid-class-name",
+        "@apply with component class names"
+      ]
+    },
+    {
+      "id": "tailwind_config_error",
+      "category": "tailwind",
+      "subcategory": "configuration",
+      "pattern": "tailwind.config.*error|Invalid.*tailwind.*config|Configuration.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "tailwind_config_error",
+      "suggestion": "Fix Tailwind CSS configuration file syntax and structure",
+      "fix_commands": [
+        "Check tailwind.config.js syntax and structure",
+        "Verify theme customizations follow correct format",
+        "Ensure plugins are properly configured",
+        "Check PostCSS configuration for Tailwind inclusion"
+      ],
+      "tags": ["tailwind", "configuration", "config", "syntax"],
+      "examples": [
+        "Invalid JavaScript syntax in config",
+        "Incorrect theme extension format"
+      ]
+    },
+    {
+      "id": "tailwind_build_error",
+      "category": "tailwind",
+      "subcategory": "build_process",
+      "pattern": "Tailwind.*build.*error|PostCSS.*tailwind.*error|CSS.*build.*failed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "tailwind_build_error",
+      "suggestion": "Fix Tailwind CSS build process and PostCSS configuration",
+      "fix_commands": [
+        "Check PostCSS configuration includes Tailwind plugin",
+        "Verify build process includes CSS processing",
+        "Ensure Tailwind CSS is properly installed",
+        "Check for conflicting CSS processing tools"
+      ],
+      "tags": ["tailwind", "build", "postcss", "compilation"],
+      "examples": [
+        "PostCSS plugin configuration issues",
+        "Build tool integration problems"
+      ]
+    },
+    {
+      "id": "tailwind_jit_error",
+      "category": "tailwind",
+      "subcategory": "jit_mode",
+      "pattern": "JIT.*error|Just-in-Time.*error|Tailwind.*JIT.*compilation",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "tailwind_jit_error",
+      "suggestion": "Fix Tailwind CSS Just-in-Time mode configuration",
+      "fix_commands": [
+        "Check JIT mode configuration in tailwind.config.js",
+        "Ensure content paths are correctly specified",
+        "Verify file watching is working correctly",
+        "Check for JIT-specific syntax usage"
+      ],
+      "tags": ["tailwind", "jit", "just-in-time", "mode"],
+      "examples": [
+        "Dynamic class generation issues",
+        "File watching problems in JIT mode"
+      ]
+    },
+    {
+      "id": "tailwind_variant_error",
+      "category": "tailwind",
+      "subcategory": "variants",
+      "pattern": "Unknown.*variant|Invalid.*modifier|Variant.*not.*enabled",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "tailwind_variant_error",
+      "suggestion": "Check Tailwind CSS variant usage and configuration",
+      "fix_commands": [
+        "Verify variant is available in your Tailwind version",
+        "Check variant configuration in tailwind.config.js",
+        "Enable required variants in configuration",
+        "Use correct variant syntax"
+      ],
+      "tags": ["tailwind", "variants", "modifiers", "responsive"],
+      "examples": [
+        "Using disabled variant",
+        "Incorrect variant syntax"
+      ]
+    },
+    {
+      "id": "tailwind_arbitrary_value_error",
+      "category": "tailwind",
+      "subcategory": "arbitrary_values",
+      "pattern": "Arbitrary.*value.*error|Invalid.*arbitrary.*syntax|Custom.*value.*invalid",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "tailwind_arbitrary_value_error",
+      "suggestion": "Fix Tailwind CSS arbitrary value syntax",
+      "fix_commands": [
+        "Check arbitrary value syntax with square brackets",
+        "Ensure CSS property values are valid",
+        "Use proper escaping for special characters",
+        "Verify Tailwind version supports arbitrary values"
+      ],
+      "tags": ["tailwind", "arbitrary", "custom", "values"],
+      "examples": [
+        "w-[invalid-value]",
+        "bg-[#invalid-color]"
+      ]
+    },
+    {
+      "id": "tailwind_performance_warning",
+      "category": "tailwind",
+      "subcategory": "performance",
+      "pattern": "Large.*CSS.*bundle|Too.*many.*utilities|Bundle.*size.*warning",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "low",
+      "root_cause": "tailwind_performance_issue",
+      "suggestion": "Optimize Tailwind CSS build for better performance",
+      "fix_commands": [
+        "Enable purging/tree-shaking in production",
+        "Remove unused utility variants",
+        "Use only necessary Tailwind plugins",
+        "Consider using Tailwind JIT mode"
+      ],
+      "tags": ["tailwind", "performance", "optimization", "bundle-size"],
+      "examples": [
+        "Large CSS bundle in production",
+        "Unused utilities included in build"
+      ]
+    },
+    {
+      "id": "tailwind_theme_error",
+      "category": "tailwind",
+      "subcategory": "theme",
+      "pattern": "Theme.*error|Custom.*theme.*invalid|Theme.*property.*not.*found",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "medium",
+      "root_cause": "tailwind_theme_error",
+      "suggestion": "Fix Tailwind CSS theme configuration",
+      "fix_commands": [
+        "Check theme structure in tailwind.config.js",
+        "Verify custom theme properties follow correct format",
+        "Ensure theme extensions don't override required properties",
+        "Use proper CSS values for theme properties"
+      ],
+      "tags": ["tailwind", "theme", "customization", "configuration"],
+      "examples": [
+        "Invalid color format in theme",
+        "Missing required theme properties"
+      ]
+    }
+  ]
+}
