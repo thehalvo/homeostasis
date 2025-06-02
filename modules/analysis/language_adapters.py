@@ -4092,3 +4092,234 @@ class ReactErrorAdapter(LanguageAdapter):
             return component_stack
         
         return None
+
+
+class SwiftErrorAdapter(LanguageAdapter):
+    """Adapter for Swift error formats."""
+    
+    def to_standard_format(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert Swift error data to the standard format.
+        
+        Args:
+            error_data: Swift error data
+            
+        Returns:
+            Error data in the standard format
+        """
+        # Create a standard error object
+        standard_error = {
+            "error_id": str(uuid.uuid4()),
+            "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
+            "language": "swift",
+            "language_version": error_data.get("swift_version", ""),
+            "error_type": error_data.get("error_type", ""),
+            "message": error_data.get("message", "")
+        }
+        
+        # Add Swift version if available
+        if "swift_version" in error_data:
+            standard_error["language_version"] = error_data["swift_version"]
+        
+        # Handle stack trace
+        if "stack_trace" in error_data:
+            standard_error["stack_trace"] = error_data["stack_trace"]
+        elif "backtrace" in error_data:
+            standard_error["stack_trace"] = error_data["backtrace"]
+        
+        # Handle iOS/macOS specific crash info
+        if "crash_info" in error_data:
+            crash_info = error_data["crash_info"]
+            
+            # Extract signal information
+            if "signal" in crash_info:
+                if not standard_error["error_type"]:
+                    standard_error["error_type"] = crash_info["signal"]
+                    
+            # Extract exception information
+            if "exception" in crash_info:
+                exception = crash_info["exception"]
+                if "type" in exception and not standard_error["error_type"]:
+                    standard_error["error_type"] = exception["type"]
+                if "message" in exception and not standard_error["message"]:
+                    standard_error["message"] = exception["message"]
+                    
+            # Extract thread information
+            if "threads" in crash_info:
+                standard_error["stack_trace"] = crash_info["threads"]
+        
+        # Add platform information
+        if "platform" in error_data:
+            standard_error["runtime"] = error_data["platform"]
+        elif "os" in error_data:
+            standard_error["runtime"] = error_data["os"]
+        
+        # Add framework information if available
+        if "framework" in error_data:
+            standard_error["framework"] = error_data["framework"]
+            
+            if "framework_version" in error_data:
+                standard_error["framework_version"] = error_data["framework_version"]
+        
+        # Add Xcode/build information
+        if "xcode_version" in error_data:
+            standard_error["build_info"] = {
+                "xcode_version": error_data["xcode_version"]
+            }
+            if "build_number" in error_data:
+                standard_error["build_info"]["build_number"] = error_data["build_number"]
+        
+        # Add device information if available
+        if "device_info" in error_data:
+            standard_error["context"] = {
+                "device": error_data["device_info"]
+            }
+        
+        # Add severity if available
+        if "level" in error_data:
+            # Convert iOS logging levels to the standard format
+            level_map = {
+                "DEFAULT": "info",
+                "INFO": "info",
+                "DEBUG": "debug",
+                "ERROR": "error",
+                "FAULT": "critical",
+                "FATAL": "fatal"
+            }
+            standard_error["severity"] = level_map.get(error_data["level"].upper(), "error")
+        elif "fatal error" in standard_error["message"].lower():
+            standard_error["severity"] = "fatal"
+        elif "warning" in standard_error["message"].lower():
+            standard_error["severity"] = "warning"
+        else:
+            standard_error["severity"] = "error"
+        
+        # Add handled flag if available
+        if "handled" in error_data:
+            standard_error["handled"] = error_data["handled"]
+        elif "fatal error" in standard_error["message"].lower():
+            standard_error["handled"] = False
+        
+        # Add additional Swift-specific data
+        swift_specific = {}
+        for key, value in error_data.items():
+            if key not in standard_error and key not in [
+                "stack_trace", "backtrace", "crash_info", "device_info", 
+                "xcode_version", "build_number", "platform", "os"
+            ]:
+                swift_specific[key] = value
+        
+        if swift_specific:
+            standard_error["additional_data"] = swift_specific
+        
+        return standard_error
+    
+    def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data to Swift-specific format.
+        
+        Args:
+            standard_error: Error data in the standard format
+            
+        Returns:
+            Error data in the Swift-specific format
+        """
+        # Create a Swift error object
+        swift_error = {
+            "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
+            "error_type": standard_error.get("error_type", "Error"),
+            "message": standard_error.get("message", "")
+        }
+        
+        # Add Swift version
+        if "language_version" in standard_error:
+            swift_error["swift_version"] = standard_error["language_version"]
+        
+        # Convert severity to iOS logging level
+        if "severity" in standard_error:
+            level_map = {
+                "debug": "DEBUG",
+                "info": "INFO",
+                "warning": "DEFAULT",
+                "error": "ERROR",
+                "critical": "FAULT",
+                "fatal": "FAULT"
+            }
+            swift_error["level"] = level_map.get(standard_error["severity"].lower(), "ERROR")
+        
+        # Convert stack trace to Swift format
+        if "stack_trace" in standard_error:
+            swift_error["stack_trace"] = self._format_swift_stack_trace(
+                standard_error["stack_trace"]
+            )
+        
+        # Add runtime platform
+        if "runtime" in standard_error:
+            swift_error["platform"] = standard_error["runtime"]
+        
+        # Add framework information
+        if "framework" in standard_error:
+            swift_error["framework"] = standard_error["framework"]
+            if "framework_version" in standard_error:
+                swift_error["framework_version"] = standard_error["framework_version"]
+        
+        # Add build information
+        if "build_info" in standard_error:
+            build_info = standard_error["build_info"]
+            if "xcode_version" in build_info:
+                swift_error["xcode_version"] = build_info["xcode_version"]
+            if "build_number" in build_info:
+                swift_error["build_number"] = build_info["build_number"]
+        
+        # Add device context
+        if "context" in standard_error and "device" in standard_error["context"]:
+            swift_error["device_info"] = standard_error["context"]["device"]
+        
+        # Add handled flag
+        if "handled" in standard_error:
+            swift_error["handled"] = standard_error["handled"]
+        
+        # Add any additional data
+        if "additional_data" in standard_error:
+            swift_error.update(standard_error["additional_data"])
+        
+        return swift_error
+    
+    def _format_swift_stack_trace(self, stack_trace: Union[List, str]) -> List[str]:
+        """
+        Format stack trace for Swift.
+        
+        Args:
+            stack_trace: Stack trace data
+            
+        Returns:
+            List of formatted stack trace strings
+        """
+        if isinstance(stack_trace, str):
+            return stack_trace.split('\n')
+        
+        if not isinstance(stack_trace, list):
+            return []
+        
+        # If it's already a list of strings, return as-is
+        if all(isinstance(frame, str) for frame in stack_trace):
+            return stack_trace
+        
+        # Convert structured frames to Swift format
+        if all(isinstance(frame, dict) for frame in stack_trace):
+            frames = []
+            for i, frame in enumerate(stack_trace):
+                function = frame.get("function", "unknown")
+                file_path = frame.get("file", "unknown")
+                line_num = frame.get("line", 0)
+                
+                # Extract just the filename for cleaner display
+                filename = file_path.split('/')[-1] if '/' in file_path else file_path
+                
+                # Format like Swift stack trace
+                frames.append(f"{i}\t{filename}\t{function} + {line_num}")
+            
+            return frames
+        
+        # Fallback: convert to strings
+        return [str(frame) for frame in stack_trace]

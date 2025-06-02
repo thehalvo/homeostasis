@@ -1,0 +1,47 @@
+// Main Thread Dispatch Template
+// Ensures UI updates happen on the main thread
+
+// Pattern 1: DispatchQueue.main.async
+DispatchQueue.main.async {
+    ${ui_update_code}
+}
+
+// Pattern 2: @MainActor function
+@MainActor
+func ${function_name}() {
+    ${ui_update_code}
+}
+
+// Pattern 3: @MainActor property
+@MainActor 
+var ${property_name}: ${property_type} {
+    didSet {
+        ${ui_update_code}
+    }
+}
+
+// Pattern 4: Task with @MainActor
+Task { @MainActor in
+    ${ui_update_code}
+}
+
+// Pattern 5: MainActor.run
+await MainActor.run {
+    ${ui_update_code}
+}
+
+// Pattern 6: Check if already on main thread
+if Thread.isMainThread {
+    ${ui_update_code}
+} else {
+    DispatchQueue.main.async {
+        ${ui_update_code}
+    }
+}
+
+// Pattern 7: Modern async/await with MainActor
+func ${function_name}() async {
+    await MainActor.run {
+        ${ui_update_code}
+    }
+}

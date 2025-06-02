@@ -175,6 +175,7 @@ Homeostasis currently provides support for the following programming languages:
 - **Scala**: Support for Scala errors, functional programming patterns, Akka actor system, and Play Framework
 - **Elixir/Erlang**: Support for Elixir errors, Phoenix Framework, Ecto database errors, and OTP supervision tree issues
 - **Clojure**: Support for Clojure JVM errors, functional programming patterns, Ring/Compojure frameworks, and core.async concurrency issues
+- **Swift**: Support for iOS, macOS, watchOS, and tvOS applications with UIKit and SwiftUI frameworks, Core Data persistence, memory management, concurrency, and Swift Package Manager
 
 For more information about language integrations, see:
 - [Python Integration](docs/python_integration.md)
@@ -196,6 +197,7 @@ For more information about language integrations, see:
 - [Scala Integration](docs/scala_integration.md)
 - [Elixir/Erlang Integration](docs/elixir_integration.md)
 - [Clojure Integration](docs/clojure_integration.md)
+- [Swift Integration](docs/swift_integration.md)
 
 ## Project Status
 
@@ -230,6 +232,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Ember.js Framework Support**: Added Ember.js framework integration with component and template error handling, Ember Data store issue detection, router and URL handling, Octane features support (tracked properties, modifiers), and Handlebars template validation with automatic fix generation
 - **Web Components Support**: Added Web Components standards support with Custom Elements API error handling, Shadow DOM manipulation fixes, HTML template optimization, framework interoperability solutions, and specialized templates for Lit and Stencil components
 - **CSS Framework Integration**: Added CSS framework integration with Tailwind CSS optimization and error detection, CSS-in-JS library healing (Styled Components, Emotion), CSS Module and SASS/LESS issue resolution, CSS Grid and Flexbox layout debugging, animation and transition error handling, and framework-specific fix templates
+- **Swift Integration**: Added full Swift language support for iOS, macOS, watchOS, and tvOS platforms with force unwrapping detection, array bounds checking, main thread violation fixes, SwiftUI state management, Core Data threading safety, async/await concurrency support, memory management error detection, and Swift Package Manager dependency analysis
 - **Backend Testing Integration**: Implemented unified testing framework for validating error detection, analysis, and healing across multiple programming languages with cross-language capabilities
 - **Production Readiness**: Enhanced security model with RBAC, implemented approval workflows for critical changes, added rate limiting/throttling for healing actions, and developed thorough audit logging
 - **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities

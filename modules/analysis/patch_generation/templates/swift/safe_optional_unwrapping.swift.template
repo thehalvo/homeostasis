@@ -1,0 +1,30 @@
+// Safe Optional Unwrapping Template
+// Replaces force unwrapping with safe optional handling
+
+// Instead of: someOptional!
+// Use one of these patterns:
+
+// Pattern 1: if let binding
+if let unwrappedValue = ${optional_variable} {
+    // Use unwrappedValue safely
+    ${code_using_variable}
+}
+
+// Pattern 2: guard let for early exit
+guard let unwrappedValue = ${optional_variable} else {
+    // Handle nil case
+    return // or throw, or continue, etc.
+}
+// Use unwrappedValue safely
+${code_using_variable}
+
+// Pattern 3: nil coalescing operator
+let safeValue = ${optional_variable} ?? ${default_value}
+
+// Pattern 4: optional chaining
+${optional_variable}?.${method_or_property}
+
+// Pattern 5: conditional execution
+${optional_variable}.map { unwrappedValue in
+    ${code_using_variable}
+}

@@ -1,0 +1,126 @@
+{
+  "version": "1.0.0",
+  "description": "Core Data persistence error detection rules",
+  "rules": [
+    {
+      "id": "coredata_context_save_error",
+      "category": "core_data",
+      "type": "context_save",
+      "pattern": "Core Data save error|NSManagedObjectContext.*save.*error",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "high",
+      "suggestion": "Core Data save failed - check validation rules and handle save errors properly",
+      "root_cause": "swift_core_data_context_error",
+      "tags": ["swift", "core_data", "save", "context"]
+    },
+    {
+      "id": "coredata_threading_violation",
+      "category": "core_data",
+      "type": "threading",
+      "pattern": "NSManagedObjectContext.*was accessed from multiple threads",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "critical",
+      "suggestion": "Core Data threading violation - use context.perform() or performAndWait() for thread safety",
+      "root_cause": "swift_core_data_threading_violation",
+      "tags": ["swift", "core_data", "threading", "context"]
+    },
+    {
+      "id": "coredata_faulting_error",
+      "category": "core_data",
+      "type": "faulting",
+      "pattern": "CoreData.*could not fulfill.*fault|object.*fault.*could not be fulfilled",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "medium",
+      "suggestion": "Core Data faulting error - object may have been deleted or context changed",
+      "root_cause": "swift_core_data_faulting_error",
+      "tags": ["swift", "core_data", "fault", "object"]
+    },
+    {
+      "id": "coredata_model_version_mismatch",
+      "category": "core_data",
+      "type": "model_version",
+      "pattern": "model used to open the store is incompatible|NSPersistentStoreIncompatibleVersionHashError",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "critical",
+      "suggestion": "Core Data model version mismatch - add migration or update data model version",
+      "root_cause": "swift_core_data_model_version",
+      "tags": ["swift", "core_data", "model", "migration"]
+    },
+    {
+      "id": "coredata_fetch_request_error",
+      "category": "core_data",
+      "type": "fetch_request",
+      "pattern": "NSFetchRequest.*error|fetch request.*failed",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "medium",
+      "suggestion": "Core Data fetch request failed - check entity name, predicate syntax, and context state",
+      "root_cause": "swift_core_data_fetch_error",
+      "tags": ["swift", "core_data", "fetch", "request"]
+    },
+    {
+      "id": "coredata_relationship_error",
+      "category": "core_data",
+      "type": "relationship",
+      "pattern": "relationship.*could not be set|NSManagedObject.*relationship.*nil",
+      "confidence": "medium",
+      "reliability": "medium",
+      "severity": "medium",
+      "suggestion": "Core Data relationship error - ensure objects are in same context and relationship is properly defined",
+      "root_cause": "swift_core_data_relationship_error",
+      "tags": ["swift", "core_data", "relationship", "object"]
+    },
+    {
+      "id": "coredata_validation_error",
+      "category": "core_data",
+      "type": "validation",
+      "pattern": "validation error|NSValidationError",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "medium",
+      "suggestion": "Core Data validation failed - check required attributes and validation rules",
+      "root_cause": "swift_core_data_validation_error",
+      "tags": ["swift", "core_data", "validation", "attribute"]
+    },
+    {
+      "id": "coredata_persistent_store_error",
+      "category": "core_data",
+      "type": "persistent_store",
+      "pattern": "NSPersistentStore.*error|persistent store.*could not be added",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "critical",
+      "suggestion": "Persistent store error - check file permissions, disk space, and store URL",
+      "root_cause": "swift_core_data_store_error",
+      "tags": ["swift", "core_data", "store", "persistent"]
+    },
+    {
+      "id": "coredata_object_deleted_error",
+      "category": "core_data",
+      "type": "object_lifecycle",
+      "pattern": "NSManagedObject.*has been deleted|object.*invalid.*deleted",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "medium",
+      "suggestion": "Attempting to access deleted Core Data object - check object lifecycle and deletion handling",
+      "root_cause": "swift_core_data_deleted_object",
+      "tags": ["swift", "core_data", "deleted", "object"]
+    },
+    {
+      "id": "coredata_merge_conflict",
+      "category": "core_data",
+      "type": "merge_conflict",
+      "pattern": "NSMergeConflict|merge conflict.*Core Data",
+      "confidence": "high",
+      "reliability": "medium",
+      "severity": "medium",
+      "suggestion": "Core Data merge conflict - implement proper merge policy or conflict resolution",
+      "root_cause": "swift_core_data_merge_conflict",
+      "tags": ["swift", "core_data", "merge", "conflict"]
+    }
+  ]
+}

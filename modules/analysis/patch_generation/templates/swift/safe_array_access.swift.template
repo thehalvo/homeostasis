@@ -1,0 +1,36 @@
+// Safe Array Access Template
+// Replaces direct array indexing with bounds checking
+
+// Instead of: array[index]
+// Use one of these patterns:
+
+// Pattern 1: bounds checking with indices
+if ${array_name}.indices.contains(${index_expression}) {
+    let value = ${array_name}[${index_expression}]
+    ${code_using_value}
+}
+
+// Pattern 2: safe subscript extension
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}
+
+// Usage: 
+if let value = ${array_name}[safe: ${index_expression}] {
+    ${code_using_value}
+}
+
+// Pattern 3: first/last for common cases
+// For first element: array.first
+// For last element: array.last
+if let firstElement = ${array_name}.first {
+    ${code_using_value}
+}
+
+// Pattern 4: dropFirst/dropLast with bounds checking
+if ${array_name}.count > ${index_expression} {
+    let value = ${array_name}[${index_expression}]
+    ${code_using_value}
+}

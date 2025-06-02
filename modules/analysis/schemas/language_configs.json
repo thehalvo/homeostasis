@@ -1207,5 +1207,119 @@
         "source_map_generation": true
       }
     }
+  },
+  "swift": {
+    "language": "swift",
+    "field_mappings": {
+      "error_type": ["error_type", "signal", "exception_type", "type"],
+      "message": "message",
+      "stack_trace": ["stack_trace", "backtrace", "threads"]
+    },
+    "stack_trace_fields": ["stack_trace", "backtrace", "threads"],
+    "stack_trace_format": "list",
+    "version_fields": ["swift_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:fatal error:)",
+      "(?:unexpectedly found nil while unwrapping)",
+      "(?:Index out of range)",
+      "(?:EXC_BAD_ACCESS)",
+      "(?:Thread \\d+: signal SIGABRT)",
+      "(?:\\.swift:\\d+)",
+      "(?:SwiftUI)",
+      "(?:UIKit)",
+      "(?:Foundation)",
+      "(?:Core Data)",
+      "(?:Main Thread Checker:)",
+      "(?:ThreadSanitizer:)",
+      "(?:Task was cancelled)",
+      "(?:CancellationError)",
+      "(?:Actor-isolated)",
+      "(?:@MainActor)",
+      "(?:No such module)",
+      "(?:Package\\.swift)",
+      "(?:swift package)"
+    ],
+    "severity_mappings": {
+      "debug": "DEBUG",
+      "info": "INFO",
+      "warning": "DEFAULT",
+      "error": "ERROR",
+      "critical": "FAULT",
+      "fatal": "FAULT"
+    },
+    "platform_detection": {
+      "ios": ["iOS", "iPhone", "iPad"],
+      "macos": ["macOS", "Mac"],
+      "watchos": ["watchOS", "Apple Watch"],
+      "tvos": ["tvOS", "Apple TV"]
+    },
+    "file_extensions": [".swift"],
+    "config_files": ["Package.swift", "*.xcodeproj", "*.xcworkspace", "Info.plist"],
+    "frameworks": [
+      "UIKit", "SwiftUI", "Foundation", "CoreData", "CoreAnimation",
+      "AVFoundation", "MapKit", "CoreLocation", "HealthKit", "HomeKit",
+      "CloudKit", "GameplayKit", "SceneKit", "Metal", "CoreML"
+    ],
+    "swift_patterns": {
+      "optional_rules": {
+        "avoid_force_unwrapping": true,
+        "use_nil_coalescing": true,
+        "safe_optional_chaining": true,
+        "guard_let_patterns": true
+      },
+      "memory_rules": {
+        "weak_references": true,
+        "unowned_references": true,
+        "arc_optimization": true,
+        "retain_cycle_prevention": true
+      },
+      "concurrency_rules": {
+        "async_await_usage": true,
+        "actor_isolation": true,
+        "sendable_conformance": true,
+        "main_actor_usage": true,
+        "task_cancellation": true
+      },
+      "ui_rules": {
+        "main_thread_updates": true,
+        "view_controller_lifecycle": true,
+        "auto_layout_constraints": true,
+        "interface_builder_connections": true
+      },
+      "core_data_rules": {
+        "context_threading": true,
+        "save_error_handling": true,
+        "fetch_request_validation": true,
+        "relationship_management": true
+      },
+      "performance_rules": {
+        "collection_bounds_checking": true,
+        "string_interpolation": true,
+        "closure_capture_optimization": true,
+        "image_optimization": true
+      }
+    },
+    "spm_patterns": {
+      "package_declaration": {
+        "name_requirement": true,
+        "platform_specification": true,
+        "dependencies_format": true,
+        "targets_configuration": true
+      },
+      "dependency_rules": {
+        "version_specification": true,
+        "url_validation": true,
+        "local_path_validation": true,
+        "conflict_resolution": true
+      },
+      "build_rules": {
+        "swift_tools_version": true,
+        "compiler_flags": true,
+        "linker_settings": true,
+        "resource_bundling": true
+      }
+    }
   }
 }

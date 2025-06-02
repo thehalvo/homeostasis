@@ -1,0 +1,68 @@
+// Async/Await Error Handling Template
+// Proper error handling for async/await code
+
+// Pattern 1: Basic try-catch with async
+func ${function_name}() async throws {
+    do {
+        let result = try await ${async_function_call}
+        ${success_handling_code}
+    } catch {
+        ${error_handling_code}
+    }
+}
+
+// Pattern 2: Task with error handling
+Task {
+    do {
+        let result = try await ${async_function_call}
+        await MainActor.run {
+            ${ui_update_code}
+        }
+    } catch {
+        await MainActor.run {
+            ${error_ui_update_code}
+        }
+    }
+}
+
+// Pattern 3: Cancellation handling
+func ${function_name}() async throws {
+    try Task.checkCancellation()
+    
+    do {
+        let result = try await ${async_function_call}
+        ${success_handling_code}
+    } catch is CancellationError {
+        ${cancellation_handling_code}
+    } catch {
+        ${error_handling_code}
+    }
+}
+
+// Pattern 4: Multiple async calls with error handling
+func ${function_name}() async {
+    async let result1 = ${async_function_1}()
+    async let result2 = ${async_function_2}()
+    
+    do {
+        let (value1, value2) = try await (result1, result2)
+        ${success_handling_code}
+    } catch {
+        ${error_handling_code}
+    }
+}
+
+// Pattern 5: TaskGroup with error handling
+func ${function_name}() async throws {
+    try await withThrowingTaskGroup(of: ${result_type}.self) { group in
+        for ${item} in ${items} {
+            group.addTask {
+                try await ${async_operation}(${item})
+            }
+        }
+        
+        for try await result in group {
+            ${process_result_code}
+        }
+    }
+}

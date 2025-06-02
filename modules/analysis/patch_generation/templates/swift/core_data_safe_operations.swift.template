@@ -1,0 +1,72 @@
+// Core Data Safe Operations Template
+// Proper Core Data context handling and threading
+
+// Pattern 1: Safe context operations
+func ${function_name}() {
+    ${context_name}.perform {
+        do {
+            ${core_data_operations}
+            try ${context_name}.save()
+        } catch {
+            ${error_handling_code}
+        }
+    }
+}
+
+// Pattern 2: Background context operations
+func ${function_name}() {
+    let backgroundContext = persistentContainer.newBackgroundContext()
+    backgroundContext.perform {
+        do {
+            ${core_data_operations}
+            try backgroundContext.save()
+            
+            // Update main context
+            DispatchQueue.main.async {
+                do {
+                    try self.viewContext.save()
+                } catch {
+                    ${main_context_error_handling}
+                }
+            }
+        } catch {
+            ${background_context_error_handling}
+        }
+    }
+}
+
+// Pattern 3: Fetch with error handling
+func ${fetch_function_name}() -> [${entity_name}] {
+    let request: NSFetchRequest<${entity_name}> = ${entity_name}.fetchRequest()
+    ${predicate_setup}
+    
+    do {
+        return try ${context_name}.fetch(request)
+    } catch {
+        ${fetch_error_handling}
+        return []
+    }
+}
+
+// Pattern 4: Safe object deletion
+func ${delete_function_name}(${object_name}: ${entity_name}) {
+    ${context_name}.perform {
+        ${context_name}.delete(${object_name})
+        do {
+            try ${context_name}.save()
+        } catch {
+            ${delete_error_handling}
+        }
+    }
+}
+
+// Pattern 5: Merge changes from notifications
+func setupCoreDataNotifications() {
+    NotificationCenter.default.addObserver(
+        forName: .NSManagedObjectContextDidSave,
+        object: nil,
+        queue: .main
+    ) { notification in
+        self.viewContext.mergeChanges(fromContextDidSave: notification)
+    }
+}

@@ -1,0 +1,150 @@
+{
+  "version": "1.0.0",
+  "description": "UIKit framework error detection rules",
+  "rules": [
+    {
+      "id": "uikit_main_thread_ui_update",
+      "category": "uikit",
+      "type": "main_thread_violation",
+      "pattern": "UIApplication.* must be used from main thread only",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "high",
+      "suggestion": "UIKit operations must be performed on the main thread - use DispatchQueue.main.async",
+      "root_cause": "swift_main_thread_violation",
+      "tags": ["swift", "uikit", "main_thread", "ui"]
+    },
+    {
+      "id": "uikit_outlet_nil",
+      "category": "uikit",
+      "type": "outlet_connection",
+      "pattern": "Fatal error.*IBOutlet|unexpectedly found nil.*outlet",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "high",
+      "suggestion": "IBOutlet is nil - check Interface Builder connections and view loading lifecycle",
+      "root_cause": "swift_outlet_not_connected",
+      "tags": ["swift", "uikit", "iboutlet", "interface_builder"]
+    },
+    {
+      "id": "uikit_viewcontroller_dealloc",
+      "category": "uikit",
+      "type": "lifecycle_error",
+      "pattern": "ViewController.*deallocated.*view|View controller.*released.*view",
+      "confidence": "medium",
+      "reliability": "medium",
+      "severity": "medium",
+      "suggestion": "View controller deallocated while view is still loaded - check retain cycles and proper cleanup",
+      "root_cause": "swift_viewcontroller_lifecycle",
+      "tags": ["swift", "uikit", "viewcontroller", "lifecycle"]
+    },
+    {
+      "id": "uikit_auto_layout_conflict",
+      "category": "uikit",
+      "type": "auto_layout",
+      "pattern": "Unable to simultaneously satisfy constraints|constraint conflict",
+      "confidence": "high",
+      "reliability": "medium",
+      "severity": "medium",
+      "suggestion": "Auto Layout constraint conflict - review constraint priorities and relationships",
+      "root_cause": "swift_auto_layout_conflict",
+      "tags": ["swift", "uikit", "auto_layout", "constraints"]
+    },
+    {
+      "id": "uikit_table_cell_dequeue",
+      "category": "uikit",
+      "type": "table_view",
+      "pattern": "unable to dequeue a cell with identifier",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "medium",
+      "suggestion": "Table view cell identifier not registered - register cell class or nib before use",
+      "root_cause": "swift_table_cell_not_registered",
+      "tags": ["swift", "uikit", "tableview", "cell"]
+    },
+    {
+      "id": "uikit_collection_invalid_index",
+      "category": "uikit",
+      "type": "collection_view",
+      "pattern": "attempt to.*item.*section.*when there are only",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "medium",
+      "suggestion": "Collection view index out of bounds - ensure data source consistency during updates",
+      "root_cause": "swift_collection_view_index_bounds",
+      "tags": ["swift", "uikit", "collectionview", "index"]
+    },
+    {
+      "id": "uikit_navigation_pop_error",
+      "category": "uikit",
+      "type": "navigation",
+      "pattern": "Tried to pop.*but it is not in the stack",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "medium",
+      "suggestion": "Attempting to pop view controller not in navigation stack - check navigation state",
+      "root_cause": "swift_navigation_pop_error",
+      "tags": ["swift", "uikit", "navigation", "stack"]
+    },
+    {
+      "id": "uikit_view_not_in_hierarchy",
+      "category": "uikit",
+      "type": "view_hierarchy",
+      "pattern": "view is not in the window hierarchy",
+      "confidence": "medium",
+      "reliability": "medium",
+      "severity": "low",
+      "suggestion": "Attempting to present on view not in window hierarchy - ensure view is loaded and visible",
+      "root_cause": "swift_view_not_in_hierarchy",
+      "tags": ["swift", "uikit", "view", "hierarchy"]
+    },
+    {
+      "id": "uikit_image_loading_failure",
+      "category": "uikit",
+      "type": "resource_loading",
+      "pattern": "Could not load the.*image referenced from.*nib",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "medium",
+      "suggestion": "Image resource not found - check filename spelling and bundle inclusion",
+      "root_cause": "swift_missing_image_resource",
+      "tags": ["swift", "uikit", "image", "resource"]
+    },
+    {
+      "id": "uikit_keyboard_notification_error",
+      "category": "uikit",
+      "type": "notification",
+      "pattern": "UIKeyboard.*notification.*userInfo",
+      "confidence": "medium",
+      "reliability": "medium",
+      "severity": "low",
+      "suggestion": "Keyboard notification handling error - check userInfo dictionary access",
+      "root_cause": "swift_keyboard_notification_error",
+      "tags": ["swift", "uikit", "keyboard", "notification"]
+    },
+    {
+      "id": "uikit_storyboard_segue_error",
+      "category": "uikit",
+      "type": "storyboard",
+      "pattern": "Could not find a navigation controller|Storyboard.*doesn't contain.*segue",
+      "confidence": "high",
+      "reliability": "high",
+      "severity": "medium",
+      "suggestion": "Storyboard segue error - check segue identifier and navigation controller setup",
+      "root_cause": "swift_storyboard_segue_error",
+      "tags": ["swift", "uikit", "storyboard", "segue"]
+    },
+    {
+      "id": "uikit_animation_completion_error",
+      "category": "uikit",
+      "type": "animation",
+      "pattern": "Completion block.*animation.*nil",
+      "confidence": "medium",
+      "reliability": "low",
+      "severity": "low",
+      "suggestion": "Animation completion block error - ensure proper completion handling",
+      "root_cause": "swift_animation_completion_error",
+      "tags": ["swift", "uikit", "animation", "completion"]
+    }
+  ]
+}

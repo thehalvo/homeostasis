@@ -1,0 +1,34 @@
+// Weak Reference Template
+// Fixes retain cycles by using weak/unowned references
+
+// Pattern 1: weak self in closures
+${closure_name} = { [weak self] in
+    guard let self = self else { return }
+    ${closure_body}
+}
+
+// Pattern 2: weak self with conditional binding
+${closure_name} = { [weak self] in
+    guard let strongSelf = self else { return }
+    strongSelf.${method_or_property}
+}
+
+// Pattern 3: unowned self (when self is guaranteed to exist)
+${closure_name} = { [unowned self] in
+    self.${method_or_property}
+}
+
+// Pattern 4: weak capture of other objects
+${closure_name} = { [weak ${captured_object}] in
+    guard let ${captured_object} = ${captured_object} else { return }
+    ${closure_body}
+}
+
+// Pattern 5: multiple weak captures
+${closure_name} = { [weak self, weak ${other_object}] in
+    guard let self = self, let ${other_object} = ${other_object} else { return }
+    ${closure_body}
+}
+
+// Pattern 6: weak delegate pattern
+weak var ${delegate_property}: ${delegate_protocol}?
