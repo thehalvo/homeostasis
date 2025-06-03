@@ -2,17 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-```
-╔═════════════════════════════════════════════════════════════╗
-║                                                             ║
-║  ☆ ★    $ git push origin homeostasis-fix             ✓     ║
-║  ↑                                                          ║
-║  ✗     WE DON'T WANT YOUR STARS                             ║
-║                                                 ┌────────┐  ║
-║  →     WE WANT YOUR PRs                         │APPROVED│  ║
-║                                                 └────────┘  ║
-╚═════════════════════════════════════════════════════════════╝
-```
+![Homeostasis Header](header.png)
 
 ## Vision
 
