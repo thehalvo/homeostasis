@@ -1,0 +1,37 @@
+// Room database main thread access fix
+// Original issue: ${ERROR_MESSAGE}
+
+class ${CLASS_NAME} {
+    
+    // Option 1: Use suspend functions with coroutines
+    suspend fun ${METHOD_NAME}(): ${RETURN_TYPE} {
+        return withContext(Dispatchers.IO) {
+            ${DAO_NAME}.${QUERY_METHOD}()
+        }
+    }
+    
+    // Option 2: Use LiveData for reactive updates
+    fun ${METHOD_NAME}LiveData(): LiveData<${RETURN_TYPE}> {
+        return ${DAO_NAME}.${QUERY_METHOD}LiveData()
+    }
+    
+    // Option 3: Use Flow for reactive streams
+    fun ${METHOD_NAME}Flow(): Flow<${RETURN_TYPE}> {
+        return ${DAO_NAME}.${QUERY_METHOD}Flow()
+    }
+    
+    // Option 4: Execute in background thread (for one-time operations)
+    fun ${METHOD_NAME}Async(callback: (${RETURN_TYPE}) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = ${DAO_NAME}.${QUERY_METHOD}()
+            withContext(Dispatchers.Main) {
+                callback(result)
+            }
+        }
+    }
+}
+
+// For testing only - DO NOT use in production
+// Room.databaseBuilder(context, ${DATABASE_CLASS}::class.java, "database")
+//     .allowMainThreadQueries() // Only for testing!
+//     .build()

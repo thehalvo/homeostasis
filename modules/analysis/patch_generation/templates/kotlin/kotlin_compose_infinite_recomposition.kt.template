@@ -1,0 +1,41 @@
+// Jetpack Compose infinite recomposition fix
+// Original issue: ${ERROR_MESSAGE}
+
+@Composable
+fun ${COMPOSABLE_NAME}() {
+    // Problem: Creating new objects in composition causes infinite recomposition
+    // val list = mutableListOf<String>() // Creates new list every recomposition
+    
+    // Solution 1: Use remember for object creation
+    val list = remember { mutableListOf<String>() }
+    
+    // Problem: Changing state during composition
+    // state.value = newValue // Causes immediate recomposition
+    
+    // Solution 2: Use LaunchedEffect for side effects
+    LaunchedEffect(${TRIGGER_KEY}) {
+        // Perform side effects here
+        ${SIDE_EFFECT_CODE}
+    }
+    
+    // Solution 3: Use derivedStateOf for computed values
+    val computedValue by remember {
+        derivedStateOf {
+            // This will only recompute when dependencies change
+            ${COMPUTATION_CODE}
+        }
+    }
+    
+    // Solution 4: Avoid creating lambdas in composition
+    // val lambda = { doSomething() } // Creates new lambda every time
+    
+    // Better: Remember the lambda
+    val rememberedLambda = remember {
+        { doSomething() }
+    }
+    
+    // Or use callback with stable parameters
+    val stableLambda = remember(${STABLE_PARAM}) {
+        { doSomethingWith(${STABLE_PARAM}) }
+    }
+}

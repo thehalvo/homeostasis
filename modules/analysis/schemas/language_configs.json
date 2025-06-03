@@ -1321,5 +1321,129 @@
         "resource_bundling": true
       }
     }
+  },
+  "kotlin": {
+    "language": "kotlin",
+    "field_mappings": {
+      "error_type": ["exception_type", "type", "error_type"],
+      "message": "message",
+      "stack_trace": ["stackTrace", "stack_trace"]
+    },
+    "stack_trace_fields": ["stackTrace", "stack_trace"],
+    "stack_trace_format": "string",
+    "version_fields": ["kotlin_version", "language_version"],
+    "framework_fields": ["framework"],
+    "framework_version_fields": ["framework_version"],
+    "detection_patterns": [
+      "(?:kotlin\\.)",
+      "(?:KotlinNullPointerException)",
+      "(?:at [\\w\\.$]+\\([^)]+\\.kt:\\d+\\))",
+      "(?:kotlinx\\.coroutines)",
+      "(?:CancellationException)",
+      "(?:TimeoutCancellationException)",
+      "(?:androidx\\.)",
+      "(?:android\\.)",
+      "(?:@Composable)",
+      "(?:compose)",
+      "(?:room)",
+      "(?:suspend fun)",
+      "(?:coroutineScope)",
+      "(?:launch\\s*\\{)",
+      "(?:async\\s*\\{)",
+      "(?:runBlocking)",
+      "(?:\\.kt:\\d+)",
+      "(?:Fragment.*not attached)",
+      "(?:Cannot access database on the main thread)",
+      "(?:expect.*actual)",
+      "(?:multiplatform)"
+    ],
+    "severity_mappings": {
+      "verbose": "debug",
+      "debug": "debug",
+      "info": "info", 
+      "warn": "warning",
+      "error": "error",
+      "assert": "critical"
+    },
+    "platform_detection": {
+      "android": ["android", "androidx", "Activity", "Fragment"],
+      "jvm": ["java", "jvm", "kotlin-jvm"],
+      "js": ["kotlin-js", "js"],
+      "native": ["kotlin-native", "native"],
+      "multiplatform": ["kotlin-multiplatform", "expect", "actual"]
+    },
+    "file_extensions": [".kt", ".kts"],
+    "config_files": ["build.gradle.kts", "build.gradle", "gradle.properties", "settings.gradle.kts"],
+    "frameworks": [
+      "coroutines", "android", "compose", "room", "multiplatform", "ktor",
+      "serialization", "datetime", "spring", "exposed"
+    ],
+    "kotlin_patterns": {
+      "null_safety_rules": {
+        "avoid_unsafe_cast": true,
+        "use_safe_calls": true,
+        "use_elvis_operator": true,
+        "check_lateinit_initialization": true,
+        "proper_nullable_handling": true
+      },
+      "coroutine_rules": {
+        "handle_cancellation": true,
+        "proper_dispatcher_usage": true,
+        "structured_concurrency": true,
+        "avoid_runblocking_main": true,
+        "exception_handling": true
+      },
+      "android_rules": {
+        "lifecycle_awareness": true,
+        "context_management": true,
+        "fragment_attachment": true,
+        "permission_handling": true,
+        "memory_leak_prevention": true
+      },
+      "compose_rules": {
+        "remember_state": true,
+        "avoid_side_effects": true,
+        "proper_recomposition": true,
+        "state_hoisting": true,
+        "performance_optimization": true
+      },
+      "room_rules": {
+        "background_thread_operations": true,
+        "proper_migration": true,
+        "transaction_handling": true,
+        "type_converter_usage": true,
+        "dao_annotation": true
+      },
+      "multiplatform_rules": {
+        "expect_actual_matching": true,
+        "platform_specific_dependencies": true,
+        "common_source_abstraction": true,
+        "target_compatibility": true,
+        "native_interop": true
+      },
+      "performance_rules": {
+        "collection_optimization": true,
+        "inline_functions": true,
+        "data_class_usage": true,
+        "sequence_vs_list": true,
+        "string_templates": true
+      }
+    },
+    "android_lifecycle_methods": [
+      "onCreate", "onStart", "onResume", "onPause", "onStop", "onDestroy",
+      "onCreateView", "onViewCreated", "onDestroyView", "onAttach", "onDetach"
+    ],
+    "coroutine_builders": [
+      "launch", "async", "runBlocking", "coroutineScope", "supervisorScope",
+      "withContext", "withTimeout", "withTimeoutOrNull"
+    ],
+    "compose_functions": [
+      "remember", "LaunchedEffect", "DisposableEffect", "SideEffect",
+      "derivedStateOf", "mutableStateOf", "rememberSaveable", "produceState"
+    ],
+    "room_annotations": [
+      "@Entity", "@Dao", "@Database", "@PrimaryKey", "@ColumnInfo", "@Embedded",
+      "@Relation", "@Insert", "@Update", "@Delete", "@Query", "@Transaction"
+    ]
   }
 }

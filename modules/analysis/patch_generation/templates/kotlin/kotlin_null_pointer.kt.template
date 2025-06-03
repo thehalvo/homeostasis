@@ -1,0 +1,25 @@
+// Kotlin null safety fix for NullPointerException
+// Original issue: ${ERROR_MESSAGE}
+
+// Option 1: Safe call operator
+${VARIABLE_NAME}?.let { nonNullValue ->
+    // Use nonNullValue safely here
+    nonNullValue.${METHOD_NAME}()
+}
+
+// Option 2: Null check with early return
+if (${VARIABLE_NAME} == null) {
+    // Handle null case
+    return // or throw exception, or provide default
+}
+// Continue with non-null variable
+${VARIABLE_NAME}.${METHOD_NAME}()
+
+// Option 3: Elvis operator with default
+val result = ${VARIABLE_NAME}?.${METHOD_NAME}() ?: ${DEFAULT_VALUE}
+
+// Option 4: Safe call with default
+val safeValue = ${VARIABLE_NAME} ?: run {
+    // Provide default or handle null case
+    ${DEFAULT_VALUE}
+}

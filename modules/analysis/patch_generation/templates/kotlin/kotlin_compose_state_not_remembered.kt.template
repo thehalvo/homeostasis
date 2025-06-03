@@ -1,0 +1,37 @@
+// Jetpack Compose state remembering fix
+// Original issue: ${ERROR_MESSAGE}
+
+@Composable
+fun ${COMPOSABLE_NAME}() {
+    // Wrong: State will be recreated on every recomposition
+    // val state = mutableStateOf("${DEFAULT_VALUE}")
+    
+    // Correct: State is remembered across recompositions
+    val state = remember { mutableStateOf("${DEFAULT_VALUE}") }
+    
+    // Alternative: Use rememberSaveable for process death survival
+    val savedState = rememberSaveable { mutableStateOf("${DEFAULT_VALUE}") }
+    
+    // For complex state objects
+    val complexState = remember {
+        ${STATE_CLASS}()
+    }
+    
+    // For state that depends on parameters
+    val dependentState = remember(${DEPENDENCY_PARAM}) {
+        mutableStateOf(computeInitialValue(${DEPENDENCY_PARAM}))
+    }
+    
+    // For expensive computations
+    val expensiveValue = remember {
+        expensiveComputation()
+    }
+    
+    // Use derivedStateOf for computed state
+    val derivedState by remember {
+        derivedStateOf { 
+            // This will only recompute when dependencies change
+            state.value.uppercase()
+        }
+    }
+}

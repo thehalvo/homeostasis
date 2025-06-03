@@ -1,0 +1,150 @@
+{
+  "description": "Common Kotlin language errors and exceptions",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "kotlin_null_pointer_exception",
+      "pattern": "(kotlin\\.)?KotlinNullPointerException(?::\\s*(.*))?",
+      "error_type": "KotlinNullPointerException",
+      "description": "Attempted to access a null reference in Kotlin code",
+      "root_cause": "kotlin_null_pointer",
+      "suggestion": "Use safe call operator (?.) or null checks. Consider using let, also, apply, or run scope functions for null-safe operations",
+      "confidence": "high",
+      "severity": "high",
+      "category": "null_safety",
+      "framework": ""
+    },
+    {
+      "id": "kotlin_lateinit_not_initialized",
+      "pattern": "kotlin\\.UninitializedPropertyAccessException.*lateinit property.*has not been initialized",
+      "error_type": "UninitializedPropertyAccessException",
+      "description": "Lateinit property accessed before initialization",
+      "root_cause": "kotlin_lateinit_not_initialized",
+      "suggestion": "Initialize lateinit property before access, or check with ::property.isInitialized",
+      "confidence": "high",
+      "severity": "high",
+      "category": "core",
+      "framework": ""
+    },
+    {
+      "id": "kotlin_class_cast_exception",
+      "pattern": "java\\.lang\\.ClassCastException.*cannot be cast to.*",
+      "error_type": "ClassCastException",
+      "description": "Failed to cast object to expected type",
+      "root_cause": "kotlin_invalid_cast",
+      "suggestion": "Use safe cast operator (as?) instead of unsafe cast (as), or add type checks with is operator",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core",
+      "framework": ""
+    },
+    {
+      "id": "kotlin_index_out_of_bounds",
+      "pattern": "java\\.lang\\.IndexOutOfBoundsException.*Index.*out of bounds",
+      "error_type": "IndexOutOfBoundsException", 
+      "description": "Attempted to access list/array element with invalid index",
+      "root_cause": "kotlin_index_out_of_bounds",
+      "suggestion": "Check collection bounds using size/indices properties before accessing elements, or use getOrNull() for safe access",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "collections",
+      "framework": ""
+    },
+    {
+      "id": "kotlin_illegal_argument_exception",
+      "pattern": "java\\.lang\\.IllegalArgumentException(?:\\s*:\\s*(.*))?",
+      "error_type": "IllegalArgumentException",
+      "description": "Invalid argument passed to function",
+      "root_cause": "kotlin_invalid_argument",
+      "suggestion": "Validate function arguments using require() function with meaningful error messages",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "core",
+      "framework": ""
+    },
+    {
+      "id": "kotlin_illegal_state_exception",
+      "pattern": "java\\.lang\\.IllegalStateException(?:\\s*:\\s*(.*))?",
+      "error_type": "IllegalStateException",
+      "description": "Object is in invalid state for requested operation",
+      "root_cause": "kotlin_invalid_state",
+      "suggestion": "Use check() function to validate object state before operations",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "core",
+      "framework": ""
+    },
+    {
+      "id": "kotlin_number_format_exception",
+      "pattern": "java\\.lang\\.NumberFormatException.*",
+      "error_type": "NumberFormatException",
+      "description": "Failed to parse string as number",
+      "root_cause": "kotlin_invalid_number_format",
+      "suggestion": "Use toIntOrNull(), toDoubleOrNull() etc. for safe parsing, or validate input before conversion",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "core",
+      "framework": ""
+    },
+    {
+      "id": "kotlin_no_such_element_exception",
+      "pattern": "java\\.util\\.NoSuchElementException.*",
+      "error_type": "NoSuchElementException",
+      "description": "Attempted to access element that doesn't exist",
+      "root_cause": "kotlin_no_such_element",
+      "suggestion": "Check if collection is not empty before accessing first/last elements, or use firstOrNull()/lastOrNull()",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "collections", 
+      "framework": ""
+    },
+    {
+      "id": "kotlin_concurrent_modification_exception",
+      "pattern": "java\\.util\\.ConcurrentModificationException.*",
+      "error_type": "ConcurrentModificationException",
+      "description": "Collection was modified during iteration",
+      "root_cause": "kotlin_concurrent_modification",
+      "suggestion": "Use mutableIterator with remove() method, or create a copy of collection for iteration when modifying",
+      "confidence": "high",
+      "severity": "high",
+      "category": "collections",
+      "framework": ""
+    },
+    {
+      "id": "kotlin_unsupported_operation_exception",
+      "pattern": "java\\.lang\\.UnsupportedOperationException.*",
+      "error_type": "UnsupportedOperationException",
+      "description": "Operation not supported on this collection type",
+      "root_cause": "kotlin_unsupported_operation",
+      "suggestion": "Use mutable collection types (MutableList, MutableSet, MutableMap) for modification operations",
+      "confidence": "high",
+      "severity": "medium", 
+      "category": "collections",
+      "framework": ""
+    },
+    {
+      "id": "kotlin_stack_overflow_error",
+      "pattern": "java\\.lang\\.StackOverflowError.*",
+      "error_type": "StackOverflowError",
+      "description": "Stack overflow due to excessive recursion",
+      "root_cause": "kotlin_stack_overflow",
+      "suggestion": "Check for infinite recursion, add proper base cases, or consider using iterative approach with tailrec modifier",
+      "confidence": "high",
+      "severity": "high",
+      "category": "core",
+      "framework": ""
+    },
+    {
+      "id": "kotlin_out_of_memory_error",
+      "pattern": "java\\.lang\\.OutOfMemoryError.*",
+      "error_type": "OutOfMemoryError",
+      "description": "Application ran out of memory",
+      "root_cause": "kotlin_out_of_memory",
+      "suggestion": "Optimize memory usage, use lazy initialization, weak references, or increase heap size for JVM applications",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "core",
+      "framework": ""
+    }
+  ]
+}

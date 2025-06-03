@@ -176,6 +176,7 @@ Homeostasis currently provides support for the following programming languages:
 - **Elixir/Erlang**: Support for Elixir errors, Phoenix Framework, Ecto database errors, and OTP supervision tree issues
 - **Clojure**: Support for Clojure JVM errors, functional programming patterns, Ring/Compojure frameworks, and core.async concurrency issues
 - **Swift**: Support for iOS, macOS, watchOS, and tvOS applications with UIKit and SwiftUI frameworks, Core Data persistence, memory management, concurrency, and Swift Package Manager
+- **Kotlin**: Support for Android, JVM, JavaScript, and Native platforms with null safety validation, coroutine management, Android lifecycle handling, Jetpack Compose UI framework, Room database persistence, and multiplatform development
 
 For more information about language integrations, see:
 - [Python Integration](docs/python_integration.md)
@@ -198,6 +199,7 @@ For more information about language integrations, see:
 - [Elixir/Erlang Integration](docs/elixir_integration.md)
 - [Clojure Integration](docs/clojure_integration.md)
 - [Swift Integration](docs/swift_integration.md)
+- [Kotlin Integration](docs/kotlin_integration.md)
 
 ## Project Status
 
@@ -233,6 +235,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Web Components Support**: Added Web Components standards support with Custom Elements API error handling, Shadow DOM manipulation fixes, HTML template optimization, framework interoperability solutions, and specialized templates for Lit and Stencil components
 - **CSS Framework Integration**: Added CSS framework integration with Tailwind CSS optimization and error detection, CSS-in-JS library healing (Styled Components, Emotion), CSS Module and SASS/LESS issue resolution, CSS Grid and Flexbox layout debugging, animation and transition error handling, and framework-specific fix templates
 - **Swift Integration**: Added full Swift language support for iOS, macOS, watchOS, and tvOS platforms with force unwrapping detection, array bounds checking, main thread violation fixes, SwiftUI state management, Core Data threading safety, async/await concurrency support, memory management error detection, and Swift Package Manager dependency analysis
+- **Kotlin Integration**: Added complete Kotlin language support for Android, JVM, JavaScript, and Native platforms with null safety error detection, coroutine cancellation handling, Android lifecycle issue resolution, Jetpack Compose state management, Room database threading fixes, multiplatform dependency resolution, and Kotlin-specific framework integration
 - **Backend Testing Integration**: Implemented unified testing framework for validating error detection, analysis, and healing across multiple programming languages with cross-language capabilities
 - **Production Readiness**: Enhanced security model with RBAC, implemented approval workflows for critical changes, added rate limiting/throttling for healing actions, and developed thorough audit logging
 - **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities

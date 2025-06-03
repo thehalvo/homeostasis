@@ -1,0 +1,27 @@
+// Kotlin coroutine cancellation handling
+// Original issue: ${ERROR_MESSAGE}
+
+try {
+    // Coroutine work that might be cancelled
+    ${CODE_SNIPPET}
+} catch (e: CancellationException) {
+    // Clean up resources if needed
+    // Log cancellation if necessary
+    println("Coroutine was cancelled: ${e.message}")
+    
+    // Important: Re-throw CancellationException to maintain structured concurrency
+    throw e
+} catch (e: Exception) {
+    // Handle other exceptions
+    println("Error in coroutine: ${e.message}")
+    throw e
+}
+
+// Alternative: Check if coroutine is still active before expensive operations
+if (coroutineContext.isActive) {
+    // Continue work only if not cancelled
+    ${CODE_SNIPPET}
+} else {
+    // Coroutine was cancelled, cleanup and exit
+    return
+}

@@ -1,0 +1,42 @@
+// Android Fragment attachment check fix
+// Original issue: ${ERROR_MESSAGE}
+
+class ${FRAGMENT_NAME} : Fragment() {
+    
+    override fun ${METHOD_NAME}() {
+        // Option 1: Check if fragment is added before accessing context
+        if (isAdded && context != null) {
+            // Safe to use context here
+            val ctx = requireContext()
+            // Use ctx safely
+        }
+        
+        // Option 2: Use safe context access
+        context?.let { ctx ->
+            // Fragment is attached, use context safely
+        }
+        
+        // Option 3: Use activity safely
+        activity?.let { act ->
+            // Fragment is attached to activity
+        }
+        
+        // Option 4: For view access, check if view is not null
+        view?.let { v ->
+            // Safe to access view
+            val button = v.findViewById<Button>(R.id.button)
+        }
+    }
+    
+    // Safe way to get context in fragments
+    private fun getSafeContext(): Context? {
+        return if (isAdded) context else null
+    }
+    
+    // Safe way to show toast or dialog
+    private fun showSafeToast(message: String) {
+        getSafeContext()?.let { ctx ->
+            Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+}

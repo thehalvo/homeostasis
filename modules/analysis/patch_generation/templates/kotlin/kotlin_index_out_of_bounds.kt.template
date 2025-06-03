@@ -1,0 +1,33 @@
+// Kotlin collection bounds checking fix
+// Original issue: ${ERROR_MESSAGE}
+
+// Option 1: Check bounds before access
+if (${INDEX_VAR} >= 0 && ${INDEX_VAR} < ${COLLECTION_VAR}.size) {
+    val item = ${COLLECTION_VAR}[${INDEX_VAR}]
+    // Use item safely
+} else {
+    // Handle invalid index
+    println("Index ${INDEX_VAR} is out of bounds for collection of size ${${COLLECTION_VAR}.size}")
+}
+
+// Option 2: Use getOrNull for safe access
+val item = ${COLLECTION_VAR}.getOrNull(${INDEX_VAR})
+item?.let { safeItem ->
+    // Use safeItem only if index was valid
+}
+
+// Option 3: Use getOrElse with default
+val item = ${COLLECTION_VAR}.getOrElse(${INDEX_VAR}) { 
+    ${DEFAULT_VALUE} // Provide default value
+}
+
+// Option 4: Use indices property for iteration
+for (index in ${COLLECTION_VAR}.indices) {
+    val item = ${COLLECTION_VAR}[index] // Always safe
+    // Process item
+}
+
+// Option 5: Safe iteration with forEachIndexed
+${COLLECTION_VAR}.forEachIndexed { index, item ->
+    // Both index and item are guaranteed to be valid
+}

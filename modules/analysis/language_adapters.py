@@ -2031,6 +2031,8 @@ class ErrorAdapterFactory:
             return CSharpErrorAdapter()
         elif language == "php":
             return PHPErrorAdapter()
+        elif language == "kotlin":
+            return KotlinErrorAdapter()
         else:
             raise ValueError(f"No adapter available for language: {language}")
     
@@ -2071,6 +2073,15 @@ class ErrorAdapterFactory:
             for frame in error_data["backtrace"][:10] if isinstance(frame, dict)
         ):
             return "php"
+        elif "kotlin_version" in error_data or "android" in error_data or (
+            "error_type" in error_data and "KotlinNullPointerException" in error_data["error_type"]
+        ) or (
+            "stack_trace" in error_data and isinstance(error_data["stack_trace"], (str, list)) and 
+            any((".kt:" in str(frame) or "kotlinx.coroutines" in str(frame) or "kotlin." in str(frame)) 
+                for frame in (error_data["stack_trace"] if isinstance(error_data["stack_trace"], list) 
+                            else [error_data["stack_trace"]]))
+        ):
+            return "kotlin"
             
         # Try to detect from stack trace format
         if "stack_trace" in error_data and isinstance(error_data["stack_trace"], str):
@@ -2079,6 +2090,8 @@ class ErrorAdapterFactory:
                 return "go"
             elif "at " in stack and ".java:" in stack:
                 return "java"
+            elif "at " in stack and ".kt:" in stack:
+                return "kotlin"
             elif "at " in stack and (re.search(r'\.cs:line \d+', stack) or "System." in stack):
                 return "csharp"
                 
@@ -2088,6 +2101,8 @@ class ErrorAdapterFactory:
                 return "javascript"
             elif "at " in stack and ".java:" in stack:
                 return "java"
+            elif "at " in stack and ".kt:" in stack:
+                return "kotlin"
             elif "goroutine " in stack and ".go:" in stack:
                 return "go"
             elif "at " in stack and (re.search(r'\.cs:line \d+', stack) or "System." in stack):
@@ -4318,6 +4333,357 @@ class SwiftErrorAdapter(LanguageAdapter):
                 
                 # Format like Swift stack trace
                 frames.append(f"{i}\t{filename}\t{function} + {line_num}")
+            
+            return frames
+        
+        # Fallback: convert to strings
+        return [str(frame) for frame in stack_trace]
+
+
+class KotlinErrorAdapter(LanguageAdapter):
+    """Adapter for Kotlin errors."""
+    
+    def to_standard_format(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert Kotlin error data to the standard format.
+        
+        Args:
+            error_data: Kotlin error data
+            
+        Returns:
+            Error data in the standard format
+        """
+        # Base error structure
+        standard_error = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "timestamp": error_data.get("timestamp", datetime.utcnow().isoformat()),
+            "language": "kotlin",
+            "error_type": error_data.get("error_type", error_data.get("type", "Exception")),
+            "message": error_data.get("message", ""),
+            "severity": error_data.get("severity", "error"),
+            "handled": error_data.get("handled", False)
+        }
+        
+        # Extract file and line information
+        if "file" in error_data and "line" in error_data:
+            standard_error["file"] = error_data["file"]
+            standard_error["line"] = error_data["line"]
+        elif "location" in error_data:
+            # Parse location like "MainActivity.kt:42"
+            location = error_data["location"]
+            if ":" in location:
+                file_part, line_part = location.rsplit(":", 1)
+                try:
+                    standard_error["file"] = file_part
+                    standard_error["line"] = int(line_part)
+                except ValueError:
+                    standard_error["file"] = location
+                    standard_error["line"] = 0
+            else:
+                standard_error["file"] = location
+                standard_error["line"] = 0
+        
+        # Extract function/method information
+        if "function" in error_data:
+            standard_error["function"] = error_data["function"]
+        elif "method" in error_data:
+            standard_error["function"] = error_data["method"]
+        
+        # Extract stack trace
+        if "stack_trace" in error_data:
+            if isinstance(error_data["stack_trace"], str):
+                # Parse string stack trace
+                standard_error["stack_trace"] = self._parse_kotlin_stack_trace(error_data["stack_trace"])
+            elif isinstance(error_data["stack_trace"], list):
+                if error_data["stack_trace"] and isinstance(error_data["stack_trace"][0], dict):
+                    # Structured stack trace
+                    standard_error["stack_trace"] = error_data["stack_trace"]
+                else:
+                    # List of strings
+                    standard_error["stack_trace"] = error_data["stack_trace"]
+        elif "stackTrace" in error_data:
+            # Handle camelCase variant
+            if isinstance(error_data["stackTrace"], str):
+                standard_error["stack_trace"] = self._parse_kotlin_stack_trace(error_data["stackTrace"])
+            else:
+                standard_error["stack_trace"] = error_data["stackTrace"]
+        
+        # Add framework information if available
+        if "framework" in error_data:
+            standard_error["framework"] = error_data["framework"]
+            
+            if "framework_version" in error_data:
+                standard_error["framework_version"] = error_data["framework_version"]
+        
+        # Add Android-specific information
+        if "android" in error_data:
+            android_info = error_data["android"]
+            standard_error["android"] = android_info
+            
+            # Extract API level
+            if "api_level" in android_info:
+                standard_error["android_api_level"] = android_info["api_level"]
+            
+            # Extract device info
+            if "device" in android_info:
+                standard_error["device"] = android_info["device"]
+        
+        # Add request information if available (for server-side Kotlin)
+        if "request" in error_data:
+            standard_error["request"] = error_data["request"]
+        
+        # Add any additional context
+        if "context" in error_data:
+            standard_error["context"] = error_data["context"]
+        
+        # Add severity mapping from Android log levels
+        if "level" in error_data:
+            level_map = {
+                "verbose": "debug",
+                "debug": "debug", 
+                "info": "info",
+                "warn": "warning",
+                "error": "error",
+                "assert": "critical"
+            }
+            standard_error["severity"] = level_map.get(error_data["level"].lower(), "error")
+        
+        # Add runtime information
+        if "kotlin_version" in error_data:
+            standard_error["runtime"] = "Kotlin"
+            standard_error["runtime_version"] = error_data["kotlin_version"]
+        elif "jvm" in error_data:
+            standard_error["runtime"] = "JVM"
+            standard_error["runtime_version"] = error_data["jvm"]
+        
+        # Add coroutine information if available
+        if "coroutine" in error_data:
+            standard_error["coroutine"] = error_data["coroutine"]
+        
+        # Add thread information
+        if "thread" in error_data:
+            standard_error["thread"] = error_data["thread"]
+        elif "thread_name" in error_data:
+            standard_error["thread"] = error_data["thread_name"]
+        
+        # Add additional Kotlin-specific data
+        kotlin_specific = {}
+        for key, value in error_data.items():
+            if key not in standard_error and key not in ["stack_trace", "stackTrace", "request", "context", "android"]:
+                kotlin_specific[key] = value
+        
+        if kotlin_specific:
+            standard_error["kotlin_specific"] = kotlin_specific
+        
+        return standard_error
+    
+    def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data to Kotlin format.
+        
+        Args:
+            standard_error: Error data in the standard format
+            
+        Returns:
+            Error data in the Kotlin format
+        """
+        # Base Kotlin error structure
+        kotlin_error = {
+            "id": standard_error.get("id"),
+            "timestamp": standard_error.get("timestamp"),
+            "type": standard_error.get("error_type", "Exception"),
+            "message": standard_error.get("message", ""),
+            "severity": standard_error.get("severity", "error"),
+            "handled": standard_error.get("handled", False)
+        }
+        
+        # Add location information
+        if "file" in standard_error and "line" in standard_error:
+            kotlin_error["location"] = f"{standard_error['file']}:{standard_error['line']}"
+        elif "file" in standard_error:
+            kotlin_error["location"] = standard_error["file"]
+        
+        # Add function information
+        if "function" in standard_error:
+            kotlin_error["function"] = standard_error["function"]
+        
+        # Convert stack trace to Kotlin format
+        if "stack_trace" in standard_error:
+            kotlin_error["stackTrace"] = self._format_kotlin_stack_trace(standard_error["stack_trace"])
+        
+        # Add framework information
+        if "framework" in standard_error:
+            kotlin_error["framework"] = standard_error["framework"]
+            
+            if "framework_version" in standard_error:
+                kotlin_error["framework_version"] = standard_error["framework_version"]
+        
+        # Add Android-specific information
+        if "android" in standard_error:
+            kotlin_error["android"] = standard_error["android"]
+        elif "android_api_level" in standard_error or "device" in standard_error:
+            android_info = {}
+            if "android_api_level" in standard_error:
+                android_info["api_level"] = standard_error["android_api_level"]
+            if "device" in standard_error:
+                android_info["device"] = standard_error["device"]
+            kotlin_error["android"] = android_info
+        
+        # Add request information
+        if "request" in standard_error:
+            kotlin_error["request"] = standard_error["request"]
+        
+        # Add context
+        if "context" in standard_error:
+            kotlin_error["context"] = standard_error["context"]
+        
+        # Add runtime information
+        if "runtime" in standard_error and standard_error["runtime"] == "Kotlin":
+            if "runtime_version" in standard_error:
+                kotlin_error["kotlin_version"] = standard_error["runtime_version"]
+        elif "runtime" in standard_error and standard_error["runtime"] == "JVM":
+            if "runtime_version" in standard_error:
+                kotlin_error["jvm"] = standard_error["runtime_version"]
+        
+        # Add coroutine information
+        if "coroutine" in standard_error:
+            kotlin_error["coroutine"] = standard_error["coroutine"]
+        
+        # Add thread information
+        if "thread" in standard_error:
+            kotlin_error["thread"] = standard_error["thread"]
+        
+        # Add Kotlin-specific data
+        if "kotlin_specific" in standard_error:
+            kotlin_error.update(standard_error["kotlin_specific"])
+        
+        return kotlin_error
+    
+    def _parse_kotlin_stack_trace(self, stack_trace_str: str) -> List[Dict[str, Any]]:
+        """
+        Parse Kotlin stack trace string into structured format.
+        
+        Args:
+            stack_trace_str: Stack trace as string
+            
+        Returns:
+            List of structured stack frames
+        """
+        if not stack_trace_str:
+            return []
+        
+        frames = []
+        lines = stack_trace_str.strip().split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith("Caused by:"):
+                continue
+            
+            # Match Kotlin/Java stack trace format:
+            # at com.example.MainActivity.onCreate(MainActivity.kt:42)
+            # at kotlinx.coroutines.CoroutineExceptionHandler.handleException(...)
+            match = re.match(r'\s*at\s+([^(]+)\(([^:)]+)(?::(\d+))?\)', line)
+            
+            if match:
+                full_method = match.group(1)
+                file_name = match.group(2)
+                line_number = int(match.group(3)) if match.group(3) else 0
+                
+                # Split package.class.method
+                if '.' in full_method:
+                    parts = full_method.rsplit('.', 2)
+                    if len(parts) >= 2:
+                        package_class = '.'.join(parts[:-1])
+                        method = parts[-1]
+                        
+                        # Try to separate package and class
+                        if '.' in package_class:
+                            package_parts = package_class.split('.')
+                            # Assume class name starts with uppercase
+                            for i in range(len(package_parts) - 1, -1, -1):
+                                if package_parts[i] and package_parts[i][0].isupper():
+                                    package = '.'.join(package_parts[:i])
+                                    class_name = '.'.join(package_parts[i:])
+                                    break
+                            else:
+                                package = '.'.join(package_parts[:-1])
+                                class_name = package_parts[-1]
+                        else:
+                            package = ""
+                            class_name = package_class
+                    else:
+                        package = ""
+                        class_name = ""
+                        method = full_method
+                else:
+                    package = ""
+                    class_name = ""
+                    method = full_method
+                
+                frame = {
+                    "function": method,
+                    "class": class_name,
+                    "package": package,
+                    "file": file_name,
+                    "line": line_number,
+                    "raw": line
+                }
+                frames.append(frame)
+            else:
+                # If we can't parse it, keep the raw line
+                frames.append({"raw": line})
+        
+        return frames
+    
+    def _format_kotlin_stack_trace(self, stack_trace: List[Union[str, Dict[str, Any]]]) -> List[str]:
+        """
+        Format stack trace for Kotlin format output.
+        
+        Args:
+            stack_trace: List of stack frames (strings or dicts)
+            
+        Returns:
+            List of formatted stack trace strings
+        """
+        if not stack_trace:
+            return []
+        
+        if not isinstance(stack_trace, list):
+            return []
+        
+        # If it's already a list of strings, return as-is
+        if all(isinstance(frame, str) for frame in stack_trace):
+            return stack_trace
+        
+        # Convert structured frames to Kotlin format
+        if all(isinstance(frame, dict) for frame in stack_trace):
+            frames = []
+            for frame in stack_trace:
+                if "raw" in frame:
+                    frames.append(frame["raw"])
+                else:
+                    # Reconstruct stack trace line
+                    package = frame.get("package", "")
+                    class_name = frame.get("class", "")
+                    function = frame.get("function", "unknown")
+                    file_name = frame.get("file", "unknown")
+                    line_num = frame.get("line", 0)
+                    
+                    # Build full method name
+                    method_parts = []
+                    if package:
+                        method_parts.append(package)
+                    if class_name:
+                        method_parts.append(class_name)
+                    method_parts.append(function)
+                    
+                    full_method = '.'.join(method_parts)
+                    
+                    if line_num > 0:
+                        frames.append(f"at {full_method}({file_name}:{line_num})")
+                    else:
+                        frames.append(f"at {full_method}({file_name})")
             
             return frames
         
