@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-![Homeostasis Header](header.png)
+<img src="header.png" alt="Homeostasis Header" width="600">
 
 ## Vision
 
