@@ -167,6 +167,11 @@ Homeostasis currently provides support for the following programming languages:
 - **Clojure**: Support for Clojure JVM errors, functional programming patterns, Ring/Compojure frameworks, and core.async concurrency issues
 - **Swift**: Support for iOS, macOS, watchOS, and tvOS applications with UIKit and SwiftUI frameworks, Core Data persistence, memory management, concurrency, and Swift Package Manager
 - **Kotlin**: Support for Android, JVM, JavaScript, and Native platforms with null safety validation, coroutine management, Android lifecycle handling, Jetpack Compose UI framework, Room database persistence, and multiplatform development
+- **React Native**: Support for React Native mobile applications with Metro bundler error resolution, native module integration, iOS/Android build issues, bridge communication, and platform-specific deployment
+- **Flutter**: Support for Flutter cross-platform applications with Dart language error handling, widget lifecycle management, layout overflow resolution, state management, and mobile/web/desktop deployment
+- **Xamarin**: Support for Xamarin.Forms, Xamarin.iOS, and Xamarin.Android applications with MVVM pattern validation, DependencyService integration, custom renderer handling, and platform binding resolution
+- **Unity**: Support for Unity game development with C# scripting error detection, GameObject/Component lifecycle management, mobile build configuration, Unity UI handling, and performance optimization
+- **Capacitor/Cordova**: Support for hybrid mobile applications with plugin integration, native bridge communication, WebView configuration, Content Security Policy handling, and cross-platform deployment
 
 For more information about language integrations, see:
 - [Python Integration](docs/python_integration.md)
@@ -190,6 +195,11 @@ For more information about language integrations, see:
 - [Clojure Integration](docs/clojure_integration.md)
 - [Swift Integration](docs/swift_integration.md)
 - [Kotlin Integration](docs/kotlin_integration.md)
+- [React Native Integration](docs/react_native_integration.md)
+- [Flutter Integration](docs/flutter_integration.md)
+- [Xamarin Integration](docs/xamarin_integration.md)
+- [Unity Integration](docs/unity_integration.md)
+- [Capacitor/Cordova Integration](docs/capacitor_cordova_integration.md)
 
 ## Project Status
 
@@ -206,7 +216,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Python Ecosystem**: Added support for Python 3.11+ features, Celery tasks, asyncio-specific error detection, NumPy/Pandas error handling, and AI/ML library error detection
 - **Multi-Language Support**: Implemented language-agnostic error schema with support for JavaScript/Node.js and Java through a pluggable adapter architecture
 - **JavaScript Core Support**: Expanded JavaScript language plugin with browser and Node.js error handling, dependency analysis, transpilation error detection, and automated fix generation
-- **TypeScript Integration**: Added full TypeScript support with compilation error detection, type system error analysis, JSX/TSX handling, module resolution fixes, and framework integration for React, Angular, Vue, and Node.js
+- **TypeScript Integration**: Added TypeScript support with compilation error detection, type system error analysis, JSX/TSX handling, module resolution fixes, and framework integration for React, Angular, Vue, and Node.js
 - **Java Integration**: Added support for Java exceptions, Spring Framework, Hibernate/JPA, and Java concurrency issues, and Maven/Gradle build analysis
 - **Go Integration**: Added support for Go runtime errors, goroutine deadlock detection, web frameworks (Gin, Echo), and common concurrency patterns
 - **Ruby Integration**: Added support for Ruby exceptions, Rails ActiveRecord errors, Sinatra/Rack frameworks, and Ruby metaprogramming patterns
@@ -216,16 +226,17 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Scala Integration**: Added support for Scala-specific errors, functional programming patterns, Akka actor system, Play Framework, and SBT build errors with specialized fix templates
 - **Elixir/Erlang Integration**: Added support for Elixir errors, Phoenix web framework, Ecto database issues, and OTP/BEAM VM patterns with specialized fix templates for common failure patterns
 - **Clojure Integration**: Added support for Clojure JVM errors, functional programming patterns, Ring/Compojure web frameworks, core.async concurrency issues, and REPL-specific errors with Lisp-aware fix generation
-- **React Framework Support**: Added full React framework integration with component lifecycle error detection, hooks rule validation, state management healing (Redux, Context), performance optimization suggestions, server components support, and JSX error handling
-- **Vue Framework Support**: Added complete Vue.js framework integration with component and directive error handling, Vuex store issue detection, Composition API support, Vue Router navigation guard healing, Vue 3 features integration, and template syntax validation
-- **Angular Framework Support**: Added full Angular framework integration with dependency injection error handling, NgRx state management healing, template binding issue detection, module and lazy loading optimization, Angular Universal SSR error support, and specialized fix templates
-- **Svelte Framework Support**: Added complete Svelte framework integration with component reactivity error detection, SvelteKit routing and SSR healing, store management issue resolution, transition and animation debugging, compiler optimization support, two-way binding fixes, action and context API error handling, and slot composition error resolution
+- **React Framework Support**: Added React framework integration with component lifecycle error detection, hooks rule validation, state management healing (Redux, Context), performance optimization suggestions, server components support, and JSX error handling
+- **Vue Framework Support**: Added Vue.js framework integration with component and directive error handling, Vuex store issue detection, Composition API support, Vue Router navigation guard healing, Vue 3 features integration, and template syntax validation
+- **Angular Framework Support**: Added Angular framework integration with dependency injection error handling, NgRx state management healing, template binding issue detection, module and lazy loading optimization, Angular Universal SSR error support, and specialized fix templates
+- **Svelte Framework Support**: Added Svelte framework integration with component reactivity error detection, SvelteKit routing and SSR healing, store management issue resolution, transition and animation debugging, compiler optimization support, two-way binding fixes, action and context API error handling, and slot composition error resolution
 - **Next.js Framework Support**: Added Next.js framework integration with data fetching error detection (getServerSideProps, getStaticProps), API route issue handling, App Router and Pages Router support, image optimization fixes, middleware configuration, and deployment error resolution
 - **Ember.js Framework Support**: Added Ember.js framework integration with component and template error handling, Ember Data store issue detection, router and URL handling, Octane features support (tracked properties, modifiers), and Handlebars template validation with automatic fix generation
 - **Web Components Support**: Added Web Components standards support with Custom Elements API error handling, Shadow DOM manipulation fixes, HTML template optimization, framework interoperability solutions, and specialized templates for Lit and Stencil components
 - **CSS Framework Integration**: Added CSS framework integration with Tailwind CSS optimization and error detection, CSS-in-JS library healing (Styled Components, Emotion), CSS Module and SASS/LESS issue resolution, CSS Grid and Flexbox layout debugging, animation and transition error handling, and framework-specific fix templates
-- **Swift Integration**: Added full Swift language support for iOS, macOS, watchOS, and tvOS platforms with force unwrapping detection, array bounds checking, main thread violation fixes, SwiftUI state management, Core Data threading safety, async/await concurrency support, memory management error detection, and Swift Package Manager dependency analysis
-- **Kotlin Integration**: Added complete Kotlin language support for Android, JVM, JavaScript, and Native platforms with null safety error detection, coroutine cancellation handling, Android lifecycle issue resolution, Jetpack Compose state management, Room database threading fixes, multiplatform dependency resolution, and Kotlin-specific framework integration
+- **Swift Integration**: Added Swift language support for iOS, macOS, watchOS, and tvOS platforms with force unwrapping detection, array bounds checking, main thread violation fixes, SwiftUI state management, Core Data threading safety, async/await concurrency support, memory management error detection, and Swift Package Manager dependency analysis
+- **Kotlin Integration**: Added Kotlin language support for Android, JVM, JavaScript, and Native platforms with null safety error detection, coroutine cancellation handling, Android lifecycle issue resolution, Jetpack Compose state management, Room database threading fixes, multiplatform dependency resolution, and Kotlin-specific framework integration
+- **Cross-Platform Mobile Frameworks**: Implemented support for React Native (Metro bundler, native modules, iOS/Android builds), Flutter/Dart (widget errors, null safety, layout overflow), Xamarin (Forms binding, DependencyService, platform integration), Unity (scripting errors, mobile builds, GameObject management), and Capacitor/Cordova (plugin integration, native bridge, hybrid app issues) with specialized error detection, analysis, and automated fix generation
 - **Backend Testing Integration**: Implemented unified testing framework for validating error detection, analysis, and healing across multiple programming languages with cross-language capabilities
 - **Production Readiness**: Enhanced security model with RBAC, implemented approval workflows for critical changes, added rate limiting/throttling for healing actions, and developed thorough audit logging
 - **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities
