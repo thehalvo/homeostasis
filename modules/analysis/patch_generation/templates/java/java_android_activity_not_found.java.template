@@ -1,0 +1,21 @@
+// Fix for ActivityNotFoundException
+try {
+    Intent intent = new Intent(${INTENT_ACTION});
+    // Verify the intent can be handled
+    if (intent.resolveActivity(getPackageManager()) != null) {
+        startActivity(intent);
+    } else {
+        // Handle case where no activity can handle the intent
+        Log.w("${CLASS_NAME}", "No activity found to handle intent: " + intent.getAction());
+        // Show user-friendly message
+        Toast.makeText(this, "Required app not installed", Toast.LENGTH_SHORT).show();
+        
+        // Alternative: redirect to Play Store
+        // Intent playStoreIntent = new Intent(Intent.ACTION_VIEW, 
+        //     Uri.parse("market://details?id=" + TARGET_PACKAGE));
+        // startActivity(playStoreIntent);
+    }
+} catch (ActivityNotFoundException e) {
+    Log.e("${CLASS_NAME}", "Activity not found: " + e.getMessage());
+    // Provide fallback behavior
+}

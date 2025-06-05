@@ -1,0 +1,29 @@
+// Fix for fragment not attached error
+if (isAdded() && getActivity() != null) {
+    // Safe to access activity/context
+    ${FRAGMENT_OPERATION}
+} else {
+    Log.w("${CLASS_NAME}", "Fragment not attached to activity, skipping operation");
+    return; // or handle appropriately
+}
+
+// For context access, use safer patterns:
+Context context = getContext();
+if (context != null) {
+    // Use context safely
+    ${CONTEXT_OPERATION}
+}
+
+// Alternative: Store application context for long-lived operations
+/*
+// In onCreate() or onAttach():
+private Context appContext;
+
+@Override
+public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    appContext = context.getApplicationContext();
+}
+
+// Use appContext for operations that don't require activity context
+*/

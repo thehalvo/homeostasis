@@ -1,0 +1,40 @@
+// Fix for network operation on main thread
+ExecutorService executor = Executors.newSingleThreadExecutor();
+Handler mainHandler = new Handler(Looper.getMainLooper());
+
+executor.execute(() -> {
+    try {
+        // Perform network operation in background
+        ${NETWORK_OPERATION}
+        
+        // Update UI on main thread
+        mainHandler.post(() -> {
+            // UI updates here
+            ${UI_UPDATE_OPERATION}
+        });
+    } catch (Exception e) {
+        Log.e("${CLASS_NAME}", "Network operation failed: " + e.getMessage());
+        mainHandler.post(() -> {
+            // Handle error on main thread
+            ${ERROR_HANDLING}
+        });
+    }
+});
+
+// Modern alternative using AsyncTask (deprecated in API 30+):
+/*
+private class NetworkTask extends AsyncTask<Void, Void, String> {
+    @Override
+    protected String doInBackground(Void... voids) {
+        // Background network operation
+        return ${NETWORK_RESULT};
+    }
+    
+    @Override
+    protected void onPostExecute(String result) {
+        // Update UI on main thread
+        ${UI_UPDATE_OPERATION}
+    }
+}
+new NetworkTask().execute();
+*/

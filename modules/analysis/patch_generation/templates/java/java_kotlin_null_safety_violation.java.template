@@ -1,0 +1,36 @@
+// Fix for Java-Kotlin null safety violations
+// When calling Kotlin from Java:
+if (${KOTLIN_OBJECT} != null) {
+    // Safe to call Kotlin method
+    ${KOTLIN_METHOD_CALL}
+} else {
+    Log.w("${CLASS_NAME}", "Kotlin object is null, cannot perform operation");
+    // Handle null case appropriately
+    ${NULL_HANDLING}
+}
+
+// When calling Java from Kotlin, add proper annotations:
+/*
+// In Java class:
+@Nullable
+public String getSomeValue() {
+    return someValue;
+}
+
+@NonNull 
+public String getRequiredValue() {
+    return requiredValue;
+}
+
+// In Kotlin:
+val value: String? = javaObject.someValue  // Nullable
+val required: String = javaObject.requiredValue  // Non-null
+*/
+
+// Best practices for Java-Kotlin interop:
+/*
+1. Use @Nullable/@NonNull annotations in Java code
+2. Be careful with platform types in Kotlin
+3. Add explicit null checks when calling across languages
+4. Consider using Kotlin's safe call operator (?.) when appropriate
+*/

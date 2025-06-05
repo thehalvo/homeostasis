@@ -1,0 +1,38 @@
+// Fix for API level compatibility issues
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.${MIN_API_LEVEL}) {
+    // Use newer API method
+    ${NEW_API_OPERATION}
+} else {
+    // Use legacy method for older versions
+    ${LEGACY_API_OPERATION}
+}
+
+// Alternative using @TargetApi annotation:
+/*
+@TargetApi(${MIN_API_LEVEL})
+private void ${METHOD_NAME}New() {
+    ${NEW_API_OPERATION}
+}
+
+@SuppressWarnings("deprecation")
+private void ${METHOD_NAME}Legacy() {
+    ${LEGACY_API_OPERATION}
+}
+
+public void ${METHOD_NAME}() {
+    if (Build.VERSION.SDK_INT >= ${MIN_API_LEVEL}) {
+        ${METHOD_NAME}New();
+    } else {
+        ${METHOD_NAME}Legacy();
+    }
+}
+*/
+
+// Using AndroidX compatibility libraries (recommended):
+/*
+// Instead of direct API calls, use compat versions:
+// ContextCompat.checkSelfPermission()
+// ActivityCompat.requestPermissions()
+// ViewCompat.setBackgroundTintList()
+// NotificationCompat.Builder()
+*/

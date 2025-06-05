@@ -1,0 +1,39 @@
+// Fix for accessing Kotlin companion object from Java
+// Correct way to access companion object members:
+${RESULT_TYPE} result = ${KOTLIN_CLASS}.Companion.${METHOD_NAME}(${PARAMETERS});
+
+// Alternative: Use @JvmStatic annotation in Kotlin
+/*
+// In Kotlin class:
+class ${KOTLIN_CLASS} {
+    companion object {
+        @JvmStatic
+        fun ${METHOD_NAME}(${KOTLIN_PARAMETERS}): ${KOTLIN_RETURN_TYPE} {
+            // Implementation
+        }
+    }
+}
+
+// Then in Java, you can call directly:
+${RESULT_TYPE} result = ${KOTLIN_CLASS}.${METHOD_NAME}(${PARAMETERS});
+*/
+
+// For companion object properties:
+/*
+// Kotlin:
+class ${KOTLIN_CLASS} {
+    companion object {
+        @JvmStatic
+        val CONSTANT = "value"
+        
+        // Or for mutable:
+        @JvmStatic
+        var mutableProperty = "initial"
+    }
+}
+
+// Java access:
+String value = ${KOTLIN_CLASS}.CONSTANT;
+String mutable = ${KOTLIN_CLASS}.getMutableProperty();
+${KOTLIN_CLASS}.setMutableProperty("new value");
+*/

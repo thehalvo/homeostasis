@@ -1,0 +1,29 @@
+// Fix for RecyclerView with no adapter set
+// Set adapter and layout manager for RecyclerView
+${RECYCLERVIEW_VARIABLE}.setLayoutManager(new LinearLayoutManager(this));
+${RECYCLERVIEW_VARIABLE}.setAdapter(${ADAPTER_VARIABLE});
+
+// Alternative: Check if adapter is set before operations
+if (${RECYCLERVIEW_VARIABLE}.getAdapter() != null) {
+    // Safe to perform operations
+    ${RECYCLERVIEW_OPERATION}
+} else {
+    Log.w("${CLASS_NAME}", "RecyclerView adapter not set");
+    // Initialize adapter first
+    ${ADAPTER_VARIABLE} = new ${ADAPTER_CLASS}(${ADAPTER_DATA});
+    ${RECYCLERVIEW_VARIABLE}.setAdapter(${ADAPTER_VARIABLE});
+}
+
+// Modern RecyclerView setup pattern:
+/*
+// In onCreate() or fragment setup:
+RecyclerView recyclerView = findViewById(R.id.${RECYCLERVIEW_ID});
+${ADAPTER_CLASS} adapter = new ${ADAPTER_CLASS}(${ADAPTER_DATA});
+
+recyclerView.setLayoutManager(new LinearLayoutManager(this));
+recyclerView.setAdapter(adapter);
+
+// Optional: Add item decoration and animations
+recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+recyclerView.setItemAnimator(new DefaultItemAnimator());
+*/

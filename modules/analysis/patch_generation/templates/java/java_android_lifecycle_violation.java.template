@@ -1,0 +1,20 @@
+// Fix for Activity lifecycle state violation
+if (!isFinishing() && !isDestroyed()) {
+    // Safe to perform activity operations
+    ${ORIGINAL_OPERATION}
+} else {
+    Log.w("${CLASS_NAME}", "Activity is finishing or destroyed, skipping operation");
+    return; // or handle appropriately
+}
+
+// Alternative approach using lifecycle-aware components
+// Consider moving logic to ViewModel or using lifecycle observers:
+/*
+getLifecycle().addObserver(new LifecycleObserver() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public void onResume() {
+        // Perform operation when activity is in valid state
+        ${ORIGINAL_OPERATION}
+    }
+});
+*/

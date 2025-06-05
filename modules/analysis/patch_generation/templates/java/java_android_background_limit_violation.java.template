@@ -1,0 +1,64 @@
+// Fix for background execution limits (API 26+)
+// Option 1: Use Foreground Service for long-running tasks
+private void startForegroundService() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        // Create notification channel first
+        createNotificationChannel();
+        
+        // Create foreground service
+        Intent serviceIntent = new Intent(this, ${SERVICE_CLASS}.class);
+        startForegroundService(serviceIntent);
+    } else {
+        // For older APIs, use regular service
+        Intent serviceIntent = new Intent(this, ${SERVICE_CLASS}.class);
+        startService(serviceIntent);
+    }
+}
+
+// Option 2: Use WorkManager for deferred background work
+private void scheduleBackgroundWork() {
+    Constraints constraints = new Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .setRequiresBatteryNotLow(true)
+            .build();
+
+    OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(${WORK_CLASS}.class)
+            .setConstraints(constraints)
+            .build();
+
+    WorkManager.getInstance(this).enqueue(workRequest);
+}
+
+// Option 3: Use JobScheduler for system-managed scheduling
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+private void scheduleJob() {
+    JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+    
+    JobInfo jobInfo = new JobInfo.Builder(${JOB_ID}, new ComponentName(this, ${JOB_SERVICE_CLASS}.class))
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+            .setRequiresCharging(false)
+            .setRequiresDeviceIdle(false)
+            .build();
+    
+    int result = jobScheduler.schedule(jobInfo);
+    if (result == JobScheduler.RESULT_SUCCESS) {
+        Log.d("${CLASS_NAME}", "Job scheduled successfully");
+    } else {
+        Log.e("${CLASS_NAME}", "Job scheduling failed");
+    }
+}
+
+// Required: Create notification channel for foreground service
+private void createNotificationChannel() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        NotificationChannel channel = new NotificationChannel(
+                "${CHANNEL_ID}",
+                "${CHANNEL_NAME}",
+                NotificationManager.IMPORTANCE_LOW
+        );
+        channel.setDescription("${CHANNEL_DESCRIPTION}");
+        
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+}

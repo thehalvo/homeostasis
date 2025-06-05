@@ -1,0 +1,63 @@
+// Fix for deprecated AsyncTask usage
+// Replace AsyncTask with ExecutorService and Handler
+private ExecutorService executor = Executors.newSingleThreadExecutor();
+private Handler mainHandler = new Handler(Looper.getMainLooper());
+
+public void ${OPERATION_NAME}() {
+    // Show loading indicator on main thread
+    ${SHOW_LOADING}
+    
+    executor.execute(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                // Background work (replaces doInBackground)
+                ${BACKGROUND_OPERATION}
+                
+                // Update UI on main thread (replaces onPostExecute)
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ${UI_UPDATE_OPERATION}
+                        ${HIDE_LOADING}
+                    }
+                });
+            } catch (Exception e) {
+                // Handle error on main thread
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ${ERROR_HANDLING}
+                        ${HIDE_LOADING}
+                    }
+                });
+            }
+        }
+    });
+}
+
+// Modern alternative with CompletableFuture (API 24+):
+/*
+CompletableFuture.supplyAsync(() -> {
+    // Background operation
+    return ${BACKGROUND_RESULT};
+}).thenAcceptAsync(result -> {
+    // UI update on main thread
+    ${UI_UPDATE_OPERATION}
+}, ContextCompat.getMainExecutor(this)).exceptionally(throwable -> {
+    // Error handling on main thread
+    ${ERROR_HANDLING}
+    return null;
+});
+*/
+
+// Don't forget to cleanup in onDestroy():
+/*
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    if (executor != null && !executor.isShutdown()) {
+        executor.shutdown();
+    }
+}
+*/

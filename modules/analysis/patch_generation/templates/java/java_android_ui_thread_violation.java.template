@@ -1,0 +1,26 @@
+// Fix for UI operation from background thread
+runOnUiThread(new Runnable() {
+    @Override
+    public void run() {
+        // Safe UI operations on main thread
+        ${UI_OPERATION}
+    }
+});
+
+// Alternative using Handler:
+/*
+Handler mainHandler = new Handler(Looper.getMainLooper());
+mainHandler.post(new Runnable() {
+    @Override
+    public void run() {
+        ${UI_OPERATION}
+    }
+});
+*/
+
+// Alternative using lambda (API 24+):
+/*
+runOnUiThread(() -> {
+    ${UI_OPERATION}
+});
+*/

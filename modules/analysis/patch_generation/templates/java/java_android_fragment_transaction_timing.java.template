@@ -1,0 +1,28 @@
+// Fix for fragment transaction after onSaveInstanceState
+if (!isStateSaved()) {
+    // Safe to commit transaction
+    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    ${FRAGMENT_TRANSACTION_OPERATIONS}
+    transaction.commit();
+} else {
+    // Use commitAllowingStateLoss if state loss is acceptable
+    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    ${FRAGMENT_TRANSACTION_OPERATIONS}
+    transaction.commitAllowingStateLoss();
+    
+    Log.w("${CLASS_NAME}", "Fragment transaction committed with potential state loss");
+}
+
+// Alternative: Queue transaction for later execution
+/*
+if (isStateSaved()) {
+    // Schedule transaction for next frame
+    new Handler(Looper.getMainLooper()).post(() -> {
+        if (!isStateSaved() && !isFinishing()) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            ${FRAGMENT_TRANSACTION_OPERATIONS}
+            transaction.commit();
+        }
+    });
+}
+*/

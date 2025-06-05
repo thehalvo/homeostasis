@@ -1,0 +1,33 @@
+// Fix for BadTokenException when showing dialogs
+if (!isFinishing() && !isDestroyed()) {
+    try {
+        // Safe to show dialog
+        ${DIALOG_OPERATION}
+    } catch (WindowManager.BadTokenException e) {
+        Log.e("${CLASS_NAME}", "BadTokenException caught: " + e.getMessage());
+        // Handle gracefully - activity may have been destroyed
+    }
+} else {
+    Log.w("${CLASS_NAME}", "Activity finishing/destroyed, cannot show dialog");
+}
+
+// Alternative: Use DialogFragment for better lifecycle management
+/*
+public class ${DIALOG_NAME}Fragment extends DialogFragment {
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("${DIALOG_TITLE}")
+               .setMessage("${DIALOG_MESSAGE}")
+               .setPositiveButton("OK", null);
+        return builder.create();
+    }
+}
+
+// Show dialog fragment safely:
+if (!isFinishing() && !getSupportFragmentManager().isStateSaved()) {
+    ${DIALOG_NAME}Fragment dialog = new ${DIALOG_NAME}Fragment();
+    dialog.show(getSupportFragmentManager(), "${DIALOG_TAG}");
+}
+*/

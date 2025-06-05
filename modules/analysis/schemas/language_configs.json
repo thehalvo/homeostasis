@@ -65,7 +65,17 @@
     "detection_patterns": [
       "(?:java\\.\\w+\\.\\w+Exception:)",
       "(?:at [\\w\\.$]+\\([^)]+\\.java:\\d+\\))",
-      "(?:Caused by:)"
+      "(?:Caused by:)",
+      "(?:android\\.\\w+\\.\\w+Exception:)",
+      "(?:at android\\.[\\w\\.$]+\\([^)]+\\))",
+      "(?:ActivityNotFoundException)",
+      "(?:NetworkOnMainThreadException)",
+      "(?:CalledFromWrongThreadException)",
+      "(?:Fragment.*not attached)",
+      "(?:BadTokenException)",
+      "(?:Permission.*denied)",
+      "(?:kotlinx?\\.)",
+      "(?:KotlinNullPointerException)"
     ],
     "severity_mappings": {
       "debug": "fine",
@@ -74,6 +84,38 @@
       "error": "severe",
       "critical": "severe",
       "fatal": "severe"
+    },
+    "platform_detection": {
+      "android": ["android", "androidx", "Activity", "Fragment", "Service"],
+      "jvm": ["java", "jvm", "javax"],
+      "kotlin_interop": ["kotlin", "KotlinNullPointerException", "Companion"]
+    },
+    "frameworks": [
+      "spring", "jakarta", "hibernate", "android", "kotlin-interop", "base"
+    ],
+    "android_patterns": {
+      "lifecycle_rules": {
+        "check_activity_state": true,
+        "handle_fragment_detachment": true,
+        "proper_service_lifecycle": true,
+        "background_execution_limits": true
+      },
+      "threading_rules": {
+        "ui_thread_operations": true,
+        "background_network_operations": true,
+        "avoid_blocking_main_thread": true
+      },
+      "permission_rules": {
+        "runtime_permission_requests": true,
+        "manifest_declarations": true,
+        "permission_result_handling": true
+      },
+      "interop_rules": {
+        "kotlin_null_safety": true,
+        "companion_object_access": true,
+        "data_class_usage": true,
+        "suspend_function_handling": true
+      }
     }
   },
   "go": {

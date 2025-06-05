@@ -273,6 +273,7 @@ class JavaExceptionHandler:
         # Framework-specific rules
         all_rules.extend(self._load_spring_rules())
         all_rules.extend(self._load_hibernate_rules())
+        all_rules.extend(self._load_android_rules())
         # all_rules.extend(self._load_jakarta_rules())
         
         return all_rules
@@ -827,6 +828,27 @@ class JavaExceptionHandler:
                 "framework": "spring"
             }
         ]
+    
+    def _load_hibernate_rules(self) -> List[Dict[str, Any]]:
+        """Load rules for Hibernate and JPA exceptions."""
+        # Placeholder method - can be extended later with Hibernate-specific rules
+        return []
+    
+    def _load_android_rules(self) -> List[Dict[str, Any]]:
+        """Load rules for Android platform exceptions."""
+        rules_file = Path(__file__).parent.parent / "rules" / "java" / "android_errors.json"
+        
+        if rules_file.exists():
+            try:
+                with open(rules_file, 'r') as f:
+                    data = json.load(f)
+                    return data.get("rules", [])
+            except Exception as e:
+                logger.error(f"Error loading Android rules from {rules_file}: {e}")
+        
+        # Fallback to empty list if file doesn't exist or can't be loaded
+        logger.warning(f"Android rules file not found at {rules_file}")
+        return []
 
 
 class JavaPatchGenerator:

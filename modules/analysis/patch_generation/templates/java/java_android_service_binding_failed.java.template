@@ -1,0 +1,50 @@
+// Fix for service binding failure
+private ServiceConnection serviceConnection = new ServiceConnection() {
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        // Service connected successfully
+        ${SERVICE_CONNECTION_CALLBACK}
+        Log.d("${CLASS_NAME}", "Service connected: " + name.getClassName());
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        // Service disconnected
+        ${SERVICE_DISCONNECTION_CALLBACK}
+        Log.d("${CLASS_NAME}", "Service disconnected: " + name.getClassName());
+    }
+};
+
+public void bindToService() {
+    Intent serviceIntent = new Intent(this, ${SERVICE_CLASS}.class);
+    // Use explicit intent for better security and reliability
+    serviceIntent.setComponent(new ComponentName(getPackageName(), "${SERVICE_PACKAGE}.${SERVICE_CLASS}"));
+    
+    boolean bound = bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+    if (!bound) {
+        Log.e("${CLASS_NAME}", "Failed to bind to service: " + ${SERVICE_CLASS}.class.getSimpleName());
+        // Handle binding failure
+        ${BINDING_FAILURE_HANDLING}
+    }
+}
+
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    // Always unbind to prevent memory leaks
+    try {
+        unbindService(serviceConnection);
+    } catch (IllegalArgumentException e) {
+        // Service was not bound
+        Log.w("${CLASS_NAME}", "Service was not bound when trying to unbind");
+    }
+}
+
+// Alternative: Check if service is available before binding
+/*
+private boolean isServiceAvailable() {
+    Intent serviceIntent = new Intent(this, ${SERVICE_CLASS}.class);
+    List<ResolveInfo> services = getPackageManager().queryIntentServices(serviceIntent, 0);
+    return !services.isEmpty();
+}
+*/

@@ -1,4 +1,4 @@
-# Homeostasis: An Open-Source Framework for Self-Healing Systems
+# Homeostasis: A Framework for Self-Healing Systems
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -185,6 +185,7 @@ For more information about language integrations, see:
 - [Ember.js Integration](docs/ember_integration.md)
 - [Web Components Integration](docs/web_components_integration.md)
 - [Java Integration](docs/java_integration.md)
+- [Android Integration](docs/android_integration.md)
 - [Go Integration](docs/go_integration.md)
 - [Ruby Integration](docs/ruby_integration.md)
 - [Rust Integration](docs/rust_integration.md)
@@ -217,7 +218,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Multi-Language Support**: Implemented language-agnostic error schema with support for JavaScript/Node.js and Java through a pluggable adapter architecture
 - **JavaScript Core Support**: Expanded JavaScript language plugin with browser and Node.js error handling, dependency analysis, transpilation error detection, and automated fix generation
 - **TypeScript Integration**: Added TypeScript support with compilation error detection, type system error analysis, JSX/TSX handling, module resolution fixes, and framework integration for React, Angular, Vue, and Node.js
-- **Java Integration**: Added support for Java exceptions, Spring Framework, Hibernate/JPA, and Java concurrency issues, and Maven/Gradle build analysis
+- **Java Integration**: Added support for Java exceptions, Spring Framework, Hibernate/JPA, Java concurrency issues, Maven/Gradle build analysis, and Android platform development with activity lifecycle monitoring, fragment transaction handling, API compatibility layers, Java-Kotlin interoperability, and service/background task healing
 - **Go Integration**: Added support for Go runtime errors, goroutine deadlock detection, web frameworks (Gin, Echo), and common concurrency patterns
 - **Ruby Integration**: Added support for Ruby exceptions, Rails ActiveRecord errors, Sinatra/Rack frameworks, and Ruby metaprogramming patterns
 - **Rust Integration**: Added support for Rust runtime errors, memory safety issues, concurrency problems, and frameworks like Actix, Rocket, Tokio, and Diesel

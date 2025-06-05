@@ -1,0 +1,50 @@
+// Fix for permission denied error
+private static final int PERMISSION_REQUEST_CODE = 100;
+
+// Check permission before operation
+if (ContextCompat.checkSelfPermission(this, ${PERMISSION_NAME}) 
+    == PackageManager.PERMISSION_GRANTED) {
+    // Permission granted, proceed with operation
+    ${PROTECTED_OPERATION}
+} else {
+    // Request permission
+    ActivityCompat.requestPermissions(this, 
+        new String[]{${PERMISSION_NAME}}, 
+        PERMISSION_REQUEST_CODE);
+}
+
+// Handle permission result
+@Override
+public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, 
+                                     @NonNull int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    
+    if (requestCode == PERMISSION_REQUEST_CODE) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Permission granted, proceed with operation
+            ${PROTECTED_OPERATION}
+        } else {
+            // Permission denied, show explanation or disable feature
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, ${PERMISSION_NAME})) {
+                // Show explanation and ask again
+                showPermissionRationale();
+            } else {
+                // Permission permanently denied, direct to settings
+                showSettingsDialog();
+            }
+        }
+    }
+}
+
+private void showPermissionRationale() {
+    new AlertDialog.Builder(this)
+        .setTitle("Permission Required")
+        .setMessage("This feature requires ${PERMISSION_DESCRIPTION}")
+        .setPositiveButton("Grant", (dialog, which) -> {
+            ActivityCompat.requestPermissions(this, 
+                new String[]{${PERMISSION_NAME}}, 
+                PERMISSION_REQUEST_CODE);
+        })
+        .setNegativeButton("Cancel", null)
+        .show();
+}

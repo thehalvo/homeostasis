@@ -1,0 +1,20 @@
+// Fix for view not found error
+View ${VIEW_VARIABLE} = findViewById(R.id.${VIEW_ID});
+if (${VIEW_VARIABLE} != null) {
+    // Safe to use the view
+    ${ORIGINAL_VIEW_OPERATION}
+} else {
+    Log.e("${CLASS_NAME}", "View with ID ${VIEW_ID} not found in layout");
+    // Handle missing view gracefully
+    return; // or provide alternative behavior
+}
+
+// Modern alternative using View Binding (recommended):
+/*
+// In onCreate() or onCreateView():
+ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+setContentView(binding.getRoot());
+
+// Access views safely:
+binding.${VIEW_ID}.${VIEW_OPERATION};
+*/
