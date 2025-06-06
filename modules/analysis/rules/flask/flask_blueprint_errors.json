@@ -1,0 +1,198 @@
+{
+  "name": "Flask Blueprint Errors",
+  "description": "Rules for detecting Flask Blueprint-related errors and configuration issues",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "flask_blueprint_already_registered",
+      "pattern": "AssertionError: A blueprint's name collision occurred between '([^']+)' and '([^']+)'",
+      "type": "AssertionError",
+      "description": "Flask blueprint name collision - same blueprint registered multiple times",
+      "root_cause": "flask_blueprint_name_collision",
+      "suggestion": "Use unique blueprint names or check if blueprint is already registered before registering again. Use app.blueprints to check existing blueprints.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "blueprint",
+        "registration",
+        "collision"
+      ],
+      "examples": [
+        "AssertionError: A blueprint's name collision occurred between 'users' and 'users'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_blueprint_url_rule_collision",
+      "pattern": "AssertionError: View function mapping is overwriting an existing endpoint function: ([^\\n]+)",
+      "type": "AssertionError",
+      "description": "URL rule collision in Flask blueprint - same endpoint defined multiple times",
+      "root_cause": "flask_blueprint_endpoint_collision",
+      "suggestion": "Use unique endpoint names in your route decorators or check for duplicate route definitions. Use endpoint parameter in @bp.route().",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "blueprint",
+        "routing",
+        "endpoint",
+        "collision"
+      ],
+      "examples": [
+        "AssertionError: View function mapping is overwriting an existing endpoint function: users.profile"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_blueprint_not_registered",
+      "pattern": "werkzeug\\.routing\\.BuildError: Could not build url for endpoint '([^']+)'.*Did you forget to register the blueprint?",
+      "type": "BuildError",
+      "description": "Attempting to build URL for blueprint endpoint that is not registered",
+      "root_cause": "flask_blueprint_not_registered",
+      "suggestion": "Register the blueprint with app.register_blueprint(blueprint_name) before using url_for() with blueprint endpoints.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "blueprint",
+        "registration",
+        "url_for",
+        "werkzeug"
+      ],
+      "examples": [
+        "werkzeug.routing.BuildError: Could not build url for endpoint 'users.profile'. Did you forget to register the blueprint?"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_blueprint_static_folder_error",
+      "pattern": "ValueError: The blueprint name '([^']+)' is already registered for a different blueprint",
+      "type": "ValueError",
+      "description": "Blueprint registration error due to name conflict or static folder issues",
+      "root_cause": "flask_blueprint_registration_conflict",
+      "suggestion": "Use unique blueprint names and ensure static_folder paths don't conflict. Check for duplicate blueprint registrations.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "blueprint",
+        "static",
+        "registration"
+      ],
+      "examples": [
+        "ValueError: The blueprint name 'api' is already registered for a different blueprint"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_blueprint_template_folder_error",
+      "pattern": "jinja2\\.exceptions\\.TemplateNotFound: ([^\\n]+).*blueprint.*template",
+      "type": "TemplateNotFound",
+      "description": "Blueprint template not found in configured template folder",
+      "root_cause": "flask_blueprint_template_missing",
+      "suggestion": "Ensure template exists in blueprint's template_folder or the main app templates directory. Check template_folder configuration in Blueprint constructor.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "blueprint",
+        "template",
+        "jinja2"
+      ],
+      "examples": [
+        "jinja2.exceptions.TemplateNotFound: users/profile.html in blueprint template folder"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_blueprint_url_prefix_error",
+      "pattern": "TypeError: '([^']+)' object cannot be interpreted as an integer.*url_prefix",
+      "type": "TypeError",
+      "description": "Invalid url_prefix type in blueprint registration",
+      "root_cause": "flask_blueprint_invalid_url_prefix",
+      "suggestion": "Ensure url_prefix is a string starting with '/'. Check blueprint registration: app.register_blueprint(bp, url_prefix='/api').",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "blueprint",
+        "url_prefix",
+        "registration"
+      ],
+      "examples": [
+        "TypeError: 'int' object cannot be interpreted as an integer in url_prefix"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_blueprint_subdomain_error",
+      "pattern": "RuntimeError: The blueprint .* has set its subdomain to ([^,]+), but the application's subdomain is ([^.]+)",
+      "type": "RuntimeError",
+      "description": "Blueprint subdomain configuration conflicts with application configuration",
+      "root_cause": "flask_blueprint_subdomain_conflict",
+      "suggestion": "Ensure blueprint subdomain configuration matches application SERVER_NAME config. Set proper subdomain in blueprint or application configuration.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "blueprint",
+        "subdomain",
+        "configuration"
+      ],
+      "examples": [
+        "RuntimeError: The blueprint 'api' has set its subdomain to 'api', but the application's subdomain is None"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

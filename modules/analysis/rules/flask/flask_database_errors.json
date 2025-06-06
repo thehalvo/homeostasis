@@ -1,0 +1,229 @@
+{
+  "name": "Flask Database Errors",
+  "description": "Rules for detecting Flask database integration errors with SQLAlchemy, Flask-SQLAlchemy, and other database extensions",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "flask_sqlalchemy_not_initialized",
+      "pattern": "RuntimeError: The application must have a SQLALCHEMY_DATABASE_URI config variable set",
+      "type": "RuntimeError",
+      "description": "Flask-SQLAlchemy requires database URI configuration",
+      "root_cause": "flask_sqlalchemy_config_missing",
+      "suggestion": "Set SQLALCHEMY_DATABASE_URI in your Flask config: app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "sqlalchemy",
+        "database",
+        "configuration"
+      ],
+      "examples": [
+        "RuntimeError: The application must have a SQLALCHEMY_DATABASE_URI config variable set"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-sqlalchemy"]
+    },
+    {
+      "id": "flask_sqlalchemy_no_app_context",
+      "pattern": "RuntimeError: No application found\\. Either work inside a view function or push an application context.*db\\.",
+      "type": "RuntimeError",
+      "description": "Flask-SQLAlchemy operation attempted outside application context",
+      "root_cause": "flask_sqlalchemy_context_missing",
+      "suggestion": "Use 'with app.app_context():' when working with database outside of request context. For CLI commands, use @with_appcontext decorator.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "sqlalchemy",
+        "context",
+        "application"
+      ],
+      "examples": [
+        "RuntimeError: No application found. Either work inside a view function or push an application context when accessing db.session"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-sqlalchemy"]
+    },
+    {
+      "id": "flask_sqlalchemy_table_not_found",
+      "pattern": "sqlalchemy\\.exc\\.OperationalError.*\\(sqlite3\\.OperationalError\\) no such table: ([^\\n]+)",
+      "type": "OperationalError",
+      "description": "SQLAlchemy table does not exist in database",
+      "root_cause": "flask_sqlalchemy_table_missing",
+      "suggestion": "Run database migrations: 'flask db upgrade' or create tables with 'db.create_all()' within application context.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "sqlalchemy",
+        "migration",
+        "table"
+      ],
+      "examples": [
+        "sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: users"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-sqlalchemy"]
+    },
+    {
+      "id": "flask_sqlalchemy_integrity_error",
+      "pattern": "sqlalchemy\\.exc\\.IntegrityError.*\\(.*\\.IntegrityError\\) (.*) constraint failed: ([^\\n]+)",
+      "type": "IntegrityError",
+      "description": "SQLAlchemy database integrity constraint violation",
+      "root_cause": "flask_sqlalchemy_constraint_violation",
+      "suggestion": "Check for duplicate values in unique fields, missing required fields, or foreign key violations. Validate data before database operations.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "sqlalchemy",
+        "constraint",
+        "validation"
+      ],
+      "examples": [
+        "sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.email"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-sqlalchemy"]
+    },
+    {
+      "id": "flask_migrate_not_initialized",
+      "pattern": "Error: Could not locate a Flask application.*FLASK_APP.*migrate",
+      "type": "Error",
+      "description": "Flask-Migrate cannot find Flask application for migration",
+      "root_cause": "flask_migrate_app_missing",
+      "suggestion": "Set FLASK_APP environment variable or ensure Flask app is properly configured. Initialize migrations with 'flask db init'.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "migrate",
+        "migration",
+        "environment"
+      ],
+      "examples": [
+        "Error: Could not locate a Flask application. Set FLASK_APP for migrate commands"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-migrate"]
+    },
+    {
+      "id": "flask_sqlalchemy_connection_error",
+      "pattern": "sqlalchemy\\.exc\\.OperationalError.*\\(.*\\.OperationalError\\) could not connect to server",
+      "type": "OperationalError",
+      "description": "SQLAlchemy cannot connect to database server",
+      "root_cause": "flask_database_connection_failed",
+      "suggestion": "Check database server is running, connection string is correct, and network connectivity. Verify database credentials and permissions.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "sqlalchemy",
+        "connection",
+        "network"
+      ],
+      "examples": [
+        "sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server: Connection refused"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-sqlalchemy"]
+    },
+    {
+      "id": "flask_sqlalchemy_session_not_committed",
+      "pattern": "sqlalchemy\\.exc\\.InvalidRequestError: This Session's transaction has been rolled back",
+      "type": "InvalidRequestError",
+      "description": "SQLAlchemy session transaction has been rolled back and needs to be reset",
+      "root_cause": "flask_sqlalchemy_session_rollback",
+      "suggestion": "Handle database errors properly with try/except and db.session.rollback(). Ensure db.session.commit() is called after successful operations.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "sqlalchemy",
+        "session",
+        "transaction"
+      ],
+      "examples": [
+        "sqlalchemy.exc.InvalidRequestError: This Session's transaction has been rolled back due to a previous exception"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-sqlalchemy"]
+    },
+    {
+      "id": "flask_sqlalchemy_detached_instance",
+      "pattern": "sqlalchemy\\.orm\\.exc\\.DetachedInstanceError: Instance .* is not bound to a Session",
+      "type": "DetachedInstanceError",
+      "description": "Attempting to access SQLAlchemy object attributes outside of session scope",
+      "root_cause": "flask_sqlalchemy_detached_instance",
+      "suggestion": "Ensure database objects are accessed within the same session. Use db.session.merge() to reattach objects or eager load relationships.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "sqlalchemy",
+        "session",
+        "object-lifecycle"
+      ],
+      "examples": [
+        "sqlalchemy.orm.exc.DetachedInstanceError: Instance <User at 0x123> is not bound to a Session"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-sqlalchemy"]
+    }
+  ]
+}

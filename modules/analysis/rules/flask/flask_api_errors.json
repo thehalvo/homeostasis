@@ -1,0 +1,257 @@
+{
+  "name": "Flask API Errors",
+  "description": "Rules for detecting Flask REST API and JSON-related errors including Flask-RESTful, serialization, and API response issues",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "flask_json_decode_error",
+      "pattern": "json\\.decoder\\.JSONDecodeError: Expecting property name in double quotes.*line (\\d+) column (\\d+)",
+      "type": "JSONDecodeError",
+      "description": "Invalid JSON format in request body",
+      "root_cause": "flask_json_malformed",
+      "suggestion": "Validate JSON format in request body. Use request.get_json(force=True, silent=True) to handle malformed JSON gracefully.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "json",
+        "api",
+        "request",
+        "validation"
+      ],
+      "examples": [
+        "json.decoder.JSONDecodeError: Expecting property name in double quotes: line 1 column 2 (char 1)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_request_json_none",
+      "pattern": "TypeError: 'NoneType' object.*request\\.json",
+      "type": "TypeError",
+      "description": "Request JSON is None, likely due to missing Content-Type header or empty body",
+      "root_cause": "flask_request_json_missing",
+      "suggestion": "Check Content-Type header is 'application/json' and request body contains valid JSON. Use request.get_json() with appropriate parameters.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "json",
+        "api",
+        "request",
+        "content-type"
+      ],
+      "examples": [
+        "TypeError: 'NoneType' object has no attribute 'get' when accessing request.json['key']"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_restful_missing_resource",
+      "pattern": "AttributeError: module '([^']+)' has no attribute '([^']+)'.*Resource",
+      "type": "AttributeError",
+      "description": "Flask-RESTful Resource class not found in module",
+      "root_cause": "flask_restful_resource_missing",
+      "suggestion": "Ensure Resource class is properly defined and imported. Check class name spelling and inheritance from flask_restful.Resource.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "restful",
+        "api",
+        "resource",
+        "class"
+      ],
+      "examples": [
+        "AttributeError: module 'api.users' has no attribute 'UserResource'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-restful"]
+    },
+    {
+      "id": "flask_restful_method_not_allowed",
+      "pattern": "werkzeug\\.exceptions\\.MethodNotAllowed.*405.*methods?\\s*\\[([^\\]]+)\\]",
+      "type": "MethodNotAllowed",
+      "description": "HTTP method not implemented in Flask-RESTful Resource",
+      "root_cause": "flask_restful_method_missing",
+      "suggestion": "Implement the required HTTP method (get, post, put, delete) in your Resource class or remove it from allowed methods.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "restful",
+        "api",
+        "http-method",
+        "resource"
+      ],
+      "examples": [
+        "werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL. Allowed methods: ['GET', 'POST']"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-restful"]
+    },
+    {
+      "id": "flask_marshmallow_validation_error",
+      "pattern": "marshmallow\\.exceptions\\.ValidationError: (.+)",
+      "type": "ValidationError",
+      "description": "Marshmallow schema validation failed",
+      "root_cause": "flask_marshmallow_validation_failed",
+      "suggestion": "Check input data against schema requirements. Handle validation errors gracefully and return appropriate error responses to clients.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "marshmallow",
+        "validation",
+        "schema",
+        "api"
+      ],
+      "examples": [
+        "marshmallow.exceptions.ValidationError: {'email': ['Not a valid email address.']}"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["marshmallow"]
+    },
+    {
+      "id": "flask_jsonify_circular_reference",
+      "pattern": "ValueError: Out of range float values are not JSON compliant.*jsonify",
+      "type": "ValueError",
+      "description": "Circular reference or invalid value in data passed to jsonify()",
+      "root_cause": "flask_jsonify_invalid_data",
+      "suggestion": "Check for circular references in objects or non-JSON-serializable values (NaN, Infinity). Use custom JSON encoder or clean data before jsonify().",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "json",
+        "serialization",
+        "circular-reference"
+      ],
+      "examples": [
+        "ValueError: Out of range float values are not JSON compliant when using jsonify()"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_api_rate_limit_exceeded",
+      "pattern": "flask_limiter.*RateLimitExceeded.*([0-9]+) per ([^\\s]+)",
+      "type": "RateLimitExceeded",
+      "description": "API rate limit exceeded (Flask-Limiter)",
+      "root_cause": "flask_rate_limit_exceeded",
+      "suggestion": "Implement proper rate limiting handling in client. Consider exponential backoff or show appropriate error message to users.",
+      "category": "flask",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "rate-limiting",
+        "api",
+        "throttling"
+      ],
+      "examples": [
+        "flask_limiter.RateLimitExceeded: 100 per hour rate limit exceeded"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-limiter"]
+    },
+    {
+      "id": "flask_api_cors_preflight_error",
+      "pattern": "werkzeug\\.exceptions\\.MethodNotAllowed.*OPTIONS.*CORS",
+      "type": "MethodNotAllowed",
+      "description": "CORS preflight OPTIONS request not handled properly",
+      "root_cause": "flask_cors_preflight_missing",
+      "suggestion": "Ensure CORS is properly configured to handle OPTIONS requests. Use Flask-CORS or implement custom OPTIONS handler.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "cors",
+        "preflight",
+        "options",
+        "api"
+      ],
+      "examples": [
+        "werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed for OPTIONS request with CORS"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_api_content_length_error",
+      "pattern": "werkzeug\\.exceptions\\.RequestEntityTooLarge.*413.*content length",
+      "type": "RequestEntityTooLarge",
+      "description": "Request payload exceeds maximum allowed size",
+      "root_cause": "flask_request_too_large",
+      "suggestion": "Increase MAX_CONTENT_LENGTH in Flask config or implement chunked upload for large files. Check client-side file size validation.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "api",
+        "content-length",
+        "upload",
+        "limit"
+      ],
+      "examples": [
+        "werkzeug.exceptions.RequestEntityTooLarge: 413 Request Entity Too Large: The data value transmitted exceeds the capacity limit."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

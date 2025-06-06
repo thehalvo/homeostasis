@@ -1,0 +1,287 @@
+{
+  "name": "Flask Common Errors",
+  "description": "Rules for detecting common Flask framework errors and exceptions",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "flask_import_error",
+      "pattern": "ImportError: cannot import name '([^']+)' from 'flask'",
+      "type": "ImportError",
+      "description": "Cannot import specified name from Flask module",
+      "root_cause": "flask_import_missing",
+      "suggestion": "Check Flask version compatibility and ensure the imported name exists in your Flask version. Update Flask if using newer features.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "import",
+        "version"
+      ],
+      "examples": [
+        "ImportError: cannot import name 'escape' from 'flask'",
+        "ImportError: cannot import name 'Markup' from 'flask'"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_app_not_found",
+      "pattern": "RuntimeError: Failed to find Flask application or factory.*",
+      "type": "RuntimeError",
+      "description": "Flask application or application factory not found",
+      "root_cause": "flask_app_missing",
+      "suggestion": "Ensure your Flask app is properly defined and exported. Check FLASK_APP environment variable points to correct module and function.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "application",
+        "factory",
+        "startup"
+      ],
+      "examples": [
+        "RuntimeError: Failed to find Flask application or factory in module 'app'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_working_outside_context",
+      "pattern": "RuntimeError: Working outside of (?:application|request) context",
+      "type": "RuntimeError",
+      "description": "Attempting to use Flask context-dependent functionality outside of proper context",
+      "root_cause": "flask_context_missing",
+      "suggestion": "Use 'with app.app_context():' for application context or ensure you're within a request context. Consider using app.test_request_context() for testing.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "context",
+        "application",
+        "request"
+      ],
+      "examples": [
+        "RuntimeError: Working outside of application context",
+        "RuntimeError: Working outside of request context"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_template_not_found",
+      "pattern": "jinja2\\.exceptions\\.TemplateNotFound: ([^\\n]+)",
+      "type": "TemplateNotFound",
+      "description": "Jinja2 template file not found in Flask template directory",
+      "root_cause": "flask_template_missing",
+      "suggestion": "Check template file exists in templates directory and verify template name spelling. Ensure template_folder is correctly configured.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "jinja2",
+        "template",
+        "file-not-found"
+      ],
+      "examples": [
+        "jinja2.exceptions.TemplateNotFound: index.html",
+        "jinja2.exceptions.TemplateNotFound: user/profile.html"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_method_not_allowed",
+      "pattern": "405 Method Not Allowed.*The method is not allowed for the requested URL",
+      "type": "MethodNotAllowed",
+      "description": "HTTP method not allowed for the requested route",
+      "root_cause": "flask_method_not_allowed",
+      "suggestion": "Add the required HTTP method to your route decorator (e.g., @app.route('/path', methods=['POST'])) or check the request method in your client code.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "routing",
+        "http-method",
+        "405"
+      ],
+      "examples": [
+        "405 Method Not Allowed: The method is not allowed for the requested URL."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_bad_request_keyerror",
+      "pattern": "werkzeug\\.exceptions\\.BadRequestKeyError: 400 Bad Request: KeyError: '([^']+)'",
+      "type": "BadRequestKeyError",
+      "description": "Required form field or query parameter is missing from request",
+      "root_cause": "flask_missing_request_param",
+      "suggestion": "Use request.form.get('key') or request.args.get('key') instead of direct access, or validate required parameters exist before accessing.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "request",
+        "form",
+        "validation",
+        "werkzeug"
+      ],
+      "examples": [
+        "werkzeug.exceptions.BadRequestKeyError: 400 Bad Request: KeyError: 'username'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_circular_import",
+      "pattern": "ImportError: cannot import name '([^']+)' from partially initialized module '([^']+)'.*\\(most likely due to a circular import\\)",
+      "type": "ImportError",
+      "description": "Circular import detected in Flask application modules",
+      "root_cause": "flask_circular_import",
+      "suggestion": "Reorganize imports to avoid circular dependencies. Consider using import statements inside functions or at the bottom of modules.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "import",
+        "circular",
+        "module"
+      ],
+      "examples": [
+        "ImportError: cannot import name 'db' from partially initialized module 'app' (most likely due to a circular import)"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_config_key_error",
+      "pattern": "KeyError: '([^']+)'.*app\\.config\\[",
+      "type": "KeyError",
+      "description": "Configuration key not found in Flask app config",
+      "root_cause": "flask_config_missing",
+      "suggestion": "Add the configuration key to your config file or environment variables. Use app.config.get('KEY', 'default') for optional configs.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "config",
+        "configuration",
+        "environment"
+      ],
+      "examples": [
+        "KeyError: 'SECRET_KEY' in app.config[SECRET_KEY]",
+        "KeyError: 'DATABASE_URL' in app.config[DATABASE_URL]"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_session_interface_error",
+      "pattern": "RuntimeError: The session is unavailable because no secret key was set",
+      "type": "RuntimeError",
+      "description": "Flask session unavailable due to missing secret key",
+      "root_cause": "flask_secret_key_missing",
+      "suggestion": "Set app.config['SECRET_KEY'] to a random secret string. Never use default or predictable keys in production.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "session",
+        "secret-key",
+        "security"
+      ],
+      "examples": [
+        "RuntimeError: The session is unavailable because no secret key was set"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_werkzeug_address_in_use",
+      "pattern": "OSError: \\[Errno 48\\] Address already in use.*127\\.0\\.0\\.1:(\\d+)",
+      "type": "OSError",
+      "description": "Flask development server port already in use",
+      "root_cause": "flask_port_in_use",
+      "suggestion": "Stop the existing Flask server or use a different port with app.run(port=5001). Check for other processes using the port with 'lsof -i :5000'.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "port",
+        "development-server",
+        "networking"
+      ],
+      "examples": [
+        "OSError: [Errno 48] Address already in use: 127.0.0.1:5000"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

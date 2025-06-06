@@ -1,0 +1,232 @@
+{
+  "name": "Flask Testing Errors",
+  "description": "Rules for detecting Flask testing-related errors including test client, fixtures, and testing framework integration issues",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "flask_test_client_no_app_context",
+      "pattern": "RuntimeError: Working outside of application context.*test_client",
+      "type": "RuntimeError",
+      "description": "Flask test client used outside application context",
+      "root_cause": "flask_test_client_context_missing",
+      "suggestion": "Use 'with app.app_context():' when creating test client or use app.test_client() within proper context setup.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "testing",
+        "test-client",
+        "context"
+      ],
+      "examples": [
+        "RuntimeError: Working outside of application context when using test_client"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_test_request_context_error",
+      "pattern": "RuntimeError: Attempted to generate a URL without the application context being pushed",
+      "type": "RuntimeError",
+      "description": "URL generation attempted outside request context in tests",
+      "root_cause": "flask_test_url_context_missing",
+      "suggestion": "Use app.test_request_context() or with app.test_request_context(): when testing URL generation with url_for().",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "testing",
+        "url_for",
+        "request-context"
+      ],
+      "examples": [
+        "RuntimeError: Attempted to generate a URL without the application context being pushed"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_pytest_fixture_scope_error",
+      "pattern": "ScopeMismatch.*fixture.*has a shorter scope.*than.*fixture",
+      "type": "ScopeMismatch",
+      "description": "Pytest fixture scope mismatch in Flask application testing",
+      "root_cause": "flask_pytest_fixture_scope_mismatch",
+      "suggestion": "Adjust fixture scopes to match dependencies. Typically app fixture should have 'session' scope and client fixture 'function' scope.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "testing",
+        "pytest",
+        "fixture",
+        "scope"
+      ],
+      "examples": [
+        "ScopeMismatch: the fixture 'client' has a shorter scope ('function') than the fixture 'app' ('session')"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["pytest"]
+    },
+    {
+      "id": "flask_test_database_not_isolated",
+      "pattern": "sqlalchemy\\.exc\\.IntegrityError.*constraint.*test.*database",
+      "type": "IntegrityError",
+      "description": "Test database not properly isolated, causing constraint violations between tests",
+      "root_cause": "flask_test_database_pollution",
+      "suggestion": "Use separate test database and ensure proper teardown. Consider using database transactions that rollback after each test.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "testing",
+        "database",
+        "isolation",
+        "sqlalchemy"
+      ],
+      "examples": [
+        "sqlalchemy.exc.IntegrityError: constraint violation in test database"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-sqlalchemy"]
+    },
+    {
+      "id": "flask_test_config_not_loaded",
+      "pattern": "KeyError.*TEST.*config.*testing",
+      "type": "KeyError",
+      "description": "Test configuration not properly loaded in Flask testing environment",
+      "root_cause": "flask_test_config_missing",
+      "suggestion": "Ensure test configuration is loaded: app.config.from_object('config.TestConfig') or set FLASK_ENV=testing.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "testing",
+        "configuration",
+        "environment"
+      ],
+      "examples": [
+        "KeyError: 'TESTING' not found in config during testing"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_test_mock_patch_error",
+      "pattern": "AttributeError: module '([^']+)' has no attribute '([^']+)'.*mock.*patch",
+      "type": "AttributeError",
+      "description": "Mock patch target not found in Flask application testing",
+      "root_cause": "flask_test_mock_target_missing",
+      "suggestion": "Verify the patch target path is correct. Use full module path for patching (e.g., 'app.models.User.query' instead of 'User.query').",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "testing",
+        "mock",
+        "patch",
+        "unittest"
+      ],
+      "examples": [
+        "AttributeError: module 'app.models' has no attribute 'User' when using mock.patch"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["unittest.mock"]
+    },
+    {
+      "id": "flask_test_client_json_error",
+      "pattern": "TypeError: Object of type '([^']+)' is not JSON serializable.*test_client",
+      "type": "TypeError",
+      "description": "Non-JSON-serializable data passed to Flask test client",
+      "root_cause": "flask_test_client_json_serialization",
+      "suggestion": "Convert objects to JSON-serializable format before passing to test client. Use json.dumps() for complex objects or ensure data types are supported.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "testing",
+        "test-client",
+        "json",
+        "serialization"
+      ],
+      "examples": [
+        "TypeError: Object of type 'datetime' is not JSON serializable in test_client post data"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "flask_test_response_assertion_error",
+      "pattern": "AssertionError.*response\\.status_code.*expected (\\d+).*got (\\d+)",
+      "type": "AssertionError",
+      "description": "Unexpected HTTP status code in Flask test response",
+      "root_cause": "flask_test_unexpected_status",
+      "suggestion": "Check test logic and application behavior. Examine response.data for error details. Verify test setup and application state.",
+      "category": "flask",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "testing",
+        "assertion",
+        "status-code",
+        "response"
+      ],
+      "examples": [
+        "AssertionError: response.status_code expected 200, got 404"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,256 @@
+{
+  "name": "Flask Security Errors",
+  "description": "Rules for detecting Flask security-related errors including authentication, authorization, and common security issues",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "flask_login_user_not_authenticated",
+      "pattern": "AttributeError: 'AnonymousUserMixin' object has no attribute '([^']+)'",
+      "type": "AttributeError",
+      "description": "Attempting to access user attributes when user is not authenticated (Flask-Login)",
+      "root_cause": "flask_login_anonymous_user",
+      "suggestion": "Check if user is authenticated with 'current_user.is_authenticated' before accessing user attributes. Use @login_required decorator for protected routes.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "security",
+        "authentication",
+        "flask-login"
+      ],
+      "examples": [
+        "AttributeError: 'AnonymousUserMixin' object has no attribute 'username'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-login"]
+    },
+    {
+      "id": "flask_login_unauthorized_access",
+      "pattern": "werkzeug\\.exceptions\\.Unauthorized: 401 Unauthorized.*login_required",
+      "type": "Unauthorized",
+      "description": "Access attempt to login_required route without authentication",
+      "root_cause": "flask_login_unauthorized",
+      "suggestion": "Redirect users to login page or provide authentication mechanism. Configure Flask-Login's login_view setting.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "security",
+        "authentication",
+        "unauthorized",
+        "flask-login"
+      ],
+      "examples": [
+        "werkzeug.exceptions.Unauthorized: 401 Unauthorized: The server could not verify that you are authorized to access the URL requested."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-login"]
+    },
+    {
+      "id": "flask_csrf_token_missing",
+      "pattern": "flask_wtf\\.csrf\\.CSRFError: The CSRF token is missing",
+      "type": "CSRFError",
+      "description": "CSRF token missing from form submission (Flask-WTF)",
+      "root_cause": "flask_csrf_token_missing",
+      "suggestion": "Include {{ csrf_token() }} in your forms or use {{ csrf.hidden_tag() }} with Flask-WTF. Ensure CSRFProtect is properly configured.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "security",
+        "csrf",
+        "flask-wtf"
+      ],
+      "examples": [
+        "flask_wtf.csrf.CSRFError: The CSRF token is missing."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-wtf"]
+    },
+    {
+      "id": "flask_csrf_token_invalid",
+      "pattern": "flask_wtf\\.csrf\\.CSRFError: The CSRF token is invalid",
+      "type": "CSRFError",
+      "description": "CSRF token validation failed (Flask-WTF)",
+      "root_cause": "flask_csrf_token_invalid",
+      "suggestion": "Ensure CSRF tokens are fresh and match the session. Check SECRET_KEY configuration and token generation/transmission.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "security",
+        "csrf",
+        "validation",
+        "flask-wtf"
+      ],
+      "examples": [
+        "flask_wtf.csrf.CSRFError: The CSRF token is invalid."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-wtf"]
+    },
+    {
+      "id": "flask_jwt_token_expired",
+      "pattern": "jwt\\.exceptions\\.ExpiredSignatureError: Signature has expired",
+      "type": "ExpiredSignatureError",
+      "description": "JWT token has expired (Flask-JWT-Extended)",
+      "root_cause": "flask_jwt_token_expired",
+      "suggestion": "Implement token refresh mechanism or handle expired tokens gracefully. Check JWT_ACCESS_TOKEN_EXPIRES configuration.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "security",
+        "jwt",
+        "authentication",
+        "token"
+      ],
+      "examples": [
+        "jwt.exceptions.ExpiredSignatureError: Signature has expired"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-jwt-extended"]
+    },
+    {
+      "id": "flask_jwt_decode_error",
+      "pattern": "jwt\\.exceptions\\.DecodeError: Invalid token signature",
+      "type": "DecodeError",
+      "description": "JWT token signature verification failed",
+      "root_cause": "flask_jwt_invalid_signature",
+      "suggestion": "Verify JWT_SECRET_KEY matches the key used for token generation. Check for token tampering or corruption.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "security",
+        "jwt",
+        "signature",
+        "validation"
+      ],
+      "examples": [
+        "jwt.exceptions.DecodeError: Invalid token signature"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-jwt-extended"]
+    },
+    {
+      "id": "flask_bcrypt_invalid_hash",
+      "pattern": "ValueError: Invalid salt.*bcrypt",
+      "type": "ValueError",
+      "description": "Bcrypt hash format is invalid (Flask-Bcrypt)",
+      "root_cause": "flask_bcrypt_invalid_hash",
+      "suggestion": "Ensure password hashes are properly generated with bcrypt.generate_password_hash(). Check database field length allows full hash storage.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "security",
+        "bcrypt",
+        "password",
+        "hashing"
+      ],
+      "examples": [
+        "ValueError: Invalid salt in bcrypt hash"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-bcrypt"]
+    },
+    {
+      "id": "flask_cors_origin_not_allowed",
+      "pattern": "flask_cors.*has been blocked by CORS policy.*origin.*not allowed",
+      "type": "CORSError",
+      "description": "CORS policy blocking request from origin (Flask-CORS)",
+      "root_cause": "flask_cors_origin_blocked",
+      "suggestion": "Add allowed origins to CORS configuration: CORS(app, origins=['http://localhost:3000']). Review CORS policy for security implications.",
+      "category": "flask",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "security",
+        "cors",
+        "cross-origin",
+        "policy"
+      ],
+      "examples": [
+        "flask_cors: The origin 'http://localhost:3000' has been blocked by CORS policy: origin not allowed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-cors"]
+    },
+    {
+      "id": "flask_security_config_missing",
+      "pattern": "RuntimeError: You must specify a '[^']+' in your app's config",
+      "type": "RuntimeError",
+      "description": "Required security configuration missing (Flask-Security)",
+      "root_cause": "flask_security_config_missing",
+      "suggestion": "Add required Flask-Security configuration: SECURITY_PASSWORD_SALT, SECURITY_SECRET_KEY, etc. Check Flask-Security documentation for required settings.",
+      "category": "flask",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "flask",
+        "security",
+        "configuration",
+        "flask-security"
+      ],
+      "examples": [
+        "RuntimeError: You must specify a 'SECURITY_PASSWORD_SALT' in your app's config"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": ["flask-security"]
+    }
+  ]
+}
