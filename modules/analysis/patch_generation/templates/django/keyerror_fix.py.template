@@ -1,0 +1,26 @@
+# Django KeyError Fix Template
+# Handles missing keys in dictionaries, forms, and context data
+
+# Original problematic code pattern:
+# value = some_dict[key]
+# field_value = form.cleaned_data[field_name]
+# context_value = context[variable_name]
+
+# Fixed version with error handling:
+try:
+    value = some_dict[{{key_name}}]
+except KeyError:
+    value = {{default_value}}  # or handle appropriately
+
+# Alternative using get() method:
+value = some_dict.get({{key_name}}, {{default_value}})
+
+# For Django forms:
+field_value = form.cleaned_data.get({{field_name}}, {{default_value}})
+
+# For template context in views:
+context_value = context.get({{variable_name}}, {{default_value}})
+
+# For request data:
+request_value = request.POST.get({{param_name}}, {{default_value}})
+request_value = request.GET.get({{param_name}}, {{default_value}})

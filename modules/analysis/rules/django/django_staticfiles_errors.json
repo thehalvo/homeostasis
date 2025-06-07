@@ -1,0 +1,123 @@
+{
+  "name": "Django Static Files Errors",
+  "description": "Rules for detecting Django static files and media handling errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "django_static_file_not_found",
+      "pattern": "Not Found: /static/([^\\s]+)",
+      "type": "Http404",
+      "description": "Static file not found",
+      "root_cause": "django_static_file_missing",
+      "suggestion": "Run 'python manage.py collectstatic' or check STATIC_URL and STATICFILES_DIRS settings.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "static",
+        "files",
+        "404"
+      ],
+      "examples": [
+        "Not Found: /static/css/style.css"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_media_file_not_found",
+      "pattern": "Not Found: /media/([^\\s]+)",
+      "type": "Http404",
+      "description": "Media file not found",
+      "root_cause": "django_media_file_missing",
+      "suggestion": "Check MEDIA_URL and MEDIA_ROOT settings. Ensure media files are properly uploaded and served.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "media",
+        "files",
+        "404"
+      ],
+      "examples": [
+        "Not Found: /media/uploads/image.jpg"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_staticfiles_finders_error",
+      "pattern": "django.contrib.staticfiles.finders.InvalidStaticFilesStorage: ([^\\n]*)",
+      "type": "InvalidStaticFilesStorage",
+      "description": "Invalid static files storage configuration",
+      "root_cause": "django_staticfiles_storage_invalid",
+      "suggestion": "Check STATICFILES_STORAGE setting and ensure storage backend is properly configured.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "staticfiles",
+        "storage",
+        "configuration"
+      ],
+      "examples": [
+        "django.contrib.staticfiles.finders.InvalidStaticFilesStorage: The storage backend is not configured properly"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_collectstatic_permission_error",
+      "pattern": "PermissionError: \\[Errno 13\\] Permission denied: '([^']*)'",
+      "type": "PermissionError",
+      "description": "Permission denied when collecting static files",
+      "root_cause": "django_collectstatic_permission_denied",
+      "suggestion": "Check write permissions for STATIC_ROOT directory. Ensure the web server user has access.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "django",
+        "collectstatic",
+        "permissions",
+        "filesystem"
+      ],
+      "examples": [
+        "PermissionError: [Errno 13] Permission denied: '/var/www/static/admin/css/base.css'"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

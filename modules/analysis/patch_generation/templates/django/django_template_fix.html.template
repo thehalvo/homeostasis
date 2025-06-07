@@ -1,0 +1,50 @@
+<!-- Django Template Fix Template -->
+<!-- Handles common template errors -->
+
+<!-- Fix for TemplateDoesNotExist -->
+<!-- Create the missing template file at: templates/{{template_path}} -->
+
+<!-- Basic template structure -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{page_title}}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>{{heading}}</h1>
+    
+    <!-- Fix for template syntax errors -->
+    {% if {{variable_name}} %}
+        <p>{{ {{variable_name}} }}</p>
+    {% endif %}
+    
+    <!-- Fix for missing template tags -->
+    {% load {{template_library}} %}
+    
+    <!-- Fix for CSRF token in forms -->
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+    
+    <!-- Fix for missing static files -->
+    <img src="{% static 'images/{{image_name}}' %}" alt="{{alt_text}}">
+    
+    <!-- Fix for template blocks -->
+    {% block content %}
+        <p>Default content</p>
+    {% endblock %}
+    
+    <!-- Fix for template includes -->
+    {% include '{{include_template}}' %}
+    
+    <!-- Fix for URL reversing -->
+    <a href="{% url '{{url_name}}' %}">{{link_text}}</a>
+    
+    <!-- Fix with parameters -->
+    <a href="{% url '{{url_name}}' {{url_param}} %}">{{link_text}}</a>
+</body>
+</html>

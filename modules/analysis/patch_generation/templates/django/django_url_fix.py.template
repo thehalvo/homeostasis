@@ -1,0 +1,65 @@
+# Django URL Fix Template
+# Handles URL routing and reverse lookup issues
+
+from django.urls import path, include
+from django.shortcuts import reverse, redirect
+
+# Fix for NoReverseMatch - missing URL pattern
+# In urls.py:
+from {{app_name}} import views
+
+urlpatterns = [
+    path('', views.{{view_name}}, name='{{url_name}}'),
+    path('{{url_pattern}}/', views.{{view_name}}, name='{{url_name}}'),
+    path('{{url_pattern}}/<int:{{param_name}}>/', views.{{view_name}}, name='{{url_name}}'),
+]
+
+# Fix for URL with parameters
+urlpatterns = [
+    path('user/<int:user_id>/', views.user_detail, name='user_detail'),
+    path('category/<slug:category_slug>/', views.category_view, name='category_view'),
+]
+
+# Fix for including app URLs in main urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('{{app_url_prefix}}/', include('{{app_name}}.urls')),
+    path('', include('{{app_name}}.urls')),  # for root URL
+]
+
+# Fix for reverse URL lookup in views
+def {{view_name}}(request):
+    # Safe reverse lookup
+    try:
+        url = reverse('{{url_name}}')
+    except NoReverseMatch:
+        url = reverse('{{fallback_url_name}}')
+    
+    return redirect(url)
+
+# Fix for reverse with parameters
+def redirect_to_detail(request, object_id):
+    return redirect(reverse('{{detail_url_name}}', args=[object_id]))
+    
+    # Alternative with kwargs
+    return redirect(reverse('{{detail_url_name}}', kwargs={'id': object_id}))
+
+# Fix for ViewDoesNotExist - ensure view is imported
+from django.http import HttpResponse
+
+def {{missing_view_name}}(request):
+    return HttpResponse("{{view_content}}")
+
+# Alternative class-based view
+from django.views.generic import TemplateView
+
+class {{class_view_name}}(TemplateView):
+    template_name = '{{template_name}}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['{{context_key}}'] = '{{context_value}}'
+        return context

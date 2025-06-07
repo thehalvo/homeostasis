@@ -1,0 +1,152 @@
+{
+  "name": "Django Forms Errors",
+  "description": "Rules for detecting Django forms and validation errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "django_validation_error",
+      "pattern": "django.core.exceptions.ValidationError: ([^\\n]*)",
+      "type": "ValidationError",
+      "description": "Django model or form validation failed",
+      "root_cause": "django_validation_failed",
+      "suggestion": "Check model field constraints and form validation logic. Ensure data meets validation requirements.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "validation",
+        "forms",
+        "models"
+      ],
+      "examples": [
+        "django.core.exceptions.ValidationError: ['This field cannot be blank.']"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_form_field_error",
+      "pattern": "KeyError: \"Key '([^']+)' not found in Form\"",
+      "type": "KeyError",
+      "description": "Form field not found",
+      "root_cause": "django_form_field_missing",
+      "suggestion": "Check that the field exists in the form definition or use cleaned_data.get() instead of direct access.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "forms",
+        "field",
+        "keyerror"
+      ],
+      "examples": [
+        "KeyError: \"Key 'email' not found in Form\""
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_csrf_token_missing",
+      "pattern": "django.middleware.csrf.CsrfViewMiddleware: Forbidden \\(CSRF token missing\\)",
+      "type": "PermissionDenied",
+      "description": "CSRF token missing from form submission",
+      "root_cause": "django_csrf_token_missing",
+      "suggestion": "Include {% csrf_token %} in forms or use @csrf_exempt decorator for API views.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "csrf",
+        "security",
+        "forms"
+      ],
+      "examples": [
+        "django.middleware.csrf.CsrfViewMiddleware: Forbidden (CSRF token missing)"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_form_invalid",
+      "pattern": "AttributeError: 'NoneType' object has no attribute 'is_valid'",
+      "type": "AttributeError",
+      "description": "Form object is None when calling is_valid()",
+      "root_cause": "django_form_not_initialized",
+      "suggestion": "Ensure form is properly initialized before calling validation methods.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "django",
+        "forms",
+        "validation",
+        "initialization"
+      ],
+      "examples": [
+        "AttributeError: 'NoneType' object has no attribute 'is_valid'"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_modelform_missing_meta",
+      "pattern": "AttributeError: type object '([^']+)' has no attribute '_meta'",
+      "type": "AttributeError",
+      "description": "ModelForm missing Meta class",
+      "root_cause": "django_modelform_meta_missing",
+      "suggestion": "Add a Meta class to ModelForm with model and fields attributes.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "forms",
+        "modelform",
+        "meta"
+      ],
+      "examples": [
+        "AttributeError: type object 'UserForm' has no attribute '_meta'"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+# Django Model DoesNotExist Fix Template
+# Handles cases where model instances don't exist
+
+from django.shortcuts import get_object_or_404
+from django.http import Http404
+
+# Original problematic code:
+# obj = {{model_name}}.objects.get({{query_params}})
+
+# Fix 1: Using try/except
+try:
+    obj = {{model_name}}.objects.get({{query_params}})
+except {{model_name}}.DoesNotExist:
+    # Handle the case when object doesn't exist
+    obj = None  # or set a default value
+    # or redirect/return error response
+    # return HttpResponse("Object not found", status=404)
+
+# Fix 2: Using get_object_or_404 (recommended for views)
+obj = get_object_or_404({{model_name}}, {{query_params}})
+
+# Fix 3: Using filter and first()
+obj = {{model_name}}.objects.filter({{query_params}}).first()
+if obj is None:
+    # Handle the case when object doesn't exist
+    pass
+
+# Fix 4: Check if object exists before getting
+if {{model_name}}.objects.filter({{query_params}}).exists():
+    obj = {{model_name}}.objects.get({{query_params}})
+else:
+    # Handle the case when object doesn't exist
+    obj = None

@@ -1,0 +1,40 @@
+# Django Migration Fix Template
+# Handles common migration issues
+
+# Fix for NodeNotFoundError - missing migration dependency
+# Run these commands in order:
+
+# 1. Create missing migrations
+# python manage.py makemigrations {{app_name}}
+
+# 2. If migrations are out of sync, reset migrations (CAUTION: data loss)
+# python manage.py migrate {{app_name}} zero
+# python manage.py makemigrations {{app_name}}
+# python manage.py migrate {{app_name}}
+
+# 3. For production, use fake-initial to handle existing tables
+# python manage.py migrate --fake-initial
+
+# Fix for InconsistentMigrationHistory
+# Option 1: Mark specific migration as applied
+# python manage.py migrate --fake {{app_name}} {{migration_name}}
+
+# Option 2: Reset all migrations (DEVELOPMENT ONLY)
+# python manage.py migrate --fake {{app_name}} zero
+# python manage.py migrate {{app_name}}
+
+# Fix for migration dependency issues in code:
+from django.db import migrations, models
+
+class Migration(migrations.Migration):
+    
+    dependencies = [
+        ('{{app_name}}', '{{previous_migration}}'),
+        # Add missing dependencies here
+        ('{{dependency_app}}', '{{dependency_migration}}'),
+    ]
+
+    operations = [
+        # Your migration operations
+        {{migration_operations}}
+    ]

@@ -1,0 +1,152 @@
+{
+  "name": "Django Template Errors",
+  "description": "Rules for detecting Django template engine errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "django_template_does_not_exist",
+      "pattern": "django.template.exceptions.TemplateDoesNotExist: ([^\\n]*)",
+      "type": "TemplateDoesNotExist",
+      "description": "Django template file is missing",
+      "root_cause": "django_template_missing",
+      "suggestion": "Check the template directory and create the missing template file. Verify TEMPLATES setting in settings.py.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "template",
+        "frontend",
+        "file"
+      ],
+      "examples": [
+        "django.template.exceptions.TemplateDoesNotExist: myapp/index.html"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_template_syntax_error",
+      "pattern": "django.template.exceptions.TemplateSyntaxError: ([^\\n]*)",
+      "type": "TemplateSyntaxError",
+      "description": "Syntax error in Django template",
+      "root_cause": "django_template_syntax_error",
+      "suggestion": "Check template syntax, especially template tags and filters. Ensure proper opening/closing of template blocks.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "template",
+        "syntax",
+        "frontend"
+      ],
+      "examples": [
+        "django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 5: 'endfor'. Did you forget to register or load this tag?"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_variable_does_not_exist",
+      "pattern": "django.template.exceptions.VariableDoesNotExist: Failed lookup for key \\[([^\\]]+)\\]",
+      "type": "VariableDoesNotExist",
+      "description": "Template variable does not exist in context",
+      "root_cause": "django_template_variable_missing",
+      "suggestion": "Pass the required variable in the view context or use default filters in templates.",
+      "category": "django",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "template",
+        "variable",
+        "context"
+      ],
+      "examples": [
+        "django.template.exceptions.VariableDoesNotExist: Failed lookup for key [user_name]"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_invalid_template_library",
+      "pattern": "django.template.library.InvalidTemplateLibrary: ([^\\n]*)",
+      "type": "InvalidTemplateLibrary",
+      "description": "Invalid template library or tag",
+      "root_cause": "django_template_library_invalid",
+      "suggestion": "Check template library imports and ensure custom template tags are properly registered.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "template",
+        "library",
+        "tags"
+      ],
+      "examples": [
+        "django.template.library.InvalidTemplateLibrary: Template library myapp.templatetags.custom_tags not found"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_template_encoding_error",
+      "pattern": "UnicodeDecodeError: 'utf-8' codec can't decode byte.*in position.*invalid start byte",
+      "type": "UnicodeDecodeError",
+      "description": "Template file encoding error",
+      "root_cause": "django_template_encoding_error",
+      "suggestion": "Ensure template files are saved with UTF-8 encoding. Check for BOM or invalid characters.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "django",
+        "template",
+        "encoding",
+        "unicode"
+      ],
+      "examples": [
+        "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

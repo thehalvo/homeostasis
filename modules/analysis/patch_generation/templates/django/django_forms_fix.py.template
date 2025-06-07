@@ -1,0 +1,72 @@
+# Django Forms Fix Template
+# Handles common form-related issues
+
+from django import forms
+from django.shortcuts import render, redirect
+
+# Fix for ModelForm missing Meta class
+class {{form_name}}(forms.ModelForm):
+    class Meta:
+        model = {{model_name}}
+        fields = ['{{field_1}}', '{{field_2}}']  # or '__all__'
+        exclude = ['{{excluded_field}}']  # optional
+
+# Fix for form validation errors
+def {{view_name}}(request):
+    if request.method == 'POST':
+        form = {{form_name}}(request.POST)
+        if form.is_valid():
+            # Process valid form
+            form.save()  # for ModelForm
+            return redirect('{{success_url}}')
+        else:
+            # Handle form errors
+            context = {'form': form, 'errors': form.errors}
+            return render(request, '{{template_name}}', context)
+    else:
+        form = {{form_name}}()
+    
+    return render(request, '{{template_name}}', {'form': form})
+
+# Fix for accessing form cleaned_data safely
+def process_form_data(form):
+    if form.is_valid():
+        # Safe access to cleaned_data
+        field_value = form.cleaned_data.get('{{field_name}}', '{{default_value}}')
+        
+        # Alternative with error handling
+        try:
+            field_value = form.cleaned_data['{{field_name}}']
+        except KeyError:
+            field_value = '{{default_value}}'
+            
+        return field_value
+    return None
+
+# Fix for custom form validation
+class {{custom_form}}(forms.Form):
+    {{field_name}} = forms.CharField(max_length={{max_length}})
+    
+    def clean_{{field_name}}(self):
+        data = self.cleaned_data['{{field_name}}']
+        
+        # Add custom validation logic
+        if {{validation_condition}}:
+            raise forms.ValidationError("{{error_message}}")
+        
+        return data
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        # Cross-field validation
+        return cleaned_data
+
+# Fix for form field widgets
+class {{widget_form}}(forms.ModelForm):
+    class Meta:
+        model = {{model_name}}
+        fields = '__all__'
+        widgets = {
+            '{{field_name}}': forms.TextInput(attrs={'class': 'form-control'}),
+            '{{date_field}}': forms.DateInput(attrs={'type': 'date'}),
+        }

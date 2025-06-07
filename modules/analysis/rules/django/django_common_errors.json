@@ -1,0 +1,296 @@
+{
+  "name": "Django Common Errors",
+  "description": "Rules for detecting common Django framework errors and exceptions",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "django_import_error",
+      "pattern": "ImportError: cannot import name '([^']+)' from 'django[^']*'",
+      "type": "ImportError",
+      "description": "Cannot import specified name from Django module",
+      "root_cause": "django_import_missing",
+      "suggestion": "Check Django version compatibility and ensure the imported name exists in your Django version. Update Django if using newer features.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "import",
+        "version"
+      ],
+      "examples": [
+        "ImportError: cannot import name 'ugettext' from 'django.utils.translation'",
+        "ImportError: cannot import name 'smart_text' from 'django.utils.encoding'"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_settings_import_error",
+      "pattern": "ImportError: Could not import settings '([^']*)'",
+      "type": "ImportError",
+      "description": "Django cannot import the settings module",
+      "root_cause": "django_settings_missing",
+      "suggestion": "Ensure that the settings module exists and is in your PYTHONPATH. Check DJANGO_SETTINGS_MODULE environment variable.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "settings",
+        "import"
+      ],
+      "examples": [
+        "ImportError: Could not import settings 'myproject.settings'",
+        "ImportError: Could not import settings 'app.settings.production'"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_apps_not_ready",
+      "pattern": "django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet",
+      "type": "AppRegistryNotReady",
+      "description": "Django apps registry is not ready yet",
+      "root_cause": "django_apps_not_loaded",
+      "suggestion": "Ensure Django setup is called before accessing models or apps. Call django.setup() if running standalone scripts.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "apps",
+        "setup",
+        "registry"
+      ],
+      "examples": [
+        "django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_circular_import",
+      "pattern": "ImportError: cannot import name '([^']+)' from partially initialized module '([^']+)'.*circular import",
+      "type": "ImportError",
+      "description": "Circular import detected in Django modules",
+      "root_cause": "django_circular_import",
+      "suggestion": "Restructure imports to avoid circular dependencies. Consider using late imports or string-based model references.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "import",
+        "circular",
+        "architecture"
+      ],
+      "examples": [
+        "ImportError: cannot import name 'User' from partially initialized module 'myapp.models' (circular import)"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_secret_key_missing",
+      "pattern": "django.core.exceptions.ImproperlyConfigured: The SECRET_KEY setting must not be empty",
+      "type": "ImproperlyConfigured",
+      "description": "Django SECRET_KEY setting is missing or empty",
+      "root_cause": "django_secret_key_missing",
+      "suggestion": "Set SECRET_KEY in settings.py or environment variables. Never use the default key in production.",
+      "category": "django",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "security",
+        "configuration",
+        "secret_key"
+      ],
+      "examples": [
+        "django.core.exceptions.ImproperlyConfigured: The SECRET_KEY setting must not be empty"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "critical",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_allowed_hosts_error",
+      "pattern": "django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '([^']+)'",
+      "type": "DisallowedHost",
+      "description": "HTTP_HOST header is not in ALLOWED_HOSTS",
+      "root_cause": "django_allowed_hosts_missing",
+      "suggestion": "Add the host to ALLOWED_HOSTS in settings.py. Be careful with wildcards in production.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "security",
+        "configuration",
+        "allowed_hosts"
+      ],
+      "examples": [
+        "django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'example.com'"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_middleware_not_found",
+      "pattern": "django.core.exceptions.ImproperlyConfigured: MIDDLEWARE_CLASSES isn't set",
+      "type": "ImproperlyConfigured",
+      "description": "MIDDLEWARE_CLASSES setting is not configured",
+      "root_cause": "django_middleware_missing",
+      "suggestion": "Configure MIDDLEWARE in settings.py. Use MIDDLEWARE instead of MIDDLEWARE_CLASSES in Django 2.0+.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "middleware",
+        "configuration"
+      ],
+      "examples": [
+        "django.core.exceptions.ImproperlyConfigured: MIDDLEWARE_CLASSES isn't set"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_csrf_failure",
+      "pattern": "django.middleware.csrf.CsrfViewMiddleware: Forbidden \\(CSRF cookie not set\\)",
+      "type": "PermissionDenied",
+      "description": "CSRF protection failure",
+      "root_cause": "django_csrf_missing",
+      "suggestion": "Ensure CSRF middleware is enabled and csrf_token is included in forms. Use @csrf_exempt decorator if needed.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "csrf",
+        "security",
+        "middleware"
+      ],
+      "examples": [
+        "django.middleware.csrf.CsrfViewMiddleware: Forbidden (CSRF cookie not set)"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_url_resolver_error",
+      "pattern": "django.urls.exceptions.NoReverseMatch: Reverse for '([^']+)' not found",
+      "type": "NoReverseMatch",
+      "description": "URL pattern name not found for reverse lookup",
+      "root_cause": "django_url_pattern_missing",
+      "suggestion": "Check that the URL pattern name exists in urlpatterns and is correctly defined. Verify arguments if using parameterized URLs.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "urls",
+        "routing",
+        "reverse"
+      ],
+      "examples": [
+        "django.urls.exceptions.NoReverseMatch: Reverse for 'home' not found"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_view_does_not_exist",
+      "pattern": "django.urls.exceptions.ViewDoesNotExist: Could not import '([^']+)'",
+      "type": "ViewDoesNotExist",
+      "description": "View function or class cannot be imported",
+      "root_cause": "django_view_import_error",
+      "suggestion": "Check that the view exists and is properly defined. Verify import paths in urls.py.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "views",
+        "urls",
+        "import"
+      ],
+      "examples": [
+        "django.urls.exceptions.ViewDoesNotExist: Could not import 'myapp.views.home'"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

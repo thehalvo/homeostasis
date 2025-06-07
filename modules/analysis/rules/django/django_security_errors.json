@@ -1,0 +1,181 @@
+{
+  "name": "Django Security Errors",
+  "description": "Rules for detecting Django security-related errors and misconfigurations",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "django_permission_denied",
+      "pattern": "django.core.exceptions.PermissionDenied: ([^\\n]*)",
+      "type": "PermissionDenied",
+      "description": "User does not have permission to perform the action",
+      "root_cause": "django_permission_denied",
+      "suggestion": "Check user permissions, groups, or adjust the permission requirements in views or decorators.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "permissions",
+        "security",
+        "authorization"
+      ],
+      "examples": [
+        "django.core.exceptions.PermissionDenied: You don't have permission to view this object"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_suspicious_operation",
+      "pattern": "django.core.exceptions.SuspiciousOperation: ([^\\n]*)",
+      "type": "SuspiciousOperation",
+      "description": "Suspicious operation detected by Django security middleware",
+      "root_cause": "django_suspicious_operation",
+      "suggestion": "Review the operation for potential security issues. Check for malformed requests or potential attacks.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "security",
+        "suspicious",
+        "middleware"
+      ],
+      "examples": [
+        "django.core.exceptions.SuspiciousOperation: Invalid HTTP_HOST header"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_csrf_failure",
+      "pattern": "django.middleware.csrf.CsrfViewMiddleware: Forbidden \\(CSRF verification failed\\)",
+      "type": "PermissionDenied",
+      "description": "CSRF verification failed",
+      "root_cause": "django_csrf_verification_failed",
+      "suggestion": "Ensure CSRF token is properly included in forms and AJAX requests. Check referrer policy settings.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "csrf",
+        "security",
+        "token"
+      ],
+      "examples": [
+        "django.middleware.csrf.CsrfViewMiddleware: Forbidden (CSRF verification failed)"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_bad_request",
+      "pattern": "django.http.response.BadHeaderError: ([^\\n]*)",
+      "type": "BadHeaderError",
+      "description": "Bad HTTP header detected",
+      "root_cause": "django_bad_header",
+      "suggestion": "Check for invalid characters in HTTP headers. Sanitize user input used in response headers.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "http",
+        "headers",
+        "security"
+      ],
+      "examples": [
+        "django.http.response.BadHeaderError: Header values can't contain newlines"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_session_key_too_long",
+      "pattern": "django.contrib.sessions.exceptions.SessionInterrupted: ([^\\n]*)",
+      "type": "SessionInterrupted",
+      "description": "Session was interrupted or corrupted",
+      "root_cause": "django_session_interrupted",
+      "suggestion": "Check session backend configuration and storage. Clear corrupted session data.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "sessions",
+        "security",
+        "storage"
+      ],
+      "examples": [
+        "django.contrib.sessions.exceptions.SessionInterrupted: Session key is too long"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_admin_login_required",
+      "pattern": "django.contrib.admin.sites.NotRegistered: The model ([^\\s]+) is not registered",
+      "type": "NotRegistered",
+      "description": "Model is not registered with Django admin",
+      "root_cause": "django_admin_model_not_registered",
+      "suggestion": "Register the model in admin.py using admin.site.register() or create a ModelAdmin class.",
+      "category": "django",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "admin",
+        "registration",
+        "model"
+      ],
+      "examples": [
+        "django.contrib.admin.sites.NotRegistered: The model User is not registered"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

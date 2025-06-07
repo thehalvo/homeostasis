@@ -1,0 +1,268 @@
+{
+  "name": "Django Database Errors",
+  "description": "Rules for detecting Django database and ORM related errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "django_migration_node_not_found",
+      "pattern": "django.db.migrations.exceptions.NodeNotFoundError: Node '([^']*)' from migration '([^']*)' in ([^']*) not found",
+      "type": "NodeNotFoundError",
+      "description": "Django migration dependency not found",
+      "root_cause": "django_migration_dependency_missing",
+      "suggestion": "Run 'python manage.py makemigrations' to create missing migrations. Check migration dependencies.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "migration",
+        "database",
+        "dependency"
+      ],
+      "examples": [
+        "django.db.migrations.exceptions.NodeNotFoundError: Node '0001_initial' from migration '0002_auto_20200101_0000' in app1 not found"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_migration_inconsistent_history",
+      "pattern": "django.db.migrations.exceptions.InconsistentMigrationHistory: Migration ([^']+) is applied before its dependency ([^']+)",
+      "type": "InconsistentMigrationHistory",
+      "description": "Migration history is inconsistent",
+      "root_cause": "django_migration_history_inconsistent",
+      "suggestion": "Reset migration history or manually fix migration dependencies. Consider using --fake-initial flag.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "migration",
+        "database",
+        "history"
+      ],
+      "examples": [
+        "django.db.migrations.exceptions.InconsistentMigrationHistory: Migration admin.0001_initial is applied before its dependency contenttypes.0001_initial"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_field_error",
+      "pattern": "django.core.exceptions.FieldError: Cannot resolve keyword '([^']*)' into field",
+      "type": "FieldError",
+      "description": "Invalid field name used in a query",
+      "root_cause": "django_invalid_field",
+      "suggestion": "Check the model definition for the correct field name. Use model introspection to verify available fields.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "database",
+        "query",
+        "field"
+      ],
+      "examples": [
+        "django.core.exceptions.FieldError: Cannot resolve keyword 'name' into field"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_database_error",
+      "pattern": "django.db.utils.DatabaseError: ([^\\n]*)",
+      "type": "DatabaseError",
+      "description": "General database error occurred",
+      "root_cause": "django_database_error",
+      "suggestion": "Check database connection, permissions, and SQL syntax. Review database logs for detailed error information.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "django",
+        "database",
+        "connection",
+        "sql"
+      ],
+      "examples": [
+        "django.db.utils.DatabaseError: table \"auth_user\" doesn't exist"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_integrity_error",
+      "pattern": "django.db.utils.IntegrityError: ([^\\n]*)",
+      "type": "IntegrityError",
+      "description": "Database integrity constraint violation",
+      "root_cause": "django_integrity_constraint_violation",
+      "suggestion": "Check for duplicate keys, foreign key violations, or null constraint violations. Validate data before saving.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "database",
+        "integrity",
+        "constraint"
+      ],
+      "examples": [
+        "django.db.utils.IntegrityError: UNIQUE constraint failed: auth_user.username"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_operational_error",
+      "pattern": "django.db.utils.OperationalError: ([^\\n]*)",
+      "type": "OperationalError",
+      "description": "Database operational error",
+      "root_cause": "django_database_operational_error",
+      "suggestion": "Check database connection, table existence, and database server status. Run migrations if tables are missing.",
+      "category": "django",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "django",
+        "database",
+        "operational",
+        "connection"
+      ],
+      "examples": [
+        "django.db.utils.OperationalError: no such table: myapp_model"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_does_not_exist",
+      "pattern": "([^.]+\\.)?([A-Z][a-zA-Z0-9_]*)\\.DoesNotExist: ([^\\n]*)",
+      "type": "DoesNotExist",
+      "description": "Model instance does not exist",
+      "root_cause": "django_model_does_not_exist",
+      "suggestion": "Use get_object_or_404() or try/except blocks to handle missing objects gracefully.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "model",
+        "query",
+        "existence"
+      ],
+      "examples": [
+        "myapp.models.User.DoesNotExist: User matching query does not exist"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_multiple_objects_returned",
+      "pattern": "([^.]+\\.)?([A-Z][a-zA-Z0-9_]*)\\.MultipleObjectsReturned: ([^\\n]*)",
+      "type": "MultipleObjectsReturned",
+      "description": "Query returned multiple objects when one was expected",
+      "root_cause": "django_multiple_objects_returned",
+      "suggestion": "Use filter() instead of get(), or add more specific query conditions to ensure uniqueness.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "model",
+        "query",
+        "uniqueness"
+      ],
+      "examples": [
+        "myapp.models.User.MultipleObjectsReturned: get() returned more than one User"
+      ],
+      "metadata": {
+        "requires_contextualization": false
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "django_transaction_management_error",
+      "pattern": "django.db.transaction.TransactionManagementError: ([^\\n]*)",
+      "type": "TransactionManagementError",
+      "description": "Error in transaction management",
+      "root_cause": "django_transaction_error",
+      "suggestion": "Review transaction boundaries and ensure proper use of @atomic decorator or transaction.atomic() context manager.",
+      "category": "django",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "django",
+        "transaction",
+        "database",
+        "atomic"
+      ],
+      "examples": [
+        "django.db.transaction.TransactionManagementError: An error occurred in the current transaction"
+      ],
+      "metadata": {
+        "requires_contextualization": true
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+# Django CSRF Fix Template
+# Handles CSRF token issues
+
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.middleware.csrf import get_token
+
+# Fix 1: Add CSRF token to template context in view
+def {{view_name}}(request):
+    context = {
+        'csrf_token': get_token(request),
+        # other context variables
+    }
+    return render(request, '{{template_name}}', context)
+
+# Fix 2: Exempt view from CSRF protection (use with caution)
+@csrf_exempt
+def {{api_view_name}}(request):
+    # This view is exempt from CSRF protection
+    # Only use for APIs with other authentication methods
+    pass
+
+# Fix 3: Ensure CSRF middleware is in settings
+# In settings.py, make sure this is in MIDDLEWARE:
+MIDDLEWARE = [
+    # other middleware
+    'django.middleware.csrf.CsrfViewMiddleware',
+    # other middleware
+]
+
+# Fix 4: Handle CSRF in AJAX requests
+# In JavaScript:
+"""
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+// Include in AJAX headers
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+"""
+
+# Fix 5: For Django REST Framework
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@api_view(['POST'])
+@csrf_exempt  # DRF handles CSRF differently
+def {{api_endpoint}}(request):
+    return Response({'status': 'success'})
