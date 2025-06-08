@@ -1,0 +1,271 @@
+{
+  "metadata": {
+    "name": "React Native Platform-Specific Errors",
+    "description": "Detection rules for iOS and Android platform-specific errors in React Native applications",
+    "version": "1.0.0",
+    "author": "Homeostasis Team",
+    "tags": ["react-native", "ios", "android", "platform-specific"]
+  },
+  "rules": [
+    {
+      "id": "rn_ios_simulator_error",
+      "pattern": "iOS Simulator.*error|Simulator.*not found|xcrun.*simctl.*error",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_ios_simulator_error",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check iOS Simulator configuration and Xcode installation",
+      "description": "React Native iOS Simulator error",
+      "tags": ["react-native", "ios", "simulator", "xcode"],
+      "reliability": "high",
+      "fix_commands": [
+        "Open Xcode and launch iOS Simulator manually",
+        "Check Xcode Command Line Tools: 'xcode-select --install'",
+        "Verify iOS Simulator is installed in Xcode",
+        "Reset iOS Simulator if needed",
+        "Check available simulators: 'xcrun simctl list devices'"
+      ]
+    },
+    {
+      "id": "rn_android_emulator_error",
+      "pattern": "Android emulator.*error|AVD.*not found|emulator.*failed to start",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_android_emulator_error",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check Android emulator configuration and Android Studio setup",
+      "description": "React Native Android emulator error",
+      "tags": ["react-native", "android", "emulator", "avd"],
+      "reliability": "high",
+      "fix_commands": [
+        "Launch Android Studio and create/start an AVD",
+        "Check Android SDK and emulator installation",
+        "Verify ANDROID_HOME environment variable",
+        "Check available AVDs: 'emulator -list-avds'",
+        "Create new AVD if needed in Android Studio"
+      ]
+    },
+    {
+      "id": "rn_ios_build_error",
+      "pattern": "iOS build.*failed|xcodebuild.*error|Build.*failed.*iOS",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_ios_build_error",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check iOS project configuration and Xcode build settings",
+      "description": "React Native iOS build failure",
+      "tags": ["react-native", "ios", "build", "xcode"],
+      "reliability": "high",
+      "fix_commands": [
+        "Open ios/YourApp.xcworkspace in Xcode",
+        "Check iOS deployment target compatibility",
+        "Run 'cd ios && pod install' to update pods",
+        "Clean Xcode build folder",
+        "Check for signing and provisioning profile issues"
+      ]
+    },
+    {
+      "id": "rn_android_build_error",
+      "pattern": "Android build.*failed|gradle.*build.*failed|Build.*failed.*Android",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_android_build_error",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check Android project configuration and Gradle build settings",
+      "description": "React Native Android build failure",
+      "tags": ["react-native", "android", "build", "gradle"],
+      "reliability": "high",
+      "fix_commands": [
+        "Clean Android build: 'cd android && ./gradlew clean'",
+        "Check compileSdkVersion and targetSdkVersion",
+        "Verify Android SDK and build tools installation",
+        "Check Gradle wrapper version compatibility",
+        "Review android/build.gradle and android/app/build.gradle"
+      ]
+    },
+    {
+      "id": "rn_ios_signing_error",
+      "pattern": "Code signing.*error|Provisioning profile.*error|iOS.*signing.*failed",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_ios_signing_error",
+      "confidence": "medium",
+      "severity": "error",
+      "suggestion": "Check iOS code signing and provisioning profile configuration",
+      "description": "React Native iOS code signing error",
+      "tags": ["react-native", "ios", "code-signing", "provisioning"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check signing configuration in Xcode project",
+        "Verify provisioning profiles are installed",
+        "Check Apple Developer account and certificates",
+        "Set correct team and bundle identifier",
+        "Use automatic signing if available"
+      ]
+    },
+    {
+      "id": "rn_android_sdk_error",
+      "pattern": "Android SDK.*not found|ANDROID_HOME.*not set|SDK.*path.*error",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_android_sdk_error",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check Android SDK installation and environment variables",
+      "description": "React Native Android SDK configuration error",
+      "tags": ["react-native", "android", "sdk", "environment"],
+      "reliability": "high",
+      "fix_commands": [
+        "Set ANDROID_HOME environment variable",
+        "Add Android SDK tools to PATH",
+        "Install Android SDK through Android Studio",
+        "Check SDK location in Android Studio preferences",
+        "Verify local.properties file in android folder"
+      ]
+    },
+    {
+      "id": "rn_ios_deployment_target_error",
+      "pattern": "iOS deployment target.*error|Minimum iOS version.*error|iOS.*version.*unsupported",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_ios_deployment_target_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check iOS deployment target compatibility",
+      "description": "React Native iOS deployment target version error",
+      "tags": ["react-native", "ios", "deployment-target"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check iOS Deployment Target in Xcode project settings",
+        "Update Podfile iOS platform version",
+        "Verify all dependencies support the target iOS version",
+        "Update React Native version if needed",
+        "Check minimum iOS version requirements"
+      ]
+    },
+    {
+      "id": "rn_android_api_level_error",
+      "pattern": "Android API.*level.*error|compileSdkVersion.*error|targetSdkVersion.*error",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_android_api_level_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check Android API level and SDK version compatibility",
+      "description": "React Native Android API level compatibility error",
+      "tags": ["react-native", "android", "api-level", "sdk-version"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Update compileSdkVersion in android/app/build.gradle",
+        "Check targetSdkVersion compatibility",
+        "Install required Android SDK API levels",
+        "Update build tools version if needed",
+        "Check dependency API level requirements"
+      ]
+    },
+    {
+      "id": "rn_ios_device_error",
+      "pattern": "iOS device.*error|Device.*not found|iOS.*physical.*device.*error",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_ios_device_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check iOS device connection and trust settings",
+      "description": "React Native iOS physical device connection error",
+      "tags": ["react-native", "ios", "device", "physical"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check iOS device is connected via USB",
+        "Trust the computer on iOS device",
+        "Enable Developer Mode on iOS device",
+        "Check device is selected in Xcode",
+        "Verify device is recognized: 'xcrun simctl list devices'"
+      ]
+    },
+    {
+      "id": "rn_android_device_error",
+      "pattern": "Android device.*error|ADB.*device.*not found|Android.*physical.*device.*error",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_android_device_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check Android device connection and USB debugging",
+      "description": "React Native Android physical device connection error",
+      "tags": ["react-native", "android", "device", "adb"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Enable USB debugging on Android device",
+        "Check device is connected: 'adb devices'",
+        "Install or update ADB drivers if needed",
+        "Allow USB debugging when prompted on device",
+        "Check USB connection mode on device"
+      ]
+    },
+    {
+      "id": "rn_ios_bundle_error",
+      "pattern": "iOS.*bundle.*error|main.jsbundle.*not found|Bundle.*phase.*error",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_ios_bundle_error",
+      "confidence": "medium",
+      "severity": "error",
+      "suggestion": "Check iOS bundle generation and build phases",
+      "description": "React Native iOS bundle generation error",
+      "tags": ["react-native", "ios", "bundle", "build-phase"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check Bundle React Native code build phase in Xcode",
+        "Verify Metro bundler is running for debug builds",
+        "Check bundle path in Xcode build settings",
+        "Clear Xcode derived data",
+        "Verify React Native CLI version compatibility"
+      ]
+    },
+    {
+      "id": "rn_android_manifest_error",
+      "pattern": "AndroidManifest.xml.*error|Manifest.*merge.*error|Android.*manifest.*invalid",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_android_manifest_error",
+      "confidence": "medium",
+      "severity": "error",
+      "suggestion": "Check AndroidManifest.xml configuration and manifest merging",
+      "description": "React Native Android manifest configuration error",
+      "tags": ["react-native", "android", "manifest"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check AndroidManifest.xml syntax",
+        "Review manifest merge conflicts",
+        "Verify all required permissions are declared",
+        "Check activity and service declarations",
+        "Validate manifest element attributes"
+      ]
+    },
+    {
+      "id": "rn_ios_info_plist_error",
+      "pattern": "Info.plist.*error|iOS.*plist.*invalid|Info.plist.*key.*missing",
+      "category": "react_native",
+      "subcategory": "platform",
+      "root_cause": "react_native_ios_info_plist_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check Info.plist configuration and required keys",
+      "description": "React Native iOS Info.plist configuration error",
+      "tags": ["react-native", "ios", "info-plist"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check Info.plist syntax and format",
+        "Verify all required keys are present",
+        "Check permission usage descriptions",
+        "Validate bundle identifier and version",
+        "Check supported interface orientations"
+      ]
+    }
+  ]
+}

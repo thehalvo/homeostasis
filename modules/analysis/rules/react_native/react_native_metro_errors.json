@@ -1,0 +1,249 @@
+{
+  "metadata": {
+    "name": "React Native Metro Bundler Errors",
+    "description": "Detection rules for Metro bundler configuration, module resolution, and build errors",
+    "version": "1.0.0",
+    "author": "Homeostasis Team",
+    "tags": ["react-native", "metro", "bundler", "build", "module-resolution"]
+  },
+  "rules": [
+    {
+      "id": "rn_metro_module_resolution_error",
+      "pattern": "Unable to resolve module|Module.*does not exist|Cannot resolve.*from",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_module_not_found",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check module path and ensure dependency is installed",
+      "description": "Metro bundler cannot resolve module import",
+      "tags": ["react-native", "metro", "modules", "resolution"],
+      "reliability": "high",
+      "fix_commands": [
+        "Check import/require statement spelling",
+        "Verify package is installed in node_modules",
+        "Clear Metro cache: 'npx react-native start --reset-cache'",
+        "Check metro.config.js resolver configuration",
+        "Verify relative import paths are correct"
+      ]
+    },
+    {
+      "id": "rn_metro_cache_error",
+      "pattern": "Metro.*cache.*error|Cache.*corrupt|Metro.*reset.*cache",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_metro_cache_error",
+      "confidence": "high",
+      "severity": "warning",
+      "suggestion": "Clear Metro cache and restart bundler",
+      "description": "Metro bundler cache corruption or error",
+      "tags": ["react-native", "metro", "cache"],
+      "reliability": "high",
+      "fix_commands": [
+        "Clear Metro cache: 'npx react-native start --reset-cache'",
+        "Clear watchman cache: 'watchman watch-del-all'",
+        "Clear node_modules and reinstall: 'rm -rf node_modules && npm install'",
+        "Restart Metro bundler: 'npx react-native start'"
+      ]
+    },
+    {
+      "id": "rn_metro_config_error",
+      "pattern": "metro.config.js.*error|Metro.*configuration.*error|Invalid.*metro.*config",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_metro_config_error",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check metro.config.js file syntax and configuration",
+      "description": "Metro bundler configuration file error",
+      "tags": ["react-native", "metro", "configuration"],
+      "reliability": "high",
+      "fix_commands": [
+        "Check metro.config.js syntax for errors",
+        "Verify module.exports structure",
+        "Check resolver and transformer configuration",
+        "Compare with default React Native metro config",
+        "Validate file paths in configuration"
+      ]
+    },
+    {
+      "id": "rn_metro_transformer_error",
+      "pattern": "Metro.*transformer.*error|Transform.*error|babel.*transform.*error",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_metro_transformer_error",
+      "confidence": "medium",
+      "severity": "error",
+      "suggestion": "Check Babel and Metro transformer configuration",
+      "description": "Metro bundler transformer or Babel configuration error",
+      "tags": ["react-native", "metro", "transformer", "babel"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check .babelrc or babel.config.js configuration",
+        "Verify Metro transformer configuration",
+        "Check for conflicting Babel plugins",
+        "Update @react-native/babel-preset if needed",
+        "Clear Metro cache after configuration changes"
+      ]
+    },
+    {
+      "id": "rn_metro_resolver_error",
+      "pattern": "Metro.*resolver.*error|Resolver.*failed|Module.*resolution.*failed",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_metro_resolver_error",
+      "confidence": "medium",
+      "severity": "error",
+      "suggestion": "Check Metro resolver configuration and module paths",
+      "description": "Metro bundler module resolver configuration error",
+      "tags": ["react-native", "metro", "resolver"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check resolver configuration in metro.config.js",
+        "Verify platforms and sourceExts settings",
+        "Check asset resolution configuration",
+        "Verify alias and symlink configurations",
+        "Check for case sensitivity issues in file paths"
+      ]
+    },
+    {
+      "id": "rn_metro_watchman_error",
+      "pattern": "Watchman.*error|File watching.*error|watchman.*crawl.*failed",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_metro_watchman_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check Watchman file watching service",
+      "description": "Metro bundler Watchman file watching error",
+      "tags": ["react-native", "metro", "watchman", "file-watching"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Clear watchman cache: 'watchman watch-del-all'",
+        "Restart watchman service",
+        "Check watchman configuration",
+        "Verify file system permissions",
+        "Install or update watchman if needed"
+      ]
+    },
+    {
+      "id": "rn_metro_port_error",
+      "pattern": "Port.*already in use|Metro.*port.*8081.*busy|EADDRINUSE.*8081",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_metro_port_error",
+      "confidence": "high",
+      "severity": "warning",
+      "suggestion": "Change Metro bundler port or kill existing process",
+      "description": "Metro bundler port 8081 already in use",
+      "tags": ["react-native", "metro", "port", "8081"],
+      "reliability": "high",
+      "fix_commands": [
+        "Kill existing Metro process: 'lsof -ti:8081 | xargs kill'",
+        "Start Metro on different port: 'npx react-native start --port 8082'",
+        "Check for other processes using port 8081",
+        "Configure custom port in metro.config.js"
+      ]
+    },
+    {
+      "id": "rn_metro_asset_error",
+      "pattern": "Asset.*resolution.*error|Unable to resolve.*asset|Metro.*asset.*error",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_metro_asset_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check asset paths and Metro asset configuration",
+      "description": "Metro bundler asset resolution error",
+      "tags": ["react-native", "metro", "assets"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check asset file paths and names",
+        "Verify assetExts configuration in metro.config.js",
+        "Check asset resolution in resolver configuration",
+        "Ensure assets are in correct directories",
+        "Check for case sensitivity in asset names"
+      ]
+    },
+    {
+      "id": "rn_metro_symlink_error",
+      "pattern": "Symlink.*error|Metro.*symlink.*failed|Cannot resolve.*symlink",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_metro_symlink_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check symlink configuration and Metro resolver settings",
+      "description": "Metro bundler symlink resolution error",
+      "tags": ["react-native", "metro", "symlinks"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Enable symlink support in metro.config.js resolver",
+        "Check symlink targets exist and are valid",
+        "Configure resolver.symlinks option",
+        "Verify symlink permissions",
+        "Consider using direct paths instead of symlinks"
+      ]
+    },
+    {
+      "id": "rn_metro_duplicate_module_error",
+      "pattern": "Duplicate module name|Multiple.*modules.*same name|Metro.*duplicate.*error",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_metro_duplicate_module_error",
+      "confidence": "medium",
+      "severity": "error",
+      "suggestion": "Check for duplicate module names or conflicting dependencies",
+      "description": "Metro bundler duplicate module name error",
+      "tags": ["react-native", "metro", "duplicate-modules"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check for duplicate package installations",
+        "Clear node_modules and reinstall dependencies",
+        "Check for conflicting module names",
+        "Use Metro resolver blacklist if needed",
+        "Check for multiple React Native installations"
+      ]
+    },
+    {
+      "id": "rn_metro_memory_error",
+      "pattern": "Metro.*out of memory|JavaScript heap out of memory|Metro.*memory.*error",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_metro_memory_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Increase Node.js memory limit or optimize Metro configuration",
+      "description": "Metro bundler running out of memory",
+      "tags": ["react-native", "metro", "memory", "heap"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Increase Node.js memory: 'export NODE_OPTIONS=\"--max-old-space-size=8192\"'",
+        "Optimize Metro configuration for large projects",
+        "Check for memory leaks in transformers",
+        "Use Metro bundler with --max-workers option",
+        "Consider splitting large bundles"
+      ]
+    },
+    {
+      "id": "rn_metro_circular_dependency_error",
+      "pattern": "Circular dependency|Metro.*cycle.*detected|Circular.*import",
+      "category": "react_native",
+      "subcategory": "bundler",
+      "root_cause": "react_native_metro_circular_dependency_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check for circular import dependencies in your code",
+      "description": "Metro bundler detected circular dependency",
+      "tags": ["react-native", "metro", "circular-dependency"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Identify circular import chain from error message",
+        "Refactor code to remove circular dependencies",
+        "Use dynamic imports to break cycles if needed",
+        "Extract shared dependencies to separate modules",
+        "Check import/export structure"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,239 @@
+{
+  "metadata": {
+    "name": "React Native Navigation Errors",
+    "description": "Detection rules for React Navigation and routing errors in React Native applications",
+    "version": "1.0.0",
+    "author": "Homeostasis Team",
+    "tags": ["react-native", "navigation", "routing", "react-navigation"]
+  },
+  "rules": [
+    {
+      "id": "rn_navigation_container_error",
+      "pattern": "NavigationContainer.*error|Navigation.*container.*not found",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_navigation_container_error",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Ensure NavigationContainer wraps your app and is properly configured",
+      "description": "React Navigation NavigationContainer configuration error",
+      "tags": ["react-native", "navigation", "navigation-container"],
+      "reliability": "high",
+      "fix_commands": [
+        "Wrap your app with <NavigationContainer>",
+        "Import NavigationContainer from '@react-navigation/native'",
+        "Check for multiple NavigationContainer instances",
+        "Verify NavigationContainer placement in component tree"
+      ]
+    },
+    {
+      "id": "rn_screen_not_found",
+      "pattern": "Screen.*not found|Route.*not found|Navigator.*screen.*undefined",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_screen_not_found",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check screen registration and route names in navigator",
+      "description": "React Navigation screen or route not found error",
+      "tags": ["react-native", "navigation", "screen", "route"],
+      "reliability": "high",
+      "fix_commands": [
+        "Verify screen is registered in navigator",
+        "Check screen name spelling in navigation calls",
+        "Ensure screen component is properly imported",
+        "Check navigator configuration and screen definitions"
+      ]
+    },
+    {
+      "id": "rn_navigation_prop_undefined",
+      "pattern": "navigation.*undefined|Cannot read.*navigation.*undefined",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_navigation_prop_undefined",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Use useNavigation hook or ensure component is a screen in navigator",
+      "description": "React Navigation prop undefined error",
+      "tags": ["react-native", "navigation", "prop", "undefined"],
+      "reliability": "high",
+      "fix_commands": [
+        "Use useNavigation() hook from '@react-navigation/native'",
+        "Ensure component is registered as a screen in navigator",
+        "Pass navigation prop to child components if needed",
+        "Check component is inside NavigationContainer"
+      ]
+    },
+    {
+      "id": "rn_params_undefined",
+      "pattern": "route.params.*undefined|params.*not found|Cannot read.*params",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_navigation_params_undefined",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check parameter passing and provide default values for params",
+      "description": "React Navigation route params undefined error",
+      "tags": ["react-native", "navigation", "params", "route"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Provide default values: route.params?.paramName || defaultValue",
+        "Check parameter passing in navigation.navigate()",
+        "Use optional chaining: route.params?.paramName",
+        "Verify param names match between navigate and screen"
+      ]
+    },
+    {
+      "id": "rn_stack_navigator_error",
+      "pattern": "Stack.*Navigator.*error|createStackNavigator.*error",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_stack_navigator_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check Stack Navigator configuration and screen setup",
+      "description": "React Navigation Stack Navigator configuration error",
+      "tags": ["react-native", "navigation", "stack-navigator"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Import createStackNavigator from '@react-navigation/stack'",
+        "Check Stack.Navigator and Stack.Screen configuration",
+        "Verify initial route name exists",
+        "Check screen options and header configuration"
+      ]
+    },
+    {
+      "id": "rn_tab_navigator_error",
+      "pattern": "Tab.*Navigator.*error|createBottomTabNavigator.*error|Bottom.*Tab.*error",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_tab_navigator_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check Tab Navigator configuration and tab screens",
+      "description": "React Navigation Tab Navigator configuration error",
+      "tags": ["react-native", "navigation", "tab-navigator"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Import createBottomTabNavigator from '@react-navigation/bottom-tabs'",
+        "Check Tab.Navigator and Tab.Screen configuration",
+        "Verify tab bar icons and labels",
+        "Check screen options for tab bar customization"
+      ]
+    },
+    {
+      "id": "rn_drawer_navigator_error",
+      "pattern": "Drawer.*Navigator.*error|createDrawerNavigator.*error",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_drawer_navigator_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check Drawer Navigator configuration and gesture handling",
+      "description": "React Navigation Drawer Navigator configuration error",
+      "tags": ["react-native", "navigation", "drawer-navigator"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Import createDrawerNavigator from '@react-navigation/drawer'",
+        "Install react-native-gesture-handler for drawer gestures",
+        "Check Drawer.Navigator and Drawer.Screen configuration",
+        "Verify gesture handler setup on iOS and Android"
+      ]
+    },
+    {
+      "id": "rn_deep_linking_error",
+      "pattern": "Deep.*link.*error|Linking.*URL.*error|URL.*scheme.*error",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_deep_linking_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check deep linking configuration and URL scheme setup",
+      "description": "React Navigation deep linking configuration error",
+      "tags": ["react-native", "navigation", "deep-linking", "url-scheme"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Configure linking prop in NavigationContainer",
+        "Set up URL schemes in iOS and Android manifests",
+        "Check linking configuration object",
+        "Test deep links with proper URL format"
+      ]
+    },
+    {
+      "id": "rn_navigation_state_error",
+      "pattern": "Navigation.*state.*error|getState.*undefined|navigation.*current.*undefined",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_navigation_state_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check navigation state access and lifecycle timing",
+      "description": "React Navigation state access error",
+      "tags": ["react-native", "navigation", "state"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check navigation state access timing",
+        "Use navigation.isFocused() to check screen focus",
+        "Access navigation state after NavigationContainer is ready",
+        "Use useFocusEffect hook for focus-dependent logic"
+      ]
+    },
+    {
+      "id": "rn_header_configuration_error",
+      "pattern": "Header.*configuration.*error|headerShown.*error|Header.*component.*error",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_header_configuration_error",
+      "confidence": "low",
+      "severity": "warning",
+      "suggestion": "Check header configuration in screen options",
+      "description": "React Navigation header configuration error",
+      "tags": ["react-native", "navigation", "header"],
+      "reliability": "low",
+      "fix_commands": [
+        "Check screenOptions and options configuration",
+        "Verify header component imports and props",
+        "Use headerShown: false to hide header if needed",
+        "Check header styling and custom header components"
+      ]
+    },
+    {
+      "id": "rn_navigation_v6_migration_error",
+      "pattern": "createAppContainer.*error|SwitchNavigator.*error|navigation.*v5.*v6",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_navigation_v6_migration_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Update to React Navigation v6 API patterns",
+      "description": "React Navigation v5/v6 migration related error",
+      "tags": ["react-native", "navigation", "migration", "v6"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Remove createAppContainer usage",
+        "Replace SwitchNavigator with Stack Navigator",
+        "Update navigation prop and hook usage",
+        "Check React Navigation v6 migration guide"
+      ]
+    },
+    {
+      "id": "rn_safe_area_navigation_error",
+      "pattern": "Safe.*area.*navigation.*error|useSafeAreaInsets.*error",
+      "category": "react_native",
+      "subcategory": "navigation",
+      "root_cause": "react_native_safe_area_navigation_error",
+      "confidence": "low",
+      "severity": "warning",
+      "suggestion": "Check safe area handling with React Navigation",
+      "description": "React Navigation safe area handling error",
+      "tags": ["react-native", "navigation", "safe-area"],
+      "reliability": "low",
+      "fix_commands": [
+        "Install react-native-safe-area-context",
+        "Wrap app with SafeAreaProvider",
+        "Use useSafeAreaInsets hook properly",
+        "Check safe area handling in navigator configuration"
+      ]
+    }
+  ]
+}

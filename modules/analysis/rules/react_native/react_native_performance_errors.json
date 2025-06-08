@@ -1,0 +1,251 @@
+{
+  "metadata": {
+    "name": "React Native Performance Errors",
+    "description": "Detection rules for React Native performance issues, memory leaks, and optimization problems",
+    "version": "1.0.0",
+    "author": "Homeostasis Team",
+    "tags": ["react-native", "performance", "memory", "optimization"]
+  },
+  "rules": [
+    {
+      "id": "rn_js_thread_blocked",
+      "pattern": "JavaScript thread.*blocked|JS thread.*unresponsive|Main thread.*blocked.*JavaScript",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_js_thread_blocked",
+      "confidence": "high",
+      "severity": "warning",
+      "suggestion": "Optimize JavaScript execution to avoid blocking the main thread",
+      "description": "React Native JavaScript thread blocking the main thread",
+      "tags": ["react-native", "performance", "js-thread", "blocking"],
+      "reliability": "high",
+      "fix_commands": [
+        "Use InteractionManager.runAfterInteractions() for non-critical tasks",
+        "Move heavy computations to setTimeout or requestAnimationFrame",
+        "Use React Native's threading APIs for background work",
+        "Optimize render methods and reduce re-renders",
+        "Profile JavaScript performance with React DevTools"
+      ]
+    },
+    {
+      "id": "rn_memory_leak",
+      "pattern": "Memory leak.*React Native|Memory warning.*JavaScript|Heap.*growing.*React Native",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_memory_leak",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check for memory leaks in event listeners, timers, and component cleanup",
+      "description": "React Native memory leak detection",
+      "tags": ["react-native", "memory", "leak", "cleanup"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Clean up event listeners in useEffect cleanup",
+        "Clear timers and intervals in component cleanup",
+        "Remove navigation listeners on unmount",
+        "Check for circular references in objects",
+        "Use React DevTools Profiler to identify memory leaks"
+      ]
+    },
+    {
+      "id": "rn_large_list_performance",
+      "pattern": "FlatList.*performance|VirtualizedList.*slow|Large list.*performance.*issue",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_large_list_performance",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Optimize FlatList performance with proper configuration",
+      "description": "React Native large list performance issue",
+      "tags": ["react-native", "flatlist", "performance", "virtualization"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Use getItemLayout for consistent item heights",
+        "Set appropriate initialNumToRender and maxToRenderPerBatch",
+        "Implement keyExtractor for better key generation",
+        "Use removeClippedSubviews for large lists",
+        "Optimize renderItem with React.memo"
+      ]
+    },
+    {
+      "id": "rn_image_memory_issue",
+      "pattern": "Image.*memory.*issue|Image.*cache.*memory|Large image.*memory",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_image_memory_issue",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Optimize image loading and caching to reduce memory usage",
+      "description": "React Native image memory usage issue",
+      "tags": ["react-native", "image", "memory", "cache"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Use appropriate image sizes and formats",
+        "Implement image caching strategies",
+        "Use react-native-fast-image for better caching",
+        "Resize images before loading",
+        "Clear image cache when appropriate"
+      ]
+    },
+    {
+      "id": "rn_animation_performance",
+      "pattern": "Animation.*performance.*issue|Animated.*dropping.*frames|Animation.*janky",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_animation_performance",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Optimize animations for better performance",
+      "description": "React Native animation performance issue",
+      "tags": ["react-native", "animation", "performance", "frames"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Use useNativeDriver: true for Animated API",
+        "Avoid animating layout properties",
+        "Use transform and opacity for better performance",
+        "Reduce animation complexity and duration",
+        "Profile animations with React Native performance monitor"
+      ]
+    },
+    {
+      "id": "rn_bridge_performance",
+      "pattern": "Bridge.*performance.*issue|React Native bridge.*slow|Bridge.*communication.*slow",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_bridge_performance",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Reduce bridge communication for better performance",
+      "description": "React Native bridge communication performance issue",
+      "tags": ["react-native", "bridge", "performance", "communication"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Batch bridge calls when possible",
+        "Reduce frequency of native module calls",
+        "Use native modules for heavy computations",
+        "Minimize data serialization across bridge",
+        "Consider using JSI for direct JavaScript-native communication"
+      ]
+    },
+    {
+      "id": "rn_bundle_size_large",
+      "pattern": "Bundle size.*large|JavaScript bundle.*too big|Metro.*bundle.*size.*warning",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_bundle_size_large",
+      "confidence": "low",
+      "severity": "warning",
+      "suggestion": "Optimize bundle size to improve app startup time",
+      "description": "React Native large bundle size affecting performance",
+      "tags": ["react-native", "bundle-size", "performance", "startup"],
+      "reliability": "low",
+      "fix_commands": [
+        "Enable code splitting and lazy loading",
+        "Remove unused dependencies and code",
+        "Use React Native bundle analyzer",
+        "Enable minification and tree shaking",
+        "Consider using Hermes JavaScript engine"
+      ]
+    },
+    {
+      "id": "rn_startup_performance",
+      "pattern": "App startup.*slow|React Native.*startup.*performance|Launch time.*slow",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_startup_performance",
+      "confidence": "low",
+      "severity": "warning",
+      "suggestion": "Optimize app startup time and initial load performance",
+      "description": "React Native app startup performance issue",
+      "tags": ["react-native", "startup", "performance", "launch"],
+      "reliability": "low",
+      "fix_commands": [
+        "Reduce initial bundle size",
+        "Lazy load non-critical components",
+        "Optimize splash screen to main screen transition",
+        "Enable Hermes for faster JavaScript execution",
+        "Profile startup performance with React Native tools"
+      ]
+    },
+    {
+      "id": "rn_navigation_performance",
+      "pattern": "Navigation.*performance.*slow|Screen transition.*lag|React Navigation.*performance",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_navigation_performance",
+      "confidence": "low",
+      "severity": "warning",
+      "suggestion": "Optimize navigation performance and screen transitions",
+      "description": "React Native navigation performance issue",
+      "tags": ["react-native", "navigation", "performance", "transitions"],
+      "reliability": "low",
+      "fix_commands": [
+        "Use lazy loading for navigation screens",
+        "Optimize screen component rendering",
+        "Reduce navigation payload size",
+        "Use React Navigation performance optimizations",
+        "Profile navigation transitions"
+      ]
+    },
+    {
+      "id": "rn_state_management_performance",
+      "pattern": "State update.*performance|Redux.*performance.*issue|Context.*re-render.*performance",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_state_management_performance",
+      "confidence": "low",
+      "severity": "warning",
+      "suggestion": "Optimize state management and reduce unnecessary re-renders",
+      "description": "React Native state management performance issue",
+      "tags": ["react-native", "state-management", "performance", "re-renders"],
+      "reliability": "low",
+      "fix_commands": [
+        "Use React.memo to prevent unnecessary re-renders",
+        "Optimize Redux store structure and selectors",
+        "Use useMemo and useCallback hooks appropriately",
+        "Split large contexts into smaller ones",
+        "Profile component re-renders with React DevTools"
+      ]
+    },
+    {
+      "id": "rn_network_performance",
+      "pattern": "Network.*request.*slow|API.*call.*performance|Fetch.*timeout.*performance",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_network_performance",
+      "confidence": "low",
+      "severity": "warning",
+      "suggestion": "Optimize network requests and API call performance",
+      "description": "React Native network request performance issue",
+      "tags": ["react-native", "network", "performance", "api"],
+      "reliability": "low",
+      "fix_commands": [
+        "Implement request caching strategies",
+        "Use parallel requests where appropriate",
+        "Optimize API response payload sizes",
+        "Implement proper loading states",
+        "Use network request timeouts and retries"
+      ]
+    },
+    {
+      "id": "rn_hermes_performance",
+      "pattern": "Hermes.*performance.*issue|JavaScript engine.*performance|Hermes.*optimization",
+      "category": "react_native",
+      "subcategory": "performance",
+      "root_cause": "react_native_hermes_performance",
+      "confidence": "low",
+      "severity": "info",
+      "suggestion": "Check Hermes JavaScript engine configuration and optimization",
+      "description": "React Native Hermes JavaScript engine performance consideration",
+      "tags": ["react-native", "hermes", "performance", "javascript-engine"],
+      "reliability": "low",
+      "fix_commands": [
+        "Enable Hermes in android/app/build.gradle",
+        "Check Hermes compatibility with dependencies",
+        "Profile JavaScript performance with Hermes",
+        "Compare performance with and without Hermes",
+        "Update React Native version for Hermes improvements"
+      ]
+    }
+  ]
+}

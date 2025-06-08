@@ -1,0 +1,254 @@
+{
+  "metadata": {
+    "name": "React Native Native Modules Errors",
+    "description": "Detection rules for React Native native module integration and linking errors",
+    "version": "1.0.0",
+    "author": "Homeostasis Team",
+    "tags": ["react-native", "native-modules", "linking", "ios", "android"]
+  },
+  "rules": [
+    {
+      "id": "rn_native_module_not_found",
+      "pattern": "Native module.*cannot be null|NativeModule.*not found|Native module.*undefined",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_native_module_missing",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check if native module is properly linked and installed",
+      "description": "React Native native module not found or not properly linked",
+      "tags": ["react-native", "native-modules", "linking"],
+      "reliability": "high",
+      "fix_commands": [
+        "Check package.json for the dependency",
+        "Run 'npx react-native run-ios' or 'npx react-native run-android'",
+        "Verify native module is compatible with React Native version",
+        "Check iOS/Android native project configuration",
+        "For React Native 0.60+: Check autolinking configuration",
+        "For older versions: Run 'react-native link <package-name>'"
+      ]
+    },
+    {
+      "id": "rn_cocoapods_error",
+      "pattern": "CocoaPods.*error|pod install.*error|Podfile.*error|No podspec found",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_ios_pods_error",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Run 'cd ios && pod install' to install iOS dependencies",
+      "description": "React Native iOS CocoaPods installation or configuration error",
+      "tags": ["react-native", "ios", "cocoapods", "pods"],
+      "reliability": "high",
+      "fix_commands": [
+        "cd ios && pod install",
+        "Check Podfile configuration",
+        "Update CocoaPods: 'sudo gem install cocoapods'",
+        "Clear pods cache: 'cd ios && pod deintegrate && pod install'",
+        "Verify iOS deployment target compatibility",
+        "Check for podspec errors in dependencies"
+      ]
+    },
+    {
+      "id": "rn_gradle_error",
+      "pattern": "Gradle.*error|gradle.*build.*failed|Android.*build.*error",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_android_gradle_error",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check Android Gradle configuration and dependencies",
+      "description": "React Native Android Gradle build error",
+      "tags": ["react-native", "android", "gradle", "build"],
+      "reliability": "high",
+      "fix_commands": [
+        "Clean and rebuild Android project: 'cd android && ./gradlew clean'",
+        "Check android/build.gradle configuration",
+        "Verify Android SDK and build tools versions",
+        "Check compileSdkVersion and targetSdkVersion compatibility",
+        "Update Gradle wrapper if needed",
+        "Verify dependency versions in build.gradle files"
+      ]
+    },
+    {
+      "id": "rn_linking_error",
+      "pattern": "linking.*error|react-native link.*error|Unable to link.*native module",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_linking_error",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check native module linking configuration",
+      "description": "React Native native module linking error",
+      "tags": ["react-native", "linking", "native-modules"],
+      "reliability": "high",
+      "fix_commands": [
+        "For React Native 0.60+: Check autolinking in react-native.config.js",
+        "For older versions: Run 'react-native unlink' then 'react-native link'",
+        "Manually configure native module in iOS and Android projects",
+        "Check MainApplication.java for Android linking",
+        "Verify iOS project settings and Build Phases"
+      ]
+    },
+    {
+      "id": "rn_autolinking_error",
+      "pattern": "autolinking.*error|Auto-linking.*failed|autolinking.*disabled",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_autolinking_error",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check React Native autolinking configuration",
+      "description": "React Native autolinking system error",
+      "tags": ["react-native", "autolinking", "native-modules"],
+      "reliability": "high",
+      "fix_commands": [
+        "Check react-native.config.js for autolinking settings",
+        "Verify package.json has correct react-native field",
+        "Clear Metro cache: 'npx react-native start --reset-cache'",
+        "Rebuild iOS and Android projects",
+        "Check dependency compatibility with autolinking"
+      ]
+    },
+    {
+      "id": "rn_flipper_error",
+      "pattern": "Flipper.*error|use_flipper.*error|FlipperKit.*error",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_flipper_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check Flipper configuration or disable if not needed",
+      "description": "React Native Flipper debugging tool integration error",
+      "tags": ["react-native", "flipper", "debugging"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check use_flipper! configuration in Podfile",
+        "Update Flipper version in Podfile",
+        "Disable Flipper by setting use_flipper!(false) in Podfile",
+        "Check Flipper compatibility with React Native version",
+        "Clear iOS build and pod install"
+      ]
+    },
+    {
+      "id": "rn_hermes_error",
+      "pattern": "Hermes.*error|hermes.*enabled.*error|JSI.*error",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_hermes_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check Hermes JavaScript engine configuration",
+      "description": "React Native Hermes JavaScript engine error",
+      "tags": ["react-native", "hermes", "javascript-engine"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check enableHermes setting in android/app/build.gradle",
+        "Verify Hermes compatibility with your dependencies",
+        "Clean and rebuild after changing Hermes settings",
+        "Check for JSI-related native module compatibility",
+        "Consider disabling Hermes if causing issues"
+      ]
+    },
+    {
+      "id": "rn_rnx_kit_error",
+      "pattern": "rnx-kit.*error|@rnx-kit.*error|capability.*error",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_rnx_kit_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check rnx-kit dependency management configuration",
+      "description": "React Native rnx-kit dependency management error",
+      "tags": ["react-native", "rnx-kit", "dependencies"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check rnx-kit configuration in package.json",
+        "Run 'npx @rnx-kit/align-deps --write'",
+        "Verify capability profiles are correct",
+        "Check for dependency version conflicts",
+        "Update rnx-kit tools to latest version"
+      ]
+    },
+    {
+      "id": "rn_new_architecture_error",
+      "pattern": "Fabric.*error|TurboModules.*error|New Architecture.*error|RCT_NEW_ARCH_ENABLED",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_new_architecture_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check React Native New Architecture (Fabric/TurboModules) configuration",
+      "description": "React Native New Architecture (Fabric/TurboModules) error",
+      "tags": ["react-native", "fabric", "turbo-modules", "new-architecture"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check newArchEnabled setting in gradle.properties",
+        "Verify all dependencies support New Architecture",
+        "Disable New Architecture if not ready: newArchEnabled=false",
+        "Check for Fabric and TurboModule compatibility",
+        "Update dependencies to New Architecture compatible versions"
+      ]
+    },
+    {
+      "id": "rn_rn_config_error",
+      "pattern": "react-native.config.js.*error|rn-cli.config.js.*error|metro.config.js.*dependency",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_config_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check React Native configuration files",
+      "description": "React Native configuration file error affecting native modules",
+      "tags": ["react-native", "configuration", "metro"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check react-native.config.js syntax and dependencies",
+        "Verify metro.config.js resolver configuration",
+        "Check for typos in configuration file paths",
+        "Validate dependency paths and platforms settings",
+        "Clear Metro cache after configuration changes"
+      ]
+    },
+    {
+      "id": "rn_expo_module_error",
+      "pattern": "expo-modules.*error|ExpoModulesCore.*error|expo.*native.*error",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_expo_module_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check Expo modules integration and configuration",
+      "description": "React Native Expo modules integration error",
+      "tags": ["react-native", "expo", "expo-modules"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check expo-modules-core installation",
+        "Verify Expo modules are compatible with React Native version",
+        "Run 'npx expo install' to ensure compatible versions",
+        "Check expo-module.config.json configuration",
+        "Verify iOS and Android integration for Expo modules"
+      ]
+    },
+    {
+      "id": "rn_third_party_module_error",
+      "pattern": "react-native-.*error|@react-native-.*error|Third-party.*module.*error",
+      "category": "react_native",
+      "subcategory": "native_modules",
+      "root_cause": "react_native_third_party_module_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "suggestion": "Check third-party React Native module integration",
+      "description": "Third-party React Native module integration error",
+      "tags": ["react-native", "third-party", "community"],
+      "reliability": "medium",
+      "fix_commands": [
+        "Check module documentation for integration steps",
+        "Verify module compatibility with React Native version",
+        "Check for additional native dependencies required",
+        "Follow module-specific installation instructions",
+        "Check GitHub issues for known integration problems"
+      ]
+    }
+  ]
+}
