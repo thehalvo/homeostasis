@@ -1,0 +1,240 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "flutter",
+    "description": "Flutter performance-related error rules",
+    "last_updated": "2024-12-08"
+  },
+  "rules": [
+    {
+      "id": "flutter_build_method_expensive_operations",
+      "category": "performance",
+      "subcategory": "build_optimization",
+      "pattern": "build.*expensive.*operation|build.*slow.*performance",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_expensive_build_operations",
+      "suggestion": "Move expensive operations outside build method or use caching",
+      "fix_commands": [
+        "Move expensive computations to initState() or didChangeDependencies()",
+        "Cache expensive results using memoization",
+        "Use const constructors where possible",
+        "Consider using FutureBuilder or StreamBuilder for async operations"
+      ],
+      "tags": ["flutter", "performance", "build", "optimization"],
+      "examples": [
+        "Heavy calculations in build method",
+        "File I/O operations in build",
+        "Network requests in build"
+      ]
+    },
+    {
+      "id": "flutter_list_performance_issue",
+      "category": "performance",
+      "subcategory": "lists",
+      "pattern": "ListView.*performance|large.*list.*lag|scroll.*performance",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_inefficient_list_rendering",
+      "suggestion": "Use ListView.builder or ListView.separated for large lists",
+      "fix_commands": [
+        "Replace ListView with ListView.builder for large datasets",
+        "Use itemExtent for fixed-height items",
+        "Implement lazy loading for infinite lists",
+        "Use AutomaticKeepAliveClientMixin for complex list items"
+      ],
+      "tags": ["flutter", "performance", "listview", "scrolling"],
+      "examples": [
+        "ListView with hundreds of children",
+        "Complex widgets in list items",
+        "Missing itemExtent optimization"
+      ]
+    },
+    {
+      "id": "flutter_image_memory_leak",
+      "category": "performance",
+      "subcategory": "memory",
+      "pattern": "Image.*memory.*leak|ImageCache.*memory",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_image_memory_management",
+      "suggestion": "Optimize image loading and caching for memory efficiency",
+      "fix_commands": [
+        "Use Image.network with appropriate cacheWidth/cacheHeight",
+        "Implement proper image disposal in dispose()",
+        "Use FadeInImage or cached_network_image for better memory management",
+        "Resize images to appropriate sizes"
+      ],
+      "tags": ["flutter", "performance", "images", "memory"],
+      "examples": [
+        "Large images not optimized",
+        "Image cache not managed",
+        "Multiple high-resolution images"
+      ]
+    },
+    {
+      "id": "flutter_animation_performance",
+      "category": "performance",
+      "subcategory": "animations",
+      "pattern": "animation.*dropped.*frames|animation.*performance.*slow",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_inefficient_animations",
+      "suggestion": "Optimize animations to maintain 60fps performance",
+      "fix_commands": [
+        "Use Transform.translate instead of changing position properties",
+        "Prefer opacity animations over rebuilding widgets",
+        "Use RepaintBoundary to isolate animation layers",
+        "Avoid animating expensive properties like shadows"
+      ],
+      "tags": ["flutter", "performance", "animations", "fps"],
+      "examples": [
+        "Heavy widgets in animation",
+        "Multiple simultaneous animations",
+        "Expensive paint operations"
+      ]
+    },
+    {
+      "id": "flutter_widget_rebuilds_excessive",
+      "category": "performance",
+      "subcategory": "rebuilds",
+      "pattern": "widget.*rebuild.*frequently|unnecessary.*rebuilds",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_excessive_widget_rebuilds",
+      "suggestion": "Optimize widget tree to reduce unnecessary rebuilds",
+      "fix_commands": [
+        "Use const constructors for static widgets",
+        "Split large widgets into smaller, focused widgets",
+        "Use ValueListenableBuilder for granular updates",
+        "Implement shouldRebuild logic in custom widgets"
+      ],
+      "tags": ["flutter", "performance", "rebuilds", "optimization"],
+      "examples": [
+        "Entire page rebuilding for small changes",
+        "Non-const widgets in static content",
+        "Large widgets without const constructors"
+      ]
+    },
+    {
+      "id": "flutter_futurebuilder_recreation",
+      "category": "performance",
+      "subcategory": "async_widgets",
+      "pattern": "FutureBuilder.*future.*recreated|Future.*build.*method",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_future_recreated_on_rebuild",
+      "suggestion": "Create Future outside build method to avoid recreation",
+      "fix_commands": [
+        "Initialize Future in initState() or as instance variable",
+        "Avoid creating Future directly in FutureBuilder constructor",
+        "Use late final Future<T> for delayed initialization",
+        "Cache Future results when appropriate"
+      ],
+      "tags": ["flutter", "performance", "futurebuilder", "async"],
+      "examples": [
+        "Future created in build method",
+        "FutureBuilder with inline Future",
+        "HTTP requests recreated on rebuild"
+      ]
+    },
+    {
+      "id": "flutter_streambuilder_multiple_listeners",
+      "category": "performance",
+      "subcategory": "streams",
+      "pattern": "Stream.*multiple.*listeners|Stream.*performance.*issue",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_stream_performance_issue",
+      "suggestion": "Use broadcast streams or optimize stream usage",
+      "fix_commands": [
+        "Convert to broadcast stream: stream.asBroadcastStream()",
+        "Use single StreamBuilder and pass data down",
+        "Cache stream data when appropriate",
+        "Close streams properly to prevent memory leaks"
+      ],
+      "tags": ["flutter", "performance", "streams", "broadcast"],
+      "examples": [
+        "Multiple StreamBuilders on same stream",
+        "Stream not properly closed",
+        "Expensive stream operations"
+      ]
+    },
+    {
+      "id": "flutter_layout_performance",
+      "category": "performance",
+      "subcategory": "layout",
+      "pattern": "layout.*performance|constraint.*expensive|intrinsic.*slow",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_expensive_layout_operations",
+      "suggestion": "Optimize layout constraints and intrinsic dimensions",
+      "fix_commands": [
+        "Avoid IntrinsicHeight/IntrinsicWidth when possible",
+        "Use Flexible/Expanded instead of intrinsic widgets",
+        "Optimize nested scrolling widgets",
+        "Use specific dimensions instead of MainAxisSize.min"
+      ],
+      "tags": ["flutter", "performance", "layout", "constraints"],
+      "examples": [
+        "Nested IntrinsicHeight widgets",
+        "Complex constraint calculations",
+        "Multiple scrollable widgets"
+      ]
+    },
+    {
+      "id": "flutter_dispose_not_called",
+      "category": "performance",
+      "subcategory": "memory_leaks",
+      "pattern": "dispose.*not.*called|memory.*leak.*controller",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_resources_not_disposed",
+      "suggestion": "Properly dispose controllers, streams, and other resources",
+      "fix_commands": [
+        "Override dispose() method and clean up resources",
+        "Dispose controllers: controller.dispose()",
+        "Cancel timers and streams in dispose()",
+        "Close sinks and subscriptions"
+      ],
+      "tags": ["flutter", "performance", "disposal", "memory-leaks"],
+      "examples": [
+        "TextEditingController not disposed",
+        "AnimationController not disposed",
+        "StreamSubscription not canceled"
+      ]
+    },
+    {
+      "id": "flutter_large_widget_tree",
+      "category": "performance",
+      "subcategory": "widget_tree",
+      "pattern": "widget.*tree.*deep|nested.*widgets.*performance",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "low",
+      "root_cause": "flutter_deeply_nested_widget_tree",
+      "suggestion": "Flatten widget tree and extract widgets into separate classes",
+      "fix_commands": [
+        "Extract complex widgets into separate StatelessWidget classes",
+        "Use Builder widgets to break up deep nesting",
+        "Combine multiple Container/Padding widgets",
+        "Use Slivers for complex scrolling layouts"
+      ],
+      "tags": ["flutter", "performance", "widget-tree", "architecture"],
+      "examples": [
+        "20+ levels of nested widgets",
+        "Large single-method widget builds",
+        "Repeated widget patterns"
+      ]
+    }
+  ]
+}

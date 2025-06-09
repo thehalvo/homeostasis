@@ -118,13 +118,15 @@ class FlutterExceptionHandler:
     def __init__(self):
         """Initialize the Flutter exception handler."""
         self.rule_categories = {
+            "common": "Common Flutter framework errors",
             "widgets": "Flutter widget and UI errors",
-            "state": "State management and lifecycle errors",
             "navigation": "Flutter navigation and routing errors",
+            "state_management": "State management and lifecycle errors",
+            "performance": "Flutter performance and rendering issues",
+            "platform": "Platform-specific errors and integrations",
             "async": "Dart async/await and Future errors",
             "null_safety": "Dart null safety violations",
             "build": "Flutter build and compilation errors",
-            "performance": "Flutter performance and rendering issues",
             "plugins": "Flutter plugin and platform channel errors",
             "animation": "Flutter animation and transition errors",
             "layout": "Flutter layout and constraint errors",
@@ -147,40 +149,40 @@ class FlutterExceptionHandler:
             # Create rules directory if it doesn't exist
             rules_dir.mkdir(parents=True, exist_ok=True)
             
-            # Load common Flutter rules
-            common_rules_path = rules_dir / "flutter_common_errors.json"
-            if common_rules_path.exists():
-                with open(common_rules_path, 'r') as f:
-                    common_data = json.load(f)
-                    rules["common"] = common_data.get("rules", [])
-                    logger.info(f"Loaded {len(rules['common'])} common Flutter rules")
-            else:
+            # Load all Flutter rule files
+            rule_files = {
+                "common": "flutter_common_errors.json",
+                "widgets": "flutter_widget_errors.json", 
+                "navigation": "flutter_navigation_errors.json",
+                "state_management": "flutter_state_management_errors.json",
+                "performance": "flutter_performance_errors.json",
+                "platform": "flutter_platform_errors.json"
+            }
+            
+            for category, filename in rule_files.items():
+                file_path = rules_dir / filename
+                if file_path.exists():
+                    try:
+                        with open(file_path, 'r') as f:
+                            data = json.load(f)
+                            rules[category] = data.get("rules", [])
+                            logger.info(f"Loaded {len(rules[category])} Flutter {category} rules")
+                    except Exception as e:
+                        logger.error(f"Error loading Flutter {category} rules from {filename}: {e}")
+                        rules[category] = []
+                else:
+                    rules[category] = []
+                    logger.warning(f"Flutter {category} rules file not found: {filename}")
+            
+            # Load default rules if no common rules found
+            if not rules.get("common"):
                 rules["common"] = self._create_default_rules()
-                self._save_default_rules(common_rules_path, rules["common"])
-            
-            # Load widget-specific rules
-            widget_rules_path = rules_dir / "flutter_widget_errors.json"
-            if widget_rules_path.exists():
-                with open(widget_rules_path, 'r') as f:
-                    widget_data = json.load(f)
-                    rules["widgets"] = widget_data.get("rules", [])
-                    logger.info(f"Loaded {len(rules['widgets'])} Flutter widget rules")
-            else:
-                rules["widgets"] = []
-            
-            # Load Dart language rules
-            dart_rules_path = rules_dir / "dart_language_errors.json"
-            if dart_rules_path.exists():
-                with open(dart_rules_path, 'r') as f:
-                    dart_data = json.load(f)
-                    rules["dart"] = dart_data.get("rules", [])
-                    logger.info(f"Loaded {len(rules['dart'])} Dart language rules")
-            else:
-                rules["dart"] = []
+                self._save_default_rules(rules_dir / rule_files["common"], rules["common"])
                     
         except Exception as e:
             logger.error(f"Error loading Flutter rules: {e}")
-            rules = {"common": self._create_default_rules(), "widgets": [], "dart": []}
+            rules = {"common": self._create_default_rules(), "widgets": [], "navigation": [], 
+                    "state_management": [], "performance": [], "platform": []}
         
         return rules
     

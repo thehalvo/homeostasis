@@ -1,0 +1,38 @@
+// Template for fixing null safety violations
+// Usage: Add proper null checks before using null assertion operator
+
+// BEFORE (problematic code):
+// String result = someNullableValue!.toString();
+
+// AFTER (fixed code with conditional access):
+String? result = {{nullable_variable}}?.toString();
+
+// Alternative fix with null check:
+if ({{nullable_variable}} != null) {
+  String result = {{nullable_variable}}!.toString();
+  {{safe_code_block}}
+}
+
+// Using null-aware assignment:
+{{variable_name}} ??= {{default_value}};
+
+// Using late keyword for delayed initialization:
+late final {{type}} {{variable_name}};
+
+// In initState or constructor:
+void initState() {
+  super.initState();
+  {{variable_name}} = {{initialization_value}};
+}
+
+// Safe property access:
+final value = {{object}}?.{{property}} ?? {{default_value}};
+
+// Safe method call:
+{{object}}?.{{method_name}}({{parameters}});
+
+// Null-aware spread operator:
+[
+  ...?{{nullable_list}},
+  {{additional_items}}
+]

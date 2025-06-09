@@ -1,0 +1,81 @@
+// Template for fixing setState called after dispose errors
+// Usage: Add mounted check before setState calls
+
+// BEFORE (problematic code):
+// void someAsyncOperation() async {
+//   final result = await someService.fetchData();
+//   setState(() {
+//     data = result;
+//   });
+// }
+
+// AFTER (fixed code):
+void {{method_name}}() async {
+  final result = await {{async_operation}};
+  if (mounted) {
+    setState(() {
+      {{state_updates}}
+    });
+  }
+}
+
+// For timer-based operations:
+Timer? {{timer_name}};
+
+@override
+void initState() {
+  super.initState();
+  {{timer_name}} = Timer.periodic({{duration}}, (timer) {
+    if (mounted) {
+      setState(() {
+        {{state_updates}}
+      });
+    }
+  });
+}
+
+@override
+void dispose() {
+  {{timer_name}}?.cancel();
+  super.dispose();
+}
+
+// For stream subscriptions:
+StreamSubscription? {{subscription_name}};
+
+@override
+void initState() {
+  super.initState();
+  {{subscription_name}} = {{stream}}.listen((data) {
+    if (mounted) {
+      setState(() {
+        {{state_updates}}
+      });
+    }
+  });
+}
+
+@override
+void dispose() {
+  {{subscription_name}}?.cancel();
+  super.dispose();
+}
+
+// For HTTP requests:
+void {{method_name}}() async {
+  try {
+    final response = await {{http_request}};
+    if (mounted && response.statusCode == 200) {
+      setState(() {
+        {{state_updates}}
+      });
+    }
+  } catch (e) {
+    if (mounted) {
+      // Handle error
+      setState(() {
+        {{error_handling}}
+      });
+    }
+  }
+}

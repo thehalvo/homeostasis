@@ -1,0 +1,53 @@
+// Template for fixing RenderFlex overflow errors
+// Usage: Replace overflowing Row/Column with Flexible/Expanded widgets
+
+// BEFORE (problematic code):
+// Row(
+//   children: [
+//     Text('Very long text that might overflow'),
+//     Text('Another long text'),
+//   ],
+// )
+
+// AFTER (fixed code):
+Row(
+  children: [
+    Expanded(
+      child: Text(
+        '{{text_content}}',
+        overflow: TextOverflow.ellipsis,
+      ),
+    ),
+    {{additional_children}}
+  ],
+)
+
+// Alternative fix using Flexible:
+Row(
+  children: [
+    Flexible(
+      child: Text(
+        '{{text_content}}',
+        overflow: TextOverflow.ellipsis,
+      ),
+    ),
+    {{additional_children}}
+  ],
+)
+
+// For wrapping content:
+Wrap(
+  children: [
+    {{children}}
+  ],
+)
+
+// For scrollable content:
+SingleChildScrollView(
+  scrollDirection: Axis.horizontal,
+  child: Row(
+    children: [
+      {{children}}
+    ],
+  ),
+)

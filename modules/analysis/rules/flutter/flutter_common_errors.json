@@ -1,0 +1,232 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "flutter",
+    "description": "Common Flutter framework error rules",
+    "last_updated": "2024-12-08"
+  },
+  "rules": [
+    {
+      "id": "flutter_renderbox_overflow",
+      "category": "layout",
+      "subcategory": "overflow",
+      "pattern": "RenderFlex overflowed by .* pixels|A RenderFlex overflowed",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_layout_overflow",
+      "suggestion": "Use Flexible, Expanded, or Wrap widgets to handle layout overflow",
+      "fix_commands": [
+        "Wrap the overflowing widget with Flexible or Expanded",
+        "Use SingleChildScrollView for scrollable content",
+        "Replace Row/Column with Wrap for wrapping behavior",
+        "Set overflow property in Text widget"
+      ],
+      "tags": ["flutter", "layout", "renderbox", "overflow"],
+      "examples": [
+        "Row with too many children",
+        "Text widget with long content",
+        "Column height exceeding screen"
+      ]
+    },
+    {
+      "id": "flutter_null_check_operator",
+      "category": "runtime",
+      "subcategory": "null_safety",
+      "pattern": "Null check operator used on a null value|type 'Null' is not a subtype",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_null_safety_violation",
+      "suggestion": "Add null checks before using the null assertion operator (!)",
+      "fix_commands": [
+        "Use conditional access operator (?.) instead of null assertion",
+        "Add null checks with if statements",
+        "Initialize variables properly",
+        "Use late keyword for delayed initialization"
+      ],
+      "tags": ["flutter", "dart", "null-safety", "runtime"],
+      "examples": [
+        "Using ! operator on nullable variable",
+        "Accessing property on null object"
+      ]
+    },
+    {
+      "id": "flutter_setState_called_after_dispose",
+      "category": "lifecycle",
+      "subcategory": "memory_leak",
+      "pattern": "setState\\(\\) called after dispose\\(\\)|setState.*disposed",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_setState_after_dispose",
+      "suggestion": "Check if widget is mounted before calling setState",
+      "fix_commands": [
+        "Add mounted check: if (mounted) setState(() => ...)",
+        "Cancel timers and streams in dispose()",
+        "Use StatefulWidget lifecycle properly",
+        "Avoid async operations after dispose"
+      ],
+      "tags": ["flutter", "lifecycle", "setState", "dispose"],
+      "examples": [
+        "Timer completing after widget disposal",
+        "HTTP response completing after navigation"
+      ]
+    },
+    {
+      "id": "flutter_missing_material_ancestor",
+      "category": "widgets",
+      "subcategory": "material",
+      "pattern": "No Material widget found|Scaffold.of\\(\\) called with a context that does not contain a Scaffold",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_missing_material_ancestor",
+      "suggestion": "Wrap widget with MaterialApp, Scaffold, or Material widget",
+      "fix_commands": [
+        "Wrap the app with MaterialApp",
+        "Add Scaffold as parent widget",
+        "Use Material widget for custom designs",
+        "Ensure proper widget tree structure"
+      ],
+      "tags": ["flutter", "material", "scaffold", "widget-tree"],
+      "examples": [
+        "Using Material widgets without MaterialApp",
+        "FloatingActionButton without Scaffold"
+      ]
+    },
+    {
+      "id": "flutter_unbounded_height",
+      "category": "layout",
+      "subcategory": "constraints",
+      "pattern": "RenderFlex received an infinite height|unbounded height|hasSize.*height",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_unbounded_height_constraint",
+      "suggestion": "Constrain the height using Container, SizedBox, or Expanded",
+      "fix_commands": [
+        "Wrap with Container and set specific height",
+        "Use Expanded to fill available space",
+        "Add SizedBox with fixed height",
+        "Use Flexible with FlexFit.tight"
+      ],
+      "tags": ["flutter", "layout", "constraints", "height"],
+      "examples": [
+        "ListView inside Column without Expanded",
+        "GridView without height constraint"
+      ]
+    },
+    {
+      "id": "flutter_late_initialization_error",
+      "category": "runtime",
+      "subcategory": "initialization",
+      "pattern": "LateInitializationError: Field .* has not been initialized",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_late_field_not_initialized",
+      "suggestion": "Initialize late fields before first access or use nullable types",
+      "fix_commands": [
+        "Initialize late field in initState() or constructor",
+        "Change to nullable type if appropriate",
+        "Use late final for immutable fields",
+        "Add proper initialization logic"
+      ],
+      "tags": ["flutter", "dart", "late", "initialization"],
+      "examples": [
+        "late field accessed before assignment",
+        "Controller not initialized in initState"
+      ]
+    },
+    {
+      "id": "flutter_incorrect_use_of_parent_data",
+      "category": "widgets",
+      "subcategory": "parent_data",
+      "pattern": "Incorrect use of ParentDataWidget|RenderObject.*ParentData",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_incorrect_parent_data_widget",
+      "suggestion": "Use ParentDataWidgets only with compatible parent widgets",
+      "fix_commands": [
+        "Use Positioned only inside Stack",
+        "Use Flexible/Expanded only inside Flex widgets",
+        "Check parent-child widget compatibility",
+        "Remove or relocate ParentDataWidget"
+      ],
+      "tags": ["flutter", "widgets", "parent-data", "layout"],
+      "examples": [
+        "Positioned widget outside Stack",
+        "Flexible widget outside Row/Column"
+      ]
+    },
+    {
+      "id": "flutter_duplicate_global_key",
+      "category": "widgets",
+      "subcategory": "keys",
+      "pattern": "Multiple widgets used the same GlobalKey|Duplicate GlobalKey detected",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_duplicate_global_key",
+      "suggestion": "Ensure each GlobalKey is used only once in the widget tree",
+      "fix_commands": [
+        "Create unique GlobalKey instances",
+        "Remove duplicate key usage",
+        "Use ValueKey or ObjectKey for list items",
+        "Check key management in StatefulWidgets"
+      ],
+      "tags": ["flutter", "widgets", "keys", "global-key"],
+      "examples": [
+        "Same GlobalKey used in multiple widgets",
+        "Key reused in list items"
+      ]
+    },
+    {
+      "id": "flutter_gesture_binding_not_initialized",
+      "category": "gestures",
+      "subcategory": "binding",
+      "pattern": "Gesture binding has not yet been initialized|ServicesBinding.defaultBinaryMessenger",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_binding_not_initialized",
+      "suggestion": "Ensure Flutter binding is initialized before using platform services",
+      "fix_commands": [
+        "Call WidgetsFlutterBinding.ensureInitialized()",
+        "Initialize bindings in main() function",
+        "Use runApp() for proper Flutter initialization",
+        "Check async operations in main()"
+      ],
+      "tags": ["flutter", "binding", "initialization", "gestures"],
+      "examples": [
+        "Platform channel access before runApp",
+        "Plugin initialization before binding"
+      ]
+    },
+    {
+      "id": "flutter_invalid_image_data",
+      "category": "assets",
+      "subcategory": "images",
+      "pattern": "Unable to load asset|Failed to load network image|Invalid image data",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_invalid_image_asset",
+      "suggestion": "Check image path, format, and pubspec.yaml asset declaration",
+      "fix_commands": [
+        "Verify image path in pubspec.yaml assets section",
+        "Check image file exists and format is supported",
+        "Use proper asset path syntax",
+        "Handle network image loading errors"
+      ],
+      "tags": ["flutter", "assets", "images", "loading"],
+      "examples": [
+        "Missing asset declaration",
+        "Incorrect image path",
+        "Network connectivity issues"
+      ]
+    }
+  ]
+}

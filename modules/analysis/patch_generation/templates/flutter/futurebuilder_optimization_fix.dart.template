@@ -1,0 +1,128 @@
+// Template for fixing FutureBuilder performance issues
+// Usage: Move Future creation outside build method
+
+// BEFORE (problematic code):
+// class MyWidget extends StatelessWidget {
+//   Widget build(BuildContext context) {
+//     return FutureBuilder(
+//       future: fetchData(), // Created on every build!
+//       builder: (context, snapshot) => ...
+//     );
+//   }
+// }
+
+// AFTER (fixed with StatefulWidget):
+class {{widget_name}} extends StatefulWidget {
+  @override
+  _{{widget_name}}State createState() => _{{widget_name}}State();
+}
+
+class _{{widget_name}}State extends State<{{widget_name}}> {
+  late Future<{{return_type}}> {{future_variable}};
+
+  @override
+  void initState() {
+    super.initState();
+    {{future_variable}} = {{future_method}}();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<{{return_type}}>(
+      future: {{future_variable}},
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return {{loading_widget}};
+        } else if (snapshot.hasError) {
+          return {{error_widget}};
+        } else if (snapshot.hasData) {
+          return {{success_widget}};
+        } else {
+          return {{empty_widget}};
+        }
+      },
+    );
+  }
+}
+
+// Alternative with late final:
+class {{widget_name}} extends StatefulWidget {
+  @override
+  _{{widget_name}}State createState() => _{{widget_name}}State();
+}
+
+class _{{widget_name}}State extends State<{{widget_name}}> {
+  late final Future<{{return_type}}> {{future_variable}} = {{future_method}}();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<{{return_type}}>(
+      future: {{future_variable}},
+      builder: (context, snapshot) {
+        {{builder_implementation}}
+      },
+    );
+  }
+}
+
+// With refresh functionality:
+class _{{widget_name}}State extends State<{{widget_name}}> {
+  late Future<{{return_type}}> {{future_variable}};
+
+  @override
+  void initState() {
+    super.initState();
+    {{future_variable}} = {{future_method}}();
+  }
+
+  void {{refresh_method}}() {
+    setState(() {
+      {{future_variable}} = {{future_method}}();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: {{refresh_method}},
+      child: FutureBuilder<{{return_type}}>(
+        future: {{future_variable}},
+        builder: (context, snapshot) {
+          {{builder_implementation}}
+        },
+      ),
+    );
+  }
+}
+
+// Error handling template:
+builder: (context, snapshot) {
+  if (snapshot.connectionState == ConnectionState.waiting) {
+    return Center(child: CircularProgressIndicator());
+  }
+  
+  if (snapshot.hasError) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, color: Colors.red, size: 60),
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Text('Error: ${snapshot.error}'),
+          ),
+          ElevatedButton(
+            onPressed: {{retry_method}},
+            child: Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  if (!snapshot.hasData || snapshot.data == null) {
+    return Center(child: Text('No data available'));
+  }
+  
+  return {{success_widget}};
+}

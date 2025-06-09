@@ -1,0 +1,93 @@
+// Template for fixing Provider not found errors
+// Usage: Wrap widget tree with appropriate Provider
+
+// BEFORE (problematic code):
+// class MyWidget extends StatelessWidget {
+//   Widget build(BuildContext context) {
+//     final data = Provider.of<MyData>(context);
+//     return Text(data.value);
+//   }
+// }
+
+// AFTER (fixed with Provider):
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => {{provider_class}}(),
+      child: MyApp(),
+    ),
+  );
+}
+
+// For multiple providers:
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => {{provider_class_1}}()),
+        Provider(create: (context) => {{provider_class_2}}()),
+        {{additional_providers}}
+      ],
+      child: MyApp(),
+    ),
+  );
+}
+
+// Consumer widget usage:
+class {{widget_name}} extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<{{provider_type}}>(
+      builder: (context, {{provider_variable}}, child) {
+        return {{consumer_child}};
+      },
+    );
+  }
+}
+
+// Selector for optimized rebuilds:
+class {{widget_name}} extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Selector<{{provider_type}}, {{selected_type}}>(
+      selector: (context, {{provider_variable}}) => {{provider_variable}}.{{selected_property}},
+      builder: (context, {{selected_variable}}, child) {
+        return {{selector_child}};
+      },
+    );
+  }
+}
+
+// Provider.of with listen: false for methods:
+class {{widget_name}} extends StatelessWidget {
+  void {{method_name}}(BuildContext context) {
+    final {{provider_variable}} = Provider.of<{{provider_type}}>(context, listen: false);
+    {{provider_variable}}.{{method_call}};
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return {{widget_tree}};
+  }
+}
+
+// Context.read() for calling methods:
+class {{widget_name}} extends StatelessWidget {
+  void {{method_name}}(BuildContext context) {
+    context.read<{{provider_type}}>().{{method_call}};
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return {{widget_tree}};
+  }
+}
+
+// Context.watch() for listening to changes:
+class {{widget_name}} extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final {{provider_variable}} = context.watch<{{provider_type}}>();
+    return {{widget_using_provider}};
+  }
+}

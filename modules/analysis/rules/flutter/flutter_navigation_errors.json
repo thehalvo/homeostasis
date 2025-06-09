@@ -1,0 +1,230 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "flutter",
+    "description": "Flutter navigation and routing error rules",
+    "last_updated": "2024-12-08"
+  },
+  "rules": [
+    {
+      "id": "flutter_navigator_operation_error",
+      "category": "navigation",
+      "subcategory": "navigator",
+      "pattern": "Navigator operation requested with a context that does not include a Navigator",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_missing_navigator_ancestor",
+      "suggestion": "Ensure widget is wrapped with MaterialApp, CupertinoApp, or WidgetsApp",
+      "fix_commands": [
+        "Wrap app with MaterialApp or CupertinoApp",
+        "Use Navigator.of(context) with proper context",
+        "Check widget tree has Navigator ancestor",
+        "Use named routes with proper app structure"
+      ],
+      "tags": ["flutter", "navigation", "navigator", "context"],
+      "examples": [
+        "Navigator.push without Navigator ancestor",
+        "Navigation outside app widget tree"
+      ]
+    },
+    {
+      "id": "flutter_route_not_found",
+      "category": "navigation",
+      "subcategory": "routes",
+      "pattern": "Could not find a generator for route|Route.*not found",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_undefined_route",
+      "suggestion": "Define the route in routes map or onGenerateRoute",
+      "fix_commands": [
+        "Add route to MaterialApp routes property",
+        "Implement onGenerateRoute handler",
+        "Check route name spelling",
+        "Use Navigator.pushNamed with defined routes"
+      ],
+      "tags": ["flutter", "navigation", "routes", "routing"],
+      "examples": [
+        "Undefined named route",
+        "Missing route configuration"
+      ]
+    },
+    {
+      "id": "flutter_pop_scope_error",
+      "category": "navigation",
+      "subcategory": "back_navigation",
+      "pattern": "Navigator.pop.*no routes|Cannot pop the last route",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_invalid_pop_operation",
+      "suggestion": "Check if routes exist before popping or use canPop()",
+      "fix_commands": [
+        "Use Navigator.canPop() before Navigator.pop()",
+        "Handle back navigation properly",
+        "Use WillPopScope for custom back behavior",
+        "Avoid popping last route in navigator stack"
+      ],
+      "tags": ["flutter", "navigation", "pop", "back-navigation"],
+      "examples": [
+        "Popping empty navigation stack",
+        "Back button on root route"
+      ]
+    },
+    {
+      "id": "flutter_modal_barrier_dismissible",
+      "category": "navigation",
+      "subcategory": "modal",
+      "pattern": "showDialog.*barrierDismissible.*false.*Navigator.pop",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_modal_dismissal_conflict",
+      "suggestion": "Ensure modal dismissal logic is consistent",
+      "fix_commands": [
+        "Set barrierDismissible: true for tap-to-dismiss",
+        "Provide explicit close button for non-dismissible modals",
+        "Use WillPopScope to handle back button",
+        "Check modal dismissal behavior"
+      ],
+      "tags": ["flutter", "navigation", "modal", "dialog"],
+      "examples": [
+        "Non-dismissible dialog without close button",
+        "Inconsistent modal behavior"
+      ]
+    },
+    {
+      "id": "flutter_nested_navigator_error",
+      "category": "navigation",
+      "subcategory": "nested",
+      "pattern": "Navigator.of.*rootNavigator.*true|nested Navigator",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_nested_navigator_context",
+      "suggestion": "Use rootNavigator parameter appropriately for nested navigators",
+      "fix_commands": [
+        "Use Navigator.of(context, rootNavigator: true) for root navigation",
+        "Use nested Navigator for tab/bottom navigation",
+        "Check navigator hierarchy",
+        "Handle context properly in nested scenarios"
+      ],
+      "tags": ["flutter", "navigation", "nested", "context"],
+      "examples": [
+        "Wrong navigator level access",
+        "Nested navigation context confusion"
+      ]
+    },
+    {
+      "id": "flutter_page_route_builder_error",
+      "category": "navigation",
+      "subcategory": "custom_routes",
+      "pattern": "PageRouteBuilder.*pageBuilder.*required|Custom route.*builder",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_incomplete_page_route",
+      "suggestion": "Provide required pageBuilder for PageRouteBuilder",
+      "fix_commands": [
+        "Implement pageBuilder function",
+        "Add transitionsBuilder for custom animations",
+        "Set transitionDuration if needed",
+        "Use MaterialPageRoute for standard behavior"
+      ],
+      "tags": ["flutter", "navigation", "page-route", "custom"],
+      "examples": [
+        "Missing pageBuilder implementation",
+        "Incomplete custom route definition"
+      ]
+    },
+    {
+      "id": "flutter_navigator_key_error",
+      "category": "navigation",
+      "subcategory": "global_key",
+      "pattern": "GlobalKey.*Navigator.*multiple widgets|Navigator.*key.*used",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_navigator_key_conflict",
+      "suggestion": "Use unique GlobalKey for each Navigator or avoid duplicate keys",
+      "fix_commands": [
+        "Create unique GlobalKey for each Navigator",
+        "Remove duplicate navigator key usage",
+        "Use different keys for different navigator instances",
+        "Check navigator key management"
+      ],
+      "tags": ["flutter", "navigation", "global-key", "navigator"],
+      "examples": [
+        "Same GlobalKey used for multiple Navigators",
+        "Navigator key conflicts"
+      ]
+    },
+    {
+      "id": "flutter_route_arguments_error",
+      "category": "navigation",
+      "subcategory": "arguments",
+      "pattern": "Route arguments.*null|ModalRoute.of.*arguments.*null",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_missing_route_arguments",
+      "suggestion": "Check for null arguments and provide defaults or navigation with arguments",
+      "fix_commands": [
+        "Check if ModalRoute.of(context)?.settings.arguments is null",
+        "Provide default values for missing arguments",
+        "Pass arguments when navigating: Navigator.pushNamed(context, route, arguments: data)",
+        "Use null-aware operators for argument access"
+      ],
+      "tags": ["flutter", "navigation", "arguments", "null-safety"],
+      "examples": [
+        "Accessing null route arguments",
+        "Navigation without required arguments"
+      ]
+    },
+    {
+      "id": "flutter_bottom_navigation_index_error",
+      "category": "navigation",
+      "subcategory": "bottom_navigation",
+      "pattern": "BottomNavigationBar.*currentIndex.*out of range|currentIndex.*items.length",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_bottom_nav_index_out_of_bounds",
+      "suggestion": "Ensure currentIndex is within valid range of BottomNavigationBar items",
+      "fix_commands": [
+        "Check currentIndex < items.length",
+        "Initialize currentIndex to valid value (0)",
+        "Update currentIndex when items change",
+        "Add bounds checking for index updates"
+      ],
+      "tags": ["flutter", "navigation", "bottom-navigation", "index"],
+      "examples": [
+        "currentIndex exceeds item count",
+        "Negative currentIndex value"
+      ]
+    },
+    {
+      "id": "flutter_drawer_context_error",
+      "category": "navigation",
+      "subcategory": "drawer",
+      "pattern": "Scaffold.of\\(context\\).*drawer|No Scaffold.*Drawer",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_drawer_no_scaffold",
+      "suggestion": "Ensure Drawer is used within Scaffold widget",
+      "fix_commands": [
+        "Wrap content with Scaffold containing drawer",
+        "Use Scaffold.of(context).openDrawer() within Scaffold",
+        "Check widget tree for Scaffold ancestor",
+        "Use proper context for drawer operations"
+      ],
+      "tags": ["flutter", "navigation", "drawer", "scaffold"],
+      "examples": [
+        "Drawer operations outside Scaffold",
+        "Missing Scaffold for drawer"
+      ]
+    }
+  ]
+}

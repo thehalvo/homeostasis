@@ -1,0 +1,240 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "flutter",
+    "description": "Flutter platform-specific error rules",
+    "last_updated": "2024-12-08"
+  },
+  "rules": [
+    {
+      "id": "flutter_platform_channel_error",
+      "category": "platform",
+      "subcategory": "method_channel",
+      "pattern": "PlatformException|MethodChannel.*not.*implemented|platform.*method.*not.*found",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_platform_method_not_implemented",
+      "suggestion": "Implement platform-specific method or check method name spelling",
+      "fix_commands": [
+        "Implement method in Android (MainActivity.kt/java) and iOS (AppDelegate.swift)",
+        "Check method name matches exactly in platform code",
+        "Handle PlatformException with try-catch",
+        "Verify plugin registration in platform code"
+      ],
+      "tags": ["flutter", "platform", "method-channel", "native"],
+      "examples": [
+        "Method not implemented in native code",
+        "Typo in platform method name",
+        "Plugin not properly registered"
+      ]
+    },
+    {
+      "id": "flutter_permission_denied",
+      "category": "platform",
+      "subcategory": "permissions",
+      "pattern": "Permission.*denied|permission.*required|access.*denied",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_platform_permission_missing",
+      "suggestion": "Add required permissions to platform manifests and request at runtime",
+      "fix_commands": [
+        "Add permissions to AndroidManifest.xml for Android",
+        "Add usage descriptions to Info.plist for iOS",
+        "Request permissions at runtime using permission_handler",
+        "Check permission status before using restricted features"
+      ],
+      "tags": ["flutter", "platform", "permissions", "manifest"],
+      "examples": [
+        "Camera permission not requested",
+        "Location permission missing from manifest",
+        "Storage access denied"
+      ]
+    },
+    {
+      "id": "flutter_ios_build_error",
+      "category": "platform",
+      "subcategory": "ios",
+      "pattern": "ios.*build.*failed|xcode.*error|CocoaPods.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_ios_build_configuration",
+      "suggestion": "Check iOS build configuration and dependencies",
+      "fix_commands": [
+        "Run 'cd ios && pod install' to update CocoaPods",
+        "Clean and rebuild: 'flutter clean && flutter build ios'",
+        "Check iOS deployment target in Podfile",
+        "Update Xcode and iOS SDK if needed"
+      ],
+      "tags": ["flutter", "ios", "build", "xcode", "cocoapods"],
+      "examples": [
+        "CocoaPods dependency conflicts",
+        "iOS deployment target mismatch",
+        "Xcode version compatibility"
+      ]
+    },
+    {
+      "id": "flutter_android_build_error",
+      "category": "platform",
+      "subcategory": "android",
+      "pattern": "android.*build.*failed|gradle.*error|AAPT.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_android_build_configuration",
+      "suggestion": "Check Android build configuration and Gradle setup",
+      "fix_commands": [
+        "Clean and rebuild: 'flutter clean && flutter build apk'",
+        "Check compileSdkVersion and targetSdkVersion in build.gradle",
+        "Update Gradle wrapper version",
+        "Resolve dependency conflicts in build.gradle"
+      ],
+      "tags": ["flutter", "android", "build", "gradle", "aapt"],
+      "examples": [
+        "Gradle version compatibility",
+        "Android SDK version mismatch",
+        "Resource compilation errors"
+      ]
+    },
+    {
+      "id": "flutter_plugin_not_implemented",
+      "category": "platform",
+      "subcategory": "plugins",
+      "pattern": "plugin.*not.*implemented.*platform|MissingPluginException",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_plugin_platform_not_supported",
+      "suggestion": "Check if plugin supports target platform or find alternative",
+      "fix_commands": [
+        "Verify plugin supports target platform (iOS/Android/Web)",
+        "Check plugin documentation for platform support",
+        "Use platform-specific conditional code",
+        "Find alternative plugin or implement platform-specific version"
+      ],
+      "tags": ["flutter", "plugins", "platform-support", "compatibility"],
+      "examples": [
+        "Plugin only supports mobile, used on web",
+        "iOS-only plugin used on Android",
+        "Platform-specific features not available"
+      ]
+    },
+    {
+      "id": "flutter_web_html_renderer_error",
+      "category": "platform",
+      "subcategory": "web",
+      "pattern": "web.*html.*renderer|canvaskit.*not.*supported|web.*compatibility",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_web_renderer_compatibility",
+      "suggestion": "Choose appropriate web renderer or handle web-specific limitations",
+      "fix_commands": [
+        "Use --web-renderer=canvaskit for better performance",
+        "Use --web-renderer=html for better compatibility",
+        "Handle web-specific UI differences",
+        "Test on different browsers for compatibility"
+      ],
+      "tags": ["flutter", "web", "renderer", "canvaskit", "html"],
+      "examples": [
+        "CanvasKit not supported in browser",
+        "HTML renderer performance issues",
+        "Web-specific widget limitations"
+      ]
+    },
+    {
+      "id": "flutter_keyboard_overlap",
+      "category": "platform",
+      "subcategory": "keyboard",
+      "pattern": "keyboard.*overlap|bottom.*inset|viewport.*keyboard",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_keyboard_ui_overlap",
+      "suggestion": "Handle keyboard appearance properly to avoid UI overlap",
+      "fix_commands": [
+        "Wrap content with SingleChildScrollView",
+        "Use Scaffold resizeToAvoidBottomInset: true",
+        "Add padding: MediaQuery.of(context).viewInsets.bottom",
+        "Use KeyboardVisibilityBuilder for custom handling"
+      ],
+      "tags": ["flutter", "keyboard", "ui", "viewport"],
+      "examples": [
+        "Keyboard covering input fields",
+        "Bottom sheet overlapped by keyboard",
+        "UI not adjusting for keyboard"
+      ]
+    },
+    {
+      "id": "flutter_safe_area_issues",
+      "category": "platform",
+      "subcategory": "safe_area",
+      "pattern": "safe.*area|notch.*overlap|status.*bar.*overlap",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_safe_area_not_handled",
+      "suggestion": "Use SafeArea widget to handle device-specific UI elements",
+      "fix_commands": [
+        "Wrap content with SafeArea widget",
+        "Use MediaQuery.of(context).padding for custom safe area handling",
+        "Set specific SafeArea properties (top, bottom, left, right)",
+        "Test on devices with notches and different screen sizes"
+      ],
+      "tags": ["flutter", "safe-area", "notch", "status-bar"],
+      "examples": [
+        "Content behind status bar",
+        "UI overlapped by notch",
+        "Bottom content behind home indicator"
+      ]
+    },
+    {
+      "id": "flutter_orientation_error",
+      "category": "platform",
+      "subcategory": "orientation",
+      "pattern": "orientation.*change|rotate.*error|landscape.*portrait",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_orientation_handling_issue",
+      "suggestion": "Handle device orientation changes properly",
+      "fix_commands": [
+        "Use OrientationBuilder for orientation-specific layouts",
+        "Lock orientation with SystemChrome.setPreferredOrientations()",
+        "Use MediaQuery.of(context).orientation for responsive design",
+        "Test UI in both portrait and landscape modes"
+      ],
+      "tags": ["flutter", "orientation", "responsive", "layout"],
+      "examples": [
+        "UI breaks in landscape mode",
+        "Orientation not locked when required",
+        "Layout overflow in different orientations"
+      ]
+    },
+    {
+      "id": "flutter_file_system_error",
+      "category": "platform",
+      "subcategory": "file_system",
+      "pattern": "file.*system.*error|path.*not.*found|storage.*permission",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_file_system_access_error",
+      "suggestion": "Use appropriate file system paths and request storage permissions",
+      "fix_commands": [
+        "Use path_provider plugin for correct app directories",
+        "Request storage permissions for external storage access",
+        "Use getApplicationDocumentsDirectory() for app-specific storage",
+        "Handle file system errors with try-catch blocks"
+      ],
+      "tags": ["flutter", "file-system", "storage", "permissions"],
+      "examples": [
+        "Writing to restricted directory",
+        "File path not found",
+        "Storage permission denied"
+      ]
+    }
+  ]
+}

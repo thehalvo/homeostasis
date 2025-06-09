@@ -1,0 +1,230 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "flutter",
+    "description": "Flutter state management error rules",
+    "last_updated": "2024-12-08"
+  },
+  "rules": [
+    {
+      "id": "flutter_provider_not_found",
+      "category": "state_management",
+      "subcategory": "provider",
+      "pattern": "ProviderNotFoundException|Provider.of.*not found|No provider.*found",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_provider_not_in_tree",
+      "suggestion": "Wrap widget tree with appropriate Provider or check provider hierarchy",
+      "fix_commands": [
+        "Add Provider above widget in tree using Provider<T>.value() or ChangeNotifierProvider<T>()",
+        "Check provider type matches the requested type",
+        "Use MultiProvider for multiple providers",
+        "Ensure provider is ancestor of consumer widget"
+      ],
+      "tags": ["flutter", "provider", "state-management", "dependency"],
+      "examples": [
+        "Consumer without matching Provider",
+        "Provider.of() called outside provider tree"
+      ]
+    },
+    {
+      "id": "flutter_bloc_not_provided",
+      "category": "state_management",
+      "subcategory": "bloc",
+      "pattern": "BlocProvider.of.*not found|No BlocProvider.*found",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_bloc_not_in_tree",
+      "suggestion": "Wrap widget with BlocProvider or ensure BlocProvider is ancestor",
+      "fix_commands": [
+        "Add BlocProvider<T>(create: (context) => T(), child: ...)",
+        "Use MultiBlocProvider for multiple blocs",
+        "Check bloc type matches requested type",
+        "Ensure BlocProvider is above BlocBuilder/BlocConsumer"
+      ],
+      "tags": ["flutter", "bloc", "state-management", "provider"],
+      "examples": [
+        "BlocBuilder without BlocProvider",
+        "BlocProvider.of() outside provider tree"
+      ]
+    },
+    {
+      "id": "flutter_riverpod_provider_error",
+      "category": "state_management",
+      "subcategory": "riverpod",
+      "pattern": "ProviderScope.*not found|ref.watch.*outside.*provider",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_riverpod_scope_missing",
+      "suggestion": "Wrap app with ProviderScope or use ref within provider context",
+      "fix_commands": [
+        "Wrap MyApp with ProviderScope()",
+        "Use Consumer widget to access providers",
+        "Use ref.watch() within provider or widget",
+        "Ensure ProviderScope is at app root"
+      ],
+      "tags": ["flutter", "riverpod", "state-management", "scope"],
+      "examples": [
+        "Provider access without ProviderScope",
+        "ref used outside provider context"
+      ]
+    },
+    {
+      "id": "flutter_getx_controller_not_found",
+      "category": "state_management",
+      "subcategory": "getx",
+      "pattern": "GetxController.*not found|Get.find.*not registered",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_getx_controller_not_registered",
+      "suggestion": "Register controller with Get.put() or Get.lazyPut() before using",
+      "fix_commands": [
+        "Register controller: Get.put(ControllerName())",
+        "Use Get.lazyPut(() => ControllerName()) for lazy loading",
+        "Check controller is registered before Get.find()",
+        "Use GetBuilder or GetX widget for automatic dependency"
+      ],
+      "tags": ["flutter", "getx", "state-management", "controller"],
+      "examples": [
+        "Get.find() before Get.put()",
+        "Controller not registered in GetX"
+      ]
+    },
+    {
+      "id": "flutter_inherited_widget_error",
+      "category": "state_management",
+      "subcategory": "inherited_widget",
+      "pattern": "InheritedWidget.*not found|.*\\.of\\(context\\).*null",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_inherited_widget_not_ancestor",
+      "suggestion": "Ensure InheritedWidget is ancestor of dependent widget",
+      "fix_commands": [
+        "Place InheritedWidget above dependent widgets in tree",
+        "Check context is correct for .of(context) calls",
+        "Implement proper InheritedWidget structure",
+        "Use dependOnInheritedWidgetOfExactType properly"
+      ],
+      "tags": ["flutter", "inherited-widget", "state-management", "context"],
+      "examples": [
+        "Theme.of(context) without MaterialApp",
+        "Custom InheritedWidget not in tree"
+      ]
+    },
+    {
+      "id": "flutter_notifier_disposed_access",
+      "category": "state_management",
+      "subcategory": "changenotifier",
+      "pattern": "ChangeNotifier.*disposed|notifyListeners.*disposed",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_change_notifier_accessed_after_disposal",
+      "suggestion": "Check if notifier is disposed before calling notifyListeners",
+      "fix_commands": [
+        "Override dispose() and set flag when disposed",
+        "Check disposed flag before notifyListeners()",
+        "Properly manage ChangeNotifier lifecycle",
+        "Avoid async operations after disposal"
+      ],
+      "tags": ["flutter", "changenotifier", "state-management", "disposal"],
+      "examples": [
+        "notifyListeners() after dispose()",
+        "Async callback completing after disposal"
+      ]
+    },
+    {
+      "id": "flutter_redux_store_error",
+      "category": "state_management",
+      "subcategory": "redux",
+      "pattern": "StoreProvider.*not found|Store.*not provided",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_redux_store_not_provided",
+      "suggestion": "Wrap app with StoreProvider to provide Redux store",
+      "fix_commands": [
+        "Wrap app with StoreProvider<AppState>(store: store, child: ...)",
+        "Create and configure Redux store properly",
+        "Use StoreConnector within StoreProvider tree",
+        "Check store initialization"
+      ],
+      "tags": ["flutter", "redux", "state-management", "store"],
+      "examples": [
+        "StoreConnector without StoreProvider",
+        "Redux store not initialized"
+      ]
+    },
+    {
+      "id": "flutter_mobx_observable_error",
+      "category": "state_management",
+      "subcategory": "mobx",
+      "pattern": "Observer.*not found|Observable.*not tracked",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_mobx_observer_missing",
+      "suggestion": "Wrap widget with Observer to track observable changes",
+      "fix_commands": [
+        "Wrap widget with Observer(() => YourWidget())",
+        "Use @observable annotation on state variables",
+        "Import mobx and flutter_mobx packages",
+        "Run code generation for MobX"
+      ],
+      "tags": ["flutter", "mobx", "state-management", "observer"],
+      "examples": [
+        "Observable accessed without Observer",
+        "Missing @observable annotation"
+      ]
+    },
+    {
+      "id": "flutter_state_mutation_error",
+      "category": "state_management",
+      "subcategory": "immutability",
+      "pattern": "setState.*build.*infinite loop|State.*mutated.*build",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_state_mutation_in_build",
+      "suggestion": "Avoid calling setState or mutating state during build method",
+      "fix_commands": [
+        "Move setState calls outside build method",
+        "Use initState() for initialization",
+        "Use didChangeDependencies() for widget dependencies",
+        "Avoid side effects in build method"
+      ],
+      "tags": ["flutter", "state-management", "setState", "build"],
+      "examples": [
+        "setState called in build method",
+        "State mutation during widget building"
+      ]
+    },
+    {
+      "id": "flutter_context_after_async",
+      "category": "state_management",
+      "subcategory": "context",
+      "pattern": "BuildContext.*async.*mounted|use_build_context_synchronously",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_context_used_after_async",
+      "suggestion": "Check if widget is mounted before using context after async operations",
+      "fix_commands": [
+        "Check if (mounted) before using context",
+        "Store context reference before async operation",
+        "Use context synchronously when possible",
+        "Avoid navigation/setState after async without mounted check"
+      ],
+      "tags": ["flutter", "context", "async", "mounted"],
+      "examples": [
+        "Navigator.push after await without mounted check",
+        "setState after HTTP request completion"
+      ]
+    }
+  ]
+}

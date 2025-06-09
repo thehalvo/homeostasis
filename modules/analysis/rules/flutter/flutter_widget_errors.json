@@ -1,0 +1,230 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "framework": "flutter",
+    "description": "Flutter widget-specific error rules",
+    "last_updated": "2024-12-08"
+  },
+  "rules": [
+    {
+      "id": "flutter_listview_unbounded_height",
+      "category": "widgets",
+      "subcategory": "listview",
+      "pattern": "RenderBox was not laid out|ListView.*unbounded height",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_listview_infinite_height",
+      "suggestion": "Wrap ListView with Expanded or give it a specific height constraint",
+      "fix_commands": [
+        "Wrap ListView with Expanded in Column",
+        "Set shrinkWrap: true for ListView",
+        "Use Container with specific height",
+        "Consider using ListView.builder for performance"
+      ],
+      "tags": ["flutter", "listview", "constraints", "layout"],
+      "examples": [
+        "ListView inside Column without Expanded",
+        "Nested scrollable widgets"
+      ]
+    },
+    {
+      "id": "flutter_textfield_controller_disposal",
+      "category": "widgets",
+      "subcategory": "textfield",
+      "pattern": "TextEditingController.*disposed|A TextEditingController was used after being disposed",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_controller_used_after_disposal",
+      "suggestion": "Properly manage TextEditingController lifecycle",
+      "fix_commands": [
+        "Dispose controller in dispose() method",
+        "Initialize controller in initState()",
+        "Check if controller is disposed before use",
+        "Use late final for controller declaration"
+      ],
+      "tags": ["flutter", "textfield", "controller", "disposal"],
+      "examples": [
+        "Controller accessed after dispose",
+        "Missing controller disposal"
+      ]
+    },
+    {
+      "id": "flutter_futurebuilder_snapshot_error",
+      "category": "widgets",
+      "subcategory": "futurebuilder",
+      "pattern": "FutureBuilder.*snapshot.hasError|Future.*completed with an error",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_futurebuilder_error_handling",
+      "suggestion": "Handle error states properly in FutureBuilder",
+      "fix_commands": [
+        "Check snapshot.hasError in builder",
+        "Display error message for failed futures",
+        "Add try-catch in async functions",
+        "Implement proper error UI"
+      ],
+      "tags": ["flutter", "futurebuilder", "async", "error-handling"],
+      "examples": [
+        "Unhandled Future errors",
+        "Missing error state UI"
+      ]
+    },
+    {
+      "id": "flutter_streambuilder_closed_stream",
+      "category": "widgets",
+      "subcategory": "streambuilder",
+      "pattern": "Bad state: Stream has already been listened to|StreamBuilder.*closed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_stream_multiple_listeners",
+      "suggestion": "Use broadcast streams or proper stream management",
+      "fix_commands": [
+        "Convert stream to broadcast: stream.asBroadcastStream()",
+        "Create new stream instance for each listener",
+        "Close streams properly in dispose()",
+        "Use StreamController for custom streams"
+      ],
+      "tags": ["flutter", "streambuilder", "streams", "broadcast"],
+      "examples": [
+        "Multiple StreamBuilders on same stream",
+        "Stream listened multiple times"
+      ]
+    },
+    {
+      "id": "flutter_hero_tag_duplicate",
+      "category": "widgets",
+      "subcategory": "hero",
+      "pattern": "There are multiple heroes that share the same tag|Hero.*tag.*duplicate",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_duplicate_hero_tag",
+      "suggestion": "Provide unique heroTag for each FloatingActionButton or Hero widget",
+      "fix_commands": [
+        "Add unique heroTag to FloatingActionButton",
+        "Use Object() or UniqueKey() for heroTag",
+        "Ensure Hero widgets have unique tags",
+        "Remove heroTag if only one FAB on screen"
+      ],
+      "tags": ["flutter", "hero", "floatingactionbutton", "animation"],
+      "examples": [
+        "Multiple FloatingActionButtons with same heroTag",
+        "Hero widgets with duplicate tags"
+      ]
+    },
+    {
+      "id": "flutter_pageview_controller_error",
+      "category": "widgets",
+      "subcategory": "pageview",
+      "pattern": "PageController.*not attached to any PageView widget|PageView.*controller",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_pagecontroller_not_attached",
+      "suggestion": "Ensure PageController is properly attached and disposed",
+      "fix_commands": [
+        "Initialize PageController in initState()",
+        "Dispose PageController in dispose()",
+        "Check if controller is attached before use",
+        "Use single PageController per PageView"
+      ],
+      "tags": ["flutter", "pageview", "controller", "lifecycle"],
+      "examples": [
+        "PageController used before attachment",
+        "Multiple PageViews sharing controller"
+      ]
+    },
+    {
+      "id": "flutter_tabcontroller_length_mismatch",
+      "category": "widgets",
+      "subcategory": "tabs",
+      "pattern": "TabController.length.*TabBar.*tabs.length|tab count mismatch",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_tab_count_mismatch",
+      "suggestion": "Ensure TabController length matches number of tabs",
+      "fix_commands": [
+        "Match TabController length with Tab count",
+        "Update length when adding/removing tabs",
+        "Use with SingleTickerProviderStateMixin",
+        "Dispose TabController properly"
+      ],
+      "tags": ["flutter", "tabs", "tabcontroller", "length"],
+      "examples": [
+        "TabController length differs from Tab count",
+        "Dynamic tab addition/removal"
+      ]
+    },
+    {
+      "id": "flutter_animationcontroller_ticker_disposed",
+      "category": "widgets",
+      "subcategory": "animation",
+      "pattern": "AnimationController.*disposed|Ticker.*disposed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_animation_controller_disposed",
+      "suggestion": "Properly dispose AnimationController and check lifecycle",
+      "fix_commands": [
+        "Dispose AnimationController in dispose()",
+        "Use TickerProviderStateMixin",
+        "Check if controller is disposed before use",
+        "Stop animations before disposal"
+      ],
+      "tags": ["flutter", "animation", "controller", "ticker"],
+      "examples": [
+        "AnimationController used after disposal",
+        "Ticker not properly managed"
+      ]
+    },
+    {
+      "id": "flutter_textspan_recognizer_disposal",
+      "category": "widgets",
+      "subcategory": "text",
+      "pattern": "TapGestureRecognizer.*disposed|GestureRecognizer.*memory leak",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "flutter_gesture_recognizer_leak",
+      "suggestion": "Dispose GestureRecognizers used in TextSpan",
+      "fix_commands": [
+        "Dispose TapGestureRecognizer in dispose()",
+        "Create recognizer in initState()",
+        "Use onTap callback instead of recognizer when possible",
+        "Implement proper cleanup for gesture recognizers"
+      ],
+      "tags": ["flutter", "textspan", "gesture", "memory-leak"],
+      "examples": [
+        "TapGestureRecognizer not disposed",
+        "RichText with gesture recognizers"
+      ]
+    },
+    {
+      "id": "flutter_cupertino_context_error",
+      "category": "widgets",
+      "subcategory": "cupertino",
+      "pattern": "CupertinoTheme.of\\(context\\) called with a context that does not contain a CupertinoApp",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "flutter_missing_cupertino_ancestor",
+      "suggestion": "Wrap with CupertinoApp or provide CupertinoTheme",
+      "fix_commands": [
+        "Use CupertinoApp as root widget",
+        "Wrap with CupertinoTheme widget",
+        "Check widget tree structure",
+        "Use Material widgets with MaterialApp instead"
+      ],
+      "tags": ["flutter", "cupertino", "theme", "context"],
+      "examples": [
+        "Cupertino widgets without CupertinoApp",
+        "Missing Cupertino theme context"
+      ]
+    }
+  ]
+}

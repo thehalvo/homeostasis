@@ -1,0 +1,85 @@
+// Template for fixing unbounded height constraint errors
+// Usage: Constrain height using Container, Expanded, or SizedBox
+
+// BEFORE (problematic code):
+// Column(
+//   children: [
+//     ListView(children: [...]),
+//   ],
+// )
+
+// AFTER (fixed with Expanded):
+Column(
+  children: [
+    {{fixed_children_before}}
+    Expanded(
+      child: {{scrollable_widget}},
+    ),
+    {{fixed_children_after}}
+  ],
+)
+
+// Fixed with specific height:
+Column(
+  children: [
+    {{children_before}}
+    Container(
+      height: {{height_value}},
+      child: {{scrollable_widget}},
+    ),
+    {{children_after}}
+  ],
+)
+
+// Fixed with SizedBox:
+Column(
+  children: [
+    {{children_before}}
+    SizedBox(
+      height: {{height_value}},
+      child: {{scrollable_widget}},
+    ),
+    {{children_after}}
+  ],
+)
+
+// Fixed with Flexible:
+Column(
+  children: [
+    {{children_before}}
+    Flexible(
+      fit: FlexFit.tight,
+      child: {{scrollable_widget}},
+    ),
+    {{children_after}}
+  ],
+)
+
+// For ListView specifically:
+Column(
+  children: [
+    {{children_before}}
+    Expanded(
+      child: ListView.builder(
+        itemCount: {{item_count}},
+        itemBuilder: (context, index) {
+          return {{item_builder}};
+        },
+      ),
+    ),
+    {{children_after}}
+  ],
+)
+
+// Using shrinkWrap for small lists:
+Column(
+  children: [
+    {{children_before}}
+    ListView(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      children: {{list_items}},
+    ),
+    {{children_after}}
+  ],
+)

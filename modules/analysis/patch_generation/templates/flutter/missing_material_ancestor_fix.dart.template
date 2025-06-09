@@ -1,0 +1,68 @@
+// Template for fixing missing Material ancestor errors
+// Usage: Wrap widgets with MaterialApp, Scaffold, or Material
+
+// BEFORE (problematic code):
+// class MyApp extends StatelessWidget {
+//   Widget build(BuildContext context) {
+//     return FloatingActionButton(onPressed: () {});
+//   }
+// }
+
+// AFTER (fixed with MaterialApp):
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: {{home_widget}},
+      {{additional_properties}}
+    );
+  }
+}
+
+// Fixed with Scaffold:
+class {{widget_name}} extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('{{title}}')),
+      body: {{body_content}},
+      floatingActionButton: FloatingActionButton(
+        onPressed: {{on_pressed}},
+        child: {{fab_child}},
+      ),
+    );
+  }
+}
+
+// Fixed with Material widget for custom designs:
+Material(
+  child: {{child_widget}},
+)
+
+// Complete app structure:
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '{{app_title}}',
+      theme: ThemeData(
+        primarySwatch: Colors.{{primary_color}},
+      ),
+      home: {{home_page}},
+    );
+  }
+}
+
+// For custom Material widgets:
+Material(
+  elevation: {{elevation}},
+  color: {{color}},
+  child: InkWell(
+    onTap: {{on_tap}},
+    child: {{child_content}},
+  ),
+)

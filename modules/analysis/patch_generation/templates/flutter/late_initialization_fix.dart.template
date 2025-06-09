@@ -1,0 +1,80 @@
+// Template for fixing late initialization errors
+// Usage: Initialize late fields before first access
+
+// BEFORE (problematic code):
+// late String data;
+// void useData() {
+//   print(data); // LateInitializationError
+// }
+
+// AFTER (fixed with proper initialization):
+class {{class_name}} extends StatefulWidget {
+  @override
+  _{{class_name}}State createState() => _{{class_name}}State();
+}
+
+class _{{class_name}}State extends State<{{class_name}}> {
+  late {{field_type}} {{field_name}};
+
+  @override
+  void initState() {
+    super.initState();
+    {{field_name}} = {{initialization_value}};
+  }
+
+  {{rest_of_class}}
+}
+
+// For controllers:
+class _{{class_name}}State extends State<{{class_name}}> {
+  late {{controller_type}} {{controller_name}};
+
+  @override
+  void initState() {
+    super.initState();
+    {{controller_name}} = {{controller_type}}({{constructor_params}});
+  }
+
+  @override
+  void dispose() {
+    {{controller_name}}.dispose();
+    super.dispose();
+  }
+
+  {{rest_of_class}}
+}
+
+// Alternative: Use nullable instead of late:
+{{field_type}}? {{field_name}};
+
+void {{method_name}}() {
+  if ({{field_name}} != null) {
+    {{safe_usage}}
+  } else {
+    {{field_name}} = {{initialization_value}};
+    {{usage_after_init}}
+  }
+}
+
+// For late final fields (immutable):
+late final {{field_type}} {{field_name}} = {{computed_value}};
+
+// With lazy initialization:
+{{field_type}}? _{{field_name}};
+{{field_type}} get {{field_name}} {
+  return _{{field_name}} ??= {{initialization_value}};
+}
+
+// For async initialization:
+{{field_type}}? {{field_name}};
+bool _isInitialized = false;
+
+Future<void> {{init_method_name}}() async {
+  if (!_isInitialized) {
+    {{field_name}} = await {{async_initialization}};
+    _isInitialized = true;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+}
