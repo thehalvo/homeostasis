@@ -1,0 +1,317 @@
+{
+  "metadata": {
+    "description": "Common Capacitor/Cordova hybrid mobile app errors and their fixes",
+    "framework": "capacitor_cordova",
+    "version": "3.0+",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "capacitor_plugin_not_found",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "Plugin.*not found|Plugin.*not installed|No such plugin|Plugin.*not available",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "capacitor_plugin_not_found",
+      "suggestion": "Install the required plugin using npm/yarn and sync the platform",
+      "fix_commands": [
+        "Install plugin: npm install @capacitor/plugin-name",
+        "Sync platforms: npx cap sync",
+        "For iOS: npx cap run ios",
+        "For Android: npx cap run android"
+      ],
+      "tags": ["capacitor", "cordova", "plugins", "installation"]
+    },
+    {
+      "id": "cordova_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "cordova.*plugin.*error|Plugin.*failed to install|cordova-plugin.*not found",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "cordova_plugin_error",
+      "suggestion": "Check plugin compatibility and installation process",
+      "fix_commands": [
+        "Install plugin: cordova plugin add plugin-name",
+        "Check plugin compatibility with Cordova version",
+        "Verify config.xml plugin configuration"
+      ],
+      "tags": ["cordova", "plugins", "installation"]
+    },
+    {
+      "id": "native_bridge_error",
+      "category": "capacitor_cordova",
+      "subcategory": "native_bridge",
+      "pattern": "Native.*bridge.*error|Bridge.*communication.*failed|Callback.*not found|Native.*call.*failed",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "native_bridge_communication_error",
+      "suggestion": "Check native bridge configuration and callback implementations",
+      "fix_commands": [
+        "Verify callback function definitions",
+        "Check native method signatures",
+        "Add error handling for bridge communication"
+      ],
+      "tags": ["capacitor", "cordova", "native-bridge", "communication"]
+    },
+    {
+      "id": "permission_denied_mobile",
+      "category": "capacitor_cordova",
+      "subcategory": "permissions",
+      "pattern": "Permission denied|User denied.*permission|Permission.*not granted|Access.*denied",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "mobile_permission_denied",
+      "suggestion": "Request permissions properly and handle permission denials gracefully",
+      "fix_commands": [
+        "Request permissions before using protected features",
+        "Handle permission denials gracefully",
+        "Provide user-friendly explanations for permissions"
+      ],
+      "tags": ["capacitor", "cordova", "permissions", "mobile"]
+    },
+    {
+      "id": "webview_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "WebView.*error|Failed to load.*in WebView|WebView.*crashed|WebView.*not found",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "webview_error",
+      "suggestion": "Check WebView configuration and content loading",
+      "fix_commands": [
+        "Check WebView configuration in capacitor.config.ts",
+        "Verify all resources are properly loaded",
+        "Test on different WebView versions"
+      ],
+      "tags": ["capacitor", "cordova", "webview", "loading"]
+    },
+    {
+      "id": "csp_violation",
+      "category": "capacitor_cordova",
+      "subcategory": "security",
+      "pattern": "Content Security Policy.*violation|CSP.*violation|unsafe.*inline|Refused to.*CSP",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "csp_violation",
+      "suggestion": "Update Content Security Policy or modify code to comply with CSP",
+      "fix_commands": [
+        "Add 'unsafe-inline' and 'unsafe-eval' for hybrid apps if needed",
+        "Include gap: protocol for Cordova",
+        "Configure CSP in index.html meta tag"
+      ],
+      "tags": ["capacitor", "cordova", "security", "csp"]
+    },
+    {
+      "id": "platform_build_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "Platform.*build.*failed|Build.*error.*android|Build.*error.*ios|Compilation.*failed",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "platform_build_error",
+      "suggestion": "Check platform-specific build configuration and dependencies",
+      "fix_commands": [
+        "Clean and rebuild: npx cap sync && npx cap run [platform]",
+        "Check platform-specific configuration files",
+        "Update dependencies and build tools"
+      ],
+      "tags": ["capacitor", "cordova", "build", "platform"]
+    },
+    {
+      "id": "ionic_framework_error",
+      "category": "capacitor_cordova",
+      "subcategory": "framework",
+      "pattern": "Ionic.*framework.*error|ion-.*not found|Ionic.*component.*error|IonicModule.*not imported",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ionic_framework_error",
+      "suggestion": "Import IonicModule and ensure Ionic components are properly configured",
+      "fix_commands": [
+        "Import IonicModule in your module",
+        "Check Ionic component usage",
+        "Verify Ionic dependencies are installed"
+      ],
+      "tags": ["ionic", "capacitor", "framework", "components"]
+    },
+    {
+      "id": "device_ready_timeout",
+      "category": "capacitor_cordova",
+      "subcategory": "lifecycle",
+      "pattern": "deviceready.*timeout|Device.*not ready|Cordova.*not ready|timeout.*deviceready",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "device_ready_timeout",
+      "suggestion": "Check device ready event handling and increase timeout if necessary",
+      "fix_commands": [
+        "Ensure deviceready event listener is properly set",
+        "Increase timeout for device ready",
+        "Check Cordova initialization"
+      ],
+      "tags": ["cordova", "lifecycle", "device-ready", "timeout"]
+    },
+    {
+      "id": "storage_access_error",
+      "category": "capacitor_cordova",
+      "subcategory": "storage",
+      "pattern": "Storage.*access.*denied|File.*system.*error|LocalStorage.*not available|Storage.*quota.*exceeded",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "storage_access_error",
+      "suggestion": "Check storage permissions and implement proper error handling",
+      "fix_commands": [
+        "Request storage permissions",
+        "Handle storage quota exceeded errors",
+        "Use appropriate storage APIs for the platform"
+      ],
+      "tags": ["capacitor", "cordova", "storage", "filesystem"]
+    },
+    {
+      "id": "network_connectivity_error",
+      "category": "capacitor_cordova",
+      "subcategory": "network",
+      "pattern": "Network.*error|Connection.*failed|No.*internet.*connection|Network.*timeout",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "medium",
+      "root_cause": "network_connectivity_error",
+      "suggestion": "Implement network status checking and offline handling",
+      "fix_commands": [
+        "Check network connectivity before making requests",
+        "Implement offline mode fallbacks",
+        "Add retry logic for network requests"
+      ],
+      "tags": ["capacitor", "cordova", "network", "connectivity"]
+    },
+    {
+      "id": "deep_link_error",
+      "category": "capacitor_cordova",
+      "subcategory": "navigation",
+      "pattern": "Deep.*link.*error|URL.*scheme.*not found|Custom.*URL.*error|Intent.*not found",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "deep_link_error",
+      "suggestion": "Configure URL schemes and intent filters properly",
+      "fix_commands": [
+        "Configure URL schemes in capacitor.config.ts",
+        "Add intent filters for Android",
+        "Set up URL schemes for iOS"
+      ],
+      "tags": ["capacitor", "cordova", "deep-linking", "navigation"]
+    },
+    {
+      "id": "splash_screen_error",
+      "category": "capacitor_cordova",
+      "subcategory": "ui",
+      "pattern": "Splash.*screen.*error|SplashScreen.*not found|Splash.*screen.*timeout|LaunchScreen.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "splash_screen_error",
+      "suggestion": "Configure splash screen settings and resources properly",
+      "fix_commands": [
+        "Configure SplashScreen plugin settings",
+        "Check splash screen image resources",
+        "Verify splash screen timing configuration"
+      ],
+      "tags": ["capacitor", "cordova", "splash-screen", "ui"]
+    },
+    {
+      "id": "keyboard_handling_error",
+      "category": "capacitor_cordova",
+      "subcategory": "ui",
+      "pattern": "Keyboard.*handling.*error|Virtual.*keyboard.*error|Input.*focus.*error|Keyboard.*resize.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "keyboard_handling_error",
+      "suggestion": "Configure keyboard plugin and handle virtual keyboard events",
+      "fix_commands": [
+        "Configure Keyboard plugin settings",
+        "Handle keyboard show/hide events",
+        "Adjust viewport on keyboard appearance"
+      ],
+      "tags": ["capacitor", "cordova", "keyboard", "ui"]
+    },
+    {
+      "id": "camera_access_error",
+      "category": "capacitor_cordova",
+      "subcategory": "device_apis",
+      "pattern": "Camera.*access.*denied|Camera.*not available|Camera.*permission.*denied|Camera.*error",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "camera_access_error",
+      "suggestion": "Request camera permissions and handle camera availability",
+      "fix_commands": [
+        "Request camera permissions before use",
+        "Check camera availability",
+        "Handle camera access denied scenarios"
+      ],
+      "tags": ["capacitor", "cordova", "camera", "permissions"]
+    },
+    {
+      "id": "geolocation_error",
+      "category": "capacitor_cordova",
+      "subcategory": "device_apis",
+      "pattern": "Geolocation.*error|Location.*access.*denied|GPS.*not available|Position.*unavailable",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "geolocation_error",
+      "suggestion": "Request location permissions and handle location services availability",
+      "fix_commands": [
+        "Request location permissions",
+        "Check if location services are enabled",
+        "Provide fallback for location unavailable"
+      ],
+      "tags": ["capacitor", "cordova", "geolocation", "permissions"]
+    },
+    {
+      "id": "push_notification_error",
+      "category": "capacitor_cordova",
+      "subcategory": "notifications",
+      "pattern": "Push.*notification.*error|FCM.*error|APNS.*error|Notification.*permission.*denied",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "push_notification_error",
+      "suggestion": "Configure push notification services and handle permissions",
+      "fix_commands": [
+        "Configure Firebase/APNS credentials",
+        "Request notification permissions",
+        "Handle push notification registration errors"
+      ],
+      "tags": ["capacitor", "cordova", "push-notifications", "fcm", "apns"]
+    },
+    {
+      "id": "app_lifecycle_error",
+      "category": "capacitor_cordova",
+      "subcategory": "lifecycle",
+      "pattern": "App.*state.*error|Resume.*error|Pause.*error|Background.*mode.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "app_lifecycle_error",
+      "suggestion": "Handle app lifecycle events properly",
+      "fix_commands": [
+        "Listen to app state change events",
+        "Handle background/foreground transitions",
+        "Save app state on pause events"
+      ],
+      "tags": ["capacitor", "cordova", "lifecycle", "app-state"]
+    }
+  ]
+}

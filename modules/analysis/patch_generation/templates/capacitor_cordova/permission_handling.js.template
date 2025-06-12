@@ -1,0 +1,228 @@
+// Safe permission handling for Capacitor/Cordova hybrid apps
+import { Capacitor } from '@capacitor/core';
+
+// Generic permission request helper
+async function requestPermission(permissionType) {
+  try {
+    if (Capacitor.getPlatform() === 'web') {
+      // Web permissions (if applicable)
+      return await requestWebPermission(permissionType);
+    }
+    
+    // For mobile platforms
+    const { Permissions } = await import('@capacitor/permissions');
+    
+    // Check current permission status
+    const status = await Permissions.query({ name: permissionType });
+    
+    if (status.state === 'granted') {
+      return true;
+    }
+    
+    if (status.state === 'denied') {
+      // Permission was denied, show explanation
+      showPermissionExplanation(permissionType);
+      return false;
+    }
+    
+    // Request permission
+    const result = await Permissions.request({ name: permissionType });
+    return result.state === 'granted';
+    
+  } catch (error) {
+    console.error('Permission request failed:', error);
+    return false;
+  }
+}
+
+// Specific permission handlers
+async function requestCameraPermission() {
+  try {
+    if (Capacitor.isPluginAvailable('Camera')) {
+      // Camera permission is handled by the camera plugin
+      return await requestPermission('camera');
+    }
+    return false;
+  } catch (error) {
+    console.error('Camera permission request failed:', error);
+    return false;
+  }
+}
+
+async function requestLocationPermission() {
+  try {
+    if (Capacitor.getPlatform() === 'web') {
+      return await requestWebGeolocation();
+    }
+    
+    const hasPermission = await requestPermission('geolocation');
+    if (hasPermission) {
+      // Check if location services are enabled
+      const { Geolocation } = await import('@capacitor/geolocation');
+      try {
+        await Geolocation.getCurrentPosition({ timeout: 5000 });
+        return true;
+      } catch (error) {
+        console.error('Location services not available:', error);
+        showLocationServicesDisabledMessage();
+        return false;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error('Location permission request failed:', error);
+    return false;
+  }
+}
+
+async function requestStoragePermission() {
+  try {
+    // Storage permission for file system access
+    return await requestPermission('storage');
+  } catch (error) {
+    console.error('Storage permission request failed:', error);
+    return false;
+  }
+}
+
+async function requestNotificationPermission() {
+  try {
+    if (Capacitor.getPlatform() === 'web') {
+      return await requestWebNotificationPermission();
+    }
+    
+    const { PushNotifications } = await import('@capacitor/push-notifications');
+    const result = await PushNotifications.requestPermissions();
+    return result.receive === 'granted';
+  } catch (error) {
+    console.error('Notification permission request failed:', error);
+    return false;
+  }
+}
+
+// Web platform permission handlers
+async function requestWebPermission(permissionType) {
+  switch (permissionType) {
+    case 'geolocation':
+      return await requestWebGeolocation();
+    case 'notifications':
+      return await requestWebNotificationPermission();
+    case 'camera':
+      return await requestWebCamera();
+    default:
+      console.warn(`Web permission ${permissionType} not implemented`);
+      return false;
+  }
+}
+
+async function requestWebGeolocation() {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) {
+      resolve(false);
+      return;
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+      () => resolve(true),
+      (error) => {
+        console.error('Geolocation error:', error);
+        resolve(false);
+      },
+      { timeout: 10000 }
+    );
+  });
+}
+
+async function requestWebNotificationPermission() {
+  if (!('Notification' in window)) {
+    return false;
+  }
+  
+  if (Notification.permission === 'granted') {
+    return true;
+  }
+  
+  if (Notification.permission === 'denied') {
+    return false;
+  }
+  
+  const result = await Notification.requestPermission();
+  return result === 'granted';
+}
+
+async function requestWebCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    stream.getTracks().forEach(track => track.stop()); // Stop the stream immediately
+    return true;
+  } catch (error) {
+    console.error('Camera access denied:', error);
+    return false;
+  }
+}
+
+// User messaging functions
+function showPermissionExplanation(permissionType) {
+  const messages = {
+    camera: 'Camera access is required to take photos.',
+    geolocation: 'Location access is required for location-based features.',
+    storage: 'Storage access is required to save files.',
+    notifications: 'Notification permission is required to send updates.'
+  };
+  
+  const message = messages[permissionType] || `${permissionType} permission is required for this feature.`;
+  console.log(`Permission explanation: ${message}`);
+  
+  // Show user-friendly dialog or toast message
+  showUserMessage(message);
+}
+
+function showLocationServicesDisabledMessage() {
+  const message = 'Location services are disabled. Please enable them in your device settings.';
+  console.log(message);
+  showUserMessage(message);
+}
+
+function showUserMessage(message) {
+  // Implement your user messaging system here
+  // This could be a toast, alert, or custom dialog
+  if (window.alert) {
+    window.alert(message);
+  }
+}
+
+// Permission checking utility
+async function checkPermissionStatus(permissionType) {
+  try {
+    if (Capacitor.getPlatform() === 'web') {
+      return checkWebPermissionStatus(permissionType);
+    }
+    
+    const { Permissions } = await import('@capacitor/permissions');
+    const status = await Permissions.query({ name: permissionType });
+    return status.state;
+  } catch (error) {
+    console.error('Failed to check permission status:', error);
+    return 'prompt';
+  }
+}
+
+function checkWebPermissionStatus(permissionType) {
+  switch (permissionType) {
+    case 'geolocation':
+      return navigator.geolocation ? 'prompt' : 'denied';
+    case 'notifications':
+      return Notification.permission;
+    default:
+      return 'prompt';
+  }
+}
+
+export {
+  requestPermission,
+  requestCameraPermission,
+  requestLocationPermission,
+  requestStoragePermission,
+  requestNotificationPermission,
+  checkPermissionStatus
+};

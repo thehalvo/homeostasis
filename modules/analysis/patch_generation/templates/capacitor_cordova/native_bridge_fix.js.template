@@ -1,0 +1,384 @@
+// Native bridge communication fixes for Capacitor/Cordova apps
+import { Capacitor } from '@capacitor/core';
+
+class NativeBridgeManager {
+  constructor() {
+    this.isInitialized = false;
+    this.pendingCalls = new Map();
+    this.callId = 0;
+    this.timeout = 10000; // 10 second timeout for native calls
+    
+    this.initializeBridge();
+  }
+  
+  async initializeBridge() {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        // Wait for native platform to be ready
+        await this.waitForNativePlatform();
+      }
+      this.isInitialized = true;
+      console.log('Native bridge initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize native bridge:', error);
+    }
+  }
+  
+  async waitForNativePlatform() {
+    return new Promise((resolve) => {
+      if (window.Capacitor) {
+        resolve();
+      } else {
+        // For Cordova apps
+        document.addEventListener('deviceready', resolve, { once: true });
+      }
+    });
+  }
+  
+  // Safe native method call with timeout and error handling
+  async callNativeMethod(plugin, method, args = {}, options = {}) {
+    const callOptions = {
+      timeout: this.timeout,
+      retries: 1,
+      ...options
+    };
+    
+    if (!this.isInitialized) {
+      throw new Error('Native bridge not initialized');
+    }
+    
+    if (!Capacitor.isNativePlatform()) {
+      throw new Error('Native methods not available on web platform');
+    }
+    
+    // Check if plugin is available
+    if (!Capacitor.isPluginAvailable(plugin)) {
+      throw new Error(`Plugin ${plugin} not available`);
+    }
+    
+    const callId = ++this.callId;
+    
+    return new Promise(async (resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        this.pendingCalls.delete(callId);
+        reject(new Error(`Native call timeout: ${plugin}.${method}`));
+      }, callOptions.timeout);
+      
+      this.pendingCalls.set(callId, { resolve, reject, timeoutId });
+      
+      try {
+        const pluginInstance = Capacitor.Plugins[plugin];
+        if (!pluginInstance) {
+          throw new Error(`Plugin instance ${plugin} not found`);
+        }
+        
+        if (typeof pluginInstance[method] !== 'function') {
+          throw new Error(`Method ${method} not found on plugin ${plugin}`);
+        }
+        
+        const result = await pluginInstance[method](args);
+        
+        clearTimeout(timeoutId);
+        this.pendingCalls.delete(callId);
+        resolve(result);
+        
+      } catch (error) {
+        clearTimeout(timeoutId);
+        this.pendingCalls.delete(callId);
+        
+        if (callOptions.retries > 0) {
+          console.warn(`Retrying native call: ${plugin}.${method}`, error);
+          try {
+            const retryResult = await this.callNativeMethod(
+              plugin, 
+              method, 
+              args, 
+              { ...callOptions, retries: callOptions.retries - 1 }
+            );
+            resolve(retryResult);
+          } catch (retryError) {
+            reject(retryError);
+          }
+        } else {
+          reject(error);
+        }
+      }
+    });
+  }
+  
+  // Safe event listener registration
+  addNativeEventListener(plugin, event, callback) {
+    if (!Capacitor.isNativePlatform()) {
+      console.warn('Native event listeners not available on web platform');
+      return { remove: () => {} };
+    }
+    
+    if (!Capacitor.isPluginAvailable(plugin)) {
+      console.warn(`Plugin ${plugin} not available for event listener`);
+      return { remove: () => {} };
+    }
+    
+    try {
+      const pluginInstance = Capacitor.Plugins[plugin];
+      if (pluginInstance && typeof pluginInstance.addListener === 'function') {
+        return pluginInstance.addListener(event, callback);
+      } else {
+        console.warn(`addListener method not available on plugin ${plugin}`);
+        return { remove: () => {} };
+      }
+    } catch (error) {
+      console.error(`Failed to add event listener for ${plugin}.${event}:`, error);
+      return { remove: () => {} };
+    }
+  }
+  
+  // Wrapper for common native operations with error handling
+  async safeNativeCall(operation, fallback = null) {
+    try {
+      return await operation();
+    } catch (error) {
+      console.error('Native operation failed:', error);
+      
+      if (fallback && typeof fallback === 'function') {
+        try {
+          return await fallback();
+        } catch (fallbackError) {
+          console.error('Fallback operation also failed:', fallbackError);
+          throw fallbackError;
+        }
+      } else {
+        throw error;
+      }
+    }
+  }
+  
+  // Camera operations with error handling
+  async takePicture(options = {}) {
+    return await this.safeNativeCall(
+      async () => {
+        return await this.callNativeMethod('Camera', 'getPhoto', {
+          resultType: 'uri',
+          source: 'camera',
+          quality: 90,
+          ...options
+        });
+      },
+      async () => {
+        // Web fallback
+        if (Capacitor.getPlatform() === 'web') {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          // Implement web camera capture logic
+          stream.getTracks().forEach(track => track.stop());
+          return { webPath: 'web-camera-fallback' };
+        }
+        throw new Error('Camera not available');
+      }
+    );
+  }
+  
+  // Geolocation operations with error handling
+  async getCurrentPosition(options = {}) {
+    return await this.safeNativeCall(
+      async () => {
+        return await this.callNativeMethod('Geolocation', 'getCurrentPosition', {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          ...options
+        });
+      },
+      async () => {
+        // Web fallback
+        if (navigator.geolocation) {
+          return new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+              (position) => resolve({
+                coords: {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                  accuracy: position.coords.accuracy
+                },
+                timestamp: position.timestamp
+              }),
+              reject,
+              options
+            );
+          });
+        }
+        throw new Error('Geolocation not available');
+      }
+    );
+  }
+  
+  // Storage operations with error handling
+  async setStorage(key, value) {
+    return await this.safeNativeCall(
+      async () => {
+        return await this.callNativeMethod('Storage', 'set', { key, value });
+      },
+      async () => {
+        // Web fallback
+        localStorage.setItem(key, value);
+        return { value };
+      }
+    );
+  }
+  
+  async getStorage(key) {
+    return await this.safeNativeCall(
+      async () => {
+        return await this.callNativeMethod('Storage', 'get', { key });
+      },
+      async () => {
+        // Web fallback
+        const value = localStorage.getItem(key);
+        return { value };
+      }
+    );
+  }
+  
+  // Network status with error handling
+  async getNetworkStatus() {
+    return await this.safeNativeCall(
+      async () => {
+        return await this.callNativeMethod('Network', 'getStatus');
+      },
+      async () => {
+        // Web fallback
+        return {
+          connected: navigator.onLine,
+          connectionType: 'unknown'
+        };
+      }
+    );
+  }
+  
+  // App state operations
+  async getAppState() {
+    return await this.safeNativeCall(
+      async () => {
+        return await this.callNativeMethod('App', 'getState');
+      },
+      async () => {
+        // Web fallback
+        return {
+          isActive: !document.hidden
+        };
+      }
+    );
+  }
+  
+  // Clean up pending calls on app termination
+  cleanup() {
+    this.pendingCalls.forEach(({ reject, timeoutId }) => {
+      clearTimeout(timeoutId);
+      reject(new Error('App terminating, cancelling pending native calls'));
+    });
+    this.pendingCalls.clear();
+  }
+}
+
+// Cordova-specific bridge fixes
+class CordovaBridgeManager {
+  constructor() {
+    this.isDeviceReady = false;
+    this.pendingOperations = [];
+    
+    this.initializeCordova();
+  }
+  
+  initializeCordova() {
+    if (window.cordova) {
+      document.addEventListener('deviceready', () => {
+        this.isDeviceReady = true;
+        this.processPendingOperations();
+        console.log('Cordova device ready');
+      }, { once: true });
+    }
+  }
+  
+  processPendingOperations() {
+    while (this.pendingOperations.length > 0) {
+      const operation = this.pendingOperations.shift();
+      operation();
+    }
+  }
+  
+  waitForDeviceReady() {
+    return new Promise((resolve) => {
+      if (this.isDeviceReady) {
+        resolve();
+      } else {
+        this.pendingOperations.push(resolve);
+      }
+    });
+  }
+  
+  async safePluginCall(pluginPath, method, args = [], successCallback, errorCallback) {
+    await this.waitForDeviceReady();
+    
+    const plugin = this.getNestedPlugin(window, pluginPath.split('.'));
+    
+    if (!plugin) {
+      const error = new Error(`Plugin not found: ${pluginPath}`);
+      if (errorCallback) {
+        errorCallback(error);
+      } else {
+        throw error;
+      }
+      return;
+    }
+    
+    if (typeof plugin[method] !== 'function') {
+      const error = new Error(`Method not found: ${pluginPath}.${method}`);
+      if (errorCallback) {
+        errorCallback(error);
+      } else {
+        throw error;
+      }
+      return;
+    }
+    
+    try {
+      plugin[method](...args, successCallback, errorCallback);
+    } catch (error) {
+      if (errorCallback) {
+        errorCallback(error);
+      } else {
+        throw error;
+      }
+    }
+  }
+  
+  getNestedPlugin(obj, path) {
+    return path.reduce((current, key) => {
+      return current && current[key];
+    }, obj);
+  }
+}
+
+// Export managers
+const nativeBridgeManager = new NativeBridgeManager();
+const cordovaBridgeManager = new CordovaBridgeManager();
+
+// Utility functions
+export function isNativePlatform() {
+  return Capacitor.isNativePlatform();
+}
+
+export function getPlatform() {
+  return Capacitor.getPlatform();
+}
+
+export function isPluginAvailable(plugin) {
+  return Capacitor.isPluginAvailable(plugin);
+}
+
+// Clean up on app exit
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    nativeBridgeManager.cleanup();
+  });
+}
+
+export { nativeBridgeManager, cordovaBridgeManager };
+export default nativeBridgeManager;

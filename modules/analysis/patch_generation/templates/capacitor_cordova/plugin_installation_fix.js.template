@@ -1,0 +1,65 @@
+// Fix for Capacitor/Cordova plugin installation and usage
+import { Capacitor } from '@capacitor/core';
+
+// Check if plugin is available before using
+async function safePluginUsage() {
+  // For Capacitor plugins
+  if (Capacitor.isPluginAvailable('{{PLUGIN_NAME}}')) {
+    const { {{PLUGIN_NAME}} } = await import('@capacitor/{{PLUGIN_NAME_LOWER}}');
+    try {
+      const result = await {{PLUGIN_NAME}}.{{METHOD_NAME}}();
+      return result;
+    } catch (error) {
+      console.error('Plugin method failed:', error);
+      // Provide fallback or graceful degradation
+      return handlePluginError(error);
+    }
+  } else {
+    console.warn('Plugin {{PLUGIN_NAME}} not available on this platform');
+    // Provide web fallback if possible
+    return provideWebFallback();
+  }
+}
+
+// For Cordova plugins
+function safeCordovaPlugin() {
+  // Wait for deviceready event
+  document.addEventListener('deviceready', function() {
+    if (window.cordova && window.cordova.plugins.{{PLUGIN_NAME}}) {
+      window.cordova.plugins.{{PLUGIN_NAME}}.{{METHOD_NAME}}(
+        (success) => {
+          console.log('Plugin success:', success);
+          handleSuccess(success);
+        },
+        (error) => {
+          console.error('Plugin error:', error);
+          handlePluginError(error);
+        }
+      );
+    } else {
+      console.warn('Cordova plugin {{PLUGIN_NAME}} not available');
+      provideWebFallback();
+    }
+  }, false);
+}
+
+function handlePluginError(error) {
+  // Implement error handling logic
+  console.error('Plugin operation failed:', error);
+  // Return appropriate fallback value or show user message
+}
+
+function provideWebFallback() {
+  // Implement web platform fallback if applicable
+  if (Capacitor.getPlatform() === 'web') {
+    // Provide web-specific implementation
+    console.log('Using web fallback for {{PLUGIN_NAME}}');
+  }
+}
+
+function handleSuccess(result) {
+  // Process successful plugin operation
+  console.log('Plugin operation completed successfully:', result);
+}
+
+export { safePluginUsage, safeCordovaPlugin };

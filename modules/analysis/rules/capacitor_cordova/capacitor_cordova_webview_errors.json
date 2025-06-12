@@ -1,0 +1,281 @@
+{
+  "metadata": {
+    "description": "WebView and web-to-native communication errors in Capacitor/Cordova apps",
+    "framework": "capacitor_cordova",
+    "category": "webview",
+    "version": "3.0+",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "webview_csp_violation",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "Content Security Policy.*violation|CSP.*violation|unsafe.*inline.*blocked|Refused to.*CSP",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "webview_csp_violation",
+      "suggestion": "Update Content Security Policy for hybrid app requirements",
+      "fix_commands": [
+        "Add 'unsafe-inline' and 'unsafe-eval' to CSP if needed",
+        "Include gap: protocol for Cordova apps",
+        "Allow data: and blob: URLs for local resources",
+        "Configure CSP in index.html meta tag"
+      ],
+      "tags": ["capacitor", "cordova", "csp", "security", "webview"]
+    },
+    {
+      "id": "webview_cors_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "CORS.*error|Cross-Origin.*blocked|Access.*Control.*Allow.*Origin|XMLHttpRequest.*CORS",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "webview_cors_error",
+      "suggestion": "Configure CORS settings for API requests in mobile apps",
+      "fix_commands": [
+        "Use capacitor-http plugin for HTTP requests",
+        "Configure server CORS headers properly",
+        "Use native HTTP for mobile platforms",
+        "Whitelist domains in config.xml for Cordova"
+      ],
+      "tags": ["capacitor", "cordova", "cors", "http", "api"]
+    },
+    {
+      "id": "webview_resource_loading_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "Failed to load.*resource|Resource.*not found|Unable to load.*asset|404.*asset",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "webview_resource_loading_error",
+      "suggestion": "Check asset paths and ensure resources are properly bundled",
+      "fix_commands": [
+        "Verify asset paths are correct for mobile platforms",
+        "Check webDir configuration in capacitor.config.ts",
+        "Ensure assets are included in build output",
+        "Use proper base href for mobile apps"
+      ],
+      "tags": ["capacitor", "cordova", "assets", "resources", "webview"]
+    },
+    {
+      "id": "webview_javascript_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "JavaScript.*error.*WebView|Script.*error|Uncaught.*error.*WebView",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "webview_javascript_error",
+      "suggestion": "Debug JavaScript errors in WebView environment",
+      "fix_commands": [
+        "Enable WebView debugging on Android",
+        "Use Safari Web Inspector for iOS WebView",
+        "Add console.log statements for debugging",
+        "Check for WebView-specific JavaScript limitations"
+      ],
+      "tags": ["capacitor", "cordova", "javascript", "debugging", "webview"]
+    },
+    {
+      "id": "webview_console_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "Console.*log.*not working|console.*undefined|Logging.*not available",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "medium",
+      "root_cause": "webview_console_error",
+      "suggestion": "Configure console logging for WebView debugging",
+      "fix_commands": [
+        "Enable console logging in WebView",
+        "Use native logging plugins",
+        "Configure debug mode for development",
+        "Check console availability before use"
+      ],
+      "tags": ["capacitor", "cordova", "console", "logging", "debugging"]
+    },
+    {
+      "id": "webview_navigation_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "Navigation.*error|Page.*not found|Unable to navigate|Routing.*failed.*WebView",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "medium",
+      "root_cause": "webview_navigation_error",
+      "suggestion": "Fix navigation and routing issues in WebView",
+      "fix_commands": [
+        "Use hash routing for single-page apps",
+        "Configure base href properly",
+        "Handle back button navigation",
+        "Check route configurations"
+      ],
+      "tags": ["capacitor", "cordova", "navigation", "routing", "webview"]
+    },
+    {
+      "id": "webview_storage_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "LocalStorage.*not available|SessionStorage.*error|Storage.*quota.*exceeded|WebSQL.*deprecated",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "webview_storage_error",
+      "suggestion": "Use appropriate storage solutions for mobile WebView",
+      "fix_commands": [
+        "Use @capacitor/storage for persistent storage",
+        "Check storage availability before use",
+        "Handle storage quota exceeded errors",
+        "Migrate from WebSQL to modern storage APIs"
+      ],
+      "tags": ["capacitor", "cordova", "storage", "localstorage", "webview"]
+    },
+    {
+      "id": "webview_viewport_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "Viewport.*error|Mobile.*viewport.*issue|Screen.*scaling.*problem",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "medium",
+      "root_cause": "webview_viewport_error",
+      "suggestion": "Configure viewport meta tag for mobile WebView",
+      "fix_commands": [
+        "Add proper viewport meta tag",
+        "Set viewport-fit=cover for notched devices",
+        "Configure initial-scale and user-scalable",
+        "Test on different screen sizes"
+      ],
+      "tags": ["capacitor", "cordova", "viewport", "mobile", "responsive"]
+    },
+    {
+      "id": "webview_touch_event_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "Touch.*event.*not working|Gesture.*recognition.*failed|Touch.*handler.*error",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "medium",
+      "root_cause": "webview_touch_event_error",
+      "suggestion": "Fix touch event handling in mobile WebView",
+      "fix_commands": [
+        "Use touch events instead of mouse events",
+        "Add passive event listeners",
+        "Handle touch gesture conflicts",
+        "Test touch interactions on device"
+      ],
+      "tags": ["capacitor", "cordova", "touch", "gestures", "events"]
+    },
+    {
+      "id": "webview_performance_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "WebView.*performance.*slow|Rendering.*lag|Animation.*stuttering|Memory.*leak.*WebView",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "medium",
+      "root_cause": "webview_performance_error",
+      "suggestion": "Optimize WebView performance and memory usage",
+      "fix_commands": [
+        "Optimize CSS animations and transitions",
+        "Reduce DOM complexity and size",
+        "Use hardware acceleration where appropriate",
+        "Monitor memory usage and clean up properly"
+      ],
+      "tags": ["capacitor", "cordova", "performance", "optimization", "webview"]
+    },
+    {
+      "id": "webview_font_loading_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "Font.*not loaded|Custom.*font.*error|Font.*display.*issue",
+      "severity": "warning",
+      "confidence": "low",
+      "reliability": "medium",
+      "root_cause": "webview_font_loading_error",
+      "suggestion": "Ensure fonts are properly loaded in WebView",
+      "fix_commands": [
+        "Include fonts in app bundle",
+        "Use web-safe font fallbacks",
+        "Preload critical fonts",
+        "Check font CORS settings if loading from CDN"
+      ],
+      "tags": ["capacitor", "cordova", "fonts", "typography", "assets"]
+    },
+    {
+      "id": "webview_file_access_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "File.*access.*denied|Unable to access.*local.*file|File.*protocol.*blocked",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "webview_file_access_error",
+      "suggestion": "Configure file access permissions for WebView",
+      "fix_commands": [
+        "Use @capacitor/filesystem for file operations",
+        "Configure allowFileAccess in WebView settings",
+        "Use proper file URLs for mobile platforms",
+        "Handle file permissions properly"
+      ],
+      "tags": ["capacitor", "cordova", "file-access", "permissions", "webview"]
+    },
+    {
+      "id": "webview_ssl_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "SSL.*certificate.*error|HTTPS.*error|Certificate.*not trusted|SSL.*handshake.*failed",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "webview_ssl_error",
+      "suggestion": "Fix SSL certificate issues in WebView",
+      "fix_commands": [
+        "Use valid SSL certificates",
+        "Configure certificate pinning if needed",
+        "Handle self-signed certificates properly",
+        "Check network security configuration"
+      ],
+      "tags": ["capacitor", "cordova", "ssl", "certificates", "security"]
+    },
+    {
+      "id": "webview_url_scheme_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "URL.*scheme.*not supported|Custom.*scheme.*error|Protocol.*handler.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "webview_url_scheme_error",
+      "suggestion": "Configure custom URL schemes properly",
+      "fix_commands": [
+        "Register custom URL schemes in config",
+        "Handle URL scheme redirects properly",
+        "Use standard protocols where possible",
+        "Test deep linking functionality"
+      ],
+      "tags": ["capacitor", "cordova", "url-schemes", "deep-linking", "navigation"]
+    },
+    {
+      "id": "webview_mixed_content_error",
+      "category": "capacitor_cordova",
+      "subcategory": "webview",
+      "pattern": "Mixed.*content.*blocked|HTTP.*content.*HTTPS.*page|Insecure.*content.*blocked",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "webview_mixed_content_error",
+      "suggestion": "Fix mixed content issues in HTTPS contexts",
+      "fix_commands": [
+        "Use HTTPS for all external resources",
+        "Configure allowMixedContent in Android config",
+        "Update resource URLs to HTTPS",
+        "Use protocol-relative URLs where appropriate"
+      ],
+      "tags": ["capacitor", "cordova", "mixed-content", "https", "security"]
+    }
+  ]
+}

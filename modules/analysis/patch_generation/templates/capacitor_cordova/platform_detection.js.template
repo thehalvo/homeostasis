@@ -1,0 +1,306 @@
+// Platform detection and feature availability for Capacitor/Cordova apps
+import { Capacitor } from '@capacitor/core';
+
+class PlatformManager {
+  constructor() {
+    this.platform = Capacitor.getPlatform();
+    this.isNative = Capacitor.isNativePlatform();
+    this.platformInfo = null;
+    this.deviceInfo = null;
+    
+    // Initialize platform info
+    this.initializePlatformInfo();
+  }
+  
+  async initializePlatformInfo() {
+    try {
+      // Get device information
+      if (this.isNative && Capacitor.isPluginAvailable('Device')) {
+        const { Device } = await import('@capacitor/device');
+        this.deviceInfo = await Device.getInfo();
+        this.platformInfo = {
+          platform: this.deviceInfo.platform,
+          model: this.deviceInfo.model,
+          osVersion: this.deviceInfo.osVersion,
+          manufacturer: this.deviceInfo.manufacturer,
+          isVirtual: this.deviceInfo.isVirtual
+        };
+      } else {
+        // Web platform info
+        this.platformInfo = {
+          platform: 'web',
+          userAgent: navigator.userAgent,
+          language: navigator.language,
+          cookieEnabled: navigator.cookieEnabled
+        };
+      }
+    } catch (error) {
+      console.error('Failed to initialize platform info:', error);
+    }
+  }
+  
+  // Platform detection methods
+  isWeb() {
+    return this.platform === 'web';
+  }
+  
+  isIOS() {
+    return this.platform === 'ios';
+  }
+  
+  isAndroid() {
+    return this.platform === 'android';
+  }
+  
+  isMobile() {
+    return this.isIOS() || this.isAndroid();
+  }
+  
+  isTablet() {
+    if (this.deviceInfo) {
+      return this.deviceInfo.model && this.deviceInfo.model.toLowerCase().includes('ipad');
+    }
+    return false;
+  }
+  
+  // Feature availability checks
+  async isFeatureAvailable(featureName) {
+    switch (featureName) {
+      case 'camera':
+        return this.isNative && Capacitor.isPluginAvailable('Camera');
+      case 'geolocation':
+        return this.isNative ? 
+          Capacitor.isPluginAvailable('Geolocation') : 
+          'geolocation' in navigator;
+      case 'filesystem':
+        return this.isNative && Capacitor.isPluginAvailable('Filesystem');
+      case 'storage':
+        return this.isNative ? 
+          Capacitor.isPluginAvailable('Storage') : 
+          'localStorage' in window;
+      case 'network':
+        return this.isNative ? 
+          Capacitor.isPluginAvailable('Network') : 
+          'navigator' in window && 'onLine' in navigator;
+      case 'push-notifications':
+        return this.isNative && Capacitor.isPluginAvailable('PushNotifications');
+      case 'app-state':
+        return this.isNative && Capacitor.isPluginAvailable('App');
+      case 'device-info':
+        return this.isNative ? 
+          Capacitor.isPluginAvailable('Device') : 
+          'navigator' in window;
+      case 'haptics':
+        return this.isNative && Capacitor.isPluginAvailable('Haptics');
+      case 'keyboard':
+        return this.isNative && Capacitor.isPluginAvailable('Keyboard');
+      case 'splash-screen':
+        return this.isNative && Capacitor.isPluginAvailable('SplashScreen');
+      case 'status-bar':
+        return this.isNative && Capacitor.isPluginAvailable('StatusBar');
+      default:
+        return false;
+    }
+  }
+  
+  // Safe feature usage with fallbacks
+  async useFeature(featureName, nativeImpl, webImpl) {
+    const isAvailable = await this.isFeatureAvailable(featureName);
+    
+    if (isAvailable && this.isNative) {
+      try {
+        return await nativeImpl();
+      } catch (error) {
+        console.error(`Native ${featureName} failed:`, error);
+        if (webImpl && this.isWeb()) {
+          return await webImpl();
+        }
+        throw error;
+      }
+    } else if (webImpl && this.isWeb()) {
+      return await webImpl();
+    } else {
+      throw new Error(`Feature ${featureName} not available on platform ${this.platform}`);
+    }
+  }
+  
+  // Camera feature with fallback
+  async takePhoto(options = {}) {
+    return await this.useFeature('camera',
+      async () => {
+        const { Camera, CameraResultType, CameraSource } = await import('@capacitor/camera');
+        return await Camera.getPhoto({
+          resultType: CameraResultType.Uri,
+          source: CameraSource.Camera,
+          quality: 90,
+          ...options
+        });
+      },
+      async () => {
+        // Web fallback using getUserMedia
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        // Implement web camera capture logic here
+        return { webPath: 'web-camera-placeholder' };
+      }
+    );
+  }
+  
+  // Geolocation feature with fallback
+  async getCurrentPosition(options = {}) {
+    return await this.useFeature('geolocation',
+      async () => {
+        const { Geolocation } = await import('@capacitor/geolocation');
+        return await Geolocation.getCurrentPosition(options);
+      },
+      async () => {
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, options);
+        });
+      }
+    );
+  }
+  
+  // Storage feature with fallback
+  async setItem(key, value) {
+    return await this.useFeature('storage',
+      async () => {
+        const { Storage } = await import('@capacitor/storage');
+        return await Storage.set({ key, value });
+      },
+      async () => {
+        localStorage.setItem(key, value);
+        return { value };
+      }
+    );
+  }
+  
+  async getItem(key) {
+    return await this.useFeature('storage',
+      async () => {
+        const { Storage } = await import('@capacitor/storage');
+        return await Storage.get({ key });
+      },
+      async () => {
+        const value = localStorage.getItem(key);
+        return { value };
+      }
+    );
+  }
+  
+  // Network status with fallback
+  async getNetworkStatus() {
+    return await this.useFeature('network',
+      async () => {
+        const { Network } = await import('@capacitor/network');
+        return await Network.getStatus();
+      },
+      async () => {
+        return {
+          connected: navigator.onLine,
+          connectionType: 'unknown'
+        };
+      }
+    );
+  }
+  
+  // Platform-specific configurations
+  getPlatformConfig() {
+    const baseConfig = {
+      platform: this.platform,
+      isNative: this.isNative
+    };
+    
+    if (this.isIOS()) {
+      return {
+        ...baseConfig,
+        safeAreaInsets: true,
+        statusBarStyle: 'light',
+        swipeBackEnabled: true
+      };
+    } else if (this.isAndroid()) {
+      return {
+        ...baseConfig,
+        hardwareBackButton: true,
+        statusBarColor: '#000000',
+        navigationBarColor: '#000000'
+      };
+    } else {
+      return {
+        ...baseConfig,
+        fullscreen: false,
+        responsive: true
+      };
+    }
+  }
+  
+  // Handle platform-specific styling
+  getPlatformClasses() {
+    const classes = [`platform-${this.platform}`];
+    
+    if (this.isNative) {
+      classes.push('platform-native');
+    } else {
+      classes.push('platform-web');
+    }
+    
+    if (this.isMobile()) {
+      classes.push('platform-mobile');
+    }
+    
+    if (this.isTablet()) {
+      classes.push('platform-tablet');
+    }
+    
+    return classes;
+  }
+  
+  // Apply platform-specific styles to document
+  applyPlatformStyles() {
+    const classes = this.getPlatformClasses();
+    document.body.classList.add(...classes);
+    
+    // Apply platform-specific CSS variables
+    const root = document.documentElement;
+    const config = this.getPlatformConfig();
+    
+    if (config.statusBarStyle) {
+      root.style.setProperty('--status-bar-style', config.statusBarStyle);
+    }
+    
+    if (config.statusBarColor) {
+      root.style.setProperty('--status-bar-color', config.statusBarColor);
+    }
+  }
+  
+  // Get platform information
+  getPlatformInfo() {
+    return this.platformInfo;
+  }
+  
+  // Check if running in development mode
+  isDevelopment() {
+    return this.isWeb() && (
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname.includes('192.168.')
+    );
+  }
+  
+  // Check if app is running in background
+  async isAppInBackground() {
+    if (this.isNative && await this.isFeatureAvailable('app-state')) {
+      const { App } = await import('@capacitor/app');
+      const state = await App.getState();
+      return !state.isActive;
+    }
+    
+    return document.hidden;
+  }
+}
+
+// Singleton instance
+const platformManager = new PlatformManager();
+
+// Export both the class and instance
+export default PlatformManager;
+export { platformManager };

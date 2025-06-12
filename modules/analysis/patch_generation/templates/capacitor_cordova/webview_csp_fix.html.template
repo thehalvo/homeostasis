@@ -1,0 +1,186 @@
+<!-- Content Security Policy fix for Capacitor/Cordova hybrid apps -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{APP_NAME}}</title>
+    
+    <!-- Capacitor CSP - allows inline scripts and styles needed for hybrid apps -->
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self' data: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; 
+                   object-src 'none'; 
+                   style-src 'self' 'unsafe-inline' https:; 
+                   script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; 
+                   media-src 'self' data: content: blob: https:; 
+                   img-src 'self' data: content: blob: https:; 
+                   connect-src 'self' https: wss: ws:; 
+                   frame-src 'self' https:;">
+    
+    <!-- Alternative CSP for stricter security (use if above is too permissive) -->
+    <!-- 
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self' data: gap: capacitor: https://ssl.gstatic.com; 
+                   style-src 'self' 'unsafe-inline'; 
+                   script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
+                   media-src 'self' data: content: blob:; 
+                   img-src 'self' data: content: blob:; 
+                   connect-src 'self' https: wss:;">
+    -->
+    
+    <!-- Cordova-specific CSP (for legacy Cordova apps) -->
+    <!-- 
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; 
+                   style-src 'self' 'unsafe-inline'; 
+                   media-src *; 
+                   img-src 'self' data: content:; 
+                   script-src 'self' 'unsafe-inline' 'unsafe-eval';">
+    -->
+    
+    <!-- Standard mobile meta tags -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    
+    <!-- Prevent iOS bounce and zoom -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Capacitor configuration -->
+    <meta name="capacitor-initial-scale" content="1">
+    
+</head>
+<body>
+    <div id="app">
+        <!-- App content will be loaded here -->
+    </div>
+    
+    <script>
+        // Safe script loading for hybrid apps
+        function loadScript(src, callback) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => {
+                    resolve();
+                    if (callback) callback();
+                };
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+        
+        // Safe external resource loading
+        function loadExternalResource(url, type = 'script') {
+            return new Promise((resolve, reject) => {
+                let element;
+                
+                if (type === 'script') {
+                    element = document.createElement('script');
+                    element.src = url;
+                } else if (type === 'style') {
+                    element = document.createElement('link');
+                    element.rel = 'stylesheet';
+                    element.href = url;
+                }
+                
+                element.onload = resolve;
+                element.onerror = reject;
+                document.head.appendChild(element);
+            });
+        }
+        
+        // Initialize app safely
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing app...');
+            
+            // Check if we're in a Capacitor environment
+            if (window.Capacitor) {
+                console.log('Running in Capacitor environment');
+                // Capacitor-specific initialization
+                initializeCapacitorApp();
+            } else if (window.cordova) {
+                console.log('Running in Cordova environment');
+                // Wait for Cordova deviceready event
+                document.addEventListener('deviceready', initializeCordovaApp, false);
+            } else {
+                console.log('Running in web environment');
+                // Web-specific initialization
+                initializeWebApp();
+            }
+        });
+        
+        function initializeCapacitorApp() {
+            // Capacitor app initialization
+            console.log('Capacitor app ready');
+            
+            // Add any Capacitor-specific initialization here
+            if (window.Capacitor.Plugins) {
+                // Plugins are available
+                setupCapacitorPlugins();
+            }
+            
+            startApp();
+        }
+        
+        function initializeCordovaApp() {
+            // Cordova app initialization
+            console.log('Cordova device ready');
+            
+            // Add any Cordova-specific initialization here
+            if (window.cordova.plugins) {
+                // Plugins are available
+                setupCordovaPlugins();
+            }
+            
+            startApp();
+        }
+        
+        function initializeWebApp() {
+            // Web app initialization
+            console.log('Web app ready');
+            startApp();
+        }
+        
+        function setupCapacitorPlugins() {
+            // Initialize Capacitor plugins
+            console.log('Setting up Capacitor plugins...');
+        }
+        
+        function setupCordovaPlugins() {
+            // Initialize Cordova plugins
+            console.log('Setting up Cordova plugins...');
+        }
+        
+        function startApp() {
+            // Common app initialization logic
+            console.log('Starting app...');
+            
+            // Initialize your app framework here
+            // This is where you would typically initialize Angular, React, Vue, etc.
+        }
+        
+        // Error handling for CSP violations
+        document.addEventListener('securitypolicyviolation', function(e) {
+            console.error('CSP Violation:', e.violatedDirective, e.blockedURI);
+            
+            // You might want to report this to your analytics or error tracking service
+            // reportCSPViolation(e);
+        });
+        
+        // Global error handler
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            
+            // Handle errors gracefully
+            // You might want to show a user-friendly error message
+        });
+        
+        // Handle unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Unhandled promise rejection:', e.reason);
+            e.preventDefault(); // Prevent the default browser behavior
+        });
+    </script>
+</body>
+</html>

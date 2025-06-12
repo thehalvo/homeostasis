@@ -1,0 +1,299 @@
+{
+  "metadata": {
+    "description": "Platform-specific build and deployment errors for Capacitor/Cordova apps",
+    "framework": "capacitor_cordova",
+    "category": "platform_build",
+    "version": "3.0+",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "android_gradle_build_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "Gradle.*build.*failed|Task.*failed.*android|Android.*build.*error|Could not resolve.*dependency",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "android_gradle_build_error",
+      "suggestion": "Check Android Gradle configuration and dependencies",
+      "fix_commands": [
+        "Clean and rebuild: npx cap run android",
+        "Check Android SDK and build tools versions",
+        "Update Gradle wrapper version",
+        "Check plugin compatibility with Android"
+      ],
+      "tags": ["capacitor", "cordova", "android", "gradle", "build"]
+    },
+    {
+      "id": "android_sdk_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "Android.*SDK.*not found|SDK.*location.*not found|ANDROID_HOME.*not set|License.*not accepted",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "android_sdk_error",
+      "suggestion": "Configure Android SDK paths and accept licenses",
+      "fix_commands": [
+        "Set ANDROID_HOME environment variable",
+        "Accept Android SDK licenses",
+        "Update Android SDK and build tools",
+        "Check SDK path configuration"
+      ],
+      "tags": ["capacitor", "cordova", "android", "sdk", "environment"]
+    },
+    {
+      "id": "android_manifest_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "AndroidManifest.*error|Permission.*not found|Activity.*not found|manifest.*merger.*failed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "android_manifest_error",
+      "suggestion": "Fix Android manifest configuration and permissions",
+      "fix_commands": [
+        "Check AndroidManifest.xml syntax",
+        "Verify required permissions are declared",
+        "Resolve manifest merger conflicts",
+        "Check activity declarations"
+      ],
+      "tags": ["capacitor", "cordova", "android", "manifest", "permissions"]
+    },
+    {
+      "id": "android_minsdkversion_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "minSdkVersion.*too low|API level.*not supported|requires.*API.*level",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "android_minsdkversion_error",
+      "suggestion": "Update minimum SDK version in build configuration",
+      "fix_commands": [
+        "Update minSdkVersion in build.gradle",
+        "Check plugin minimum API requirements",
+        "Update target and compile SDK versions",
+        "Test on appropriate Android version"
+      ],
+      "tags": ["capacitor", "cordova", "android", "sdk-version", "api-level"]
+    },
+    {
+      "id": "ios_xcode_build_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "Xcode.*build.*failed|iOS.*build.*error|Code signing.*error|Provisioning.*profile.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ios_xcode_build_error",
+      "suggestion": "Check Xcode project configuration and code signing",
+      "fix_commands": [
+        "Open iOS project in Xcode and check for issues",
+        "Update provisioning profiles and certificates",
+        "Check iOS deployment target version",
+        "Sync Capacitor: npx cap sync ios"
+      ],
+      "tags": ["capacitor", "cordova", "ios", "xcode", "code-signing"]
+    },
+    {
+      "id": "ios_cocoapods_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "CocoaPods.*error|pod.*install.*failed|Podfile.*error|Unable to find.*pod",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ios_cocoapods_error",
+      "suggestion": "Fix CocoaPods configuration and dependencies",
+      "fix_commands": [
+        "Run pod install in ios/ directory",
+        "Update CocoaPods: sudo gem install cocoapods",
+        "Clean pods: pod deintegrate && pod install",
+        "Check Podfile syntax and dependencies"
+      ],
+      "tags": ["capacitor", "cordova", "ios", "cocoapods", "dependencies"]
+    },
+    {
+      "id": "ios_deployment_target_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "deployment target.*too low|iOS.*version.*not supported|minimum.*iOS.*version",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ios_deployment_target_error",
+      "suggestion": "Update iOS deployment target version",
+      "fix_commands": [
+        "Update deployment target in Xcode project",
+        "Check Capacitor iOS requirements",
+        "Update plugin iOS version requirements",
+        "Test on appropriate iOS version"
+      ],
+      "tags": ["capacitor", "cordova", "ios", "deployment-target", "version"]
+    },
+    {
+      "id": "ios_simulator_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "Simulator.*not found|iOS.*Simulator.*error|Unable to boot.*simulator",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "ios_simulator_error",
+      "suggestion": "Check iOS Simulator configuration and availability",
+      "fix_commands": [
+        "Open Xcode and check available simulators",
+        "Reset iOS Simulator if needed",
+        "Check simulator device compatibility",
+        "Try different simulator device"
+      ],
+      "tags": ["capacitor", "cordova", "ios", "simulator", "testing"]
+    },
+    {
+      "id": "capacitor_sync_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "cap sync.*failed|Capacitor.*sync.*error|Unable to sync.*platform",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "capacitor_sync_error",
+      "suggestion": "Fix Capacitor configuration and sync process",
+      "fix_commands": [
+        "Check capacitor.config.ts syntax",
+        "Verify webDir path is correct",
+        "Clean and reinstall: npm install && npx cap sync",
+        "Check platform-specific configurations"
+      ],
+      "tags": ["capacitor", "sync", "configuration", "platform"]
+    },
+    {
+      "id": "cordova_platform_add_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "cordova platform add.*failed|Platform.*already exists|Unable to add.*platform",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "cordova_platform_add_error",
+      "suggestion": "Fix Cordova platform installation",
+      "fix_commands": [
+        "Remove and re-add platform: cordova platform rm [platform] && cordova platform add [platform]",
+        "Check Cordova version compatibility",
+        "Clear Cordova cache: cordova clean",
+        "Check internet connectivity for platform download"
+      ],
+      "tags": ["cordova", "platform", "installation", "build"]
+    },
+    {
+      "id": "webview_version_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "WebView.*version.*incompatible|WebView.*not supported|SystemWebView.*error",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "webview_version_error",
+      "suggestion": "Check WebView version compatibility and update if needed",
+      "fix_commands": [
+        "Update Android System WebView on device",
+        "Check minimum WebView version requirements",
+        "Test on different devices/WebView versions",
+        "Consider WebView compatibility settings"
+      ],
+      "tags": ["capacitor", "cordova", "webview", "compatibility", "android"]
+    },
+    {
+      "id": "build_tools_version_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "Build.*tools.*version.*not found|buildToolsVersion.*not installed|Android build.*tools.*error",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "build_tools_version_error",
+      "suggestion": "Install or update Android build tools",
+      "fix_commands": [
+        "Install build tools via Android Studio SDK Manager",
+        "Update build.gradle buildToolsVersion",
+        "Check available build tools versions",
+        "Update Android SDK and tools"
+      ],
+      "tags": ["capacitor", "cordova", "android", "build-tools", "sdk"]
+    },
+    {
+      "id": "java_version_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "Java.*version.*not supported|JDK.*not found|Incompatible.*Java.*version",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "java_version_error",
+      "suggestion": "Install or update Java JDK to compatible version",
+      "fix_commands": [
+        "Install Java JDK 8 or 11 (as required)",
+        "Set JAVA_HOME environment variable",
+        "Check Java version: java -version",
+        "Update Android Studio JDK settings"
+      ],
+      "tags": ["capacitor", "cordova", "java", "jdk", "environment"]
+    },
+    {
+      "id": "node_version_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "Node.*version.*not supported|npm.*version.*incompatible|Engine.*node.*unsupported",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "node_version_error",
+      "suggestion": "Update Node.js and npm to compatible versions",
+      "fix_commands": [
+        "Update Node.js to LTS version",
+        "Update npm: npm install -g npm@latest",
+        "Check version requirements in package.json",
+        "Use nvm to manage Node versions"
+      ],
+      "tags": ["capacitor", "cordova", "node", "npm", "version"]
+    },
+    {
+      "id": "native_dependencies_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "Native.*dependencies.*error|Unable to resolve.*native.*dependency|Native.*module.*not found",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "native_dependencies_error",
+      "suggestion": "Check and install required native dependencies",
+      "fix_commands": [
+        "Clean and reinstall dependencies",
+        "Check native dependency versions",
+        "Rebuild native modules if needed",
+        "Verify platform-specific requirements"
+      ],
+      "tags": ["capacitor", "cordova", "native", "dependencies", "modules"]
+    },
+    {
+      "id": "memory_limit_error",
+      "category": "capacitor_cordova",
+      "subcategory": "platform_build",
+      "pattern": "Out of memory.*build|Java heap space|Memory limit.*exceeded|OutOfMemoryError",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "memory_limit_error",
+      "suggestion": "Increase build memory limits and optimize build process",
+      "fix_commands": [
+        "Increase Gradle JVM heap size",
+        "Add org.gradle.jvmargs=-Xmx4g to gradle.properties",
+        "Close other applications during build",
+        "Consider incremental builds"
+      ],
+      "tags": ["capacitor", "cordova", "memory", "build", "performance"]
+    }
+  ]
+}

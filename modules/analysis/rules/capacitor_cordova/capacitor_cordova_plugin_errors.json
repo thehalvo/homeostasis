@@ -1,0 +1,299 @@
+{
+  "metadata": {
+    "description": "Capacitor/Cordova plugin-specific errors and integration issues",
+    "framework": "capacitor_cordova",
+    "category": "plugin_integration",
+    "version": "3.0+",
+    "last_updated": "2024-01-01"
+  },
+  "rules": [
+    {
+      "id": "capacitor_camera_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "@capacitor/camera.*error|Camera.*plugin.*not found|Camera.*getPhoto.*failed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "capacitor_camera_plugin_error",
+      "suggestion": "Install and configure @capacitor/camera plugin properly",
+      "fix_commands": [
+        "Install: npm install @capacitor/camera",
+        "Sync: npx cap sync",
+        "Add camera permissions to platform manifests",
+        "Check camera availability before use"
+      ],
+      "tags": ["capacitor", "camera", "plugin", "permissions"]
+    },
+    {
+      "id": "capacitor_geolocation_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "@capacitor/geolocation.*error|Geolocation.*plugin.*not found|getCurrentPosition.*failed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "capacitor_geolocation_plugin_error",
+      "suggestion": "Install and configure @capacitor/geolocation plugin with proper permissions",
+      "fix_commands": [
+        "Install: npm install @capacitor/geolocation",
+        "Add location permissions to manifests",
+        "Handle permission requests properly",
+        "Provide fallback for location unavailable"
+      ],
+      "tags": ["capacitor", "geolocation", "plugin", "permissions"]
+    },
+    {
+      "id": "capacitor_filesystem_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "@capacitor/filesystem.*error|Filesystem.*plugin.*not found|readFile.*failed|writeFile.*failed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "capacitor_filesystem_plugin_error",
+      "suggestion": "Install @capacitor/filesystem and handle file operations properly",
+      "fix_commands": [
+        "Install: npm install @capacitor/filesystem",
+        "Check file permissions and paths",
+        "Use proper directory constants",
+        "Handle file not found errors"
+      ],
+      "tags": ["capacitor", "filesystem", "plugin", "file-operations"]
+    },
+    {
+      "id": "capacitor_network_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "@capacitor/network.*error|Network.*plugin.*not found|getStatus.*failed",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "capacitor_network_plugin_error",
+      "suggestion": "Install @capacitor/network for network status monitoring",
+      "fix_commands": [
+        "Install: npm install @capacitor/network",
+        "Listen to network status changes",
+        "Handle offline scenarios",
+        "Check connectivity before network requests"
+      ],
+      "tags": ["capacitor", "network", "plugin", "connectivity"]
+    },
+    {
+      "id": "capacitor_storage_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "@capacitor/storage.*error|Storage.*plugin.*not found|get.*failed|set.*failed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "capacitor_storage_plugin_error",
+      "suggestion": "Install @capacitor/storage for persistent data storage",
+      "fix_commands": [
+        "Install: npm install @capacitor/storage",
+        "Initialize storage properly",
+        "Handle storage errors gracefully",
+        "Check storage availability"
+      ],
+      "tags": ["capacitor", "storage", "plugin", "persistence"]
+    },
+    {
+      "id": "capacitor_push_notifications_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "@capacitor/push-notifications.*error|Push.*notifications.*plugin.*not found|register.*failed",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "capacitor_push_notifications_plugin_error",
+      "suggestion": "Install and configure @capacitor/push-notifications with proper setup",
+      "fix_commands": [
+        "Install: npm install @capacitor/push-notifications",
+        "Configure Firebase for Android",
+        "Configure APNS for iOS",
+        "Request notification permissions"
+      ],
+      "tags": ["capacitor", "push-notifications", "plugin", "firebase", "apns"]
+    },
+    {
+      "id": "capacitor_app_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "@capacitor/app.*error|App.*plugin.*not found|getInfo.*failed|addListener.*failed",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "capacitor_app_plugin_error",
+      "suggestion": "Install @capacitor/app for app lifecycle and info management",
+      "fix_commands": [
+        "Install: npm install @capacitor/app",
+        "Handle app state listeners properly",
+        "Check app info availability",
+        "Handle lifecycle events"
+      ],
+      "tags": ["capacitor", "app", "plugin", "lifecycle"]
+    },
+    {
+      "id": "cordova_file_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "cordova-plugin-file.*error|File.*plugin.*not found|resolveLocalFileSystemURL.*failed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "cordova_file_plugin_error",
+      "suggestion": "Install and configure cordova-plugin-file properly",
+      "fix_commands": [
+        "Install: cordova plugin add cordova-plugin-file",
+        "Check file system permissions",
+        "Use proper file paths",
+        "Handle file operation errors"
+      ],
+      "tags": ["cordova", "file", "plugin", "filesystem"]
+    },
+    {
+      "id": "cordova_camera_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "cordova-plugin-camera.*error|Camera.*plugin.*not found|getPicture.*failed",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "cordova_camera_plugin_error",
+      "suggestion": "Install cordova-plugin-camera and handle camera permissions",
+      "fix_commands": [
+        "Install: cordova plugin add cordova-plugin-camera",
+        "Add camera permissions to config.xml",
+        "Handle camera options properly",
+        "Check camera availability"
+      ],
+      "tags": ["cordova", "camera", "plugin", "permissions"]
+    },
+    {
+      "id": "cordova_device_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "cordova-plugin-device.*error|Device.*plugin.*not found|device\\.platform.*undefined",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "cordova_device_plugin_error",
+      "suggestion": "Install cordova-plugin-device for device information",
+      "fix_commands": [
+        "Install: cordova plugin add cordova-plugin-device",
+        "Wait for deviceready event",
+        "Check device object availability",
+        "Handle device info safely"
+      ],
+      "tags": ["cordova", "device", "plugin", "device-info"]
+    },
+    {
+      "id": "cordova_network_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "cordova-plugin-network-information.*error|Network.*information.*plugin.*not found|navigator\\.connection.*undefined",
+      "severity": "warning",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "cordova_network_plugin_error",
+      "suggestion": "Install cordova-plugin-network-information for connectivity status",
+      "fix_commands": [
+        "Install: cordova plugin add cordova-plugin-network-information",
+        "Listen to network events",
+        "Check connection object availability",
+        "Handle offline scenarios"
+      ],
+      "tags": ["cordova", "network", "plugin", "connectivity"]
+    },
+    {
+      "id": "cordova_geolocation_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "cordova-plugin-geolocation.*error|Geolocation.*plugin.*not found|getCurrentPosition.*not available",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "cordova_geolocation_plugin_error",
+      "suggestion": "Install cordova-plugin-geolocation and handle location permissions",
+      "fix_commands": [
+        "Install: cordova plugin add cordova-plugin-geolocation",
+        "Add location permissions to config.xml",
+        "Handle permission requests",
+        "Provide location error handling"
+      ],
+      "tags": ["cordova", "geolocation", "plugin", "permissions"]
+    },
+    {
+      "id": "ionic_native_plugin_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "@ionic-native.*error|Ionic.*Native.*plugin.*not found|provider.*not found",
+      "severity": "error",
+      "confidence": "high",
+      "reliability": "high",
+      "root_cause": "ionic_native_plugin_error",
+      "suggestion": "Install both Ionic Native wrapper and corresponding Cordova plugin",
+      "fix_commands": [
+        "Install Ionic Native: npm install @ionic-native/plugin-name",
+        "Install Cordova plugin: cordova plugin add cordova-plugin-name",
+        "Add provider to app module",
+        "Import and inject properly"
+      ],
+      "tags": ["ionic", "ionic-native", "plugin", "provider"]
+    },
+    {
+      "id": "plugin_compatibility_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "Plugin.*incompatible.*with.*version|Plugin.*requires.*minimum.*version|Plugin.*deprecated",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "plugin_compatibility_error",
+      "suggestion": "Check plugin compatibility with your Capacitor/Cordova version",
+      "fix_commands": [
+        "Check plugin documentation for version compatibility",
+        "Update Capacitor/Cordova to supported version",
+        "Find alternative plugin if incompatible",
+        "Check plugin changelog for breaking changes"
+      ],
+      "tags": ["capacitor", "cordova", "plugin", "compatibility", "version"]
+    },
+    {
+      "id": "plugin_method_not_available",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "Method.*not available.*on.*platform|Function.*not implemented|Platform.*not supported",
+      "severity": "warning",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "plugin_method_not_available",
+      "suggestion": "Check method availability on target platform before calling",
+      "fix_commands": [
+        "Check platform availability before calling method",
+        "Implement platform-specific fallbacks",
+        "Use feature detection",
+        "Provide graceful degradation"
+      ],
+      "tags": ["capacitor", "cordova", "plugin", "platform", "feature-detection"]
+    },
+    {
+      "id": "plugin_configuration_error",
+      "category": "capacitor_cordova",
+      "subcategory": "plugin_integration",
+      "pattern": "Plugin.*configuration.*error|Missing.*plugin.*configuration|Invalid.*plugin.*settings",
+      "severity": "error",
+      "confidence": "medium",
+      "reliability": "high",
+      "root_cause": "plugin_configuration_error",
+      "suggestion": "Check and fix plugin configuration in capacitor.config.ts or config.xml",
+      "fix_commands": [
+        "Review plugin documentation for configuration options",
+        "Check capacitor.config.ts plugin settings",
+        "Verify config.xml plugin preferences for Cordova",
+        "Ensure required permissions are declared"
+      ],
+      "tags": ["capacitor", "cordova", "plugin", "configuration", "settings"]
+    }
+  ]
+}
