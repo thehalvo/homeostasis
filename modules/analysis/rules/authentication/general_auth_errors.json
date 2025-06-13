@@ -1,0 +1,362 @@
+{
+  "name": "General Authentication Errors",
+  "description": "Cross-language rules for detecting common authentication errors and issues",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "auth_invalid_credentials",
+      "pattern": "(?i)(invalid|incorrect|wrong|bad)\\s+(credentials|username|password|login)",
+      "type": "AuthenticationError",
+      "description": "Invalid login credentials provided",
+      "root_cause": "invalid_credentials",
+      "suggestion": "Verify username and password are correct. Check for typos, case sensitivity, and ensure account exists and is active.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authentication",
+        "credentials",
+        "login",
+        "security"
+      ],
+      "examples": [
+        "Invalid credentials provided",
+        "Incorrect username or password",
+        "Wrong login information",
+        "Bad credentials"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "auth_user_not_found",
+      "pattern": "(?i)(user|account)\\s+(not\\s+found|does\\s+not\\s+exist|doesn't\\s+exist)",
+      "type": "AuthenticationError",
+      "description": "User account not found during authentication",
+      "root_cause": "user_not_found",
+      "suggestion": "Verify the username/email is correct and the user account exists in the system. Check user registration process.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authentication",
+        "user",
+        "account",
+        "not-found"
+      ],
+      "examples": [
+        "User not found",
+        "Account does not exist",
+        "User doesn't exist in the system"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "auth_account_locked",
+      "pattern": "(?i)(account|user)\\s+(locked|disabled|suspended|blocked|deactivated)",
+      "type": "AuthenticationError",
+      "description": "User account is locked or disabled",
+      "root_cause": "account_locked",
+      "suggestion": "Check account status and unlock if appropriate. Review security policies for account locking conditions.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authentication",
+        "account",
+        "locked",
+        "security",
+        "access-denied"
+      ],
+      "examples": [
+        "Account locked due to multiple failed attempts",
+        "User account is disabled",
+        "Account suspended",
+        "User blocked"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "auth_password_expired",
+      "pattern": "(?i)password\\s+(expired|has\\s+expired|needs\\s+to\\s+be\\s+changed)",
+      "type": "AuthenticationError",
+      "description": "User password has expired and needs to be changed",
+      "root_cause": "password_expired",
+      "suggestion": "Prompt user to change password. Implement password expiration policies and notifications.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authentication",
+        "password",
+        "expired",
+        "policy"
+      ],
+      "examples": [
+        "Password expired",
+        "Password has expired and needs to be changed",
+        "Your password needs to be changed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "auth_too_many_attempts",
+      "pattern": "(?i)(too\\s+many|maximum)\\s+(login\\s+)?(attempts|tries|failures)",
+      "type": "AuthenticationError",
+      "description": "Too many failed authentication attempts",
+      "root_cause": "too_many_attempts",
+      "suggestion": "Implement rate limiting and account lockout after failed attempts. Consider CAPTCHA or temporary delays.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authentication",
+        "rate-limiting",
+        "security",
+        "brute-force"
+      ],
+      "examples": [
+        "Too many login attempts",
+        "Maximum login failures exceeded",
+        "Too many authentication tries"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "auth_unauthorized_access",
+      "pattern": "(?i)(unauthorized|not\\s+authorized|access\\s+denied|permission\\s+denied)",
+      "type": "AuthorizationError",
+      "description": "User is not authorized to access the resource",
+      "root_cause": "unauthorized_access",
+      "suggestion": "Check user permissions and roles. Ensure proper authorization middleware is in place.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "access-control",
+        "permissions",
+        "security"
+      ],
+      "examples": [
+        "Unauthorized access",
+        "Not authorized to perform this action",
+        "Access denied",
+        "Permission denied"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "auth_missing_token",
+      "pattern": "(?i)(missing|no|empty)\\s+(token|authentication|auth|bearer)",
+      "type": "AuthenticationError",
+      "description": "Authentication token is missing from the request",
+      "root_cause": "missing_auth_token",
+      "suggestion": "Include authentication token in request headers (e.g., Authorization: Bearer <token>). Check token storage and transmission.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authentication",
+        "token",
+        "missing",
+        "header"
+      ],
+      "examples": [
+        "Missing authentication token",
+        "No bearer token provided",
+        "Empty auth token",
+        "Missing token"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "auth_invalid_token",
+      "pattern": "(?i)(invalid|malformed|corrupt|bad)\\s+(token|authentication|auth)",
+      "type": "AuthenticationError",
+      "description": "Authentication token format is invalid or corrupted",
+      "root_cause": "invalid_auth_token",
+      "suggestion": "Verify token format and structure. Check token generation and parsing logic. Ensure proper encoding.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authentication",
+        "token",
+        "invalid",
+        "format"
+      ],
+      "examples": [
+        "Invalid authentication token",
+        "Malformed token",
+        "Corrupt auth token",
+        "Bad token format"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "auth_token_expired",
+      "pattern": "(?i)(token|authentication|auth)\\s+(expired|has\\s+expired|timed\\s+out)",
+      "type": "AuthenticationError",
+      "description": "Authentication token has expired",
+      "root_cause": "token_expired",
+      "suggestion": "Implement token refresh mechanism. Check token expiration times and refresh tokens before they expire.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authentication",
+        "token",
+        "expired",
+        "refresh"
+      ],
+      "examples": [
+        "Token expired",
+        "Authentication token has expired",
+        "Auth token timed out"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "auth_session_expired",
+      "pattern": "(?i)(session|login)\\s+(expired|has\\s+expired|timed\\s+out|invalid)",
+      "type": "AuthenticationError",
+      "description": "User session has expired or is invalid",
+      "root_cause": "session_expired",
+      "suggestion": "Redirect user to login page. Implement session timeout handling and renewal mechanisms.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authentication",
+        "session",
+        "expired",
+        "timeout"
+      ],
+      "examples": [
+        "Session expired",
+        "Login session has expired",
+        "Session timed out",
+        "Invalid session"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "auth_insufficient_privileges",
+      "pattern": "(?i)(insufficient|not\\s+enough|lack\\s+of)\\s+(privileges|permissions|rights|access)",
+      "type": "AuthorizationError",
+      "description": "User lacks sufficient privileges for the requested action",
+      "root_cause": "insufficient_privileges",
+      "suggestion": "Review user roles and permissions. Implement proper role-based access control (RBAC).",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "privileges",
+        "permissions",
+        "rbac"
+      ],
+      "examples": [
+        "Insufficient privileges",
+        "Not enough permissions",
+        "Lack of access rights"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "auth_authentication_required",
+      "pattern": "(?i)(authentication|login)\\s+(required|needed)",
+      "type": "AuthenticationError",
+      "description": "Authentication is required to access the resource",
+      "root_cause": "authentication_required",
+      "suggestion": "Redirect user to login page or provide authentication mechanism. Implement proper authentication middleware.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authentication",
+        "required",
+        "middleware",
+        "redirect"
+      ],
+      "examples": [
+        "Authentication required",
+        "Login needed",
+        "Authentication is required to access this resource"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

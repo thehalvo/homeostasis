@@ -1,0 +1,421 @@
+{
+  "name": "OAuth/OpenID Connect Authentication Errors",
+  "description": "Rules for detecting OAuth 2.0 and OpenID Connect authentication errors and issues",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "oauth_invalid_client",
+      "pattern": "(?i)(invalid|unknown|unauthorized)\\s+(oauth\\s+)?client",
+      "type": "OAuthError",
+      "description": "OAuth client is invalid, unknown, or unauthorized",
+      "root_cause": "oauth_invalid_client",
+      "suggestion": "Verify OAuth client ID and client secret are correct. Ensure client is registered with the authorization server.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "oauth",
+        "client",
+        "registration",
+        "authentication",
+        "authorization"
+      ],
+      "examples": [
+        "Invalid OAuth client",
+        "Unknown client ID",
+        "Unauthorized OAuth client",
+        "Client authentication failed"
+      ],
+      "metadata": {
+        "oauth_error_code": "invalid_client"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oauth_invalid_grant",
+      "pattern": "(?i)(invalid|expired|revoked)\\s+(oauth\\s+)?grant",
+      "type": "OAuthError",
+      "description": "OAuth authorization grant is invalid, expired, or revoked",
+      "root_cause": "oauth_invalid_grant",
+      "suggestion": "Check authorization grant validity and expiration. Ensure proper grant flow implementation and handle grant expiration.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "oauth",
+        "grant",
+        "authorization",
+        "expired",
+        "authentication"
+      ],
+      "examples": [
+        "Invalid OAuth grant",
+        "Expired authorization grant",
+        "Revoked OAuth grant",
+        "Grant validation failed"
+      ],
+      "metadata": {
+        "oauth_error_code": "invalid_grant"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oauth_invalid_request",
+      "pattern": "(?i)invalid\\s+(oauth\\s+)?request",
+      "type": "OAuthError",
+      "description": "OAuth request is malformed or missing required parameters",
+      "root_cause": "oauth_invalid_request",
+      "suggestion": "Check OAuth request parameters and format. Ensure all required parameters are included and properly encoded.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "oauth",
+        "request",
+        "parameters",
+        "malformed",
+        "authentication"
+      ],
+      "examples": [
+        "Invalid OAuth request",
+        "Malformed authorization request",
+        "Missing required OAuth parameters"
+      ],
+      "metadata": {
+        "oauth_error_code": "invalid_request"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oauth_unauthorized_client",
+      "pattern": "(?i)unauthorized\\s+(oauth\\s+)?client",
+      "type": "OAuthError",
+      "description": "OAuth client is not authorized to use the requested grant type",
+      "root_cause": "oauth_unauthorized_client",
+      "suggestion": "Verify client is authorized for the requested grant type. Check client configuration and grant type permissions.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "oauth",
+        "client",
+        "unauthorized",
+        "grant-type",
+        "authentication"
+      ],
+      "examples": [
+        "Unauthorized OAuth client",
+        "Client not authorized for grant type",
+        "Unauthorized client request"
+      ],
+      "metadata": {
+        "oauth_error_code": "unauthorized_client"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oauth_unsupported_grant_type",
+      "pattern": "(?i)unsupported\\s+(oauth\\s+)?grant\\s+type",
+      "type": "OAuthError",
+      "description": "OAuth grant type is not supported by the authorization server",
+      "root_cause": "oauth_unsupported_grant_type",
+      "suggestion": "Use a supported grant type (authorization_code, implicit, password, client_credentials). Check server configuration.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "oauth",
+        "grant-type",
+        "unsupported",
+        "server",
+        "authentication"
+      ],
+      "examples": [
+        "Unsupported OAuth grant type",
+        "Grant type not supported",
+        "Unsupported authorization grant"
+      ],
+      "metadata": {
+        "oauth_error_code": "unsupported_grant_type"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oauth_invalid_scope",
+      "pattern": "(?i)invalid\\s+(oauth\\s+)?scope",
+      "type": "OAuthError",
+      "description": "OAuth scope is invalid, unknown, or malformed",
+      "root_cause": "oauth_invalid_scope",
+      "suggestion": "Verify requested scopes are valid and supported. Check scope format and permissions for the client.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "oauth",
+        "scope",
+        "permissions",
+        "invalid",
+        "authentication"
+      ],
+      "examples": [
+        "Invalid OAuth scope",
+        "Unknown scope requested",
+        "Malformed scope parameter"
+      ],
+      "metadata": {
+        "oauth_error_code": "invalid_scope"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oauth_access_denied",
+      "pattern": "(?i)(oauth\\s+)?access\\s+denied",
+      "type": "OAuthError",
+      "description": "OAuth access denied by resource owner or authorization server",
+      "root_cause": "oauth_access_denied",
+      "suggestion": "Handle user denial gracefully. Provide clear error messages and retry mechanisms for authorization requests.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "oauth",
+        "access-denied",
+        "authorization",
+        "user",
+        "authentication"
+      ],
+      "examples": [
+        "OAuth access denied",
+        "Authorization denied by user",
+        "Access denied by server"
+      ],
+      "metadata": {
+        "oauth_error_code": "access_denied"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oauth_server_error",
+      "pattern": "(?i)(oauth\\s+)?(authorization\\s+)?server\\s+error",
+      "type": "OAuthError",
+      "description": "OAuth authorization server encountered an error",
+      "root_cause": "oauth_server_error",
+      "suggestion": "Retry the request after a delay. Check authorization server status and configuration. Implement proper error handling.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "oauth",
+        "server",
+        "error",
+        "retry",
+        "authentication"
+      ],
+      "examples": [
+        "OAuth server error",
+        "Authorization server error",
+        "Server encountered an error"
+      ],
+      "metadata": {
+        "oauth_error_code": "server_error"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oauth_temporarily_unavailable",
+      "pattern": "(?i)(oauth\\s+)?(authorization\\s+)?server\\s+(temporarily\\s+unavailable|overloaded)",
+      "type": "OAuthError",
+      "description": "OAuth authorization server is temporarily unavailable",
+      "root_cause": "oauth_temporarily_unavailable",
+      "suggestion": "Implement exponential backoff and retry logic. Check server capacity and load balancing configuration.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "oauth",
+        "server",
+        "unavailable",
+        "retry",
+        "authentication"
+      ],
+      "examples": [
+        "OAuth server temporarily unavailable",
+        "Authorization server overloaded",
+        "Server temporarily unavailable"
+      ],
+      "metadata": {
+        "oauth_error_code": "temporarily_unavailable"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oidc_invalid_id_token",
+      "pattern": "(?i)(invalid|malformed|corrupt)\\s+(openid|oidc|id)\\s+token",
+      "type": "OIDCError",
+      "description": "OpenID Connect ID token is invalid or malformed",
+      "root_cause": "oidc_invalid_id_token",
+      "suggestion": "Verify ID token format and signature. Check token issuer, audience, and expiration claims.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "oidc",
+        "openid",
+        "id-token",
+        "invalid",
+        "authentication"
+      ],
+      "examples": [
+        "Invalid OpenID token",
+        "Malformed ID token",
+        "Corrupt OIDC token"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oidc_userinfo_error",
+      "pattern": "(?i)(oidc|openid)\\s+(userinfo|user\\s+info)\\s+(error|failed|unavailable)",
+      "type": "OIDCError",
+      "description": "OpenID Connect UserInfo endpoint error",
+      "root_cause": "oidc_userinfo_error",
+      "suggestion": "Verify access token scope includes 'openid'. Check UserInfo endpoint availability and access token validity.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "oidc",
+        "openid",
+        "userinfo",
+        "endpoint",
+        "authentication"
+      ],
+      "examples": [
+        "OIDC UserInfo error",
+        "OpenID user info failed",
+        "UserInfo endpoint unavailable"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oauth_pkce_challenge_failed",
+      "pattern": "(?i)(pkce|code\\s+challenge)\\s+(failed|invalid|mismatch)",
+      "type": "OAuthError",
+      "description": "OAuth PKCE code challenge verification failed",
+      "root_cause": "oauth_pkce_failed",
+      "suggestion": "Verify PKCE code verifier matches the code challenge. Ensure proper PKCE implementation for public clients.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "oauth",
+        "pkce",
+        "code-challenge",
+        "security",
+        "authentication"
+      ],
+      "examples": [
+        "PKCE challenge failed",
+        "Code challenge invalid",
+        "PKCE verification mismatch"
+      ],
+      "metadata": {
+        "security_feature": "pkce"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oauth_redirect_uri_mismatch",
+      "pattern": "(?i)(redirect\\s+uri|callback\\s+url)\\s+(mismatch|invalid|not\\s+registered)",
+      "type": "OAuthError",
+      "description": "OAuth redirect URI does not match registered URI",
+      "root_cause": "oauth_redirect_mismatch",
+      "suggestion": "Verify redirect URI exactly matches the registered URI in OAuth client configuration. Check for trailing slashes and URL encoding.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "oauth",
+        "redirect-uri",
+        "callback",
+        "security",
+        "authentication"
+      ],
+      "examples": [
+        "Redirect URI mismatch",
+        "Invalid callback URL",
+        "Redirect URI not registered"
+      ],
+      "metadata": {
+        "security_impact": "high"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

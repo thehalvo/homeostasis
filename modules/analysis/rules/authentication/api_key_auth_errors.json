@@ -1,0 +1,377 @@
+{
+  "name": "API Key Authentication Errors",
+  "description": "Rules for detecting API key authentication errors and API security issues",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "api_key_missing",
+      "pattern": "(?i)(api\\s+key|api.key)\\s+(missing|not\\s+provided|required)",
+      "type": "APIKeyError",
+      "description": "API key is missing from the request",
+      "root_cause": "api_key_missing",
+      "suggestion": "Include API key in request headers (e.g., X-API-Key) or query parameters. Check API documentation for required authentication format.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "authentication",
+        "missing",
+        "header",
+        "required"
+      ],
+      "examples": [
+        "API key missing",
+        "API key not provided",
+        "API key required"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_invalid",
+      "pattern": "(?i)(api\\s+key|api.key)\\s+(invalid|incorrect|malformed|not\\s+recognized)",
+      "type": "APIKeyError",
+      "description": "API key is invalid or not recognized",
+      "root_cause": "api_key_invalid",
+      "suggestion": "Verify API key format and value. Check if key is properly registered and active in the system.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "authentication",
+        "invalid",
+        "format",
+        "registration"
+      ],
+      "examples": [
+        "Invalid API key",
+        "API key not recognized",
+        "Malformed API key",
+        "Incorrect API key"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_expired",
+      "pattern": "(?i)(api\\s+key|api.key)\\s+(expired|has\\s+expired)",
+      "type": "APIKeyError",
+      "description": "API key has expired",
+      "root_cause": "api_key_expired",
+      "suggestion": "Renew or regenerate API key. Implement key rotation policies and expiration notifications.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "authentication",
+        "expired",
+        "rotation",
+        "renewal"
+      ],
+      "examples": [
+        "API key expired",
+        "API key has expired",
+        "Expired authentication key"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_revoked",
+      "pattern": "(?i)(api\\s+key|api.key)\\s+(revoked|disabled|deactivated|suspended)",
+      "type": "APIKeyError",
+      "description": "API key has been revoked or disabled",
+      "root_cause": "api_key_revoked",
+      "suggestion": "Contact administrator to reactivate key or obtain new API key. Check account status and compliance requirements.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "authentication",
+        "revoked",
+        "disabled",
+        "status"
+      ],
+      "examples": [
+        "API key revoked",
+        "API key disabled",
+        "API key deactivated",
+        "API key suspended"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_rate_limit_exceeded",
+      "pattern": "(?i)(api\\s+)?(rate\\s+limit|quota)\\s+(exceeded|reached|exhausted)",
+      "type": "RateLimitError",
+      "description": "API rate limit exceeded for the key",
+      "root_cause": "api_rate_limit_exceeded",
+      "suggestion": "Implement exponential backoff and retry logic. Consider upgrading API plan or optimizing request frequency.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "rate-limit",
+        "quota",
+        "throttling",
+        "backoff"
+      ],
+      "examples": [
+        "API rate limit exceeded",
+        "Rate limit reached",
+        "API quota exhausted",
+        "Request quota exceeded"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_insufficient_permissions",
+      "pattern": "(?i)(api\\s+key|key)\\s+(insufficient|lacks?)\\s+(permissions|privileges|access)",
+      "type": "APIKeyError",
+      "description": "API key lacks sufficient permissions for the requested operation",
+      "root_cause": "api_key_insufficient_permissions",
+      "suggestion": "Verify API key has required scopes and permissions. Contact administrator to update key permissions or use appropriate key.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "permissions",
+        "authorization",
+        "scopes",
+        "access"
+      ],
+      "examples": [
+        "API key insufficient permissions",
+        "Key lacks required privileges",
+        "API key insufficient access"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_wrong_format",
+      "pattern": "(?i)(api\\s+key|api.key)\\s+(wrong\\s+format|format\\s+error|invalid\\s+format)",
+      "type": "APIKeyError",
+      "description": "API key format is incorrect",
+      "root_cause": "api_key_wrong_format",
+      "suggestion": "Check API key format requirements (length, character set, prefix). Verify key is not truncated or modified.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "format",
+        "validation",
+        "structure",
+        "authentication"
+      ],
+      "examples": [
+        "API key wrong format",
+        "API key format error",
+        "Invalid API key format"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_header_missing",
+      "pattern": "(?i)(missing|required)\\s+(api\\s+key\\s+header|x.api.key|authorization\\s+header)",
+      "type": "APIKeyError",
+      "description": "Required API key header is missing from request",
+      "root_cause": "api_key_header_missing",
+      "suggestion": "Include API key in required header format (e.g., X-API-Key: your_key_here). Check API documentation for header requirements.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "header",
+        "missing",
+        "request",
+        "authentication"
+      ],
+      "examples": [
+        "Missing API key header",
+        "Required X-API-Key header",
+        "Authorization header missing"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_ip_restriction",
+      "pattern": "(?i)(api\\s+key|key)\\s+(ip\\s+restriction|not\\s+allowed\\s+from\\s+ip|ip\\s+blocked)",
+      "type": "APIKeyError",
+      "description": "API key usage restricted from current IP address",
+      "root_cause": "api_key_ip_restriction",
+      "suggestion": "Verify request is coming from whitelisted IP address. Update IP restrictions in API key configuration if needed.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "ip-restriction",
+        "whitelist",
+        "security",
+        "access-control"
+      ],
+      "examples": [
+        "API key IP restriction",
+        "Key not allowed from IP",
+        "API key IP blocked"
+      ],
+      "metadata": {
+        "security_feature": "ip_whitelisting"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_domain_restriction",
+      "pattern": "(?i)(api\\s+key|key)\\s+(domain\\s+restriction|not\\s+allowed\\s+from\\s+domain|domain\\s+blocked)",
+      "type": "APIKeyError",
+      "description": "API key usage restricted from current domain",
+      "root_cause": "api_key_domain_restriction",
+      "suggestion": "Verify request is coming from whitelisted domain. Update domain restrictions in API key configuration.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "domain-restriction",
+        "whitelist",
+        "security",
+        "cors"
+      ],
+      "examples": [
+        "API key domain restriction",
+        "Key not allowed from domain",
+        "API key domain blocked"
+      ],
+      "metadata": {
+        "security_feature": "domain_whitelisting"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_usage_exceeded",
+      "pattern": "(?i)(api\\s+key|key)\\s+(usage\\s+limit|monthly\\s+limit|daily\\s+limit)\\s+(exceeded|reached)",
+      "type": "APIKeyError",
+      "description": "API key usage limit exceeded",
+      "root_cause": "api_key_usage_exceeded",
+      "suggestion": "Wait for usage limit reset or upgrade API plan. Monitor usage patterns and implement usage optimization.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "usage-limit",
+        "quota",
+        "billing",
+        "optimization"
+      ],
+      "examples": [
+        "API key usage limit exceeded",
+        "Monthly limit reached",
+        "Daily usage exceeded"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_compromised",
+      "pattern": "(?i)(api\\s+key|key)\\s+(compromised|leaked|exposed|suspicious\\s+usage)",
+      "type": "SecurityError",
+      "description": "API key potentially compromised or showing suspicious usage patterns",
+      "root_cause": "api_key_compromised",
+      "suggestion": "Immediately revoke and regenerate API key. Review access logs and implement key rotation policies.",
+      "category": "authentication",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "api-key",
+        "security",
+        "compromised",
+        "suspicious",
+        "rotation"
+      ],
+      "examples": [
+        "API key compromised",
+        "Key potentially leaked",
+        "Suspicious API key usage",
+        "API key exposed"
+      ],
+      "metadata": {
+        "security_impact": "critical"
+      },
+      "criticality": "critical",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

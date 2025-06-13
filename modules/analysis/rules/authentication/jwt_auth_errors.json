@@ -1,0 +1,384 @@
+{
+  "name": "JWT Authentication Errors",
+  "description": "Rules for detecting JWT (JSON Web Token) authentication and validation errors across languages",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "jwt_invalid_signature",
+      "pattern": "(?i)(invalid|bad|corrupt|wrong)\\s+(jwt\\s+)?signature",
+      "type": "JWTError",
+      "description": "JWT signature verification failed",
+      "root_cause": "jwt_invalid_signature",
+      "suggestion": "Verify JWT secret key matches between token generation and validation. Check for token tampering or key rotation issues.",
+      "category": "authentication",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "signature",
+        "validation",
+        "security",
+        "authentication"
+      ],
+      "examples": [
+        "Invalid JWT signature",
+        "Bad signature in token",
+        "JWT signature verification failed",
+        "Wrong token signature"
+      ],
+      "metadata": {
+        "security_impact": "high",
+        "common_causes": ["key_mismatch", "token_tampering", "key_rotation"]
+      },
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "jwt_expired_token",
+      "pattern": "(?i)(jwt\\s+)?(token\\s+)?(expired|has\\s+expired|signature\\s+has\\s+expired)",
+      "type": "JWTError",
+      "description": "JWT token has expired",
+      "root_cause": "jwt_token_expired",
+      "suggestion": "Implement token refresh mechanism. Check token expiration time (exp claim) and provide refresh tokens for seamless renewal.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "expired",
+        "refresh",
+        "authentication",
+        "token"
+      ],
+      "examples": [
+        "JWT token expired",
+        "Token has expired",
+        "Signature has expired",
+        "JWT expired"
+      ],
+      "metadata": {
+        "suggested_fix": "refresh_token_mechanism",
+        "prevention": "shorter_expiry_with_refresh"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "jwt_malformed_token",
+      "pattern": "(?i)(malformed|invalid|corrupt|bad\\s+format)\\s+(jwt\\s+)?token",
+      "type": "JWTError",
+      "description": "JWT token format is malformed or invalid",
+      "root_cause": "jwt_malformed_token",
+      "suggestion": "Verify JWT token structure (header.payload.signature). Check for proper base64 encoding and JSON format in header/payload.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "malformed",
+        "format",
+        "parsing",
+        "authentication"
+      ],
+      "examples": [
+        "Malformed JWT token",
+        "Invalid token format",
+        "Corrupt JWT",
+        "Bad format token"
+      ],
+      "metadata": {
+        "common_causes": ["truncation", "encoding_issues", "manual_construction"]
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "jwt_decode_error",
+      "pattern": "(?i)jwt\\s+(decode|decoding)\\s+(error|failed|failure)",
+      "type": "JWTError",
+      "description": "Failed to decode JWT token",
+      "root_cause": "jwt_decode_error",
+      "suggestion": "Check JWT token format and encoding. Verify base64 decoding and JSON parsing of token components.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "decode",
+        "parsing",
+        "base64",
+        "authentication"
+      ],
+      "examples": [
+        "JWT decode error",
+        "JWT decoding failed",
+        "Token decode failure",
+        "Failed to decode JWT"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "jwt_invalid_algorithm",
+      "pattern": "(?i)(invalid|unsupported|unknown)\\s+(jwt\\s+)?algorithm",
+      "type": "JWTError",
+      "description": "JWT uses invalid or unsupported signing algorithm",
+      "root_cause": "jwt_invalid_algorithm",
+      "suggestion": "Verify JWT algorithm (alg claim) is supported. Use secure algorithms like RS256, HS256. Avoid 'none' algorithm in production.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "algorithm",
+        "security",
+        "signing",
+        "authentication"
+      ],
+      "examples": [
+        "Invalid JWT algorithm",
+        "Unsupported algorithm in token",
+        "Unknown JWT signing algorithm"
+      ],
+      "metadata": {
+        "security_note": "Ensure algorithm whitelist is properly configured"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "jwt_invalid_issuer",
+      "pattern": "(?i)(invalid|unknown|untrusted)\\s+(jwt\\s+)?issuer",
+      "type": "JWTError",
+      "description": "JWT issuer (iss claim) is invalid or untrusted",
+      "root_cause": "jwt_invalid_issuer",
+      "suggestion": "Verify JWT issuer claim matches expected value. Maintain a whitelist of trusted issuers for token validation.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "issuer",
+        "validation",
+        "trust",
+        "authentication"
+      ],
+      "examples": [
+        "Invalid JWT issuer",
+        "Unknown token issuer",
+        "Untrusted JWT issuer"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "jwt_invalid_audience",
+      "pattern": "(?i)(invalid|wrong|unknown)\\s+(jwt\\s+)?audience",
+      "type": "JWTError",
+      "description": "JWT audience (aud claim) is invalid or not intended for this service",
+      "root_cause": "jwt_invalid_audience",
+      "suggestion": "Verify JWT audience claim matches the intended recipient. Check audience validation logic and service identifiers.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "audience",
+        "validation",
+        "recipient",
+        "authentication"
+      ],
+      "examples": [
+        "Invalid JWT audience",
+        "Wrong token audience",
+        "Unknown JWT audience"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "jwt_not_before_error",
+      "pattern": "(?i)jwt\\s+(not\\s+yet\\s+valid|before\\s+valid\\s+time|nbf\\s+claim)",
+      "type": "JWTError",
+      "description": "JWT not yet valid (nbf claim)",
+      "root_cause": "jwt_not_before_error",
+      "suggestion": "Check JWT 'not before' (nbf) claim. Ensure system clocks are synchronized and account for clock skew.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "nbf",
+        "time",
+        "validation",
+        "authentication"
+      ],
+      "examples": [
+        "JWT not yet valid",
+        "Token before valid time",
+        "nbf claim validation failed"
+      ],
+      "metadata": {
+        "common_cause": "clock_skew"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "jwt_missing_claims",
+      "pattern": "(?i)(missing|required)\\s+(jwt\\s+)?(claim|claims)",
+      "type": "JWTError",
+      "description": "Required JWT claims are missing",
+      "root_cause": "jwt_missing_claims",
+      "suggestion": "Ensure all required claims (sub, exp, iat, etc.) are present in JWT payload. Validate claim presence during token generation.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "claims",
+        "validation",
+        "required",
+        "authentication"
+      ],
+      "examples": [
+        "Missing JWT claims",
+        "Required claims not found",
+        "JWT claim validation failed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "jwt_invalid_subject",
+      "pattern": "(?i)(invalid|unknown|missing)\\s+(jwt\\s+)?subject",
+      "type": "JWTError",
+      "description": "JWT subject (sub claim) is invalid or missing",
+      "root_cause": "jwt_invalid_subject",
+      "suggestion": "Verify JWT subject claim contains valid user identifier. Ensure subject validation logic is properly implemented.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "subject",
+        "user",
+        "validation",
+        "authentication"
+      ],
+      "examples": [
+        "Invalid JWT subject",
+        "Unknown token subject",
+        "Missing JWT subject"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "jwt_revoked_token",
+      "pattern": "(?i)(jwt\\s+)?(token\\s+)?(revoked|blacklisted|invalidated)",
+      "type": "JWTError",
+      "description": "JWT token has been revoked or blacklisted",
+      "root_cause": "jwt_token_revoked",
+      "suggestion": "Check token revocation status against blacklist or revocation service. Implement proper token revocation mechanism.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "revoked",
+        "blacklist",
+        "security",
+        "authentication"
+      ],
+      "examples": [
+        "JWT token revoked",
+        "Token blacklisted",
+        "Revoked authentication token",
+        "Token has been invalidated"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "jwt_key_not_found",
+      "pattern": "(?i)(jwt\\s+)?(key|signing\\s+key)\\s+(not\\s+found|missing|unavailable)",
+      "type": "JWTError",
+      "description": "JWT signing key not found or unavailable",
+      "root_cause": "jwt_key_not_found",
+      "suggestion": "Verify JWT signing key is properly configured and accessible. Check key management and rotation procedures.",
+      "category": "authentication",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "jwt",
+        "key",
+        "signing",
+        "configuration",
+        "authentication"
+      ],
+      "examples": [
+        "JWT key not found",
+        "Signing key missing",
+        "JWT signing key unavailable"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

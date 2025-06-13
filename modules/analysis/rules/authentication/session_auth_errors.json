@@ -1,0 +1,377 @@
+{
+  "name": "Session-Based Authentication Errors",
+  "description": "Rules for detecting session-based authentication errors and session management issues",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "session_not_found",
+      "pattern": "(?i)(session|login)\\s+(not\\s+found|does\\s+not\\s+exist|missing)",
+      "type": "SessionError",
+      "description": "User session not found or does not exist",
+      "root_cause": "session_not_found",
+      "suggestion": "Redirect user to login page. Check session storage configuration and cleanup processes.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "authentication",
+        "not-found",
+        "login",
+        "storage"
+      ],
+      "examples": [
+        "Session not found",
+        "Login session does not exist",
+        "Missing user session"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "session_expired",
+      "pattern": "(?i)(session|login)\\s+(expired|has\\s+expired|timed\\s+out)",
+      "type": "SessionError",
+      "description": "User session has expired",
+      "root_cause": "session_expired",
+      "suggestion": "Implement session renewal or redirect to login. Configure appropriate session timeout values and warning notifications.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "authentication",
+        "expired",
+        "timeout",
+        "renewal"
+      ],
+      "examples": [
+        "Session expired",
+        "Login session has expired",
+        "Session timed out"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "session_invalid",
+      "pattern": "(?i)(session|login)\\s+(invalid|corrupt|malformed)",
+      "type": "SessionError",
+      "description": "User session is invalid or corrupted",
+      "root_cause": "session_invalid",
+      "suggestion": "Clear invalid session and redirect to login. Check session data integrity and storage backend health.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "authentication",
+        "invalid",
+        "corrupt",
+        "integrity"
+      ],
+      "examples": [
+        "Session invalid",
+        "Corrupt login session",
+        "Malformed session data"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "session_hijacking_detected",
+      "pattern": "(?i)(session\\s+hijacking|session\\s+theft|suspicious\\s+session)",
+      "type": "SecurityError",
+      "description": "Potential session hijacking detected",
+      "root_cause": "session_hijacking",
+      "suggestion": "Invalidate session immediately. Implement IP validation, user agent checking, and session regeneration on privilege changes.",
+      "category": "authentication",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "security",
+        "hijacking",
+        "suspicious",
+        "threat"
+      ],
+      "examples": [
+        "Session hijacking detected",
+        "Suspicious session activity",
+        "Potential session theft"
+      ],
+      "metadata": {
+        "security_impact": "critical"
+      },
+      "criticality": "critical",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "session_fixation_attack",
+      "pattern": "(?i)(session\\s+fixation|session\\s+id\\s+not\\s+regenerated)",
+      "type": "SecurityError",
+      "description": "Session fixation attack detected or session ID not properly regenerated",
+      "root_cause": "session_fixation",
+      "suggestion": "Regenerate session ID after authentication. Implement proper session management and invalidate old sessions.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "security",
+        "fixation",
+        "regeneration",
+        "attack"
+      ],
+      "examples": [
+        "Session fixation detected",
+        "Session ID not regenerated after login"
+      ],
+      "metadata": {
+        "security_impact": "high"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "session_storage_error",
+      "pattern": "(?i)(session\\s+storage|session\\s+store)\\s+(error|failed|unavailable)",
+      "type": "SessionError",
+      "description": "Session storage backend error",
+      "root_cause": "session_storage_error",
+      "suggestion": "Check session storage backend (Redis, database, filesystem). Implement fallback mechanisms and proper error handling.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "storage",
+        "backend",
+        "error",
+        "infrastructure"
+      ],
+      "examples": [
+        "Session storage error",
+        "Session store failed",
+        "Session storage unavailable"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "session_concurrent_limit",
+      "pattern": "(?i)(concurrent\\s+session|session\\s+limit)\\s+(exceeded|reached|violation)",
+      "type": "SessionError",
+      "description": "Concurrent session limit exceeded",
+      "root_cause": "session_limit_exceeded",
+      "suggestion": "Implement session limit policies. Allow users to manage active sessions or automatically invalidate oldest sessions.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "concurrent",
+        "limit",
+        "policy",
+        "management"
+      ],
+      "examples": [
+        "Concurrent session limit exceeded",
+        "Session limit reached",
+        "Maximum sessions violation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "session_cookie_error",
+      "pattern": "(?i)(session\\s+cookie|cookie)\\s+(missing|invalid|corrupt|not\\s+found)",
+      "type": "SessionError",
+      "description": "Session cookie is missing, invalid, or corrupted",
+      "root_cause": "session_cookie_error",
+      "suggestion": "Check cookie configuration (domain, path, secure, httpOnly). Verify cookie is being set and transmitted correctly.",
+      "category": "authentication",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "cookie",
+        "missing",
+        "invalid",
+        "configuration"
+      ],
+      "examples": [
+        "Session cookie missing",
+        "Invalid session cookie",
+        "Corrupt cookie data",
+        "Session cookie not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "session_cross_site_usage",
+      "pattern": "(?i)(cross.site\\s+session|session\\s+cross.origin|session\\s+from\\s+different\\s+origin)",
+      "type": "SecurityError",
+      "description": "Session used from different site or origin",
+      "root_cause": "session_cross_site",
+      "suggestion": "Implement proper CORS policies and SameSite cookie attributes. Validate request origin and referrer headers.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "security",
+        "cross-site",
+        "cors",
+        "origin"
+      ],
+      "examples": [
+        "Cross-site session usage detected",
+        "Session from different origin",
+        "Cross-origin session access"
+      ],
+      "metadata": {
+        "security_impact": "high"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "session_replay_attack",
+      "pattern": "(?i)(session\\s+replay|replayed\\s+session|session\\s+reuse)",
+      "type": "SecurityError",
+      "description": "Session replay attack detected",
+      "root_cause": "session_replay",
+      "suggestion": "Implement session tokens with timestamps and nonces. Use HTTPS and proper session invalidation mechanisms.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "security",
+        "replay",
+        "attack",
+        "nonce"
+      ],
+      "examples": [
+        "Session replay attack detected",
+        "Replayed session tokens",
+        "Session reuse violation"
+      ],
+      "metadata": {
+        "security_impact": "high"
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "session_csrf_token_mismatch",
+      "pattern": "(?i)(csrf|cross.site)\\s+(token\\s+)?(mismatch|invalid|missing).*session",
+      "type": "SecurityError",
+      "description": "CSRF token mismatch in session-based authentication",
+      "root_cause": "session_csrf_mismatch",
+      "suggestion": "Ensure CSRF tokens are properly generated, stored in session, and validated on requests. Implement double-submit cookie pattern.",
+      "category": "authentication",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "csrf",
+        "security",
+        "token",
+        "mismatch"
+      ],
+      "examples": [
+        "CSRF token mismatch in session",
+        "Cross-site token invalid for session",
+        "Session CSRF validation failed"
+      ],
+      "metadata": {
+        "security_impact": "high"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "session_idle_timeout",
+      "pattern": "(?i)(session\\s+idle|idle\\s+session)\\s+(timeout|expired)",
+      "type": "SessionError",
+      "description": "Session idle timeout reached",
+      "root_cause": "session_idle_timeout",
+      "suggestion": "Implement activity tracking and session extension mechanisms. Provide warnings before timeout and auto-save functionality.",
+      "category": "authentication",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "session",
+        "idle",
+        "timeout",
+        "activity",
+        "tracking"
+      ],
+      "examples": [
+        "Session idle timeout",
+        "Idle session expired",
+        "Session timeout due to inactivity"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}
