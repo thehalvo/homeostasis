@@ -1,0 +1,351 @@
+{
+  "name": "Cross-Platform Authorization Errors",
+  "description": "Cross-language rules for detecting platform-specific and multi-platform authorization errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "platform_permission_denied",
+      "pattern": "(?i)(platform|system|os)\\s+(permission|access)\\s+(denied|forbidden|not\\s+granted)",
+      "type": "AuthorizationError",
+      "description": "Platform-level permission denied",
+      "root_cause": "platform_permission_denied",
+      "suggestion": "Check platform-specific permissions and access controls. Verify application permissions and system-level grants. Review platform security policies.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "platform",
+        "permission",
+        "system-level",
+        "denied"
+      ],
+      "examples": [
+        "Platform permission denied",
+        "System access forbidden",
+        "OS permission not granted",
+        "Platform access denied"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mobile_permission_missing",
+      "pattern": "(?i)(android|ios|mobile)\\s+(permission|manifest\\s+permission)\\s+(missing|not\\s+declared|required)",
+      "type": "AuthorizationError",
+      "description": "Required mobile platform permission is missing",
+      "root_cause": "mobile_permission_missing",
+      "suggestion": "Add required permissions to application manifest. Check platform permission documentation. Review permission request flows and user consent.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "mobile",
+        "permission",
+        "manifest",
+        "android",
+        "ios"
+      ],
+      "examples": [
+        "Android permission missing",
+        "iOS permission not declared",
+        "Mobile permission required",
+        "Manifest permission missing"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "web_security_policy_violation",
+      "pattern": "(?i)(csp|content\\s+security\\s+policy|same\\s+origin)\\s+(violation|blocked|denied|error)",
+      "type": "AuthorizationError",
+      "description": "Web security policy violation detected",
+      "root_cause": "web_security_policy_violation",
+      "suggestion": "Review Content Security Policy configuration. Check same-origin policy compliance. Update CSP headers and security policies as needed.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "web",
+        "csp",
+        "security-policy",
+        "same-origin"
+      ],
+      "examples": [
+        "CSP violation",
+        "Content security policy blocked",
+        "Same origin policy denied",
+        "Security policy error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "database_access_denied",
+      "pattern": "(?i)(database|db|sql)\\s+(access|permission|privilege)\\s+(denied|forbidden|insufficient)",
+      "type": "AuthorizationError",
+      "description": "Database access permission denied",
+      "root_cause": "database_access_denied",
+      "suggestion": "Check database user permissions and grants. Verify database connection credentials. Review database access control lists and role assignments.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "database",
+        "access-denied",
+        "privileges",
+        "sql"
+      ],
+      "examples": [
+        "Database access denied",
+        "DB permission forbidden",
+        "SQL privilege insufficient",
+        "Database access forbidden"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "file_system_permission_error",
+      "pattern": "(?i)(file\\s+system|filesystem|file|directory)\\s+(permission|access)\\s+(denied|error|forbidden)",
+      "type": "AuthorizationError",
+      "description": "File system permission error",
+      "root_cause": "filesystem_permission_error",
+      "suggestion": "Check file and directory permissions. Verify user access rights to the file system. Review file ownership and permission settings.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "filesystem",
+        "permission",
+        "file-access",
+        "directory"
+      ],
+      "examples": [
+        "File system permission denied",
+        "Filesystem access error",
+        "File permission forbidden",
+        "Directory access denied"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_access_restricted",
+      "pattern": "(?i)(network|internet|connection)\\s+(access|permission)\\s+(restricted|blocked|denied|forbidden)",
+      "type": "AuthorizationError",
+      "description": "Network access is restricted or blocked",
+      "root_cause": "network_access_restricted",
+      "suggestion": "Check network access permissions and firewall rules. Verify network security policies. Review proxy and gateway configurations.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "network",
+        "access-restricted",
+        "firewall",
+        "connection"
+      ],
+      "examples": [
+        "Network access restricted",
+        "Internet connection blocked",
+        "Network permission denied",
+        "Connection access forbidden"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cloud_service_authorization_failed",
+      "pattern": "(?i)(cloud|aws|azure|gcp)\\s+(service|resource)\\s+(authorization|access)\\s+(failed|denied|error)",
+      "type": "AuthorizationError",
+      "description": "Cloud service authorization failed",
+      "root_cause": "cloud_authorization_failed",
+      "suggestion": "Check cloud service credentials and permissions. Verify IAM roles and policies. Review cloud resource access configurations and service accounts.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "cloud",
+        "aws",
+        "azure",
+        "gcp",
+        "iam"
+      ],
+      "examples": [
+        "Cloud service authorization failed",
+        "AWS access denied",
+        "Azure resource authorization error",
+        "GCP service access failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "container_security_context_error",
+      "pattern": "(?i)(container|docker|kubernetes)\\s+(security\\s+context|permission|capability)\\s+(error|denied|missing)",
+      "type": "AuthorizationError",
+      "description": "Container security context or capability error",
+      "root_cause": "container_security_error",
+      "suggestion": "Check container security context configuration. Verify required capabilities and permissions. Review Pod Security Standards and security policies.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "container",
+        "docker",
+        "kubernetes",
+        "security-context"
+      ],
+      "examples": [
+        "Container security context error",
+        "Docker permission denied",
+        "Kubernetes capability missing",
+        "Container security error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "microservice_authorization_error",
+      "pattern": "(?i)(microservice|service\\s+mesh|inter\\s+service)\\s+(authorization|access)\\s+(error|failed|denied)",
+      "type": "AuthorizationError",
+      "description": "Microservice authorization error",
+      "root_cause": "microservice_authorization_error",
+      "suggestion": "Check service-to-service authentication and authorization. Verify service mesh policies. Review inter-service communication security configurations.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "microservice",
+        "service-mesh",
+        "inter-service",
+        "distributed"
+      ],
+      "examples": [
+        "Microservice authorization error",
+        "Service mesh access failed",
+        "Inter service authorization denied",
+        "Service authorization error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "identity_provider_error",
+      "pattern": "(?i)(identity\\s+provider|idp|sso|saml|oidc)\\s+(error|failed|unavailable|timeout)",
+      "type": "AuthorizationError",
+      "description": "Identity provider authentication or authorization error",
+      "root_cause": "identity_provider_error",
+      "suggestion": "Check identity provider connectivity and configuration. Verify SSO settings and certificates. Review SAML/OIDC configuration and token validation.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "identity-provider",
+        "sso",
+        "saml",
+        "oidc",
+        "federation"
+      ],
+      "examples": [
+        "Identity provider error",
+        "IDP failed",
+        "SSO unavailable",
+        "SAML authentication timeout"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "multi_tenant_isolation_error",
+      "pattern": "(?i)(multi\\s+tenant|tenant)\\s+(isolation|separation)\\s+(error|violation|breach)",
+      "type": "AuthorizationError",
+      "description": "Multi-tenant isolation or separation error",
+      "root_cause": "tenant_isolation_error",
+      "suggestion": "Check tenant isolation mechanisms and boundaries. Verify data segregation and access controls. Review multi-tenant security architecture and policies.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "multi-tenant",
+        "isolation",
+        "separation",
+        "data-segregation"
+      ],
+      "examples": [
+        "Multi tenant isolation error",
+        "Tenant separation violation",
+        "Tenant isolation breach",
+        "Multi-tenant security error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

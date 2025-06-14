@@ -1,0 +1,379 @@
+{
+  "name": "API Authorization and Scope Errors",
+  "description": "Cross-language rules for detecting API authorization, scope, and access token errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "api_scope_insufficient",
+      "pattern": "(?i)(insufficient|missing|invalid)\\s+(scope|scopes|api\\s+scope)",
+      "type": "AuthorizationError",
+      "description": "API request lacks required scope permissions",
+      "root_cause": "insufficient_scope",
+      "suggestion": "Check API scope requirements and ensure client has necessary permissions. Review OAuth scope configuration and token generation.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "api",
+        "scope",
+        "oauth",
+        "permissions"
+      ],
+      "examples": [
+        "Insufficient scope",
+        "Missing API scope",
+        "Invalid scope permissions",
+        "Required scope not granted"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_invalid",
+      "pattern": "(?i)(invalid|bad|malformed|corrupt)\\s+(api\\s+key|apikey|access\\s+key)",
+      "type": "AuthorizationError",
+      "description": "API key is invalid or malformed",
+      "root_cause": "invalid_api_key",
+      "suggestion": "Verify API key format and validity. Check API key generation and validation logic. Ensure proper key encoding and transmission.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "api",
+        "api-key",
+        "invalid",
+        "validation"
+      ],
+      "examples": [
+        "Invalid API key",
+        "Bad API key format",
+        "Malformed access key",
+        "Corrupt API key"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_key_expired",
+      "pattern": "(?i)(api\\s+key|apikey|access\\s+key)\\s+(expired|has\\s+expired|timed\\s+out)",
+      "type": "AuthorizationError",
+      "description": "API key has expired and needs renewal",
+      "root_cause": "api_key_expired",
+      "suggestion": "Renew or regenerate API key. Implement API key rotation policies and expiration notifications. Check key lifecycle management.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "api",
+        "api-key",
+        "expired",
+        "renewal"
+      ],
+      "examples": [
+        "API key expired",
+        "Access key has expired",
+        "API key timed out",
+        "Expired API key"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_rate_limit_exceeded",
+      "pattern": "(?i)(rate\\s+limit|api\\s+limit|request\\s+limit)\\s+(exceeded|reached|violated|over)",
+      "type": "AuthorizationError",
+      "description": "API rate limit has been exceeded",
+      "root_cause": "rate_limit_exceeded",
+      "suggestion": "Implement proper rate limiting and throttling. Review API usage patterns and implement backoff strategies. Consider rate limit increases if justified.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "api",
+        "rate-limit",
+        "throttling",
+        "exceeded"
+      ],
+      "examples": [
+        "Rate limit exceeded",
+        "API limit reached",
+        "Request limit violated",
+        "Too many requests"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_endpoint_forbidden",
+      "pattern": "(?i)(api\\s+endpoint|endpoint)\\s+(forbidden|not\\s+allowed|unauthorized|access\\s+denied)",
+      "type": "AuthorizationError",
+      "description": "Access to API endpoint is forbidden",
+      "root_cause": "endpoint_forbidden",
+      "suggestion": "Check API endpoint permissions and access controls. Verify client authorization for the specific endpoint. Review API gateway configuration.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "api",
+        "endpoint",
+        "forbidden",
+        "access-control"
+      ],
+      "examples": [
+        "API endpoint forbidden",
+        "Endpoint not allowed",
+        "Endpoint access denied",
+        "Unauthorized endpoint"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_client_unauthorized",
+      "pattern": "(?i)(api\\s+client|client)\\s+(unauthorized|not\\s+authorized|access\\s+denied|forbidden)",
+      "type": "AuthorizationError",
+      "description": "API client is not authorized for the requested operation",
+      "root_cause": "client_unauthorized",
+      "suggestion": "Verify client credentials and registration. Check client permissions and scope assignments. Review API client management and authorization flows.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "api",
+        "client",
+        "unauthorized",
+        "credentials"
+      ],
+      "examples": [
+        "API client unauthorized",
+        "Client not authorized",
+        "Client access denied",
+        "Unauthorized API client"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_cors_error",
+      "pattern": "(?i)(cors|cross\\s+origin)\\s+(error|blocked|denied|violation)",
+      "type": "AuthorizationError",
+      "description": "Cross-Origin Resource Sharing (CORS) policy violation",
+      "root_cause": "cors_violation",
+      "suggestion": "Configure CORS policies to allow cross-origin requests. Check allowed origins, methods, and headers. Review CORS preflight handling.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "api",
+        "cors",
+        "cross-origin",
+        "policy"
+      ],
+      "examples": [
+        "CORS error",
+        "Cross origin blocked",
+        "CORS policy violation",
+        "Cross-origin request denied"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_method_not_allowed",
+      "pattern": "(?i)(method|http\\s+method)\\s+(not\\s+allowed|forbidden|unsupported)",
+      "type": "AuthorizationError",
+      "description": "HTTP method is not allowed for the API endpoint",
+      "root_cause": "method_not_allowed",
+      "suggestion": "Check allowed HTTP methods for the endpoint. Verify API method configuration and routing. Review endpoint method permissions.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "api",
+        "http-method",
+        "not-allowed",
+        "routing"
+      ],
+      "examples": [
+        "Method not allowed",
+        "HTTP method forbidden",
+        "Unsupported method",
+        "Method not permitted"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_token_scope_mismatch",
+      "pattern": "(?i)(token|access\\s+token)\\s+(scope|scopes)\\s+(mismatch|invalid|insufficient)",
+      "type": "AuthorizationError",
+      "description": "Access token scope does not match API requirements",
+      "root_cause": "token_scope_mismatch",
+      "suggestion": "Verify token scope requirements and generation. Check scope validation logic. Review OAuth token configuration and scope mapping.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "api",
+        "token",
+        "scope-mismatch",
+        "oauth"
+      ],
+      "examples": [
+        "Token scope mismatch",
+        "Access token scope invalid",
+        "Token scope insufficient",
+        "Scope validation failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_resource_server_error",
+      "pattern": "(?i)(resource\\s+server|api\\s+server)\\s+(error|unauthorized|forbidden|rejected)",
+      "type": "AuthorizationError",
+      "description": "Resource server rejected the API request",
+      "root_cause": "resource_server_error",
+      "suggestion": "Check resource server configuration and status. Verify API server authorization policies. Review resource server connectivity and health.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "api",
+        "resource-server",
+        "error",
+        "configuration"
+      ],
+      "examples": [
+        "Resource server error",
+        "API server unauthorized",
+        "Resource server forbidden",
+        "Server rejected request"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_audience_mismatch",
+      "pattern": "(?i)(audience|aud)\\s+(mismatch|invalid|wrong|incorrect)",
+      "type": "AuthorizationError",
+      "description": "Token audience does not match the API service",
+      "root_cause": "audience_mismatch",
+      "suggestion": "Verify token audience configuration and validation. Check JWT audience claims. Review API service identification and token issuer settings.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "api",
+        "audience",
+        "jwt",
+        "mismatch"
+      ],
+      "examples": [
+        "Audience mismatch",
+        "Invalid audience",
+        "Wrong token audience",
+        "Incorrect aud claim"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "api_issuer_untrusted",
+      "pattern": "(?i)(issuer|iss)\\s+(untrusted|invalid|unknown|not\\s+recognized)",
+      "type": "AuthorizationError",
+      "description": "Token issuer is not trusted or recognized",
+      "root_cause": "untrusted_issuer",
+      "suggestion": "Verify token issuer configuration and trust relationships. Check issuer whitelist and validation logic. Review JWT issuer claims and certificate validation.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "api",
+        "issuer",
+        "untrusted",
+        "jwt"
+      ],
+      "examples": [
+        "Issuer untrusted",
+        "Invalid token issuer",
+        "Unknown issuer",
+        "Issuer not recognized"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

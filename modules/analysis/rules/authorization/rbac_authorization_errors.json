@@ -1,0 +1,379 @@
+{
+  "name": "Role-Based Access Control (RBAC) Authorization Errors",
+  "description": "Cross-language rules for detecting role-based access control and permission errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "rbac_role_not_found",
+      "pattern": "(?i)(role|user\\s+role)\\s+(not\\s+found|does\\s+not\\s+exist|doesn't\\s+exist|missing)",
+      "type": "AuthorizationError",
+      "description": "User role not found in the system",
+      "root_cause": "role_not_found",
+      "suggestion": "Verify the role exists in the system. Check role assignment and role definition. Ensure proper role synchronization if using external systems.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "rbac",
+        "role",
+        "not-found",
+        "access-control"
+      ],
+      "examples": [
+        "Role not found",
+        "User role does not exist",
+        "Role 'admin' doesn't exist",
+        "Missing role definition"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "rbac_permission_denied",
+      "pattern": "(?i)(permission|access)\\s+(denied|not\\s+allowed|forbidden|not\\s+permitted)",
+      "type": "AuthorizationError",
+      "description": "User lacks required permissions for the requested action",
+      "root_cause": "permission_denied",
+      "suggestion": "Check user roles and permissions. Verify role-based access control configuration. Ensure user has appropriate role assignments.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "permission",
+        "denied",
+        "rbac",
+        "access-control"
+      ],
+      "examples": [
+        "Permission denied",
+        "Access not allowed",
+        "Operation forbidden",
+        "User not permitted to perform this action"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "rbac_role_assignment_failed",
+      "pattern": "(?i)(role\\s+assignment|assign\\s+role|role\\s+allocation)\\s+(failed|error|unsuccessful)",
+      "type": "AuthorizationError",
+      "description": "Failed to assign role to user",
+      "root_cause": "role_assignment_failed",
+      "suggestion": "Check role assignment logic and permissions. Verify role exists and user is valid. Review role assignment service configuration.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "rbac",
+        "role-assignment",
+        "failed",
+        "configuration"
+      ],
+      "examples": [
+        "Role assignment failed",
+        "Failed to assign role to user",
+        "Role allocation error",
+        "Unsuccessful role assignment"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "rbac_insufficient_role_privileges",
+      "pattern": "(?i)(insufficient|not\\s+enough|lack\\s+of|missing)\\s+(role|user\\s+role)\\s+(privileges|permissions|rights|access)",
+      "type": "AuthorizationError",
+      "description": "User role has insufficient privileges for the requested operation",
+      "root_cause": "insufficient_role_privileges",
+      "suggestion": "Review role permissions and grant necessary privileges. Check role hierarchy and inheritance. Consider role elevation or approval workflows.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "rbac",
+        "insufficient-privileges",
+        "role-permissions",
+        "access-control"
+      ],
+      "examples": [
+        "Insufficient role privileges",
+        "User role lacks required permissions",
+        "Not enough role access rights",
+        "Missing role privileges"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "rbac_role_hierarchy_violation",
+      "pattern": "(?i)(role\\s+hierarchy|hierarchy\\s+violation|invalid\\s+role\\s+chain|role\\s+inheritance)\\s+(error|violation|invalid|broken)",
+      "type": "AuthorizationError",
+      "description": "Role hierarchy rules have been violated",
+      "root_cause": "role_hierarchy_violation",
+      "suggestion": "Review role hierarchy configuration. Check for circular dependencies in role inheritance. Validate role chain integrity.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "rbac",
+        "hierarchy",
+        "violation",
+        "inheritance"
+      ],
+      "examples": [
+        "Role hierarchy violation",
+        "Invalid role chain detected",
+        "Role inheritance error",
+        "Broken role hierarchy"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "rbac_multiple_roles_conflict",
+      "pattern": "(?i)(multiple\\s+roles?|role\\s+conflict|conflicting\\s+roles?|role\\s+collision)\\s+(conflict|error|collision|incompatible)",
+      "type": "AuthorizationError",
+      "description": "Multiple assigned roles are conflicting with each other",
+      "root_cause": "role_conflict",
+      "suggestion": "Review role assignments and resolve conflicts. Define role precedence rules. Consider role separation or mutual exclusion policies.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "rbac",
+        "role-conflict",
+        "multiple-roles",
+        "collision"
+      ],
+      "examples": [
+        "Multiple roles conflict",
+        "Conflicting roles assigned",
+        "Role collision detected",
+        "Incompatible role assignments"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "rbac_role_expiration",
+      "pattern": "(?i)(role|user\\s+role)\\s+(expired|has\\s+expired|no\\s+longer\\s+valid|timed\\s+out)",
+      "type": "AuthorizationError",
+      "description": "User role has expired and is no longer valid",
+      "root_cause": "role_expired",
+      "suggestion": "Check role expiration policies. Renew or reassign roles as needed. Implement role renewal notifications and workflows.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "rbac",
+        "role-expiration",
+        "expired",
+        "temporal"
+      ],
+      "examples": [
+        "Role expired",
+        "User role has expired",
+        "Role no longer valid",
+        "Role assignment timed out"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "rbac_role_deactivated",
+      "pattern": "(?i)(role|user\\s+role)\\s+(deactivated|disabled|suspended|inactive|revoked)",
+      "type": "AuthorizationError",
+      "description": "User role has been deactivated or suspended",
+      "root_cause": "role_deactivated",
+      "suggestion": "Check role status and reactivate if appropriate. Review role deactivation policies and procedures. Verify role management workflows.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "rbac",
+        "role-deactivated",
+        "suspended",
+        "revoked"
+      ],
+      "examples": [
+        "Role deactivated",
+        "User role disabled",
+        "Role suspended",
+        "Role has been revoked"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "rbac_permission_scope_exceeded",
+      "pattern": "(?i)(permission\\s+scope|scope)\\s+(exceeded|violation|out\\s+of\\s+bounds|invalid)",
+      "type": "AuthorizationError",
+      "description": "Operation exceeds the scope of granted permissions",
+      "root_cause": "permission_scope_exceeded",
+      "suggestion": "Review permission scopes and boundaries. Validate operation scope against granted permissions. Consider permission refinement or expansion.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "permission-scope",
+        "exceeded",
+        "violation",
+        "boundaries"
+      ],
+      "examples": [
+        "Permission scope exceeded",
+        "Operation out of permission bounds",
+        "Invalid permission scope",
+        "Scope violation detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "rbac_role_based_filtering_error",
+      "pattern": "(?i)(role\\s+based\\s+filtering|rbac\\s+filter|role\\s+filter)\\s+(error|failed|invalid)",
+      "type": "AuthorizationError",
+      "description": "Role-based data filtering has failed",
+      "root_cause": "role_based_filtering_error",
+      "suggestion": "Check role-based filtering logic and configuration. Verify role-to-data mapping. Review filtering policies and implementation.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "rbac",
+        "filtering",
+        "data-access",
+        "error"
+      ],
+      "examples": [
+        "Role based filtering error",
+        "RBAC filter failed",
+        "Role filter invalid",
+        "Failed to apply role-based filtering"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "rbac_circular_role_dependency",
+      "pattern": "(?i)(circular\\s+role|role\\s+cycle|cyclic\\s+dependency|role\\s+loop)\\s+(detected|error|found|violation)",
+      "type": "AuthorizationError",
+      "description": "Circular dependency detected in role hierarchy",
+      "root_cause": "circular_role_dependency",
+      "suggestion": "Review role hierarchy and remove circular dependencies. Implement role dependency validation. Redesign role inheritance structure.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "rbac",
+        "circular-dependency",
+        "role-hierarchy",
+        "validation"
+      ],
+      "examples": [
+        "Circular role dependency detected",
+        "Role cycle found",
+        "Cyclic dependency in roles",
+        "Role loop detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "rbac_role_context_mismatch",
+      "pattern": "(?i)(role\\s+context|context\\s+mismatch|invalid\\s+context|context\\s+violation)\\s+(mismatch|invalid|error|violation)",
+      "type": "AuthorizationError",
+      "description": "Role context does not match the current execution context",
+      "root_cause": "role_context_mismatch",
+      "suggestion": "Verify role context requirements and current execution context. Check context-aware role assignments. Review multi-tenant or multi-domain role configurations.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "rbac",
+        "context-mismatch",
+        "execution-context",
+        "multi-tenant"
+      ],
+      "examples": [
+        "Role context mismatch",
+        "Invalid role context",
+        "Context violation for role",
+        "Role context error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

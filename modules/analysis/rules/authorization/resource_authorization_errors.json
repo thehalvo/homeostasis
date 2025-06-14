@@ -1,0 +1,348 @@
+{
+  "name": "Resource-Based Authorization Errors",
+  "description": "Cross-language rules for detecting resource-specific access control and ownership errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "resource_not_found",
+      "pattern": "(?i)(resource|object|entity|item)\\s+(not\\s+found|does\\s+not\\s+exist|doesn't\\s+exist|missing)",
+      "type": "AuthorizationError",
+      "description": "Requested resource does not exist or is not accessible",
+      "root_cause": "resource_not_found",
+      "suggestion": "Verify resource existence and user access permissions. Check resource identifiers and ownership. Implement proper resource discovery mechanisms.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "resource",
+        "not-found",
+        "access-control",
+        "ownership"
+      ],
+      "examples": [
+        "Resource not found",
+        "Object does not exist",
+        "Entity doesn't exist",
+        "Requested item missing"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "resource_access_denied",
+      "pattern": "(?i)(resource|object|file|document)\\s+(access\\s+)?(denied|forbidden|not\\s+allowed|unauthorized)",
+      "type": "AuthorizationError",
+      "description": "User lacks permission to access the requested resource",
+      "root_cause": "resource_access_denied",
+      "suggestion": "Check user permissions for the specific resource. Verify resource ownership and access control lists. Review resource-level authorization policies.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "resource",
+        "access-denied",
+        "permissions",
+        "acl"
+      ],
+      "examples": [
+        "Resource access denied",
+        "Object forbidden",
+        "File access not allowed",
+        "Document unauthorized"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "resource_ownership_violation",
+      "pattern": "(?i)(resource|object)\\s+(ownership|owner)\\s+(violation|mismatch|error|invalid)",
+      "type": "AuthorizationError",
+      "description": "Resource ownership validation failed",
+      "root_cause": "ownership_violation",
+      "suggestion": "Verify resource ownership and transfer mechanisms. Check ownership validation logic. Review resource ownership policies and inheritance rules.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "resource",
+        "ownership",
+        "violation",
+        "validation"
+      ],
+      "examples": [
+        "Resource ownership violation",
+        "Object owner mismatch",
+        "Ownership validation error",
+        "Invalid resource owner"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "resource_modification_denied",
+      "pattern": "(?i)(modify|update|edit|change)\\s+(resource|object|file|document)\\s+(denied|forbidden|not\\s+allowed|unauthorized)",
+      "type": "AuthorizationError",
+      "description": "User lacks permission to modify the requested resource",
+      "root_cause": "resource_modification_denied",
+      "suggestion": "Check user write permissions for the resource. Verify resource modification policies. Review resource locking and concurrent access controls.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "resource",
+        "modification",
+        "write-permission",
+        "access-control"
+      ],
+      "examples": [
+        "Modify resource denied",
+        "Update object forbidden",
+        "Edit file not allowed",
+        "Change document unauthorized"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "resource_deletion_denied",
+      "pattern": "(?i)(delete|remove|destroy)\\s+(resource|object|file|document)\\s+(denied|forbidden|not\\s+allowed|unauthorized)",
+      "type": "AuthorizationError",
+      "description": "User lacks permission to delete the requested resource",
+      "root_cause": "resource_deletion_denied",
+      "suggestion": "Check user delete permissions for the resource. Verify resource deletion policies and cascading rules. Review resource protection mechanisms.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "resource",
+        "deletion",
+        "delete-permission",
+        "protection"
+      ],
+      "examples": [
+        "Delete resource denied",
+        "Remove object forbidden",
+        "Destroy file not allowed",
+        "Delete document unauthorized"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "resource_sharing_violation",
+      "pattern": "(?i)(share|sharing)\\s+(resource|object|file|document)\\s+(violation|denied|forbidden|not\\s+allowed)",
+      "type": "AuthorizationError",
+      "description": "Resource sharing permission violation",
+      "root_cause": "resource_sharing_violation",
+      "suggestion": "Check resource sharing policies and permissions. Verify user sharing rights. Review collaboration and sharing workflow configurations.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "resource",
+        "sharing",
+        "collaboration",
+        "permissions"
+      ],
+      "examples": [
+        "Share resource violation",
+        "Sharing denied",
+        "Resource sharing forbidden",
+        "Sharing not allowed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "resource_acl_error",
+      "pattern": "(?i)(acl|access\\s+control\\s+list)\\s+(error|invalid|violation|failed)",
+      "type": "AuthorizationError",
+      "description": "Access Control List (ACL) configuration or validation error",
+      "root_cause": "acl_error",
+      "suggestion": "Review ACL configuration and syntax. Validate ACL entries and permissions. Check ACL inheritance and precedence rules.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "acl",
+        "access-control-list",
+        "configuration",
+        "validation"
+      ],
+      "examples": [
+        "ACL error",
+        "Access control list invalid",
+        "ACL validation failed",
+        "Access control list violation"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "resource_quota_exceeded",
+      "pattern": "(?i)(quota|limit|threshold)\\s+(exceeded|reached|violated|over)",
+      "type": "AuthorizationError",
+      "description": "Resource quota or limit has been exceeded",
+      "root_cause": "quota_exceeded",
+      "suggestion": "Check resource quotas and usage limits. Review quota policies and allocation. Consider quota increase or resource cleanup.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "quota",
+        "limit",
+        "resource-management",
+        "threshold"
+      ],
+      "examples": [
+        "Quota exceeded",
+        "Resource limit reached",
+        "Storage quota violated",
+        "Usage threshold over"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "resource_isolation_violation",
+      "pattern": "(?i)(resource\\s+isolation|isolation)\\s+(violation|breach|compromised|failed)",
+      "type": "AuthorizationError",
+      "description": "Resource isolation boundary has been violated",
+      "root_cause": "isolation_violation",
+      "suggestion": "Review resource isolation policies and boundaries. Check multi-tenant separation mechanisms. Validate resource access controls and sandboxing.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "isolation",
+        "multi-tenant",
+        "security",
+        "boundary"
+      ],
+      "examples": [
+        "Resource isolation violation",
+        "Isolation breach detected",
+        "Resource isolation compromised",
+        "Isolation boundary failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "resource_lock_conflict",
+      "pattern": "(?i)(resource|object|file)\\s+(lock|locked|locking)\\s+(conflict|error|failed|busy)",
+      "type": "AuthorizationError",
+      "description": "Resource locking conflict or failure",
+      "root_cause": "resource_lock_conflict",
+      "suggestion": "Check resource locking mechanisms and timeout settings. Review concurrent access patterns. Implement proper lock management and deadlock prevention.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "resource",
+        "locking",
+        "concurrency",
+        "conflict"
+      ],
+      "examples": [
+        "Resource lock conflict",
+        "Object locked by another user",
+        "File locking failed",
+        "Resource busy"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "resource_version_mismatch",
+      "pattern": "(?i)(resource|object|document)\\s+(version|revision)\\s+(mismatch|conflict|outdated|stale)",
+      "type": "AuthorizationError",
+      "description": "Resource version conflict or mismatch",
+      "root_cause": "version_conflict",
+      "suggestion": "Check resource versioning and conflict resolution mechanisms. Implement optimistic locking or merge strategies. Review version control policies.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "resource",
+        "versioning",
+        "conflict",
+        "optimistic-locking"
+      ],
+      "examples": [
+        "Resource version mismatch",
+        "Object revision conflict",
+        "Document version outdated",
+        "Stale resource version"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

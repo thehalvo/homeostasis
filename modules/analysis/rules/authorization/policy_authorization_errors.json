@@ -1,0 +1,348 @@
+{
+  "name": "Policy-Based Authorization Errors",
+  "description": "Cross-language rules for detecting policy-based access control and attribute-based authorization errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "policy_evaluation_failed",
+      "pattern": "(?i)(policy|authorization\\s+policy)\\s+(evaluation|check)\\s+(failed|error|unsuccessful)",
+      "type": "AuthorizationError",
+      "description": "Authorization policy evaluation failed",
+      "root_cause": "policy_evaluation_failed",
+      "suggestion": "Check policy syntax and logic. Verify policy evaluation engine configuration. Review policy conditions and attribute availability.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "policy",
+        "evaluation",
+        "failed",
+        "abac"
+      ],
+      "examples": [
+        "Policy evaluation failed",
+        "Authorization policy check error",
+        "Policy evaluation unsuccessful",
+        "Failed to evaluate policy"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "policy_not_found",
+      "pattern": "(?i)(policy|authorization\\s+policy|access\\s+policy)\\s+(not\\s+found|does\\s+not\\s+exist|missing)",
+      "type": "AuthorizationError",
+      "description": "Required authorization policy not found",
+      "root_cause": "policy_not_found",
+      "suggestion": "Verify policy existence and deployment. Check policy naming and referencing. Review policy management and distribution mechanisms.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "policy",
+        "not-found",
+        "missing",
+        "configuration"
+      ],
+      "examples": [
+        "Policy not found",
+        "Authorization policy does not exist",
+        "Access policy missing",
+        "Required policy not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "policy_syntax_error",
+      "pattern": "(?i)(policy|authorization\\s+policy)\\s+(syntax|format)\\s+(error|invalid|malformed)",
+      "type": "AuthorizationError",
+      "description": "Authorization policy has syntax or format errors",
+      "root_cause": "policy_syntax_error",
+      "suggestion": "Review policy syntax and format. Validate policy against schema. Check policy language compliance and structure.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "policy",
+        "syntax-error",
+        "format",
+        "validation"
+      ],
+      "examples": [
+        "Policy syntax error",
+        "Authorization policy format invalid",
+        "Malformed policy",
+        "Policy syntax invalid"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "attribute_missing",
+      "pattern": "(?i)(attribute|claim|property)\\s+(missing|not\\s+found|unavailable|absent)",
+      "type": "AuthorizationError",
+      "description": "Required attribute for policy evaluation is missing",
+      "root_cause": "attribute_missing",
+      "suggestion": "Check attribute availability and sources. Verify attribute mapping and collection. Review policy attribute requirements and dependencies.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "attribute",
+        "missing",
+        "abac",
+        "claims"
+      ],
+      "examples": [
+        "Attribute missing",
+        "Required claim not found",
+        "Property unavailable",
+        "Attribute absent"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "policy_condition_failed",
+      "pattern": "(?i)(policy\\s+condition|condition|rule\\s+condition)\\s+(failed|not\\s+met|violated|false)",
+      "type": "AuthorizationError",
+      "description": "Policy condition or rule was not satisfied",
+      "root_cause": "condition_not_met",
+      "suggestion": "Review policy conditions and their requirements. Check attribute values and context. Verify condition logic and evaluation criteria.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "policy",
+        "condition",
+        "failed",
+        "evaluation"
+      ],
+      "examples": [
+        "Policy condition failed",
+        "Condition not met",
+        "Rule condition violated",
+        "Condition evaluation false"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "policy_conflict",
+      "pattern": "(?i)(policy|policies)\\s+(conflict|conflicting|contradiction|inconsistent)",
+      "type": "AuthorizationError",
+      "description": "Multiple policies are conflicting with each other",
+      "root_cause": "policy_conflict",
+      "suggestion": "Review policy precedence and conflict resolution rules. Check for contradictory policies. Implement policy hierarchy and resolution mechanisms.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "policy",
+        "conflict",
+        "contradiction",
+        "resolution"
+      ],
+      "examples": [
+        "Policy conflict",
+        "Conflicting policies",
+        "Policy contradiction",
+        "Inconsistent policies"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "policy_engine_error",
+      "pattern": "(?i)(policy\\s+engine|authorization\\s+engine|decision\\s+engine)\\s+(error|failed|unavailable|timeout)",
+      "type": "AuthorizationError",
+      "description": "Policy decision engine encountered an error",
+      "root_cause": "policy_engine_error",
+      "suggestion": "Check policy engine status and configuration. Verify engine connectivity and performance. Review engine logs and error handling.",
+      "category": "authorization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "authorization",
+        "policy-engine",
+        "error",
+        "infrastructure",
+        "pdp"
+      ],
+      "examples": [
+        "Policy engine error",
+        "Authorization engine failed",
+        "Decision engine unavailable",
+        "Policy engine timeout"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "context_evaluation_error",
+      "pattern": "(?i)(context|environmental\\s+context)\\s+(evaluation|processing)\\s+(error|failed|invalid)",
+      "type": "AuthorizationError",
+      "description": "Context evaluation for policy decision failed",
+      "root_cause": "context_evaluation_error",
+      "suggestion": "Check context information availability and format. Verify context processing logic. Review environmental attribute collection and validation.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "context",
+        "evaluation",
+        "environmental",
+        "abac"
+      ],
+      "examples": [
+        "Context evaluation error",
+        "Environmental context processing failed",
+        "Context evaluation invalid",
+        "Failed to process context"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "obligation_failed",
+      "pattern": "(?i)(obligation|post\\s+condition|requirement)\\s+(failed|not\\s+met|violated|error)",
+      "type": "AuthorizationError",
+      "description": "Policy obligation or post-condition was not satisfied",
+      "root_cause": "obligation_failed",
+      "suggestion": "Check obligation requirements and implementation. Verify post-condition logic and execution. Review obligation handling and enforcement mechanisms.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "obligation",
+        "post-condition",
+        "failed",
+        "enforcement"
+      ],
+      "examples": [
+        "Obligation failed",
+        "Post condition not met",
+        "Requirement violated",
+        "Obligation error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "policy_version_mismatch",
+      "pattern": "(?i)(policy\\s+version|version)\\s+(mismatch|incompatible|outdated|wrong)",
+      "type": "AuthorizationError",
+      "description": "Policy version is incompatible or outdated",
+      "root_cause": "policy_version_mismatch",
+      "suggestion": "Update policy to compatible version. Check policy versioning and migration procedures. Review policy deployment and synchronization.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "authorization",
+        "policy",
+        "version-mismatch",
+        "compatibility",
+        "deployment"
+      ],
+      "examples": [
+        "Policy version mismatch",
+        "Incompatible policy version",
+        "Outdated policy version",
+        "Wrong policy version"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dynamic_policy_error",
+      "pattern": "(?i)(dynamic\\s+policy|runtime\\s+policy|policy\\s+adaptation)\\s+(error|failed|invalid)",
+      "type": "AuthorizationError",
+      "description": "Dynamic policy adaptation or runtime policy generation failed",
+      "root_cause": "dynamic_policy_error",
+      "suggestion": "Check dynamic policy generation logic and rules. Verify runtime policy adaptation mechanisms. Review policy templating and parameterization.",
+      "category": "authorization",
+      "severity": "medium",
+      "confidence": "low",
+      "tags": [
+        "authorization",
+        "dynamic-policy",
+        "runtime",
+        "adaptation",
+        "generation"
+      ],
+      "examples": [
+        "Dynamic policy error",
+        "Runtime policy failed",
+        "Policy adaptation invalid",
+        "Dynamic policy generation error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "low",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}
