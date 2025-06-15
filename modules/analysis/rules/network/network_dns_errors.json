@@ -1,0 +1,355 @@
+{
+  "name": "DNS Resolution Errors",
+  "description": "Cross-language rules for detecting DNS resolution and lookup errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "dns_name_not_resolved",
+      "pattern": "(?i)(name\\s+not\\s+resolved|hostname\\s+not\\s+found|dns\\s+resolution\\s+failed)",
+      "type": "DNSResolutionError",
+      "description": "DNS name resolution failed",
+      "root_cause": "dns_resolution_failed",
+      "suggestion": "Check hostname spelling and DNS server configuration. Verify domain exists and is reachable.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dns",
+        "resolution",
+        "hostname",
+        "lookup"
+      ],
+      "examples": [
+        "Name not resolved",
+        "Hostname not found",
+        "DNS resolution failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dns_lookup_timeout",
+      "pattern": "(?i)(dns\\s+lookup\\s+timeout|name\\s+resolution\\s+timeout|dns\\s+query\\s+timeout)",
+      "type": "DNSTimeoutError",
+      "description": "DNS lookup operation timed out",
+      "root_cause": "dns_lookup_timeout",
+      "suggestion": "Check DNS server response times. Consider using alternative DNS servers or increasing timeout.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dns",
+        "lookup",
+        "timeout",
+        "query"
+      ],
+      "examples": [
+        "DNS lookup timeout",
+        "Name resolution timeout",
+        "DNS query timeout"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dns_server_not_responding",
+      "pattern": "(?i)(dns\\s+server\\s+not\\s+responding|name\\s+server\\s+not\\s+responding|dns\\s+server\\s+unreachable)",
+      "type": "DNSServerError",
+      "description": "DNS server is not responding",
+      "root_cause": "dns_server_not_responding",
+      "suggestion": "Check DNS server availability and network connectivity. Try alternative DNS servers.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dns",
+        "server",
+        "not-responding",
+        "unreachable"
+      ],
+      "examples": [
+        "DNS server not responding",
+        "Name server not responding",
+        "DNS server unreachable"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dns_no_address_record",
+      "pattern": "(?i)(no\\s+address\\s+record|no\\s+a\\s+record|no\\s+such\\s+host)",
+      "type": "DNSRecordError",
+      "description": "No DNS address record found for hostname",
+      "root_cause": "no_address_record",
+      "suggestion": "Verify hostname is correct and DNS records exist. Check domain configuration.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dns",
+        "record",
+        "address",
+        "a-record"
+      ],
+      "examples": [
+        "No address record found",
+        "No A record for hostname",
+        "No such host"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dns_invalid_hostname",
+      "pattern": "(?i)(invalid\\s+hostname|malformed\\s+hostname|hostname\\s+syntax\\s+error)",
+      "type": "DNSHostnameError",
+      "description": "Invalid or malformed hostname format",
+      "root_cause": "invalid_hostname",
+      "suggestion": "Check hostname format and syntax. Ensure it follows DNS naming conventions.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dns",
+        "hostname",
+        "invalid",
+        "syntax"
+      ],
+      "examples": [
+        "Invalid hostname format",
+        "Malformed hostname",
+        "Hostname syntax error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dns_nxdomain",
+      "pattern": "(?i)(nxdomain|domain\\s+does\\s+not\\s+exist|non-existent\\s+domain)",
+      "type": "DNSNXDomainError",
+      "description": "Domain does not exist (NXDOMAIN response)",
+      "root_cause": "domain_not_exist",
+      "suggestion": "Verify domain name spelling and registration status. Check if domain has expired.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dns",
+        "nxdomain",
+        "domain",
+        "not-exist"
+      ],
+      "examples": [
+        "NXDOMAIN response",
+        "Domain does not exist",
+        "Non-existent domain"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dns_servfail",
+      "pattern": "(?i)(servfail|server\\s+failure|dns\\s+server\\s+failure)",
+      "type": "DNSServerFailureError",
+      "description": "DNS server failure (SERVFAIL response)",
+      "root_cause": "dns_server_failure",
+      "suggestion": "DNS server encountered an error. Try alternative DNS servers or contact domain administrator.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dns",
+        "servfail",
+        "server",
+        "failure"
+      ],
+      "examples": [
+        "SERVFAIL response",
+        "DNS server failure",
+        "Server failure during lookup"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dns_refused",
+      "pattern": "(?i)(dns\\s+refused|query\\s+refused|refused\\s+by\\s+server)",
+      "type": "DNSRefusedError",
+      "description": "DNS query refused by server",
+      "root_cause": "dns_query_refused",
+      "suggestion": "DNS server refused the query. Check server configuration or try different DNS server.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dns",
+        "refused",
+        "query",
+        "server"
+      ],
+      "examples": [
+        "DNS query refused",
+        "Query refused by server",
+        "DNS refused"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dns_cache_poisoning",
+      "pattern": "(?i)(dns\\s+poisoning|cache\\s+poisoning|dns\\s+spoofing)",
+      "type": "DNSSecurityError",
+      "description": "Potential DNS cache poisoning or spoofing detected",
+      "root_cause": "dns_security_issue",
+      "suggestion": "Use secure DNS (DNS over HTTPS/TLS) and implement DNSSEC validation.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "dns",
+        "security",
+        "poisoning",
+        "spoofing"
+      ],
+      "examples": [
+        "DNS cache poisoning detected",
+        "Potential DNS spoofing",
+        "DNS security violation"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dns_truncated_response",
+      "pattern": "(?i)(dns\\s+response\\s+truncated|truncated\\s+dns|dns\\s+tc\\s+bit)",
+      "type": "DNSTruncatedError",
+      "description": "DNS response was truncated",
+      "root_cause": "dns_response_truncated",
+      "suggestion": "Use TCP for DNS queries or increase UDP buffer size. Check DNS server configuration.",
+      "category": "network",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "dns",
+        "truncated",
+        "response",
+        "udp"
+      ],
+      "examples": [
+        "DNS response truncated",
+        "Truncated DNS reply",
+        "DNS TC bit set"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dns_reverse_lookup_failed",
+      "pattern": "(?i)(reverse\\s+dns\\s+failed|reverse\\s+lookup\\s+failed|ptr\\s+record\\s+not\\s+found)",
+      "type": "DNSReverseLookupError",
+      "description": "Reverse DNS lookup failed",
+      "root_cause": "reverse_dns_failed",
+      "suggestion": "Check PTR record configuration. Reverse DNS may not be configured for the IP address.",
+      "category": "network",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "dns",
+        "reverse",
+        "lookup",
+        "ptr"
+      ],
+      "examples": [
+        "Reverse DNS lookup failed",
+        "PTR record not found",
+        "Reverse lookup failed"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dns_configuration_error",
+      "pattern": "(?i)(dns\\s+configuration\\s+error|invalid\\s+dns\\s+config|dns\\s+setup\\s+error)",
+      "type": "DNSConfigurationError",
+      "description": "DNS configuration error",
+      "root_cause": "dns_config_error",
+      "suggestion": "Check DNS client configuration and server settings. Verify resolv.conf or network settings.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dns",
+        "configuration",
+        "setup",
+        "config"
+      ],
+      "examples": [
+        "DNS configuration error",
+        "Invalid DNS config",
+        "DNS setup error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

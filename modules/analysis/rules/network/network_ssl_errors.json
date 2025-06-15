@@ -1,0 +1,390 @@
+{
+  "name": "SSL/TLS Certificate Errors",
+  "description": "Cross-language rules for detecting SSL/TLS certificate and encryption errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "ssl_certificate_expired",
+      "pattern": "(?i)(certificate\\s+expired|ssl\\s+certificate\\s+expired|tls\\s+certificate\\s+expired)",
+      "type": "SSLCertificateExpiredError",
+      "description": "SSL/TLS certificate has expired",
+      "root_cause": "certificate_expired",
+      "suggestion": "Renew the SSL/TLS certificate. Check certificate expiration dates and implement automated renewal.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "certificate",
+        "expired"
+      ],
+      "examples": [
+        "SSL certificate expired",
+        "Certificate has expired",
+        "TLS certificate expired"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_certificate_invalid",
+      "pattern": "(?i)(invalid\\s+certificate|certificate\\s+invalid|bad\\s+certificate)",
+      "type": "SSLCertificateInvalidError",
+      "description": "SSL/TLS certificate is invalid or malformed",
+      "root_cause": "certificate_invalid",
+      "suggestion": "Check certificate format and validity. Ensure certificate is properly signed by a trusted CA.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "certificate",
+        "invalid"
+      ],
+      "examples": [
+        "Invalid SSL certificate",
+        "Certificate is invalid",
+        "Bad certificate format"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_certificate_not_trusted",
+      "pattern": "(?i)(certificate\\s+not\\s+trusted|untrusted\\s+certificate|certificate\\s+authority\\s+invalid)",
+      "type": "SSLCertificateNotTrustedError",
+      "description": "SSL/TLS certificate is not trusted",
+      "root_cause": "certificate_not_trusted",
+      "suggestion": "Use certificate from trusted Certificate Authority. Add CA certificate to trust store.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "certificate",
+        "trusted",
+        "ca"
+      ],
+      "examples": [
+        "Certificate not trusted",
+        "Untrusted certificate",
+        "Certificate authority invalid"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_hostname_mismatch",
+      "pattern": "(?i)(hostname\\s+mismatch|certificate\\s+hostname\\s+mismatch|ssl\\s+hostname\\s+verification\\s+failed)",
+      "type": "SSLHostnameMismatchError",
+      "description": "SSL/TLS certificate hostname does not match",
+      "root_cause": "hostname_mismatch",
+      "suggestion": "Ensure certificate Common Name or Subject Alternative Names match the hostname being accessed.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "hostname",
+        "mismatch",
+        "verification"
+      ],
+      "examples": [
+        "SSL hostname mismatch",
+        "Certificate hostname mismatch",
+        "Hostname verification failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_handshake_failed",
+      "pattern": "(?i)(ssl\\s+handshake\\s+failed|tls\\s+handshake\\s+failed|handshake\\s+failure)",
+      "type": "SSLHandshakeFailedError",
+      "description": "SSL/TLS handshake failed",
+      "root_cause": "handshake_failed",
+      "suggestion": "Check SSL/TLS version compatibility and cipher suites. Verify certificate configuration.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "handshake",
+        "failed"
+      ],
+      "examples": [
+        "SSL handshake failed",
+        "TLS handshake failed",
+        "Handshake failure"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_protocol_error",
+      "pattern": "(?i)(ssl\\s+protocol\\s+error|tls\\s+protocol\\s+error|protocol\\s+version\\s+mismatch)",
+      "type": "SSLProtocolError",
+      "description": "SSL/TLS protocol version error or mismatch",
+      "root_cause": "protocol_error",
+      "suggestion": "Update SSL/TLS protocol versions. Ensure client and server support compatible protocols.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "protocol",
+        "version"
+      ],
+      "examples": [
+        "SSL protocol error",
+        "TLS protocol version mismatch",
+        "Protocol error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_cipher_suite_error",
+      "pattern": "(?i)(cipher\\s+suite\\s+mismatch|no\\s+cipher\\s+suites\\s+in\\s+common|unsupported\\s+cipher)",
+      "type": "SSLCipherSuiteError",
+      "description": "SSL/TLS cipher suite compatibility error",
+      "root_cause": "cipher_suite_error",
+      "suggestion": "Configure compatible cipher suites on client and server. Update security settings.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "cipher",
+        "suite"
+      ],
+      "examples": [
+        "Cipher suite mismatch",
+        "No cipher suites in common",
+        "Unsupported cipher"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_certificate_chain_error",
+      "pattern": "(?i)(certificate\\s+chain\\s+error|incomplete\\s+certificate\\s+chain|certificate\\s+path\\s+validation\\s+failed)",
+      "type": "SSLCertificateChainError",
+      "description": "SSL/TLS certificate chain validation error",
+      "root_cause": "certificate_chain_error",
+      "suggestion": "Ensure complete certificate chain is provided. Include intermediate certificates.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "certificate",
+        "chain"
+      ],
+      "examples": [
+        "Certificate chain error",
+        "Incomplete certificate chain",
+        "Certificate path validation failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_certificate_revoked",
+      "pattern": "(?i)(certificate\\s+revoked|revoked\\s+certificate|crl\\s+check\\s+failed)",
+      "type": "SSLCertificateRevokedError",
+      "description": "SSL/TLS certificate has been revoked",
+      "root_cause": "certificate_revoked",
+      "suggestion": "Certificate has been revoked. Obtain a new certificate from the Certificate Authority.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "certificate",
+        "revoked",
+        "crl"
+      ],
+      "examples": [
+        "Certificate revoked",
+        "SSL certificate has been revoked",
+        "CRL check failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_weak_cipher",
+      "pattern": "(?i)(weak\\s+cipher|insecure\\s+cipher|deprecated\\s+ssl|weak\\s+encryption)",
+      "type": "SSLWeakCipherError",
+      "description": "Weak or insecure SSL/TLS cipher detected",
+      "root_cause": "weak_cipher",
+      "suggestion": "Update to stronger cipher suites. Disable deprecated SSL/TLS versions and weak ciphers.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "cipher",
+        "weak",
+        "security"
+      ],
+      "examples": [
+        "Weak cipher detected",
+        "Insecure SSL cipher",
+        "Deprecated encryption"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_certificate_not_yet_valid",
+      "pattern": "(?i)(certificate\\s+not\\s+yet\\s+valid|certificate\\s+not\\s+valid\\s+yet|certificate\\s+future\\s+date)",
+      "type": "SSLCertificateNotYetValidError",
+      "description": "SSL/TLS certificate is not yet valid (future date)",
+      "root_cause": "certificate_not_yet_valid",
+      "suggestion": "Check system date/time. Certificate may be configured with future validity date.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "certificate",
+        "not-yet-valid",
+        "date"
+      ],
+      "examples": [
+        "Certificate not yet valid",
+        "Certificate not valid yet",
+        "Certificate has future date"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_self_signed_certificate",
+      "pattern": "(?i)(self.signed\\s+certificate|certificate\\s+is\\s+self.signed|untrusted\\s+self.signed)",
+      "type": "SSLSelfSignedCertificateError",
+      "description": "Self-signed SSL/TLS certificate detected",
+      "root_cause": "self_signed_certificate",
+      "suggestion": "Use certificate from trusted CA for production. Add self-signed certificate to trust store if appropriate.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "certificate",
+        "self-signed"
+      ],
+      "examples": [
+        "Self-signed certificate",
+        "Certificate is self-signed",
+        "Untrusted self-signed certificate"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ssl_ocsp_error",
+      "pattern": "(?i)(ocsp\\s+error|ocsp\\s+check\\s+failed|certificate\\s+status\\s+unknown)",
+      "type": "SSLOCSPError",
+      "description": "OCSP (Online Certificate Status Protocol) error",
+      "root_cause": "ocsp_error",
+      "suggestion": "Check OCSP responder availability. Configure OCSP stapling or fallback mechanisms.",
+      "category": "network",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "ssl",
+        "tls",
+        "ocsp",
+        "certificate",
+        "status"
+      ],
+      "examples": [
+        "OCSP check failed",
+        "OCSP error",
+        "Certificate status unknown"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

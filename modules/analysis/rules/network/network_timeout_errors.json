@@ -1,0 +1,357 @@
+{
+  "name": "Network Timeout and Latency Errors",
+  "description": "Cross-language rules for detecting network timeout and latency-related errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "network_read_timeout",
+      "pattern": "(?i)(read\\s+timeout|socket\\s+timeout|receive\\s+timeout)",
+      "type": "NetworkTimeoutError",
+      "description": "Timeout occurred while reading from network socket",
+      "root_cause": "read_timeout",
+      "suggestion": "Increase read timeout values. Check server response times and network latency.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "timeout",
+        "read",
+        "socket"
+      ],
+      "examples": [
+        "Read timeout",
+        "Socket timeout while reading",
+        "Receive timeout error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_write_timeout",
+      "pattern": "(?i)(write\\s+timeout|send\\s+timeout|transmission\\s+timeout)",
+      "type": "NetworkTimeoutError",
+      "description": "Timeout occurred while writing to network socket",
+      "root_cause": "write_timeout",
+      "suggestion": "Check network bandwidth and server capacity. Implement retry logic for write operations.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "timeout",
+        "write",
+        "send"
+      ],
+      "examples": [
+        "Write timeout",
+        "Send timeout error",
+        "Transmission timeout"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_request_timeout",
+      "pattern": "(?i)(request\\s+timeout|http\\s+timeout|response\\s+timeout)",
+      "type": "NetworkTimeoutError",
+      "description": "HTTP request or response timeout",
+      "root_cause": "request_timeout",
+      "suggestion": "Increase HTTP timeout settings. Optimize server response times and consider async operations.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "http",
+        "request",
+        "timeout"
+      ],
+      "examples": [
+        "Request timeout",
+        "HTTP timeout error",
+        "Response timeout"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_operation_timeout",
+      "pattern": "(?i)(operation\\s+timed\\s+out|network\\s+operation\\s+timeout|timeout.*network)",
+      "type": "NetworkTimeoutError",
+      "description": "General network operation timeout",
+      "root_cause": "operation_timeout",
+      "suggestion": "Check network connectivity and increase timeout values. Implement exponential backoff retry.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "operation",
+        "timeout",
+        "general"
+      ],
+      "examples": [
+        "Operation timed out",
+        "Network operation timeout",
+        "Timeout during network call"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_gateway_timeout",
+      "pattern": "(?i)(gateway\\s+timeout|504|upstream\\s+timeout)",
+      "type": "NetworkGatewayTimeoutError",
+      "description": "Gateway or proxy server timeout",
+      "root_cause": "gateway_timeout",
+      "suggestion": "Check upstream server status and response times. Consider load balancing and caching strategies.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "gateway",
+        "proxy",
+        "upstream",
+        "504"
+      ],
+      "examples": [
+        "Gateway timeout",
+        "504 Gateway Timeout",
+        "Upstream server timeout"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_dns_timeout",
+      "pattern": "(?i)(dns\\s+timeout|name\\s+resolution\\s+timeout|dns\\s+lookup\\s+timeout)",
+      "type": "NetworkDNSTimeoutError",
+      "description": "DNS resolution timeout",
+      "root_cause": "dns_timeout",
+      "suggestion": "Check DNS server configuration and response times. Consider using alternative DNS servers.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "dns",
+        "resolution",
+        "timeout"
+      ],
+      "examples": [
+        "DNS timeout",
+        "Name resolution timeout",
+        "DNS lookup timeout"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_slow_response",
+      "pattern": "(?i)(slow\\s+response|high\\s+latency|response\\s+too\\s+slow)",
+      "type": "NetworkLatencyError",
+      "description": "Network response is unusually slow",
+      "root_cause": "slow_response",
+      "suggestion": "Monitor network performance and optimize for latency. Consider CDN and caching solutions.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "network",
+        "latency",
+        "performance",
+        "slow"
+      ],
+      "examples": [
+        "Slow response from server",
+        "High network latency detected",
+        "Response too slow"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_handshake_timeout",
+      "pattern": "(?i)(handshake\\s+timeout|ssl\\s+handshake\\s+timeout|tls\\s+handshake\\s+timeout)",
+      "type": "NetworkHandshakeTimeoutError",
+      "description": "SSL/TLS handshake timeout",
+      "root_cause": "handshake_timeout",
+      "suggestion": "Check SSL/TLS configuration and certificate validity. Increase handshake timeout values.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "ssl",
+        "tls",
+        "handshake",
+        "timeout"
+      ],
+      "examples": [
+        "Handshake timeout",
+        "SSL handshake timeout",
+        "TLS handshake timeout"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_keepalive_timeout",
+      "pattern": "(?i)(keepalive\\s+timeout|keep-alive\\s+timeout|connection\\s+keepalive\\s+expired)",
+      "type": "NetworkKeepAliveTimeoutError",
+      "description": "Keep-alive connection timeout",
+      "root_cause": "keepalive_timeout",
+      "suggestion": "Adjust keep-alive timeout settings. Consider connection pooling strategies.",
+      "category": "network",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "keepalive",
+        "connection",
+        "timeout"
+      ],
+      "examples": [
+        "Keep-alive timeout",
+        "Connection keep-alive expired",
+        "Keepalive timeout error"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_idle_timeout",
+      "pattern": "(?i)(idle\\s+timeout|connection\\s+idle\\s+timeout|inactive\\s+connection\\s+timeout)",
+      "type": "NetworkIdleTimeoutError",
+      "description": "Connection idle timeout",
+      "root_cause": "idle_timeout",
+      "suggestion": "Adjust idle timeout settings or implement connection refresh mechanisms.",
+      "category": "network",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "idle",
+        "connection",
+        "timeout"
+      ],
+      "examples": [
+        "Idle timeout",
+        "Connection idle timeout",
+        "Inactive connection timeout"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_bandwidth_exceeded",
+      "pattern": "(?i)(bandwidth\\s+exceeded|rate\\s+limit\\s+exceeded|throttling)",
+      "type": "NetworkBandwidthError",
+      "description": "Network bandwidth limit exceeded or throttling detected",
+      "root_cause": "bandwidth_exceeded",
+      "suggestion": "Implement traffic shaping and optimize data transfer. Consider upgrading bandwidth limits.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "bandwidth",
+        "rate-limit",
+        "throttling"
+      ],
+      "examples": [
+        "Bandwidth exceeded",
+        "Rate limit exceeded",
+        "Connection being throttled"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_congestion",
+      "pattern": "(?i)(network\\s+congestion|congestion\\s+control|packet\\s+loss)",
+      "type": "NetworkCongestionError",
+      "description": "Network congestion or packet loss detected",
+      "root_cause": "network_congestion",
+      "suggestion": "Monitor network traffic patterns and implement congestion control algorithms.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "network",
+        "congestion",
+        "packet-loss",
+        "traffic"
+      ],
+      "examples": [
+        "Network congestion detected",
+        "Packet loss due to congestion",
+        "Congestion control activated"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

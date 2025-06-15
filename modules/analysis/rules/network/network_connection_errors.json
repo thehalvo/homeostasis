@@ -1,0 +1,357 @@
+{
+  "name": "Network Connection Errors",
+  "description": "Cross-language rules for detecting network connection errors and failures",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "network_connection_refused",
+      "pattern": "(?i)(connection\\s+refused|cannot\\s+connect|connection\\s+rejected)",
+      "type": "NetworkConnectionError",
+      "description": "Connection refused by target server",
+      "root_cause": "connection_refused",
+      "suggestion": "Check if target server is running and accepting connections. Verify port number and firewall settings.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "connection",
+        "refused",
+        "server"
+      ],
+      "examples": [
+        "Connection refused",
+        "Cannot connect to server",
+        "Connection rejected by host"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_connection_timeout",
+      "pattern": "(?i)(connection\\s+timeout|connect\\s+timed\\s+out|connection\\s+attempt\\s+failed)",
+      "type": "NetworkTimeoutError",
+      "description": "Connection attempt timed out",
+      "root_cause": "connection_timeout",
+      "suggestion": "Increase connection timeout values. Check network connectivity and server response times.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "connection",
+        "timeout",
+        "latency"
+      ],
+      "examples": [
+        "Connection timeout",
+        "Connect timed out",
+        "Connection attempt failed due to timeout"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_host_unreachable",
+      "pattern": "(?i)(host\\s+unreachable|network\\s+unreachable|no\\s+route\\s+to\\s+host)",
+      "type": "NetworkRoutingError",
+      "description": "Host or network is unreachable",
+      "root_cause": "host_unreachable",
+      "suggestion": "Check network routing and connectivity. Verify host address and network configuration.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "routing",
+        "unreachable",
+        "connectivity"
+      ],
+      "examples": [
+        "Host unreachable",
+        "Network unreachable",
+        "No route to host"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_connection_reset",
+      "pattern": "(?i)(connection\\s+reset|reset\\s+by\\s+peer|connection\\s+aborted)",
+      "type": "NetworkConnectionError",
+      "description": "Connection was reset by the remote peer",
+      "root_cause": "connection_reset",
+      "suggestion": "Check server stability and network conditions. Implement connection retry logic with exponential backoff.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "connection",
+        "reset",
+        "peer"
+      ],
+      "examples": [
+        "Connection reset by peer",
+        "Connection reset",
+        "Connection aborted"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_connection_lost",
+      "pattern": "(?i)(connection\\s+lost|connection\\s+dropped|network\\s+connection\\s+lost)",
+      "type": "NetworkConnectionError",
+      "description": "Network connection was lost during communication",
+      "root_cause": "connection_lost",
+      "suggestion": "Implement connection monitoring and automatic reconnection. Check network stability.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "connection",
+        "lost",
+        "dropped"
+      ],
+      "examples": [
+        "Connection lost",
+        "Connection dropped",
+        "Network connection lost"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_socket_error",
+      "pattern": "(?i)(socket\\s+error|socket\\s+closed|broken\\s+pipe)",
+      "type": "NetworkSocketError",
+      "description": "Socket-level network error occurred",
+      "root_cause": "socket_error",
+      "suggestion": "Check socket configuration and handle socket errors gracefully. Implement proper socket cleanup.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "socket",
+        "error",
+        "pipe"
+      ],
+      "examples": [
+        "Socket error",
+        "Socket closed unexpectedly",
+        "Broken pipe"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_port_unreachable",
+      "pattern": "(?i)(port\\s+unreachable|destination\\s+port\\s+unreachable|connection\\s+refused.*port)",
+      "type": "NetworkPortError",
+      "description": "Target port is unreachable or not listening",
+      "root_cause": "port_unreachable",
+      "suggestion": "Verify target port number and service availability. Check firewall rules and port configuration.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "port",
+        "unreachable",
+        "service"
+      ],
+      "examples": [
+        "Port unreachable",
+        "Destination port unreachable",
+        "Connection refused on port 8080"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_address_in_use",
+      "pattern": "(?i)(address\\s+already\\s+in\\s+use|port\\s+already\\s+in\\s+use|bind.*address\\s+already\\s+in\\s+use)",
+      "type": "NetworkBindError",
+      "description": "Network address or port is already in use",
+      "root_cause": "address_in_use",
+      "suggestion": "Check for conflicting services on the same port. Use different port or implement port discovery.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "address",
+        "port",
+        "bind",
+        "conflict"
+      ],
+      "examples": [
+        "Address already in use",
+        "Port already in use",
+        "Bind: address already in use"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_permission_denied",
+      "pattern": "(?i)(permission\\s+denied.*bind|permission\\s+denied.*socket|access\\s+denied.*network)",
+      "type": "NetworkPermissionError",
+      "description": "Permission denied for network operation",
+      "root_cause": "network_permission_denied",
+      "suggestion": "Check user permissions for network operations. May need administrator privileges for certain ports.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "permission",
+        "access",
+        "denied",
+        "privileges"
+      ],
+      "examples": [
+        "Permission denied: bind",
+        "Permission denied: socket",
+        "Access denied: network operation"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_interface_not_found",
+      "pattern": "(?i)(network\\s+interface\\s+not\\s+found|interface.*not\\s+available|no\\s+such\\s+device)",
+      "type": "NetworkInterfaceError",
+      "description": "Network interface not found or unavailable",
+      "root_cause": "interface_not_found",
+      "suggestion": "Check network interface configuration and availability. Verify interface names and status.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "interface",
+        "device",
+        "not-found"
+      ],
+      "examples": [
+        "Network interface not found",
+        "Interface eth0 not available",
+        "No such device"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_no_internet_connection",
+      "pattern": "(?i)(no\\s+internet\\s+connection|network\\s+is\\s+unreachable|offline)",
+      "type": "NetworkConnectivityError",
+      "description": "No internet connection available",
+      "root_cause": "no_internet_connection",
+      "suggestion": "Check internet connectivity and network configuration. Implement offline mode or retry mechanisms.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "network",
+        "internet",
+        "connectivity",
+        "offline"
+      ],
+      "examples": [
+        "No internet connection",
+        "Network is unreachable",
+        "Device is offline"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "network_max_connections_exceeded",
+      "pattern": "(?i)(too\\s+many\\s+connections|connection\\s+limit\\s+exceeded|max\\s+connections\\s+reached)",
+      "type": "NetworkConnectionLimitError",
+      "description": "Maximum number of connections exceeded",
+      "root_cause": "max_connections_exceeded",
+      "suggestion": "Implement connection pooling and rate limiting. Increase connection limits if appropriate.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "network",
+        "connections",
+        "limit",
+        "pool"
+      ],
+      "examples": [
+        "Too many connections",
+        "Connection limit exceeded",
+        "Maximum connections reached"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

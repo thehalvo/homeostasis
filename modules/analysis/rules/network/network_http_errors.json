@@ -1,0 +1,442 @@
+{
+  "name": "HTTP/HTTPS Protocol Errors",
+  "description": "Cross-language rules for detecting HTTP and HTTPS protocol errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "http_400_bad_request",
+      "pattern": "(?i)(400|bad\\s+request|malformed\\s+request)",
+      "type": "HTTPBadRequestError",
+      "description": "HTTP 400 Bad Request error",
+      "root_cause": "bad_request",
+      "suggestion": "Validate request format, parameters, and headers. Check request body syntax and encoding.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "400",
+        "bad-request",
+        "validation"
+      ],
+      "examples": [
+        "400 Bad Request",
+        "Bad request format",
+        "Malformed request"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_401_unauthorized",
+      "pattern": "(?i)(401|unauthorized|authentication\\s+required)",
+      "type": "HTTPUnauthorizedError",
+      "description": "HTTP 401 Unauthorized error",
+      "root_cause": "unauthorized",
+      "suggestion": "Provide valid authentication credentials. Check API keys, tokens, or login status.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "401",
+        "unauthorized",
+        "authentication"
+      ],
+      "examples": [
+        "401 Unauthorized",
+        "Authentication required",
+        "Unauthorized access"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_403_forbidden",
+      "pattern": "(?i)(403|forbidden|access\\s+denied)",
+      "type": "HTTPForbiddenError",
+      "description": "HTTP 403 Forbidden error",
+      "root_cause": "forbidden_access",
+      "suggestion": "Check user permissions and access rights. Verify authorization for the requested resource.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "403",
+        "forbidden",
+        "authorization"
+      ],
+      "examples": [
+        "403 Forbidden",
+        "Access denied",
+        "Forbidden resource"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_404_not_found",
+      "pattern": "(?i)(404|not\\s+found|resource\\s+not\\s+found)",
+      "type": "HTTPNotFoundError",
+      "description": "HTTP 404 Not Found error",
+      "root_cause": "resource_not_found",
+      "suggestion": "Verify the URL path and resource location. Check for typos in the endpoint or resource ID.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "404",
+        "not-found",
+        "resource"
+      ],
+      "examples": [
+        "404 Not Found",
+        "Resource not found",
+        "Page not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_405_method_not_allowed",
+      "pattern": "(?i)(405|method\\s+not\\s+allowed|invalid\\s+method)",
+      "type": "HTTPMethodNotAllowedError",
+      "description": "HTTP 405 Method Not Allowed error",
+      "root_cause": "method_not_allowed",
+      "suggestion": "Use the correct HTTP method (GET, POST, PUT, DELETE, etc.) for the endpoint.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "405",
+        "method",
+        "not-allowed"
+      ],
+      "examples": [
+        "405 Method Not Allowed",
+        "Invalid HTTP method",
+        "Method not allowed for this endpoint"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_408_request_timeout",
+      "pattern": "(?i)(408|request\\s+timeout|client\\s+timeout)",
+      "type": "HTTPRequestTimeoutError",
+      "description": "HTTP 408 Request Timeout error",
+      "root_cause": "request_timeout",
+      "suggestion": "Increase client timeout settings or optimize request processing time.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "408",
+        "timeout",
+        "client"
+      ],
+      "examples": [
+        "408 Request Timeout",
+        "Client request timeout",
+        "Request timeout error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_429_too_many_requests",
+      "pattern": "(?i)(429|too\\s+many\\s+requests|rate\\s+limit)",
+      "type": "HTTPTooManyRequestsError",
+      "description": "HTTP 429 Too Many Requests error",
+      "root_cause": "rate_limit_exceeded",
+      "suggestion": "Implement request throttling and respect rate limits. Add retry logic with exponential backoff.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "429",
+        "rate-limit",
+        "throttling"
+      ],
+      "examples": [
+        "429 Too Many Requests",
+        "Rate limit exceeded",
+        "Request throttled"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_500_internal_server_error",
+      "pattern": "(?i)(500|internal\\s+server\\s+error|server\\s+error)",
+      "type": "HTTPInternalServerError",
+      "description": "HTTP 500 Internal Server Error",
+      "root_cause": "internal_server_error",
+      "suggestion": "Check server logs for detailed error information. Server-side issue requires investigation.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "500",
+        "server-error",
+        "internal"
+      ],
+      "examples": [
+        "500 Internal Server Error",
+        "Server error occurred",
+        "Internal server error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_502_bad_gateway",
+      "pattern": "(?i)(502|bad\\s+gateway|invalid\\s+response)",
+      "type": "HTTPBadGatewayError",
+      "description": "HTTP 502 Bad Gateway error",
+      "root_cause": "bad_gateway",
+      "suggestion": "Check upstream server configuration and connectivity. Verify proxy or load balancer settings.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "502",
+        "gateway",
+        "proxy"
+      ],
+      "examples": [
+        "502 Bad Gateway",
+        "Invalid response from upstream",
+        "Bad gateway error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_503_service_unavailable",
+      "pattern": "(?i)(503|service\\s+unavailable|server\\s+unavailable)",
+      "type": "HTTPServiceUnavailableError",
+      "description": "HTTP 503 Service Unavailable error",
+      "root_cause": "service_unavailable",
+      "suggestion": "Server is temporarily unavailable. Implement retry logic and check server capacity.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "503",
+        "unavailable",
+        "maintenance"
+      ],
+      "examples": [
+        "503 Service Unavailable",
+        "Server temporarily unavailable",
+        "Service unavailable"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_504_gateway_timeout",
+      "pattern": "(?i)(504|gateway\\s+timeout|upstream\\s+timeout)",
+      "type": "HTTPGatewayTimeoutError",
+      "description": "HTTP 504 Gateway Timeout error",
+      "root_cause": "gateway_timeout",
+      "suggestion": "Increase gateway timeout settings. Check upstream server response times and capacity.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "504",
+        "gateway",
+        "timeout"
+      ],
+      "examples": [
+        "504 Gateway Timeout",
+        "Upstream server timeout",
+        "Gateway timeout error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_invalid_content_type",
+      "pattern": "(?i)(invalid\\s+content\\s+type|unsupported\\s+media\\s+type|wrong\\s+content\\s+type)",
+      "type": "HTTPContentTypeError",
+      "description": "Invalid or unsupported content type in HTTP request",
+      "root_cause": "invalid_content_type",
+      "suggestion": "Set correct Content-Type header. Ensure server supports the media type being sent.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "content-type",
+        "media-type",
+        "header"
+      ],
+      "examples": [
+        "Invalid content type",
+        "Unsupported media type",
+        "Wrong content type header"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_cors_error",
+      "pattern": "(?i)(cors\\s+error|cross-origin|blocked\\s+by\\s+cors)",
+      "type": "HTTPCORSError",
+      "description": "Cross-Origin Resource Sharing (CORS) error",
+      "root_cause": "cors_blocked",
+      "suggestion": "Configure CORS headers on server. Add allowed origins, methods, and headers.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "cors",
+        "cross-origin",
+        "security"
+      ],
+      "examples": [
+        "CORS error",
+        "Cross-origin request blocked",
+        "Blocked by CORS policy"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "http_redirect_error",
+      "pattern": "(?i)(redirect\\s+error|too\\s+many\\s+redirects|circular\\s+redirect)",
+      "type": "HTTPRedirectError",
+      "description": "HTTP redirect loop or excessive redirects",
+      "root_cause": "redirect_error",
+      "suggestion": "Check redirect configuration to avoid loops. Limit maximum number of redirects.",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "http",
+        "redirect",
+        "loop",
+        "configuration"
+      ],
+      "examples": [
+        "Too many redirects",
+        "Circular redirect detected",
+        "Redirect loop error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "https_certificate_error",
+      "pattern": "(?i)(certificate\\s+error|ssl\\s+certificate|tls\\s+certificate)",
+      "type": "HTTPSCertificateError",
+      "description": "HTTPS certificate validation error",
+      "root_cause": "certificate_error",
+      "suggestion": "Verify SSL/TLS certificate validity and chain. Check certificate expiration and trusted CA.",
+      "category": "network",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "https",
+        "ssl",
+        "tls",
+        "certificate"
+      ],
+      "examples": [
+        "SSL certificate error",
+        "TLS certificate invalid",
+        "Certificate validation failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}
