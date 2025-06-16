@@ -1,0 +1,587 @@
+{
+  "name": "Input Validation Errors",
+  "description": "Cross-language rules for detecting input validation errors and data sanitization issues",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "validation_required_field_missing",
+      "pattern": "(?i)(required|mandatory)\\s+(field|parameter|value|input)\\s+(is\\s+)?(missing|not\\s+provided|empty|null)",
+      "type": "ValidationError",
+      "description": "Required field or parameter is missing from input",
+      "root_cause": "missing_required_field",
+      "suggestion": "Add validation to check for required fields before processing. Implement proper error messages for missing mandatory parameters.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "required-field",
+        "input",
+        "data-integrity"
+      ],
+      "examples": [
+        "Required field 'email' is missing",
+        "Mandatory parameter not provided",
+        "Required value is empty"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_invalid_email_format",
+      "pattern": "(?i)(invalid|malformed|bad)\\s+(email|e-mail)\\s+(format|address|pattern)",
+      "type": "ValidationError",
+      "description": "Email address format validation failed",
+      "root_cause": "invalid_email_format",
+      "suggestion": "Use proper email validation regex or library. Common pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "email",
+        "format",
+        "regex"
+      ],
+      "examples": [
+        "Invalid email format",
+        "Malformed email address",
+        "Bad email pattern"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_string_too_long",
+      "pattern": "(?i)(string|text|input|value)\\s+(is\\s+)?(too\\s+long|exceeds\\s+length|length\\s+limit|maximum\\s+length)",
+      "type": "ValidationError",
+      "description": "Input string exceeds maximum allowed length",
+      "root_cause": "string_length_exceeded",
+      "suggestion": "Add length validation checks. Use string slicing or truncation with user notification. Consider database field limits.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "string-length",
+        "input-size",
+        "limits"
+      ],
+      "examples": [
+        "String is too long",
+        "Input exceeds length limit",
+        "Value exceeds maximum length"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_numeric_range_error",
+      "pattern": "(?i)(number|value|integer|float)\\s+(is\\s+)?(out\\s+of\\s+range|outside\\s+range|exceeds\\s+limit|below\\s+minimum|above\\s+maximum)",
+      "type": "ValidationError",
+      "description": "Numeric value is outside allowed range",
+      "root_cause": "numeric_range_violation",
+      "suggestion": "Add min/max validation checks. Use proper bounds checking before processing numeric inputs.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "numeric",
+        "range",
+        "bounds-checking"
+      ],
+      "examples": [
+        "Number is out of range",
+        "Value outside allowed range",
+        "Integer exceeds maximum limit"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_invalid_date_format",
+      "pattern": "(?i)(invalid|malformed|bad)\\s+(date|datetime|timestamp)\\s+(format|pattern|string)",
+      "type": "ValidationError",
+      "description": "Date/datetime format validation failed",
+      "root_cause": "invalid_date_format",
+      "suggestion": "Use standardized date formats (ISO 8601) or provide clear format examples. Use date parsing libraries with proper error handling.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "date",
+        "datetime",
+        "format"
+      ],
+      "examples": [
+        "Invalid date format",
+        "Malformed datetime string",
+        "Bad timestamp format"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_sql_injection_attempt",
+      "pattern": "(?i)(sql\\s+injection|malicious\\s+query|suspicious\\s+sql|invalid\\s+sql\\s+characters)",
+      "type": "SecurityValidationError",
+      "description": "Potential SQL injection attempt detected in input",
+      "root_cause": "sql_injection_risk",
+      "suggestion": "Use parameterized queries or prepared statements. Sanitize all user inputs. Implement proper input validation and escaping.",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "security",
+        "sql-injection",
+        "sanitization"
+      ],
+      "examples": [
+        "SQL injection attempt detected",
+        "Malicious query blocked",
+        "Suspicious SQL characters found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_xss_attempt",
+      "pattern": "(?i)(xss|cross.site\\s+scripting|malicious\\s+script|script\\s+injection|html\\s+injection)",
+      "type": "SecurityValidationError",
+      "description": "Potential XSS (Cross-Site Scripting) attempt detected",
+      "root_cause": "xss_attack_risk",
+      "suggestion": "Implement proper HTML encoding/escaping. Use Content Security Policy (CSP). Sanitize user inputs and validate against allowlists.",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "security",
+        "xss",
+        "html-injection"
+      ],
+      "examples": [
+        "XSS attempt blocked",
+        "Cross-site scripting detected",
+        "Malicious script injection"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_file_upload_invalid",
+      "pattern": "(?i)(invalid|unsupported|dangerous|malicious)\\s+(file\\s+type|file\\s+format|file\\s+extension|upload)",
+      "type": "ValidationError",
+      "description": "File upload validation failed due to invalid file type or format",
+      "root_cause": "invalid_file_upload",
+      "suggestion": "Implement file type validation using magic bytes, not just extensions. Create allowlists for permitted file types. Add file size limits.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "file-upload",
+        "file-type",
+        "security"
+      ],
+      "examples": [
+        "Invalid file type uploaded",
+        "Unsupported file format",
+        "Dangerous file extension blocked"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_phone_number_invalid",
+      "pattern": "(?i)(invalid|malformed|bad)\\s+(phone|telephone)\\s+(number|format|pattern)",
+      "type": "ValidationError",
+      "description": "Phone number format validation failed",
+      "root_cause": "invalid_phone_format",
+      "suggestion": "Use phone number validation libraries (e.g., libphonenumber). Consider international formats and provide clear format examples.",
+      "category": "validation",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "phone-number",
+        "format",
+        "international"
+      ],
+      "examples": [
+        "Invalid phone number format",
+        "Malformed telephone number",
+        "Bad phone pattern"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_url_invalid",
+      "pattern": "(?i)(invalid|malformed|bad)\\s+(url|uri|link|web\\s+address)",
+      "type": "ValidationError",
+      "description": "URL/URI format validation failed",
+      "root_cause": "invalid_url_format",
+      "suggestion": "Use URL validation libraries or regex patterns. Check for proper protocol, domain format, and handle special characters.",
+      "category": "validation",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "url",
+        "uri",
+        "format"
+      ],
+      "examples": [
+        "Invalid URL format",
+        "Malformed URI",
+        "Bad web address"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_password_strength",
+      "pattern": "(?i)(weak|insecure|invalid)\\s+(password|passphrase)",
+      "type": "ValidationError",
+      "description": "Password does not meet strength requirements",
+      "root_cause": "weak_password",
+      "suggestion": "Implement password complexity rules: minimum length, uppercase/lowercase, numbers, special characters. Consider using password strength meters.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "password",
+        "security",
+        "strength"
+      ],
+      "examples": [
+        "Weak password provided",
+        "Password does not meet requirements",
+        "Insecure password detected"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_json_malformed",
+      "pattern": "(?i)(invalid|malformed|bad)\\s+(json|javascript\\s+object\\s+notation)",
+      "type": "ValidationError",
+      "description": "JSON format validation failed",
+      "root_cause": "malformed_json",
+      "suggestion": "Use proper JSON parsing with error handling. Validate JSON schema if required. Provide clear error messages for JSON syntax issues.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "json",
+        "format",
+        "syntax"
+      ],
+      "examples": [
+        "Invalid JSON format",
+        "Malformed JSON data",
+        "Bad JSON syntax"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_xml_malformed",
+      "pattern": "(?i)(invalid|malformed|bad)\\s+(xml|extensible\\s+markup\\s+language)",
+      "type": "ValidationError",
+      "description": "XML format validation failed",
+      "root_cause": "malformed_xml",
+      "suggestion": "Use XML parsers with proper error handling. Validate against XSD schema if required. Handle XML entity expansion securely.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "xml",
+        "format",
+        "syntax"
+      ],
+      "examples": [
+        "Invalid XML format",
+        "Malformed XML document",
+        "Bad XML syntax"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_csrf_token_invalid",
+      "pattern": "(?i)(invalid|missing|expired)\\s+(csrf|cross.site\\s+request\\s+forgery)\\s+(token|protection)",
+      "type": "SecurityValidationError",
+      "description": "CSRF token validation failed",
+      "root_cause": "csrf_token_invalid",
+      "suggestion": "Implement proper CSRF protection with token generation and validation. Ensure tokens are unique per session and have appropriate expiration.",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "security",
+        "csrf",
+        "token"
+      ],
+      "examples": [
+        "Invalid CSRF token",
+        "Missing CSRF protection",
+        "Expired CSRF token"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_rate_limit_exceeded",
+      "pattern": "(?i)(rate\\s+limit|too\\s+many\\s+requests|request\\s+throttled|quota\\s+exceeded)",
+      "type": "ValidationError",
+      "description": "Request rate limit or quota exceeded",
+      "root_cause": "rate_limit_exceeded",
+      "suggestion": "Implement proper rate limiting with clear error messages. Use exponential backoff for retries. Consider user-specific and IP-based limits.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "rate-limiting",
+        "throttling",
+        "quota"
+      ],
+      "examples": [
+        "Rate limit exceeded",
+        "Too many requests",
+        "Request quota exceeded"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_input_encoding_error",
+      "pattern": "(?i)(encoding|character\\s+set|unicode|utf-8)\\s+(error|invalid|unsupported)",
+      "type": "ValidationError",
+      "description": "Input encoding or character set validation failed",
+      "root_cause": "encoding_error",
+      "suggestion": "Validate input encoding before processing. Use UTF-8 as default. Handle encoding conversion errors gracefully.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "encoding",
+        "unicode",
+        "character-set"
+      ],
+      "examples": [
+        "Encoding error in input",
+        "Invalid character set",
+        "Unicode conversion failed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_regex_pattern_invalid",
+      "pattern": "(?i)(invalid|malformed|bad)\\s+(regex|regular\\s+expression|pattern)",
+      "type": "ValidationError",
+      "description": "Regular expression pattern validation failed",
+      "root_cause": "invalid_regex_pattern",
+      "suggestion": "Test regex patterns thoroughly. Use regex validation libraries. Handle regex compilation errors and provide fallback validation.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "regex",
+        "pattern",
+        "syntax"
+      ],
+      "examples": [
+        "Invalid regex pattern",
+        "Malformed regular expression",
+        "Bad pattern syntax"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_mime_type_mismatch",
+      "pattern": "(?i)(mime\\s+type|content\\s+type)\\s+(mismatch|invalid|unsupported)",
+      "type": "ValidationError",
+      "description": "MIME type validation failed or content type mismatch",
+      "root_cause": "mime_type_mismatch",
+      "suggestion": "Validate MIME types against file content, not just extensions. Use file magic bytes for accurate detection. Maintain allowlists of permitted types.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "mime-type",
+        "content-type",
+        "file-validation"
+      ],
+      "examples": [
+        "MIME type mismatch",
+        "Invalid content type",
+        "Unsupported file type"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_business_rule_violation",
+      "pattern": "(?i)(business\\s+rule|constraint)\\s+(violation|failed|invalid)",
+      "type": "ValidationError",
+      "description": "Business logic validation rule violated",
+      "root_cause": "business_rule_violation",
+      "suggestion": "Review business logic validation rules. Ensure constraints are clearly documented and error messages are user-friendly.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "validation",
+        "business-rules",
+        "constraints",
+        "logic"
+      ],
+      "examples": [
+        "Business rule violation",
+        "Constraint validation failed",
+        "Invalid business logic"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "validation_schema_mismatch",
+      "pattern": "(?i)(schema|structure)\\s+(validation|mismatch|invalid|failed)",
+      "type": "ValidationError",
+      "description": "Data schema validation failed",
+      "root_cause": "schema_validation_failed",
+      "suggestion": "Use schema validation libraries (JSON Schema, Joi, etc.). Provide clear schema documentation and validation error messages.",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "validation",
+        "schema",
+        "structure",
+        "data-integrity"
+      ],
+      "examples": [
+        "Schema validation failed",
+        "Data structure mismatch",
+        "Invalid schema format"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}
