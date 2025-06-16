@@ -23,6 +23,6 @@ sqlalchemy==2.0.21
 
 # Utilities
 python-dotenv==1.0.0
-requests==2.31.0
+requests==2.32.4
 werkzeug==2.3.7
 cachetools==5.3.1
