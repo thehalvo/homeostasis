@@ -1,0 +1,226 @@
+{
+  "description": "Go module system and dependency management error patterns",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "go_mod_not_found",
+      "pattern": "go.mod file not found",
+      "type": "go mod error",
+      "description": "No go.mod file found in the current directory or parent directories",
+      "root_cause": "go_mod_not_found",
+      "suggestion": "Initialize a Go module with 'go mod init [module-name]' in your project directory.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "module"
+    },
+    {
+      "id": "go_mod_invalid_version",
+      "pattern": "invalid version: ([^\\s]+)",
+      "type": "go mod error",
+      "description": "Invalid semantic version specified in go.mod",
+      "root_cause": "go_mod_invalid_version",
+      "suggestion": "Use proper semantic versioning format (e.g., v1.2.3). Check version tags in the repository.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "module"
+    },
+    {
+      "id": "go_mod_version_not_found",
+      "pattern": "version \"([^\"]+)\" invalid: unknown revision ([^\\s]+)",
+      "type": "go mod error",
+      "description": "Specified version or revision does not exist",
+      "root_cause": "go_mod_version_not_found",
+      "suggestion": "Check available versions/tags in the repository. Use 'go list -m -versions [module]' to see available versions.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "module"
+    },
+    {
+      "id": "go_mod_checksum_mismatch",
+      "pattern": "verifying ([^:]+): checksum mismatch",
+      "type": "go mod error",
+      "description": "Module checksum verification failed",
+      "root_cause": "go_mod_checksum_mismatch",
+      "suggestion": "Run 'go clean -modcache' and 'go mod download' to refresh module cache. Check for compromised dependencies.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "module"
+    },
+    {
+      "id": "go_mod_replace_not_found",
+      "pattern": "replacement directory ([^\\s]+) does not exist",
+      "type": "go mod error",
+      "description": "Local replacement directory specified in go.mod does not exist",
+      "root_cause": "go_mod_replace_not_found",
+      "suggestion": "Ensure the replacement directory path is correct or remove the replace directive.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "module"
+    },
+    {
+      "id": "go_mod_proxy_error",
+      "pattern": "([^\\s]+): reading ([^:]+): ([^\\n]+)",
+      "type": "go mod error",
+      "description": "Error accessing module proxy",
+      "root_cause": "go_mod_proxy_error",
+      "suggestion": "Check network connectivity and proxy settings. Try 'go env GOPROXY' to verify proxy configuration.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "module"
+    },
+    {
+      "id": "go_mod_sum_missing",
+      "pattern": "missing go.sum entry for module providing package ([^\\s]+)",
+      "type": "go mod error",
+      "description": "go.sum missing entry for required module",
+      "root_cause": "go_mod_sum_missing",
+      "suggestion": "Run 'go mod tidy' to update go.sum with missing entries.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "module"
+    },
+    {
+      "id": "go_mod_retract_version",
+      "pattern": "module ([^\\s]+)@([^\\s]+): retracted by module author",
+      "type": "go mod error",
+      "description": "Attempting to use a retracted module version",
+      "root_cause": "go_mod_retract_version",
+      "suggestion": "Use a different version that hasn't been retracted. Check module documentation for recommended versions.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "module"
+    },
+    {
+      "id": "go_mod_import_path_mismatch",
+      "pattern": "([^\\s]+): module ([^\\s]+) found \\(([^\\)]*)\\), but does not contain package ([^\\s]+)",
+      "type": "go mod error",
+      "description": "Import path does not match module structure",
+      "root_cause": "go_mod_import_path_mismatch",
+      "suggestion": "Check the correct import path for the package. Verify module structure and available packages.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "module"
+    },
+    {
+      "id": "go_get_404",
+      "pattern": "go get ([^:]+): 404 Not Found",
+      "type": "go get error",
+      "description": "Package not found at specified import path",
+      "root_cause": "go_get_404",
+      "suggestion": "Verify the import path is correct. Check if the repository exists and is publicly accessible.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "dependency"
+    },
+    {
+      "id": "go_get_permission_denied",
+      "pattern": "go get ([^:]+): ([^\\n]*permission denied[^\\n]*)",
+      "type": "go get error",
+      "description": "Permission denied when accessing private repository",
+      "root_cause": "go_get_permission_denied",
+      "suggestion": "Configure Git credentials or SSH keys for private repositories. Set GOPRIVATE environment variable if needed.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "dependency"
+    },
+    {
+      "id": "go_get_timeout",
+      "pattern": "go get ([^:]+): ([^\\n]*timeout[^\\n]*)",
+      "type": "go get error",
+      "description": "Timeout when downloading module",
+      "root_cause": "go_get_timeout",
+      "suggestion": "Check network connectivity. Increase timeout with GOPROXY settings or try again later.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "dependency"
+    },
+    {
+      "id": "go_work_not_found",
+      "pattern": "go.work file not found",
+      "type": "go work error",
+      "description": "No go.work file found for workspace",
+      "root_cause": "go_work_not_found",
+      "suggestion": "Initialize a workspace with 'go work init' or navigate to a directory with a go.work file.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "workspace"
+    },
+    {
+      "id": "go_work_invalid_module",
+      "pattern": "directory ([^\\s]+) is not a module root",
+      "type": "go work error",
+      "description": "Directory specified in go.work is not a valid module root",
+      "root_cause": "go_work_invalid_module",
+      "suggestion": "Ensure the directory contains a go.mod file or remove it from the workspace.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "workspace"
+    },
+    {
+      "id": "go_version_too_old",
+      "pattern": "go.mod requires go ([^\\s]+) or later",
+      "type": "go version error",
+      "description": "Go version is too old for the module requirements",
+      "root_cause": "go_version_too_old",
+      "suggestion": "Update Go to the required version or modify go.mod to use a compatible version.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "version"
+    },
+    {
+      "id": "go_vendor_inconsistent",
+      "pattern": "vendored package ([^\\s]+) differs from non-vendored",
+      "type": "go vendor error",
+      "description": "Vendored package version differs from go.mod requirements",
+      "root_cause": "go_vendor_inconsistent",
+      "suggestion": "Run 'go mod vendor' to update vendored dependencies to match go.mod.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "vendor"
+    },
+    {
+      "id": "go_build_constraint_unsatisfied",
+      "pattern": "build constraint ([^\\s]+) is never satisfied",
+      "type": "build constraint error",
+      "description": "Build constraint cannot be satisfied",
+      "root_cause": "go_build_constraint_unsatisfied",
+      "suggestion": "Check build tags and constraints. Use 'go build -tags' to specify required build tags.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "build"
+    },
+    {
+      "id": "go_cgo_disabled",
+      "pattern": "cgo: C compiler not found",
+      "type": "cgo error",
+      "description": "C compiler not available for cgo builds",
+      "root_cause": "go_cgo_disabled",
+      "suggestion": "Install a C compiler (gcc, clang) or set CGO_ENABLED=0 for pure Go builds.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "cgo"
+    },
+    {
+      "id": "go_embed_not_found",
+      "pattern": "pattern ([^:]+): no matching files found",
+      "type": "embed error",
+      "description": "go:embed directive cannot find matching files",
+      "root_cause": "go_embed_not_found",
+      "suggestion": "Check the file pattern in the go:embed directive and ensure the files exist in the correct location.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "embed"
+    },
+    {
+      "id": "go_mod_graph_cycle",
+      "pattern": "module dependency graph contains cycle",
+      "type": "go mod error",
+      "description": "Circular dependency detected in module graph",
+      "root_cause": "go_mod_graph_cycle",
+      "suggestion": "Review module dependencies and restructure to eliminate circular dependencies.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "module"
+    }
+  ]
+}

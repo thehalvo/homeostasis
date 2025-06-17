@@ -1,0 +1,229 @@
+{
+  "description": "Go JSON, XML, and other serialization error patterns",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "json_unmarshal_type_error",
+      "pattern": "json: cannot unmarshal (\\w+) into Go struct field ([\\w\\.]+) of type (\\w+)",
+      "type": "json.UnmarshalTypeError",
+      "description": "JSON type doesn't match Go struct field type",
+      "root_cause": "json_type_mismatch",
+      "suggestion": "Ensure JSON data types match struct field types or use json.RawMessage for flexible parsing.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "json_unmarshal_syntax_error",
+      "pattern": "invalid character '([^']+)' after ([^\\n]+)",
+      "type": "json.SyntaxError",
+      "description": "Invalid JSON syntax",
+      "root_cause": "json_syntax_error",
+      "suggestion": "Validate JSON format. Use json.Valid() to check JSON before unmarshaling.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "json_unexpected_end",
+      "pattern": "unexpected end of JSON input",
+      "type": "json.SyntaxError",
+      "description": "JSON input is incomplete or truncated",
+      "root_cause": "json_unexpected_end",
+      "suggestion": "Ensure complete JSON data is provided. Check for network issues or incomplete reads.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "json_invalid_utf8",
+      "pattern": "invalid UTF-8 in string",
+      "type": "json.SyntaxError",
+      "description": "Invalid UTF-8 encoding in JSON string",
+      "root_cause": "json_invalid_utf8",
+      "suggestion": "Ensure JSON strings contain valid UTF-8. Clean or validate input data encoding.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "json_unsupported_type",
+      "pattern": "json: unsupported type: ([^\\n]+)",
+      "type": "json.UnsupportedTypeError",
+      "description": "Attempting to marshal unsupported type",
+      "root_cause": "json_unsupported_type",
+      "suggestion": "Implement json.Marshaler interface or convert to supported type before marshaling.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "json_unsupported_value",
+      "pattern": "json: unsupported value: ([^\\n]+)",
+      "type": "json.UnsupportedValueError",
+      "description": "Attempting to marshal unsupported value (NaN, +Inf, -Inf)",
+      "root_cause": "json_unsupported_value",
+      "suggestion": "Handle special float values (NaN, Inf) before marshaling or use custom marshaler.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "json_marshal_cycle",
+      "pattern": "json: encountered a cycle via ([^\\n]+)",
+      "type": "json.MarshalerError",
+      "description": "Circular reference detected during JSON marshaling",
+      "root_cause": "json_marshal_cycle",
+      "suggestion": "Remove circular references or implement custom marshaling logic to handle cycles.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "xml_syntax_error",
+      "pattern": "XML syntax error on line (\\d+): ([^\\n]+)",
+      "type": "xml.SyntaxError",
+      "description": "Invalid XML syntax",
+      "root_cause": "xml_syntax_error",
+      "suggestion": "Validate XML format and structure. Check for proper tag closing and escaping.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "xml_unmarshal_error",
+      "pattern": "expected element type <([^>]+)> but have <([^>]+)>",
+      "type": "xml.UnmarshalError",
+      "description": "XML element type mismatch during unmarshaling",
+      "root_cause": "xml_unmarshal_error",
+      "suggestion": "Ensure XML structure matches the expected Go struct tags and element names.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "gob_decode_error",
+      "pattern": "gob: ([^\\n]+)",
+      "type": "gob.DecodeError",
+      "description": "GOB decoding error",
+      "root_cause": "gob_decode_error",
+      "suggestion": "Ensure encoder and decoder use compatible types. Register custom types with gob.Register().",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "yaml_unmarshal_error",
+      "pattern": "yaml: line (\\d+): ([^\\n]+)",
+      "type": "yaml.TypeError",
+      "description": "YAML unmarshaling error",
+      "root_cause": "yaml_unmarshal_error",
+      "suggestion": "Check YAML syntax and structure. Ensure proper indentation and data types.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization",
+      "framework": "yaml"
+    },
+    {
+      "id": "protobuf_unmarshal_error",
+      "pattern": "proto: ([^\\n]+)",
+      "type": "protobuf.UnmarshalError",
+      "description": "Protocol Buffers unmarshaling error",
+      "root_cause": "protobuf_unmarshal_error",
+      "suggestion": "Ensure protobuf data is valid and matches the message definition. Check field numbers and types.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization",
+      "framework": "protobuf"
+    },
+    {
+      "id": "msgpack_decode_error",
+      "pattern": "msgpack: ([^\\n]+)",
+      "type": "msgpack.DecodeError",
+      "description": "MessagePack decoding error",
+      "root_cause": "msgpack_decode_error",
+      "suggestion": "Ensure MessagePack data format is correct and compatible with target type.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization",
+      "framework": "msgpack"
+    },
+    {
+      "id": "json_tag_invalid",
+      "pattern": "json: invalid tag in field ([\\w\\.]+) of struct ([\\w\\.]+): ([^\\n]+)",
+      "type": "json.TagError",
+      "description": "Invalid JSON struct tag",
+      "root_cause": "json_tag_invalid",
+      "suggestion": "Fix the JSON struct tag syntax. Common tags: json:\"field_name,omitempty\"",
+      "confidence": "high",
+      "severity": "low",
+      "category": "serialization"
+    },
+    {
+      "id": "json_number_range",
+      "pattern": "json: cannot unmarshal number ([^\\s]+) into Go struct field ([\\w\\.]+) of type ([^\\s]+)",
+      "type": "json.UnmarshalTypeError",
+      "description": "Number out of range for target type",
+      "root_cause": "json_number_range",
+      "suggestion": "Use appropriate numeric type that can handle the range of values, or validate input range.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "csv_parse_error",
+      "pattern": "record on line (\\d+): ([^\\n]+)",
+      "type": "csv.ParseError",
+      "description": "CSV parsing error",
+      "root_cause": "csv_parse_error",
+      "suggestion": "Check CSV format, delimiters, and quoting. Handle malformed records appropriately.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "base64_decode_error",
+      "pattern": "illegal base64 data at input byte (\\d+)",
+      "type": "base64.CorruptInputError",
+      "description": "Invalid base64 encoding",
+      "root_cause": "base64_decode_error",
+      "suggestion": "Validate base64 input format. Use base64.StdEncoding.DecodeString() appropriately.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "encoding"
+    },
+    {
+      "id": "hex_decode_error",
+      "pattern": "encoding/hex: ([^\\n]+)",
+      "type": "hex.InvalidByteError",
+      "description": "Invalid hexadecimal encoding",
+      "root_cause": "hex_decode_error",
+      "suggestion": "Ensure input contains only valid hexadecimal characters (0-9, A-F, a-f).",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "encoding"
+    },
+    {
+      "id": "url_parse_error",
+      "pattern": "parse \"([^\"]+)\": ([^\\n]+)",
+      "type": "url.Error",
+      "description": "URL parsing error",
+      "root_cause": "url_parse_error",
+      "suggestion": "Validate URL format. Use url.Parse() and handle parsing errors appropriately.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "parsing"
+    },
+    {
+      "id": "time_parse_error",
+      "pattern": "parsing time \"([^\"]+)\" as \"([^\"]+)\": ([^\\n]+)",
+      "type": "time.ParseError",
+      "description": "Time parsing error - format mismatch",
+      "root_cause": "time_parse_error",
+      "suggestion": "Use correct time format layout. Go uses reference time: Mon Jan 2 15:04:05 MST 2006",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "parsing"
+    }
+  ]
+}

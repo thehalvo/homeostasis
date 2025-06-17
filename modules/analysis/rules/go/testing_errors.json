@@ -1,0 +1,232 @@
+{
+  "description": "Go testing framework error patterns (testing, testify, ginkgo)",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "go_test_panic",
+      "pattern": "panic: ([^\\n]+)\\n.*testing\\.tRunner",
+      "type": "test panic",
+      "description": "Test panicked during execution",
+      "root_cause": "go_test_panic",
+      "suggestion": "Add proper error handling in test code. Use recover() if panic is expected or fix the underlying issue causing the panic.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "testing"
+    },
+    {
+      "id": "go_test_timeout",
+      "pattern": "test timed out after ([^\\s]+)",
+      "type": "test timeout",
+      "description": "Test execution exceeded timeout limit",
+      "root_cause": "go_test_timeout",
+      "suggestion": "Optimize test performance or increase timeout with -timeout flag. Check for infinite loops or blocking operations.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "testing"
+    },
+    {
+      "id": "go_test_data_race",
+      "pattern": "WARNING: DATA RACE.*testing\\.tRunner",
+      "type": "test race condition",
+      "description": "Race condition detected during test execution",
+      "root_cause": "go_test_data_race",
+      "suggestion": "Use proper synchronization (mutex, channels) in test code. Run tests with -race flag to detect race conditions.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "testing"
+    },
+    {
+      "id": "go_test_assertion_failed",
+      "pattern": "Test failed\\. Expected: ([^\\n]+), Actual: ([^\\n]+)",
+      "type": "assertion failure",
+      "description": "Test assertion failed - expected vs actual mismatch",
+      "root_cause": "go_test_assertion_failed",
+      "suggestion": "Review test expectations and actual implementation. Check for edge cases or incorrect test data.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "testing"
+    },
+    {
+      "id": "testify_assertion_failed",
+      "pattern": "Error Trace:[^\\n]*\\n[^\\n]*Error:[^\\n]*not equal[^\\n]*\\n[^\\n]*expected: ([^\\n]+)\\n[^\\n]*actual  : ([^\\n]+)",
+      "type": "testify assertion",
+      "description": "Testify assertion failed - values not equal",
+      "root_cause": "testify_assertion_failed",
+      "suggestion": "Check the expected vs actual values. Use testify.Equal() or testify.EqualValues() appropriately.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "testing",
+      "framework": "testify"
+    },
+    {
+      "id": "testify_nil_assertion",
+      "pattern": "Error Trace:[^\\n]*\\n[^\\n]*Error:[^\\n]*Expected nil, but got:? ([^\\n]+)",
+      "type": "testify assertion",
+      "description": "Testify assertion failed - expected nil but got non-nil value",
+      "root_cause": "testify_nil_assertion",
+      "suggestion": "Check why the value is not nil. Use testify.Nil() for nil checks.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "testing",
+      "framework": "testify"
+    },
+    {
+      "id": "testify_contains_assertion",
+      "pattern": "Error Trace:[^\\n]*\\n[^\\n]*Error:[^\\n]*\"([^\"]+)\" does not contain \"([^\"]+)\"",
+      "type": "testify assertion",
+      "description": "Testify assertion failed - string does not contain expected substring",
+      "root_cause": "testify_contains_assertion",
+      "suggestion": "Check the string content and expected substring. Use testify.Contains() for substring checks.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "testing",
+      "framework": "testify"
+    },
+    {
+      "id": "go_benchmark_allocation",
+      "pattern": "testing: ([^\\s]+) benchmark ran 0 times",
+      "type": "benchmark error",
+      "description": "Benchmark did not run any iterations",
+      "root_cause": "go_benchmark_allocation",
+      "suggestion": "Check benchmark function implementation. Ensure it follows proper benchmark patterns (func BenchmarkXxx(*testing.B)).",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "benchmarking"
+    },
+    {
+      "id": "go_test_coverage_fail",
+      "pattern": "coverage: ([\\d\\.]+)% of statements.*FAIL",
+      "type": "coverage failure",
+      "description": "Test coverage below threshold",
+      "root_cause": "go_test_coverage_fail",
+      "suggestion": "Add more test cases to increase coverage or adjust coverage thresholds if appropriate.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "coverage"
+    },
+    {
+      "id": "ginkgo_spec_panic",
+      "pattern": "Panic in Spec.*\\n.*panic: ([^\\n]+)",
+      "type": "ginkgo panic",
+      "description": "Ginkgo spec panicked during execution",
+      "root_cause": "ginkgo_spec_panic",
+      "suggestion": "Add proper error handling in Ginkgo specs. Use GinkgoRecover() if needed.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "testing",
+      "framework": "ginkgo"
+    },
+    {
+      "id": "ginkgo_timeout",
+      "pattern": "\\[TIMEOUT\\] in ([^\\n]+)",
+      "type": "ginkgo timeout",
+      "description": "Ginkgo spec timed out",
+      "root_cause": "ginkgo_timeout",
+      "suggestion": "Optimize spec performance or increase timeout using SetDefaultEventuallyTimeout().",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "testing",
+      "framework": "ginkgo"
+    },
+    {
+      "id": "gomega_expectation_failed",
+      "pattern": "Expected[^\\n]*\\n.*to equal[^\\n]*\\n.*([^\\n]+)",
+      "type": "gomega assertion",
+      "description": "Gomega expectation failed",
+      "root_cause": "gomega_expectation_failed",
+      "suggestion": "Review the expectation and actual value. Use appropriate Gomega matchers.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "testing",
+      "framework": "gomega"
+    },
+    {
+      "id": "go_test_setup_teardown",
+      "pattern": "TestMain should call os.Exit",
+      "type": "test setup error",
+      "description": "TestMain function not properly calling os.Exit",
+      "root_cause": "go_test_setup_teardown",
+      "suggestion": "Ensure TestMain calls os.Exit(m.Run()) to properly run tests and exit.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "testing"
+    },
+    {
+      "id": "go_test_parallel_ordering",
+      "pattern": "testing: ([^\\s]+) has been running longer than expected",
+      "type": "test ordering",
+      "description": "Parallel test running longer than expected",
+      "root_cause": "go_test_parallel_ordering",
+      "suggestion": "Check for test dependencies or shared state in parallel tests. Use t.Parallel() appropriately.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "testing"
+    },
+    {
+      "id": "go_test_helper_not_marked",
+      "pattern": "testing: ([^\\s]+) should be marked as a helper function",
+      "type": "test helper",
+      "description": "Test helper function not marked with t.Helper()",
+      "root_cause": "go_test_helper_not_marked",
+      "suggestion": "Add t.Helper() at the beginning of test helper functions for better error reporting.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "testing"
+    },
+    {
+      "id": "go_test_table_missing_field",
+      "pattern": "missing field ([^\\s]+) in struct literal",
+      "type": "table test error",
+      "description": "Missing field in table-driven test struct",
+      "root_cause": "go_test_table_missing_field",
+      "suggestion": "Add the missing field to the test case struct or use struct field tags appropriately.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "testing"
+    },
+    {
+      "id": "go_test_mock_expectation",
+      "pattern": "mock: Unexpected call to ([^\\s]+)",
+      "type": "mock error",
+      "description": "Unexpected method call on mock object",
+      "root_cause": "go_test_mock_expectation",
+      "suggestion": "Set up proper mock expectations or verify the code under test is calling the expected methods.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "mocking"
+    },
+    {
+      "id": "go_test_mock_not_satisfied",
+      "pattern": "mock: expected method ([^\\s]+) to be called ([^\\s]+) time\\(s\\), but got ([^\\s]+)",
+      "type": "mock error",
+      "description": "Mock expectations not satisfied",
+      "root_cause": "go_test_mock_not_satisfied",
+      "suggestion": "Verify the code under test calls the mocked methods the expected number of times.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "mocking"
+    },
+    {
+      "id": "go_test_fixture_cleanup",
+      "pattern": "test fixture cleanup failed: ([^\\n]+)",
+      "type": "fixture error",
+      "description": "Test fixture cleanup failed",
+      "root_cause": "go_test_fixture_cleanup",
+      "suggestion": "Ensure proper cleanup in test teardown. Use t.Cleanup() or defer statements for resource cleanup.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "testing"
+    },
+    {
+      "id": "go_test_database_transaction",
+      "pattern": "sql: transaction has already been committed or rolled back",
+      "type": "database test error",
+      "description": "Database transaction already completed in test",
+      "root_cause": "go_test_database_transaction",
+      "suggestion": "Ensure proper transaction lifecycle management in database tests. Use test transactions or proper cleanup.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "database"
+    }
+  ]
+}

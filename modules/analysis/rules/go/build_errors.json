@@ -1,0 +1,248 @@
+{
+  "description": "Go build and compilation error patterns",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "go_undefined_function",
+      "pattern": "undefined: ([\\w\\.]+)",
+      "type": "compile error",
+      "description": "Function or variable is not defined in the current scope",
+      "root_cause": "go_undefined_function",
+      "suggestion": "Import the required package or define the function/variable. Check for typos in the name.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile"
+    },
+    {
+      "id": "go_undefined_type",
+      "pattern": "undefined: ([\\w\\.]+) \\(type\\)",
+      "type": "compile error",
+      "description": "Type is not defined or imported",
+      "root_cause": "go_undefined_type",
+      "suggestion": "Import the package that defines this type or define the type if it's custom.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile"
+    },
+    {
+      "id": "go_cannot_use_as_type",
+      "pattern": "cannot use ([^\\(]+) \\(type ([^\\)]+)\\) as type ([^\\s]+)",
+      "type": "compile error",
+      "description": "Type mismatch - cannot use one type as another",
+      "root_cause": "go_type_mismatch",
+      "suggestion": "Convert the value to the correct type or change the variable type declaration.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_invalid_operation",
+      "pattern": "invalid operation: ([^\\(]+) \\(([^\\)]+)\\)",
+      "type": "compile error",
+      "description": "Operation is not valid for the given type",
+      "root_cause": "go_invalid_operation",
+      "suggestion": "Check that the operation is supported for the data type or convert to an appropriate type.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_syntax_error",
+      "pattern": "syntax error: ([^\\n]+)",
+      "type": "compile error",
+      "description": "Syntax error in Go code",
+      "root_cause": "go_syntax_error",
+      "suggestion": "Check the syntax at the indicated location. Common issues include missing semicolons, brackets, or incorrect keywords.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile"
+    },
+    {
+      "id": "go_unexpected_token",
+      "pattern": "syntax error: unexpected ([^,\\s]+)",
+      "type": "compile error",
+      "description": "Unexpected token found during parsing",
+      "root_cause": "go_unexpected_token",
+      "suggestion": "Review the code structure around the indicated token. Check for missing or extra brackets, parentheses, or keywords.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile"
+    },
+    {
+      "id": "go_redeclared_variable",
+      "pattern": "([\\w\\.]+) redeclared in this block",
+      "type": "compile error",
+      "description": "Variable or function is declared multiple times in the same scope",
+      "root_cause": "go_redeclared_variable",
+      "suggestion": "Remove duplicate declarations or use different variable names.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_unused_import",
+      "pattern": "imported and not used: \"([^\"]+)\"",
+      "type": "compile error",
+      "description": "Import statement for unused package",
+      "root_cause": "go_unused_import",
+      "suggestion": "Remove the unused import or use the package in your code.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "compile"
+    },
+    {
+      "id": "go_unused_variable",
+      "pattern": "([\\w\\.]+) declared and not used",
+      "type": "compile error",
+      "description": "Variable is declared but never used",
+      "root_cause": "go_unused_variable",
+      "suggestion": "Either use the variable or remove its declaration. Use '_' for intentionally unused variables.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "compile"
+    },
+    {
+      "id": "go_cannot_convert",
+      "pattern": "cannot convert ([^\\(]+) \\(type ([^\\)]+)\\) to type ([^\\s]+)",
+      "type": "compile error",
+      "description": "Cannot convert between incompatible types",
+      "root_cause": "go_cannot_convert",
+      "suggestion": "Use explicit type conversion or create a conversion function for custom types.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_missing_return",
+      "pattern": "missing return at end of function",
+      "type": "compile error",
+      "description": "Function with return type is missing a return statement",
+      "root_cause": "go_missing_return",
+      "suggestion": "Add a return statement at the end of the function or ensure all code paths return a value.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_too_many_return_values",
+      "pattern": "too many return values",
+      "type": "compile error",
+      "description": "Function returns more values than expected",
+      "root_cause": "go_too_many_return_values",
+      "suggestion": "Check the function signature and ensure the correct number of return values.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_not_enough_return_values",
+      "pattern": "not enough return values",
+      "type": "compile error",
+      "description": "Function returns fewer values than expected",
+      "root_cause": "go_not_enough_return_values",
+      "suggestion": "Check the function signature and provide all required return values.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_invalid_memory_address",
+      "pattern": "invalid memory address or nil pointer dereference",
+      "type": "runtime error",
+      "description": "Attempted to access memory through a nil pointer",
+      "root_cause": "go_nil_pointer_dereference",
+      "suggestion": "Add nil checks before dereferencing pointers. Use safe pointer operations.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "runtime"
+    },
+    {
+      "id": "go_cannot_call_pointer",
+      "pattern": "cannot call pointer method ([^\\s]+) on ([^\\s]+)",
+      "type": "compile error",
+      "description": "Cannot call pointer method on non-pointer value",
+      "root_cause": "go_pointer_method_call",
+      "suggestion": "Use a pointer to the value (&value) or define the method on the value type.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_invalid_receiver",
+      "pattern": "invalid receiver type ([^\\s]+) \\(([^\\)]+)\\)",
+      "type": "compile error",
+      "description": "Method receiver type is invalid",
+      "root_cause": "go_invalid_receiver",
+      "suggestion": "Method receivers must be defined on types in the same package. Use a valid receiver type.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_multiple_value_context",
+      "pattern": "multiple-value ([^\\s]+) in single-value context",
+      "type": "compile error",
+      "description": "Function returning multiple values used in single-value context",
+      "root_cause": "go_multiple_value_context",
+      "suggestion": "Handle all return values or use '_' to ignore unwanted values.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_cannot_range_over",
+      "pattern": "cannot range over ([^\\(]+) \\(type ([^\\)]+)\\)",
+      "type": "compile error",
+      "description": "Attempted to range over non-iterable type",
+      "root_cause": "go_cannot_range_over",
+      "suggestion": "Ensure the value is a slice, array, map, channel, or string before using range.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_struct_field_not_found",
+      "pattern": "([^\\s]+) has no field or method ([^\\s]+)",
+      "type": "compile error",
+      "description": "Accessing non-existent field or method on struct",
+      "root_cause": "go_struct_field_not_found",
+      "suggestion": "Check the struct definition for correct field names. Ensure the field is exported if accessing from another package.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_interface_not_satisfied",
+      "pattern": "([^\\s]+) does not implement ([^\\s]+) \\(missing ([^\\)]+) method\\)",
+      "type": "compile error",
+      "description": "Type does not implement required interface methods",
+      "root_cause": "go_interface_not_satisfied",
+      "suggestion": "Implement the missing method(s) to satisfy the interface.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "go_package_not_found",
+      "pattern": "package ([^\\s]+): cannot find package",
+      "type": "compile error",
+      "description": "Cannot find the specified package",
+      "root_cause": "go_package_not_found",
+      "suggestion": "Ensure the package is installed (go get) and the import path is correct.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile"
+    },
+    {
+      "id": "go_cyclic_import",
+      "pattern": "import cycle not allowed",
+      "type": "compile error",
+      "description": "Circular dependency detected between packages",
+      "root_cause": "go_cyclic_import",
+      "suggestion": "Restructure packages to eliminate circular dependencies. Create a common package or use dependency injection.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile"
+    }
+  ]
+}

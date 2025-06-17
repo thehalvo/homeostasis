@@ -1,0 +1,259 @@
+{
+  "description": "Go microservices, gRPC, and distributed systems error patterns",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "grpc_connection_refused",
+      "pattern": "rpc error: code = Unavailable desc = connection refused",
+      "type": "gRPC error",
+      "description": "gRPC service unavailable - connection refused",
+      "root_cause": "grpc_connection_refused",
+      "suggestion": "Ensure gRPC server is running and accessible. Check network connectivity and service discovery configuration.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "grpc"
+    },
+    {
+      "id": "grpc_deadline_exceeded",
+      "pattern": "rpc error: code = DeadlineExceeded desc = ([^\\n]+)",
+      "type": "gRPC timeout",
+      "description": "gRPC request deadline exceeded",
+      "root_cause": "grpc_deadline_exceeded",
+      "suggestion": "Increase client timeout, optimize server processing time, or implement request streaming for long operations.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "grpc"
+    },
+    {
+      "id": "grpc_unimplemented",
+      "pattern": "rpc error: code = Unimplemented desc = ([^\\n]+)",
+      "type": "gRPC error",
+      "description": "gRPC method not implemented on server",
+      "root_cause": "grpc_unimplemented",
+      "suggestion": "Implement the required gRPC method on the server or check API version compatibility.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "grpc"
+    },
+    {
+      "id": "grpc_invalid_argument",
+      "pattern": "rpc error: code = InvalidArgument desc = ([^\\n]+)",
+      "type": "gRPC validation",
+      "description": "Invalid argument passed to gRPC method",
+      "root_cause": "grpc_invalid_argument",
+      "suggestion": "Validate input parameters before making gRPC calls. Check protobuf message structure and field requirements.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "grpc"
+    },
+    {
+      "id": "grpc_permission_denied",
+      "pattern": "rpc error: code = PermissionDenied desc = ([^\\n]+)",
+      "type": "gRPC auth",
+      "description": "gRPC permission denied - authentication/authorization failure",
+      "root_cause": "grpc_permission_denied",
+      "suggestion": "Check authentication tokens, credentials, and authorization policies. Ensure proper gRPC interceptors are configured.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "grpc"
+    },
+    {
+      "id": "grpc_not_found",
+      "pattern": "rpc error: code = NotFound desc = ([^\\n]+)",
+      "type": "gRPC error",
+      "description": "gRPC resource not found",
+      "root_cause": "grpc_not_found",
+      "suggestion": "Verify resource exists, check input parameters, or handle NotFound errors gracefully in client code.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "grpc"
+    },
+    {
+      "id": "grpc_resource_exhausted",
+      "pattern": "rpc error: code = ResourceExhausted desc = ([^\\n]+)",
+      "type": "gRPC rate limit",
+      "description": "gRPC resource exhausted - rate limiting or quota exceeded",
+      "root_cause": "grpc_resource_exhausted",
+      "suggestion": "Implement client-side rate limiting, use exponential backoff, or increase server capacity/quotas.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "grpc"
+    },
+    {
+      "id": "grpc_internal_error",
+      "pattern": "rpc error: code = Internal desc = ([^\\n]+)",
+      "type": "gRPC server error",
+      "description": "Internal server error in gRPC service",
+      "root_cause": "grpc_internal_error",
+      "suggestion": "Check server logs for detailed error information. Implement proper error handling and recovery in server code.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "grpc"
+    },
+    {
+      "id": "consul_service_discovery_failed",
+      "pattern": "consul: ([^\\n]*service discovery[^\\n]*failed[^\\n]*)",
+      "type": "service discovery",
+      "description": "Consul service discovery failure",
+      "root_cause": "consul_service_discovery_failed",
+      "suggestion": "Check Consul agent connectivity, service registration, and health check configuration.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "service_discovery"
+    },
+    {
+      "id": "etcd_connection_failed",
+      "pattern": "etcd: ([^\\n]*connection[^\\n]*failed[^\\n]*)",
+      "type": "service discovery",
+      "description": "etcd connection failure",
+      "root_cause": "etcd_connection_failed",
+      "suggestion": "Verify etcd cluster health, network connectivity, and authentication credentials.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "service_discovery"
+    },
+    {
+      "id": "circuit_breaker_open",
+      "pattern": "circuit breaker is open",
+      "type": "circuit breaker",
+      "description": "Circuit breaker opened due to repeated failures",
+      "root_cause": "circuit_breaker_open",
+      "suggestion": "Check downstream service health, implement fallback mechanisms, and review circuit breaker thresholds.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "resilience"
+    },
+    {
+      "id": "load_balancer_no_healthy_endpoints",
+      "pattern": "no healthy endpoints available",
+      "type": "load balancing",
+      "description": "Load balancer has no healthy service endpoints",
+      "root_cause": "load_balancer_no_healthy_endpoints",
+      "suggestion": "Check service health, health check configuration, and service registration status.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "load_balancing"
+    },
+    {
+      "id": "distributed_lock_timeout",
+      "pattern": "distributed lock timeout|lock acquisition timeout",
+      "type": "distributed systems",
+      "description": "Failed to acquire distributed lock within timeout",
+      "root_cause": "distributed_lock_timeout",
+      "suggestion": "Increase lock timeout, check for lock contention, or implement lock-free algorithms where possible.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "coordination"
+    },
+    {
+      "id": "message_queue_connection_lost",
+      "pattern": "(kafka|rabbitmq|nats): connection lost|connection closed",
+      "type": "message queue",
+      "description": "Message queue connection lost",
+      "root_cause": "message_queue_connection_lost",
+      "suggestion": "Implement reconnection logic, check network stability, and configure appropriate timeouts and heartbeats.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "messaging"
+    },
+    {
+      "id": "kafka_consumer_lag",
+      "pattern": "kafka: consumer lag ([^\\n]+)",
+      "type": "kafka error",
+      "description": "Kafka consumer lag detected",
+      "root_cause": "kafka_consumer_lag",
+      "suggestion": "Scale consumer instances, optimize message processing, or adjust consumer configuration for better throughput.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "messaging"
+    },
+    {
+      "id": "redis_connection_pool_exhausted",
+      "pattern": "redis: connection pool exhausted",
+      "type": "redis error",
+      "description": "Redis connection pool has no available connections",
+      "root_cause": "redis_connection_pool_exhausted",
+      "suggestion": "Increase pool size, ensure connections are properly closed, or implement connection timeouts.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "caching"
+    },
+    {
+      "id": "service_mesh_sidecar_unavailable",
+      "pattern": "(istio|linkerd|envoy): sidecar unavailable",
+      "type": "service mesh",
+      "description": "Service mesh sidecar proxy unavailable",
+      "root_cause": "service_mesh_sidecar_unavailable",
+      "suggestion": "Check sidecar proxy health, service mesh configuration, and pod injection settings.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "service_mesh"
+    },
+    {
+      "id": "distributed_tracing_span_lost",
+      "pattern": "(jaeger|zipkin): span lost|trace incomplete",
+      "type": "observability",
+      "description": "Distributed tracing span data lost",
+      "root_cause": "distributed_tracing_span_lost",
+      "suggestion": "Check tracing collector health, adjust sampling rates, or increase buffer sizes for trace data.",
+      "confidence": "low",
+      "severity": "low",
+      "category": "observability"
+    },
+    {
+      "id": "api_gateway_rate_limit",
+      "pattern": "api gateway: rate limit exceeded",
+      "type": "api gateway",
+      "description": "API gateway rate limit exceeded",
+      "root_cause": "api_gateway_rate_limit",
+      "suggestion": "Implement client-side rate limiting, use exponential backoff, or request rate limit increase.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "api_gateway"
+    },
+    {
+      "id": "service_discovery_stale_data",
+      "pattern": "service discovery: stale data detected",
+      "type": "service discovery",
+      "description": "Stale service discovery data detected",
+      "root_cause": "service_discovery_stale_data",
+      "suggestion": "Check service discovery refresh intervals, health check frequency, and network partitioning issues.",
+      "confidence": "low",
+      "severity": "medium",
+      "category": "service_discovery"
+    },
+    {
+      "id": "microservice_dependency_timeout",
+      "pattern": "service ([^\\s]+): dependency timeout",
+      "type": "service dependency",
+      "description": "Microservice dependency call timeout",
+      "root_cause": "microservice_dependency_timeout",
+      "suggestion": "Implement circuit breaker pattern, add retry logic with exponential backoff, or increase timeout values.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "dependencies"
+    },
+    {
+      "id": "container_orchestration_pod_evicted",
+      "pattern": "(kubernetes|k8s): pod evicted",
+      "type": "orchestration",
+      "description": "Container pod evicted by orchestrator",
+      "root_cause": "container_orchestration_pod_evicted",
+      "suggestion": "Check resource limits, node capacity, and pod quality of service settings. Review eviction policies.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "orchestration"
+    },
+    {
+      "id": "health_check_failure",
+      "pattern": "health check failed: ([^\\n]+)",
+      "type": "health check",
+      "description": "Service health check failure",
+      "root_cause": "health_check_failure",
+      "suggestion": "Review health check implementation, check dependencies, and ensure proper error handling in health endpoints.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "health"
+    }
+  ]
+}

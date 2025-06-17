@@ -1,0 +1,226 @@
+{
+  "description": "Go performance and memory-related error patterns",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "go_out_of_memory",
+      "pattern": "fatal error: out of memory|runtime: out of memory",
+      "type": "runtime error",
+      "description": "Application ran out of available memory",
+      "root_cause": "go_out_of_memory",
+      "suggestion": "Optimize memory usage, use memory profiling (go tool pprof), implement object pooling, or increase available memory.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "memory"
+    },
+    {
+      "id": "go_stack_overflow",
+      "pattern": "runtime: goroutine stack exceeds (\\d+)-byte limit|stack overflow",
+      "type": "runtime error",
+      "description": "Goroutine stack exceeded size limit",
+      "root_cause": "go_stack_overflow",
+      "suggestion": "Check for infinite recursion, reduce function call depth, or increase stack size if legitimate deep recursion is needed.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "memory"
+    },
+    {
+      "id": "go_gc_assist_wait",
+      "pattern": "GC assist wait",
+      "type": "performance warning",
+      "description": "Garbage collector assist taking too long",
+      "root_cause": "go_gc_pressure",
+      "suggestion": "Reduce allocation rate, tune GOGC, implement object pooling, or optimize memory usage patterns.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "gc"
+    },
+    {
+      "id": "go_too_many_open_files",
+      "pattern": "too many open files",
+      "type": "resource error",
+      "description": "File descriptor limit exceeded",
+      "root_cause": "go_too_many_open_files",
+      "suggestion": "Close files/connections properly, increase ulimit, implement connection pooling, or add resource cleanup.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "resources"
+    },
+    {
+      "id": "go_memory_leak_suspected",
+      "pattern": "runtime: memory allocated by OS \\((\\d+)\\) exceeds heap size \\((\\d+)\\)",
+      "type": "memory warning",
+      "description": "Potential memory leak - OS allocation exceeds heap",
+      "root_cause": "go_memory_leak_suspected",
+      "suggestion": "Profile memory usage, check for goroutine leaks, ensure proper cleanup of resources, and review caching strategies.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "memory"
+    },
+    {
+      "id": "go_goroutine_leak",
+      "pattern": "created by ([^\\n]+)\\n[^\\n]*\\n[^\\n]*goroutine (\\d+) \\[([^\\]]+), (\\d+) minutes\\]:",
+      "type": "goroutine leak",
+      "description": "Long-running goroutine potentially leaked",
+      "root_cause": "go_goroutine_leak",
+      "suggestion": "Check for missing context cancellation, ensure goroutines have proper exit conditions, and implement timeouts.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "goroutines"
+    },
+    {
+      "id": "go_channel_buffer_full",
+      "pattern": "fatal error: all goroutines are asleep - deadlock!.*chan send.*",
+      "type": "channel deadlock",
+      "description": "Channel buffer full causing deadlock",
+      "root_cause": "go_channel_buffer_full",
+      "suggestion": "Increase channel buffer size, add more receivers, or implement non-blocking sends with select.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "channels"
+    },
+    {
+      "id": "go_cpu_profiling_detected",
+      "pattern": "cpu profiling enabled, ([^\\n]+)",
+      "type": "profiling info",
+      "description": "CPU profiling information available",
+      "root_cause": "go_cpu_profiling_detected",
+      "suggestion": "Analyze CPU profile with 'go tool pprof' to identify performance bottlenecks.",
+      "confidence": "high",
+      "severity": "info",
+      "category": "profiling"
+    },
+    {
+      "id": "go_heap_profiling_detected",
+      "pattern": "heap profiling enabled, ([^\\n]+)",
+      "type": "profiling info",
+      "description": "Heap profiling information available",
+      "root_cause": "go_heap_profiling_detected",
+      "suggestion": "Analyze heap profile with 'go tool pprof' to identify memory allocation patterns.",
+      "confidence": "high",
+      "severity": "info",
+      "category": "profiling"
+    },
+    {
+      "id": "go_slice_growth_inefficient",
+      "pattern": "runtime: slice grew too large|slice bounds out of range",
+      "type": "performance warning",
+      "description": "Inefficient slice growth pattern",
+      "root_cause": "go_slice_growth_inefficient",
+      "suggestion": "Pre-allocate slices with known capacity using make([]T, 0, capacity) to avoid repeated reallocations.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "performance"
+    },
+    {
+      "id": "go_string_concatenation_inefficient",
+      "pattern": "runtime: ([^\\n]*string concatenation[^\\n]*)",
+      "type": "performance warning",
+      "description": "Inefficient string concatenation pattern",
+      "root_cause": "go_string_concatenation_inefficient",
+      "suggestion": "Use strings.Builder for multiple concatenations or fmt.Sprintf for formatted strings.",
+      "confidence": "low",
+      "severity": "low",
+      "category": "performance"
+    },
+    {
+      "id": "go_reflect_overhead",
+      "pattern": "runtime: ([^\\n]*reflect[^\\n]*performance[^\\n]*)",
+      "type": "performance warning",
+      "description": "Reflection causing performance overhead",
+      "root_cause": "go_reflect_overhead",
+      "suggestion": "Minimize reflection usage in hot paths, cache reflect.Type and reflect.Value objects, or use code generation.",
+      "confidence": "low",
+      "severity": "low",
+      "category": "performance"
+    },
+    {
+      "id": "go_cgo_performance",
+      "pattern": "runtime: ([^\\n]*cgo call[^\\n]*slow[^\\n]*)",
+      "type": "performance warning",
+      "description": "CGO calls causing performance issues",
+      "root_cause": "go_cgo_performance",
+      "suggestion": "Minimize CGO calls, batch operations, or consider pure Go alternatives for better performance.",
+      "confidence": "low",
+      "severity": "low",
+      "category": "performance"
+    },
+    {
+      "id": "go_finalizer_pressure",
+      "pattern": "runtime: ([^\\n]*finalizer[^\\n]*pressure[^\\n]*)",
+      "type": "gc warning",
+      "description": "Finalizer pressure affecting garbage collection",
+      "root_cause": "go_finalizer_pressure",
+      "suggestion": "Reduce reliance on finalizers, implement explicit cleanup, or use object pooling patterns.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "gc"
+    },
+    {
+      "id": "go_map_concurrent_access",
+      "pattern": "fatal error: concurrent map (read and map write|writes)",
+      "type": "concurrency error",
+      "description": "Concurrent map access without synchronization",
+      "root_cause": "go_map_concurrent_access",
+      "suggestion": "Use sync.RWMutex to protect map access or use sync.Map for high-concurrency scenarios.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency"
+    },
+    {
+      "id": "go_http_client_timeout",
+      "pattern": "net/http: request canceled while waiting for connection",
+      "type": "timeout error",
+      "description": "HTTP client request timeout due to connection issues",
+      "root_cause": "go_http_client_timeout",
+      "suggestion": "Increase timeout values, implement retry logic, or optimize connection pooling settings.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "network"
+    },
+    {
+      "id": "go_channel_select_blocking",
+      "pattern": "fatal error: all goroutines are asleep - deadlock!.*select.*",
+      "type": "select deadlock",
+      "description": "Select statement causing deadlock",
+      "root_cause": "go_channel_select_blocking",
+      "suggestion": "Add default case to select statement or ensure at least one channel operation can proceed.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "channels"
+    },
+    {
+      "id": "go_context_deadline_performance",
+      "pattern": "context deadline exceeded.*([^\\n]*slow[^\\n]*)",
+      "type": "performance timeout",
+      "description": "Operation timed out due to poor performance",
+      "root_cause": "go_context_deadline_performance",
+      "suggestion": "Profile and optimize the slow operation, increase context timeout if appropriate, or implement operation cancellation.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "performance"
+    },
+    {
+      "id": "go_database_connection_pool_exhausted",
+      "pattern": "sql: database is closed|too many connections",
+      "type": "database performance",
+      "description": "Database connection pool exhausted",
+      "root_cause": "go_database_connection_pool_exhausted",
+      "suggestion": "Increase connection pool size, ensure connections are properly closed, or implement connection timeouts.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "database"
+    },
+    {
+      "id": "go_large_allocation",
+      "pattern": "runtime: large object allocation: ([^\\n]+)",
+      "type": "memory warning",
+      "description": "Large memory allocation detected",
+      "root_cause": "go_large_allocation",
+      "suggestion": "Consider streaming processing, chunk data into smaller pieces, or use memory mapping for large data sets.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "memory"
+    }
+  ]
+}

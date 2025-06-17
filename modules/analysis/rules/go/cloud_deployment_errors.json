@@ -1,0 +1,270 @@
+{
+  "description": "Go cloud deployment and infrastructure error patterns",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "aws_credentials_not_found",
+      "pattern": "NoCredentialsError|aws: credentials not found",
+      "type": "AWS error",
+      "description": "AWS credentials not configured or found",
+      "root_cause": "aws_credentials_not_found",
+      "suggestion": "Configure AWS credentials using environment variables, IAM roles, or AWS credentials file.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "aws"
+    },
+    {
+      "id": "aws_region_not_set",
+      "pattern": "aws: region not set|MissingRegion",
+      "type": "AWS error",
+      "description": "AWS region not specified",
+      "root_cause": "aws_region_not_set",
+      "suggestion": "Set AWS region using AWS_REGION environment variable or in AWS config.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "aws"
+    },
+    {
+      "id": "aws_permission_denied",
+      "pattern": "AccessDenied|aws: access denied",
+      "type": "AWS permission",
+      "description": "AWS permission denied for operation",
+      "root_cause": "aws_permission_denied",
+      "suggestion": "Check IAM policies and permissions for the required AWS service operations.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "aws"
+    },
+    {
+      "id": "docker_daemon_not_running",
+      "pattern": "Cannot connect to the Docker daemon|docker: daemon not running",
+      "type": "Docker error",
+      "description": "Docker daemon is not running or accessible",
+      "root_cause": "docker_daemon_not_running",
+      "suggestion": "Start Docker daemon or check Docker service status. Ensure proper Docker permissions.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "docker"
+    },
+    {
+      "id": "docker_image_not_found",
+      "pattern": "docker: image not found|pull access denied|repository does not exist",
+      "type": "Docker error",
+      "description": "Docker image not found or inaccessible",
+      "root_cause": "docker_image_not_found",
+      "suggestion": "Check image name and tag. Ensure image exists in registry and you have pull permissions.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "docker"
+    },
+    {
+      "id": "kubernetes_pod_crash",
+      "pattern": "kubernetes: pod ([^\\s]+) crashed|CrashLoopBackOff",
+      "type": "Kubernetes error",
+      "description": "Kubernetes pod crashed or failed to start",
+      "root_cause": "kubernetes_pod_crash",
+      "suggestion": "Check pod logs, resource limits, and container health checks. Review deployment configuration.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "kubernetes"
+    },
+    {
+      "id": "kubernetes_insufficient_resources",
+      "pattern": "kubernetes: insufficient ([^\\s]+)|Insufficient cpu|Insufficient memory",
+      "type": "Kubernetes resource",
+      "description": "Insufficient Kubernetes cluster resources",
+      "root_cause": "kubernetes_insufficient_resources",
+      "suggestion": "Scale cluster nodes, reduce resource requests, or optimize application resource usage.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "kubernetes"
+    },
+    {
+      "id": "helm_chart_not_found",
+      "pattern": "helm: chart not found|Error: failed to download chart",
+      "type": "Helm error",
+      "description": "Helm chart not found or download failed",
+      "root_cause": "helm_chart_not_found",
+      "suggestion": "Check chart name and repository. Ensure Helm repository is added and updated.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "helm"
+    },
+    {
+      "id": "terraform_state_lock",
+      "pattern": "terraform: state lock|Error locking state",
+      "type": "Terraform error",
+      "description": "Terraform state file is locked",
+      "root_cause": "terraform_state_lock",
+      "suggestion": "Wait for concurrent operation to complete or force unlock if operation was interrupted.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "terraform"
+    },
+    {
+      "id": "gcp_project_not_set",
+      "pattern": "gcp: project not set|default project not set",
+      "type": "GCP error",
+      "description": "Google Cloud project not configured",
+      "root_cause": "gcp_project_not_set",
+      "suggestion": "Set GCP project using gcloud config set project or GOOGLE_CLOUD_PROJECT environment variable.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "gcp"
+    },
+    {
+      "id": "azure_subscription_not_found",
+      "pattern": "azure: subscription not found|SubscriptionNotFound",
+      "type": "Azure error",
+      "description": "Azure subscription not found or accessible",
+      "root_cause": "azure_subscription_not_found",
+      "suggestion": "Check Azure subscription ID and ensure proper authentication with Azure CLI or service principal.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "azure"
+    },
+    {
+      "id": "cloudformation_stack_failed",
+      "pattern": "cloudformation: stack ([^\\s]+) failed|CREATE_FAILED|UPDATE_FAILED",
+      "type": "CloudFormation error",
+      "description": "AWS CloudFormation stack operation failed",
+      "root_cause": "cloudformation_stack_failed",
+      "suggestion": "Check CloudFormation events and stack resources for detailed error information.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "cloudformation"
+    },
+    {
+      "id": "load_balancer_health_check_failed",
+      "pattern": "load balancer: health check failed|unhealthy targets",
+      "type": "Load balancer error",
+      "description": "Load balancer health check failing",
+      "root_cause": "load_balancer_health_check_failed",
+      "suggestion": "Check application health endpoint, adjust health check parameters, or fix application issues.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "load_balancer"
+    },
+    {
+      "id": "cdn_cache_invalidation_failed",
+      "pattern": "cdn: cache invalidation failed|cloudfront invalidation failed",
+      "type": "CDN error",
+      "description": "CDN cache invalidation operation failed",
+      "root_cause": "cdn_cache_invalidation_failed",
+      "suggestion": "Check CDN configuration and permissions. Retry invalidation or use cache busting techniques.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "cdn"
+    },
+    {
+      "id": "secrets_manager_access_denied",
+      "pattern": "secrets manager: access denied|secret not found",
+      "type": "Secrets manager error",
+      "description": "Cannot access secrets from secrets manager",
+      "root_cause": "secrets_manager_access_denied",
+      "suggestion": "Check IAM permissions for secrets manager and verify secret ARN or name.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "secrets"
+    },
+    {
+      "id": "container_registry_push_failed",
+      "pattern": "container registry: push failed|denied: requested access to the resource is denied",
+      "type": "Container registry error",
+      "description": "Failed to push image to container registry",
+      "root_cause": "container_registry_push_failed",
+      "suggestion": "Check registry authentication, permissions, and repository existence.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "registry"
+    },
+    {
+      "id": "service_mesh_injection_failed",
+      "pattern": "service mesh: injection failed|sidecar injection failed",
+      "type": "Service mesh error",
+      "description": "Service mesh sidecar injection failed",
+      "root_cause": "service_mesh_injection_failed",
+      "suggestion": "Check service mesh configuration, namespace labels, and admission controller settings.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "service_mesh"
+    },
+    {
+      "id": "ingress_controller_error",
+      "pattern": "ingress: ([^\\n]*error[^\\n]*)|ingress controller failed",
+      "type": "Ingress error",
+      "description": "Kubernetes ingress controller error",
+      "root_cause": "ingress_controller_error",
+      "suggestion": "Check ingress configuration, TLS certificates, and backend service availability.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "ingress"
+    },
+    {
+      "id": "autoscaling_policy_failed",
+      "pattern": "autoscaling: policy failed|scaling failed",
+      "type": "Autoscaling error",
+      "description": "Auto-scaling policy execution failed",
+      "root_cause": "autoscaling_policy_failed",
+      "suggestion": "Check scaling metrics, resource limits, and autoscaling configuration parameters.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "autoscaling"
+    },
+    {
+      "id": "monitoring_metrics_collection_failed",
+      "pattern": "monitoring: metrics collection failed|prometheus scrape failed",
+      "type": "Monitoring error",
+      "description": "Monitoring metrics collection failed",
+      "root_cause": "monitoring_metrics_collection_failed",
+      "suggestion": "Check metrics endpoint availability, network connectivity, and monitoring configuration.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "monitoring"
+    },
+    {
+      "id": "backup_operation_failed",
+      "pattern": "backup: operation failed|snapshot failed",
+      "type": "Backup error",
+      "description": "Backup or snapshot operation failed",
+      "root_cause": "backup_operation_failed",
+      "suggestion": "Check storage permissions, available space, and backup service configuration.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "backup"
+    },
+    {
+      "id": "ssl_certificate_expired",
+      "pattern": "ssl: certificate expired|tls: certificate has expired",
+      "type": "SSL/TLS error",
+      "description": "SSL/TLS certificate has expired",
+      "root_cause": "ssl_certificate_expired",
+      "suggestion": "Renew SSL certificate and update configuration. Consider automated certificate management.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "ssl"
+    },
+    {
+      "id": "dns_resolution_failed",
+      "pattern": "dns: resolution failed|no such host",
+      "type": "DNS error",
+      "description": "DNS resolution failed for hostname",
+      "root_cause": "dns_resolution_failed",
+      "suggestion": "Check DNS configuration, verify hostname exists, and ensure network connectivity to DNS servers.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "dns"
+    },
+    {
+      "id": "environment_variable_not_set",
+      "pattern": "environment variable ([^\\s]+) not set|required env var missing",
+      "type": "Configuration error",
+      "description": "Required environment variable not set",
+      "root_cause": "environment_variable_not_set",
+      "suggestion": "Set the required environment variable in deployment configuration or container specification.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "configuration"
+    }
+  ]
+}

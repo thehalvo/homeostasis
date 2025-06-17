@@ -86,5 +86,151 @@
       "category": "http",
       "framework": "standard"
     }
+  ],
+  "extended_frameworks": [
+    {
+      "id": "fiber_binding_error",
+      "pattern": "fiber: ([^\\n]*binding[^\\n]*error[^\\n]*)",
+      "type": "fiber error",
+      "description": "Fiber framework request binding error",
+      "root_cause": "fiber_binding_error",
+      "suggestion": "Check request body format and struct tags. Ensure Content-Type matches expected format.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "fiber",
+      "framework": "fiber"
+    },
+    {
+      "id": "fiber_route_not_found",
+      "pattern": "fiber: route not found",
+      "type": "fiber error",
+      "description": "Fiber route not found",
+      "root_cause": "fiber_route_not_found",
+      "suggestion": "Verify route registration and URL pattern. Check for typos in route paths.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "fiber",
+      "framework": "fiber"
+    },
+    {
+      "id": "chi_route_conflict",
+      "pattern": "chi: route conflict ([^\\n]+)",
+      "type": "chi error",
+      "description": "Chi router route conflict",
+      "root_cause": "chi_route_conflict",
+      "suggestion": "Check for duplicate or conflicting route patterns. Ensure unique route definitions.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "chi",
+      "framework": "chi"
+    },
+    {
+      "id": "gorilla_mux_vars_nil",
+      "pattern": "gorilla/mux: vars is nil",
+      "type": "gorilla/mux error",
+      "description": "Gorilla Mux route variables not found",
+      "root_cause": "gorilla_mux_vars_nil",
+      "suggestion": "Ensure route has defined variables or check if request matched a route with variables.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "gorilla",
+      "framework": "gorilla/mux"
+    },
+    {
+      "id": "iris_context_stopped",
+      "pattern": "iris: context stopped",
+      "type": "iris error",
+      "description": "Iris context was stopped/cancelled",
+      "root_cause": "iris_context_stopped",
+      "suggestion": "Handle context cancellation appropriately. Check for timeout or client disconnection.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "iris",
+      "framework": "iris"
+    },
+    {
+      "id": "revel_action_not_found",
+      "pattern": "revel: action not found ([^\\n]+)",
+      "type": "revel error",
+      "description": "Revel framework action method not found",
+      "root_cause": "revel_action_not_found",
+      "suggestion": "Ensure controller action method exists and is properly exported (capitalized).",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "revel",
+      "framework": "revel"
+    },
+    {
+      "id": "beego_controller_panic",
+      "pattern": "beego: controller panic ([^\\n]+)",
+      "type": "beego error",
+      "description": "Beego controller panicked during execution",
+      "root_cause": "beego_controller_panic",
+      "suggestion": "Add proper error handling in controller methods. Use defer recover() if needed.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "beego",
+      "framework": "beego"
+    },
+    {
+      "id": "buffalo_middleware_error",
+      "pattern": "buffalo: middleware error ([^\\n]+)",
+      "type": "buffalo error",
+      "description": "Buffalo middleware execution error",
+      "root_cause": "buffalo_middleware_error",
+      "suggestion": "Check middleware implementation and ensure proper error handling and next() calls.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "buffalo",
+      "framework": "buffalo"
+    },
+    {
+      "id": "martini_dependency_not_found",
+      "pattern": "martini: dependency not found ([^\\n]+)",
+      "type": "martini error",
+      "description": "Martini dependency injection failed",
+      "root_cause": "martini_dependency_not_found",
+      "suggestion": "Ensure dependency is properly mapped with Map() or MapTo() before handler execution.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "martini",
+      "framework": "martini"
+    },
+    {
+      "id": "gorm_v2_association_error",
+      "pattern": "gorm: association ([^\\s]+) not found",
+      "type": "gorm error",
+      "description": "GORM v2 association not found",
+      "root_cause": "gorm_v2_association_error",
+      "suggestion": "Check association definition in struct tags and ensure proper foreign key setup.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "gorm",
+      "framework": "gorm"
+    },
+    {
+      "id": "websocket_connection_closed",
+      "pattern": "websocket: close ([^\\n]+)",
+      "type": "websocket error",
+      "description": "WebSocket connection closed unexpectedly",
+      "root_cause": "websocket_connection_closed",
+      "suggestion": "Handle connection closure gracefully. Implement reconnection logic if needed.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "websocket",
+      "framework": "gorilla/websocket"
+    },
+    {
+      "id": "graphql_resolver_error",
+      "pattern": "graphql: resolver error ([^\\n]+)",
+      "type": "graphql error",
+      "description": "GraphQL resolver execution error",
+      "root_cause": "graphql_resolver_error",
+      "suggestion": "Check resolver implementation and ensure proper error handling. Validate input arguments.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "graphql",
+      "framework": "graphql-go"
+    }
   ]
 }
