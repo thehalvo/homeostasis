@@ -1,0 +1,473 @@
+{
+  "name": "JavaScript Web API Errors",
+  "description": "Rules for detecting errors related to browser Web APIs",
+  "rules": [
+    {
+      "id": "js_fetch_api_error",
+      "pattern": "TypeError: (Failed to fetch|NetworkError when attempting to fetch|Fetch API cannot load)",
+      "type": "FetchAPIError",
+      "description": "Fetch API request failed",
+      "root_cause": "js_fetch_request_failed",
+      "suggestion": "Check network connectivity, verify URL correctness, handle network errors with try/catch, or add retry logic",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "fetch",
+        "network",
+        "api"
+      ],
+      "examples": [
+        "TypeError: Failed to fetch",
+        "TypeError: NetworkError when attempting to fetch resource"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Fetch"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_service_worker_error",
+      "pattern": "(ServiceWorkerRegistrationError|DOMException): (The script resource is behind a redirect|Service Worker script evaluation failed)",
+      "type": "ServiceWorkerError",
+      "description": "Service Worker registration or execution failed",
+      "root_cause": "js_service_worker_failure",
+      "suggestion": "Check Service Worker script path, ensure script is served over HTTPS, verify script syntax and dependencies",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "service-worker",
+        "pwa"
+      ],
+      "examples": [
+        "DOMException: The script resource is behind a redirect, which is disallowed",
+        "ServiceWorkerRegistrationError: Service Worker script evaluation failed"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Service Worker"
+      },
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_websocket_error",
+      "pattern": "WebSocket connection to '[^']*' failed: (Error|WebSocket is already in CLOSING or CLOSED state)",
+      "type": "WebSocketError",
+      "description": "WebSocket connection failed or invalid state",
+      "root_cause": "js_websocket_connection_failed",
+      "suggestion": "Check WebSocket server availability, verify URL format, handle connection states properly, implement reconnection logic",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "websocket",
+        "network"
+      ],
+      "examples": [
+        "WebSocket connection to 'ws://localhost:8080/socket' failed: Error in connection establishment",
+        "WebSocket is already in CLOSING or CLOSED state"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "WebSocket"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_indexeddb_error",
+      "pattern": "(InvalidStateError|TransactionInactiveError|DataError): (The database connection is closing|A mutation operation was attempted)",
+      "type": "IndexedDBError",
+      "description": "IndexedDB operation failed",
+      "root_cause": "js_indexeddb_operation_failed",
+      "suggestion": "Check IndexedDB transaction state, ensure database is open, handle quota exceeded errors, or use proper error handling",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "indexeddb",
+        "storage"
+      ],
+      "examples": [
+        "InvalidStateError: The database connection is closing",
+        "TransactionInactiveError: A mutation operation was attempted on a database"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "IndexedDB"
+      },
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_intersection_observer_error",
+      "pattern": "TypeError: (Failed to construct 'IntersectionObserver'|Invalid root element)",
+      "type": "IntersectionObserverError",
+      "description": "Intersection Observer API error",
+      "root_cause": "js_intersection_observer_invalid_config",
+      "suggestion": "Check root element validity, verify threshold values are between 0 and 1, ensure callback function is provided",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "intersection-observer",
+        "api"
+      ],
+      "examples": [
+        "TypeError: Failed to construct 'IntersectionObserver': callback is not a function",
+        "TypeError: Invalid root element"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Intersection Observer"
+      },
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_mutation_observer_error",
+      "pattern": "TypeError: (Failed to construct 'MutationObserver'|Failed to execute 'observe' on 'MutationObserver')",
+      "type": "MutationObserverError",
+      "description": "Mutation Observer API error",
+      "root_cause": "js_mutation_observer_invalid_config",
+      "suggestion": "Provide valid callback function, ensure target element exists, specify at least one observation option (childList, attributes, etc.)",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "mutation-observer",
+        "dom"
+      ],
+      "examples": [
+        "TypeError: Failed to construct 'MutationObserver': callback is not a function",
+        "TypeError: Failed to execute 'observe' on 'MutationObserver': No valid options provided"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Mutation Observer"
+      },
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_resize_observer_error",
+      "pattern": "ReferenceError: ResizeObserver is not defined",
+      "type": "ResizeObserverError",
+      "description": "Resize Observer not supported or not available",
+      "root_cause": "js_resize_observer_unsupported",
+      "suggestion": "Check browser support for ResizeObserver, use polyfill for older browsers, or provide fallback with window resize events",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "resize-observer",
+        "api"
+      ],
+      "examples": [
+        "ReferenceError: ResizeObserver is not defined",
+        "TypeError: ResizeObserver is not a constructor"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Resize Observer"
+      },
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_broadcast_channel_error",
+      "pattern": "(ReferenceError: BroadcastChannel is not defined|DataCloneError: Failed to execute 'postMessage' on 'BroadcastChannel')",
+      "type": "BroadcastChannelError",
+      "description": "Broadcast Channel API error or not supported",
+      "root_cause": "js_broadcast_channel_failure",
+      "suggestion": "Check browser support for BroadcastChannel, ensure data is serializable, or use alternative communication methods like localStorage events",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "broadcast-channel",
+        "communication"
+      ],
+      "examples": [
+        "ReferenceError: BroadcastChannel is not defined",
+        "DataCloneError: Failed to execute 'postMessage' on 'BroadcastChannel'"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Broadcast Channel"
+      },
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_performance_observer_error",
+      "pattern": "(ReferenceError: PerformanceObserver is not defined|TypeError: '[^']*' is not a valid entry type)",
+      "type": "PerformanceObserverError",
+      "description": "Performance Observer API error or invalid entry type",
+      "root_cause": "js_performance_observer_invalid",
+      "suggestion": "Check browser support for PerformanceObserver, verify entry types are valid and supported, use feature detection",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "performance-observer",
+        "performance"
+      ],
+      "examples": [
+        "ReferenceError: PerformanceObserver is not defined",
+        "TypeError: 'invalid-type' is not a valid entry type"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Performance Observer"
+      },
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_web_workers_error",
+      "pattern": "(DOMException: Failed to construct 'Worker'|NetworkError: A network error occurred|SecurityError: Access to dedicated workers is denied)",
+      "type": "WebWorkersError",
+      "description": "Web Workers API error",
+      "root_cause": "js_web_workers_failure",
+      "suggestion": "Check worker script path and accessibility, ensure HTTPS for secure contexts, verify script doesn't have CORS issues",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "web-workers",
+        "threads"
+      ],
+      "examples": [
+        "DOMException: Failed to construct 'Worker': Script at 'worker.js' cannot be accessed from origin 'null'",
+        "NetworkError: A network error occurred while loading worker"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Web Workers"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_web_crypto_error",
+      "pattern": "(NotSupportedError: The operation is not supported|InvalidAccessError: The requested operation is not valid)",
+      "type": "WebCryptoError",
+      "description": "Web Crypto API operation failed",
+      "root_cause": "js_web_crypto_operation_failed",
+      "suggestion": "Check browser support for specific crypto operations, verify algorithm parameters, ensure secure context (HTTPS)",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "web-crypto",
+        "cryptography"
+      ],
+      "examples": [
+        "NotSupportedError: The operation is not supported",
+        "InvalidAccessError: The requested operation is not valid for the provided key"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Web Crypto"
+      },
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_file_api_error",
+      "pattern": "(NotReadableError: The file could not be read|SecurityError: Access to file system denied)",
+      "type": "FileAPIError",
+      "description": "File API operation failed",
+      "root_cause": "js_file_api_operation_failed",
+      "suggestion": "Ensure file is accessible and not corrupted, check file permissions, handle file read errors gracefully",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "file-api",
+        "files"
+      ],
+      "examples": [
+        "NotReadableError: The file could not be read",
+        "SecurityError: Access to file system denied"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "File API"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_battery_api_error",
+      "pattern": "ReferenceError: (navigator\\.battery|navigator\\.getBattery) is not defined",
+      "type": "BatteryAPIError",
+      "description": "Battery API not supported or deprecated",
+      "root_cause": "js_battery_api_unsupported",
+      "suggestion": "Battery API is deprecated in most browsers, remove battery-dependent functionality or use feature detection with fallbacks",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "battery-api",
+        "deprecated"
+      ],
+      "examples": [
+        "ReferenceError: navigator.battery is not defined",
+        "TypeError: navigator.getBattery is not a function"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Battery API",
+        "status": "deprecated"
+      },
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_vibration_api_error",
+      "pattern": "TypeError: navigator\\.vibrate is not a function",
+      "type": "VibrationAPIError",
+      "description": "Vibration API not supported",
+      "root_cause": "js_vibration_api_unsupported",
+      "suggestion": "Check browser and device support for Vibration API, use feature detection, primarily available on mobile devices",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "vibration-api",
+        "mobile"
+      ],
+      "examples": [
+        "TypeError: navigator.vibrate is not a function",
+        "ReferenceError: vibrate is not defined"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Vibration API"
+      },
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_screen_orientation_error",
+      "pattern": "(TypeError: Cannot read property 'lock' of undefined|NotSupportedError: screen\\.orientation\\.lock is not supported)",
+      "type": "ScreenOrientationError",
+      "description": "Screen Orientation API error or not supported",
+      "root_cause": "js_screen_orientation_unsupported",
+      "suggestion": "Check browser support for Screen Orientation API, use feature detection, primarily available on mobile devices",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "screen-orientation",
+        "mobile"
+      ],
+      "examples": [
+        "TypeError: Cannot read property 'lock' of undefined",
+        "NotSupportedError: screen.orientation.lock is not supported"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Screen Orientation"
+      },
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

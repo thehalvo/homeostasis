@@ -1,0 +1,400 @@
+{
+  "name": "JavaScript Module System Errors",
+  "description": "Rules for detecting ES6+ module system and import/export related errors",
+  "rules": [
+    {
+      "id": "js_import_not_found",
+      "pattern": "SyntaxError: The requested module '[^']*' does not provide an export named '[^']*'",
+      "type": "ImportNotFoundError",
+      "description": "Named import not found in the target module",
+      "root_cause": "js_named_import_missing",
+      "suggestion": "Check if the export exists in the target module, verify export name spelling, or use default import if appropriate",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "modules",
+        "import",
+        "export"
+      ],
+      "examples": [
+        "SyntaxError: The requested module './utils.js' does not provide an export named 'helper'",
+        "SyntaxError: The requested module '@/components/Button' does not provide an export named 'ButtonGroup'"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_module_not_found",
+      "pattern": "Error: Cannot resolve module '[^']*'",
+      "type": "ModuleResolutionError",
+      "description": "Module resolution failed - module not found",
+      "root_cause": "js_module_resolution_failed",
+      "suggestion": "Check if the module path is correct, ensure the file exists, or verify module name spelling",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "modules",
+        "resolution"
+      ],
+      "examples": [
+        "Error: Cannot resolve module './nonexistent.js'",
+        "Error: Cannot resolve module '@/utils/missing-helper'"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_circular_dependency",
+      "pattern": "Error: Circular dependency detected: ([^\\n]*)",
+      "type": "CircularDependencyError",
+      "description": "Circular dependency between modules",
+      "root_cause": "js_circular_module_dependency",
+      "suggestion": "Refactor code to remove circular dependencies, move shared code to a separate module, or use dynamic imports",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "modules",
+        "circular-dependency"
+      ],
+      "examples": [
+        "Error: Circular dependency detected: A.js -> B.js -> A.js",
+        "Error: Circular dependency detected in module chain"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_default_import_error",
+      "pattern": "SyntaxError: The requested module '[^']*' does not provide a default export",
+      "type": "DefaultImportError",
+      "description": "Default import attempted on module without default export",
+      "root_cause": "js_default_export_missing",
+      "suggestion": "Use named import instead of default import, or add a default export to the target module",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "modules",
+        "default-import"
+      ],
+      "examples": [
+        "SyntaxError: The requested module './utils.js' does not provide a default export",
+        "SyntaxError: The requested module '@/services/api' does not provide a default export"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_import_syntax_error",
+      "pattern": "SyntaxError: (Unexpected token|Invalid or unexpected token) 'import'",
+      "type": "ImportSyntaxError",
+      "description": "Invalid import syntax or import used in non-module context",
+      "root_cause": "js_import_syntax_invalid",
+      "suggestion": "Check import syntax, ensure file is treated as module, or use require() in CommonJS environment",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "modules",
+        "syntax"
+      ],
+      "examples": [
+        "SyntaxError: Unexpected token 'import'",
+        "SyntaxError: Cannot use import statement outside a module"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_export_syntax_error",
+      "pattern": "SyntaxError: (Unexpected token 'export'|Export declarations may only appear at top level)",
+      "type": "ExportSyntaxError",
+      "description": "Invalid export syntax or export not at top level",
+      "root_cause": "js_export_syntax_invalid",
+      "suggestion": "Move export declarations to top level of module, check export syntax, or ensure file is treated as module",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "modules",
+        "export",
+        "syntax"
+      ],
+      "examples": [
+        "SyntaxError: Unexpected token 'export'",
+        "SyntaxError: Export declarations may only appear at top level of a module"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_dynamic_import_error",
+      "pattern": "Error: (Cannot resolve|Failed to resolve) dynamic import '[^']*'",
+      "type": "DynamicImportError",
+      "description": "Dynamic import resolution failed",
+      "root_cause": "js_dynamic_import_failed",
+      "suggestion": "Check if the dynamically imported module exists, verify the path is correct, or add error handling for failed imports",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es2020",
+        "modules",
+        "dynamic-import"
+      ],
+      "examples": [
+        "Error: Cannot resolve dynamic import './lazy-component.js'",
+        "Error: Failed to resolve dynamic import '@/components/LazyModal'"
+      ],
+      "metadata": {
+        "es_version": "ES2020+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_import_meta_error",
+      "pattern": "ReferenceError: import\\.meta is not defined",
+      "type": "ImportMetaError",
+      "description": "import.meta not available in current environment",
+      "root_cause": "js_import_meta_unsupported",
+      "suggestion": "Use import.meta only in ES modules with supporting environment, or provide fallback for unsupported environments",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es2020",
+        "modules",
+        "import-meta"
+      ],
+      "examples": [
+        "ReferenceError: import.meta is not defined",
+        "TypeError: Cannot read property 'url' of undefined"
+      ],
+      "metadata": {
+        "es_version": "ES2020+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_namespace_import_error",
+      "pattern": "TypeError: Cannot read property '[^']*' of undefined.*namespace import",
+      "type": "NamespaceImportError",
+      "description": "Property access on undefined namespace import",
+      "root_cause": "js_namespace_import_undefined",
+      "suggestion": "Check if the namespace import is successful, verify the imported module exports, or use default import if appropriate",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "javascript",
+        "es6",
+        "modules",
+        "namespace-import"
+      ],
+      "examples": [
+        "TypeError: Cannot read property 'helper' of undefined in namespace import",
+        "TypeError: Cannot read property 'default' of undefined"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_module_format_mismatch",
+      "pattern": "Error: (Cannot use import statement outside a module|require is not defined)",
+      "type": "ModuleFormatMismatchError",
+      "description": "Module format mismatch between CommonJS and ES modules",
+      "root_cause": "js_module_format_conflict",
+      "suggestion": "Configure package.json with correct 'type' field, use appropriate import/require syntax, or use tools like Babel to transpile",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "modules",
+        "commonjs",
+        "esm"
+      ],
+      "examples": [
+        "SyntaxError: Cannot use import statement outside a module",
+        "ReferenceError: require is not defined"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_export_before_declaration",
+      "pattern": "ReferenceError: Cannot access '[^']*' before initialization.*export",
+      "type": "ExportBeforeDeclarationError",
+      "description": "Export reference before declaration (temporal dead zone)",
+      "root_cause": "js_export_temporal_dead_zone",
+      "suggestion": "Declare variables before exporting them, or use function declarations which are hoisted",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "modules",
+        "temporal-dead-zone",
+        "hoisting"
+      ],
+      "examples": [
+        "ReferenceError: Cannot access 'myVariable' before initialization",
+        "ReferenceError: Cannot access 'MyClass' before initialization"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_duplicate_export",
+      "pattern": "SyntaxError: Duplicate export of '[^']*'",
+      "type": "DuplicateExportError",
+      "description": "Multiple exports with the same name",
+      "root_cause": "js_duplicate_export_name",
+      "suggestion": "Use unique names for exports, or use export aliases to avoid conflicts",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "modules",
+        "export",
+        "duplicate"
+      ],
+      "examples": [
+        "SyntaxError: Duplicate export of 'myFunction'",
+        "SyntaxError: Duplicate export of 'default'"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_import_assertion_error",
+      "pattern": "SyntaxError: (Import assertions are not supported|Unexpected token) 'assert'",
+      "type": "ImportAssertionError",
+      "description": "Import assertions not supported in current environment",
+      "root_cause": "js_import_assertions_unsupported",
+      "suggestion": "Use a newer JavaScript engine that supports import assertions, or remove assert clause and handle JSON imports differently",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es2022",
+        "modules",
+        "import-assertions"
+      ],
+      "examples": [
+        "SyntaxError: Import assertions are not supported",
+        "SyntaxError: Unexpected token 'assert'"
+      ],
+      "metadata": {
+        "es_version": "ES2022+"
+      },
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

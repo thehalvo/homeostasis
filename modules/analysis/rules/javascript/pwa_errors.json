@@ -1,0 +1,409 @@
+{
+  "name": "Progressive Web App Errors",
+  "description": "Rules for detecting errors related to Progressive Web App features and APIs",
+  "rules": [
+    {
+      "id": "js_pwa_manifest_error",
+      "pattern": "Manifest: (Line \\d+, column \\d+, Syntax error|Property '[^']*' ignored|No matching service worker detected)",
+      "type": "PWAManifestError",
+      "description": "PWA manifest file error or invalid configuration",
+      "root_cause": "js_pwa_manifest_invalid",
+      "suggestion": "Validate manifest.json syntax, check required properties (name, short_name, start_url, display), ensure proper JSON format",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "manifest",
+        "web-app"
+      ],
+      "examples": [
+        "Manifest: Line 5, column 12, Syntax error",
+        "Manifest: Property 'icon' ignored, should be 'icons'"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Web App Manifest"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_install_prompt_error",
+      "pattern": "(TypeError: Cannot read property 'prompt' of null|The user prompt was dismissed|beforeinstallprompt event not supported)",
+      "type": "PWAInstallPromptError",
+      "description": "PWA installation prompt error",
+      "root_cause": "js_pwa_install_prompt_failed",
+      "suggestion": "Check if beforeinstallprompt event is supported, ensure proper event handling, verify PWA installation criteria are met",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "install-prompt",
+        "a2hs"
+      ],
+      "examples": [
+        "TypeError: Cannot read property 'prompt' of null",
+        "The user prompt was dismissed"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "PWA Install"
+      },
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_service_worker_update_error",
+      "pattern": "(ServiceWorker: Update failed|Failed to update service worker|ServiceWorker registration update failed)",
+      "type": "PWAServiceWorkerUpdateError",
+      "description": "Service Worker update failed",
+      "root_cause": "js_pwa_sw_update_failed",
+      "suggestion": "Check Service Worker script changes, ensure proper update handling, verify cache strategies, handle update notifications to users",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "service-worker",
+        "update"
+      ],
+      "examples": [
+        "ServiceWorker: Update failed",
+        "Failed to update service worker: script evaluation failed"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Service Worker"
+      },
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_cache_storage_error",
+      "pattern": "(DOMException: Failed to execute '(put|add|delete)' on 'Cache'|QuotaExceededError: The quota has been exceeded)",
+      "type": "PWACacheStorageError",
+      "description": "PWA Cache Storage API error",
+      "root_cause": "js_pwa_cache_operation_failed",
+      "suggestion": "Check available storage quota, implement cache cleanup strategies, handle cache operation failures gracefully",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "cache-storage",
+        "quota"
+      ],
+      "examples": [
+        "DOMException: Failed to execute 'put' on 'Cache': Request scheme 'http' is unsupported",
+        "QuotaExceededError: The quota has been exceeded"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Cache Storage"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_background_sync_error",
+      "pattern": "(NotSupportedError: Background Sync is not supported|PermissionDeniedError: Background sync permission denied)",
+      "type": "PWABackgroundSyncError",
+      "description": "PWA Background Sync API error",
+      "root_cause": "js_pwa_background_sync_failed",
+      "suggestion": "Check browser support for Background Sync, request necessary permissions, implement fallback strategies for unsupported browsers",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "background-sync",
+        "offline"
+      ],
+      "examples": [
+        "NotSupportedError: Background Sync is not supported",
+        "PermissionDeniedError: Background sync permission denied"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Background Sync"
+      },
+      "criticality": "low",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_push_notification_error",
+      "pattern": "(NotSupportedError: Push messaging is not supported|PermissionDeniedError: Push notification permission denied|InvalidStateError: Service worker is not active)",
+      "type": "PWAPushNotificationError",
+      "description": "PWA Push Notifications error",
+      "root_cause": "js_pwa_push_notification_failed",
+      "suggestion": "Check browser support for Push API, request notification permissions, ensure Service Worker is active and properly configured",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "push-notifications",
+        "permissions"
+      ],
+      "examples": [
+        "NotSupportedError: Push messaging is not supported",
+        "PermissionDeniedError: Push notification permission denied"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Push API"
+      },
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_offline_error",
+      "pattern": "(TypeError: Failed to fetch|NetworkError: The request is not allowed in offline mode|The operation is not supported in offline mode)",
+      "type": "PWAOfflineError",
+      "description": "PWA offline functionality error",
+      "root_cause": "js_pwa_offline_operation_failed",
+      "suggestion": "Implement proper offline/online detection, cache essential resources, provide offline fallbacks, handle network state changes",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "offline",
+        "network"
+      ],
+      "examples": [
+        "TypeError: Failed to fetch - network offline",
+        "NetworkError: The request is not allowed in offline mode"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Offline"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_web_share_error",
+      "pattern": "(NotSupportedError: Web Share API is not supported|AbortError: Share was aborted|DataError: Invalid share data)",
+      "type": "PWAWebShareError",
+      "description": "PWA Web Share API error",
+      "root_cause": "js_pwa_web_share_failed",
+      "suggestion": "Check browser support for Web Share API, validate share data format, provide fallback sharing methods",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "web-share",
+        "sharing"
+      ],
+      "examples": [
+        "NotSupportedError: Web Share API is not supported",
+        "AbortError: Share was aborted by the user"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Web Share"
+      },
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_badging_error",
+      "pattern": "(NotSupportedError: Badging API is not supported|TypeError: navigator\\.setAppBadge is not a function)",
+      "type": "PWABadgingError",
+      "description": "PWA Badging API error or not supported",
+      "root_cause": "js_pwa_badging_unsupported",
+      "suggestion": "Check browser support for Badging API, use feature detection, provide alternative notification methods",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "badging",
+        "notifications"
+      ],
+      "examples": [
+        "NotSupportedError: Badging API is not supported",
+        "TypeError: navigator.setAppBadge is not a function"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Badging"
+      },
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_shortcuts_error",
+      "pattern": "Manifest: (Property 'shortcuts' ignored|Invalid shortcut configuration|Shortcut '[^']*' is missing required property)",
+      "type": "PWAShortcutsError",
+      "description": "PWA app shortcuts configuration error",
+      "root_cause": "js_pwa_shortcuts_invalid",
+      "suggestion": "Validate shortcuts configuration in manifest, ensure required properties (name, url), check icon specifications",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "shortcuts",
+        "manifest"
+      ],
+      "examples": [
+        "Manifest: Property 'shortcuts' ignored - invalid configuration",
+        "Manifest: Shortcut 'compose' is missing required property 'url'"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "App Shortcuts"
+      },
+      "criticality": "low",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_file_handling_error",
+      "pattern": "(NotSupportedError: File Handling API is not supported|SecurityError: File handling not allowed|TypeError: Cannot register file handler)",
+      "type": "PWAFileHandlingError",
+      "description": "PWA File Handling API error",
+      "root_cause": "js_pwa_file_handling_failed",
+      "suggestion": "Check browser support for File Handling API, ensure proper manifest configuration, verify file type associations",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "file-handling",
+        "files"
+      ],
+      "examples": [
+        "NotSupportedError: File Handling API is not supported",
+        "SecurityError: File handling not allowed in this context"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "File Handling"
+      },
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_window_controls_overlay_error",
+      "pattern": "CSS: (Unknown property 'titlebar-area-|Invalid value for titlebar-area|Window Controls Overlay not supported)",
+      "type": "PWAWindowControlsOverlayError",
+      "description": "PWA Window Controls Overlay error",
+      "root_cause": "js_pwa_window_controls_overlay_unsupported",
+      "suggestion": "Check browser support for Window Controls Overlay, validate CSS properties, ensure proper manifest display_override configuration",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "javascript",
+        "pwa",
+        "window-controls-overlay",
+        "desktop"
+      ],
+      "examples": [
+        "CSS: Unknown property 'titlebar-area-x'",
+        "Window Controls Overlay not supported"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Window Controls Overlay"
+      },
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_pwa_protocol_handler_error",
+      "pattern": "(NotSupportedError: Protocol handling is not supported|SecurityError: Protocol handler registration denied|TypeError: Invalid protocol scheme)",
+      "type": "PWAProtocolHandlerError",
+      "description": "PWA Protocol Handler API error",
+      "root_cause": "js_pwa_protocol_handler_failed",
+      "suggestion": "Check browser support for Protocol Handlers, ensure valid protocol schemes, verify manifest configuration",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "pwa",
+        "protocol-handler",
+        "url-schemes"
+      ],
+      "examples": [
+        "NotSupportedError: Protocol handling is not supported",
+        "TypeError: Invalid protocol scheme 'invalid://'"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "api": "Protocol Handler"
+      },
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

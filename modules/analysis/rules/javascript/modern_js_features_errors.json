@@ -1,0 +1,488 @@
+{
+  "name": "Modern JavaScript Features Errors",
+  "description": "Rules for detecting errors related to modern JavaScript features (ES6+)",
+  "rules": [
+    {
+      "id": "js_arrow_function_this_error",
+      "pattern": "TypeError: Cannot read property '[^']*' of undefined.*arrow function",
+      "type": "ArrowFunctionThisError",
+      "description": "Arrow function 'this' binding issue",
+      "root_cause": "js_arrow_function_this_context",
+      "suggestion": "Use regular function instead of arrow function when you need dynamic 'this' binding, or bind 'this' explicitly",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "javascript",
+        "es6",
+        "arrow-function",
+        "this-binding"
+      ],
+      "examples": [
+        "TypeError: Cannot read property 'name' of undefined in arrow function context",
+        "TypeError: Cannot read property 'setState' of undefined"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_destructuring_error",
+      "pattern": "TypeError: Cannot (destructure|read property) '[^']*' of (null|undefined).*destructuring",
+      "type": "DestructuringError",
+      "description": "Destructuring assignment on null or undefined",
+      "root_cause": "js_destructuring_null_undefined",
+      "suggestion": "Add default values in destructuring assignment or check if the object exists before destructuring",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "destructuring",
+        "null-check"
+      ],
+      "examples": [
+        "TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined",
+        "TypeError: Cannot read property 'Symbol(Symbol.iterator)' of null"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_template_literal_error",
+      "pattern": "SyntaxError: (Unexpected token|Invalid or unexpected token).*template literal",
+      "type": "TemplateLiteralError",
+      "description": "Template literal syntax error",
+      "root_cause": "js_template_literal_syntax",
+      "suggestion": "Check template literal syntax, ensure proper backtick usage and ${} expressions",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "template-literals",
+        "syntax"
+      ],
+      "examples": [
+        "SyntaxError: Unexpected token in template literal",
+        "SyntaxError: Invalid or unexpected token in template string"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_spread_operator_error",
+      "pattern": "TypeError: ([^\\s]+) is not iterable.*spread",
+      "type": "SpreadOperatorError",
+      "description": "Spread operator used on non-iterable object",
+      "root_cause": "js_spread_non_iterable",
+      "suggestion": "Ensure the object is iterable (array, string, etc.) before using spread operator, or convert to array first",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "spread-operator",
+        "iterable"
+      ],
+      "examples": [
+        "TypeError: obj is not iterable",
+        "TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator))"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_class_constructor_error",
+      "pattern": "TypeError: Class constructor ([^\\s]+) cannot be invoked without 'new'",
+      "type": "ClassConstructorError",
+      "description": "Class constructor called without 'new' keyword",
+      "root_cause": "js_class_constructor_without_new",
+      "suggestion": "Use 'new' keyword when instantiating classes",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "class",
+        "constructor"
+      ],
+      "examples": [
+        "TypeError: Class constructor MyClass cannot be invoked without 'new'",
+        "TypeError: Class constructor Component cannot be invoked without 'new'"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_super_constructor_error",
+      "pattern": "ReferenceError: Must call super constructor in derived class before accessing 'this'",
+      "type": "SuperConstructorError",
+      "description": "Accessing 'this' before calling super() in derived class",
+      "root_cause": "js_super_constructor_missing",
+      "suggestion": "Call super() before accessing 'this' in the constructor of a derived class",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "class",
+        "inheritance",
+        "super"
+      ],
+      "examples": [
+        "ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor",
+        "ReferenceError: this is not defined"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_symbol_error",
+      "pattern": "TypeError: Cannot convert a Symbol value to a (string|number)",
+      "type": "SymbolConversionError",
+      "description": "Attempting to convert Symbol to primitive type",
+      "root_cause": "js_symbol_conversion_error",
+      "suggestion": "Use Symbol.prototype.toString() or Symbol.prototype.description to get string representation of Symbol",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "symbol",
+        "type-conversion"
+      ],
+      "examples": [
+        "TypeError: Cannot convert a Symbol value to a string",
+        "TypeError: Cannot convert a Symbol value to a number"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_generator_function_error",
+      "pattern": "TypeError: ([^\\s]+) is not a generator function",
+      "type": "GeneratorFunctionError",
+      "description": "Attempting to use generator methods on non-generator function",
+      "root_cause": "js_generator_function_expected",
+      "suggestion": "Ensure function is declared with function* syntax for generator functions",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "generator",
+        "function"
+      ],
+      "examples": [
+        "TypeError: myFunction is not a generator function",
+        "TypeError: Cannot read property 'next' of undefined"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_map_set_error",
+      "pattern": "TypeError: (Map|Set) constructor requires a new operator",
+      "type": "MapSetConstructorError",
+      "description": "Map or Set constructor called without 'new'",
+      "root_cause": "js_map_set_constructor_without_new",
+      "suggestion": "Use 'new' keyword when creating Map or Set instances",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "map",
+        "set",
+        "constructor"
+      ],
+      "examples": [
+        "TypeError: Map constructor requires a new operator",
+        "TypeError: Set constructor requires a new operator"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_proxy_error",
+      "pattern": "TypeError: (Cannot create property '[^']*' on|Proxy handler '[^']*' is not a function)",
+      "type": "ProxyError",
+      "description": "Proxy object handler error",
+      "root_cause": "js_proxy_handler_error",
+      "suggestion": "Ensure Proxy handlers are properly defined functions, check handler method implementations",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es6",
+        "proxy",
+        "handler"
+      ],
+      "examples": [
+        "TypeError: Cannot create property 'newProp' on proxy",
+        "TypeError: Proxy handler 'get' is not a function"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      },
+      "criticality": "medium",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_async_await_error",
+      "pattern": "SyntaxError: await is only valid in async function",
+      "type": "AsyncAwaitError",
+      "description": "Using await outside of async function",
+      "root_cause": "js_await_outside_async",
+      "suggestion": "Declare the function as async or use Promise.then() instead of await",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es2017",
+        "async",
+        "await"
+      ],
+      "examples": [
+        "SyntaxError: await is only valid in async function",
+        "SyntaxError: Unexpected reserved word 'await'"
+      ],
+      "metadata": {
+        "es_version": "ES2017+"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_optional_chaining_error",
+      "pattern": "SyntaxError: Unexpected token '\\?'.*optional chaining",
+      "type": "OptionalChainingError",
+      "description": "Optional chaining syntax not supported",
+      "root_cause": "js_optional_chaining_unsupported",
+      "suggestion": "Use a newer JavaScript engine that supports optional chaining (ES2020+) or use traditional null checks",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es2020",
+        "optional-chaining",
+        "syntax"
+      ],
+      "examples": [
+        "SyntaxError: Unexpected token '?.'",
+        "SyntaxError: Unexpected token '?' in optional chaining"
+      ],
+      "metadata": {
+        "es_version": "ES2020+"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_nullish_coalescing_error",
+      "pattern": "SyntaxError: Unexpected token '\\?\\?'.*nullish coalescing",
+      "type": "NullishCoalescingError",
+      "description": "Nullish coalescing operator syntax not supported",
+      "root_cause": "js_nullish_coalescing_unsupported",
+      "suggestion": "Use a newer JavaScript engine that supports nullish coalescing (ES2020+) or use traditional null/undefined checks",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es2020",
+        "nullish-coalescing",
+        "syntax"
+      ],
+      "examples": [
+        "SyntaxError: Unexpected token '??'",
+        "SyntaxError: Unexpected token in nullish coalescing"
+      ],
+      "metadata": {
+        "es_version": "ES2020+"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_bigint_error",
+      "pattern": "TypeError: Cannot (mix BigInt and other types|convert BigInt to number)",
+      "type": "BigIntError",
+      "description": "BigInt type conversion or operation error",
+      "root_cause": "js_bigint_type_mismatch",
+      "suggestion": "Convert BigInt to Number using Number() or convert other types to BigInt using BigInt() for operations",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es2020",
+        "bigint",
+        "type-conversion"
+      ],
+      "examples": [
+        "TypeError: Cannot mix BigInt and other types, use explicit conversions",
+        "TypeError: Cannot convert BigInt to number"
+      ],
+      "metadata": {
+        "es_version": "ES2020+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_private_field_error",
+      "pattern": "SyntaxError: (Private field '#[^']*' must be declared in an enclosing class|Cannot access private field)",
+      "type": "PrivateFieldError",
+      "description": "Private class field access error",
+      "root_cause": "js_private_field_access_error",
+      "suggestion": "Ensure private fields are accessed only within the class they're declared in, check field declaration syntax",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es2022",
+        "private-fields",
+        "class"
+      ],
+      "examples": [
+        "SyntaxError: Private field '#myPrivateField' must be declared in an enclosing class",
+        "SyntaxError: Cannot access private field '#data' from outside class"
+      ],
+      "metadata": {
+        "es_version": "ES2022+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_top_level_await_error",
+      "pattern": "SyntaxError: await is only valid in async (function|contexts|modules)",
+      "type": "TopLevelAwaitError",
+      "description": "Top-level await used in unsupported environment",
+      "root_cause": "js_top_level_await_unsupported",
+      "suggestion": "Use top-level await only in ES modules with supporting environment, or wrap in async function",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "es2022",
+        "top-level-await",
+        "modules"
+      ],
+      "examples": [
+        "SyntaxError: await is only valid in async functions and the top level bodies of modules",
+        "SyntaxError: Top-level await is not supported"
+      ],
+      "metadata": {
+        "es_version": "ES2022+"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

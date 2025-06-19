@@ -1,0 +1,402 @@
+{
+  "name": "JavaScript Browser-Specific Errors",
+  "description": "Rules for detecting JavaScript errors specific to browser environments",
+  "rules": [
+    {
+      "id": "js_dom_element_not_found",
+      "pattern": "TypeError: Cannot (read|set) property '[^']*' of null.*(?:getElementById|querySelector|getElementsBy)",
+      "type": "DOMElementNotFoundError",
+      "description": "DOM element not found when trying to access properties",
+      "root_cause": "js_dom_element_missing",
+      "suggestion": "Check if the element exists before accessing it, ensure the DOM is fully loaded, or use optional chaining",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "dom",
+        "element"
+      ],
+      "examples": [
+        "TypeError: Cannot read property 'innerHTML' of null",
+        "TypeError: Cannot set property 'value' of null"
+      ],
+      "metadata": {
+        "environment": "Browser",
+        "es_version": "ES5+"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_cors_error",
+      "pattern": "Access to (fetch|XMLHttpRequest) at '[^']*' from origin '[^']*' has been blocked by CORS policy",
+      "type": "CORSError",
+      "description": "Cross-Origin Resource Sharing (CORS) policy blocked the request",
+      "root_cause": "js_cors_policy_violation",
+      "suggestion": "Configure CORS headers on the server, use a proxy server, or enable CORS for the specific origin",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "cors",
+        "network",
+        "security"
+      ],
+      "examples": [
+        "Access to fetch at 'https://api.example.com/data' from origin 'https://mysite.com' has been blocked by CORS policy",
+        "Access to XMLHttpRequest at 'http://localhost:3000/api' from origin 'http://localhost:8080' has been blocked by CORS policy"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_mixed_content_error",
+      "pattern": "Mixed Content: The page at '[^']*' was loaded over HTTPS, but requested an insecure (XMLHttpRequest|resource|script|stylesheet|image|iframe)",
+      "type": "MixedContentError",
+      "description": "Mixed content error when loading insecure content on HTTPS page",
+      "root_cause": "js_mixed_content_violation",
+      "suggestion": "Use HTTPS URLs for all resources, update API endpoints to use HTTPS, or configure Content Security Policy",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "security",
+        "https",
+        "mixed-content"
+      ],
+      "examples": [
+        "Mixed Content: The page at 'https://example.com' was loaded over HTTPS, but requested an insecure XMLHttpRequest endpoint 'http://api.example.com/data'",
+        "Mixed Content: The page at 'https://mysite.com' was loaded over HTTPS, but requested an insecure script 'http://cdn.example.com/lib.js'"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "high",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_csp_violation",
+      "pattern": "Refused to (execute inline script|load the script|connect to|load the image|load the stylesheet) because it violates the following Content Security Policy directive",
+      "type": "CSPViolationError",
+      "description": "Content Security Policy violation",
+      "root_cause": "js_csp_policy_violation",
+      "suggestion": "Update Content Security Policy to allow the resource, use nonce or hash for inline scripts, or move inline code to external files",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "security",
+        "csp",
+        "policy"
+      ],
+      "examples": [
+        "Refused to execute inline script because it violates the following Content Security Policy directive: \"script-src 'self'\"",
+        "Refused to load the script 'https://cdn.example.com/script.js' because it violates the following Content Security Policy directive"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_local_storage_quota",
+      "pattern": "QuotaExceededError: Failed to execute '(setItem|clear)' on 'Storage'",
+      "type": "StorageQuotaExceededError",
+      "description": "Local storage quota exceeded",
+      "root_cause": "js_storage_quota_exceeded",
+      "suggestion": "Clear unnecessary data from localStorage, implement data cleanup strategy, or use IndexedDB for larger data storage",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "storage",
+        "quota"
+      ],
+      "examples": [
+        "QuotaExceededError: Failed to execute 'setItem' on 'Storage': Setting the value of 'data' exceeded the quota",
+        "QuotaExceededError: Failed to execute 'clear' on 'Storage'"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_geolocation_error",
+      "pattern": "GeolocationPositionError: (User denied the request for Geolocation|The location information is unavailable|The request to get user location timed out)",
+      "type": "GeolocationError",
+      "description": "Geolocation API error",
+      "root_cause": "js_geolocation_failure",
+      "suggestion": "Handle geolocation errors gracefully, provide fallback options, check if HTTPS is required for geolocation",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "geolocation",
+        "api"
+      ],
+      "examples": [
+        "GeolocationPositionError: User denied the request for Geolocation",
+        "GeolocationPositionError: The location information is unavailable"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_notification_permission_error",
+      "pattern": "NotificationPermissionError: (Permission denied|Notifications are not supported)",
+      "type": "NotificationPermissionError",
+      "description": "Browser notification permission denied or not supported",
+      "root_cause": "js_notification_permission_denied",
+      "suggestion": "Request notification permission properly, provide fallback for browsers that don't support notifications",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "notifications",
+        "permissions"
+      ],
+      "examples": [
+        "NotificationPermissionError: Permission denied",
+        "NotificationPermissionError: Notifications are not supported"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_webgl_context_lost",
+      "pattern": "WebGL: (CONTEXT_LOST_WEBGL|context lost|WebGL context was lost)",
+      "type": "WebGLContextLostError",
+      "description": "WebGL context was lost",
+      "root_cause": "js_webgl_context_lost",
+      "suggestion": "Handle WebGL context lost events, implement context restoration, reduce GPU memory usage",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "webgl",
+        "graphics"
+      ],
+      "examples": [
+        "WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost",
+        "WebGL context was lost"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "high",
+      "complexity": "complex",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_iframe_access_denied",
+      "pattern": "DOMException: (Blocked a frame with origin \"[^\"]*\" from accessing a cross-origin frame|Permission denied to access property)",
+      "type": "IFrameAccessDeniedError",
+      "description": "Cross-origin iframe access denied",
+      "root_cause": "js_iframe_cross_origin_access",
+      "suggestion": "Use postMessage API for cross-origin communication, ensure iframe and parent have same origin, or configure proper CORS headers",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "iframe",
+        "cross-origin"
+      ],
+      "examples": [
+        "DOMException: Blocked a frame with origin \"https://example.com\" from accessing a cross-origin frame",
+        "DOMException: Permission denied to access property 'document' on cross-origin object"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_media_device_error",
+      "pattern": "(NotAllowedError|NotFoundError|NotReadableError|OverconstrainedError): (Could not start|Permission denied|No camera|No microphone)",
+      "type": "MediaDeviceError",
+      "description": "Media device access error (camera/microphone)",
+      "root_cause": "js_media_device_access_failure",
+      "suggestion": "Request media permissions properly, handle device not found errors, provide fallback for unsupported devices",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "media",
+        "permissions",
+        "camera",
+        "microphone"
+      ],
+      "examples": [
+        "NotAllowedError: Permission denied to access camera",
+        "NotFoundError: No camera available"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_fullscreen_api_error",
+      "pattern": "Failed to execute '(requestFullscreen|exitFullscreen)' on 'Element': API can only be initiated by a user gesture",
+      "type": "FullscreenAPIError",
+      "description": "Fullscreen API can only be called from user gesture",
+      "root_cause": "js_fullscreen_user_gesture_required",
+      "suggestion": "Call fullscreen API only in response to user interaction (click, touch), not programmatically",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "fullscreen",
+        "user-gesture"
+      ],
+      "examples": [
+        "Failed to execute 'requestFullscreen' on 'Element': API can only be initiated by a user gesture",
+        "Failed to execute 'exitFullscreen' on 'Document': API can only be initiated by a user gesture"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "medium",
+      "complexity": "simple",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_clipboard_api_error",
+      "pattern": "DOMException: (Document is not focused|Not allowed to read from clipboard|Write permission denied)",
+      "type": "ClipboardAPIError",
+      "description": "Clipboard API access denied or failed",
+      "root_cause": "js_clipboard_access_denied",
+      "suggestion": "Ensure document is focused when accessing clipboard, request permissions properly, use fallback methods for clipboard operations",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "clipboard",
+        "permissions"
+      ],
+      "examples": [
+        "DOMException: Document is not focused",
+        "DOMException: Not allowed to read from clipboard"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "js_payment_request_error",
+      "pattern": "(NotSupportedError|InvalidStateError|AbortError): (Payment method not supported|Payment request already showing|Payment request was aborted)",
+      "type": "PaymentRequestError",
+      "description": "Payment Request API error",
+      "root_cause": "js_payment_request_failure",
+      "suggestion": "Check if Payment Request API is supported, validate payment methods, handle user cancellation gracefully",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "javascript",
+        "browser",
+        "payment",
+        "api"
+      ],
+      "examples": [
+        "NotSupportedError: Payment method not supported",
+        "InvalidStateError: Payment request already showing"
+      ],
+      "metadata": {
+        "environment": "Browser"
+      },
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}
