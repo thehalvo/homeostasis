@@ -1,0 +1,210 @@
+{
+  "version": "1.0.0",
+  "description": "Svelte performance optimization error detection rules",
+  "rules": [
+    {
+      "id": "svelte_reactive_statement_performance",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)reactive.*statement.*performance|\\$:.*expensive.*operation|reactive.*computation.*slow",
+      "suggestion": "Avoid expensive operations in reactive statements - use derived stores or computed values",
+      "root_cause": "svelte_reactive_statement_performance",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "performance", "reactivity"],
+      "fix_commands": [
+        "Move expensive computations to derived stores",
+        "Use memoization for complex calculations",
+        "Debounce reactive statements that depend on frequently changing values"
+      ]
+    },
+    {
+      "id": "svelte_component_rerender_performance",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)component.*rerender.*performance|excessive.*rerendering|component.*update.*frequent",
+      "suggestion": "Optimize component updates by reducing reactive dependencies",
+      "root_cause": "svelte_component_rerender_performance",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "performance", "rerendering"],
+      "fix_commands": [
+        "Split large components into smaller ones",
+        "Use derived stores to reduce reactive dependencies",
+        "Move static content outside reactive blocks"
+      ]
+    },
+    {
+      "id": "svelte_store_subscription_performance",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)store.*subscription.*performance|too.*many.*subscriptions|store.*update.*frequent",
+      "suggestion": "Optimize store subscriptions and reduce update frequency",
+      "root_cause": "svelte_store_subscription_performance",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "performance", "stores", "subscriptions"],
+      "fix_commands": [
+        "Use derived stores to combine multiple store values",
+        "Debounce store updates for frequently changing data",
+        "Use $ syntax for automatic subscription management"
+      ]
+    },
+    {
+      "id": "svelte_large_list_performance",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)large.*list.*performance|each.*block.*slow|list.*rendering.*performance",
+      "suggestion": "Use virtual scrolling or pagination for large lists",
+      "root_cause": "svelte_large_list_performance",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "performance", "lists", "each"],
+      "fix_commands": [
+        "Implement virtual scrolling for large lists",
+        "Use pagination to limit rendered items",
+        "Add keys to each blocks for better diffing"
+      ]
+    },
+    {
+      "id": "svelte_each_block_key_missing",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)each.*block.*key.*missing|each.*block.*no.*key|list.*key.*missing",
+      "suggestion": "Add unique keys to each blocks for better performance",
+      "root_cause": "svelte_each_block_key_missing",
+      "confidence": "high",
+      "severity": "warning",
+      "reliability": "high",
+      "tags": ["svelte", "performance", "each", "keys"],
+      "fix_commands": [
+        "Add key to each block: {#each items as item (item.id)}",
+        "Use unique identifiers as keys",
+        "Ensure keys are stable and unique"
+      ]
+    },
+    {
+      "id": "svelte_bundle_size_warning",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)bundle.*size.*large|bundle.*size.*warning|chunk.*size.*exceeded",
+      "suggestion": "Optimize bundle size with code splitting and tree shaking",
+      "root_cause": "svelte_bundle_size_warning",
+      "confidence": "low",
+      "severity": "warning",
+      "reliability": "low",
+      "tags": ["svelte", "performance", "bundle-size"],
+      "fix_commands": [
+        "Use dynamic imports for code splitting",
+        "Remove unused dependencies and code",
+        "Configure build tool for tree shaking"
+      ]
+    },
+    {
+      "id": "svelte_animation_performance",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)animation.*performance.*poor|transition.*performance.*slow|animation.*janky",
+      "suggestion": "Optimize animations using transform and opacity properties",
+      "root_cause": "svelte_animation_performance",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "performance", "animations", "transitions"],
+      "fix_commands": [
+        "Use transform and opacity for smooth animations",
+        "Avoid animating layout properties like width/height",
+        "Use will-change CSS property for complex animations"
+      ]
+    },
+    {
+      "id": "svelte_dom_manipulation_performance",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)DOM.*manipulation.*performance|DOM.*operation.*slow|excessive.*DOM.*updates",
+      "suggestion": "Minimize direct DOM manipulation - let Svelte handle updates",
+      "root_cause": "svelte_dom_manipulation_performance",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "performance", "dom"],
+      "fix_commands": [
+        "Use Svelte's reactive system instead of direct DOM manipulation",
+        "Batch DOM operations where necessary",
+        "Use bind:this sparingly for DOM references"
+      ]
+    },
+    {
+      "id": "svelte_memory_leak_warning",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)memory.*leak.*warning|component.*not.*destroyed|subscription.*leak",
+      "suggestion": "Clean up subscriptions and timers in onDestroy",
+      "root_cause": "svelte_memory_leak_warning",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "performance", "memory-leak"],
+      "fix_commands": [
+        "Use onDestroy to clean up subscriptions",
+        "Clear intervals and timeouts in onDestroy",
+        "Use $ syntax for automatic store subscription cleanup"
+      ]
+    },
+    {
+      "id": "svelte_hydration_performance",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)hydration.*performance.*slow|client.*hydration.*expensive|hydration.*time.*high",
+      "suggestion": "Optimize hydration by reducing initial state size and complexity",
+      "root_cause": "svelte_hydration_performance",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "performance", "hydration", "ssr"],
+      "fix_commands": [
+        "Reduce initial component state size",
+        "Defer non-critical component initialization",
+        "Use lazy loading for heavy components"
+      ]
+    },
+    {
+      "id": "svelte_css_unused_performance",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)unused.*CSS.*performance|CSS.*bundle.*size|style.*optimization",
+      "suggestion": "Remove unused CSS styles to reduce bundle size",
+      "root_cause": "svelte_css_unused_performance",
+      "confidence": "low",
+      "severity": "warning",
+      "reliability": "low",
+      "tags": ["svelte", "performance", "css", "optimization"],
+      "fix_commands": [
+        "Remove unused CSS selectors and rules",
+        "Use CSS purging tools in production",
+        "Leverage Svelte's scoped styling for better tree shaking"
+      ]
+    },
+    {
+      "id": "svelte_event_listener_performance",
+      "category": "svelte",
+      "subcategory": "performance",
+      "pattern": "(?i)event.*listener.*performance|too.*many.*event.*listeners|event.*handler.*optimization",
+      "suggestion": "Optimize event listeners with passive events and event delegation",
+      "root_cause": "svelte_event_listener_performance",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "performance", "events"],
+      "fix_commands": [
+        "Use passive event listeners where appropriate",
+        "Remove unnecessary event listeners",
+        "Use event delegation for list items"
+      ]
+    }
+  ]
+}

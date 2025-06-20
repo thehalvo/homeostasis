@@ -1,0 +1,210 @@
+{
+  "version": "1.0.0",
+  "description": "Svelte testing framework error detection rules",
+  "rules": [
+    {
+      "id": "svelte_testing_library_not_imported",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)render.*not.*defined|screen.*not.*defined|fireEvent.*not.*defined|@testing-library.*not.*found",
+      "suggestion": "Import required functions from @testing-library/svelte",
+      "root_cause": "svelte_testing_library_not_imported",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "testing", "testing-library", "import"],
+      "fix_commands": [
+        "Import render from '@testing-library/svelte'",
+        "Import screen, fireEvent from '@testing-library/user-event'",
+        "Install @testing-library/svelte if not present"
+      ]
+    },
+    {
+      "id": "svelte_component_render_error",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)component.*render.*error|render.*function.*failed|component.*mount.*error",
+      "suggestion": "Check component import and render function usage",
+      "root_cause": "svelte_component_render_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "testing", "render", "component"],
+      "fix_commands": [
+        "Ensure component is properly imported",
+        "Check render function syntax: render(Component, { props })",
+        "Verify component export and file path"
+      ]
+    },
+    {
+      "id": "svelte_test_props_error",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)test.*props.*error|component.*props.*invalid|props.*not.*passed",
+      "suggestion": "Pass props to component in test render function",
+      "root_cause": "svelte_test_props_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "testing", "props"],
+      "fix_commands": [
+        "Pass props in render: render(Component, { props: { name: 'test' } })",
+        "Check prop names match component expectations",
+        "Use proper prop types in test data"
+      ]
+    },
+    {
+      "id": "svelte_test_event_simulation_error",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)fireEvent.*error|event.*simulation.*failed|click.*event.*error",
+      "suggestion": "Use fireEvent or user-event library to simulate user interactions",
+      "root_cause": "svelte_test_event_simulation_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "testing", "events", "user-interaction"],
+      "fix_commands": [
+        "Use fireEvent.click(element) for click events",
+        "Use userEvent.type(input, 'text') for input events",
+        "Ensure element exists before firing events"
+      ]
+    },
+    {
+      "id": "svelte_test_store_mocking_error",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)store.*mocking.*error|store.*test.*error|store.*mock.*failed",
+      "suggestion": "Mock Svelte stores properly in tests",
+      "root_cause": "svelte_test_store_mocking_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "testing", "stores", "mocking"],
+      "fix_commands": [
+        "Mock stores with vi.mock or jest.mock",
+        "Create mock store implementations",
+        "Use store.set() to update store values in tests"
+      ]
+    },
+    {
+      "id": "svelte_test_async_error",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)async.*test.*error|waitFor.*not.*working|async.*component.*test",
+      "suggestion": "Use waitFor or findBy queries for async operations in tests",
+      "root_cause": "svelte_test_async_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "testing", "async", "waitFor"],
+      "fix_commands": [
+        "Use waitFor(() => expect(element).toBeInTheDocument())",
+        "Use findByText for async element queries",
+        "Handle async operations with proper await"
+      ]
+    },
+    {
+      "id": "svelte_test_cleanup_error",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)test.*cleanup.*error|component.*not.*unmounted|test.*memory.*leak",
+      "suggestion": "Ensure proper test cleanup with afterEach",
+      "root_cause": "svelte_test_cleanup_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "testing", "cleanup"],
+      "fix_commands": [
+        "Use cleanup() from @testing-library/svelte",
+        "Add afterEach(cleanup) to test files",
+        "Ensure components are properly unmounted"
+      ]
+    },
+    {
+      "id": "svelte_jest_config_error",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)Jest.*Svelte.*config.*error|jest.*preset.*svelte|jest.*transform.*error",
+      "suggestion": "Configure Jest properly for Svelte with jest-preset-svelte",
+      "root_cause": "svelte_jest_config_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "testing", "jest", "config"],
+      "fix_commands": [
+        "Install jest-preset-svelte package",
+        "Add preset: 'jest-preset-svelte' to jest.config.js",
+        "Configure transform for .svelte files"
+      ]
+    },
+    {
+      "id": "svelte_vitest_config_error",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)Vitest.*Svelte.*config.*error|vitest.*plugin.*svelte|vitest.*transform.*error",
+      "suggestion": "Configure Vitest with @sveltejs/vite-plugin-svelte",
+      "root_cause": "svelte_vitest_config_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "testing", "vitest", "config"],
+      "fix_commands": [
+        "Install @sveltejs/vite-plugin-svelte",
+        "Add svelte plugin to vitest.config.js",
+        "Configure test environment for Svelte"
+      ]
+    },
+    {
+      "id": "svelte_test_component_slot_error",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)slot.*test.*error|component.*slot.*not.*rendered|slot.*content.*missing",
+      "suggestion": "Test component slots by passing slot content in render",
+      "root_cause": "svelte_test_component_slot_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "testing", "slots"],
+      "fix_commands": [
+        "Pass slot content in render function",
+        "Use $$slots to test slot presence",
+        "Test named slots with proper slot names"
+      ]
+    },
+    {
+      "id": "svelte_test_context_error",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)context.*test.*error|getContext.*test.*error|context.*provider.*test",
+      "suggestion": "Mock or provide context values in component tests",
+      "root_cause": "svelte_test_context_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "testing", "context"],
+      "fix_commands": [
+        "Mock context with setContext in wrapper component",
+        "Create test wrapper with required context",
+        "Use context providers in test setup"
+      ]
+    },
+    {
+      "id": "svelte_test_transition_error",
+      "category": "svelte",
+      "subcategory": "testing",
+      "pattern": "(?i)transition.*test.*error|animation.*test.*error|transition.*not.*triggered",
+      "suggestion": "Handle transitions in tests with proper timing and assertions",
+      "root_cause": "svelte_test_transition_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "testing", "transitions", "animations"],
+      "fix_commands": [
+        "Use waitFor to handle transition timing",
+        "Mock transitions for faster tests",
+        "Test transition states with proper selectors"
+      ]
+    }
+  ]
+}

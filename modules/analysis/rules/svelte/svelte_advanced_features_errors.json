@@ -1,0 +1,210 @@
+{
+  "version": "1.0.0",
+  "description": "Svelte 4/5 advanced features error detection rules",
+  "rules": [
+    {
+      "id": "svelte_runes_usage_error",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)\\$state.*error|\\$derived.*error|\\$effect.*error|rune.*usage.*error",
+      "suggestion": "Use Svelte 5 runes correctly: $state(), $derived(), $effect()",
+      "root_cause": "svelte_runes_usage_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "svelte5", "runes", "state"],
+      "fix_commands": [
+        "Use $state() for reactive state: let count = $state(0)",
+        "Use $derived() for computed values: let doubled = $derived(count * 2)",
+        "Use $effect() for side effects: $effect(() => { console.log(count) })"
+      ]
+    },
+    {
+      "id": "svelte_snippet_syntax_error",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)snippet.*syntax.*error|\\{\\#snippet.*error|snippet.*definition.*error",
+      "suggestion": "Use correct snippet syntax in Svelte 5: {#snippet name(params)} ... {/snippet}",
+      "root_cause": "svelte_snippet_syntax_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "svelte5", "snippets"],
+      "fix_commands": [
+        "Define snippet: {#snippet mySnippet(param)} content {/snippet}",
+        "Use snippet: {@render mySnippet(value)}",
+        "Check snippet parameter syntax"
+      ]
+    },
+    {
+      "id": "svelte_render_tag_error",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)@render.*error|render.*tag.*syntax|snippet.*render.*error",
+      "suggestion": "Use @render tag correctly to render snippets",
+      "root_cause": "svelte_render_tag_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "svelte5", "render", "snippets"],
+      "fix_commands": [
+        "Use @render to call snippets: {@render mySnippet()}",
+        "Pass parameters: {@render mySnippet(param1, param2)}",
+        "Check snippet exists before rendering"
+      ]
+    },
+    {
+      "id": "svelte_component_events_error",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)component.*events.*createEventDispatcher|dispatcher.*deprecated|event.*callback.*prop",
+      "suggestion": "Use callback props instead of createEventDispatcher in Svelte 5",
+      "root_cause": "svelte_component_events_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "svelte5", "events", "callbacks"],
+      "fix_commands": [
+        "Use callback props: export let onclick",
+        "Call callback prop: onclick?.(event)",
+        "Migrate from createEventDispatcher to callback props"
+      ]
+    },
+    {
+      "id": "svelte_bind_this_error",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)bind:this.*runes.*mode|element.*binding.*runes|bind:this.*\\$state",
+      "suggestion": "Use $state() with bind:this in Svelte 5 runes mode",
+      "root_cause": "svelte_bind_this_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "svelte5", "runes", "bind"],
+      "fix_commands": [
+        "Declare with $state: let element = $state()",
+        "Use bind:this={element} with runes",
+        "Access element.value or element properties"
+      ]
+    },
+    {
+      "id": "svelte_legacy_reactive_statements",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)\\$:.*runes.*mode|reactive.*statement.*runes|\\$:.*deprecated",
+      "suggestion": "Replace $: reactive statements with $derived() in Svelte 5",
+      "root_cause": "svelte_legacy_reactive_statements",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "svelte5", "runes", "reactive"],
+      "fix_commands": [
+        "Replace $: computed = value * 2 with let computed = $derived(value * 2)",
+        "Replace $: { effect() } with $effect(() => { effect() })",
+        "Use $derived.by() for complex computations"
+      ]
+    },
+    {
+      "id": "svelte_mount_unmount_error",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)mount.*function.*error|unmount.*function.*error|component.*instance.*api",
+      "suggestion": "Use mount() and unmount() functions correctly for dynamic component instantiation",
+      "root_cause": "svelte_mount_unmount_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "svelte5", "mount", "components"],
+      "fix_commands": [
+        "Import mount from 'svelte': import { mount } from 'svelte'",
+        "Mount component: const instance = mount(Component, { target, props })",
+        "Unmount component: instance.unmount()"
+      ]
+    },
+    {
+      "id": "svelte_hydration_boundary_error",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)hydration.*boundary.*error|client.*only.*component|ssr.*hydration.*mismatch",
+      "suggestion": "Handle client-only content properly with browser checks",
+      "root_cause": "svelte_hydration_boundary_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "ssr", "hydration", "client"],
+      "fix_commands": [
+        "Use browser check: import { browser } from '$app/environment'",
+        "Conditional rendering: {#if browser} client-only content {/if}",
+        "Use onMount for client-side initialization"
+      ]
+    },
+    {
+      "id": "svelte_inspector_error",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)svelte.*inspector.*error|dev.*tools.*error|inspector.*integration",
+      "suggestion": "Configure Svelte inspector properly for development",
+      "root_cause": "svelte_inspector_error",
+      "confidence": "low",
+      "severity": "warning",
+      "reliability": "low",
+      "tags": ["svelte", "inspector", "devtools"],
+      "fix_commands": [
+        "Install @sveltejs/inspector package",
+        "Configure inspector in vite.config.js",
+        "Use inspector only in development mode"
+      ]
+    },
+    {
+      "id": "svelte_module_context_error",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)module.*context.*script|context=\"module\".*error|module.*script.*error",
+      "suggestion": "Use <script context=\"module\"> correctly for module-level code",
+      "root_cause": "svelte_module_context_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "module", "context", "script"],
+      "fix_commands": [
+        "Use module context for imports: <script context=\"module\">",
+        "Export module-level functions and constants",
+        "Avoid component instance code in module context"
+      ]
+    },
+    {
+      "id": "svelte_custom_elements_error",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)custom.*element.*compilation|svelte:options.*tag.*error|custom.*element.*error",
+      "suggestion": "Configure custom elements properly with svelte:options",
+      "root_cause": "svelte_custom_elements_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "custom-elements", "web-components"],
+      "fix_commands": [
+        "Use svelte:options tag=\"my-element\"",
+        "Configure compiler for custom elements",
+        "Handle props and events for custom elements"
+      ]
+    },
+    {
+      "id": "svelte_compiler_options_error",
+      "category": "svelte",
+      "subcategory": "advanced",
+      "pattern": "(?i)compiler.*options.*error|svelte.*config.*error|compilation.*options",
+      "suggestion": "Check Svelte compiler configuration in svelte.config.js",
+      "root_cause": "svelte_compiler_options_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "compiler", "config"],
+      "fix_commands": [
+        "Check svelte.config.js syntax",
+        "Verify compiler options compatibility",
+        "Update adapter and preprocessor configurations"
+      ]
+    }
+  ]
+}

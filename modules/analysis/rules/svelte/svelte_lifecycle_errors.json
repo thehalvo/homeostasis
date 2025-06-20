@@ -1,0 +1,176 @@
+{
+  "version": "1.0.0",
+  "description": "Svelte component lifecycle error detection rules",
+  "rules": [
+    {
+      "id": "svelte_onmount_not_imported",
+      "category": "svelte",
+      "subcategory": "lifecycle",
+      "pattern": "(?i)onMount is not defined|onDestroy is not defined|beforeUpdate is not defined|afterUpdate is not defined",
+      "suggestion": "Import lifecycle functions from 'svelte'",
+      "root_cause": "svelte_lifecycle_import_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "lifecycle", "import"],
+      "fix_commands": [
+        "Import lifecycle functions: import { onMount, onDestroy } from 'svelte'",
+        "Check import statement syntax",
+        "Ensure correct lifecycle function names"
+      ]
+    },
+    {
+      "id": "svelte_onmount_ssr_warning",
+      "category": "svelte",
+      "subcategory": "lifecycle",
+      "pattern": "(?i)onMount.*server.*side.*rendering|onMount.*ssr.*warning|onMount.*not.*run.*server",
+      "suggestion": "onMount only runs in browser, use tick() or afterUpdate for SSR-compatible code",
+      "root_cause": "svelte_onmount_ssr_warning",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "lifecycle", "ssr", "onMount"],
+      "fix_commands": [
+        "Use tick() for DOM-related operations that need to work on server",
+        "Move browser-specific code to onMount",
+        "Use afterUpdate for code that needs to run on both server and client"
+      ]
+    },
+    {
+      "id": "svelte_lifecycle_async_error",
+      "category": "svelte",
+      "subcategory": "lifecycle",
+      "pattern": "(?i)lifecycle.*function.*cannot.*be.*async|onMount.*async.*error|afterUpdate.*async.*error",
+      "suggestion": "Lifecycle functions should not be async - use async operations inside them",
+      "root_cause": "svelte_lifecycle_async_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "lifecycle", "async"],
+      "fix_commands": [
+        "Remove async keyword from lifecycle function",
+        "Use async operations inside lifecycle functions instead",
+        "Return cleanup function from onMount if needed"
+      ]
+    },
+    {
+      "id": "svelte_ondestroy_cleanup_missing",
+      "category": "svelte",
+      "subcategory": "lifecycle",
+      "pattern": "(?i)memory.*leak.*component|cleanup.*not.*called|onDestroy.*missing|subscription.*not.*cleaned",
+      "suggestion": "Use onDestroy to clean up subscriptions, timers, and event listeners",
+      "root_cause": "svelte_ondestroy_cleanup_missing",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "lifecycle", "cleanup", "memory-leak"],
+      "fix_commands": [
+        "Add onDestroy to clean up resources",
+        "Clear intervals and timeouts in onDestroy",
+        "Unsubscribe from stores and event listeners"
+      ]
+    },
+    {
+      "id": "svelte_beforeupdate_infinite_loop",
+      "category": "svelte",
+      "subcategory": "lifecycle",
+      "pattern": "(?i)beforeUpdate.*infinite.*loop|beforeUpdate.*ran.*too.*many.*times|beforeUpdate.*circular",
+      "suggestion": "Avoid updating reactive variables in beforeUpdate that trigger new updates",
+      "root_cause": "svelte_beforeupdate_infinite_loop",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "lifecycle", "beforeUpdate", "infinite-loop"],
+      "fix_commands": [
+        "Check for circular dependencies in beforeUpdate",
+        "Use conditions to prevent unnecessary updates",
+        "Move state updates to appropriate lifecycle hooks"
+      ]
+    },
+    {
+      "id": "svelte_afterupdate_infinite_loop",
+      "category": "svelte",
+      "subcategory": "lifecycle",
+      "pattern": "(?i)afterUpdate.*infinite.*loop|afterUpdate.*ran.*too.*many.*times|afterUpdate.*circular",
+      "suggestion": "Avoid updating reactive variables in afterUpdate that trigger new updates",
+      "root_cause": "svelte_afterupdate_infinite_loop",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "lifecycle", "afterUpdate", "infinite-loop"],
+      "fix_commands": [
+        "Check for circular dependencies in afterUpdate",
+        "Use conditions to prevent unnecessary updates",
+        "Consider using tick() instead of afterUpdate"
+      ]
+    },
+    {
+      "id": "svelte_tick_await_missing",
+      "category": "svelte",
+      "subcategory": "lifecycle",
+      "pattern": "(?i)tick.*not.*awaited|tick.*promise.*not.*handled|await.*tick.*missing",
+      "suggestion": "Always await tick() when using it for DOM updates",
+      "root_cause": "svelte_tick_await_missing",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "lifecycle", "tick", "async"],
+      "fix_commands": [
+        "Add await before tick() call",
+        "Make function async if using await tick()",
+        "Handle tick() promise with .then() if not using async/await"
+      ]
+    },
+    {
+      "id": "svelte_component_destroy_error",
+      "category": "svelte",
+      "subcategory": "lifecycle",
+      "pattern": "(?i)component.*already.*destroyed|cannot.*call.*destroyed.*component|component.*instance.*destroyed",
+      "suggestion": "Check component lifecycle state before calling methods",
+      "root_cause": "svelte_component_destroy_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "lifecycle", "destroy", "component"],
+      "fix_commands": [
+        "Check component state before method calls",
+        "Use proper cleanup in onDestroy",
+        "Avoid calling component methods after destruction"
+      ]
+    },
+    {
+      "id": "svelte_lifecycle_order_error",
+      "category": "svelte",
+      "subcategory": "lifecycle",
+      "pattern": "(?i)lifecycle.*wrong.*order|onMount.*before.*creation|lifecycle.*sequence.*error",
+      "suggestion": "Follow Svelte lifecycle order: creation -> beforeUpdate -> afterUpdate -> onMount -> onDestroy",
+      "root_cause": "svelte_lifecycle_order_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "lifecycle", "order"],
+      "fix_commands": [
+        "Use appropriate lifecycle hook for the operation",
+        "Move DOM manipulation to onMount",
+        "Use beforeUpdate/afterUpdate for reactive updates"
+      ]
+    },
+    {
+      "id": "svelte_setcontext_timing_error",
+      "category": "svelte",
+      "subcategory": "lifecycle",
+      "pattern": "(?i)setContext.*after.*component.*initialization|setContext.*timing.*error|context.*set.*too.*late",
+      "suggestion": "setContext must be called during component initialization, not in lifecycle hooks",
+      "root_cause": "svelte_setcontext_timing_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "lifecycle", "context", "timing"],
+      "fix_commands": [
+        "Move setContext to component initialization (not in onMount)",
+        "Call setContext at the top level of component script",
+        "Ensure setContext is called before child components mount"
+      ]
+    }
+  ]
+}

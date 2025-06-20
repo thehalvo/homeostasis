@@ -1,0 +1,210 @@
+{
+  "version": "1.0.0",
+  "description": "Svelte styling and CSS error detection rules",
+  "rules": [
+    {
+      "id": "svelte_style_scoping_error",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i)style.*scoping.*error|CSS.*not.*scoped|style.*leak.*global",
+      "suggestion": "Svelte styles are scoped by default - check for global modifier or :global() selector usage",
+      "root_cause": "svelte_style_scoping_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "css", "scoping"],
+      "fix_commands": [
+        "Use :global() selector for global styles",
+        "Add <style> tag without global modifier for scoped styles",
+        "Check CSS class names and selectors"
+      ]
+    },
+    {
+      "id": "svelte_global_style_error",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i):global.*syntax.*error|global.*style.*invalid|global.*selector.*error",
+      "suggestion": "Use :global() selector properly for global CSS styles",
+      "root_cause": "svelte_global_style_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "css", "global"],
+      "fix_commands": [
+        "Use :global(selector) for global styles",
+        "Use :global(.class) :global(.other) for multiple global selectors",
+        "Check global selector syntax"
+      ]
+    },
+    {
+      "id": "svelte_css_custom_properties_error",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i)CSS.*custom.*property.*error|CSS.*variable.*undefined|--.*property.*error",
+      "suggestion": "Define CSS custom properties (variables) before using them",
+      "root_cause": "svelte_css_custom_properties_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "css", "custom-properties", "variables"],
+      "fix_commands": [
+        "Define CSS custom properties: --my-color: blue;",
+        "Use CSS variables: color: var(--my-color);",
+        "Check custom property names and values"
+      ]
+    },
+    {
+      "id": "svelte_style_directive_error",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i)style:.*directive.*error|style.*binding.*invalid|style.*property.*error",
+      "suggestion": "Use style: directive for dynamic styling - style:property={value}",
+      "root_cause": "svelte_style_directive_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "css", "style-directive"],
+      "fix_commands": [
+        "Use style:property={value} for dynamic styles",
+        "Use style:color={isActive ? 'red' : 'blue'}",
+        "Check style directive syntax and property names"
+      ]
+    },
+    {
+      "id": "svelte_class_directive_error",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i)class:.*directive.*error|class.*binding.*invalid|conditional.*class.*error",
+      "suggestion": "Use class: directive for conditional classes - class:className={condition}",
+      "root_cause": "svelte_class_directive_error",
+      "confidence": "high",
+      "severity": "error",
+      "reliability": "high",
+      "tags": ["svelte", "css", "class-directive"],
+      "fix_commands": [
+        "Use class:className={condition} for conditional classes",
+        "Use class:active={isActive} syntax",
+        "Check class directive syntax and variable names"
+      ]
+    },
+    {
+      "id": "svelte_css_preprocessor_error",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i)SCSS.*preprocessor.*error|SASS.*compilation.*error|Less.*preprocessor.*error|Stylus.*error",
+      "suggestion": "Configure CSS preprocessor in svelte.config.js and install required packages",
+      "root_cause": "svelte_css_preprocessor_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "css", "preprocessor", "sass", "scss"],
+      "fix_commands": [
+        "Install CSS preprocessor: npm install -D sass",
+        "Configure in svelte.config.js: preprocess: sveltePreprocess()",
+        "Use lang attribute: <style lang=\"scss\">"
+      ]
+    },
+    {
+      "id": "svelte_tailwind_integration_error",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i)Tailwind.*CSS.*not.*working|Tailwind.*classes.*not.*applied|PostCSS.*Tailwind.*error",
+      "suggestion": "Configure Tailwind CSS with PostCSS in Svelte project",
+      "root_cause": "svelte_tailwind_integration_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "css", "tailwind", "postcss"],
+      "fix_commands": [
+        "Install Tailwind CSS and PostCSS packages",
+        "Configure tailwind.config.js with Svelte paths",
+        "Add Tailwind directives to CSS file"
+      ]
+    },
+    {
+      "id": "svelte_style_unused_selector",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i)unused.*CSS.*selector|CSS.*selector.*not.*used|style.*rule.*unused",
+      "suggestion": "Remove unused CSS selectors or check if they target the correct elements",
+      "root_cause": "svelte_style_unused_selector",
+      "confidence": "low",
+      "severity": "warning",
+      "reliability": "low",
+      "tags": ["svelte", "css", "unused", "optimization"],
+      "fix_commands": [
+        "Remove unused CSS selectors",
+        "Check if selectors match existing elements",
+        "Use Svelte compiler warnings to identify unused styles"
+      ]
+    },
+    {
+      "id": "svelte_css_module_error",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i)CSS.*module.*error|CSS.*module.*not.*found|CSS.*import.*error",
+      "suggestion": "Import CSS modules properly or use Svelte's built-in styling",
+      "root_cause": "svelte_css_module_error",
+      "confidence": "medium",
+      "severity": "error",
+      "reliability": "medium",
+      "tags": ["svelte", "css", "modules", "import"],
+      "fix_commands": [
+        "Use Svelte's scoped styles instead of CSS modules",
+        "Import CSS files in JavaScript if needed",
+        "Configure CSS modules in build tool if required"
+      ]
+    },
+    {
+      "id": "svelte_style_animation_error",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i)CSS.*animation.*error|keyframe.*animation.*error|animation.*not.*working",
+      "suggestion": "Define CSS animations and keyframes properly within Svelte components",
+      "root_cause": "svelte_style_animation_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "css", "animation", "keyframes"],
+      "fix_commands": [
+        "Define @keyframes in style tag",
+        "Use animation property with proper syntax",
+        "Consider using Svelte transitions for dynamic animations"
+      ]
+    },
+    {
+      "id": "svelte_css_grid_error",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i)CSS.*grid.*error|grid.*layout.*error|grid.*template.*error",
+      "suggestion": "Check CSS Grid properties and values",
+      "root_cause": "svelte_css_grid_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "css", "grid", "layout"],
+      "fix_commands": [
+        "Check grid-template-columns and grid-template-rows values",
+        "Use proper grid area names",
+        "Verify grid container and item properties"
+      ]
+    },
+    {
+      "id": "svelte_css_flexbox_error",
+      "category": "svelte",
+      "subcategory": "styling",
+      "pattern": "(?i)flexbox.*error|flex.*layout.*error|flex.*property.*error",
+      "suggestion": "Check Flexbox properties and values",
+      "root_cause": "svelte_css_flexbox_error",
+      "confidence": "medium",
+      "severity": "warning",
+      "reliability": "medium",
+      "tags": ["svelte", "css", "flexbox", "layout"],
+      "fix_commands": [
+        "Use display: flex on container",
+        "Check flex-direction, justify-content, align-items values",
+        "Verify flex item properties"
+      ]
+    }
+  ]
+}
