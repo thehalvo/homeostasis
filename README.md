@@ -243,6 +243,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **Infrastructure Integration**: Created Kubernetes operator for container healing, implemented cloud-specific adapters (AWS, GCP, Azure), developed service mesh integration, added serverless function support, and built edge deployment capabilities
 - **User Experience**: Released web dashboard for monitoring healing activities, implemented fix suggestion interface for human review, added configuration management UI, performance reporting, and custom rule/template editors
 - **Deployment Options**: Added canary deployment support for gradual rollout of fixes with automatic promotion/rollback based on metrics
+- **IDE Integration**: Released Visual Studio Code extension with real-time healing, inline fix suggestions, code lens for error prevention, settings synchronization across development environments, and telemetry for developer experience improvement. Supports 15 programming languages with confidence-based auto-fixes and workspace-wide healing capabilities
 
 ## Contributing
 
