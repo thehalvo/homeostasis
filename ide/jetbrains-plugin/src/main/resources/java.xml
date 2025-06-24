@@ -1,0 +1,28 @@
+<idea-plugin>
+    <!-- Java-specific extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Additional Java inspections -->
+        <localInspection 
+            language="JAVA" 
+            displayName="Homeostasis Java Advanced Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.JavaAdvancedHealingInspection" 
+            level="INFO"/>
+        
+        <!-- Java-specific intention actions -->
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.JavaNullSafetyIntention</className>
+            <category>Homeostasis/Java</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.JavaStreamOptimizationIntention</className>
+            <category>Homeostasis/Java</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.JavaExceptionHandlingIntention</className>
+            <category>Homeostasis/Java</category>
+        </intentionAction>
+    </extensions>
+</idea-plugin>

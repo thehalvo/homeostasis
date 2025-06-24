@@ -1,0 +1,216 @@
+<idea-plugin>
+    <id>com.homeostasis.healing</id>
+    <name>Homeostasis Self-Healing</name>
+    <version>0.1.0</version>
+    <vendor email="contact@homeostasis.dev" url="https://homeostasis.dev">Homeostasis</vendor>
+    
+    <description><![CDATA[
+        Real-time code healing and error prevention for multiple programming languages.
+        
+        Homeostasis automatically detects, analyzes, and fixes code errors across 15+ programming languages.
+        Features include:
+        - Real-time error detection and healing
+        - Language-specific inspections
+        - Automated refactoring actions
+        - Integration with Homeostasis healing server
+        - Confidence-based auto-fixes
+        - Comprehensive telemetry and learning
+    ]]></description>
+    
+    <change-notes><![CDATA[
+        Initial release with support for:
+        - Python, JavaScript, TypeScript, Java, Go, Rust, C#, PHP, Ruby, Scala, Elixir, Clojure, Swift, Kotlin, Dart
+        - Real-time healing as you type
+        - Language-specific inspections
+        - Refactoring action integration
+        - Configuration UI
+        - Remote Development support
+    ]]></change-notes>
+    
+    <!-- IntelliJ Platform compatibility -->
+    <idea-version since-build="223.0" until-build="241.*"/>
+    
+    <!-- Plugin dependencies -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends optional="true" config-file="python.xml">com.intellij.modules.python</depends>
+    <depends optional="true" config-file="java.xml">com.intellij.modules.java</depends>
+    <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
+    <depends optional="true" config-file="go.xml">org.jetbrains.plugins.go</depends>
+    <depends optional="true" config-file="rust.xml">org.rust.lang</depends>
+    <depends optional="true" config-file="php.xml">com.jetbrains.php</depends>
+    <depends optional="true" config-file="ruby.xml">org.jetbrains.plugins.ruby</depends>
+    <depends optional="true" config-file="scala.xml">org.intellij.scala</depends>
+    <depends optional="true" config-file="csharp.xml">com.intellij.modules.rider</depends>
+    <depends optional="true" config-file="swift.xml">com.intellij.appcode</depends>
+    <depends optional="true" config-file="dart.xml">Dart</depends>
+    <depends optional="true" config-file="javascript.xml">JavaScript</depends>
+    
+    <!-- Application components -->
+    <applicationComponents>
+        <component>
+            <implementation-class>com.homeostasis.healing.components.HomeostasisApplicationComponent</implementation-class>
+        </component>
+    </applicationComponents>
+    
+    <!-- Project components -->
+    <projectComponents>
+        <component>
+            <implementation-class>com.homeostasis.healing.components.HomeostasisProjectComponent</implementation-class>
+        </component>
+    </projectComponents>
+    
+    <!-- Extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Configuration -->
+        <applicationConfigurable 
+            id="homeostasis.settings" 
+            displayName="Homeostasis" 
+            instance="com.homeostasis.healing.settings.HomeostasisConfigurable"/>
+        
+        <!-- Inspections -->
+        <localInspection 
+            language="Python" 
+            displayName="Homeostasis Python Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.PythonHealingInspection" 
+            level="WARNING"/>
+        
+        <localInspection 
+            language="JAVA" 
+            displayName="Homeostasis Java Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.JavaHealingInspection" 
+            level="WARNING"/>
+            
+        <localInspection 
+            language="JavaScript" 
+            displayName="Homeostasis JavaScript Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.JavaScriptHealingInspection" 
+            level="WARNING"/>
+            
+        <localInspection 
+            language="TypeScript" 
+            displayName="Homeostasis TypeScript Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.TypeScriptHealingInspection" 
+            level="WARNING"/>
+        
+        <!-- External annotators for real-time analysis -->
+        <externalAnnotator 
+            language="Python" 
+            implementationClass="com.homeostasis.healing.annotators.PythonHealingAnnotator"/>
+        
+        <externalAnnotator 
+            language="JAVA" 
+            implementationClass="com.homeostasis.healing.annotators.JavaHealingAnnotator"/>
+            
+        <externalAnnotator 
+            language="JavaScript" 
+            implementationClass="com.homeostasis.healing.annotators.JavaScriptHealingAnnotator"/>
+            
+        <externalAnnotator 
+            language="TypeScript" 
+            implementationClass="com.homeostasis.healing.annotators.TypeScriptHealingAnnotator"/>
+        
+        <!-- Intention actions for fixes -->
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.HealCodeIntention</className>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.PreventiveHealingIntention</className>
+        </intentionAction>
+        
+        <!-- Tool windows -->
+        <toolWindow 
+            id="Homeostasis" 
+            anchor="bottom" 
+            factoryClass="com.homeostasis.healing.toolwindows.HealingToolWindowFactory"/>
+        
+        <!-- Notification groups -->
+        <notificationGroup 
+            id="Homeostasis" 
+            displayType="BALLOON" 
+            logByDefault="true"/>
+        
+        <!-- Services -->
+        <applicationService 
+            serviceInterface="com.homeostasis.healing.services.HealingService" 
+            serviceImplementation="com.homeostasis.healing.services.impl.HealingServiceImpl"/>
+            
+        <applicationService 
+            serviceInterface="com.homeostasis.healing.services.ConfigurationService" 
+            serviceImplementation="com.homeostasis.healing.services.impl.ConfigurationServiceImpl"/>
+            
+        <applicationService 
+            serviceInterface="com.homeostasis.healing.services.TelemetryService" 
+            serviceImplementation="com.homeostasis.healing.services.impl.TelemetryServiceImpl"/>
+        
+        <projectService 
+            serviceInterface="com.homeostasis.healing.services.ProjectHealingService" 
+            serviceImplementation="com.homeostasis.healing.services.impl.ProjectHealingServiceImpl"/>
+    </extensions>
+    
+    <!-- Actions -->
+    <actions>
+        <group id="homeostasis.healing.actions" text="Homeostasis" popup="true">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+            
+            <action 
+                id="homeostasis.healFile" 
+                class="com.homeostasis.healing.actions.HealFileAction" 
+                text="Heal Current File" 
+                description="Analyze and heal the current file">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt H"/>
+            </action>
+            
+            <action 
+                id="homeostasis.healProject" 
+                class="com.homeostasis.healing.actions.HealProjectAction" 
+                text="Heal Entire Project" 
+                description="Analyze and heal the entire project">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift H"/>
+            </action>
+            
+            <action 
+                id="homeostasis.toggleRealTimeHealing" 
+                class="com.homeostasis.healing.actions.ToggleRealTimeHealingAction" 
+                text="Toggle Real-time Healing" 
+                description="Enable or disable real-time healing">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt T"/>
+            </action>
+            
+            <action 
+                id="homeostasis.showDashboard" 
+                class="com.homeostasis.healing.actions.ShowDashboardAction" 
+                text="Show Healing Dashboard" 
+                description="Open the Homeostasis healing dashboard"/>
+                
+            <action 
+                id="homeostasis.configureTelemetry" 
+                class="com.homeostasis.healing.actions.ConfigureTelemetryAction" 
+                text="Configure Telemetry" 
+                description="Configure telemetry settings"/>
+        </group>
+        
+        <!-- Tool window actions -->
+        <group id="homeostasis.toolwindow.actions">
+            <action 
+                id="homeostasis.refreshStats" 
+                class="com.homeostasis.healing.actions.RefreshStatsAction" 
+                text="Refresh" 
+                description="Refresh healing statistics" 
+                icon="AllIcons.Actions.Refresh"/>
+                
+            <action 
+                id="homeostasis.clearHistory" 
+                class="com.homeostasis.healing.actions.ClearHistoryAction" 
+                text="Clear History" 
+                description="Clear healing history" 
+                icon="AllIcons.Actions.GC"/>
+        </group>
+    </actions>
+</idea-plugin>

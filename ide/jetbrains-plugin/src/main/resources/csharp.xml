@@ -1,0 +1,28 @@
+<idea-plugin>
+    <!-- C#-specific extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Additional C# inspections -->
+        <localInspection 
+            language="C#" 
+            displayName="Homeostasis C# Advanced Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.CSharpAdvancedHealingInspection" 
+            level="INFO"/>
+        
+        <!-- C#-specific intention actions -->
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.CSharpAsyncAwaitIntention</className>
+            <category>Homeostasis/C#</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.CSharpNullableReferenceIntention</className>
+            <category>Homeostasis/C#</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.CSharpLinqOptimizationIntention</className>
+            <category>Homeostasis/C#</category>
+        </intentionAction>
+    </extensions>
+</idea-plugin>

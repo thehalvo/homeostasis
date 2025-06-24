@@ -1,0 +1,28 @@
+<idea-plugin>
+    <!-- JavaScript-specific extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Additional JavaScript inspections -->
+        <localInspection 
+            language="JavaScript" 
+            displayName="Homeostasis JavaScript Advanced Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.JavaScriptAdvancedHealingInspection" 
+            level="INFO"/>
+        
+        <!-- JavaScript-specific intention actions -->
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.JavaScriptAsyncAwaitIntention</className>
+            <category>Homeostasis/JavaScript</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.JavaScriptES6ModuleIntention</className>
+            <category>Homeostasis/JavaScript</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.JavaScriptNullishCoalescingIntention</className>
+            <category>Homeostasis/JavaScript</category>
+        </intentionAction>
+    </extensions>
+</idea-plugin>

@@ -1,0 +1,28 @@
+<idea-plugin>
+    <!-- Kotlin-specific extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Additional Kotlin inspections -->
+        <localInspection 
+            language="kotlin" 
+            displayName="Homeostasis Kotlin Advanced Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.KotlinAdvancedHealingInspection" 
+            level="INFO"/>
+        
+        <!-- Kotlin-specific intention actions -->
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.KotlinCoroutineIntention</className>
+            <category>Homeostasis/Kotlin</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.KotlinNullSafetyIntention</className>
+            <category>Homeostasis/Kotlin</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.KotlinScopeFunctionIntention</className>
+            <category>Homeostasis/Kotlin</category>
+        </intentionAction>
+    </extensions>
+</idea-plugin>

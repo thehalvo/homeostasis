@@ -1,0 +1,28 @@
+<idea-plugin>
+    <!-- Rust-specific extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Additional Rust inspections -->
+        <localInspection 
+            language="Rust" 
+            displayName="Homeostasis Rust Advanced Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.RustAdvancedHealingInspection" 
+            level="INFO"/>
+        
+        <!-- Rust-specific intention actions -->
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.RustOwnershipIntention</className>
+            <category>Homeostasis/Rust</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.RustLifetimeIntention</className>
+            <category>Homeostasis/Rust</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.RustErrorHandlingIntention</className>
+            <category>Homeostasis/Rust</category>
+        </intentionAction>
+    </extensions>
+</idea-plugin>

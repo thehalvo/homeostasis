@@ -244,6 +244,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **User Experience**: Released web dashboard for monitoring healing activities, implemented fix suggestion interface for human review, added configuration management UI, performance reporting, and custom rule/template editors
 - **Deployment Options**: Added canary deployment support for gradual rollout of fixes with automatic promotion/rollback based on metrics
 - **IDE Integration**: Released Visual Studio Code extension with real-time healing, inline fix suggestions, code lens for error prevention, settings synchronization across development environments, and telemetry for developer experience improvement. Supports 15 programming languages with confidence-based auto-fixes and workspace-wide healing capabilities
+- **JetBrains Suite Integration**: Completed plugin for IntelliJ IDEA, PyCharm, WebStorm, and other JetBrains IDEs with language-specific inspection integration, refactoring action integration, embedded healing configuration UI, remote development support through JetBrains Gateway, real-time healing as you type, intention actions for quick fixes, tool windows for healing statistics, and support for 15+ programming languages with automated error detection and resolution
 
 ## Contributing
 

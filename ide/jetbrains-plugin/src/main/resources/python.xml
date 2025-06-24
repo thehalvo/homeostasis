@@ -1,0 +1,23 @@
+<idea-plugin>
+    <!-- Python-specific extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Additional Python inspections -->
+        <localInspection 
+            language="Python" 
+            displayName="Homeostasis Python Advanced Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.PythonAdvancedHealingInspection" 
+            level="INFO"/>
+        
+        <!-- Python-specific intention actions -->
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.PythonOptimizeImportsIntention</className>
+            <category>Homeostasis/Python</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.PythonTypeHintIntention</className>
+            <category>Homeostasis/Python</category>
+        </intentionAction>
+    </extensions>
+</idea-plugin>

@@ -1,0 +1,28 @@
+<idea-plugin>
+    <!-- PHP-specific extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Additional PHP inspections -->
+        <localInspection 
+            language="PHP" 
+            displayName="Homeostasis PHP Advanced Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.PhpAdvancedHealingInspection" 
+            level="INFO"/>
+        
+        <!-- PHP-specific intention actions -->
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.PhpTypeDeclarationIntention</className>
+            <category>Homeostasis/PHP</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.PhpNamespaceIntention</className>
+            <category>Homeostasis/PHP</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.PhpNullSafetyIntention</className>
+            <category>Homeostasis/PHP</category>
+        </intentionAction>
+    </extensions>
+</idea-plugin>

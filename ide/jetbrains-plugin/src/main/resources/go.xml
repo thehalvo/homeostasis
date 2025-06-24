@@ -1,0 +1,28 @@
+<idea-plugin>
+    <!-- Go-specific extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Additional Go inspections -->
+        <localInspection 
+            language="go" 
+            displayName="Homeostasis Go Advanced Healing" 
+            groupName="Homeostasis" 
+            implementationClass="com.homeostasis.healing.inspections.GoAdvancedHealingInspection" 
+            level="INFO"/>
+        
+        <!-- Go-specific intention actions -->
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.GoErrorHandlingIntention</className>
+            <category>Homeostasis/Go</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.GoGoroutineIntention</className>
+            <category>Homeostasis/Go</category>
+        </intentionAction>
+        
+        <intentionAction>
+            <className>com.homeostasis.healing.intentions.GoInterfaceIntention</className>
+            <category>Homeostasis/Go</category>
+        </intentionAction>
+    </extensions>
+</idea-plugin>
