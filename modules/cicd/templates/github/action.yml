@@ -1,0 +1,169 @@
+name: 'Homeostasis Healing'
+description: 'Automatically analyze and heal code issues in your repository'
+author: 'Homeostasis Framework'
+
+branding:
+  icon: 'zap'
+  color: 'green'
+
+inputs:
+  github-token:
+    description: 'GitHub token for API access'
+    required: true
+    default: ${{ github.token }}
+  
+  confidence-threshold:
+    description: 'Minimum confidence score for automatic healing (0.0-1.0)'
+    required: false
+    default: '0.8'
+  
+  languages:
+    description: 'Comma-separated list of languages to analyze'
+    required: false
+    default: 'python,javascript,typescript,java,go,rust,php,ruby'
+  
+  analysis-only:
+    description: 'Only perform analysis without applying fixes'
+    required: false
+    default: 'false'
+  
+  workflow-run-id:
+    description: 'Specific workflow run ID to analyze'
+    required: false
+  
+  create-pr:
+    description: 'Create PR for fixes that need manual review'
+    required: false
+    default: 'true'
+
+outputs:
+  healing-applied:
+    description: 'Whether healing was applied to the code'
+  
+  fixes-count:
+    description: 'Number of fixes applied'
+  
+  confidence-score:
+    description: 'Average confidence score of applied fixes'
+  
+  analysis-path:
+    description: 'Path to the analysis results file'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Cache Homeostasis dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: homeostasis-${{ runner.os }}-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          homeostasis-${{ runner.os }}-
+    
+    - name: Install Homeostasis
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install homeostasis[github] requests pyyaml
+    
+    - name: Run Homeostasis Analysis
+      shell: bash
+      id: analysis
+      run: |
+        # Determine what to analyze
+        if [ -n "${{ inputs.workflow-run-id }}" ]; then
+          ANALYZE_CMD="homeostasis analyze-github-workflow --run-id ${{ inputs.workflow-run-id }}"
+        else
+          ANALYZE_CMD="homeostasis analyze --platform github"
+        fi
+        
+        # Run analysis
+        $ANALYZE_CMD \
+          --repo "${{ github.repository }}" \
+          --languages "${{ inputs.languages }}" \
+          --output homeostasis-analysis.json \
+          --confidence-threshold "${{ inputs.confidence-threshold }}"
+        
+        # Extract results
+        if [ -f "homeostasis-analysis.json" ]; then
+          HEALING_NEEDED=$(jq -r '.healing_recommended // false' homeostasis-analysis.json)
+          CONFIDENCE=$(jq -r '.confidence_score // 0' homeostasis-analysis.json)
+          ISSUES_COUNT=$(jq -r '.issues_found // 0' homeostasis-analysis.json)
+          
+          echo "healing-needed=$HEALING_NEEDED" >> $GITHUB_OUTPUT
+          echo "confidence-score=$CONFIDENCE" >> $GITHUB_OUTPUT
+          echo "issues-count=$ISSUES_COUNT" >> $GITHUB_OUTPUT
+          echo "analysis-path=homeostasis-analysis.json" >> $GITHUB_OUTPUT
+          
+          echo "🔍 Analysis complete:"
+          echo "  - Issues found: $ISSUES_COUNT"
+          echo "  - Confidence score: $CONFIDENCE"
+          echo "  - Healing recommended: $HEALING_NEEDED"
+        else
+          echo "❌ Analysis failed - no results file generated"
+          exit 1
+        fi
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+    
+    - name: Apply Healing Fixes
+      shell: bash
+      if: steps.analysis.outputs.healing-needed == 'true' && inputs.analysis-only != 'true'
+      id: healing
+      run: |
+        # Apply fixes based on confidence threshold
+        homeostasis heal \
+          --input homeostasis-analysis.json \
+          --min-confidence "${{ inputs.confidence-threshold }}" \
+          --output healing-results.json
+        
+        # Check results
+        if [ -f "healing-results.json" ]; then
+          FIXES_APPLIED=$(jq -r '.fixes_applied // 0' healing-results.json)
+          HEALING_SUCCESS=$(jq -r '.success // false' healing-results.json)
+          AVG_CONFIDENCE=$(jq -r '.average_confidence // 0' healing-results.json)
+          
+          echo "healing-applied=$HEALING_SUCCESS" >> $GITHUB_OUTPUT
+          echo "fixes-count=$FIXES_APPLIED" >> $GITHUB_OUTPUT
+          echo "confidence-score=$AVG_CONFIDENCE" >> $GITHUB_OUTPUT
+          
+          echo "🔧 Healing complete:"
+          echo "  - Fixes applied: $FIXES_APPLIED"
+          echo "  - Success: $HEALING_SUCCESS"
+          echo "  - Average confidence: $AVG_CONFIDENCE"
+        else
+          echo "healing-applied=false" >> $GITHUB_OUTPUT
+          echo "fixes-count=0" >> $GITHUB_OUTPUT
+          echo "confidence-score=0" >> $GITHUB_OUTPUT
+        fi
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+    
+    - name: Create Summary
+      shell: bash
+      run: |
+        echo "## 🔧 Homeostasis Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "homeostasis-analysis.json" ]; then
+          echo "### Analysis Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Issues Found:** ${{ steps.analysis.outputs.issues-count }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Confidence Score:** ${{ steps.analysis.outputs.confidence-score }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Healing Recommended:** ${{ steps.analysis.outputs.healing-needed }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ inputs.analysis-only }}" != "true" ] && [ -f "healing-results.json" ]; then
+          echo "### Healing Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Fixes Applied:** ${{ steps.healing.outputs.fixes-count }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Healing Success:** ${{ steps.healing.outputs.healing-applied }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Average Confidence:** ${{ steps.healing.outputs.confidence-score }}" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "*Powered by [Homeostasis](https://github.com/homeostasis-framework/homeostasis) 🤖*" >> $GITHUB_STEP_SUMMARY

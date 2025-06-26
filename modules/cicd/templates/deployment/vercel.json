@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "name": "homeostasis-enabled-app",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
+    }
+  ],
+  "functions": {
+    "api/homeostasis/*.js": {
+      "memory": 512,
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "HOMEOSTASIS_ENABLED": "true",
+    "HOMEOSTASIS_CONFIDENCE_THRESHOLD": "0.8",
+    "HOMEOSTASIS_AUTO_HEAL": "true",
+    "HOMEOSTASIS_PLATFORM": "vercel"
+  },
+  "build": {
+    "env": {
+      "HOMEOSTASIS_BUILD_HEALING": "true",
+      "HOMEOSTASIS_BUILD_TIMEOUT": "600"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/homeostasis/webhook",
+      "dest": "/api/homeostasis/webhook.js"
+    },
+    {
+      "src": "/api/homeostasis/status",
+      "dest": "/api/homeostasis/status.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/homeostasis/(.*)",
+      "headers": [
+        {
+          "key": "X-Homeostasis-Version",
+          "value": "1.0.0"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/health",
+      "destination": "/api/homeostasis/status"
+    }
+  ]
+}

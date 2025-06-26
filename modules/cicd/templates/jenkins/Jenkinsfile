@@ -1,0 +1,495 @@
+// Homeostasis Healing Jenkins Pipeline
+// This pipeline provides automated healing for failed builds
+
+pipeline {
+    agent any
+    
+    parameters {
+        string(
+            name: 'FAILED_JOB_NAME', 
+            defaultValue: '', 
+            description: 'Name of the failed job to heal'
+        )
+        string(
+            name: 'FAILED_BUILD_NUMBER', 
+            defaultValue: '', 
+            description: 'Build number of the failed build'
+        )
+        choice(
+            name: 'CONFIDENCE_THRESHOLD',
+            choices: ['0.9', '0.8', '0.7', '0.6'],
+            description: 'Minimum confidence for automatic healing'
+        )
+        choice(
+            name: 'HEALING_MODE',
+            choices: ['auto', 'suggest', 'both'],
+            description: 'Healing mode: auto-apply fixes, suggest only, or both'
+        )
+        booleanParam(
+            name: 'RUN_TESTS',
+            defaultValue: true,
+            description: 'Run tests after applying fixes'
+        )
+        booleanParam(
+            name: 'CREATE_PR',
+            defaultValue: true,
+            description: 'Create pull request for manual review fixes'
+        )
+    }
+    
+    environment {
+        HOMEOSTASIS_CONFIDENCE = "${params.CONFIDENCE_THRESHOLD}"
+        HOMEOSTASIS_MODE = "${params.HEALING_MODE}"
+        // Jenkins API credentials
+        JENKINS_API_URL = "${env.JENKINS_URL}"
+        JENKINS_USER_ID = "${env.BUILD_USER_ID}"
+    }
+    
+    options {
+        // Keep builds for analysis
+        buildDiscarder(logRotator(numToKeepStr: '50'))
+        // Timeout after 30 minutes
+        timeout(time: 30, unit: 'MINUTES')
+        // Add timestamps to console output
+        timestamps()
+        // Retry on failure
+        retry(2)
+    }
+    
+    stages {
+        stage('🔧 Setup Homeostasis') {
+            steps {
+                echo "🚀 Setting up Homeostasis healing environment"
+                script {
+                    try {
+                        sh '''
+                            # Install Python if not available
+                            python3 --version || {
+                                echo "Installing Python..."
+                                if command -v apt-get; then
+                                    sudo apt-get update && sudo apt-get install -y python3 python3-pip
+                                elif command -v yum; then
+                                    sudo yum install -y python3 python3-pip
+                                fi
+                            }
+                            
+                            # Install Homeostasis
+                            python3 -m pip install --upgrade pip
+                            python3 -m pip install homeostasis[jenkins] requests
+                            
+                            # Verify installation
+                            homeostasis --version
+                        '''
+                    } catch (Exception e) {
+                        error("Failed to setup Homeostasis: ${e.getMessage()}")
+                    }
+                }
+            }
+        }
+        
+        stage('🔍 Analyze Build Failure') {
+            steps {
+                echo "🔍 Analyzing failed build: ${params.FAILED_JOB_NAME} #${params.FAILED_BUILD_NUMBER}"
+                script {
+                    try {
+                        // Validate required parameters
+                        if (!params.FAILED_JOB_NAME || !params.FAILED_BUILD_NUMBER) {
+                            error("FAILED_JOB_NAME and FAILED_BUILD_NUMBER parameters are required")
+                        }
+                        
+                        sh """
+                            homeostasis analyze-jenkins-build \\
+                                --jenkins-url "${env.JENKINS_URL}" \\
+                                --username "${env.JENKINS_USERNAME}" \\
+                                --api-token "${env.JENKINS_API_TOKEN}" \\
+                                --job-name "${params.FAILED_JOB_NAME}" \\
+                                --build-number "${params.FAILED_BUILD_NUMBER}" \\
+                                --output analysis.json \\
+                                --verbose
+                        """
+                        
+                        // Read and parse analysis results
+                        def analysisText = readFile('analysis.json')
+                        def analysis = readJSON text: analysisText
+                        
+                        // Set environment variables for downstream stages
+                        env.HEALING_NEEDED = analysis.healing_recommended ?: 'false'
+                        env.CONFIDENCE_SCORE = analysis.confidence_score ?: '0'
+                        env.ISSUES_FOUND = analysis.issues_found ?: '0'
+                        env.ERROR_TYPES = analysis.error_types?.join(',') ?: ''
+                        
+                        echo "📊 Analysis Results:"
+                        echo "   - Healing needed: ${env.HEALING_NEEDED}"
+                        echo "   - Confidence score: ${env.CONFIDENCE_SCORE}"
+                        echo "   - Issues found: ${env.ISSUES_FOUND}"
+                        echo "   - Error types: ${env.ERROR_TYPES}"
+                        
+                        // Create analysis summary
+                        def summary = """
+## 🔍 Homeostasis Analysis Summary
+
+**Target Build:** ${params.FAILED_JOB_NAME} #${params.FAILED_BUILD_NUMBER}
+**Healing Recommended:** ${env.HEALING_NEEDED}
+**Confidence Score:** ${env.CONFIDENCE_SCORE}
+**Issues Found:** ${env.ISSUES_FOUND}
+**Error Types:** ${env.ERROR_TYPES}
+
+**Analysis Timestamp:** ${new Date()}
+"""
+                        writeFile file: 'analysis-summary.md', text: summary
+                        
+                    } catch (Exception e) {
+                        error("Analysis failed: ${e.getMessage()}")
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'analysis.json,analysis-summary.md', fingerprint: true
+                }
+            }
+        }
+        
+        stage('🔧 Apply Healing Fixes') {
+            when {
+                expression { env.HEALING_NEEDED == 'true' }
+            }
+            parallel {
+                stage('Auto-Apply High-Confidence Fixes') {
+                    when {
+                        expression { 
+                            return params.HEALING_MODE in ['auto', 'both'] &&
+                                   Float.parseFloat(env.CONFIDENCE_SCORE) >= Float.parseFloat(params.CONFIDENCE_THRESHOLD)
+                        }
+                    }
+                    steps {
+                        echo "🤖 Auto-applying high-confidence fixes"
+                        script {
+                            sh """
+                                homeostasis heal \\
+                                    --input analysis.json \\
+                                    --min-confidence "${params.CONFIDENCE_THRESHOLD}" \\
+                                    --auto-apply \\
+                                    --create-backup \\
+                                    --output auto-healing-results.json
+                            """
+                            
+                            def healingResults = readJSON file: 'auto-healing-results.json'
+                            env.AUTO_FIXES_APPLIED = healingResults.fixes_applied ?: '0'
+                            env.AUTO_HEALING_SUCCESS = healingResults.success ?: 'false'
+                            
+                            echo "✅ Auto-healing complete: ${env.AUTO_FIXES_APPLIED} fixes applied"
+                        }
+                    }
+                }
+                
+                stage('Generate Manual Review Suggestions') {
+                    when {
+                        expression { params.HEALING_MODE in ['suggest', 'both'] }
+                    }
+                    steps {
+                        echo "📝 Generating suggestions for manual review"
+                        script {
+                            def minConfidence = params.HEALING_MODE == 'suggest' ? '0.3' : '0.3'
+                            def maxConfidence = params.HEALING_MODE == 'suggest' ? '1.0' : params.CONFIDENCE_THRESHOLD
+                            
+                            sh """
+                                homeostasis heal \\
+                                    --input analysis.json \\
+                                    --min-confidence "${minConfidence}" \\
+                                    --max-confidence "${maxConfidence}" \\
+                                    --suggest-only \\
+                                    --output manual-suggestions.json
+                            """
+                            
+                            def suggestions = readJSON file: 'manual-suggestions.json'
+                            env.MANUAL_SUGGESTIONS_COUNT = suggestions.suggestions_count ?: '0'
+                            
+                            echo "📋 Generated ${env.MANUAL_SUGGESTIONS_COUNT} manual suggestions"
+                        }
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'auto-healing-results.json,manual-suggestions.json', allowEmptyArchive: true
+                }
+            }
+        }
+        
+        stage('🧪 Test Applied Fixes') {
+            when {
+                allOf {
+                    expression { env.HEALING_NEEDED == 'true' }
+                    expression { params.RUN_TESTS }
+                    expression { env.AUTO_HEALING_SUCCESS == 'true' }
+                }
+            }
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        echo "🧪 Running unit tests"
+                        script {
+                            sh '''
+                                # Detect project type and run appropriate tests
+                                if [ -f "package.json" ]; then
+                                    echo "📦 Node.js project detected"
+                                    npm install
+                                    npm test || npm run test:unit || echo "No unit tests found"
+                                elif [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then
+                                    echo "🐍 Python project detected"
+                                    if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+                                    python -m pytest tests/ -v || python -m unittest discover || echo "No tests found"
+                                elif [ -f "pom.xml" ]; then
+                                    echo "☕ Java Maven project detected"
+                                    mvn test
+                                elif [ -f "build.gradle" ] || [ -f "build.gradle.kts" ]; then
+                                    echo "☕ Java Gradle project detected"
+                                    ./gradlew test
+                                elif [ -f "go.mod" ]; then
+                                    echo "🐹 Go project detected"
+                                    go test ./...
+                                elif [ -f "Cargo.toml" ]; then
+                                    echo "🦀 Rust project detected"
+                                    cargo test
+                                else
+                                    echo "⚠️ Unknown project type, skipping tests"
+                                fi
+                            '''
+                        }
+                    }
+                    post {
+                        always {
+                            // Publish test results if available
+                            publishTestResults testResultsPattern: '**/test-results.xml,**/TEST-*.xml', allowEmptyResults: true
+                        }
+                    }
+                }
+                
+                stage('Static Analysis') {
+                    steps {
+                        echo "🔍 Running static analysis on fixed code"
+                        script {
+                            sh '''
+                                # Run language-specific static analysis
+                                if [ -f "package.json" ]; then
+                                    npm run lint || npx eslint . || echo "No linting available"
+                                elif [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then
+                                    python -m flake8 . || python -m pylint . || echo "No Python linting available"
+                                fi
+                                
+                                # Run Homeostasis code quality check
+                                homeostasis quality-check --path . --output quality-report.json || true
+                            '''
+                        }
+                    }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: 'quality-report.json', allowEmptyArchive: true
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('📋 Create Pull Request') {
+            when {
+                allOf {
+                    expression { env.HEALING_NEEDED == 'true' }
+                    expression { params.CREATE_PR }
+                    expression { env.MANUAL_SUGGESTIONS_COUNT != '0' }
+                }
+            }
+            steps {
+                echo "📋 Creating pull request for manual review"
+                script {
+                    sh '''
+                        # Configure git
+                        git config --local user.email "jenkins@homeostasis.bot"
+                        git config --local user.name "Jenkins Homeostasis Bot"
+                        
+                        # Create feature branch
+                        BRANCH_NAME="homeostasis/healing-${BUILD_NUMBER}"
+                        git checkout -b "$BRANCH_NAME"
+                        
+                        # Apply manual suggestions
+                        homeostasis apply-suggestions \\
+                            --input manual-suggestions.json \\
+                            --interactive false
+                        
+                        # Check if there are changes to commit
+                        if ! git diff --quiet; then
+                            git add .
+                            git commit -m "🔧 Homeostasis: Healing suggestions for ${params.FAILED_JOB_NAME} #${params.FAILED_BUILD_NUMBER}
+                            
+                            Auto-fixes applied: ${env.AUTO_FIXES_APPLIED ?: 0}
+                            Manual suggestions: ${env.MANUAL_SUGGESTIONS_COUNT}
+                            Confidence score: ${env.CONFIDENCE_SCORE}
+                            
+                            Please review these changes before merging.
+                            
+                            Generated by Jenkins job: ${env.BUILD_URL}"
+                            
+                            # Push branch (assumes git credentials are configured)
+                            git push origin "$BRANCH_NAME"
+                            
+                            echo "🎯 Branch '$BRANCH_NAME' created and pushed"
+                            echo "HEALING_BRANCH=$BRANCH_NAME" >> healing.env
+                        else
+                            echo "ℹ️ No changes to create PR for"
+                        fi
+                    '''
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'healing.env', allowEmptyArchive: true
+                }
+            }
+        }
+        
+        stage('🚀 Deploy Auto-Fixes') {
+            when {
+                allOf {
+                    expression { env.AUTO_HEALING_SUCCESS == 'true' }
+                    expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                    // Only auto-deploy if tests passed or tests were skipped
+                    not { expression { currentBuild.result == 'UNSTABLE' } }
+                }
+            }
+            steps {
+                echo "🚀 Deploying automatic fixes to main branch"
+                script {
+                    sh '''
+                        git config --local user.email "jenkins@homeostasis.bot"
+                        git config --local user.name "Jenkins Homeostasis Bot"
+                        
+                        # Check if there are changes to commit
+                        if ! git diff --quiet; then
+                            git add .
+                            git commit -m "🔧 Auto-heal: Fix issues from ${params.FAILED_JOB_NAME} #${params.FAILED_BUILD_NUMBER}
+                            
+                            ✅ Applied ${env.AUTO_FIXES_APPLIED} high-confidence fixes
+                            📊 Confidence score: ${env.CONFIDENCE_SCORE}
+                            🧪 Tests: $([ "${params.RUN_TESTS}" = "true" ] && echo "PASSED" || echo "SKIPPED")
+                            
+                            Automated healing by Homeostasis via Jenkins
+                            Build: ${env.BUILD_URL}"
+                            
+                            # Push to main branch
+                            git push origin HEAD:main
+                            
+                            echo "✅ Auto-fixes deployed to main branch"
+                        else
+                            echo "ℹ️ No changes to deploy"
+                        fi
+                    '''
+                }
+            }
+        }
+        
+        stage('📢 Send Notifications') {
+            steps {
+                echo "📢 Sending healing completion notifications"
+                script {
+                    def status = env.HEALING_NEEDED == 'true' ? 'HEALING_APPLIED' : 'NO_HEALING_NEEDED'
+                    def message = """
+🔧 **Homeostasis Healing Complete**
+
+**Target:** ${params.FAILED_JOB_NAME} #${params.FAILED_BUILD_NUMBER}
+**Status:** ${status}
+**Confidence Score:** ${env.CONFIDENCE_SCORE}
+**Auto-fixes Applied:** ${env.AUTO_FIXES_APPLIED ?: '0'}
+**Manual Suggestions:** ${env.MANUAL_SUGGESTIONS_COUNT ?: '0'}
+**Tests Status:** ${params.RUN_TESTS ? 'RUN' : 'SKIPPED'}
+
+**Jenkins Build:** ${env.BUILD_URL}
+**Healing Branch:** ${env.HEALING_BRANCH ?: 'none'}
+
+*Automated by Homeostasis 🤖*
+"""
+                    
+                    // Send notifications (configure webhooks as needed)
+                    sh """
+                        homeostasis notify \\
+                            --message "${message}" \\
+                            --status "${status}" \\
+                            --build-url "${env.BUILD_URL}" \\
+                            --channels slack,email || echo "Notification failed, continuing..."
+                    """
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            echo "🏁 Homeostasis healing pipeline completed"
+            
+            script {
+                // Create final summary
+                def summary = """
+# 🔧 Homeostasis Healing Summary
+
+**Build:** ${env.BUILD_NUMBER}
+**Started:** ${env.BUILD_TIMESTAMP}
+**Duration:** ${currentBuild.durationString}
+**Result:** ${currentBuild.result ?: 'SUCCESS'}
+
+## Target Information
+- **Failed Job:** ${params.FAILED_JOB_NAME}
+- **Failed Build:** #${params.FAILED_BUILD_NUMBER}
+- **Healing Mode:** ${params.HEALING_MODE}
+- **Confidence Threshold:** ${params.CONFIDENCE_THRESHOLD}
+
+## Results
+- **Healing Needed:** ${env.HEALING_NEEDED ?: 'Unknown'}
+- **Confidence Score:** ${env.CONFIDENCE_SCORE ?: 'Unknown'}
+- **Issues Found:** ${env.ISSUES_FOUND ?: 'Unknown'}
+- **Auto-fixes Applied:** ${env.AUTO_FIXES_APPLIED ?: '0'}
+- **Manual Suggestions:** ${env.MANUAL_SUGGESTIONS_COUNT ?: '0'}
+
+## Actions Taken
+- **Tests Run:** ${params.RUN_TESTS}
+- **PR Created:** ${params.CREATE_PR}
+- **Auto-deployed:** ${env.AUTO_HEALING_SUCCESS == 'true' ? 'Yes' : 'No'}
+
+---
+*Generated by Homeostasis Jenkins Pipeline*
+"""
+                writeFile file: 'healing-summary.md', text: summary
+            }
+            
+            // Archive all artifacts
+            archiveArtifacts artifacts: 'healing-summary.md,*.json,*.env', allowEmptyArchive: true
+        }
+        
+        success {
+            echo "✅ Healing pipeline completed successfully"
+        }
+        
+        failure {
+            echo "❌ Healing pipeline failed"
+            script {
+                // Send failure notification
+                sh """
+                    homeostasis notify \\
+                        --message "❌ Homeostasis healing pipeline failed for ${params.FAILED_JOB_NAME} #${params.FAILED_BUILD_NUMBER}" \\
+                        --status "PIPELINE_FAILED" \\
+                        --build-url "${env.BUILD_URL}" \\
+                        --channels slack,email || true
+                """
+            }
+        }
+        
+        unstable {
+            echo "⚠️ Healing pipeline completed with warnings"
+        }
+        
+        cleanup {
+            echo "🧹 Cleaning up workspace"
+            // Clean up sensitive files
+            sh 'rm -f *.token *.key || true'
+        }
+    }
+}

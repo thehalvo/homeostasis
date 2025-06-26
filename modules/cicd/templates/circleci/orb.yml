@@ -1,0 +1,508 @@
+version: 2.1
+
+description: |
+  Homeostasis healing orb for automated error detection and fixing in CircleCI workflows.
+  This orb provides commands and jobs to analyze failed builds and apply intelligent fixes.
+
+display:
+  home_url: https://github.com/homeostasis-framework/homeostasis
+  source_url: https://github.com/homeostasis-framework/homeostasis
+
+orbs:
+  node: circleci/node@5.0.0
+  python: circleci/python@2.0.0
+
+executors:
+  homeostasis:
+    description: Homeostasis executor with Python environment
+    docker:
+      - image: python:3.9-slim
+    working_directory: ~/project
+    environment:
+      PYTHONUNBUFFERED: "1"
+
+  homeostasis-node:
+    description: Homeostasis executor with Node.js environment
+    docker:
+      - image: cimg/python:3.9-node
+    working_directory: ~/project
+
+commands:
+  install:
+    description: Install Homeostasis healing framework
+    parameters:
+      version:
+        type: string
+        default: "latest"
+        description: Version of Homeostasis to install
+      extra-deps:
+        type: string
+        default: "circleci"
+        description: Extra dependencies to install (e.g., 'circleci,github')
+    steps:
+      - run:
+          name: Update system packages
+          command: |
+            apt-get update && apt-get install -y git curl jq
+      - run:
+          name: Install Homeostasis
+          command: |
+            if [ "<< parameters.version >>" = "latest" ]; then
+              pip install "homeostasis[<< parameters.extra-deps >>]"
+            else
+              pip install "homeostasis[<< parameters.extra-deps >>]==<< parameters.version >>"
+            fi
+            
+            # Verify installation
+            homeostasis --version
+            echo "✅ Homeostasis installed successfully"
+
+  analyze-workflow:
+    description: Analyze a failed CircleCI workflow
+    parameters:
+      workflow-id:
+        type: string
+        description: Workflow ID to analyze
+      output-file:
+        type: string
+        default: "homeostasis-analysis.json"
+        description: Output file for analysis results
+      deep-analysis:
+        type: boolean
+        default: false
+        description: Perform deep analysis including historical patterns
+    steps:
+      - run:
+          name: Analyze workflow failure
+          command: |
+            echo "🔍 Analyzing workflow: << parameters.workflow-id >>"
+            
+            DEEP_FLAG=""
+            if [ "<< parameters.deep-analysis >>" = "true" ]; then
+              DEEP_FLAG="--deep-analysis"
+            fi
+            
+            homeostasis analyze-circleci-workflow \
+              --workflow-id "<< parameters.workflow-id >>" \
+              --project-slug "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}" \
+              --api-token "${CIRCLE_TOKEN}" \
+              $DEEP_FLAG \
+              --output "<< parameters.output-file >>" \
+              --verbose
+            
+            # Display analysis summary
+            if [ -f "<< parameters.output-file >>" ]; then
+              echo "📊 Analysis Results:"
+              jq -r '
+                "  - Healing recommended: " + (.healing_recommended // false | tostring) +
+                "\n  - Confidence score: " + (.confidence_score // 0 | tostring) +
+                "\n  - Issues found: " + (.issues_found // 0 | tostring) +
+                "\n  - Error types: " + ((.error_types // []) | join(", "))
+              ' "<< parameters.output-file >>"
+            fi
+
+  apply-healing:
+    description: Apply Homeostasis healing fixes
+    parameters:
+      analysis-file:
+        type: string
+        default: "homeostasis-analysis.json"
+        description: Analysis file to use for healing
+      confidence-threshold:
+        type: string
+        default: "0.8"
+        description: Minimum confidence for auto-healing
+      auto-apply:
+        type: boolean
+        default: true
+        description: Automatically apply high-confidence fixes
+      create-backup:
+        type: boolean
+        default: true
+        description: Create backup before applying fixes
+      output-file:
+        type: string
+        default: "healing-results.json"
+        description: Output file for healing results
+    steps:
+      - run:
+          name: Apply healing fixes
+          command: |
+            echo "🔧 Applying healing fixes..."
+            
+            # Check if analysis file exists
+            if [ ! -f "<< parameters.analysis-file >>" ]; then
+              echo "❌ Analysis file not found: << parameters.analysis-file >>"
+              exit 1
+            fi
+            
+            # Build command flags
+            AUTO_FLAG=""
+            BACKUP_FLAG=""
+            
+            if [ "<< parameters.auto-apply >>" = "true" ]; then
+              AUTO_FLAG="--auto-apply"
+            fi
+            
+            if [ "<< parameters.create-backup >>" = "true" ]; then
+              BACKUP_FLAG="--create-backup"
+            fi
+            
+            # Apply healing
+            homeostasis heal \
+              --input "<< parameters.analysis-file >>" \
+              --min-confidence "<< parameters.confidence-threshold >>" \
+              --output "<< parameters.output-file >>" \
+              $AUTO_FLAG \
+              $BACKUP_FLAG \
+              --verbose
+            
+            # Display healing summary
+            if [ -f "<< parameters.output-file >>" ]; then
+              echo "📈 Healing Results:"
+              jq -r '
+                "  - Success: " + (.success // false | tostring) +
+                "\n  - Fixes applied: " + (.fixes_applied // 0 | tostring) +
+                "\n  - Average confidence: " + (.average_confidence // 0 | tostring)
+              ' "<< parameters.output-file >>"
+            fi
+
+  run-tests:
+    description: Run tests after applying healing fixes
+    parameters:
+      test-command:
+        type: string
+        default: ""
+        description: Custom test command to run
+      test-timeout:
+        type: string
+        default: "10m"
+        description: Test timeout duration
+    steps:
+      - run:
+          name: Run tests after healing
+          command: |
+            echo "🧪 Running tests to verify fixes..."
+            
+            if [ -n "<< parameters.test-command >>" ]; then
+              echo "Running custom test command: << parameters.test-command >>"
+              << parameters.test-command >>
+            else
+              echo "Auto-detecting test framework..."
+              
+              # Node.js projects
+              if [ -f "package.json" ]; then
+                echo "📦 Node.js project detected"
+                if npm run | grep -q "test"; then
+                  npm test
+                else
+                  echo "No test script found in package.json"
+                fi
+              
+              # Python projects
+              elif [ -f "requirements.txt" ] || [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then
+                echo "🐍 Python project detected"
+                
+                # Install dependencies if needed
+                if [ -f "requirements.txt" ]; then
+                  pip install -r requirements.txt
+                fi
+                
+                # Run tests
+                if command -v pytest >/dev/null; then
+                  python -m pytest -v
+                elif [ -d "tests" ]; then
+                  python -m unittest discover tests
+                else
+                  python -m unittest discover
+                fi
+              
+              # Go projects
+              elif [ -f "go.mod" ]; then
+                echo "🐹 Go project detected"
+                go test ./...
+              
+              # Java projects
+              elif [ -f "pom.xml" ]; then
+                echo "☕ Java Maven project detected"
+                mvn test
+              elif [ -f "build.gradle" ] || [ -f "build.gradle.kts" ]; then
+                echo "☕ Java Gradle project detected"
+                ./gradlew test
+              
+              # Rust projects
+              elif [ -f "Cargo.toml" ]; then
+                echo "🦀 Rust project detected"
+                cargo test
+              
+              else
+                echo "⚠️ No recognized test framework found"
+                echo "Consider specifying a custom test command"
+              fi
+            fi
+          no_output_timeout: << parameters.test-timeout >>
+
+  commit-changes:
+    description: Commit healing changes to repository
+    parameters:
+      commit-message:
+        type: string
+        default: "🔧 Auto-heal: Apply Homeostasis fixes"
+        description: Commit message for the changes
+      push-changes:
+        type: boolean
+        default: false
+        description: Push changes to remote repository
+    steps:
+      - run:
+          name: Configure git
+          command: |
+            git config --global user.email "circleci@homeostasis.bot"
+            git config --global user.name "CircleCI Homeostasis Bot"
+      - run:
+          name: Commit healing changes
+          command: |
+            if git diff --quiet && git diff --cached --quiet; then
+              echo "ℹ️ No changes to commit"
+              exit 0
+            fi
+            
+            echo "📝 Committing healing changes..."
+            git add .
+            git commit -m "<< parameters.commit-message >>
+
+            Workflow: ${CIRCLE_WORKFLOW_ID}
+            Build: ${CIRCLE_BUILD_NUM}
+            Branch: ${CIRCLE_BRANCH}
+            
+            Applied by Homeostasis CircleCI orb"
+            
+            if [ "<< parameters.push-changes >>" = "true" ]; then
+              echo "🚀 Pushing changes to remote..."
+              git push origin HEAD
+            else
+              echo "ℹ️ Changes committed locally (not pushed)"
+            fi
+
+jobs:
+  analyze-and-heal:
+    description: Complete workflow analysis and healing
+    executor: homeostasis
+    parameters:
+      workflow-id:
+        type: string
+        description: Failed workflow ID to analyze
+      confidence-threshold:
+        type: string
+        default: "0.8"
+        description: Confidence threshold for auto-healing
+      run-tests:
+        type: boolean
+        default: true
+        description: Run tests after applying fixes
+      commit-fixes:
+        type: boolean
+        default: false
+        description: Commit fixes to repository
+    steps:
+      - checkout
+      - install
+      - analyze-workflow:
+          workflow-id: << parameters.workflow-id >>
+      - apply-healing:
+          confidence-threshold: << parameters.confidence-threshold >>
+      - when:
+          condition: << parameters.run-tests >>
+          steps:
+            - run-tests
+      - when:
+          condition: << parameters.commit-fixes >>
+          steps:
+            - commit-changes:
+                commit-message: "🔧 Auto-heal: Fix workflow << parameters.workflow-id >>"
+      - store_artifacts:
+          path: homeostasis-analysis.json
+          destination: analysis
+      - store_artifacts:
+          path: healing-results.json
+          destination: healing
+
+  healing-pipeline:
+    description: Advanced healing pipeline with multiple strategies
+    executor: homeostasis
+    parameters:
+      failed-workflow-id:
+        type: string
+        description: ID of the failed workflow to heal
+      healing-strategy:
+        type: enum
+        enum: ["auto", "manual", "both"]
+        default: "both"
+        description: Healing strategy to use
+    steps:
+      - checkout
+      - install
+      - analyze-workflow:
+          workflow-id: << parameters.failed-workflow-id >>
+          deep-analysis: true
+      
+      # Determine healing approach based on confidence
+      - run:
+          name: Determine healing strategy
+          command: |
+            CONFIDENCE=$(jq -r '.confidence_score // 0' homeostasis-analysis.json)
+            HEALING_NEEDED=$(jq -r '.healing_recommended // false' homeostasis-analysis.json)
+            
+            echo "export HEALING_NEEDED=$HEALING_NEEDED" >> $BASH_ENV
+            echo "export CONFIDENCE_SCORE=$CONFIDENCE" >> $BASH_ENV
+            
+            if [ "$HEALING_NEEDED" = "true" ]; then
+              if (( $(echo "$CONFIDENCE >= 0.8" | bc -l) )); then
+                echo "export STRATEGY=auto" >> $BASH_ENV
+                echo "🤖 High confidence - enabling auto-healing"
+              elif (( $(echo "$CONFIDENCE >= 0.6" | bc -l) )); then
+                echo "export STRATEGY=manual" >> $BASH_ENV
+                echo "👤 Medium confidence - manual review required"
+              else
+                echo "export STRATEGY=suggest" >> $BASH_ENV
+                echo "💡 Low confidence - suggestions only"
+              fi
+            else
+              echo "export STRATEGY=none" >> $BASH_ENV
+              echo "ℹ️ No healing needed"
+            fi
+      
+      # Auto-healing for high confidence
+      - when:
+          condition:
+            and:
+              - equal: [ "${STRATEGY}", "auto" ]
+              - or:
+                  - equal: [ << parameters.healing-strategy >>, "auto" ]
+                  - equal: [ << parameters.healing-strategy >>, "both" ]
+          steps:
+            - apply-healing:
+                confidence-threshold: "0.8"
+                auto-apply: true
+            - run-tests
+            - commit-changes:
+                commit-message: "🔧 Auto-heal: CircleCI workflow fixes (high confidence)"
+                push-changes: true
+      
+      # Manual review for medium confidence
+      - when:
+          condition:
+            and:
+              - or:
+                  - equal: [ "${STRATEGY}", "manual" ]
+                  - equal: [ "${STRATEGY}", "suggest" ]
+              - or:
+                  - equal: [ << parameters.healing-strategy >>, "manual" ]
+                  - equal: [ << parameters.healing-strategy >>, "both" ]
+          steps:
+            - apply-healing:
+                confidence-threshold: "0.6"
+                auto-apply: false
+            - run:
+                name: Create review branch
+                command: |
+                  BRANCH_NAME="homeostasis/circleci-healing-${CIRCLE_BUILD_NUM}"
+                  git checkout -b "$BRANCH_NAME"
+                  
+                  # Apply suggestions
+                  homeostasis apply-suggestions --input healing-results.json
+                  
+                  if ! git diff --quiet; then
+                    git add .
+                    git commit -m "🔧 Homeostasis: CircleCI healing suggestions
+                    
+                    Failed workflow: << parameters.failed-workflow-id >>
+                    Confidence: ${CONFIDENCE_SCORE}
+                    Strategy: ${STRATEGY}
+                    
+                    Please review these changes before merging.
+                    
+                    CircleCI build: ${CIRCLE_BUILD_URL}"
+                    
+                    git push origin "$BRANCH_NAME"
+                    echo "✅ Review branch created: $BRANCH_NAME"
+                    
+                    # Create PR if GitHub CLI is available
+                    if command -v gh >/dev/null 2>&1; then
+                      gh pr create \
+                        --title "🔧 Homeostasis: CircleCI healing suggestions" \
+                        --body "Automated healing suggestions for workflow << parameters.failed-workflow-id >>
+                        
+                        **Confidence Score:** ${CONFIDENCE_SCORE}
+                        **Strategy:** ${STRATEGY}
+                        **CircleCI Build:** ${CIRCLE_BUILD_URL}
+                        
+                        Please review these changes carefully before merging."
+                    fi
+                  else
+                    echo "ℹ️ No suggestions to create branch for"
+                  fi
+      
+      # Store artifacts
+      - store_artifacts:
+          path: homeostasis-analysis.json
+          destination: analysis/workflow-<< parameters.failed-workflow-id >>
+      - store_artifacts:
+          path: healing-results.json
+          destination: healing/workflow-<< parameters.failed-workflow-id >>
+
+  trigger-healing:
+    description: Trigger healing for a failed workflow
+    executor: homeostasis
+    parameters:
+      target-workflow-id:
+        type: string
+        description: Workflow ID that failed and needs healing
+    steps:
+      - run:
+          name: Trigger healing pipeline
+          command: |
+            echo "🚀 Triggering healing for workflow: << parameters.target-workflow-id >>"
+            
+            # Trigger new pipeline with healing parameters
+            curl -X POST \
+              -H "Circle-Token: ${CIRCLE_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "branch": "'${CIRCLE_BRANCH}'",
+                "parameters": {
+                  "failed-workflow-id": "<< parameters.target-workflow-id >>",
+                  "healing-mode": "both"
+                }
+              }' \
+              "https://circleci.com/api/v2/project/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline"
+
+examples:
+  basic-healing:
+    description: Basic workflow healing setup
+    usage:
+      version: 2.1
+      orbs:
+        homeostasis: homeostasis/healing@1.0.0
+      workflows:
+        version: 2
+        healing-on-failure:
+          jobs:
+            - homeostasis/analyze-and-heal:
+                workflow-id: "${FAILED_WORKFLOW_ID}"
+                confidence-threshold: "0.8"
+                run-tests: true
+
+  advanced-healing:
+    description: Advanced healing with multiple strategies
+    usage:
+      version: 2.1
+      orbs:
+        homeostasis: homeostasis/healing@1.0.0
+      workflows:
+        version: 2
+        advanced-healing:
+          jobs:
+            - homeostasis/healing-pipeline:
+                failed-workflow-id: "${FAILED_WORKFLOW_ID}"
+                healing-strategy: "both"

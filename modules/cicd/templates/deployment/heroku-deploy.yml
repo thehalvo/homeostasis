@@ -1,0 +1,195 @@
+# Heroku deployment configuration with Homeostasis integration
+# This file should be used with Heroku CI or GitHub Actions
+
+name: Heroku Deploy with Homeostasis Healing
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    - run: npm ci
+    - run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Homeostasis
+      run: |
+        pip install homeostasis[heroku]
+        echo "HOMEOSTASIS_ENABLED=true" >> $GITHUB_ENV
+        echo "HOMEOSTASIS_PLATFORM=heroku" >> $GITHUB_ENV
+    
+    - name: Pre-deployment healing check
+      run: |
+        homeostasis analyze --platform heroku --pre-deploy
+        if [ -f "healing-suggestions.json" ]; then
+          echo "Pre-deployment issues found, applying fixes..."
+          homeostasis heal --input healing-suggestions.json --auto-apply
+        fi
+    
+    - name: Deploy to Heroku
+      uses: akhileshns/heroku-deploy@v3.12.12
+      with:
+        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+        heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+        heroku_email: ${{secrets.HEROKU_EMAIL}}
+        buildpack: "https://github.com/homeostasis-framework/heroku-buildpack-homeostasis.git"
+      continue-on-error: true
+      id: heroku-deploy
+    
+    - name: Handle deployment failure
+      if: failure()
+      run: |
+        echo "Deployment failed, running Homeostasis healing..."
+        
+        # Get the latest deploy info
+        DEPLOY_ID=$(heroku releases --app ${{secrets.HEROKU_APP_NAME}} --json | jq -r '.[0].id')
+        
+        # Analyze the failure
+        homeostasis analyze-heroku-deploy \
+          --app-name ${{secrets.HEROKU_APP_NAME}} \
+          --deploy-id $DEPLOY_ID \
+          --output deploy-analysis.json
+        
+        # Apply healing fixes
+        homeostasis heal \
+          --input deploy-analysis.json \
+          --platform heroku \
+          --auto-apply \
+          --confidence-threshold 0.8
+        
+        # Retry deployment if fixes were applied
+        if [ -f "healing-applied.json" ]; then
+          echo "Fixes applied, retrying deployment..."
+          git add .
+          git commit -m "Auto-heal: Apply Heroku deployment fixes" || true
+          git push heroku main --force
+        fi
+    
+    - name: Post-deployment verification
+      run: |
+        # Wait for deployment to be available
+        sleep 30
+        
+        # Run health checks
+        homeostasis verify-deployment \
+          --platform heroku \
+          --app-url "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com" \
+          --timeout 300
+    
+    - name: Send deployment notification
+      if: always()
+      run: |
+        STATUS="${{ job.status }}"
+        
+        homeostasis notify \
+          --platform heroku \
+          --deployment-status "$STATUS" \
+          --app-name "${{secrets.HEROKU_APP_NAME}}" \
+          --commit-sha "${{ github.sha }}" \
+          --channels slack,email
+
+# Heroku app.json for review apps
+{
+  "name": "Homeostasis-Enabled App",
+  "description": "Application with Homeostasis healing capabilities",
+  "repository": "https://github.com/your-org/your-app",
+  "logo": "https://homeostasis-framework.github.io/logo.png",
+  "keywords": ["homeostasis", "healing", "automation"],
+  "image": "heroku/nodejs",
+  "stack": "heroku-22",
+  "buildpacks": [
+    {
+      "url": "https://github.com/homeostasis-framework/heroku-buildpack-homeostasis"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "HOMEOSTASIS_ENABLED": {
+      "description": "Enable Homeostasis healing",
+      "value": "true"
+    },
+    "HOMEOSTASIS_CONFIDENCE_THRESHOLD": {
+      "description": "Minimum confidence for auto-healing",
+      "value": "0.8"
+    },
+    "HOMEOSTASIS_PLATFORM": {
+      "description": "Deployment platform identifier",
+      "value": "heroku"
+    },
+    "HOMEOSTASIS_AUTO_HEAL": {
+      "description": "Enable automatic healing",
+      "value": "true"
+    },
+    "HOMEOSTASIS_WEBHOOK_URL": {
+      "description": "Webhook URL for healing notifications",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    },
+    "worker": {
+      "quantity": 0,
+      "size": "basic"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:mini",
+      "options": {
+        "version": "14"
+      }
+    },
+    {
+      "plan": "heroku-redis:mini"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "npm run db:migrate && homeostasis post-deploy-check"
+  },
+  "environments": {
+    "test": {
+      "formation": {
+        "test": {
+          "quantity": 1,
+          "size": "basic"
+        }
+      },
+      "addons": [
+        "heroku-postgresql:mini"
+      ],
+      "scripts": {
+        "test-setup": "npm run test:setup",
+        "test": "npm test && homeostasis test-validation"
+      },
+      "env": {
+        "HOMEOSTASIS_AUTO_HEAL": "false",
+        "HOMEOSTASIS_TEST_MODE": "true"
+      }
+    }
+  }
+}

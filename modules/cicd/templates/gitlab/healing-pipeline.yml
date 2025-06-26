@@ -1,0 +1,258 @@
+# Homeostasis Healing Pipeline for GitLab CI
+# This pipeline analyzes failed builds and applies automated fixes
+
+stages:
+  - analyze
+  - heal-auto
+  - heal-manual
+  - test
+  - notify
+
+variables:
+  HOMEOSTASIS_CONFIDENCE_THRESHOLD: "0.8"
+  HOMEOSTASIS_MEDIUM_CONFIDENCE: "0.6"
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+    - node_modules/
+    - vendor/
+
+# Analyze failed pipeline and generate healing suggestions
+analyze_failures:
+  stage: analyze
+  image: python:3.9-slim
+  before_script:
+    - apt-get update && apt-get install -y git curl jq
+    - pip install --cache-dir .cache/pip homeostasis[gitlab]
+  script:
+    - echo "🔍 Analyzing pipeline failures..."
+    - |
+      # Get the failed pipeline ID from trigger or find latest failed
+      if [ -n "$FAILED_PIPELINE_ID" ]; then
+        PIPELINE_ID="$FAILED_PIPELINE_ID"
+      else
+        PIPELINE_ID=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+          "$CI_API_V4_URL/projects/$CI_PROJECT_ID/pipelines?status=failed&per_page=1" | \
+          jq -r '.[0].id')
+      fi
+      
+      echo "Analyzing pipeline: $PIPELINE_ID"
+      
+      # Run Homeostasis analysis
+      homeostasis analyze-gitlab-pipeline \
+        --pipeline-id "$PIPELINE_ID" \
+        --project-id "$CI_PROJECT_ID" \
+        --gitlab-url "$CI_SERVER_URL" \
+        --output analysis.json
+      
+      # Extract key information
+      HEALING_NEEDED=$(jq -r '.healing_recommended // false' analysis.json)
+      CONFIDENCE_SCORE=$(jq -r '.confidence_score // 0' analysis.json)
+      ISSUES_COUNT=$(jq -r '.issues_found // 0' analysis.json)
+      
+      echo "HEALING_NEEDED=$HEALING_NEEDED" >> analysis.env
+      echo "CONFIDENCE_SCORE=$CONFIDENCE_SCORE" >> analysis.env  
+      echo "ISSUES_COUNT=$ISSUES_COUNT" >> analysis.env
+      
+      echo "📊 Analysis Results:"
+      echo "  - Issues found: $ISSUES_COUNT"
+      echo "  - Confidence score: $CONFIDENCE_SCORE"
+      echo "  - Healing needed: $HEALING_NEEDED"
+  artifacts:
+    paths:
+      - analysis.json
+    reports:
+      dotenv: analysis.env
+    expire_in: 1 week
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "trigger" && $HEALING_TRIGGER == "true"
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
+
+# Apply high-confidence fixes automatically
+heal_high_confidence:
+  stage: heal-auto
+  image: python:3.9-slim
+  before_script:
+    - apt-get update && apt-get install -y git
+    - pip install --cache-dir .cache/pip homeostasis[gitlab]
+    - git config --global user.email "homeostasis-bot@$CI_SERVER_HOST"
+    - git config --global user.name "Homeostasis Bot"
+  script:
+    - echo "🔧 Applying high-confidence fixes..."
+    - |
+      if [ "$HEALING_NEEDED" = "true" ] && [ "$(echo "$CONFIDENCE_SCORE > $HOMEOSTASIS_CONFIDENCE_THRESHOLD" | bc -l)" = "1" ]; then
+        homeostasis heal \
+          --input analysis.json \
+          --min-confidence "$HOMEOSTASIS_CONFIDENCE_THRESHOLD" \
+          --auto-apply \
+          --create-commit
+        
+        echo "✅ High-confidence fixes applied and committed"
+      else
+        echo "⏸️ Confidence too low for automatic healing ($CONFIDENCE_SCORE <= $HOMEOSTASIS_CONFIDENCE_THRESHOLD)"
+      fi
+  dependencies:
+    - analyze_failures
+  rules:
+    - if: $HEALING_NEEDED == "true"
+      when: manual
+      allow_failure: true
+
+# Create merge request for medium-confidence fixes
+create_healing_mr:
+  stage: heal-manual
+  image: python:3.9-slim
+  before_script:
+    - apt-get update && apt-get install -y git curl jq
+    - pip install --cache-dir .cache/pip homeostasis[gitlab]
+    - git config --global user.email "homeostasis-bot@$CI_SERVER_HOST"
+    - git config --global user.name "Homeostasis Bot"
+  script:
+    - echo "📝 Creating MR for manual review fixes..."
+    - |
+      # Create a new branch for healing suggestions
+      BRANCH_NAME="homeostasis/healing-$CI_PIPELINE_ID"
+      git checkout -b "$BRANCH_NAME"
+      
+      # Apply medium-confidence fixes
+      homeostasis heal \
+        --input analysis.json \
+        --min-confidence "$HOMEOSTASIS_MEDIUM_CONFIDENCE" \
+        --max-confidence "$HOMEOSTASIS_CONFIDENCE_THRESHOLD"
+      
+      # Check if there are changes to commit
+      if ! git diff --quiet; then
+        git add .
+        git commit -m "🔧 Homeostasis: Healing suggestions for pipeline $FAILED_PIPELINE_ID
+
+        This commit contains automated healing suggestions that require manual review.
+        
+        Confidence score: $CONFIDENCE_SCORE
+        Issues found: $ISSUES_COUNT
+        
+        Please review these changes carefully before merging."
+        
+        # Push the branch
+        git push -u origin "$BRANCH_NAME"
+        
+        # Create merge request
+        MR_RESPONSE=$(curl -X POST "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests" \
+          --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+          --header "Content-Type: application/json" \
+          --data "{
+            \"source_branch\": \"$BRANCH_NAME\",
+            \"target_branch\": \"$CI_DEFAULT_BRANCH\",
+            \"title\": \"🔧 Homeostasis: Healing suggestions (review required)\",
+            \"description\": \"## 🔧 Automated Healing Suggestions\n\nThis merge request contains automated fixes for recent pipeline failures.\n\n**Analysis Results:**\n- Issues found: $ISSUES_COUNT\n- Confidence score: $CONFIDENCE_SCORE\n- Failed pipeline: $CI_SERVER_URL/$CI_PROJECT_PATH/-/pipelines/$FAILED_PIPELINE_ID\n\n**Please review these changes carefully before merging.**\n\n---\n*Generated by [Homeostasis](https://github.com/homeostasis-framework/homeostasis) 🤖*\"
+          }")
+        
+        MR_URL=$(echo "$MR_RESPONSE" | jq -r '.web_url')
+        echo "📋 Merge request created: $MR_URL"
+        echo "MR_URL=$MR_URL" >> healing.env
+      else
+        echo "ℹ️ No changes to create MR for"
+      fi
+  dependencies:
+    - analyze_failures
+  artifacts:
+    reports:
+      dotenv: healing.env
+    expire_in: 1 week
+  rules:
+    - if: $HEALING_NEEDED == "true"
+
+# Test the applied fixes
+test_healing_fixes:
+  stage: test
+  image: python:3.9
+  before_script:
+    - apt-get update && apt-get install -y curl
+  script:
+    - echo "🧪 Testing applied healing fixes..."
+    - |
+      # Detect project type and run appropriate tests
+      if [ -f "package.json" ]; then
+        echo "📦 Running Node.js tests..."
+        npm install
+        npm test
+      fi
+      
+      if [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then
+        echo "🐍 Running Python tests..."
+        if [ -f "requirements.txt" ]; then
+          pip install -r requirements.txt
+        fi
+        python -m pytest -v || python -m unittest discover
+      fi
+      
+      if [ -f "pom.xml" ]; then
+        echo "☕ Running Java tests..."
+        mvn test
+      fi
+      
+      if [ -f "go.mod" ]; then
+        echo "🐹 Running Go tests..."
+        go test ./...
+      fi
+      
+      if [ -f "Cargo.toml" ]; then
+        echo "🦀 Running Rust tests..."
+        cargo test
+      fi
+  dependencies:
+    - heal_high_confidence
+  allow_failure: true
+  rules:
+    - if: $HEALING_NEEDED == "true"
+
+# Send notification about healing results
+notify_results:
+  stage: notify
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl jq
+  script:
+    - echo "📢 Sending healing notification..."
+    - |
+      # Prepare notification message
+      if [ "$HEALING_NEEDED" = "true" ]; then
+        MESSAGE="🔧 **Homeostasis Healing Complete**\n\n"
+        MESSAGE="${MESSAGE}**Pipeline:** [$CI_PIPELINE_URL]($CI_PIPELINE_URL)\n"
+        MESSAGE="${MESSAGE}**Issues Found:** $ISSUES_COUNT\n"
+        MESSAGE="${MESSAGE}**Confidence Score:** $CONFIDENCE_SCORE\n"
+        
+        if [ -n "$MR_URL" ]; then
+          MESSAGE="${MESSAGE}**Merge Request:** [$MR_URL]($MR_URL)\n"
+        fi
+        
+        MESSAGE="${MESSAGE}\n*Automated healing by Homeostasis 🤖*"
+      else
+        MESSAGE="ℹ️ **Homeostasis Analysis Complete** - No healing needed"
+      fi
+      
+      echo -e "$MESSAGE"
+      
+      # Send to Slack if webhook is configured
+      if [ -n "$SLACK_WEBHOOK_URL" ]; then
+        curl -X POST -H 'Content-type: application/json' \
+          --data "{\"text\":\"$MESSAGE\"}" \
+          "$SLACK_WEBHOOK_URL"
+      fi
+      
+      # Send to Discord if webhook is configured  
+      if [ -n "$DISCORD_WEBHOOK_URL" ]; then
+        curl -X POST -H 'Content-type: application/json' \
+          --data "{\"content\":\"$MESSAGE\"}" \
+          "$DISCORD_WEBHOOK_URL"
+      fi
+  dependencies:
+    - analyze_failures
+    - create_healing_mr
+  rules:
+    - if: $HEALING_NEEDED == "true"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "trigger" && $HEALING_TRIGGER == "true"
+      when: always

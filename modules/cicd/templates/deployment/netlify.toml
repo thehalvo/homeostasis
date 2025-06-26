@@ -1,0 +1,89 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  
+  [build.environment]
+    HOMEOSTASIS_ENABLED = "true"
+    HOMEOSTASIS_BUILD_HEALING = "true"
+    HOMEOSTASIS_CONFIDENCE_THRESHOLD = "0.8"
+    HOMEOSTASIS_PLATFORM = "netlify"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "nft"
+
+# Homeostasis healing plugin
+[[plugins]]
+  package = "@netlify/plugin-homeostasis"
+  
+  [plugins.inputs]
+    confidence_threshold = 0.8
+    auto_heal = true
+    heal_on_build_failure = true
+    heal_on_deploy_failure = true
+    create_issue_on_failure = false
+
+# Build error handling
+[[plugins]]
+  package = "netlify-plugin-build-errors"
+  
+  [plugins.inputs]
+    webhook_url = "${HOMEOSTASIS_WEBHOOK_URL}"
+
+# Custom headers for Homeostasis endpoints
+[[headers]]
+  for = "/api/homeostasis/*"
+  [headers.values]
+    X-Homeostasis-Version = "1.0.0"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+
+# Redirects for health checks
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/homeostasis-status"
+  status = 200
+
+[[redirects]]
+  from = "/api/homeostasis/webhook"
+  to = "/.netlify/functions/homeostasis-webhook"
+  status = 200
+
+# Edge functions for real-time healing
+[[edge_functions]]
+  function = "homeostasis-monitor"
+  path = "/api/*"
+
+# Build hooks
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+# Context-specific settings
+[context.production]
+  command = "npm run build:production"
+  
+  [context.production.environment]
+    HOMEOSTASIS_AUTO_HEAL = "true"
+    HOMEOSTASIS_CREATE_PR = "false"
+
+[context.deploy-preview]
+  command = "npm run build:preview"
+  
+  [context.deploy-preview.environment]
+    HOMEOSTASIS_AUTO_HEAL = "false" 
+    HOMEOSTASIS_CREATE_PR = "true"
+
+[context.branch-deploy]
+  command = "npm run build:dev"
+  
+  [context.branch-deploy.environment]
+    HOMEOSTASIS_AUTO_HEAL = "true"
+    HOMEOSTASIS_CONFIDENCE_THRESHOLD = "0.9"
