@@ -51,6 +51,34 @@ For detailed architecture diagrams, see [Homeostasis Architecture](docs/assets/a
    pip install -e ".[dev]"
    ```
 
+### Setting Up API Keys
+
+Homeostasis supports LLM integration. To configure API keys:
+
+```bash
+# Set API key for OpenAI
+homeostasis llm set-key openai
+
+# Set API key for Anthropic
+homeostasis llm set-key anthropic
+
+# Set API key for OpenRouter (can proxy to other providers)
+homeostasis llm set-key openrouter
+
+# List configured keys
+homeostasis llm list-keys
+
+# Test all configured providers
+homeostasis llm test-providers
+```
+
+Keys are stored securely with encryption. You can also set them via environment variables:
+```bash
+export HOMEOSTASIS_OPENAI_API_KEY="your-key-here"
+export HOMEOSTASIS_ANTHROPIC_API_KEY="your-key-here"
+export HOMEOSTASIS_OPENROUTER_API_KEY="your-key-here"
+```
+
 ### Running the Demo
 
 Homeostasis includes a demo service with intentional bugs that the framework can automatically fix:
@@ -247,6 +275,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **JetBrains Suite Integration**: Completed plugin for IntelliJ IDEA, PyCharm, WebStorm, and other JetBrains IDEs with language-specific inspection integration, refactoring action integration, embedded healing configuration UI, remote development support through JetBrains Gateway, real-time healing as you type, intention actions for quick fixes, tool windows for healing statistics, and support for 15+ programming languages with automated error detection and resolution
 - **Git Workflow Integration**: Implemented full Git workflow integration with pre-commit hooks for error prevention, PR/MR analysis and suggestion systems for GitHub and GitLab, branch-aware healing strategies with risk assessment, commit message analysis for improved context understanding, and commit signing/verification for secure healing changes with audit trails
 - **CI/CD Pipeline Integration**: Completed integration with major CI/CD platforms including GitHub Actions (workflow failure analysis, automatic healing workflows, PR creation for manual review), GitLab CI (pipeline failure analysis, merge request integration, healing pipeline configurations), Jenkins (build failure analysis, Groovy pipeline scripts, job creation and triggering), CircleCI (orb implementation with advanced features, workflow analysis, multi-strategy healing), and deployment platforms (Vercel, Netlify, Heroku) with confidence-based healing strategies, automatic vs. manual review workflows, multi-platform error pattern recognition, and cross-platform orchestration
+- **LLM Integration**: Implemented CLI key management system with secure API key storage for OpenAI, Anthropic, and OpenRouter providers. Features encrypted local storage, environment variable support, key validation through lightweight API requests, and unified command interface (`homeostasis llm set-key <provider>`) with helpful error messages and masking for security
 
 ## Contributing
 

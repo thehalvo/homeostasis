@@ -13,6 +13,7 @@ setup(
         "loguru>=0.7.0",
         "pyyaml>=6.0.0",
         "requests>=2.31.0",
+        "cryptography>=41.0.0",
     ],
     extras_require={
         "dev": [
