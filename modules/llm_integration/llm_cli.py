@@ -27,6 +27,26 @@ def cmd_set_key(args: argparse.Namespace) -> None:
         print("Error: API key cannot be empty")
         sys.exit(1)
     
+    # Detect and suggest corrections for common issues
+    issues = manager.detect_key_issues(provider, api_key)
+    if issues:
+        print("⚠️  Detected potential issues with the API key:")
+        for issue in issues:
+            print(f"   • {issue}")
+        
+        suggested_correction = manager.suggest_key_correction(provider, api_key)
+        if suggested_correction and suggested_correction != api_key:
+            print(f"\n💡 Suggested correction: {suggested_correction[:10]}...")
+            
+            if not args.key:  # Only prompt for interactive input
+                response = input("Apply this correction? (y/N): ").lower().strip()
+                if response in ['y', 'yes']:
+                    api_key = suggested_correction
+                    print("✓ Applied correction")
+        
+        if not args.no_validate:
+            print("\nProceeding with validation...")
+    
     try:
         # Validate unless explicitly disabled
         validate = not args.no_validate
@@ -37,6 +57,18 @@ def cmd_set_key(args: argparse.Namespace) -> None:
             
     except KeyValidationError as e:
         print(f"Error: {e}")
+        
+        # If validation failed, offer to save without validation
+        if not args.no_validate and not args.key:  # Only for interactive input
+            response = input("\nSave key without validation? (y/N): ").lower().strip()
+            if response in ['y', 'yes']:
+                try:
+                    manager.set_key(provider, api_key.strip(), validate=False)
+                    print("⚠️  Key saved without validation")
+                    return
+                except Exception as save_error:
+                    print(f"Failed to save key: {save_error}")
+        
         sys.exit(1)
     except Exception as e:
         print(f"Unexpected error: {e}")
@@ -48,24 +80,46 @@ def cmd_list_keys(args: argparse.Namespace) -> None:
     manager = APIKeyManager()
     
     try:
-        keys = manager.list_keys()
+        keys_info = manager.list_keys()
         
         print("LLM API Keys Status:")
-        print("-" * 30)
+        print("=" * 50)
         
-        for provider, has_key in keys.items():
-            status = "✓ Available" if has_key else "✗ Not set"
+        for provider, sources in keys_info.items():
+            print(f"\n{provider.capitalize()}:")
             
-            if has_key and args.show_masked:
+            # Check if any source has the key
+            has_any_key = any(sources.values())
+            overall_status = "✓ Available" if has_any_key else "✗ Not set"
+            
+            if has_any_key and args.show_masked:
                 masked_key = manager.get_masked_key(provider)
                 if masked_key:
-                    status += f" ({masked_key})"
+                    overall_status += f" ({masked_key})"
             
-            print(f"{provider.capitalize():>12}: {status}")
+            print(f"  Status: {overall_status}")
+            
+            # Show detailed source information
+            if args.verbose or not has_any_key:
+                print("  Sources:")
+                print(f"    Environment Variable: {'✓' if sources['environment'] else '✗'}")
+                print(f"    External Secrets:     {'✓' if sources['external_secrets'] else '✗'}")
+                print(f"    Encrypted Storage:    {'✓' if sources['encrypted_storage'] else '✗'}")
         
-        print("\nNote: Keys can be stored in:")
-        print("  • Encrypted local storage (~/.homeostasis/)")
-        print("  • Environment variables (HOMEOSTASIS_<PROVIDER>_API_KEY)")
+        # Show available secrets managers
+        if args.verbose:
+            available_managers = manager.get_available_secrets_managers()
+            if available_managers:
+                print(f"\nAvailable External Secrets Managers:")
+                for name, manager_type in available_managers.items():
+                    print(f"  • {name.upper()}: {manager_type}")
+            else:
+                print(f"\nNo external secrets managers configured")
+        
+        print("\nKey Storage Options:")
+        print("  • Environment variables: HOMEOSTASIS_<PROVIDER>_API_KEY")
+        print("  • Encrypted local storage: ~/.homeostasis/llm_keys.enc")
+        print("  • External secrets managers: AWS Secrets Manager, Azure Key Vault, HashiCorp Vault")
         
     except Exception as e:
         print(f"Error listing keys: {e}")
@@ -211,6 +265,11 @@ def create_llm_cli_parser() -> argparse.ArgumentParser:
         "--show-masked",
         action="store_true",
         help="Show masked versions of the keys"
+    )
+    list_keys_parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Show detailed source information"
     )
     list_keys_parser.set_defaults(func=cmd_list_keys)
     

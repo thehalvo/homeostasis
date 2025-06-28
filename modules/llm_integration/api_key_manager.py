@@ -16,6 +16,8 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import requests
 
+from .secrets_managers import secrets_registry, SecretsManagerError
+
 
 class KeyValidationError(Exception):
     """Raised when API key validation fails."""
@@ -32,12 +34,13 @@ class APIKeyManager:
     KEYS_FILE = CONFIG_DIR / 'llm_keys.enc'
     SALT_FILE = CONFIG_DIR / 'salt'
     
-    def __init__(self, config_dir: Optional[Path] = None):
+    def __init__(self, config_dir: Optional[Path] = None, use_external_secrets: bool = True):
         """
         Initialize the API key manager.
         
         Args:
             config_dir: Optional custom configuration directory
+            use_external_secrets: Whether to use external secrets managers
         """
         if config_dir:
             self.config_dir = config_dir
@@ -53,6 +56,7 @@ class APIKeyManager:
         
         self._cipher_suite = None
         self._keys = {}
+        self._use_external_secrets = use_external_secrets
     
     def _get_password(self) -> str:
         """
@@ -154,7 +158,15 @@ class APIKeyManager:
         self._save_keys(keys)
         self._keys[provider] = api_key
         
-        print(f"✓ API key for {provider} saved successfully")
+        # Try to store in external secrets manager if available
+        if self._use_external_secrets:
+            external_success = self.set_key_in_external_secrets(provider, api_key)
+            if external_success:
+                print(f"✓ API key for {provider} saved to encrypted storage and external secrets")
+            else:
+                print(f"✓ API key for {provider} saved to encrypted storage")
+        else:
+            print(f"✓ API key for {provider} saved successfully")
     
     def get_key(self, provider: str) -> Optional[str]:
         """
@@ -179,6 +191,13 @@ class APIKeyManager:
             self._keys[provider] = env_key
             return env_key
         
+        # Check external secrets managers
+        if self._use_external_secrets:
+            external_key = self._get_key_from_external_secrets(provider)
+            if external_key:
+                self._keys[provider] = external_key
+                return external_key
+        
         # Load from encrypted storage
         try:
             keys = self._load_keys()
@@ -189,29 +208,76 @@ class APIKeyManager:
         except Exception:
             return None
     
-    def list_keys(self) -> Dict[str, bool]:
+    def _get_key_from_external_secrets(self, provider: str) -> Optional[str]:
+        """Get API key from external secrets managers."""
+        try:
+            manager = secrets_registry.get_preferred_manager()
+            if manager:
+                secret_name = f"{provider}_api_key"
+                return manager.get_secret(secret_name)
+        except SecretsManagerError:
+            pass  # Fall back to other methods
+        except Exception:
+            pass  # Fall back to other methods
+        
+        return None
+    
+    def set_key_in_external_secrets(self, provider: str, api_key: str) -> bool:
+        """Set API key in external secrets manager."""
+        if not self._use_external_secrets:
+            return False
+        
+        try:
+            manager = secrets_registry.get_preferred_manager()
+            if manager:
+                secret_name = f"{provider}_api_key"
+                return manager.set_secret(secret_name, api_key)
+        except SecretsManagerError as e:
+            print(f"⚠️  External secrets manager error: {e}")
+        except Exception as e:
+            print(f"⚠️  Failed to store key in external secrets: {e}")
+        
+        return False
+    
+    def get_available_secrets_managers(self) -> Dict[str, str]:
+        """Get available external secrets managers."""
+        available = secrets_registry.get_available_managers()
+        return {name: type(manager).__name__ for name, manager in available.items()}
+    
+    def list_keys(self) -> Dict[str, Dict[str, bool]]:
         """
         List available keys (without revealing the actual keys).
         
         Returns:
-            Dictionary of provider -> has_key mappings
+            Dictionary of provider -> source availability mappings
         """
         result = {}
         
         for provider in self.SUPPORTED_PROVIDERS:
+            sources = {}
+            
             # Check environment variable
             env_var = f"HOMEOSTASIS_{provider.upper()}_API_KEY"
-            has_env_key = bool(os.getenv(env_var))
+            sources['environment'] = bool(os.getenv(env_var))
+            
+            # Check external secrets managers
+            sources['external_secrets'] = False
+            if self._use_external_secrets:
+                try:
+                    external_key = self._get_key_from_external_secrets(provider)
+                    sources['external_secrets'] = bool(external_key)
+                except Exception:
+                    pass
             
             # Check encrypted storage
-            has_stored_key = False
+            sources['encrypted_storage'] = False
             try:
                 keys = self._load_keys()
-                has_stored_key = provider in keys
+                sources['encrypted_storage'] = provider in keys
             except Exception:
                 pass
             
-            result[provider] = has_env_key or has_stored_key
+            result[provider] = sources
         
         return result
     
@@ -278,6 +344,21 @@ class APIKeyManager:
     
     def _validate_openai_key(self, api_key: str) -> bool:
         """Validate OpenAI API key."""
+        # Check key format first
+        if not api_key.startswith('sk-'):
+            raise KeyValidationError(
+                "Invalid OpenAI API key format. "
+                "OpenAI keys should start with 'sk-'. "
+                "Please check your key and try again."
+            )
+        
+        if len(api_key) < 45:
+            raise KeyValidationError(
+                "OpenAI API key appears too short. "
+                "Valid keys are typically 51+ characters. "
+                "Please verify you copied the complete key."
+            )
+        
         headers = {
             'Authorization': f'Bearer {api_key}',
             'Content-Type': 'application/json'
@@ -293,12 +374,38 @@ class APIKeyManager:
         if response.status_code == 200:
             return True
         elif response.status_code == 401:
-            raise KeyValidationError("Invalid OpenAI API key")
+            raise KeyValidationError(
+                "Invalid OpenAI API key. "
+                "Please check: 1) Key is correct and complete, "
+                "2) Key hasn't expired, 3) Account has sufficient credits. "
+                "Get a new key from https://platform.openai.com/api-keys"
+            )
+        elif response.status_code == 429:
+            raise KeyValidationError(
+                "OpenAI API rate limit exceeded during validation. "
+                "Please wait a moment and try again."
+            )
         else:
-            raise KeyValidationError(f"OpenAI API validation failed: {response.status_code}")
+            raise KeyValidationError(f"OpenAI API validation failed with status {response.status_code}. "
+                                   f"Please check your internet connection and try again.")
     
     def _validate_anthropic_key(self, api_key: str) -> bool:
         """Validate Anthropic API key."""
+        # Check key format first
+        if not api_key.startswith('sk-ant-'):
+            raise KeyValidationError(
+                "Invalid Anthropic API key format. "
+                "Anthropic keys should start with 'sk-ant-'. "
+                "Please check your key and try again."
+            )
+        
+        if len(api_key) < 60:
+            raise KeyValidationError(
+                "Anthropic API key appears too short. "
+                "Valid keys are typically 90+ characters. "
+                "Please verify you copied the complete key."
+            )
+        
         headers = {
             'x-api-key': api_key,
             'Content-Type': 'application/json',
@@ -322,12 +429,51 @@ class APIKeyManager:
         if response.status_code == 200:
             return True
         elif response.status_code == 401:
-            raise KeyValidationError("Invalid Anthropic API key")
+            raise KeyValidationError(
+                "Invalid Anthropic API key. "
+                "Please check: 1) Key is correct and complete, "
+                "2) Key hasn't been revoked, 3) Account has API access. "
+                "Get a new key from https://console.anthropic.com/"
+            )
+        elif response.status_code == 429:
+            raise KeyValidationError(
+                "Anthropic API rate limit exceeded during validation. "
+                "Please wait a moment and try again."
+            )
+        elif response.status_code == 400:
+            try:
+                error_data = response.json()
+                if 'error' in error_data and 'type' in error_data['error']:
+                    error_type = error_data['error']['type']
+                    if error_type == 'invalid_request_error':
+                        raise KeyValidationError(
+                            "Anthropic API request error. "
+                            "Your key may be valid but have restricted permissions."
+                        )
+                raise KeyValidationError(f"Anthropic API error: {error_data}")
+            except (ValueError, KeyError):
+                raise KeyValidationError("Anthropic API returned invalid response during validation.")
         else:
-            raise KeyValidationError(f"Anthropic API validation failed: {response.status_code}")
+            raise KeyValidationError(f"Anthropic API validation failed with status {response.status_code}. "
+                                   f"Please check your internet connection and try again.")
     
     def _validate_openrouter_key(self, api_key: str) -> bool:
         """Validate OpenRouter API key."""
+        # Check key format first
+        if not api_key.startswith('sk-or-'):
+            raise KeyValidationError(
+                "Invalid OpenRouter API key format. "
+                "OpenRouter keys should start with 'sk-or-'. "
+                "Please check your key and try again."
+            )
+        
+        if len(api_key) < 40:
+            raise KeyValidationError(
+                "OpenRouter API key appears too short. "
+                "Valid keys are typically 60+ characters. "
+                "Please verify you copied the complete key."
+            )
+        
         headers = {
             'Authorization': f'Bearer {api_key}',
             'Content-Type': 'application/json'
@@ -343,9 +489,20 @@ class APIKeyManager:
         if response.status_code == 200:
             return True
         elif response.status_code == 401:
-            raise KeyValidationError("Invalid OpenRouter API key")
+            raise KeyValidationError(
+                "Invalid OpenRouter API key. "
+                "Please check: 1) Key is correct and complete, "
+                "2) Key hasn't been revoked, 3) Account has sufficient credits. "
+                "Get a new key from https://openrouter.ai/keys"
+            )
+        elif response.status_code == 429:
+            raise KeyValidationError(
+                "OpenRouter API rate limit exceeded during validation. "
+                "Please wait a moment and try again."
+            )
         else:
-            raise KeyValidationError(f"OpenRouter API validation failed: {response.status_code}")
+            raise KeyValidationError(f"OpenRouter API validation failed with status {response.status_code}. "
+                                   f"Please check your internet connection and try again.")
     
     def get_masked_key(self, provider: str) -> Optional[str]:
         """
@@ -365,3 +522,83 @@ class APIKeyManager:
             return "*" * len(key)
         
         return f"{key[:3]}...{key[-4:]}"
+    
+    def detect_key_issues(self, provider: str, api_key: str) -> List[str]:
+        """
+        Detect potential issues with an API key format.
+        
+        Args:
+            provider: Provider name
+            api_key: API key to analyze
+            
+        Returns:
+            List of detected issues
+        """
+        issues = []
+        provider = provider.lower()
+        
+        # Common issues for all providers
+        if not api_key.strip():
+            issues.append("API key is empty")
+            return issues
+        
+        if api_key != api_key.strip():
+            issues.append("API key has leading/trailing whitespace")
+        
+        if '\n' in api_key or '\r' in api_key:
+            issues.append("API key contains line breaks")
+        
+        if ' ' in api_key:
+            issues.append("API key contains spaces (may be incomplete)")
+        
+        # Provider-specific checks
+        if provider == 'openai':
+            if not api_key.startswith('sk-'):
+                issues.append("OpenAI keys should start with 'sk-'")
+            if len(api_key) < 45:
+                issues.append("OpenAI key appears too short (should be 51+ characters)")
+            elif len(api_key) > 60:
+                issues.append("OpenAI key appears too long (typically ~51 characters)")
+                
+        elif provider == 'anthropic':
+            if not api_key.startswith('sk-ant-'):
+                issues.append("Anthropic keys should start with 'sk-ant-'")
+            if len(api_key) < 60:
+                issues.append("Anthropic key appears too short (should be 90+ characters)")
+            elif len(api_key) > 120:
+                issues.append("Anthropic key appears too long (typically ~100 characters)")
+                
+        elif provider == 'openrouter':
+            if not api_key.startswith('sk-or-'):
+                issues.append("OpenRouter keys should start with 'sk-or-'")
+            if len(api_key) < 40:
+                issues.append("OpenRouter key appears too short (should be 60+ characters)")
+            elif len(api_key) > 80:
+                issues.append("OpenRouter key appears too long (typically ~64 characters)")
+        
+        return issues
+    
+    def suggest_key_correction(self, provider: str, api_key: str) -> Optional[str]:
+        """
+        Suggest corrections for common API key issues.
+        
+        Args:
+            provider: Provider name
+            api_key: API key to analyze
+            
+        Returns:
+            Corrected key if possible, None otherwise
+        """
+        if not api_key:
+            return None
+        
+        # Clean up common issues
+        corrected = api_key.strip()
+        corrected = corrected.replace('\n', '').replace('\r', '')
+        corrected = corrected.replace(' ', '')
+        
+        # If we made changes, return the corrected version
+        if corrected != api_key:
+            return corrected
+        
+        return None
