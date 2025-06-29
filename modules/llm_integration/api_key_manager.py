@@ -33,6 +33,7 @@ class APIKeyManager:
     CONFIG_DIR = Path.home() / '.homeostasis'
     KEYS_FILE = CONFIG_DIR / 'llm_keys.enc'
     SALT_FILE = CONFIG_DIR / 'salt'
+    PROVIDER_CONFIG_FILE = CONFIG_DIR / 'provider_config.json'
     
     def __init__(self, config_dir: Optional[Path] = None, use_external_secrets: bool = True):
         """
@@ -46,10 +47,12 @@ class APIKeyManager:
             self.config_dir = config_dir
             self.keys_file = config_dir / 'llm_keys.enc'
             self.salt_file = config_dir / 'salt'
+            self.provider_config_file = config_dir / 'provider_config.json'
         else:
             self.config_dir = self.CONFIG_DIR
             self.keys_file = self.KEYS_FILE
             self.salt_file = self.SALT_FILE
+            self.provider_config_file = self.PROVIDER_CONFIG_FILE
         
         # Ensure config directory exists
         self.config_dir.mkdir(exist_ok=True)
@@ -602,3 +605,258 @@ class APIKeyManager:
             return corrected
         
         return None
+    
+    def _load_provider_config(self) -> Dict[str, Any]:
+        """
+        Load provider configuration including preferences and fallback strategy.
+        
+        Returns:
+            Dictionary containing provider configuration
+        """
+        if not self.provider_config_file.exists():
+            return self._get_default_provider_config()
+        
+        try:
+            with open(self.provider_config_file, 'r') as f:
+                config = json.load(f)
+                # Ensure all required fields exist
+                default_config = self._get_default_provider_config()
+                for key, value in default_config.items():
+                    if key not in config:
+                        config[key] = value
+                return config
+        except Exception as e:
+            print(f"Warning: Failed to load provider config, using defaults: {e}")
+            return self._get_default_provider_config()
+    
+    def _get_default_provider_config(self) -> Dict[str, Any]:
+        """Get default provider configuration."""
+        return {
+            'active_provider': None,  # None means auto-select
+            'fallback_order': ['anthropic', 'openai', 'openrouter'],
+            'enable_fallback': True,
+            'provider_policies': {
+                'cost_preference': 'balanced',  # 'low', 'balanced', 'high'
+                'latency_preference': 'balanced',  # 'low', 'balanced', 'high'
+                'reliability_preference': 'high'  # 'low', 'balanced', 'high'
+            },
+            'openrouter_unified_config': {
+                'enabled': False,
+                'proxy_to_anthropic': True,
+                'proxy_to_openai': True,
+                'fallback_model_mapping': {
+                    'anthropic': 'anthropic/claude-3-haiku',
+                    'openai': 'openai/gpt-3.5-turbo'
+                }
+            }
+        }
+    
+    def _save_provider_config(self, config: Dict[str, Any]) -> None:
+        """
+        Save provider configuration to file.
+        
+        Args:
+            config: Provider configuration dictionary
+        """
+        try:
+            with open(self.provider_config_file, 'w') as f:
+                json.dump(config, f, indent=2)
+        except Exception as e:
+            raise KeyValidationError(f"Failed to save provider config: {e}")
+    
+    def set_active_provider(self, provider: Optional[str]) -> None:
+        """
+        Set the active provider for LLM requests.
+        
+        Args:
+            provider: Provider name or None for auto-selection
+        """
+        if provider is not None:
+            provider = provider.lower()
+            if provider not in self.SUPPORTED_PROVIDERS:
+                raise KeyValidationError(f"Unsupported provider: {provider}. Supported: {self.SUPPORTED_PROVIDERS}")
+        
+        config = self._load_provider_config()
+        config['active_provider'] = provider
+        self._save_provider_config(config)
+        
+        if provider:
+            print(f"✓ Active provider set to {provider}")
+        else:
+            print("✓ Active provider set to auto-selection")
+    
+    def get_active_provider(self) -> Optional[str]:
+        """
+        Get the currently active provider.
+        
+        Returns:
+            Active provider name or None for auto-selection
+        """
+        config = self._load_provider_config()
+        return config.get('active_provider')
+    
+    def set_fallback_order(self, providers: List[str]) -> None:
+        """
+        Set the fallback order for providers.
+        
+        Args:
+            providers: List of provider names in fallback order
+        """
+        # Validate all providers
+        for provider in providers:
+            if provider.lower() not in self.SUPPORTED_PROVIDERS:
+                raise KeyValidationError(f"Unsupported provider: {provider}. Supported: {self.SUPPORTED_PROVIDERS}")
+        
+        # Normalize to lowercase
+        providers = [p.lower() for p in providers]
+        
+        config = self._load_provider_config()
+        config['fallback_order'] = providers
+        self._save_provider_config(config)
+        
+        print(f"✓ Fallback order set to: {' → '.join(providers)}")
+    
+    def get_fallback_order(self) -> List[str]:
+        """
+        Get the current fallback order.
+        
+        Returns:
+            List of provider names in fallback order
+        """
+        config = self._load_provider_config()
+        return config.get('fallback_order', ['anthropic', 'openai', 'openrouter'])
+    
+    def set_enable_fallback(self, enabled: bool) -> None:
+        """
+        Enable or disable provider fallback.
+        
+        Args:
+            enabled: Whether to enable fallback
+        """
+        config = self._load_provider_config()
+        config['enable_fallback'] = enabled
+        self._save_provider_config(config)
+        
+        status = "enabled" if enabled else "disabled"
+        print(f"✓ Provider fallback {status}")
+    
+    def is_fallback_enabled(self) -> bool:
+        """
+        Check if provider fallback is enabled.
+        
+        Returns:
+            True if fallback is enabled
+        """
+        config = self._load_provider_config()
+        return config.get('enable_fallback', True)
+    
+    def set_openrouter_unified_mode(self, enabled: bool, proxy_to_anthropic: bool = True, proxy_to_openai: bool = True) -> None:
+        """
+        Configure OpenRouter unified mode for proxying to other providers.
+        
+        Args:
+            enabled: Whether to enable OpenRouter unified mode
+            proxy_to_anthropic: Whether to proxy Anthropic requests through OpenRouter
+            proxy_to_openai: Whether to proxy OpenAI requests through OpenRouter
+        """
+        config = self._load_provider_config()
+        config['openrouter_unified_config'] = {
+            'enabled': enabled,
+            'proxy_to_anthropic': proxy_to_anthropic,
+            'proxy_to_openai': proxy_to_openai,
+            'fallback_model_mapping': config.get('openrouter_unified_config', {}).get('fallback_model_mapping', {
+                'anthropic': 'anthropic/claude-3-haiku',
+                'openai': 'openai/gpt-3.5-turbo'
+            })
+        }
+        self._save_provider_config(config)
+        
+        status = "enabled" if enabled else "disabled"
+        print(f"✓ OpenRouter unified mode {status}")
+        if enabled:
+            if proxy_to_anthropic:
+                print("  - Will proxy Anthropic requests through OpenRouter")
+            if proxy_to_openai:
+                print("  - Will proxy OpenAI requests through OpenRouter")
+    
+    def get_openrouter_unified_config(self) -> Dict[str, Any]:
+        """
+        Get OpenRouter unified mode configuration.
+        
+        Returns:
+            OpenRouter unified configuration
+        """
+        config = self._load_provider_config()
+        return config.get('openrouter_unified_config', {'enabled': False})
+    
+    def set_provider_policies(self, cost_preference: str = 'balanced', 
+                             latency_preference: str = 'balanced',
+                             reliability_preference: str = 'high') -> None:
+        """
+        Set provider selection policies.
+        
+        Args:
+            cost_preference: Cost preference ('low', 'balanced', 'high')
+            latency_preference: Latency preference ('low', 'balanced', 'high')
+            reliability_preference: Reliability preference ('low', 'balanced', 'high')
+        """
+        valid_preferences = ['low', 'balanced', 'high']
+        
+        if cost_preference not in valid_preferences:
+            raise KeyValidationError(f"Invalid cost preference: {cost_preference}. Valid: {valid_preferences}")
+        if latency_preference not in valid_preferences:
+            raise KeyValidationError(f"Invalid latency preference: {latency_preference}. Valid: {valid_preferences}")
+        if reliability_preference not in valid_preferences:
+            raise KeyValidationError(f"Invalid reliability preference: {reliability_preference}. Valid: {valid_preferences}")
+        
+        config = self._load_provider_config()
+        config['provider_policies'] = {
+            'cost_preference': cost_preference,
+            'latency_preference': latency_preference,
+            'reliability_preference': reliability_preference
+        }
+        self._save_provider_config(config)
+        
+        print(f"✓ Provider policies updated:")
+        print(f"  - Cost preference: {cost_preference}")
+        print(f"  - Latency preference: {latency_preference}")
+        print(f"  - Reliability preference: {reliability_preference}")
+    
+    def get_provider_policies(self) -> Dict[str, str]:
+        """
+        Get current provider selection policies.
+        
+        Returns:
+            Dictionary of provider policies
+        """
+        config = self._load_provider_config()
+        return config.get('provider_policies', {
+            'cost_preference': 'balanced',
+            'latency_preference': 'balanced',
+            'reliability_preference': 'high'
+        })
+    
+    def get_provider_config_summary(self) -> Dict[str, Any]:
+        """
+        Get a summary of the current provider configuration.
+        
+        Returns:
+            Dictionary containing configuration summary
+        """
+        config = self._load_provider_config()
+        
+        # Get available providers
+        available_providers = []
+        for provider in self.SUPPORTED_PROVIDERS:
+            if self.get_key(provider):
+                available_providers.append(provider)
+        
+        return {
+            'active_provider': config.get('active_provider'),
+            'fallback_enabled': config.get('enable_fallback', True),
+            'fallback_order': config.get('fallback_order', []),
+            'available_providers': available_providers,
+            'openrouter_unified': config.get('openrouter_unified_config', {}).get('enabled', False),
+            'provider_policies': config.get('provider_policies', {}),
+            'total_configured_providers': len(available_providers)
+        }

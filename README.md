@@ -53,44 +53,62 @@ For detailed architecture diagrams, see [Homeostasis Architecture](docs/assets/a
 
 ### Setting Up API Keys
 
-Homeostasis supports LLM integration for advanced error analysis and code generation. The framework provides secure API key management with multiple storage options:
+Homeostasis integrates with multiple LLM providers for AI-assisted error analysis and code generation. The system provides secure multi-provider key management with fallback support and unified access patterns:
 
-#### Key Management Commands
+#### Basic Key Management
 
 ```bash
-# Set API key for OpenAI (will prompt for key and validate)
-homeostasis llm set-key openai
+# Set API key for OpenAI (interactive with validation)
+homeostasis set-key openai
 
 # Set API key for Anthropic
-homeostasis llm set-key anthropic
+homeostasis set-key anthropic
 
-# Set API key for OpenRouter (can proxy to other providers)
-homeostasis llm set-key openrouter
+# Set API key for OpenRouter (unified endpoint for multiple providers)
+homeostasis set-key openrouter
 
-# List configured keys (shows masked keys for security)
-homeostasis llm list-keys
+# List all configured providers with status
+homeostasis list-keys --show-masked --verbose
 
-# Validate existing keys
-homeostasis llm validate-key openai
-homeostasis llm validate-key anthropic
-homeostasis llm validate-key openrouter
+# Validate a specific provider's configuration
+homeostasis validate-key openai
 
-# Test all configured providers
-homeostasis llm test-providers
+# Test connectivity for all configured providers
+homeostasis test-providers
+```
 
-# Remove a stored key
-homeostasis llm remove-key openai
+#### Multi-Provider Configuration
+
+```bash
+# Set active provider (or 'auto' for intelligent selection)
+homeostasis set-active-provider anthropic
+
+# Configure fallback order for automatic provider switching
+homeostasis set-fallback-order anthropic openai openrouter
+
+# Enable/disable automatic fallback on provider failures
+homeostasis set-fallback-enabled true
+
+# Configure provider selection policies
+homeostasis set-provider-policies --cost balanced --latency low --reliability high
+
+# Enable OpenRouter as unified endpoint (proxy to other providers)
+homeostasis set-openrouter-unified true --proxy-anthropic --proxy-openai
+
+# View complete multi-provider status
+homeostasis provider-status --verbose
 ```
 
 #### Security Features
 
-- **Encrypted Storage**: Keys are stored locally using PBKDF2 + Fernet encryption with 100,000 iterations
-- **External Secrets Support**: Automatic integration with AWS Secrets Manager, Azure Key Vault, and HashiCorp Vault
-- **Environment Variables**: Fallback support for environment-based configuration
-- **Key Validation**: Format checking and API validation during setup
-- **Masked Display**: Keys are never displayed in full for security
+- **PBKDF2 + Fernet Encryption**: Local storage uses 100,000 iterations for key derivation
+- **External Secrets Integration**: Automatic discovery and integration with AWS Secrets Manager, Azure Key Vault, and HashiCorp Vault
+- **Hierarchical Key Lookup**: Environment variables → External secrets → Encrypted local storage
+- **Format Validation**: Provider-specific key format checking with correction suggestions
+- **API Validation**: Live endpoint testing during key setup
+- **Secure Display**: Keys are masked in all CLI output and logs
 
-#### Configuration Options
+#### Storage Options
 
 **Environment Variables** (highest priority):
 ```bash
@@ -99,26 +117,34 @@ export HOMEOSTASIS_ANTHROPIC_API_KEY="sk-ant-..."
 export HOMEOSTASIS_OPENROUTER_API_KEY="sk-or-..."
 ```
 
-**External Secrets Managers**:
+**External Secrets Managers** (auto-detected):
 ```bash
-# AWS Secrets Manager (auto-detected if AWS credentials available)
+# AWS Secrets Manager
 export AWS_DEFAULT_REGION="us-east-1"
 
-# Azure Key Vault
-export AZURE_KEY_VAULT_URL="https://your-vault.vault.azure.net/"
+# Azure Key Vault  
+export AZURE_KEY_VAULT_URL="https://vault-name.vault.azure.net/"
 
 # HashiCorp Vault
-export VAULT_ADDR="https://your-vault-server:8200"
-export VAULT_TOKEN="your-vault-token"
+export VAULT_ADDR="https://vault-server:8200"
+export VAULT_TOKEN="hvs.token..."
 ```
 
-**Key Hierarchy**: Environment variables → External secrets → Encrypted local storage
+**Encrypted Local Storage**: `~/.homeostasis/llm_keys.enc` with password-based encryption
 
-#### Provider-Specific Notes
+#### Provider Information
 
-- **OpenAI**: Keys start with `sk-` and require active account with credits
-- **Anthropic**: Keys start with `sk-ant-` and require API access
-- **OpenRouter**: Keys start with `sk-or-` and can proxy to multiple providers
+- **OpenAI**: Keys start with `sk-` (51+ characters), requires account with credits
+- **Anthropic**: Keys start with `sk-ant-` (90+ characters), requires API access
+- **OpenRouter**: Keys start with `sk-or-` (60+ characters), can proxy requests to other providers
+
+#### Advanced Features
+
+- **Intelligent Provider Selection**: Automatic provider choice based on cost, latency, and reliability policies  
+- **Seamless Fallback**: Automatic switching between providers on errors or rate limits
+- **OpenRouter Unified Mode**: Use OpenRouter as a single endpoint for multiple AI providers
+- **Key Rotation Support**: Update keys without service interruption
+- **Usage Monitoring**: Track provider performance and costs
 
 ### Running the Demo
 
@@ -316,7 +342,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **JetBrains Suite Integration**: Completed plugin for IntelliJ IDEA, PyCharm, WebStorm, and other JetBrains IDEs with language-specific inspection integration, refactoring action integration, embedded healing configuration UI, remote development support through JetBrains Gateway, real-time healing as you type, intention actions for quick fixes, tool windows for healing statistics, and support for 15+ programming languages with automated error detection and resolution
 - **Git Workflow Integration**: Implemented full Git workflow integration with pre-commit hooks for error prevention, PR/MR analysis and suggestion systems for GitHub and GitLab, branch-aware healing strategies with risk assessment, commit message analysis for improved context understanding, and commit signing/verification for secure healing changes with audit trails
 - **CI/CD Pipeline Integration**: Completed integration with major CI/CD platforms including GitHub Actions (workflow failure analysis, automatic healing workflows, PR creation for manual review), GitLab CI (pipeline failure analysis, merge request integration, healing pipeline configurations), Jenkins (build failure analysis, Groovy pipeline scripts, job creation and triggering), CircleCI (orb implementation with advanced features, workflow analysis, multi-strategy healing), and deployment platforms (Vercel, Netlify, Heroku) with confidence-based healing strategies, automatic vs. manual review workflows, multi-platform error pattern recognition, and cross-platform orchestration
-- **LLM Integration**: Completed secure API key management system with multi-provider support for OpenAI, Anthropic, and OpenRouter. Features PBKDF2 + Fernet encrypted local storage, automatic integration with external secrets managers (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault), environment variable fallback, key format validation, API endpoint testing, and unified CLI interface with masked key display for security. Key management includes validation, rotation, and hierarchical lookup across multiple storage backends
+- **LLM Integration Foundations**: Completed foundational integration with multi-provider support for OpenAI, Anthropic, and OpenRouter. Features secure PBKDF2 + Fernet encrypted storage, automatic external secrets manager integration (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault), environment variable fallback, provider-specific key validation, and unified CLI interface. Implemented intelligent provider selection with cost/latency/reliability policies, seamless automatic fallback between providers, OpenRouter unified endpoint mode for proxying requests, and complete multi-provider configuration management with hierarchical key lookup across storage backends
 
 ## Contributing
 

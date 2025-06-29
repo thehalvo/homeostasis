@@ -491,23 +491,49 @@ class LLMManager:
         """
         self.api_key_manager = api_key_manager
         self._providers = {}
-        self._provider_order = ["anthropic", "openai", "openrouter"]  # Preference order
+        self._provider_order = ["anthropic", "openai", "openrouter"]  # Default preference order
     
-    def _get_provider(self, provider_name: str) -> Optional[LLMProviderInterface]:
+    def _get_provider(self, provider_name: str, use_openrouter_proxy: bool = False) -> Optional[LLMProviderInterface]:
         """Get or create a provider instance."""
-        if provider_name in self._providers:
-            return self._providers[provider_name]
+        cache_key = f"{provider_name}{'_via_openrouter' if use_openrouter_proxy else ''}"
         
-        api_key = self.api_key_manager.get_key(provider_name)
-        if not api_key:
-            return None
+        if cache_key in self._providers:
+            return self._providers[cache_key]
         
-        try:
-            provider = ProviderFactory.create_provider(provider_name, api_key)
-            self._providers[provider_name] = provider
-            return provider
-        except Exception:
-            return None
+        # Check for OpenRouter unified mode
+        if use_openrouter_proxy:
+            openrouter_key = self.api_key_manager.get_key('openrouter')
+            if not openrouter_key:
+                return None
+            
+            try:
+                # Create OpenRouter provider with unified endpoint
+                provider = ProviderFactory.create_provider('openrouter', openrouter_key)
+                
+                # Get model mapping for the target provider
+                unified_config = self.api_key_manager.get_openrouter_unified_config()
+                model_mapping = unified_config.get('fallback_model_mapping', {})
+                
+                # Override default model for the target provider
+                if provider_name in model_mapping:
+                    provider._default_model = model_mapping[provider_name]
+                
+                self._providers[cache_key] = provider
+                return provider
+            except Exception:
+                return None
+        else:
+            # Regular provider creation
+            api_key = self.api_key_manager.get_key(provider_name)
+            if not api_key:
+                return None
+            
+            try:
+                provider = ProviderFactory.create_provider(provider_name, api_key)
+                self._providers[cache_key] = provider
+                return provider
+            except Exception:
+                return None
     
     def complete(self, request: LLMRequest, preferred_provider: Optional[str] = None) -> LLMResponse:
         """
@@ -523,30 +549,59 @@ class LLMManager:
         Raises:
             LLMError: If no providers are available or all fail
         """
-        # Try preferred provider first
-        if preferred_provider:
-            provider = self._get_provider(preferred_provider)
+        # Get configuration
+        active_provider = preferred_provider or self.api_key_manager.get_active_provider()
+        fallback_enabled = self.api_key_manager.is_fallback_enabled()
+        fallback_order = self.api_key_manager.get_fallback_order()
+        unified_config = self.api_key_manager.get_openrouter_unified_config()
+        
+        # Determine provider order
+        if active_provider:
+            # Start with active provider, then fallback order
+            provider_order = [active_provider]
+            if fallback_enabled:
+                for provider in fallback_order:
+                    if provider != active_provider:
+                        provider_order.append(provider)
+        else:
+            # Use fallback order as primary order
+            provider_order = fallback_order if fallback_enabled else self._provider_order
+        
+        last_error = None
+        
+        for provider_name in provider_order:
+            # Check if OpenRouter unified mode should be used
+            use_openrouter_proxy = False
+            if unified_config.get('enabled', False):
+                if provider_name == 'anthropic' and unified_config.get('proxy_to_anthropic', False):
+                    use_openrouter_proxy = True
+                elif provider_name == 'openai' and unified_config.get('proxy_to_openai', False):
+                    use_openrouter_proxy = True
+            
+            # Try direct provider first
+            provider = self._get_provider(provider_name, use_openrouter_proxy=False)
             if provider:
                 try:
                     return provider.complete(request)
-                except LLMError:
-                    pass  # Fall back to other providers
-        
-        # Try providers in preference order
-        last_error = None
-        for provider_name in self._provider_order:
-            if provider_name == preferred_provider:
-                continue  # Already tried
+                except LLMError as e:
+                    last_error = e
+                    # If direct provider fails and unified mode is available, try OpenRouter proxy
+                    if use_openrouter_proxy:
+                        try:
+                            proxy_provider = self._get_provider(provider_name, use_openrouter_proxy=True)
+                            if proxy_provider:
+                                return proxy_provider.complete(request)
+                        except LLMError:
+                            pass  # Continue to next provider
             
-            provider = self._get_provider(provider_name)
-            if not provider:
-                continue
-            
-            try:
-                return provider.complete(request)
-            except LLMError as e:
-                last_error = e
-                continue
+            # If direct provider is not available but OpenRouter proxy is enabled, try proxy
+            elif use_openrouter_proxy:
+                try:
+                    proxy_provider = self._get_provider(provider_name, use_openrouter_proxy=True)
+                    if proxy_provider:
+                        return proxy_provider.complete(request)
+                except LLMError as e:
+                    last_error = e
         
         # No providers worked
         if last_error:
@@ -561,3 +616,82 @@ class LLMManager:
             if self.api_key_manager.get_key(provider_name):
                 available.append(provider_name)
         return available
+    
+    def get_recommended_provider_order(self) -> List[str]:
+        """
+        Get recommended provider order based on current policies.
+        
+        Returns:
+            List of provider names in recommended order
+        """
+        policies = self.api_key_manager.get_provider_policies()
+        available_providers = self.get_available_providers()
+        
+        # Provider characteristics (simplified scoring)
+        provider_scores = {
+            'anthropic': {
+                'cost': 2,      # Medium cost
+                'latency': 2,   # Medium latency  
+                'reliability': 3  # High reliability
+            },
+            'openai': {
+                'cost': 2,      # Medium cost
+                'latency': 3,   # Low latency
+                'reliability': 3  # High reliability
+            },
+            'openrouter': {
+                'cost': 1,      # Lower cost (aggregator)
+                'latency': 1,   # Higher latency
+                'reliability': 2  # Medium reliability
+            }
+        }
+        
+        # Weight preferences (higher is better)
+        preference_weights = {
+            'low': 1, 'balanced': 2, 'high': 3
+        }
+        
+        # Calculate scores for each available provider
+        scored_providers = []
+        for provider in available_providers:
+            if provider in provider_scores:
+                score = 0
+                chars = provider_scores[provider]
+                
+                # Cost preference (inverted - lower cost is better when preference is low)
+                cost_pref = policies.get('cost_preference', 'balanced')
+                if cost_pref == 'low':
+                    score += (4 - chars['cost']) * 2  # Prefer lower cost
+                elif cost_pref == 'high':
+                    score += chars['cost'] * 2  # Don't mind higher cost
+                else:
+                    score += 2  # Balanced
+                
+                # Latency preference (lower latency is better when preference is low)
+                latency_pref = policies.get('latency_preference', 'balanced')
+                if latency_pref == 'low':
+                    score += chars['latency'] * 2  # Prefer lower latency
+                else:
+                    score += preference_weights[latency_pref]
+                
+                # Reliability preference
+                reliability_pref = policies.get('reliability_preference', 'high')
+                score += chars['reliability'] * preference_weights[reliability_pref]
+                
+                scored_providers.append((provider, score))
+        
+        # Sort by score (highest first)
+        scored_providers.sort(key=lambda x: x[1], reverse=True)
+        
+        return [provider for provider, _ in scored_providers]
+    
+    def auto_configure_fallback_order(self) -> None:
+        """
+        Automatically configure fallback order based on current policies.
+        """
+        recommended_order = self.get_recommended_provider_order()
+        if recommended_order:
+            self.api_key_manager.set_fallback_order(recommended_order)
+            print(f"✓ Auto-configured fallback order based on current policies")
+        else:
+            print("⚠️  No providers available for auto-configuration")
