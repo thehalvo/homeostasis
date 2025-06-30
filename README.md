@@ -55,6 +55,8 @@ For detailed architecture diagrams, see [Homeostasis Architecture](docs/assets/a
 
 Homeostasis integrates with multiple LLM providers for AI-assisted error analysis and code generation. The system provides secure multi-provider key management with fallback support and unified access patterns:
 
+> **For detailed API key configuration, see [API Keys Guide](docs/api_keys.md)**
+
 #### Basic Key Management
 
 ```bash
@@ -138,13 +140,44 @@ export VAULT_TOKEN="hvs.token..."
 - **Anthropic**: Keys start with `sk-ant-` (90+ characters), requires API access
 - **OpenRouter**: Keys start with `sk-or-` (60+ characters), can proxy requests to other providers
 
+#### Web Dashboard Key Management
+
+Homeostasis provides a web-based interface for API key management accessible through the configuration panel:
+
+```bash
+# Start the dashboard server
+homeostasis dashboard --port 5000
+
+# Open the configuration panel
+open http://localhost:5000/config
+```
+
+**Dashboard Features:**
+- **Visual Key Status**: Real-time indicators showing which keys are configured and their validation status
+- **Secure Input Forms**: Password-masked input fields with toggle visibility for all three providers
+- **Live Validation**: Immediate feedback on key format and API connectivity during entry
+- **Source Indicators**: Visual badges showing key sources (Environment, External Secrets, Encrypted Storage)
+- **Bulk Testing**: Test all configured providers simultaneously with detailed results
+- **Synchronized Management**: Changes made in dashboard are immediately reflected in CLI and vice versa
+- **Provider Configuration**: Set default provider, configure failover order, and enable automatic switching
+- **Security Features**: All keys are masked in display, never stored in plaintext, and validated before storage
+
+**Key Management Workflow:**
+1. Navigate to Configuration → LLM Keys tab
+2. Enter API keys in provider-specific input fields
+3. Test keys individually or all at once for validation
+4. Configure provider preferences and failover settings
+5. Save configuration - keys are encrypted and stored securely
+6. Monitor key sources and status through visual indicators
+
 #### Advanced Features
 
 - **Intelligent Provider Selection**: Automatic provider choice based on cost, latency, and reliability policies  
 - **Seamless Fallback**: Automatic switching between providers on errors or rate limits
 - **OpenRouter Unified Mode**: Use OpenRouter as a single endpoint for multiple AI providers
-- **Key Rotation Support**: Update keys without service interruption
+- **Key Rotation Support**: Update keys without service interruption through CLI or dashboard
 - **Usage Monitoring**: Track provider performance and costs
+- **Cross-Interface Sync**: Keys set via CLI appear in dashboard and vice versa
 
 ### Running the Demo
 
@@ -342,7 +375,7 @@ Homeostasis is actively being developed, here are some recent updates:
 - **JetBrains Suite Integration**: Completed plugin for IntelliJ IDEA, PyCharm, WebStorm, and other JetBrains IDEs with language-specific inspection integration, refactoring action integration, embedded healing configuration UI, remote development support through JetBrains Gateway, real-time healing as you type, intention actions for quick fixes, tool windows for healing statistics, and support for 15+ programming languages with automated error detection and resolution
 - **Git Workflow Integration**: Implemented full Git workflow integration with pre-commit hooks for error prevention, PR/MR analysis and suggestion systems for GitHub and GitLab, branch-aware healing strategies with risk assessment, commit message analysis for improved context understanding, and commit signing/verification for secure healing changes with audit trails
 - **CI/CD Pipeline Integration**: Completed integration with major CI/CD platforms including GitHub Actions (workflow failure analysis, automatic healing workflows, PR creation for manual review), GitLab CI (pipeline failure analysis, merge request integration, healing pipeline configurations), Jenkins (build failure analysis, Groovy pipeline scripts, job creation and triggering), CircleCI (orb implementation with advanced features, workflow analysis, multi-strategy healing), and deployment platforms (Vercel, Netlify, Heroku) with confidence-based healing strategies, automatic vs. manual review workflows, multi-platform error pattern recognition, and cross-platform orchestration
-- **LLM Integration Foundations**: Completed foundational integration with multi-provider support for OpenAI, Anthropic, and OpenRouter. Features secure PBKDF2 + Fernet encrypted storage, automatic external secrets manager integration (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault), environment variable fallback, provider-specific key validation, and unified CLI interface. Implemented intelligent provider selection with cost/latency/reliability policies, seamless automatic fallback between providers, OpenRouter unified endpoint mode for proxying requests, and complete multi-provider configuration management with hierarchical key lookup across storage backends
+- **LLM Integration Foundations**: Completed foundational integration with multi-provider support for OpenAI, Anthropic, and OpenRouter. Features secure PBKDF2 + Fernet encrypted storage, automatic external secrets manager integration (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault), environment variable fallback, provider-specific key validation, and unified CLI interface. Implemented intelligent provider selection with cost/latency/reliability policies, seamless automatic fallback between providers, OpenRouter unified endpoint mode for proxying requests, and complete multi-provider configuration management with hierarchical key lookup across storage backends. Delivered full web dashboard integration with real-time key management forms, password masking, validation feedback, and CLI-dashboard synchronization for unified key administration
 
 ## Contributing
 

@@ -504,3 +504,433 @@ function rejectFix(approvalId) {
     // TODO: Send rejection request to API
     console.log(`Reject fix: ${approvalId}`);
 }
+
+// ============================================================================
+// LLM Key Management Functions
+// ============================================================================
+
+/**
+ * Initialize LLM key management interface
+ */
+function initializeLLMKeyManagement() {
+    // Load initial key status
+    loadLLMKeyStatus();
+    
+    // Set up event listeners for LLM key management
+    setupLLMKeyEventListeners();
+}
+
+/**
+ * Set up event listeners for LLM key management
+ */
+function setupLLMKeyEventListeners() {
+    // Toggle password visibility
+    document.getElementById('openai-toggle-visibility')?.addEventListener('click', function() {
+        togglePasswordVisibility('openai-key', 'openai-toggle-visibility');
+    });
+    
+    document.getElementById('anthropic-toggle-visibility')?.addEventListener('click', function() {
+        togglePasswordVisibility('anthropic-key', 'anthropic-toggle-visibility');
+    });
+    
+    document.getElementById('openrouter-toggle-visibility')?.addEventListener('click', function() {
+        togglePasswordVisibility('openrouter-key', 'openrouter-toggle-visibility');
+    });
+    
+    // Test individual keys
+    document.getElementById('openai-test-key')?.addEventListener('click', function() {
+        testLLMKey('openai');
+    });
+    
+    document.getElementById('anthropic-test-key')?.addEventListener('click', function() {
+        testLLMKey('anthropic');
+    });
+    
+    document.getElementById('openrouter-test-key')?.addEventListener('click', function() {
+        testLLMKey('openrouter');
+    });
+    
+    // Remove keys
+    document.getElementById('openai-remove-key')?.addEventListener('click', function() {
+        removeLLMKey('openai');
+    });
+    
+    document.getElementById('anthropic-remove-key')?.addEventListener('click', function() {
+        removeLLMKey('anthropic');
+    });
+    
+    document.getElementById('openrouter-remove-key')?.addEventListener('click', function() {
+        removeLLMKey('openrouter');
+    });
+    
+    // Test all providers
+    document.getElementById('test-all-providers')?.addEventListener('click', function() {
+        testAllLLMKeys();
+    });
+    
+    // Save LLM keys
+    document.getElementById('save-llm-keys')?.addEventListener('click', function() {
+        saveLLMKeys();
+    });
+}
+
+/**
+ * Toggle password visibility for input fields
+ */
+function togglePasswordVisibility(inputId, buttonId) {
+    const input = document.getElementById(inputId);
+    const button = document.getElementById(buttonId);
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+    } else {
+        input.type = 'password';
+        icon.className = 'fas fa-eye';
+    }
+}
+
+/**
+ * Load LLM key status and update UI
+ */
+async function loadLLMKeyStatus() {
+    try {
+        const response = await fetch('/api/llm-keys');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateLLMKeyStatus(data.providers);
+            updateSecretsManagersList(data.secrets_managers);
+        } else {
+            console.error('Failed to load LLM key status:', data.message);
+            showAlert('error', `Failed to load LLM key status: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error loading LLM key status:', error);
+        showAlert('error', 'Failed to load LLM key status');
+    }
+}
+
+/**
+ * Update LLM key status badges and indicators
+ */
+function updateLLMKeyStatus(providers) {
+    for (const [provider, sources] of Object.entries(providers)) {
+        const statusBadge = document.getElementById(`${provider}-status-badge`);
+        const envBadge = document.getElementById(`${provider}-env-badge`);
+        const externalBadge = document.getElementById(`${provider}-external-badge`);
+        const encryptedBadge = document.getElementById(`${provider}-encrypted-badge`);
+        
+        // Determine overall status
+        const hasKey = sources.environment || sources.external_secrets || sources.encrypted_storage;
+        
+        if (statusBadge) {
+            if (hasKey) {
+                statusBadge.className = 'badge badge-success';
+                statusBadge.textContent = 'Configured';
+            } else {
+                statusBadge.className = 'badge badge-secondary';
+                statusBadge.textContent = 'Not Set';
+            }
+        }
+        
+        // Update source badges
+        if (envBadge) {
+            envBadge.className = sources.environment ? 'badge badge-success' : 'badge badge-light';
+        }
+        if (externalBadge) {
+            externalBadge.className = sources.external_secrets ? 'badge badge-success' : 'badge badge-light';
+        }
+        if (encryptedBadge) {
+            encryptedBadge.className = sources.encrypted_storage ? 'badge badge-success' : 'badge badge-light';
+        }
+    }
+}
+
+/**
+ * Update secrets managers list
+ */
+function updateSecretsManagersList(secretsManagers) {
+    const container = document.getElementById('secrets-managers-list');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (Object.keys(secretsManagers).length === 0) {
+        container.innerHTML = '<span class="badge badge-secondary">None Available</span>';
+    } else {
+        for (const [name, type] of Object.entries(secretsManagers)) {
+            const badge = document.createElement('span');
+            badge.className = 'badge badge-info mr-1';
+            badge.textContent = `${name} (${type})`;
+            container.appendChild(badge);
+        }
+    }
+}
+
+/**
+ * Test an LLM API key
+ */
+async function testLLMKey(provider) {
+    const button = document.getElementById(`${provider}-test-key`);
+    const input = document.getElementById(`${provider}-key`);
+    const originalText = button.innerHTML;
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
+    button.disabled = true;
+    
+    try {
+        const apiKey = input.value.trim();
+        const requestBody = apiKey ? { api_key: apiKey } : {};
+        
+        const response = await fetch(`/api/llm-keys/${provider}/test`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showAlert('success', data.message);
+            // Update status badge
+            const statusBadge = document.getElementById(`${provider}-status-badge`);
+            if (statusBadge) {
+                statusBadge.className = 'badge badge-success';
+                statusBadge.textContent = 'Valid';
+            }
+        } else {
+            showAlert('error', data.message);
+        }
+    } catch (error) {
+        console.error(`Error testing ${provider} key:`, error);
+        showAlert('error', `Failed to test ${provider} API key`);
+    } finally {
+        // Restore button state
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }
+}
+
+/**
+ * Remove an LLM API key
+ */
+async function removeLLMKey(provider) {
+    if (!confirm(`Are you sure you want to remove the ${provider.toUpperCase()} API key?`)) {
+        return;
+    }
+    
+    const button = document.getElementById(`${provider}-remove-key`);
+    const originalText = button.innerHTML;
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Removing...';
+    button.disabled = true;
+    
+    try {
+        const response = await fetch(`/api/llm-keys/${provider}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showAlert('success', data.message);
+            // Clear the input and update status
+            const input = document.getElementById(`${provider}-key`);
+            if (input) input.value = '';
+            
+            const statusBadge = document.getElementById(`${provider}-status-badge`);
+            if (statusBadge) {
+                statusBadge.className = 'badge badge-secondary';
+                statusBadge.textContent = 'Not Set';
+            }
+            
+            // Reload key status
+            loadLLMKeyStatus();
+        } else {
+            showAlert('error', data.message);
+        }
+    } catch (error) {
+        console.error(`Error removing ${provider} key:`, error);
+        showAlert('error', `Failed to remove ${provider} API key`);
+    } finally {
+        // Restore button state
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }
+}
+
+/**
+ * Test all configured LLM API keys
+ */
+async function testAllLLMKeys() {
+    const button = document.getElementById('test-all-providers');
+    const resultsContainer = document.getElementById('test-results');
+    const resultsContent = document.getElementById('test-results-content');
+    const originalText = button.innerHTML;
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing All Keys...';
+    button.disabled = true;
+    
+    try {
+        const response = await fetch('/api/llm-keys/test-all', {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Display results
+            resultsContent.innerHTML = '';
+            
+            for (const [provider, result] of Object.entries(data.results)) {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `d-flex justify-content-between align-items-center mb-1`;
+                
+                const badge = result.success ? 
+                    '<span class="badge badge-success">✓</span>' : 
+                    '<span class="badge badge-danger">✗</span>';
+                
+                resultDiv.innerHTML = `
+                    <span><strong>${provider.toUpperCase()}:</strong> ${result.message}</span>
+                    ${badge}
+                `;
+                
+                resultsContent.appendChild(resultDiv);
+            }
+            
+            resultsContainer.style.display = 'block';
+        } else {
+            showAlert('error', data.message);
+        }
+    } catch (error) {
+        console.error('Error testing all keys:', error);
+        showAlert('error', 'Failed to test API keys');
+    } finally {
+        // Restore button state
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }
+}
+
+/**
+ * Save all LLM API keys
+ */
+async function saveLLMKeys() {
+    const providers = ['openai', 'anthropic', 'openrouter'];
+    const promises = [];
+    
+    for (const provider of providers) {
+        const input = document.getElementById(`${provider}-key`);
+        if (input && input.value.trim()) {
+            promises.push(saveLLMKey(provider, input.value.trim()));
+        }
+    }
+    
+    if (promises.length === 0) {
+        showAlert('warning', 'No API keys to save');
+        return;
+    }
+    
+    const button = document.getElementById('save-llm-keys');
+    const originalText = button.innerHTML;
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    button.disabled = true;
+    
+    try {
+        const results = await Promise.allSettled(promises);
+        const successful = results.filter(r => r.status === 'fulfilled').length;
+        const failed = results.length - successful;
+        
+        if (failed === 0) {
+            showAlert('success', `Successfully saved ${successful} API key(s)`);
+        } else if (successful === 0) {
+            showAlert('error', `Failed to save all ${failed} API key(s)`);
+        } else {
+            showAlert('warning', `Saved ${successful} API key(s), failed to save ${failed}`);
+        }
+        
+        // Reload key status
+        loadLLMKeyStatus();
+    } catch (error) {
+        console.error('Error saving LLM keys:', error);
+        showAlert('error', 'Failed to save API keys');
+    } finally {
+        // Restore button state
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }
+}
+
+/**
+ * Save a single LLM API key
+ */
+async function saveLLMKey(provider, apiKey) {
+    const response = await fetch(`/api/llm-keys/${provider}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ api_key: apiKey })
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+        throw new Error(data.message);
+    }
+    
+    return data;
+}
+
+/**
+ * Show alert message
+ */
+function showAlert(type, message) {
+    // Create alert element
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} alert-dismissible fade show`;
+    alert.innerHTML = `
+        ${message}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    `;
+    
+    // Find container and insert alert
+    const container = document.querySelector('.container');
+    if (container) {
+        container.insertBefore(alert, container.firstChild);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            if (alert.parentNode) {
+                alert.parentNode.removeChild(alert);
+            }
+        }, 5000);
+    }
+}
+
+// Initialize LLM key management when the configuration tab is shown
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait for tab switch to LLM keys
+    const llmKeysTab = document.getElementById('llm-keys-tab');
+    if (llmKeysTab) {
+        llmKeysTab.addEventListener('shown.bs.tab', function() {
+            initializeLLMKeyManagement();
+        });
+        
+        // Also initialize if the tab is already active
+        if (llmKeysTab.classList.contains('active')) {
+            initializeLLMKeyManagement();
+        }
+    }
+});

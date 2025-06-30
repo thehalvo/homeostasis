@@ -28,6 +28,7 @@ sys.path.insert(0, str(project_root))
 
 # Import Homeostasis modules
 from modules.monitoring.metrics_collector import MetricsCollector
+from modules.llm_integration.api_key_manager import APIKeyManager, KeyValidationError
 from modules.security.api_security import get_api_security_manager, secure_endpoint
 from modules.security.auth import get_auth_manager, authenticate
 from modules.security.rbac import get_rbac_manager, has_permission
@@ -1307,6 +1308,192 @@ class DashboardServer:
                     'success': False,
                     'message': f'Failed to deploy suggestion {suggestion_id}'
                 }), 404
+
+        # LLM Key Management API Endpoints
+        @app.route('/api/llm-keys', methods=['GET'])
+        def api_get_llm_keys():
+            """Get the status of all LLM API keys (without revealing the actual keys)."""
+            try:
+                key_manager = APIKeyManager()
+                keys_status = key_manager.list_keys()
+                
+                # Get available secrets managers
+                secrets_managers = key_manager.get_available_secrets_managers()
+                
+                return jsonify({
+                    'success': True,
+                    'providers': keys_status,
+                    'secrets_managers': secrets_managers
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to get LLM keys status: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm-keys/<provider>', methods=['POST'])
+        def api_set_llm_key(provider):
+            """Set API key for a specific provider."""
+            try:
+                data = request.get_json()
+                if not data or 'api_key' not in data:
+                    return jsonify({
+                        'success': False,
+                        'message': 'API key is required'
+                    }), 400
+
+                api_key = data['api_key'].strip()
+                if not api_key:
+                    return jsonify({
+                        'success': False,
+                        'message': 'API key cannot be empty'
+                    }), 400
+
+                key_manager = APIKeyManager()
+                
+                # Validate the key
+                try:
+                    is_valid = key_manager.validate_key(provider, api_key)
+                    if not is_valid:
+                        return jsonify({
+                            'success': False,
+                            'message': f'Invalid {provider} API key'
+                        }), 400
+                except KeyValidationError as e:
+                    return jsonify({
+                        'success': False,
+                        'message': str(e)
+                    }), 400
+
+                # Store the key
+                success = key_manager.set_key(provider, api_key)
+                if success:
+                    return jsonify({
+                        'success': True,
+                        'message': f'{provider.title()} API key set successfully'
+                    })
+                else:
+                    return jsonify({
+                        'success': False,
+                        'message': f'Failed to store {provider} API key'
+                    }), 500
+
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to set {provider} API key: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm-keys/<provider>/test', methods=['POST'])
+        def api_test_llm_key(provider):
+            """Test an API key for a specific provider."""
+            try:
+                data = request.get_json() or {}
+                api_key = data.get('api_key', '').strip()
+                
+                key_manager = APIKeyManager()
+                
+                # If no key is provided in the request, use the stored key
+                if not api_key:
+                    api_key = key_manager.get_key(provider)
+                    if not api_key:
+                        return jsonify({
+                            'success': False,
+                            'message': f'No {provider} API key found to test'
+                        }), 400
+
+                # Test the key
+                try:
+                    is_valid = key_manager.validate_key(provider, api_key)
+                    if is_valid:
+                        return jsonify({
+                            'success': True,
+                            'message': f'{provider.title()} API key is valid',
+                            'provider': provider
+                        })
+                    else:
+                        return jsonify({
+                            'success': False,
+                            'message': f'{provider.title()} API key validation failed'
+                        }), 400
+                except KeyValidationError as e:
+                    return jsonify({
+                        'success': False,
+                        'message': str(e)
+                    }), 400
+
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to test {provider} API key: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm-keys/<provider>', methods=['DELETE'])
+        def api_remove_llm_key(provider):
+            """Remove API key for a specific provider."""
+            try:
+                key_manager = APIKeyManager()
+                success = key_manager.remove_key(provider)
+                
+                if success:
+                    return jsonify({
+                        'success': True,
+                        'message': f'{provider.title()} API key removed successfully'
+                    })
+                else:
+                    return jsonify({
+                        'success': False,
+                        'message': f'No {provider} API key found to remove'
+                    }), 404
+
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to remove {provider} API key: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm-keys/test-all', methods=['POST'])
+        def api_test_all_llm_keys():
+            """Test all configured LLM API keys."""
+            try:
+                key_manager = APIKeyManager()
+                results = {}
+                
+                for provider in key_manager.SUPPORTED_PROVIDERS:
+                    api_key = key_manager.get_key(provider)
+                    if api_key:
+                        try:
+                            is_valid = key_manager.validate_key(provider, api_key)
+                            results[provider] = {
+                                'success': is_valid,
+                                'message': f'{provider.title()} API key is valid' if is_valid else f'{provider.title()} API key is invalid'
+                            }
+                        except KeyValidationError as e:
+                            results[provider] = {
+                                'success': False,
+                                'message': str(e)
+                            }
+                        except Exception as e:
+                            results[provider] = {
+                                'success': False,
+                                'message': f'Error testing {provider}: {str(e)}'
+                            }
+                    else:
+                        results[provider] = {
+                            'success': False,
+                            'message': f'No {provider} API key configured'
+                        }
+
+                return jsonify({
+                    'success': True,
+                    'results': results
+                })
+
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to test API keys: {str(e)}'
+                }), 500
             
     def _register_error_handlers(self) -> None:
         """Register error handlers for the dashboard."""

@@ -15,6 +15,7 @@
                 <a class="list-group-item list-group-item-action" id="analysis-tab" data-toggle="list" href="#analysis" role="tab" aria-controls="analysis">Error Analysis</a>
                 <a class="list-group-item list-group-item-action" id="deployment-tab" data-toggle="list" href="#deployment" role="tab" aria-controls="deployment">Deployment</a>
                 <a class="list-group-item list-group-item-action" id="security-tab" data-toggle="list" href="#security" role="tab" aria-controls="security">Security</a>
+                <a class="list-group-item list-group-item-action" id="llm-keys-tab" data-toggle="list" href="#llm-keys" role="tab" aria-controls="llm-keys">LLM Keys</a>
                 <a class="list-group-item list-group-item-action" id="rules-tab" data-toggle="list" href="#rules" role="tab" aria-controls="rules">Rules</a>
                 <a class="list-group-item list-group-item-action" id="templates-tab" data-toggle="list" href="#templates" role="tab" aria-controls="templates">Templates</a>
                 <a class="list-group-item list-group-item-action" id="plugins-tab" data-toggle="list" href="#plugins" role="tab" aria-controls="plugins">Plugins</a>
@@ -349,6 +350,235 @@
                                     <input type="number" class="form-control" id="deployment-limit" min="1" value="{{ config.security.rate_limiting.deployment_limit }}">
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LLM Keys Management -->
+                <div class="tab-pane fade" id="llm-keys" role="tabpanel" aria-labelledby="llm-keys-tab">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">LLM API Keys Management</h5>
+                            <button class="btn btn-primary btn-sm" id="save-llm-keys">Save Changes</button>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">
+                                Configure API keys for LLM providers. Keys are stored securely and can be sourced from 
+                                environment variables or external secrets managers.
+                            </p>
+                            
+                            <!-- Key Source Selection -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="key-source-preference">Preferred Key Source</label>
+                                        <select class="form-control" id="key-source-preference">
+                                            <option value="environment">Environment Variables</option>
+                                            <option value="encrypted_storage">Encrypted Storage</option>
+                                            <option value="external_secrets">External Secrets Manager</option>
+                                        </select>
+                                        <small class="form-text text-muted">
+                                            Keys are tried in order: Environment → External Secrets → Encrypted Storage
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Available Secrets Managers</label>
+                                        <div id="secrets-managers-list" class="mt-2">
+                                            <span class="badge badge-secondary">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Provider Keys Section -->
+                            <div class="row">
+                                <!-- OpenAI -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">OpenAI API Key</h6>
+                                            <span class="badge" id="openai-status-badge">Unknown</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="openai-key">API Key</label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" id="openai-key" 
+                                                           placeholder="sk-..." maxlength="200">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="button" 
+                                                                id="openai-toggle-visibility" title="Toggle Visibility">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <small class="form-text text-muted">
+                                                    Get from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a>
+                                                </small>
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-outline-primary btn-sm mr-2" id="openai-test-key">
+                                                    <i class="fas fa-check-circle"></i> Test Key
+                                                </button>
+                                                <button class="btn btn-outline-danger btn-sm" id="openai-remove-key">
+                                                    <i class="fas fa-trash"></i> Remove
+                                                </button>
+                                            </div>
+                                            <div id="openai-key-sources" class="mt-2">
+                                                <small class="text-muted">Key Sources:</small>
+                                                <div class="ml-2">
+                                                    <span class="badge badge-light" id="openai-env-badge">Environment</span>
+                                                    <span class="badge badge-light" id="openai-external-badge">External</span>
+                                                    <span class="badge badge-light" id="openai-encrypted-badge">Encrypted</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Anthropic -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">Anthropic API Key</h6>
+                                            <span class="badge" id="anthropic-status-badge">Unknown</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="anthropic-key">API Key</label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" id="anthropic-key" 
+                                                           placeholder="sk-ant-..." maxlength="200">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="button" 
+                                                                id="anthropic-toggle-visibility" title="Toggle Visibility">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <small class="form-text text-muted">
+                                                    Get from <a href="https://console.anthropic.com/" target="_blank">Anthropic Console</a>
+                                                </small>
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-outline-primary btn-sm mr-2" id="anthropic-test-key">
+                                                    <i class="fas fa-check-circle"></i> Test Key
+                                                </button>
+                                                <button class="btn btn-outline-danger btn-sm" id="anthropic-remove-key">
+                                                    <i class="fas fa-trash"></i> Remove
+                                                </button>
+                                            </div>
+                                            <div id="anthropic-key-sources" class="mt-2">
+                                                <small class="text-muted">Key Sources:</small>
+                                                <div class="ml-2">
+                                                    <span class="badge badge-light" id="anthropic-env-badge">Environment</span>
+                                                    <span class="badge badge-light" id="anthropic-external-badge">External</span>
+                                                    <span class="badge badge-light" id="anthropic-encrypted-badge">Encrypted</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- OpenRouter -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">OpenRouter API Key</h6>
+                                            <span class="badge" id="openrouter-status-badge">Unknown</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="openrouter-key">API Key</label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" id="openrouter-key" 
+                                                           placeholder="sk-or-..." maxlength="200">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="button" 
+                                                                id="openrouter-toggle-visibility" title="Toggle Visibility">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <small class="form-text text-muted">
+                                                    Get from <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a>
+                                                </small>
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-outline-primary btn-sm mr-2" id="openrouter-test-key">
+                                                    <i class="fas fa-check-circle"></i> Test Key
+                                                </button>
+                                                <button class="btn btn-outline-danger btn-sm" id="openrouter-remove-key">
+                                                    <i class="fas fa-trash"></i> Remove
+                                                </button>
+                                            </div>
+                                            <div id="openrouter-key-sources" class="mt-2">
+                                                <small class="text-muted">Key Sources:</small>
+                                                <div class="ml-2">
+                                                    <span class="badge badge-light" id="openrouter-env-badge">Environment</span>
+                                                    <span class="badge badge-light" id="openrouter-external-badge">External</span>
+                                                    <span class="badge badge-light" id="openrouter-encrypted-badge">Encrypted</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Provider Selection -->
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Provider Configuration</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="default-provider">Default Provider</label>
+                                                <select class="form-control" id="default-provider">
+                                                    <option value="openai">OpenAI</option>
+                                                    <option value="anthropic">Anthropic</option>
+                                                    <option value="openrouter">OpenRouter</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input type="checkbox" class="form-check-input" id="enable-failover" checked>
+                                                <label class="form-check-label" for="enable-failover">
+                                                    Enable automatic failover
+                                                </label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="failover-order">Failover Order</label>
+                                                <input type="text" class="form-control" id="failover-order" 
+                                                       value="openai,anthropic,openrouter" readonly>
+                                                <small class="form-text text-muted">
+                                                    Providers will be tried in this order if primary fails
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Test All Providers</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <button class="btn btn-success btn-block" id="test-all-providers">
+                                                <i class="fas fa-play-circle"></i> Test All Configured Keys
+                                            </button>
+                                            <div id="test-results" class="mt-3" style="display: none;">
+                                                <div class="alert alert-info">
+                                                    <strong>Test Results:</strong>
+                                                    <div id="test-results-content"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
