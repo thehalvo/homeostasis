@@ -26,6 +26,9 @@ from modules.patch_generation.indent_utils import (
     adjust_indentation_for_context, indent_aware_replace, generate_line_indentation_map
 )
 
+# Import LLM patch generator
+from modules.patch_generation.llm_patch_generator import LLMPatchGenerator, create_llm_patch_generator
+
 # Templates directory
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
@@ -118,20 +121,32 @@ class PatchGenerator:
     Class for generating code patches based on error analysis.
     """
 
-    def __init__(self, templates_dir: Path = TEMPLATES_DIR):
+    def __init__(self, templates_dir: Path = TEMPLATES_DIR, enable_llm: bool = True):
         """
         Initialize the patch generator.
 
         Args:
             templates_dir: Directory containing patch templates
+            enable_llm: Whether to enable LLM-powered patch generation
         """
         self.templates_dir = templates_dir
+        self.enable_llm = enable_llm
         
         # Initialize the template manager for hierarchical templates
         self.template_manager = TemplateManager(templates_dir)
         
         # Load legacy templates for backward compatibility
         self.templates = self._load_templates()
+        
+        # Initialize LLM patch generator if enabled
+        self.llm_generator = None
+        if enable_llm:
+            try:
+                self.llm_generator = create_llm_patch_generator()
+                print("LLM patch generation enabled")
+            except Exception as e:
+                print(f"Warning: Could not initialize LLM patch generator: {e}")
+                self.enable_llm = False
         
         # Mappings from error types to templates
         self.error_template_mapping = {
@@ -291,9 +306,22 @@ class PatchGenerator:
         root_cause = analysis.get("root_cause")
         file_path = analysis.get("file_path")
         
-        # Try to find a matching template
+        # Try LLM-powered patch generation first if enabled
+        if self.enable_llm and self.llm_generator:
+            try:
+                llm_patch = self.llm_generator.generate_patch_from_analysis(analysis)
+                if llm_patch and llm_patch.get('confidence', 0) > 0.3:  # Minimum confidence threshold
+                    print(f"Generated LLM patch with confidence {llm_patch.get('confidence', 0):.2f}")
+                    return llm_patch
+                elif llm_patch:
+                    print(f"LLM patch confidence too low ({llm_patch.get('confidence', 0):.2f}), falling back to templates")
+            except Exception as e:
+                print(f"LLM patch generation failed: {e}, falling back to templates")
+        
+        # Fall back to template-based patch generation
         template_name = self.error_template_mapping.get(root_cause)
         if not template_name:
+            # If no template and LLM is disabled/failed, return None
             return None
         
         # Detect the framework if a file path is provided
@@ -426,6 +454,10 @@ class PatchGenerator:
         Returns:
             True if the patch was applied successfully, False otherwise
         """
+        # Handle LLM-generated patches
+        if patch.get("patch_type") in ["llm_generated", "llm_generated_fallback"]:
+            return self._apply_llm_patch(patch, project_root)
+        
         if patch["patch_type"] != "specific":
             return False
         
@@ -567,6 +599,86 @@ class PatchGenerator:
         
         return False
 
+    def _apply_llm_patch(self, patch: Dict[str, Any], project_root: Path) -> bool:
+        """
+        Apply an LLM-generated patch to the codebase.
+        
+        Args:
+            patch: LLM-generated patch details
+            project_root: Root directory of the project
+            
+        Returns:
+            True if the patch was applied successfully, False otherwise
+        """
+        try:
+            file_path = patch.get("file_path", "")
+            if not file_path:
+                print("No file path specified in LLM patch")
+                return False
+                
+            target_file = project_root / file_path
+            
+            # Use the LLM generator's apply method if available
+            if self.llm_generator:
+                return self.llm_generator.apply_llm_patch(patch, str(target_file))
+            else:
+                # Fallback implementation
+                return self._apply_llm_patch_fallback(patch, target_file)
+                
+        except Exception as e:
+            print(f"Error applying LLM patch: {e}")
+            return False
+
+    def _apply_llm_patch_fallback(self, patch: Dict[str, Any], target_file: Path) -> bool:
+        """
+        Fallback method to apply LLM patch without LLM generator.
+        
+        Args:
+            patch: LLM patch details
+            target_file: Target file path
+            
+        Returns:
+            True if successful
+        """
+        try:
+            if not target_file.exists():
+                print(f"Target file does not exist: {target_file}")
+                return False
+                
+            # Read current content
+            with open(target_file, 'r', encoding='utf-8') as f:
+                original_content = f.read()
+            
+            # Extract changes from patch
+            changes = patch.get('changes', [])
+            if not changes:
+                print("No changes specified in LLM patch")
+                return False
+            
+            # Apply changes (simplified version)
+            lines = original_content.split('\n')
+            
+            for change in reversed(sorted(changes, key=lambda x: x.get('line_start', 0))):
+                start_line = change.get('line_start', 1) - 1  # Convert to 0-based
+                end_line = change.get('line_end', start_line + 1) - 1
+                new_code = change.get('new_code', '').split('\n')
+                
+                if 0 <= start_line < len(lines):
+                    lines[start_line:end_line + 1] = new_code
+            
+            # Write modified content
+            backup_path = target_file.with_suffix(target_file.suffix + '.bak')
+            shutil.copy2(target_file, backup_path)
+            
+            with open(target_file, 'w', encoding='utf-8') as f:
+                f.write('\n'.join(lines))
+            
+            print(f"Applied LLM patch to {target_file}")
+            return True
+            
+        except Exception as e:
+            print(f"Error in LLM patch fallback: {e}")
+            return False
 
     def _get_template_variables(self, template_name: str) -> List[str]:
         """
