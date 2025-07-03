@@ -12,8 +12,12 @@ import json
 import logging
 import re
 import uuid
+import subprocess
+import time
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union
+from typing import Dict, List, Optional, Any, Tuple, Union, Callable
+from dataclasses import dataclass
+from enum import Enum
 
 from ..llm_integration.provider_abstraction import (
     LLMManager, LLMRequest, LLMMessage, LLMError
@@ -27,6 +31,40 @@ from .code_style_analyzer import CodeStyleAnalyzer, create_code_style_analyzer
 
 
 logger = logging.getLogger(__name__)
+
+
+class ValidationResult(Enum):
+    """Results of patch validation."""
+    SUCCESS = "success"
+    FAILURE = "failure"
+    TIMEOUT = "timeout"
+    ERROR = "error"
+
+
+@dataclass
+class TestResult:
+    """Result of running tests after patch application."""
+    success: bool
+    output: str
+    error_output: str
+    execution_time: float
+    test_count: int = 0
+    passed_count: int = 0
+    failed_count: int = 0
+    validation_result: ValidationResult = ValidationResult.SUCCESS
+
+
+@dataclass
+class PatchValidationConfig:
+    """Configuration for patch validation."""
+    enable_test_validation: bool = True
+    test_timeout: float = 300.0  # 5 minutes
+    max_validation_attempts: int = 3
+    retry_on_test_failure: bool = True
+    require_all_tests_pass: bool = False  # If True, all tests must pass
+    test_command: Optional[str] = None  # Custom test command
+    pre_validation_commands: List[str] = None  # Commands to run before validation
+    post_validation_commands: List[str] = None  # Commands to run after validation
 
 
 class LLMPatchGenerator:
@@ -63,6 +101,19 @@ class LLMPatchGenerator:
         self.max_context_length = self.config.get('max_context_length', 8000)
         self.temperature = self.config.get('temperature', 0.1)  # Low temperature for consistent code
         self.max_tokens = self.config.get('max_tokens', 2000)
+        
+        # Validation configuration
+        validation_config = self.config.get('validation', {})
+        self.validation_config = PatchValidationConfig(
+            enable_test_validation=validation_config.get('enable_test_validation', True),
+            test_timeout=validation_config.get('test_timeout', 300.0),
+            max_validation_attempts=validation_config.get('max_validation_attempts', 3),
+            retry_on_test_failure=validation_config.get('retry_on_test_failure', True),
+            require_all_tests_pass=validation_config.get('require_all_tests_pass', False),
+            test_command=validation_config.get('test_command'),
+            pre_validation_commands=validation_config.get('pre_validation_commands', []),
+            post_validation_commands=validation_config.get('post_validation_commands', [])
+        )
         
         # Language-specific configurations
         self.language_configs = {
@@ -784,6 +835,347 @@ Provide your response in the following JSON format:
             lines[start_line:end_line + 1] = new_code
         
         return '\n'.join(lines)
+    
+    def _run_test_validation(self, target_file: str, working_dir: Optional[str] = None) -> TestResult:
+        """
+        Run test validation after applying a patch.
+
+        Args:
+            target_file: Path to the target file that was patched
+            working_dir: Working directory for running tests
+            
+        Returns:
+            Test result
+        """
+        if not self.validation_config.enable_test_validation:
+            return TestResult(
+                success=True,
+                output="Test validation disabled",
+                error_output="",
+                execution_time=0.0,
+                validation_result=ValidationResult.SUCCESS
+            )
+        
+        working_dir = working_dir or str(Path(target_file).parent)
+        start_time = time.time()
+        
+        try:
+            # Run pre-validation commands
+            if self.validation_config.pre_validation_commands:
+                for cmd in self.validation_config.pre_validation_commands:
+                    self._run_command(cmd, working_dir)
+            
+            # Determine test command
+            test_command = self._get_test_command(target_file, working_dir)
+            
+            if not test_command:
+                return TestResult(
+                    success=False,
+                    output="",
+                    error_output="No test command available",
+                    execution_time=0.0,
+                    validation_result=ValidationResult.ERROR
+                )
+            
+            # Run tests
+            result = self._run_command(
+                test_command, 
+                working_dir, 
+                timeout=self.validation_config.test_timeout
+            )
+            
+            # Parse test results
+            test_count, passed_count, failed_count = self._parse_test_output(result.stdout)
+            
+            # Run post-validation commands
+            if self.validation_config.post_validation_commands:
+                for cmd in self.validation_config.post_validation_commands:
+                    self._run_command(cmd, working_dir)
+            
+            execution_time = time.time() - start_time
+            
+            # Determine success based on configuration
+            if self.validation_config.require_all_tests_pass:
+                success = result.returncode == 0 and failed_count == 0
+            else:
+                # Consider successful if tests run without critical errors
+                success = result.returncode == 0 or (test_count > 0 and passed_count > failed_count)
+            
+            return TestResult(
+                success=success,
+                output=result.stdout,
+                error_output=result.stderr,
+                execution_time=execution_time,
+                test_count=test_count,
+                passed_count=passed_count,
+                failed_count=failed_count,
+                validation_result=ValidationResult.SUCCESS if success else ValidationResult.FAILURE
+            )
+            
+        except subprocess.TimeoutExpired:
+            return TestResult(
+                success=False,
+                output="",
+                error_output="Test execution timed out",
+                execution_time=time.time() - start_time,
+                validation_result=ValidationResult.TIMEOUT
+            )
+        except Exception as e:
+            return TestResult(
+                success=False,
+                output="",
+                error_output=str(e),
+                execution_time=time.time() - start_time,
+                validation_result=ValidationResult.ERROR
+            )
+    
+    def _run_command(self, command: str, working_dir: str, timeout: Optional[float] = None) -> subprocess.CompletedProcess:
+        """
+        Run a shell command with timeout.
+
+        Args:
+            command: Command to run
+            working_dir: Working directory
+            timeout: Timeout in seconds
+            
+        Returns:
+            Completed process
+        """
+        return subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+            cwd=working_dir,
+            timeout=timeout
+        )
+    
+    def _get_test_command(self, target_file: str, working_dir: str) -> Optional[str]:
+        """
+        Get the appropriate test command for the project.
+
+        Args:
+            target_file: Path to the target file
+            working_dir: Working directory
+            
+        Returns:
+            Test command or None if not found
+        """
+        # Use configured test command if available
+        if self.validation_config.test_command:
+            return self.validation_config.test_command
+        
+        # Auto-detect test command based on project structure
+        working_path = Path(working_dir)
+        
+        # Python projects
+        if (working_path / 'pytest.ini').exists() or (working_path / 'pyproject.toml').exists():
+            return 'pytest -v'
+        elif (working_path / 'setup.py').exists():
+            return 'python -m pytest'
+        elif (working_path / 'requirements.txt').exists() and Path(target_file).suffix == '.py':
+            return 'python -m unittest discover -v'
+        
+        # Node.js projects
+        elif (working_path / 'package.json').exists():
+            try:
+                with open(working_path / 'package.json', 'r') as f:
+                    package_json = json.load(f)
+                    if 'scripts' in package_json and 'test' in package_json['scripts']:
+                        return 'npm test'
+            except:
+                pass
+        
+        # Java projects
+        elif (working_path / 'pom.xml').exists():
+            return 'mvn test'
+        elif (working_path / 'build.gradle').exists():
+            return './gradlew test'
+        
+        # Go projects
+        elif (working_path / 'go.mod').exists():
+            return 'go test ./...'
+        
+        # Rust projects
+        elif (working_path / 'Cargo.toml').exists():
+            return 'cargo test'
+        
+        return None
+    
+    def _parse_test_output(self, output: str) -> Tuple[int, int, int]:
+        """
+        Parse test output to extract test counts.
+
+        Args:
+            output: Test output
+            
+        Returns:
+            Tuple of (total_tests, passed_tests, failed_tests)
+        """
+        total_tests = 0
+        passed_tests = 0
+        failed_tests = 0
+        
+        # Common patterns for different test frameworks
+        patterns = [
+            # pytest
+            r'(\d+) passed.*?(\d+) failed',
+            r'(\d+) passed',
+            r'(\d+) failed',
+            # unittest
+            r'Ran (\d+) tests.*?OK',
+            r'Ran (\d+) tests.*?FAILED.*?failures=(\d+)',
+            # jest
+            r'Tests:\s+(\d+) passed.*?(\d+) failed',
+            # go test
+            r'PASS.*?(\d+) tests',
+            r'FAIL.*?(\d+) tests',
+            # cargo test
+            r'test result: ok\. (\d+) passed',
+            r'test result: FAILED\. (\d+) passed; (\d+) failed'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, output, re.IGNORECASE)
+            if match:
+                groups = match.groups()
+                if len(groups) == 1:
+                    if 'passed' in pattern or 'ok' in pattern:
+                        passed_tests = int(groups[0])
+                        total_tests = passed_tests
+                    elif 'failed' in pattern:
+                        failed_tests = int(groups[0])
+                        total_tests = failed_tests
+                elif len(groups) == 2:
+                    passed_tests = int(groups[0])
+                    failed_tests = int(groups[1])
+                    total_tests = passed_tests + failed_tests
+                break
+        
+        return total_tests, passed_tests, failed_tests
+    
+    def generate_patch_with_validation(self, 
+                                     error_context: Dict[str, Any],
+                                     source_code: Optional[str] = None,
+                                     additional_context: Optional[Dict[str, Any]] = None,
+                                     target_file: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """
+        Generate a patch with automated validation and re-generation if tests fail.
+
+        Args:
+            error_context: Error context information
+            source_code: Source code containing the error
+            additional_context: Additional context
+            target_file: Target file for validation
+            
+        Returns:
+            Generated and validated patch information or None if generation fails
+        """
+        if not self.validation_config.enable_test_validation or not target_file:
+            # Fall back to regular patch generation
+            return self.generate_patch_from_error_context(
+                error_context, source_code, additional_context
+            )
+        
+        working_dir = str(Path(target_file).parent)
+        
+        for attempt in range(self.validation_config.max_validation_attempts):
+            logger.info(f"Patch generation attempt {attempt + 1}/{self.validation_config.max_validation_attempts}")
+            
+            # Generate patch
+            patch = self.generate_patch_from_error_context(
+                error_context, source_code, additional_context
+            )
+            
+            if not patch:
+                logger.warning(f"Patch generation failed on attempt {attempt + 1}")
+                continue
+            
+            # Apply patch temporarily for validation
+            backup_file = None
+            try:
+                # Create backup
+                target_path = Path(target_file)
+                backup_file = target_path.with_suffix(target_path.suffix + '.validation_backup')
+                
+                if target_path.exists():
+                    backup_file.write_text(target_path.read_text())
+                
+                # Apply patch
+                if self.apply_llm_patch(patch, target_file):
+                    # Run validation
+                    test_result = self._run_test_validation(target_file, working_dir)
+                    
+                    # Add validation results to patch
+                    patch['validation_result'] = {
+                        'success': test_result.success,
+                        'test_count': test_result.test_count,
+                        'passed_count': test_result.passed_count,
+                        'failed_count': test_result.failed_count,
+                        'execution_time': test_result.execution_time,
+                        'validation_attempt': attempt + 1,
+                        'output': test_result.output,
+                        'error_output': test_result.error_output
+                    }
+                    
+                    if test_result.success:
+                        logger.info(f"Patch validation successful on attempt {attempt + 1}")
+                        return patch
+                    else:
+                        logger.warning(f"Patch validation failed on attempt {attempt + 1}: {test_result.error_output}")
+                        
+                        # If retry is enabled and we have more attempts, update context with failure info
+                        if self.validation_config.retry_on_test_failure and attempt < self.validation_config.max_validation_attempts - 1:
+                            # Update error context with validation failure information
+                            error_context = self._update_context_with_validation_failure(
+                                error_context, test_result, patch
+                            )
+                
+            finally:
+                # Restore backup
+                if backup_file and backup_file.exists():
+                    if target_path.exists():
+                        target_path.write_text(backup_file.read_text())
+                    backup_file.unlink()
+        
+        logger.error(f"Failed to generate valid patch after {self.validation_config.max_validation_attempts} attempts")
+        return None
+    
+    def _update_context_with_validation_failure(self, 
+                                               error_context: Dict[str, Any], 
+                                               test_result: TestResult,
+                                               failed_patch: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Update error context with validation failure information for retry.
+
+        Args:
+            error_context: Original error context
+            test_result: Failed test result
+            failed_patch: The patch that failed validation
+            
+        Returns:
+            Updated error context
+        """
+        updated_context = error_context.copy()
+        
+        # Add validation failure context
+        validation_context = {
+            'previous_patch_failed': True,
+            'test_failure_output': test_result.error_output,
+            'test_output': test_result.output,
+            'failed_patch_analysis': failed_patch.get('llm_analysis', ''),
+            'failed_patch_changes': failed_patch.get('changes', []),
+            'test_counts': {
+                'total': test_result.test_count,
+                'passed': test_result.passed_count,
+                'failed': test_result.failed_count
+            }
+        }
+        
+        updated_context['validation_failures'] = updated_context.get('validation_failures', [])
+        updated_context['validation_failures'].append(validation_context)
+        
+        return updated_context
 
     def get_patch_statistics(self) -> Dict[str, Any]:
         """

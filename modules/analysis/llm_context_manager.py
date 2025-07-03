@@ -9,14 +9,68 @@ import json
 import logging
 import pickle
 import uuid
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from collections import defaultdict
+from enum import Enum
 
 from .comprehensive_error_detector import ErrorContext, ErrorClassification
 from .intelligent_classifier import IntelligentClassifier
+
+
+class FailureType(Enum):
+    """Types of failures that can occur during LLM processing."""
+    LLM_REQUEST_FAILED = "llm_request_failed"
+    PATCH_GENERATION_FAILED = "patch_generation_failed"
+    PATCH_APPLICATION_FAILED = "patch_application_failed"
+    TEST_VALIDATION_FAILED = "test_validation_failed"
+    PROVIDER_UNAVAILABLE = "provider_unavailable"
+    TIMEOUT = "timeout"
+    UNKNOWN = "unknown"
+
+
+@dataclass
+class FailureLog:
+    """Log entry for failures during LLM processing."""
+    failure_id: str
+    context_id: str
+    failure_type: FailureType
+    timestamp: float
+    error_message: str
+    provider: Optional[str] = None
+    attempt_number: int = 1
+    retry_delay: Optional[float] = None
+    stack_trace: Optional[str] = None
+    additional_context: Optional[Dict[str, Any]] = None
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            'failure_id': self.failure_id,
+            'context_id': self.context_id,
+            'failure_type': self.failure_type.value,
+            'timestamp': self.timestamp,
+            'error_message': self.error_message,
+            'provider': self.provider,
+            'attempt_number': self.attempt_number,
+            'retry_delay': self.retry_delay,
+            'stack_trace': self.stack_trace,
+            'additional_context': self.additional_context
+        }
+
+
+@dataclass
+class RetryContext:
+    """Context for tracking retry attempts."""
+    original_context_id: str
+    retry_attempt: int
+    previous_failures: List[FailureLog] = field(default_factory=list)
+    modified_prompts: List[str] = field(default_factory=list)
+    provider_fallback_chain: List[str] = field(default_factory=list)
+    accumulated_context: Dict[str, Any] = field(default_factory=dict)
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +113,12 @@ class LLMContext:
     prompt_template: Optional[str] = None
     expected_output_format: Optional[str] = None
     provider_preferences: Optional[Dict[str, Any]] = None
+    
+    # Failure tracking
+    llm_failures: Optional[List[LLMFailureLog]] = None
+    validation_failures: Optional[List[ValidationFailureLog]] = None
+    retry_history: Optional[List[Dict[str, Any]]] = None
+    common_failure_patterns: Optional[List[Dict[str, Any]]] = None
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
@@ -478,6 +538,11 @@ class LLMContextManager:
         
         if previous_fixes:
             context.previous_fixes = previous_fixes[:5]  # Limit to 5 most recent
+        
+        # Add failure pattern analysis from similar contexts
+        common_failures = self._analyze_common_failure_patterns(similar_contexts)
+        if common_failures:
+            context.common_failure_patterns = common_failures
     
     def _set_llm_metadata(self, context: LLMContext):
         """Set LLM-specific metadata for the context."""
@@ -638,6 +703,160 @@ Return the patch in unified diff format.
         if context.error_context.source_code_snippet:
             return f"SOURCE CODE:\n```{context.error_context.language.value}\n{context.error_context.source_code_snippet}\n```"
         return ""
+    
+    def log_llm_failure(self, 
+                       context_id: str, 
+                       provider: str, 
+                       error_type: str,
+                       error_message: str,
+                       attempt_number: int = 1,
+                       retry_delay: float = 0.0,
+                       request_data: Optional[Dict[str, Any]] = None,
+                       stack_trace: Optional[str] = None) -> str:
+        """
+        Log an LLM operation failure.
+        
+        Args:
+            context_id: Context ID
+            provider: LLM provider name
+            error_type: Type of error
+            error_message: Error message
+            attempt_number: Attempt number
+            retry_delay: Delay before retry
+            request_data: Request data that failed
+            stack_trace: Stack trace if available
+            
+        Returns:
+            Failure ID
+        """
+        failure_id = str(uuid.uuid4())
+        
+        failure_log = LLMFailureLog(
+            failure_id=failure_id,
+            context_id=context_id,
+            timestamp=datetime.now().isoformat(),
+            provider=provider,
+            error_type=error_type,
+            error_message=error_message,
+            attempt_number=attempt_number,
+            retry_delay=retry_delay,
+            request_data=request_data or {},
+            stack_trace=stack_trace
+        )
+        
+        # Add to context if it exists
+        if context_id in self.contexts:
+            context = self.contexts[context_id]
+            if context.llm_failures is None:
+                context.llm_failures = []
+            context.llm_failures.append(failure_log)
+        
+        logger.warning(f"Logged LLM failure for context {context_id}: {error_message}")
+        return failure_id
+    
+    def log_validation_failure(self,
+                              context_id: str,
+                              patch_id: str,
+                              validation_type: str,
+                              failure_reason: str,
+                              test_output: str = "",
+                              error_output: str = "",
+                              test_counts: Optional[Dict[str, int]] = None,
+                              execution_time: float = 0.0,
+                              retry_context: Optional[Dict[str, Any]] = None) -> str:
+        """
+        Log a validation failure.
+        
+        Args:
+            context_id: Context ID
+            patch_id: Patch ID that failed validation
+            validation_type: Type of validation (test, compile, lint, etc.)
+            failure_reason: Reason for failure
+            test_output: Test output
+            error_output: Error output
+            test_counts: Test counts
+            execution_time: Execution time
+            retry_context: Additional retry context
+            
+        Returns:
+            Failure ID
+        """
+        failure_id = str(uuid.uuid4())
+        
+        validation_failure = ValidationFailureLog(
+            failure_id=failure_id,
+            context_id=context_id,
+            patch_id=patch_id,
+            timestamp=datetime.now().isoformat(),
+            validation_type=validation_type,
+            failure_reason=failure_reason,
+            test_output=test_output,
+            error_output=error_output,
+            test_counts=test_counts or {},
+            execution_time=execution_time,
+            retry_context=retry_context
+        )
+        
+        # Add to context if it exists
+        if context_id in self.contexts:
+            context = self.contexts[context_id]
+            if context.validation_failures is None:
+                context.validation_failures = []
+            context.validation_failures.append(validation_failure)
+        
+        logger.warning(f"Logged validation failure for context {context_id}, patch {patch_id}: {failure_reason}")
+        return failure_id
+    
+    def _analyze_common_failure_patterns(self, similar_contexts: List[LLMContext]) -> List[Dict[str, Any]]:
+        """
+        Analyze common failure patterns from similar contexts.
+        
+        Args:
+            similar_contexts: List of similar contexts
+            
+        Returns:
+            List of common failure patterns
+        """
+        if not similar_contexts:
+            return []
+        
+        patterns = []
+        
+        # Analyze LLM failures
+        llm_error_types = defaultdict(int)
+        llm_providers = defaultdict(int)
+        
+        for ctx in similar_contexts:
+            if ctx.llm_failures:
+                for failure in ctx.llm_failures:
+                    llm_error_types[failure.error_type] += 1
+                    llm_providers[failure.provider] += 1
+        
+        if llm_error_types:
+            patterns.append({
+                'type': 'llm_failures',
+                'common_error_types': dict(llm_error_types),
+                'problematic_providers': dict(llm_providers)
+            })
+        
+        # Analyze validation failures
+        validation_types = defaultdict(int)
+        validation_reasons = defaultdict(int)
+        
+        for ctx in similar_contexts:
+            if ctx.validation_failures:
+                for failure in ctx.validation_failures:
+                    validation_types[failure.validation_type] += 1
+                    validation_reasons[failure.failure_reason] += 1
+        
+        if validation_types:
+            patterns.append({
+                'type': 'validation_failures',
+                'common_validation_types': dict(validation_types),
+                'common_failure_reasons': dict(validation_reasons)
+            })
+        
+        return patterns
 
 
 # Integration functions for orchestrator
