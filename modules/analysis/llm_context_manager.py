@@ -19,6 +19,7 @@ from enum import Enum
 
 from .comprehensive_error_detector import ErrorContext, ErrorClassification
 from .intelligent_classifier import IntelligentClassifier
+from ..security.llm_security_manager import LLMSecurityManager, create_llm_security_manager
 
 
 class FailureType(Enum):
@@ -190,6 +191,9 @@ class LLMContextManager:
         # Initialize classifier for enhanced analysis
         self.classifier = IntelligentClassifier()
         
+        # Initialize security manager for data protection
+        self.security_manager = create_llm_security_manager()
+        
         # Load existing contexts
         self._load_existing_contexts()
         
@@ -301,7 +305,7 @@ class LLMContextManager:
     def prepare_llm_prompt(self, context_id: str, 
                           template_type: str = "comprehensive") -> Dict[str, Any]:
         """
-        Prepare an LLM prompt from stored context.
+        Prepare an LLM prompt from stored context with security safeguards.
         
         Args:
             context_id: Context ID to prepare prompt for
@@ -314,15 +318,36 @@ class LLMContextManager:
         if not context:
             raise ValueError(f"Context {context_id} not found")
         
+        # Sanitize context before processing
+        sanitized_context = self.security_manager.sanitize_llm_context(context)
+        
         # Create prompt based on template type
         if template_type == "comprehensive":
-            return self._create_comprehensive_prompt(context)
+            prompt_data = self._create_comprehensive_prompt(sanitized_context)
         elif template_type == "focused":
-            return self._create_focused_prompt(context)
+            prompt_data = self._create_focused_prompt(sanitized_context)
         elif template_type == "patch_generation":
-            return self._create_patch_generation_prompt(context)
+            prompt_data = self._create_patch_generation_prompt(sanitized_context)
         else:
             raise ValueError(f"Unknown template type: {template_type}")
+        
+        # Scrub sensitive data from the final prompt
+        scrubbed_prompt, scrubbing_detections = self.security_manager.scrub_sensitive_data(
+            prompt_data.get("user_prompt", ""), 
+            context_id
+        )
+        prompt_data["user_prompt"] = scrubbed_prompt
+        
+        # Add security metadata
+        prompt_data["security_metadata"] = {
+            "context_sanitized": True,
+            "sensitive_data_scrubbed": len(scrubbing_detections) > 0,
+            "scrubbing_detections": len(scrubbing_detections),
+            "compliance_frameworks": [f.value for f in self.security_manager.active_compliance_frameworks]
+        }
+        
+        logger.info(f"Prepared secure LLM prompt for context {context_id}")
+        return prompt_data
     
     def update_context_with_results(self, 
                                    context_id: str,
@@ -330,7 +355,7 @@ class LLMContextManager:
                                    patch_result: Optional[Dict[str, Any]] = None,
                                    test_result: Optional[Dict[str, Any]] = None):
         """
-        Update context with LLM response and results.
+        Update context with LLM response and results after security validation.
         
         Args:
             context_id: Context ID to update
@@ -342,23 +367,41 @@ class LLMContextManager:
         if not context:
             return
         
+        # Validate LLM response for security
+        response_text = str(llm_response.get("content", ""))
+        is_safe, safety_violations = self.security_manager.validate_llm_response_safety(
+            response_text, context_id
+        )
+        
+        # Detect data leakage in the response
+        prompt_text = ""  # We'd need to store the original prompt to compare
+        leakage_detections = self.security_manager.detect_data_leakage(
+            prompt_text, response_text, context_id
+        )
+        
         # Update context with results
         if not hasattr(context, 'llm_responses'):
             context.llm_responses = []
         
-        context.llm_responses.append({
+        response_entry = {
             "timestamp": datetime.now().isoformat(),
             "response": llm_response,
             "patch_result": patch_result,
-            "test_result": test_result
-        })
+            "test_result": test_result,
+            "security_validation": {
+                "is_safe": is_safe,
+                "safety_violations": safety_violations,
+                "leakage_detections": [d.__dict__ for d in leakage_detections]
+            }
+        }
         
+        context.llm_responses.append(response_entry)
         context.updated_at = datetime.now().isoformat()
         
         # Save updated context
         self._save_context_to_file(context)
         
-        logger.info(f"Updated context {context_id} with LLM results")
+        logger.info(f"Updated context {context_id} with LLM results (safe: {is_safe})")
     
     def get_context_statistics(self) -> Dict[str, Any]:
         """

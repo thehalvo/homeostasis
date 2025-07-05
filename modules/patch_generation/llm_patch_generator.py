@@ -24,6 +24,7 @@ from ..llm_integration.provider_abstraction import (
 )
 from ..llm_integration.api_key_manager import APIKeyManager
 from ..analysis.llm_context_manager import LLMContextManager, LLMContext
+from ..security.llm_security_manager import LLMSecurityManager, create_llm_security_manager
 from .multi_language_framework_detector import (
     MultiLanguageFrameworkDetector, LanguageType, create_multi_language_detector
 )
@@ -93,6 +94,7 @@ class LLMPatchGenerator:
         self.api_key_manager = api_key_manager or APIKeyManager()
         self.llm_manager = LLMManager(self.api_key_manager)
         self.context_manager = context_manager or LLMContextManager()
+        self.security_manager = create_llm_security_manager()
         self.language_detector = create_multi_language_detector()
         self.style_analyzer = create_code_style_analyzer()
         
