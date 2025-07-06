@@ -1,0 +1,217 @@
+metadata:
+  name: "javascript_react_performance_optimization"
+  description: "Performance optimization analysis for React applications"
+  prompt_type: "optimization"
+  domain: "frontend_performance"
+  language: "javascript"
+  framework: "react"
+  complexity_level: "advanced"
+  author: "Homeostasis Frontend Team"
+  version: "1.1.0"
+  tags:
+    - "performance"
+    - "react"
+    - "optimization"
+    - "frontend"
+    - "web_vitals"
+  required_variables:
+    - "component_code"
+    - "component_name"
+  optional_variables:
+    - "react_version"
+    - "performance_metrics"
+    - "target_devices"
+    - "bundle_size_constraints"
+  example_usage: "Use for analyzing React components with performance issues"
+  success_criteria:
+    - "Identifies performance bottlenecks"
+    - "Suggests React-specific optimizations"
+    - "Provides measurable improvements"
+    - "Considers Core Web Vitals"
+  limitations:
+    - "Cannot measure actual runtime performance"
+    - "May not catch all edge cases"
+  provider_preferences:
+    openai: 0.9
+    anthropic: 0.8
+    openrouter: 0.7
+
+system_prompt: |
+  You are a React performance optimization expert with deep knowledge of modern React patterns, Core Web Vitals, and frontend performance best practices.
+
+  ## Performance Analysis Areas:
+  1. **Rendering Performance**: Re-renders, reconciliation, component lifecycle
+  2. **Memory Usage**: Memory leaks, garbage collection, object allocation
+  3. **Bundle Size**: Code splitting, tree shaking, lazy loading
+  4. **Core Web Vitals**: LCP, FID, CLS, INP
+  5. **React Patterns**: Hooks optimization, memoization, virtualization
+  6. **Network Performance**: Resource loading, caching, prefetching
+  7. **Runtime Performance**: Event handling, DOM manipulation, animations
+
+  ## React-Specific Optimizations:
+  - **React.memo**: Prevent unnecessary re-renders
+  - **useMemo/useCallback**: Expensive calculations and stable references
+  - **Code Splitting**: React.lazy, dynamic imports, route-based splitting
+  - **Virtualization**: Large lists, infinite scrolling
+  - **Concurrent Features**: Suspense, transitions, deferred values
+  - **State Management**: Context optimization, state normalization
+  - **Component Architecture**: Composition vs inheritance, render props
+
+  ## Performance Measurement:
+  - **React DevTools Profiler**: Component render times
+  - **Web Vitals**: Real user monitoring metrics
+  - **Lighthouse**: Performance audits
+  - **Bundle Analysis**: Webpack Bundle Analyzer
+  - **Memory Profiling**: Chrome DevTools
+
+  Provide actionable, React-specific performance optimizations with measurable impact.
+
+user_prompt_template: |
+  Please analyze the following React component for performance optimization opportunities:
+
+  **Component Name**: {{ component_name }}
+  {% if react_version %}**React Version**: {{ react_version }}{% endif %}
+  {% if performance_metrics %}**Current Performance Metrics**: {{ performance_metrics }}{% endif %}
+  {% if target_devices %}**Target Devices**: {{ target_devices }}{% endif %}
+  {% if bundle_size_constraints %}**Bundle Size Constraints**: {{ bundle_size_constraints }}{% endif %}
+
+  **Component Code**:
+  ```javascript
+  {{ component_code }}
+  ```
+
+  ## Required Analysis:
+
+  ### 1. Performance Bottleneck Identification
+  - Analyze rendering performance issues
+  - Identify unnecessary re-renders
+  - Spot memory leaks and inefficient patterns
+  - Assess bundle size impact
+
+  ### 2. React Optimization Opportunities
+  - Evaluate memoization opportunities (React.memo, useMemo, useCallback)
+  - Assess code splitting potential
+  - Review state management efficiency
+  - Identify virtualization needs
+
+  ### 3. Core Web Vitals Impact
+  - Analyze impact on Largest Contentful Paint (LCP)
+  - Assess First Input Delay (FID) / Interaction to Next Paint (INP)
+  - Review Cumulative Layout Shift (CLS) potential
+
+  ### 4. Optimized Implementation
+  For each optimization:
+  - Provide optimized code implementation
+  - Explain the performance benefit
+  - Estimate performance impact
+  - Include measurement strategies
+
+  ### 5. Performance Testing Strategy
+  - Suggest specific performance test cases
+  - Recommend profiling tools and techniques
+  - Provide benchmarking approach
+
+  **Format your response as**:
+  ```
+  ## Performance Analysis Summary
+  [Brief overview of performance issues found]
+
+  ## Performance Issues Identified
+  ### [Issue Name] - [Impact Level: High/Medium/Low]
+  - **Problem**: [Detailed description]
+  - **Performance Impact**: [How it affects performance]
+  - **Measurement**: [How to measure the impact]
+  - **Solution**: 
+    ```javascript
+    [Optimized code]
+    ```
+  - **Expected Improvement**: [Quantified benefit]
+
+  ## Optimization Recommendations
+  [General performance improvements]
+
+  ## Performance Testing Plan
+  [Testing and measurement strategy]
+
+  ## Bundle Size Analysis
+  [Impact on bundle size and loading performance]
+  ```
+
+context_template: |
+  ## Performance Context
+  This analysis is focused on optimizing React component performance for modern web applications.
+  
+  **Performance Targets**:
+  - React Version: {% if react_version %}{{ react_version }}{% else %}Latest stable{% endif %}
+  - Target Devices: {% if target_devices %}{{ target_devices }}{% else %}Mobile and desktop{% endif %}
+  - Bundle Constraints: {% if bundle_size_constraints %}{{ bundle_size_constraints }}{% else %}Standard web performance budgets{% endif %}
+
+  **Core Web Vitals Targets**:
+  - LCP: < 2.5 seconds
+  - FID/INP: < 100ms
+  - CLS: < 0.1
+
+  **Performance Review Scope**:
+  - Component-level performance analysis
+  - React-specific optimization patterns
+  - Bundle size and loading performance
+  - Runtime performance characteristics
+
+examples:
+  - input:
+      component_code: |
+        function UserList({ users, onUserClick }) {
+          const [filter, setFilter] = useState('');
+          
+          const filteredUsers = users.filter(user => 
+            user.name.toLowerCase().includes(filter.toLowerCase())
+          );
+          
+          return (
+            <div>
+              <input 
+                value={filter} 
+                onChange={(e) => setFilter(e.target.value)}
+                placeholder="Filter users..."
+              />
+              {filteredUsers.map(user => (
+                <div key={user.id} onClick={() => onUserClick(user)}>
+                  <h3>{user.name}</h3>
+                  <p>{user.email}</p>
+                  <p>{user.department}</p>
+                </div>
+              ))}
+            </div>
+          );
+        }
+      component_name: "UserList"
+      performance_metrics: "Rendering 1000+ users causes lag"
+    expected_output: |
+      ## Performance Analysis Summary
+      Multiple performance issues found: expensive filtering on every render, no memoization, and lack of virtualization for large lists.
+
+      ## Performance Issues Identified
+      ### Expensive Filtering on Every Render - HIGH
+      - **Problem**: Filter calculation runs on every render regardless of dependencies
+      - **Performance Impact**: O(n) operation on potentially large dataset every render
+      - **Measurement**: React DevTools Profiler will show high render times
+      - **Solution**: 
+        ```javascript
+        const filteredUsers = useMemo(() => 
+          users.filter(user => 
+            user.name.toLowerCase().includes(filter.toLowerCase())
+          ), [users, filter]
+        );
+        ```
+      - **Expected Improvement**: 70-90% reduction in render time for unchanged filter
+
+validation_rules:
+  - "Must identify specific React performance patterns"
+  - "Optimizations must be measurable"
+  - "Code must be syntactically correct and follow React best practices"
+  - "Must consider Core Web Vitals impact"
+
+post_processing_rules:
+  - "Ensure all code examples are properly formatted"
+  - "Verify React patterns are current and recommended"
+  - "Check that performance claims are realistic"

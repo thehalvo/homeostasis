@@ -1,0 +1,235 @@
+metadata:
+  name: "python_ml_data_pipeline_error_fix"
+  description: "Error analysis and fixing for machine learning data pipelines"
+  prompt_type: "patch_generation"
+  domain: "machine_learning"
+  language: "python"
+  framework: "pandas"
+  complexity_level: "advanced"
+  author: "Homeostasis ML Team"
+  version: "1.0.0"
+  tags:
+    - "machine_learning"
+    - "data_science"
+    - "pandas"
+    - "numpy"
+    - "sklearn"
+    - "data_pipeline"
+  required_variables:
+    - "error_message"
+    - "code_snippet"
+    - "data_context"
+  optional_variables:
+    - "dataset_size"
+    - "ml_framework"
+    - "pipeline_stage"
+    - "expected_output"
+  example_usage: "Use for fixing errors in ML data preprocessing and pipeline code"
+  success_criteria:
+    - "Correctly identifies data-related errors"
+    - "Provides robust data handling solutions"
+    - "Maintains data integrity and pipeline performance"
+    - "Includes proper error handling and validation"
+  limitations:
+    - "Cannot access actual data for testing"
+    - "May not catch domain-specific data issues"
+  provider_preferences:
+    openai: 0.8
+    anthropic: 0.9
+    openrouter: 0.7
+
+system_prompt: |
+  You are a machine learning engineer and data scientist with expertise in Python data processing pipelines, pandas, numpy, scikit-learn, and ML workflow optimization.
+
+  ## Common ML Data Pipeline Errors:
+  1. **Data Type Issues**: Mixed types, incorrect casting, NaN handling
+  2. **Shape Mismatches**: Array dimensions, feature count misalignment
+  3. **Memory Issues**: Out of memory, inefficient operations, memory leaks
+  4. **Missing Data**: NaN propagation, improper imputation, data quality
+  5. **Indexing Errors**: Misaligned indices, duplicate indices, range errors
+  6. **Pipeline Inconsistencies**: Train/test data leakage, scaling issues
+  7. **Performance Issues**: Inefficient operations, non-vectorized code
+  8. **Encoding Issues**: Categorical variables, text encoding, feature scaling
+
+  ## Data Pipeline Best Practices:
+  - **Data Validation**: Schema validation, data quality checks
+  - **Robust Preprocessing**: Handle edge cases, maintain data integrity
+  - **Memory Efficiency**: Optimize data types, chunked processing
+  - **Pipeline Consistency**: Reproducible transformations, proper state management
+  - **Error Handling**: Graceful degradation, informative error messages
+  - **Testing**: Unit tests for data transformations, integration tests
+
+  ## ML-Specific Considerations:
+  - **Feature Engineering**: Proper handling of categorical/numerical features
+  - **Data Leakage**: Prevent future information in training data
+  - **Scaling**: Consistent normalization across train/validation/test sets
+  - **Cross-Validation**: Proper data splitting and validation strategies
+
+  Provide robust, production-ready data pipeline fixes with proper error handling and validation.
+
+user_prompt_template: |
+  Please analyze and fix the following machine learning data pipeline error:
+
+  **Error Message**: {{ error_message }}
+  **Data Context**: {{ data_context }}
+  {% if dataset_size %}**Dataset Size**: {{ dataset_size }}{% endif %}
+  {% if ml_framework %}**ML Framework**: {{ ml_framework }}{% endif %}
+  {% if pipeline_stage %}**Pipeline Stage**: {{ pipeline_stage }}{% endif %}
+  {% if expected_output %}**Expected Output**: {{ expected_output }}{% endif %}
+
+  **Problematic Code**:
+  ```python
+  {{ code_snippet }}
+  ```
+
+  ## Required Analysis:
+
+  ### 1. Error Root Cause Analysis
+  - Identify the specific cause of the error
+  - Analyze data flow and transformation issues
+  - Assess data quality and consistency problems
+  - Evaluate memory and performance implications
+
+  ### 2. Data Pipeline Assessment
+  - Review data preprocessing steps
+  - Check for data leakage or inconsistencies
+  - Validate feature engineering approaches
+  - Assess scalability and efficiency
+
+  ### 3. Robust Solution Implementation
+  - Provide corrected code with proper error handling
+  - Include data validation and quality checks
+  - Ensure memory efficiency and performance
+  - Maintain ML pipeline best practices
+
+  ### 4. Testing and Validation Strategy
+  - Suggest unit tests for data transformations
+  - Recommend data quality validation checks
+  - Provide debugging and monitoring approaches
+  - Include edge case handling
+
+  **Format your response as**:
+  ```
+  ## Error Analysis
+  **Root Cause**: [Detailed explanation of the error cause]
+  **Data Flow Impact**: [How the error affects the pipeline]
+  **Risk Assessment**: [Potential data integrity risks]
+
+  ## Fixed Implementation
+  ```python
+  # Fixed code with comprehensive error handling
+  [Corrected code implementation]
+  ```
+
+  ## Key Improvements
+  - [List of specific improvements made]
+  - [Explanation of error handling added]
+  - [Performance optimizations included]
+
+  ## Data Validation Strategy
+  ```python
+  # Recommended validation functions
+  [Data validation code]
+  ```
+
+  ## Testing Recommendations
+  [Specific test cases and validation approaches]
+
+  ## Production Considerations
+  [Deployment and monitoring recommendations]
+  ```
+
+context_template: |
+  ## ML Pipeline Context
+  This error analysis is for a machine learning data processing pipeline.
+  
+  **Pipeline Configuration**:
+  - Stage: {% if pipeline_stage %}{{ pipeline_stage }}{% else %}Data preprocessing{% endif %}
+  - Framework: {% if ml_framework %}{{ ml_framework }}{% else %}pandas/scikit-learn{% endif %}
+  - Dataset: {% if dataset_size %}{{ dataset_size }}{% else %}Medium-scale dataset{% endif %}
+
+  **Data Processing Goals**:
+  - Maintain data integrity throughout pipeline
+  - Ensure reproducible transformations
+  - Optimize for memory efficiency and performance
+  - Prevent data leakage and maintain ML best practices
+
+  **Error Context**: {{ data_context }}
+
+examples:
+  - input:
+      error_message: "ValueError: Input contains NaN, infinity or a value too large for dtype('float64')"
+      code_snippet: |
+        def preprocess_features(df):
+            # Scale numerical features
+            scaler = StandardScaler()
+            numerical_cols = df.select_dtypes(include=[np.number]).columns
+            df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
+            return df
+      data_context: "Customer dataset with missing values in income column"
+    expected_output: |
+      ## Error Analysis
+      **Root Cause**: StandardScaler cannot handle NaN values in the numerical columns
+      **Data Flow Impact**: Pipeline fails during feature scaling step
+      **Risk Assessment**: Data loss if NaN values are simply dropped without analysis
+
+      ## Fixed Implementation
+      ```python
+      def preprocess_features(df):
+          # Validate input data
+          if df.empty:
+              raise ValueError("Input DataFrame is empty")
+          
+          # Identify numerical columns
+          numerical_cols = df.select_dtypes(include=[np.number]).columns
+          
+          if len(numerical_cols) == 0:
+              warnings.warn("No numerical columns found for scaling")
+              return df
+          
+          # Handle missing values before scaling
+          df_processed = df.copy()
+          
+          # Log missing value statistics
+          missing_stats = df_processed[numerical_cols].isnull().sum()
+          if missing_stats.any():
+              print(f"Missing values found: {missing_stats[missing_stats > 0].to_dict()}")
+          
+          # Apply appropriate imputation strategy
+          for col in numerical_cols:
+              if df_processed[col].isnull().any():
+                  # Use median for robust imputation
+                  median_val = df_processed[col].median()
+                  df_processed[col].fillna(median_val, inplace=True)
+                  print(f"Imputed {col} missing values with median: {median_val}")
+          
+          # Check for infinite values
+          for col in numerical_cols:
+              if np.isinf(df_processed[col]).any():
+                  print(f"Infinite values found in {col}, clipping to finite range")
+                  finite_values = df_processed[col][np.isfinite(df_processed[col])]
+                  if len(finite_values) > 0:
+                      clip_min, clip_max = finite_values.quantile([0.01, 0.99])
+                      df_processed[col] = np.clip(df_processed[col], clip_min, clip_max)
+          
+          # Scale features
+          scaler = StandardScaler()
+          df_processed[numerical_cols] = scaler.fit_transform(df_processed[numerical_cols])
+          
+          # Store scaler for later use
+          df_processed.attrs['scaler'] = scaler
+          df_processed.attrs['scaled_columns'] = numerical_cols.tolist()
+          
+          return df_processed
+      ```
+
+validation_rules:
+  - "Must handle data quality issues robustly"
+  - "Code must include proper error handling"
+  - "Solutions must maintain ML pipeline integrity"
+  - "Must include data validation steps"
+
+post_processing_rules:
+  - "Ensure all imports are included"
+  - "Verify pandas/numpy operations are correct"
+  - "Check that ML best practices are followed"

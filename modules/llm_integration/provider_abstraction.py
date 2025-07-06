@@ -537,6 +537,17 @@ class ProviderFactory:
         Raises:
             ValueError: If provider is unknown
         """
+        # Try to use the new registry system first
+        try:
+            from .provider_registry import get_provider_registry
+            registry = get_provider_registry()
+            instance = registry.create_provider_instance(provider_name, api_key, **kwargs)
+            if instance:
+                return instance
+        except ImportError:
+            pass  # Fall back to legacy system
+        
+        # Legacy fallback
         provider_name = provider_name.lower()
         
         if provider_name == "openai":
@@ -551,6 +562,15 @@ class ProviderFactory:
     @staticmethod
     def get_supported_providers() -> List[str]:
         """Get list of supported providers."""
+        # Try to use the new registry system first
+        try:
+            from .provider_registry import get_provider_registry
+            registry = get_provider_registry()
+            return registry.list_providers()
+        except ImportError:
+            pass  # Fall back to legacy system
+        
+        # Legacy fallback
         return ["openai", "anthropic", "openrouter"]
 
 
