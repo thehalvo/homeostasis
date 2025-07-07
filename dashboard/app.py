@@ -28,6 +28,9 @@ sys.path.insert(0, str(project_root))
 
 # Import Homeostasis modules
 from modules.monitoring.metrics_collector import MetricsCollector
+from modules.monitoring.llm_metrics import LLMMetricsCollector, UsageQuota, AlertConfig
+from modules.monitoring.cost_tracker import CostTracker, Budget, BudgetPeriod, default_alert_callback
+from modules.monitoring.security_guardrails import SecurityGuardrails, SecurityLevel
 from modules.llm_integration.api_key_manager import APIKeyManager, KeyValidationError
 from modules.security.api_security import get_api_security_manager, secure_endpoint
 from modules.security.auth import get_auth_manager, authenticate
@@ -82,6 +85,46 @@ class DashboardServer:
         
         # Initialize components
         self.metrics_collector = MetricsCollector()
+        
+        # Initialize LLM observability components
+        llm_config = self.config.get('llm_observability', {})
+        quota_config = UsageQuota(
+            tokens_per_hour=llm_config.get('tokens_per_hour'),
+            tokens_per_day=llm_config.get('tokens_per_day'),
+            cost_per_hour=llm_config.get('cost_per_hour'),
+            cost_per_day=llm_config.get('cost_per_day'),
+            cost_per_month=llm_config.get('cost_per_month'),
+            requests_per_minute=llm_config.get('requests_per_minute'),
+            requests_per_hour=llm_config.get('requests_per_hour')
+        )
+        alert_config = AlertConfig()
+        
+        self.llm_metrics_collector = LLMMetricsCollector(
+            quota_config=quota_config,
+            alert_config=alert_config
+        )
+        
+        # Initialize cost tracker
+        budgets = []
+        if llm_config.get('daily_budget'):
+            budgets.append(Budget(
+                amount=llm_config['daily_budget'],
+                period=BudgetPeriod.DAY,
+                hard_limit=llm_config.get('enforce_daily_limit', False)
+            ))
+        if llm_config.get('monthly_budget'):
+            budgets.append(Budget(
+                amount=llm_config['monthly_budget'],
+                period=BudgetPeriod.MONTH,
+                hard_limit=llm_config.get('enforce_monthly_limit', False)
+            ))
+        
+        self.cost_tracker = CostTracker(budgets=budgets)
+        self.cost_tracker.add_alert_callback(default_alert_callback)
+        
+        # Initialize security guardrails
+        security_level = SecurityLevel(llm_config.get('security_level', 'restrictive'))
+        self.security_guardrails = SecurityGuardrails(security_level=security_level)
         
         # Initialize suggestion manager
         suggestion_config = self.config.get('suggestion', {})
@@ -163,6 +206,11 @@ class DashboardServer:
         @app.route('/')
         def index():
             return render_template('index.html')
+            
+        # LLM Observability dashboard route
+        @app.route('/llm-observability')
+        def llm_observability():
+            return render_template('llm_observability.html')
             
         # Suggestion interface routes
         @app.route('/suggestions/<error_id>')
@@ -1493,6 +1541,250 @@ class DashboardServer:
                 return jsonify({
                     'success': False,
                     'message': f'Failed to test API keys: {str(e)}'
+                }), 500
+
+        # LLM Observability API Endpoints
+        @app.route('/api/llm/metrics', methods=['GET'])
+        def api_llm_metrics():
+            """Get LLM usage metrics."""
+            try:
+                time_window = request.args.get('time_window', 3600, type=int)
+                usage_stats = self.llm_metrics_collector.get_current_usage()
+                provider_performance = self.llm_metrics_collector.get_provider_performance(time_window)
+                
+                return jsonify({
+                    'success': True,
+                    'usage_statistics': usage_stats,
+                    'provider_performance': provider_performance,
+                    'time_window': time_window
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to get LLM metrics: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm/costs', methods=['GET'])
+        def api_llm_costs():
+            """Get LLM cost breakdown and budget usage."""
+            try:
+                time_window = request.args.get('time_window', 86400, type=int)
+                
+                # Get cost breakdown
+                cost_breakdown = self.llm_metrics_collector.get_cost_breakdown(time_window)
+                
+                # Get budget usage
+                budget_usage = self.cost_tracker.get_current_usage()
+                
+                # Get cost trends
+                cost_trends = self.cost_tracker.get_cost_trends(days=7)
+                
+                # Get optimization recommendations
+                recommendations = self.cost_tracker.get_optimization_recommendations()
+                
+                return jsonify({
+                    'success': True,
+                    'cost_breakdown': cost_breakdown,
+                    'budget_usage': budget_usage,
+                    'cost_trends': cost_trends,
+                    'recommendations': recommendations,
+                    'time_window': time_window
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to get LLM costs: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm/security', methods=['GET'])
+        def api_llm_security():
+            """Get LLM security report."""
+            try:
+                time_window = request.args.get('time_window', 86400, type=int)
+                security_report = self.security_guardrails.get_security_report(time_window)
+                
+                return jsonify({
+                    'success': True,
+                    'security_report': security_report,
+                    'time_window': time_window
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to get LLM security report: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm/security/analyze', methods=['POST'])
+        def api_llm_security_analyze():
+            """Analyze content for security violations."""
+            try:
+                data = request.get_json()
+                if not data or 'content' not in data:
+                    return jsonify({
+                        'success': False,
+                        'message': 'Content is required'
+                    }), 400
+
+                content = data['content']
+                source = data.get('source', 'unknown')
+                context = data.get('context', {})
+                
+                is_safe, violations, scrubbed_content = self.security_guardrails.analyze_content(
+                    content, source, context
+                )
+                
+                violation_data = [
+                    {
+                        'type': v.violation_type.value,
+                        'severity': v.severity,
+                        'description': v.description,
+                        'confidence': v.confidence,
+                        'patterns_matched': v.patterns_matched
+                    }
+                    for v in violations
+                ]
+                
+                return jsonify({
+                    'success': True,
+                    'is_safe': is_safe,
+                    'violations': violation_data,
+                    'scrubbed_content': scrubbed_content,
+                    'original_length': len(content),
+                    'scrubbed_length': len(scrubbed_content)
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to analyze content: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm/budgets', methods=['GET'])
+        def api_llm_budgets():
+            """Get budget configurations."""
+            try:
+                budget_usage = self.cost_tracker.get_current_usage()
+                return jsonify({
+                    'success': True,
+                    'budgets': budget_usage
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to get budgets: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm/budgets', methods=['POST'])
+        def api_llm_budget_create():
+            """Create a new budget."""
+            try:
+                data = request.get_json()
+                if not data or 'amount' not in data or 'period' not in data:
+                    return jsonify({
+                        'success': False,
+                        'message': 'Amount and period are required'
+                    }), 400
+
+                budget = Budget(
+                    amount=float(data['amount']),
+                    period=BudgetPeriod(data['period']),
+                    alert_thresholds=data.get('alert_thresholds', [50.0, 75.0, 90.0, 100.0]),
+                    hard_limit=data.get('hard_limit', False),
+                    rollover=data.get('rollover', False)
+                )
+                
+                budget_id = f"budget_{int(time.time())}"
+                self.cost_tracker.add_budget(budget_id, budget)
+                
+                return jsonify({
+                    'success': True,
+                    'budget_id': budget_id,
+                    'message': 'Budget created successfully'
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to create budget: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm/budgets/<budget_id>', methods=['DELETE'])
+        def api_llm_budget_delete(budget_id):
+            """Delete a budget."""
+            try:
+                self.cost_tracker.remove_budget(budget_id)
+                return jsonify({
+                    'success': True,
+                    'message': f'Budget {budget_id} deleted successfully'
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to delete budget: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm/export/metrics', methods=['POST'])
+        def api_llm_export_metrics():
+            """Export LLM metrics to file."""
+            try:
+                data = request.get_json() or {}
+                time_window = data.get('time_window', 86400)
+                filename = data.get('filename', f'llm_metrics_{int(time.time())}.json')
+                
+                output_file = Path(f"/tmp/{filename}")
+                self.llm_metrics_collector.export_metrics(output_file, time_window)
+                
+                return jsonify({
+                    'success': True,
+                    'filename': filename,
+                    'message': 'Metrics exported successfully'
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to export metrics: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm/export/security', methods=['POST'])
+        def api_llm_export_security():
+            """Export security logs to file."""
+            try:
+                data = request.get_json() or {}
+                time_window = data.get('time_window', 86400)
+                filename = data.get('filename', f'llm_security_{int(time.time())}.json')
+                
+                output_file = Path(f"/tmp/{filename}")
+                self.security_guardrails.export_security_logs(output_file, time_window)
+                
+                return jsonify({
+                    'success': True,
+                    'filename': filename,
+                    'message': 'Security logs exported successfully'
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to export security logs: {str(e)}'
+                }), 500
+
+        @app.route('/api/llm/export/costs', methods=['POST'])
+        def api_llm_export_costs():
+            """Export cost report to file."""
+            try:
+                data = request.get_json() or {}
+                days = data.get('days', 30)
+                filename = data.get('filename', f'llm_costs_{int(time.time())}.json')
+                
+                output_file = Path(f"/tmp/{filename}")
+                self.cost_tracker.export_cost_report(output_file, days)
+                
+                return jsonify({
+                    'success': True,
+                    'filename': filename,
+                    'message': 'Cost report exported successfully'
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Failed to export cost report: {str(e)}'
                 }), 500
             
     def _register_error_handlers(self) -> None:
