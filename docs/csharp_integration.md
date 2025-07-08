@@ -4,7 +4,7 @@ This document describes the C# integration capabilities in Homeostasis, includin
 
 ## Overview
 
-The C# integration in Homeostasis provides comprehensive error handling for C# and .NET applications. It supports:
+The C# integration in Homeostasis provides error handling for C# and .NET applications. It supports:
 
 - ASP.NET Core web applications and APIs
 - Entity Framework Core database access

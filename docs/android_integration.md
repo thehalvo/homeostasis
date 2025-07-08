@@ -4,7 +4,7 @@ This document describes the Java Android integration for the Homeostasis self-he
 
 ## Overview
 
-The Java Android integration extends the base Java language plugin to provide comprehensive error detection and healing capabilities for Android applications. It supports both traditional Java Android development and modern Java-Kotlin interoperability scenarios.
+The Java Android integration extends the base Java language plugin to provide error detection and healing capabilities for Android applications. It supports both traditional Java Android development and modern Java-Kotlin interoperability scenarios.
 
 ## Features
 

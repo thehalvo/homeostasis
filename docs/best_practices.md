@@ -17,7 +17,7 @@ This document outlines best practices for implementing, configuring, and using t
 
 ## Monitoring Best Practices
 
-Effective monitoring is the foundation of a good self-healing system. Follow these practices to ensure your monitoring is comprehensive and efficient:
+Effective monitoring is the foundation of a good self-healing system. Follow these practices to ensure your monitoring is efficient:
 
 ### Use Structured Logging
 
@@ -106,7 +106,7 @@ logger.info("Resource usage", extra={
 
 ### Implement Health Checks
 
-Create comprehensive health checks that verify all critical components:
+Create health checks that verify all critical components:
 
 ```python
 @app.route("/health")
@@ -733,7 +733,7 @@ def connect_to_database():
 
 ### Implement Audit Logging
 
-Set up comprehensive audit logging for all healing activities:
+Set up audit logging for all healing activities:
 
 ```python
 # Audit logging for healing actions
@@ -1009,7 +1009,7 @@ def run_tests(environment):
         # Run fast tests during development
         return subprocess.run(["pytest", "-xvs", "tests/unit/"])
     elif environment == "ci":
-        # Run comprehensive tests in CI
+        # Run tests in CI
         return subprocess.run(["pytest", "--cov=modules", "tests/"])
     elif environment == "production":
         # Run non-intrusive tests in production
@@ -1058,7 +1058,7 @@ Effective collaboration is key to a successful Homeostasis implementation:
 
 ### Document Healing Activities
 
-Maintain comprehensive documentation of all healing activities:
+Maintain documentation of all healing activities:
 
 ```python
 # Document healing activities

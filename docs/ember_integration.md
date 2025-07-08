@@ -4,7 +4,7 @@ This document outlines how to integrate Ember.js applications with the Homeostas
 
 ## Overview
 
-The Ember.js plugin for Homeostasis provides comprehensive error detection, analysis, and automatic fix generation for common Ember.js errors. It supports:
+The Ember.js plugin for Homeostasis provides error detection, analysis, and automatic fix generation for common Ember.js errors. It supports:
 
 - Component and template-related errors
 - Ember Data store and model issues
@@ -331,7 +331,7 @@ start();
 3. **Unexpected behavior after fixes**:
    - Review the applied fixes in the Homeostasis dashboard
    - Consider adjusting fix templates for your specific code patterns
-   - Add more comprehensive tests for the affected components
+   - Add more tests for the affected components
 
 ## Examples
 

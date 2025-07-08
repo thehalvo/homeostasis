@@ -1,6 +1,6 @@
 # Homeostasis Usage Examples
 
-This document provides comprehensive examples of how to use Homeostasis in various real-world scenarios, from basic setup to advanced configurations.
+This document provides examples of how to use Homeostasis in various real-world scenarios, from basic setup to advanced configurations.
 
 ## Basic Examples
 

@@ -15,7 +15,7 @@ This document covers the integration of Rust with the Homeostasis self-healing f
 
 ## Overview
 
-The Rust plugin for Homeostasis provides comprehensive support for detecting and fixing common Rust errors. It's designed to handle both runtime panics and logic errors, offering solutions that align with Rust's safety and concurrency guarantees.
+The Rust plugin for Homeostasis provides support for detecting and fixing common Rust errors. It's designed to handle both runtime panics and logic errors, offering solutions that align with Rust's safety and concurrency guarantees.
 
 Key features include:
 

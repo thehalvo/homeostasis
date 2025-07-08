@@ -42,7 +42,7 @@ We believe that, much like living organisms, software ecosystems can evolve towa
 Self-healing isn’t about trusting a black-box AI to “take care of everything.” It’s about building a layered, structured intelligence that combines observability, machine learning, and safe experimentation. We focus on:
 
 - Deliberate Observation:  
-  Collecting comprehensive logs, metrics, and traces—along with contextual information—to understand not just what failed but why it failed  
+  Collecting logs, metrics, and traces—along with contextual information—to understand not just what failed but why it failed  
 
 - Pattern Recognition:  
   Harnessing both rule-based systems and machine learning to identify known error patterns and root causes, enabling targeted, automated resolutions  

@@ -1,6 +1,6 @@
 # Web Components Integration Guide
 
-This document provides a comprehensive guide for integrating the Homeostasis self-healing framework with Web Components. It covers error detection, healing strategies, and integration with popular Web Component frameworks.
+This document provides a guide for integrating the Homeostasis self-healing framework with Web Components. It covers error detection, healing strategies, and integration with popular Web Component frameworks.
 
 ## Overview
 

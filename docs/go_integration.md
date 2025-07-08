@@ -192,4 +192,4 @@ Create template files in `modules/analysis/patch_generation/templates/go/` using
 
 ## Conclusion
 
-The Go integration extends Homeostasis to support Go applications, providing powerful error detection and healing capabilities for one of the most popular modern programming languages. This integration makes Homeostasis a more comprehensive and versatile self-healing framework for organizations using diverse technology stacks.
+The Go integration extends Homeostasis to support Go applications, providing powerful error detection and healing capabilities for one of the most popular modern programming languages. This integration makes Homeostasis a more versatile self-healing framework for organizations using diverse technology stacks.

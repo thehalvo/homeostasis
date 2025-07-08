@@ -4,7 +4,7 @@ This document describes how to use Homeostasis with React applications for autom
 
 ## Overview
 
-The React plugin for Homeostasis provides comprehensive error handling for React applications, including:
+The React plugin for Homeostasis provides error handling for React applications, including:
 
 - **React Hooks** error detection and rule validation
 - **Component lifecycle** error monitoring
@@ -570,4 +570,4 @@ For React-specific issues:
 - Create new issues with React error examples
 - Join the community discussions
 
-The React integration in Homeostasis provides comprehensive error detection and healing capabilities, helping you build more robust React applications with automatic error resolution and performance optimization.
+The React integration in Homeostasis provides error detection and healing capabilities, helping you build more robust React applications with automatic error resolution and performance optimization.

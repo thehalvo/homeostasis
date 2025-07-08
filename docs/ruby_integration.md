@@ -4,7 +4,7 @@ This document describes the Ruby integration in the Homeostasis framework, inclu
 
 ## Overview
 
-The Ruby integration in Homeostasis allows the framework to detect, analyze, and heal errors in Ruby applications. It supports various Ruby frameworks including Rails, Sinatra, and Rack-based applications, providing comprehensive error handling across the Ruby ecosystem.
+The Ruby integration in Homeostasis allows the framework to detect, analyze, and heal errors in Ruby applications. It supports various Ruby frameworks including Rails, Sinatra, and Rack-based applications, providing error handling across the Ruby ecosystem.
 
 ## Supported Features
 
@@ -220,7 +220,7 @@ end
 
 4. **Regular Updates**: Keep your Homeostasis integration updated to benefit from new rule sets and detection capabilities.
 
-5. **Combine with Monitoring**: Integrate Homeostasis with your existing monitoring solutions for comprehensive observability.
+5. **Combine with Monitoring**: Integrate Homeostasis with your existing monitoring solutions for observability.
 
 ## Limitations
 

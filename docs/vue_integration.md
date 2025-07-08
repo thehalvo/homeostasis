@@ -4,7 +4,7 @@ This guide explains how to use Homeostasis with Vue.js applications, including V
 
 ## Overview
 
-The Vue.js plugin for Homeostasis provides comprehensive error detection and automatic healing for:
+The Vue.js plugin for Homeostasis provides error detection and automatic healing for:
 
 - **Vue Components**: Component lifecycle, props validation, event handling
 - **Composition API**: ref, computed, watch, lifecycle hooks, setup function

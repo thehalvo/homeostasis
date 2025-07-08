@@ -4,7 +4,7 @@ This document describes the Java language support in Homeostasis, providing deta
 
 ## Overview
 
-The Java integration module enables Homeostasis to detect, analyze, and fix errors in Java applications. It provides comprehensive exception handling for standard Java errors and framework-specific issues including Spring, Hibernate, and more.
+The Java integration module enables Homeostasis to detect, analyze, and fix errors in Java applications. It provides exception handling for standard Java errors and framework-specific issues including Spring, Hibernate, and more.
 
 ## Features
 
@@ -198,7 +198,7 @@ To extend the Java integration:
 
 ## Testing
 
-The Java integration includes comprehensive tests in `tests/test_java_plugin.py`. Run the tests with:
+The Java integration includes tests in `tests/test_java_plugin.py`. Run the tests with:
 
 ```bash
 pytest tests/test_java_plugin.py

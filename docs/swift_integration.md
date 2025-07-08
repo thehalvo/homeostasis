@@ -4,7 +4,7 @@ This guide explains how to use Homeostasis for Swift application error analysis 
 
 ## Overview
 
-The Swift language plugin provides comprehensive error detection and healing capabilities for Swift applications, including:
+The Swift language plugin provides error detection and healing capabilities for Swift applications, including:
 
 - Force unwrapping nil optionals
 - Array index out of bounds errors
@@ -342,7 +342,7 @@ swift:
 - Use structured concurrency patterns
 
 ### 4. Error Handling
-- Implement comprehensive error handling with `do-catch`
+- Implement error handling with `do-catch`
 - Use `Result` type for fallible operations
 - Log errors with appropriate detail levels
 - Provide user-friendly error messages
@@ -497,6 +497,6 @@ logging:
 
 ## Conclusion
 
-The Swift integration provides comprehensive error detection and healing for iOS, macOS, watchOS, and tvOS applications. By following the patterns and best practices outlined in this guide, you can create more robust and maintainable Swift applications with automatic error recovery capabilities.
+The Swift integration provides error detection and healing for iOS, macOS, watchOS, and tvOS applications. By following the patterns and best practices outlined in this guide, you can create more robust and maintainable Swift applications with automatic error recovery capabilities.
 
 For more information, see the main Homeostasis documentation and the Swift plugin source code.

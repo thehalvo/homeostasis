@@ -1,6 +1,6 @@
 # TypeScript Integration for Homeostasis
 
-This document provides comprehensive information about the TypeScript language plugin for Homeostasis, enabling automatic error detection, analysis, and fix generation for TypeScript applications.
+This document provides information about the TypeScript language plugin for Homeostasis, enabling automatic error detection, analysis, and fix generation for TypeScript applications.
 
 ## Overview
 
@@ -418,7 +418,7 @@ Analyzes TypeScript exceptions and provides categorization.
 
 2. **Build Phase**
    - Integrate with build system
-   - Generate comprehensive error reports
+   - Generate error reports
    - Apply automatic fixes where safe
 
 3. **Deployment Phase**
@@ -440,7 +440,7 @@ Analyzes TypeScript exceptions and provides categorization.
    Add templates for common fix patterns
 
 4. **Add Test Cases**
-   Include comprehensive tests for new functionality
+   Include tests for new functionality
 
 ### Testing Guidelines
 

@@ -1,6 +1,6 @@
 # Scala Integration
 
-This document provides comprehensive information about Homeostasis' support for Scala applications. Homeostasis can analyze, detect, and fix common Scala errors, including Scala-specific patterns and errors from popular frameworks like Akka and Play Framework.
+This document provides information about Homeostasis' support for Scala applications. Homeostasis can analyze, detect, and fix common Scala errors, including Scala-specific patterns and errors from popular frameworks like Akka and Play Framework.
 
 ## Features
 

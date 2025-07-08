@@ -150,7 +150,7 @@ When implementing Homeostasis in your environment, consider:
 1. **Integration Points**: Identify where to integrate monitoring within your applications
 2. **Rule Development**: Create rules specific to your application's error patterns
 3. **Template Creation**: Develop templates for your codebase's common issues
-4. **Testing Strategy**: Ensure comprehensive tests to validate patches
+4. **Testing Strategy**: Ensure tests to validate patches
 5. **Deployment Strategy**: Define how fixed code should be deployed (container updates, hot swapping, etc.)
 6. **Security Boundaries**: Establish security controls for the self-healing process
 

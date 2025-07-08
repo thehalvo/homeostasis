@@ -1,6 +1,6 @@
 # Backend Integration Testing Guide
 
-This document provides comprehensive guidance for using Homeostasis' backend integration testing framework to validate error detection, analysis, and healing capabilities across multiple programming languages.
+This document provides guidance for using Homeostasis' backend integration testing framework to validate error detection, analysis, and healing capabilities across multiple programming languages.
 
 ## Overview
 

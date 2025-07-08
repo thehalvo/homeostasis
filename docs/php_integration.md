@@ -4,7 +4,7 @@ This document describes the PHP language support in Homeostasis, providing detai
 
 ## Overview
 
-The PHP integration module enables Homeostasis to detect, analyze, and fix errors in PHP applications. It provides comprehensive error handling for standard PHP errors and framework-specific issues including Laravel, Symfony, and other PHP frameworks.
+The PHP integration module enables Homeostasis to detect, analyze, and fix errors in PHP applications. It provides error handling for standard PHP errors and framework-specific issues including Laravel, Symfony, and other PHP frameworks.
 
 ## Features
 
@@ -206,7 +206,7 @@ To extend the PHP integration:
 
 ## Testing
 
-The PHP integration includes comprehensive unit tests that verify the functionality of:
+The PHP integration includes unit tests that verify the functionality of:
 
 - Error normalization and format conversion
 - Rule-based error detection for various PHP errors

@@ -4,7 +4,7 @@ This document provides guidance on integrating the Homeostasis self-healing fram
 
 ## Overview
 
-The Homeostasis Next.js plugin enables automatic error detection and healing for Next.js applications. It provides comprehensive support for:
+The Homeostasis Next.js plugin enables automatic error detection and healing for Next.js applications. It provides support for:
 
 - Data fetching errors (`getServerSideProps`, `getStaticProps`, `getStaticPaths`)
 - API route issues
@@ -247,7 +247,7 @@ export const config = {
 
 1. **Error Monitoring Setup**: Configure proper error monitoring to capture all Next.js errors.
 
-2. **Test Coverage**: Maintain comprehensive test coverage to verify healing effectiveness.
+2. **Test Coverage**: Maintain test coverage to verify healing effectiveness.
 
 3. **Staged Rollout**: Use the `healingRate` configuration to control how aggressively fixes are applied.
 

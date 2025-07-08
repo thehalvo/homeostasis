@@ -1,6 +1,6 @@
 # Homeostasis Contribution Workflow
 
-This document provides a comprehensive guide for contributing to the Homeostasis project. It outlines the processes, tools, and best practices for community contributions.
+This document provides a guide for contributing to the Homeostasis project. It outlines the processes, tools, and best practices for community contributions.
 
 ## Table of Contents
 
@@ -467,7 +467,7 @@ Good documentation is essential for an open-source project:
 
 ### API Documentation
 
-Document all public APIs with comprehensive docstrings:
+Document all public APIs with docstrings:
 
 ```python
 def analyze_error(error_data: Dict[str, Any], rules: List[Dict[str, Any]]) -> Dict[str, Any]:

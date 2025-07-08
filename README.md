@@ -300,6 +300,13 @@ Homeostasis currently provides support for the following programming languages:
 - **Xamarin**: Support for Xamarin.Forms, Xamarin.iOS, and Xamarin.Android applications with MVVM pattern validation, DependencyService integration, custom renderer handling, and platform binding resolution
 - **Unity**: Support for Unity game development with C# scripting error detection, GameObject/Component lifecycle management, mobile build configuration, Unity UI handling, and performance optimization
 - **Capacitor/Cordova**: Support for hybrid mobile applications with plugin integration, native bridge communication, WebView configuration, Content Security Policy handling, and cross-platform deployment
+- **SQL**: Support for database query errors across PostgreSQL, MySQL, SQLite, SQL Server, and Oracle with syntax validation, constraint violations, and performance optimization
+- **Bash/Shell**: Support for shell scripting errors across Bash, Zsh, Fish, and other shells with syntax validation, command resolution, and script execution issues
+- **YAML/JSON**: Support for configuration file validation across Kubernetes, Docker Compose, Ansible, GitHub Actions, GitLab CI, and other tools with syntax checking and structure validation
+- **Terraform**: Support for infrastructure-as-code errors with multi-provider support for AWS, Azure, Google Cloud, Kubernetes, and other platforms including resource configuration and state management
+- **Dockerfile**: Support for container configuration errors with Docker build issues, multi-stage builds, security best practices, and optimization recommendations
+- **Ansible**: Support for configuration management errors including playbook syntax, module usage, inventory management, variable templating, and role dependencies
+- **Zig**: Support for systems programming errors including memory safety issues, compile-time evaluation, async programming patterns, optional types, and error unions
 
 For more information about language integrations, see:
 - [Python Integration](docs/python_integration.md)
@@ -329,6 +336,13 @@ For more information about language integrations, see:
 - [Xamarin Integration](docs/xamarin_integration.md)
 - [Unity Integration](docs/unity_integration.md)
 - [Capacitor/Cordova Integration](docs/capacitor_cordova_integration.md)
+- [SQL Integration](docs/sql_integration.md)
+- [Bash/Shell Integration](docs/bash_integration.md)
+- [YAML/JSON Integration](docs/yaml_json_integration.md)
+- [Terraform Integration](docs/terraform_integration.md)
+- [Dockerfile Integration](docs/dockerfile_integration.md)
+- [Ansible Integration](docs/ansible_integration.md)
+- [Zig Integration](docs/zig_integration.md)
 
 ## Recent Updates
 

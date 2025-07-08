@@ -1,6 +1,6 @@
 # JavaScript Integration Guide
 
-This guide covers the JavaScript language integration for Homeostasis, providing comprehensive support for error detection and healing in JavaScript applications, including both browser and Node.js environments.
+This guide covers the JavaScript language integration for Homeostasis, providing support for error detection and healing in JavaScript applications, including both browser and Node.js environments.
 
 ## Table of Contents
 
@@ -548,7 +548,7 @@ Generate a fix based on error analysis.
 1. **Use TypeScript** for better error detection
 2. **Enable strict mode** in JavaScript
 3. **Use linting tools** (ESLint) with Homeostasis integration
-4. **Write comprehensive tests** with error scenarios
+4. **Write tests** with error scenarios
 
 ### Performance
 

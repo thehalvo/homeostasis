@@ -1,6 +1,6 @@
 # Kotlin Integration Guide
 
-This guide covers the comprehensive Kotlin language support in Homeostasis, including Android development, coroutines, Jetpack Compose, Room database, and Kotlin Multiplatform projects.
+This guide covers the Kotlin language support in Homeostasis, including Android development, coroutines, Jetpack Compose, Room database, and Kotlin Multiplatform projects.
 
 ## Overview
 

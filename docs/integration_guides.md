@@ -1,6 +1,6 @@
 # Homeostasis Integration Guides
 
-This comprehensive guide provides detailed instructions for integrating Homeostasis into various application types, frameworks, and deployment environments.
+This guide provides detailed instructions for integrating Homeostasis into various application types, frameworks, and deployment environments.
 
 ## Table of Contents
 

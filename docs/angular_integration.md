@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Homeostasis Angular plugin provides comprehensive error detection and automatic healing for Angular applications. It supports Angular 2+ and covers dependency injection errors, NgRx state management issues, template binding problems, module configuration errors, and Angular Universal SSR issues.
+The Homeostasis Angular plugin provides error detection and automatic healing for Angular applications. It supports Angular 2+ and covers dependency injection errors, NgRx state management issues, template binding problems, module configuration errors, and Angular Universal SSR issues.
 
 ## Features
 

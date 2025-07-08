@@ -1,6 +1,6 @@
 # Clojure Integration for Homeostasis
 
-This document describes the Clojure language integration for the Homeostasis self-healing system. The integration provides comprehensive error analysis and automatic fix generation for Clojure applications.
+This document describes the Clojure language integration for the Homeostasis self-healing system. The integration provides error analysis and automatic fix generation for Clojure applications.
 
 ## Overview
 

@@ -492,7 +492,7 @@ class TrainingDataCollector:
 
 ### Unit Testing
 
-Create comprehensive unit tests for your components:
+Create unit tests for your components:
 
 ```python
 # In tests/test_analysis.py

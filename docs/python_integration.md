@@ -4,7 +4,7 @@ This document describes the Python language support in Homeostasis, outlining it
 
 ## Overview
 
-Python is the primary language supported by Homeostasis, providing comprehensive error detection, analysis, and healing capabilities for Python applications. The Python integration supports a wide range of Python frameworks, libraries, and runtime environments.
+Python is the primary language supported by Homeostasis, providing error detection, analysis, and healing capabilities for Python applications. The Python integration supports a wide range of Python frameworks, libraries, and runtime environments.
 
 ## Features
 
@@ -186,4 +186,4 @@ analysis:
 
 ## Conclusion
 
-Python support in Homeostasis provides a comprehensive solution for automating error detection and resolution in Python applications. As the primary and most mature language integration in Homeostasis, it offers the most extensive features and capabilities for self-healing Python systems.
+Python support in Homeostasis provides a solution for automating error detection and resolution in Python applications. As the primary and most mature language integration in Homeostasis, it offers the most extensive features and capabilities for self-healing Python systems.
