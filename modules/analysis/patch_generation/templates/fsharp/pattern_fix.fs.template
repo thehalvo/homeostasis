@@ -1,0 +1,53 @@
+// F# Pattern matching fix template
+// This template provides comprehensive pattern matching patterns
+
+// Complete pattern matching for discriminated union
+type ${UNION_TYPE} =
+    | ${CASE1} of ${TYPE1}
+    | ${CASE2} of ${TYPE2}
+    | ${CASE3}
+
+let ${FUNCTION_NAME} = function
+    | ${CASE1} ${VAR1} -> ${RESULT1}
+    | ${CASE2} ${VAR2} -> ${RESULT2}
+    | ${CASE3} -> ${RESULT3}
+
+// Pattern matching with guards
+let ${FUNCTION_NAME} = function
+    | ${PATTERN1} when ${CONDITION1} -> ${RESULT1}
+    | ${PATTERN2} when ${CONDITION2} -> ${RESULT2}
+    | ${PATTERN3} -> ${RESULT3}
+
+// List pattern matching
+let ${FUNCTION_NAME} = function
+    | [] -> ${EMPTY_LIST_CASE}
+    | [${SINGLE_ELEMENT}] -> ${SINGLE_CASE}
+    | ${HEAD} :: ${TAIL} -> ${CONS_CASE}
+
+// Tuple pattern matching
+let ${FUNCTION_NAME} = function
+    | (${VAR1}, ${VAR2}) -> ${TUPLE_CASE}
+
+// Record pattern matching
+let ${FUNCTION_NAME} = function
+    | { ${FIELD1} = ${VAR1}; ${FIELD2} = ${VAR2} } -> ${RECORD_CASE}
+
+// Option pattern matching
+let ${FUNCTION_NAME} = function
+    | Some ${VALUE} -> ${SOME_CASE}
+    | None -> ${NONE_CASE}
+
+// Array pattern matching
+let ${FUNCTION_NAME} = function
+    | [| |] -> ${EMPTY_ARRAY_CASE}
+    | [| ${ELEMENT} |] -> ${SINGLE_ELEMENT_CASE}
+    | ${ARRAY_PATTERN} -> ${ARRAY_CASE}
+
+// Active pattern usage
+let (|${PATTERN_NAME}|_|) ${INPUT} =
+    if ${CONDITION} then Some ${RESULT}
+    else None
+
+let ${FUNCTION_NAME} = function
+    | ${PATTERN_NAME} ${VALUE} -> ${ACTIVE_CASE}
+    | _ -> ${DEFAULT_CASE}

@@ -1,0 +1,49 @@
+// F# Async workflow fix template
+// This template provides async programming patterns
+
+// Basic async computation expression
+let ${ASYNC_FUNCTION} = async {
+    ${ASYNC_OPERATIONS}
+    return ${RESULT}
+}
+
+// Async with let! binding
+let ${ASYNC_FUNCTION} = async {
+    let! ${VAR1} = ${ASYNC_OPERATION1}
+    let! ${VAR2} = ${ASYNC_OPERATION2}
+    return ${RESULT}
+}
+
+// Async error handling
+let ${ASYNC_FUNCTION} = async {
+    try
+        let! ${VAR} = ${ASYNC_OPERATION}
+        return Ok ${VAR}
+    with
+    | ex -> return Error ex.Message
+}
+
+// Running async synchronously
+let result = ${ASYNC_FUNCTION} |> Async.RunSynchronously
+
+// Running async with timeout
+let result = 
+    ${ASYNC_FUNCTION}
+    |> Async.RunSynchronously
+    |> Async.WithTimeout ${TIMEOUT_MS}
+
+// Parallel async operations
+let parallelResults = 
+    [${ASYNC_OP1}; ${ASYNC_OP2}; ${ASYNC_OP3}]
+    |> Async.Parallel
+    |> Async.RunSynchronously
+
+// Async choice (first to complete)
+let firstResult = 
+    [${ASYNC_OP1}; ${ASYNC_OP2}]
+    |> Async.Choice
+    |> Async.RunSynchronously
+
+// Converting Task to Async
+let taskToAsync (task: System.Threading.Tasks.Task<'T>) =
+    task |> Async.AwaitTask

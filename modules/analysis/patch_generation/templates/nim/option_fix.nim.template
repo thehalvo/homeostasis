@@ -1,0 +1,29 @@
+# Nim Option type fix template
+# This template provides safe Option type handling patterns
+
+import options
+
+# Check if Option has value
+if ${OPTION_NAME}.isSome:
+  let value = ${OPTION_NAME}.get()
+  # Use value safely
+else:
+  echo "Option is None"
+
+# Using get with default value
+let value = ${OPTION_NAME}.getOrDefault(${DEFAULT_VALUE})
+
+# Pattern matching with Option
+case ${OPTION_NAME}:
+of Some(value):
+  # Handle Some case
+  echo "Value: ", value
+of None:
+  # Handle None case
+  echo "No value"
+
+# Using map for Option transformations
+let result = ${OPTION_NAME}.map(proc(x: ${TYPE}): ${RESULT_TYPE} = ${TRANSFORM})
+
+# Using filter for Option filtering
+let filtered = ${OPTION_NAME}.filter(proc(x: ${TYPE}): bool = ${CONDITION})

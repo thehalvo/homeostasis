@@ -1,0 +1,36 @@
+# Nim async/await fix template
+# This template provides async programming patterns
+
+import asyncdispatch
+
+# Async procedure definition
+proc ${PROC_NAME}(${PARAMS}): Future[${RETURN_TYPE}] {.async.} =
+  # Async code here
+  result = ${RESULT_VALUE}
+
+# Calling async procedure with await
+proc caller() {.async.} =
+  let result = await ${PROC_NAME}(${ARGS})
+  echo "Result: ", result
+
+# Synchronous waiting for async result
+let result = waitFor ${PROC_NAME}(${ARGS})
+
+# Error handling in async context
+proc asyncWithErrorHandling(): Future[${RETURN_TYPE}] {.async.} =
+  try:
+    result = await ${ASYNC_OPERATION}
+  except ${EXCEPTION_TYPE}:
+    echo "Async error: ", getCurrentExceptionMsg()
+    result = ${DEFAULT_VALUE}
+
+# Using asyncCheck for fire-and-forget
+asyncCheck ${ASYNC_PROC}(${ARGS})
+
+# Multiple async operations
+proc multipleAsync(): Future[void] {.async.} =
+  let fut1 = ${ASYNC_PROC1}(${ARGS1})
+  let fut2 = ${ASYNC_PROC2}(${ARGS2})
+  
+  let result1 = await fut1
+  let result2 = await fut2

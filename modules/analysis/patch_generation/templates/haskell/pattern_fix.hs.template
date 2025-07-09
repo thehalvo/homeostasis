@@ -1,0 +1,32 @@
+-- Haskell pattern matching fix template
+-- This template provides comprehensive pattern matching patterns
+
+-- Complete pattern matching
+${FUNCTION_NAME} :: ${TYPE} -> ${RETURN_TYPE}
+${FUNCTION_NAME} ${PATTERN1} = ${RESULT1}
+${FUNCTION_NAME} ${PATTERN2} = ${RESULT2}
+${FUNCTION_NAME} _ = ${DEFAULT_RESULT}  -- Catch-all pattern
+
+-- Pattern matching with guards
+${FUNCTION_NAME} ${PARAM}
+  | ${CONDITION1} = ${RESULT1}
+  | ${CONDITION2} = ${RESULT2}
+  | otherwise = ${DEFAULT_RESULT}
+
+-- List pattern matching
+${FUNCTION_NAME} [] = ${EMPTY_LIST_CASE}
+${FUNCTION_NAME} (x:xs) = ${CONS_CASE}
+
+-- Tuple pattern matching
+${FUNCTION_NAME} (${VAR1}, ${VAR2}) = ${TUPLE_CASE}
+
+-- Record pattern matching
+${FUNCTION_NAME} ${RECORD_NAME} { ${FIELD1} = ${VAR1}, ${FIELD2} = ${VAR2} } = ${RECORD_CASE}
+
+-- Maybe pattern matching
+${FUNCTION_NAME} (Just ${VALUE}) = ${JUST_CASE}
+${FUNCTION_NAME} Nothing = ${NOTHING_CASE}
+
+-- Either pattern matching
+${FUNCTION_NAME} (Left ${ERROR}) = ${LEFT_CASE}
+${FUNCTION_NAME} (Right ${VALUE}) = ${RIGHT_CASE}

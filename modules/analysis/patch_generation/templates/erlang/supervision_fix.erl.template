@@ -1,0 +1,48 @@
+%% Erlang Supervisor fix template
+%% This template provides supervision tree patterns
+
+-module(${SUPERVISOR_MODULE}).
+-behaviour(supervisor).
+
+%% API
+-export([start_link/0]).
+
+%% Supervisor callbacks
+-export([init/1]).
+
+-define(SERVER, ?MODULE).
+
+%%%===================================================================
+%%% API functions
+%%%===================================================================
+
+start_link() ->
+    supervisor:start_link({local, ?SERVER}, ?MODULE, []).
+
+%%%===================================================================
+%%% Supervisor callbacks
+%%%===================================================================
+
+init([]) ->
+    SupFlags = #{
+        strategy => ${STRATEGY},        % one_for_one | one_for_all | rest_for_one | simple_one_for_one
+        intensity => ${INTENSITY},      % maximum restart frequency
+        period => ${PERIOD}             % period in seconds
+    },
+    
+    ChildSpecs = [
+        #{
+            id => ${CHILD_ID},
+            start => {${CHILD_MODULE}, start_link, []},
+            restart => ${RESTART_TYPE},     % permanent | transient | temporary
+            shutdown => ${SHUTDOWN_TIME},   % brutal_kill | integer() | infinity
+            type => ${CHILD_TYPE},          % worker | supervisor
+            modules => [${CHILD_MODULE}]
+        }
+    ],
+    
+    {ok, {SupFlags, ChildSpecs}}.
+
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================

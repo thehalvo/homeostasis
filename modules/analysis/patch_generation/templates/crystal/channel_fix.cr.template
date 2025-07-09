@@ -1,0 +1,55 @@
+# Crystal channel handling fix template
+# This template provides channel communication patterns
+
+# Basic channel creation and usage
+channel = Channel(${MESSAGE_TYPE}).new
+
+# Unbuffered channel (default)
+unbuffered_channel = Channel(${MESSAGE_TYPE}).new
+
+# Buffered channel
+buffered_channel = Channel(${MESSAGE_TYPE}).new(${BUFFER_SIZE})
+
+# Sending to channel
+channel.send(${MESSAGE})
+
+# Receiving from channel
+message = channel.receive
+
+# Non-blocking receive
+if message = channel.receive?
+  puts "Received: #{message}"
+else
+  puts "No message available"
+end
+
+# Channel with select statement
+select
+when message = channel1.receive
+  puts "From channel1: #{message}"
+when message = channel2.receive
+  puts "From channel2: #{message}"
+when timeout(${TIMEOUT_SECONDS}.seconds)
+  puts "Timeout occurred"
+end
+
+# Channel closing
+channel.close
+
+# Check if channel is closed
+if channel.closed?
+  puts "Channel is closed"
+end
+
+# Channel iteration
+channel.each do |message|
+  puts "Received: #{message}"
+end
+
+# Error handling with channels
+begin
+  message = channel.receive
+  puts "Received: #{message}"
+rescue Channel::ClosedError
+  puts "Channel was closed"
+end

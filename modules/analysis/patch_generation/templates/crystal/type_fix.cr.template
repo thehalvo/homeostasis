@@ -1,0 +1,56 @@
+# Crystal type handling fix template
+# This template provides type annotation and conversion patterns
+
+# Explicit type annotation
+${VARIABLE_NAME} : ${TYPE} = ${VALUE}
+
+# Type casting with as
+casted_value = ${VALUE}.as(${TARGET_TYPE})
+
+# Safe type casting with as?
+if casted_value = ${VALUE}.as?(${TARGET_TYPE})
+  puts "Successfully cast to #{typeof(casted_value)}"
+else
+  puts "Cannot cast to ${TARGET_TYPE}"
+end
+
+# Type check with is_a?
+if ${VARIABLE_NAME}.is_a?(${TYPE})
+  puts "Variable is of type ${TYPE}"
+end
+
+# Generic type definition
+class ${CLASS_NAME}(T)
+  def initialize(@value : T)
+  end
+  
+  def get_value : T
+    @value
+  end
+end
+
+# Method with type constraints
+def process_value(value : ${TYPE}) : ${RETURN_TYPE}
+  # Process value
+  ${PROCESSING_CODE}
+end
+
+# Method overloading with different types
+def handle_value(value : String)
+  puts "String: #{value}"
+end
+
+def handle_value(value : Int32)
+  puts "Integer: #{value}"
+end
+
+# Type alias
+alias ${ALIAS_NAME} = ${TYPE}
+
+# Struct with typed fields
+struct ${STRUCT_NAME}
+  getter ${FIELD_NAME} : ${FIELD_TYPE}
+  
+  def initialize(@${FIELD_NAME} : ${FIELD_TYPE})
+  end
+end

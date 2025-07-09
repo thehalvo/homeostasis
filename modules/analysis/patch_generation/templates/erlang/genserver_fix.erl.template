@@ -1,0 +1,53 @@
+%% Erlang GenServer fix template
+%% This template provides GenServer behavior patterns
+
+-module(${MODULE_NAME}).
+-behaviour(gen_server).
+
+%% API
+-export([start_link/0, ${API_FUNCTIONS}]).
+
+%% gen_server callbacks
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2,
+         terminate/2, code_change/3]).
+
+-define(SERVER, ?MODULE).
+
+-record(state, {
+    ${STATE_FIELDS}
+}).
+
+%%%===================================================================
+%%% API
+%%%===================================================================
+
+start_link() ->
+    gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+
+${API_FUNCTION}(${ARGS}) ->
+    gen_server:call(?SERVER, {${API_FUNCTION}, ${ARGS}}).
+
+%%%===================================================================
+%%% gen_server callbacks
+%%%===================================================================
+
+init([]) ->
+    {ok, #state{${INITIAL_STATE}}}.
+
+handle_call({${API_FUNCTION}, ${ARGS}}, _From, State) ->
+    Reply = ${HANDLE_LOGIC},
+    {reply, Reply, State};
+handle_call(_Request, _From, State) ->
+    {reply, {error, unknown_request}, State}.
+
+handle_cast(_Msg, State) ->
+    {noreply, State}.
+
+handle_info(_Info, State) ->
+    {noreply, State}.
+
+terminate(_Reason, _State) ->
+    ok.
+
+code_change(_OldVsn, State, _Extra) ->
+    {ok, State}.

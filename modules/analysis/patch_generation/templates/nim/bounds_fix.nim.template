@@ -1,0 +1,25 @@
+# Nim bounds checking fix template
+# This template provides safe array/sequence access patterns
+
+# Check bounds before accessing array/sequence
+if ${INDEX} >= 0 and ${INDEX} < len(${COLLECTION_NAME}):
+  let value = ${COLLECTION_NAME}[${INDEX}]
+else:
+  echo "Index out of bounds: ", ${INDEX}
+
+# Using high() function for maximum index
+if ${INDEX} >= 0 and ${INDEX} <= high(${COLLECTION_NAME}):
+  let value = ${COLLECTION_NAME}[${INDEX}]
+
+# Safe access with try-except
+try:
+  let value = ${COLLECTION_NAME}[${INDEX}]
+except IndexDefect:
+  echo "Index out of bounds"
+
+# Using get() for sequences (returns Option)
+let maybeValue = ${COLLECTION_NAME}.get(${INDEX})
+if maybeValue.isSome:
+  let value = maybeValue.get()
+else:
+  echo "Index out of bounds"

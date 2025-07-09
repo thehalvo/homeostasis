@@ -1,0 +1,33 @@
+# Nim Result type fix template
+# This template provides safe Result type handling patterns
+
+import results
+
+# Check if Result is Ok
+if ${RESULT_NAME}.isOk:
+  let value = ${RESULT_NAME}.get()
+  # Use value safely
+else:
+  let error = ${RESULT_NAME}.error()
+  echo "Error: ", error
+
+# Using get with default value
+let value = ${RESULT_NAME}.getOrDefault(${DEFAULT_VALUE})
+
+# Pattern matching with Result
+case ${RESULT_NAME}:
+of Ok(value):
+  # Handle Ok case
+  echo "Success: ", value
+of Err(error):
+  # Handle error case
+  echo "Error: ", error
+
+# Using map for Result transformations
+let result = ${RESULT_NAME}.map(proc(x: ${TYPE}): ${RESULT_TYPE} = ${TRANSFORM})
+
+# Using mapErr for error transformations
+let resultWithNewError = ${RESULT_NAME}.mapErr(proc(e: ${ERROR_TYPE}): ${NEW_ERROR_TYPE} = ${ERROR_TRANSFORM})
+
+# Chaining Results
+let chainedResult = ${RESULT_NAME}.flatMap(proc(x: ${TYPE}): Result[${RESULT_TYPE}, ${ERROR_TYPE}] = ${CHAIN_OPERATION})

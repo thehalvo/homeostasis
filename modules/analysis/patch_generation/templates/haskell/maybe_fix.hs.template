@@ -1,0 +1,31 @@
+-- Haskell Maybe type handling fix template
+-- This template provides safe Maybe type handling patterns
+
+-- Pattern matching on Maybe
+case ${MAYBE_VALUE} of
+  Just ${VALUE} -> ${JUST_CASE}
+  Nothing -> ${NOTHING_CASE}
+
+-- Using maybe function
+maybe ${DEFAULT_VALUE} ${FUNCTION} ${MAYBE_VALUE}
+
+-- Using fromMaybe for default values
+fromMaybe ${DEFAULT_VALUE} ${MAYBE_VALUE}
+
+-- Chaining Maybe operations
+${MAYBE_VALUE} >>= ${FUNCTION1} >>= ${FUNCTION2}
+
+-- Using do-notation with Maybe
+do
+  ${VAR1} <- ${MAYBE_VALUE1}
+  ${VAR2} <- ${MAYBE_VALUE2}
+  return ${RESULT}
+
+-- Safe head and tail operations
+safeHead :: [a] -> Maybe a
+safeHead [] = Nothing
+safeHead (x:_) = Just x
+
+safeTail :: [a] -> Maybe [a]
+safeTail [] = Nothing
+safeTail (_:xs) = Just xs

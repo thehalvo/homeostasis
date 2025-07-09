@@ -1,0 +1,42 @@
+// F# Result type handling fix template
+// This template provides safe Result type handling patterns
+
+// Pattern matching on Result
+match ${RESULT_VALUE} with
+| Ok ${VALUE} -> ${OK_CASE}
+| Error ${ERROR} -> ${ERROR_CASE}
+
+// Using Result.bind for chaining
+${RESULT_VALUE}
+|> Result.bind ${FUNCTION1}
+|> Result.bind ${FUNCTION2}
+
+// Using Result.map for transformations
+${RESULT_VALUE}
+|> Result.map ${TRANSFORM_FUNCTION}
+
+// Using Result.mapError for error transformations
+${RESULT_VALUE}
+|> Result.mapError ${ERROR_TRANSFORM}
+
+// Creating Result values safely
+let safeParseInt (str: string) =
+    match System.Int32.TryParse(str) with
+    | true, value -> Ok value
+    | false, _ -> Error "Invalid number format"
+
+// Result computation expression
+result {
+    let! ${VAR1} = ${RESULT_VALUE1}
+    let! ${VAR2} = ${RESULT_VALUE2}
+    return ${RESULT}
+}
+
+// Converting between Result and Option
+let resultToOption = function
+    | Ok value -> Some value
+    | Error _ -> None
+
+let optionToResult errorMsg = function
+    | Some value -> Ok value
+    | None -> Error errorMsg

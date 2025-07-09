@@ -1,0 +1,42 @@
+# Crystal union type handling fix template
+# This template provides safe union type handling patterns
+
+# Using is_a? for union type checking
+if ${VARIABLE_NAME}.is_a?(${TYPE1})
+  # Handle as ${TYPE1}
+  ${VARIABLE_NAME}.${METHOD1}
+elsif ${VARIABLE_NAME}.is_a?(${TYPE2})
+  # Handle as ${TYPE2}
+  ${VARIABLE_NAME}.${METHOD2}
+end
+
+# Using case statement for union types
+case ${VARIABLE_NAME}
+when ${TYPE1}
+  # Handle as ${TYPE1}
+  ${VARIABLE_NAME}.${METHOD1}
+when ${TYPE2}
+  # Handle as ${TYPE2}
+  ${VARIABLE_NAME}.${METHOD2}
+else
+  puts "Unexpected type"
+end
+
+# Using union type with nil
+def handle_union(value : ${TYPE1} | ${TYPE2} | Nil)
+  case value
+  when ${TYPE1}
+    puts "Type1: #{value}"
+  when ${TYPE2}
+    puts "Type2: #{value}"
+  when nil
+    puts "Value is nil"
+  end
+end
+
+# Type narrowing with union
+union_var = ${VARIABLE_NAME}
+if union_var.is_a?(${TYPE1})
+  # Now union_var is guaranteed to be ${TYPE1}
+  union_var.${TYPE1_METHOD}
+end

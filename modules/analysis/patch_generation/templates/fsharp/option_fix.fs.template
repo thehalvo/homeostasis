@@ -1,0 +1,36 @@
+// F# Option type handling fix template
+// This template provides safe Option type handling patterns
+
+// Pattern matching on Option
+match ${OPTION_VALUE} with
+| Some ${VALUE} -> ${SOME_CASE}
+| None -> ${NONE_CASE}
+
+// Using Option.bind for chaining
+${OPTION_VALUE}
+|> Option.bind ${FUNCTION1}
+|> Option.bind ${FUNCTION2}
+
+// Using Option.map for transformations
+${OPTION_VALUE}
+|> Option.map ${TRANSFORM_FUNCTION}
+
+// Using Option.defaultValue for defaults
+${OPTION_VALUE}
+|> Option.defaultValue ${DEFAULT_VALUE}
+
+// Using Option.filter for conditional values
+${OPTION_VALUE}
+|> Option.filter ${PREDICATE}
+
+// Creating Option values safely
+let safeDiv x y =
+    if y = 0 then None
+    else Some (x / y)
+
+// Option computation expression
+option {
+    let! ${VAR1} = ${OPTION_VALUE1}
+    let! ${VAR2} = ${OPTION_VALUE2}
+    return ${RESULT}
+}

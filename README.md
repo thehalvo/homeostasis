@@ -307,6 +307,12 @@ Homeostasis currently provides support for the following programming languages:
 - **Dockerfile**: Support for container configuration errors with Docker build issues, multi-stage builds, security best practices, and optimization recommendations
 - **Ansible**: Support for configuration management errors including playbook syntax, module usage, inventory management, variable templating, and role dependencies
 - **Zig**: Support for systems programming errors including memory safety issues, compile-time evaluation, async programming patterns, optional types, and error unions
+- **Nim**: Support for performance-focused systems programming with nil safety, bounds checking, option/result types, async workflows, and compile-time evaluation
+- **Crystal**: Support for Ruby-like syntax with static typing, union types, fiber/channel concurrency, memory safety, and compile-time optimizations
+- **Haskell**: Support for functional programming with Maybe/Either types, pattern matching, monad error handling, lazy evaluation, and type class constraints
+- **F#**: Support for functional .NET programming with Option/Result types, async workflows, pattern matching, computation expressions, and .NET interop
+- **Erlang**: Support for actor model programming with OTP behaviors, GenServer patterns, supervision trees, process management, and distributed systems
+- **PowerShell**: Support for Windows scripting with cmdlet errors, execution policy issues, pipeline operations, module management, and WMI/registry access
 
 For more information about language integrations, see:
 - [Python Integration](docs/python_integration.md)
@@ -343,6 +349,12 @@ For more information about language integrations, see:
 - [Dockerfile Integration](docs/dockerfile_integration.md)
 - [Ansible Integration](docs/ansible_integration.md)
 - [Zig Integration](docs/zig_integration.md)
+- [Nim Integration](docs/nim_integration.md)
+- [Crystal Integration](docs/crystal_integration.md)
+- [Haskell Integration](docs/haskell_integration.md)
+- [F# Integration](docs/fsharp_integration.md)
+- [Erlang Integration](docs/erlang_integration.md)
+- [PowerShell Integration](docs/powershell_integration.md)
 
 ## Recent Updates
 

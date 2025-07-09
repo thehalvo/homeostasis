@@ -1,0 +1,20 @@
+# Nim nil access fix template
+# This template provides safe nil checking patterns for Nim
+
+# Check for nil before dereferencing
+if ${OBJECT_NAME} != nil:
+  # Safe to access ${OBJECT_NAME}
+  ${OBJECT_NAME}.${FIELD_NAME}
+else:
+  # Handle nil case
+  echo "Error: ${OBJECT_NAME} is nil"
+
+# Alternative: Using isNil() function
+if not isNil(${OBJECT_NAME}):
+  ${OBJECT_NAME}.${FIELD_NAME}
+
+# Using try-except for nil access
+try:
+  let result = ${OBJECT_NAME}.${FIELD_NAME}
+except NilAccessDefect:
+  echo "Nil access detected"

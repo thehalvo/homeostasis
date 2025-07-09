@@ -1,0 +1,31 @@
+# Crystal nil handling fix template
+# This template provides safe nil checking patterns for Crystal
+
+# Check for nil before accessing
+if ${OBJECT_NAME} != nil
+  # Safe to access ${OBJECT_NAME}
+  ${OBJECT_NAME}.${METHOD_NAME}
+else
+  # Handle nil case
+  puts "Error: ${OBJECT_NAME} is nil"
+end
+
+# Using safe navigation operator
+result = ${OBJECT_NAME}.try(&.${METHOD_NAME})
+
+# Using case statement with nil
+case ${OBJECT_NAME}
+when nil
+  puts "Object is nil"
+else
+  ${OBJECT_NAME}.${METHOD_NAME}
+end
+
+# Using union type with nil handling
+def handle_value(value : ${TYPE} | Nil)
+  if value.nil?
+    puts "Value is nil"
+  else
+    puts "Value: #{value}"
+  end
+end

@@ -1,0 +1,54 @@
+# Crystal fiber handling fix template
+# This template provides fiber programming patterns
+
+# Basic fiber creation and usage
+fiber = spawn do
+  ${FIBER_CODE}
+end
+
+# Fiber with exception handling
+fiber = spawn do
+  begin
+    ${FIBER_CODE}
+  rescue ex : ${EXCEPTION_TYPE}
+    puts "Fiber error: #{ex.message}"
+  end
+end
+
+# Fiber communication with channels
+channel = Channel(${MESSAGE_TYPE}).new
+
+# Sending fiber
+spawn do
+  channel.send(${MESSAGE})
+end
+
+# Receiving fiber
+spawn do
+  message = channel.receive
+  puts "Received: #{message}"
+end
+
+# Multiple fibers with synchronization
+done = Channel(Nil).new
+
+${FIBER_COUNT}.times do |i|
+  spawn do
+    # Fiber work
+    ${FIBER_WORK}
+    done.send(nil)
+  end
+end
+
+# Wait for all fibers to complete
+${FIBER_COUNT}.times do
+  done.receive
+end
+
+# Fiber with timeout
+select
+when message = channel.receive
+  puts "Received: #{message}"
+when timeout(${TIMEOUT_SECONDS}.seconds)
+  puts "Timeout occurred"
+end
