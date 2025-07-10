@@ -1,0 +1,49 @@
+# Julia type system fix template
+# This template provides type-safe programming patterns for Julia
+
+# Type annotation for function parameters
+function ${FUNCTION_NAME}(${PARAM_NAME}::${PARAM_TYPE})::${RETURN_TYPE}
+    # Function body with type safety
+    ${FUNCTION_BODY}
+end
+
+# Type conversion with safety checks
+function safe_convert(::Type{T}, value) where T
+    try
+        return convert(T, value)
+    catch e
+        @warn "Type conversion failed: $(e)"
+        return nothing
+    end
+end
+
+# Union types for flexible typing
+${VARIABLE_NAME}::Union{${TYPE1}, ${TYPE2}, Nothing} = ${VALUE}
+
+# Type checking before operations
+if isa(${VARIABLE_NAME}, ${EXPECTED_TYPE})
+    # Safe to use as expected type
+    result = ${VARIABLE_NAME}.${FIELD_NAME}
+else
+    error("Expected $(${EXPECTED_TYPE}), got $(typeof(${VARIABLE_NAME}))")
+end
+
+# Parametric types for generic functions
+struct ${STRUCT_NAME}{T}
+    ${FIELD_NAME}::T
+end
+
+# Type stability checking
+function type_stable_function(x::T) where T
+    # Ensure return type is consistent
+    if x > 0
+        return T(1)  # Return same type
+    else
+        return T(0)  # Return same type
+    end
+end
+
+# Multiple dispatch with type constraints
+${FUNCTION_NAME}(x::Integer) = "Integer: $x"
+${FUNCTION_NAME}(x::Float64) = "Float: $x"
+${FUNCTION_NAME}(x::String) = "String: $x"

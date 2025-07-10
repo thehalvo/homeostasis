@@ -313,6 +313,10 @@ Homeostasis currently provides support for the following programming languages:
 - **F#**: Support for functional .NET programming with Option/Result types, async workflows, pattern matching, computation expressions, and .NET interop
 - **Erlang**: Support for actor model programming with OTP behaviors, GenServer patterns, supervision trees, process management, and distributed systems
 - **PowerShell**: Support for Windows scripting with cmdlet errors, execution policy issues, pipeline operations, module management, and WMI/registry access
+- **Lua**: Support for embedded scripting with nil safety, table operations, coroutine management, module loading, and game engine integration
+- **R**: Support for data science workflows with object access, package management, statistical modeling, data frame operations, and visualization
+- **MATLAB**: Support for scientific computing with matrix operations, toolbox integration, array indexing, function definitions, and numerical analysis
+- **Julia**: Support for high-performance computing with type dispatch, bounds checking, package management, parallel execution, and performance optimization
 
 For more information about language integrations, see:
 - [Python Integration](docs/python_integration.md)
@@ -355,10 +359,14 @@ For more information about language integrations, see:
 - [F# Integration](docs/fsharp_integration.md)
 - [Erlang Integration](docs/erlang_integration.md)
 - [PowerShell Integration](docs/powershell_integration.md)
+- [Lua Integration](docs/lua_integration.md)
+- [R Integration](docs/r_integration.md)
+- [MATLAB Integration](docs/matlab_integration.md)
+- [Julia Integration](docs/julia_integration.md)
 
 ## Recent Updates
 
-- **Multi-Language Support**: Added support for 15+ programming languages including Python, JavaScript, TypeScript, Java, Go, Rust, Swift, Kotlin, and more
+- **Multi-Language Support**: Added support for 40+ programming languages including Python, JavaScript, TypeScript, Java, Go, Rust, Swift, Kotlin, Lua, R, MATLAB, Julia, and more
 - **Framework Integration**: Built specialized support for React, Vue, Angular, Django, FastAPI, Spring, and 20+ other frameworks  
 - **LLM Integration**: Completed secure multi-provider integration with OpenAI, Anthropic, and OpenRouter
 - **Intelligent Retry & Failover**: Implemented advanced retry strategies with exponential backoff, automatic multi-provider failover, and test re-validation for enhanced LLM reliability

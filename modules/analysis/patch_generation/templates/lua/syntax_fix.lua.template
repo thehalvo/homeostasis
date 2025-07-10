@@ -1,0 +1,48 @@
+# Lua syntax fix template
+# This template provides common syntax fix patterns for Lua
+
+# Missing 'end' keyword fix
+if ${CONDITION} then
+    ${BODY}
+end
+
+# Missing 'do' keyword fix
+while ${CONDITION} do
+    ${BODY}
+end
+
+for ${VARIABLE} = ${START}, ${END} do
+    ${BODY}
+end
+
+# String literal fixes
+local string_value = "${STRING_CONTENT}"
+local multiline_string = [[
+${MULTILINE_CONTENT}
+]]
+
+# Variable assignment
+local ${VARIABLE_NAME} = ${VALUE}
+${VARIABLE_NAME} = ${VALUE}
+
+# Function definition
+local function ${FUNCTION_NAME}(${PARAMETERS})
+    ${FUNCTION_BODY}
+end
+
+function ${FUNCTION_NAME}(${PARAMETERS})
+    ${FUNCTION_BODY}
+end
+
+# Table definition
+local ${TABLE_NAME} = {
+    ${KEY1} = ${VALUE1},
+    ${KEY2} = ${VALUE2}
+}
+
+# Array-like table
+local ${ARRAY_NAME} = {
+    ${VALUE1},
+    ${VALUE2},
+    ${VALUE3}
+}

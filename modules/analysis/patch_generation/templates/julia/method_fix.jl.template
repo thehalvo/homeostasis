@@ -1,0 +1,57 @@
+# Julia method dispatch fix template
+# This template provides method definition patterns for Julia
+
+# Method definition with type annotations
+function ${FUNCTION_NAME}(${PARAM1}::${TYPE1}, ${PARAM2}::${TYPE2})
+    # Method implementation
+    ${METHOD_BODY}
+end
+
+# Multiple dispatch for different types
+${FUNCTION_NAME}(x::Int) = "Processing integer: $x"
+${FUNCTION_NAME}(x::Float64) = "Processing float: $x"
+${FUNCTION_NAME}(x::String) = "Processing string: $x"
+
+# Generic method with constraints
+function ${FUNCTION_NAME}(x::T) where T <: Number
+    # Generic implementation for all numeric types
+    return x * 2
+end
+
+# Method with optional arguments
+function ${FUNCTION_NAME}(x; ${OPTIONAL_PARAM}=${DEFAULT_VALUE})
+    # Implementation with optional parameters
+    ${METHOD_BODY}
+end
+
+# Method with varargs
+function ${FUNCTION_NAME}(args...)
+    # Handle variable number of arguments
+    for arg in args
+        println(arg)
+    end
+end
+
+# Method existence checking
+if hasmethod(${FUNCTION_NAME}, (${TYPE1}, ${TYPE2}))
+    # Method exists, safe to call
+    result = ${FUNCTION_NAME}(${ARG1}, ${ARG2})
+else
+    error("Method ${FUNCTION_NAME} not defined for types $(${TYPE1}), $(${TYPE2})")
+end
+
+# Method debugging
+methods(${FUNCTION_NAME})  # Show all methods
+@which ${FUNCTION_NAME}(${ARG1}, ${ARG2})  # Show which method is called
+
+# Abstract type and method hierarchy
+abstract type ${ABSTRACT_TYPE} end
+
+struct ${CONCRETE_TYPE} <: ${ABSTRACT_TYPE}
+    ${FIELD_NAME}::${FIELD_TYPE}
+end
+
+function ${FUNCTION_NAME}(x::${ABSTRACT_TYPE})
+    # Generic implementation for abstract type
+    ${GENERIC_BODY}
+end

@@ -1,0 +1,43 @@
+% MATLAB matrix operation fix template
+% This template provides safe matrix operation patterns for MATLAB
+
+% Check matrix dimensions before operations
+if size(${MATRIX_A}, 2) == size(${MATRIX_B}, 1)
+    % Safe matrix multiplication
+    result = ${MATRIX_A} * ${MATRIX_B};
+else
+    error('Matrix dimensions do not agree for multiplication');
+end
+
+% Check for square matrix
+if size(${MATRIX}, 1) == size(${MATRIX}, 2)
+    % Safe matrix inversion
+    if det(${MATRIX}) ~= 0
+        inv_matrix = inv(${MATRIX});
+    else
+        % Use pseudoinverse for singular matrices
+        inv_matrix = pinv(${MATRIX});
+    end
+end
+
+% Element-wise operations
+result = ${MATRIX_A} .* ${MATRIX_B};  % Element-wise multiplication
+result = ${MATRIX_A} ./ ${MATRIX_B};  % Element-wise division
+
+% Check matrix rank and condition
+matrix_rank = rank(${MATRIX});
+condition_number = cond(${MATRIX});
+
+% Safe matrix operations with error checking
+try
+    result = ${MATRIX_A} \ ${MATRIX_B};  % Left division
+catch ME
+    warning('Matrix operation failed: %s', ME.message);
+    result = pinv(${MATRIX_A}) * ${MATRIX_B};  % Use pseudoinverse
+end
+
+% Reshape with size checking
+total_elements = numel(${MATRIX});
+if total_elements == ${TARGET_ROWS} * ${TARGET_COLS}
+    reshaped = reshape(${MATRIX}, ${TARGET_ROWS}, ${TARGET_COLS});
+end

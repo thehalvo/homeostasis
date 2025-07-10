@@ -1,0 +1,31 @@
+# Lua table access fix template
+# This template provides safe table access patterns for Lua
+
+# Safe table indexing
+if type(${TABLE_NAME}) == "table" then
+    local value = ${TABLE_NAME}[${KEY_NAME}]
+end
+
+# Initialize table if nil
+${TABLE_NAME} = ${TABLE_NAME} or {}
+
+# Safe table access with default
+local value = ${TABLE_NAME}[${KEY_NAME}] or ${DEFAULT_VALUE}
+
+# Check key validity
+if ${KEY_NAME} ~= nil then
+    ${TABLE_NAME}[${KEY_NAME}] = ${VALUE}
+end
+
+# Using rawget for safe access
+local value = rawget(${TABLE_NAME}, ${KEY_NAME})
+
+# Safe iteration
+for key, value in pairs(${TABLE_NAME} or {}) do
+    -- Process key, value
+end
+
+# Safe numeric iteration
+for i = 1, #(${TABLE_NAME} or {}) do
+    local value = ${TABLE_NAME}[i]
+end

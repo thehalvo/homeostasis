@@ -1,0 +1,64 @@
+# Julia array bounds fix template
+# This template provides safe array access patterns for Julia
+
+# Safe array indexing
+function safe_getindex(arr, idx)
+    if checkbounds(Bool, arr, idx)
+        return arr[idx]
+    else
+        @warn "Index $idx out of bounds for array of size $(size(arr))"
+        return nothing
+    end
+end
+
+# Bounds checking before access
+if 1 <= ${INDEX} <= length(${ARRAY})
+    value = ${ARRAY}[${INDEX}]
+else
+    error("Index ${INDEX} out of bounds for array of length $(length(${ARRAY}))")
+end
+
+# Safe iteration with eachindex
+for i in eachindex(${ARRAY})
+    value = ${ARRAY}[i]
+    # Process value
+end
+
+# Safe multidimensional indexing
+if checkbounds(Bool, ${MATRIX}, ${ROW}, ${COL})
+    value = ${MATRIX}[${ROW}, ${COL}]
+else
+    error("Index (${ROW}, ${COL}) out of bounds for matrix of size $(size(${MATRIX}))")
+end
+
+# Using get for safe access with default
+value = get(${DICT}, ${KEY}, ${DEFAULT_VALUE})
+
+# Safe array slicing
+start_idx = max(1, ${START_INDEX})
+end_idx = min(length(${ARRAY}), ${END_INDEX})
+if start_idx <= end_idx
+    slice = ${ARRAY}[start_idx:end_idx]
+end
+
+# Bounds checking for assignment
+if 1 <= ${INDEX} <= length(${ARRAY})
+    ${ARRAY}[${INDEX}] = ${VALUE}
+else
+    # Resize array if needed
+    if ${INDEX} > length(${ARRAY})
+        resize!(${ARRAY}, ${INDEX})
+    end
+    ${ARRAY}[${INDEX}] = ${VALUE}
+end
+
+# Safe array operations
+if size(${ARRAY1}) == size(${ARRAY2})
+    result = ${ARRAY1} .+ ${ARRAY2}
+else
+    error("Array dimensions do not match: $(size(${ARRAY1})) vs $(size(${ARRAY2}))")
+end
+
+# Clamp indices to valid range
+clamped_idx = clamp(${INDEX}, 1, length(${ARRAY}))
+value = ${ARRAY}[clamped_idx]

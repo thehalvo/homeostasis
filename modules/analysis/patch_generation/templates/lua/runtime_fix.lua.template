@@ -1,0 +1,48 @@
+# Lua runtime error fix template
+# This template provides runtime error handling patterns for Lua
+
+# Stack overflow prevention
+local function ${FUNCTION_NAME}(${PARAMETERS})
+    -- Add base case for recursion
+    if ${BASE_CONDITION} then
+        return ${BASE_VALUE}
+    end
+    
+    -- Recursive call
+    return ${FUNCTION_NAME}(${MODIFIED_PARAMETERS})
+end
+
+# Memory management
+collectgarbage("collect")  -- Force garbage collection
+local memory_before = collectgarbage("count")
+
+# Safe value access
+local function safe_access(value, default)
+    return value ~= nil and value or default
+end
+
+# Error handling with pcall
+local function safe_execute(func, ...)
+    local ok, result = pcall(func, ...)
+    if not ok then
+        print("Error: " .. tostring(result))
+        return nil
+    end
+    return result
+end
+
+# Type checking
+local function check_type(value, expected_type, name)
+    if type(value) ~= expected_type then
+        error(string.format("%s must be a %s, got %s", 
+              name or "value", expected_type, type(value)))
+    end
+end
+
+# Nil value handling
+local function handle_nil(value, message)
+    if value == nil then
+        error(message or "Unexpected nil value")
+    end
+    return value
+end

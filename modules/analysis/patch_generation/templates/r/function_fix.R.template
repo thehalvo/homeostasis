@@ -1,0 +1,40 @@
+# R function call fix template
+# This template provides safe function calling patterns for R
+
+# Check if function exists before calling
+if (exists("${FUNCTION_NAME}") && is.function(${FUNCTION_NAME})) {
+  result <- ${FUNCTION_NAME}(${ARGUMENTS})
+}
+
+# Load package containing function
+if (!require(${PACKAGE_NAME})) {
+  install.packages("${PACKAGE_NAME}")
+  library(${PACKAGE_NAME})
+}
+
+# Function argument checking
+${FUNCTION_NAME} <- function(${PARAMETERS}) {
+  # Check required arguments
+  if (missing(${REQUIRED_PARAM})) {
+    stop("${REQUIRED_PARAM} is required")
+  }
+  
+  # Check argument types
+  if (!is.numeric(${NUMERIC_PARAM})) {
+    stop("${NUMERIC_PARAM} must be numeric")
+  }
+  
+  # Function body
+  ${FUNCTION_BODY}
+}
+
+# Use match.call() for argument matching
+args(${FUNCTION_NAME})  # Check function arguments
+
+# Safe function call with error handling
+tryCatch({
+  result <- ${FUNCTION_NAME}(${ARGUMENTS})
+}, error = function(e) {
+  cat("Error in function call:", e$message, "\n")
+  return(NULL)
+})

@@ -1,0 +1,58 @@
+% MATLAB function definition fix template
+% This template provides safe function definition patterns for MATLAB
+
+function [${OUTPUT_ARGS}] = ${FUNCTION_NAME}(${INPUT_ARGS})
+% ${FUNCTION_NAME} - Brief description of function
+% 
+% Syntax: [${OUTPUT_ARGS}] = ${FUNCTION_NAME}(${INPUT_ARGS})
+%
+% Inputs:
+%   ${INPUT_ARG} - Description of input argument
+%
+% Outputs:
+%   ${OUTPUT_ARG} - Description of output argument
+
+% Input validation
+if nargin < ${MIN_ARGS}
+    error('Not enough input arguments. Expected at least %d', ${MIN_ARGS});
+end
+
+if nargin > ${MAX_ARGS}
+    error('Too many input arguments. Expected at most %d', ${MAX_ARGS});
+end
+
+% Check input types
+if ~isnumeric(${NUMERIC_ARG})
+    error('Input ${NUMERIC_ARG} must be numeric');
+end
+
+if ~ischar(${STRING_ARG}) && ~isstring(${STRING_ARG})
+    error('Input ${STRING_ARG} must be a string or character array');
+end
+
+% Function body with error handling
+try
+    ${FUNCTION_BODY}
+catch ME
+    error('Error in ${FUNCTION_NAME}: %s', ME.message);
+end
+
+end
+
+% Helper function for argument validation
+function validateInputs(varargin)
+    % Validate input arguments
+    for i = 1:length(varargin)
+        if isempty(varargin{i})
+            error('Input argument %d cannot be empty', i);
+        end
+    end
+end
+
+% Check if function exists
+if exist('${FUNCTION_NAME}', 'file') == 2
+    % Function exists, safe to call
+    result = ${FUNCTION_NAME}(${ARGUMENTS});
+else
+    error('Function ${FUNCTION_NAME} not found');
+end

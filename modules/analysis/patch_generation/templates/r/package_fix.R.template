@@ -1,0 +1,42 @@
+# R package loading fix template
+# This template provides safe package loading patterns for R
+
+# Safe package loading
+if (!require(${PACKAGE_NAME})) {
+  install.packages("${PACKAGE_NAME}")
+  library(${PACKAGE_NAME})
+}
+
+# Check if package is available
+if ("${PACKAGE_NAME}" %in% rownames(installed.packages())) {
+  library(${PACKAGE_NAME})
+} else {
+  install.packages("${PACKAGE_NAME}")
+  library(${PACKAGE_NAME})
+}
+
+# Load multiple packages
+packages <- c("${PACKAGE1}", "${PACKAGE2}", "${PACKAGE3}")
+for (pkg in packages) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg)
+    library(pkg, character.only = TRUE)
+  }
+}
+
+# Check package version
+if (packageVersion("${PACKAGE_NAME}") < "${MIN_VERSION}") {
+  install.packages("${PACKAGE_NAME}")
+}
+
+# Load package with error handling
+tryCatch({
+  library(${PACKAGE_NAME})
+}, error = function(e) {
+  cat("Failed to load package ${PACKAGE_NAME}:", e$message, "\n")
+  install.packages("${PACKAGE_NAME}")
+  library(${PACKAGE_NAME})
+})
+
+# Check available packages
+available.packages()[, c("Package", "Version")]

@@ -1,0 +1,29 @@
+# R object not found fix template
+# This template provides object existence checking patterns for R
+
+# Check if object exists before using
+if (exists("${OBJECT_NAME}")) {
+  # Safe to use ${OBJECT_NAME}
+  result <- ${OBJECT_NAME}
+} else {
+  # Handle missing object
+  stop("Object ${OBJECT_NAME} not found")
+}
+
+# Load required package for object
+if (!require(${PACKAGE_NAME})) {
+  install.packages("${PACKAGE_NAME}")
+  library(${PACKAGE_NAME})
+}
+
+# Check workspace for objects
+ls()  # List all objects
+find("${OBJECT_NAME}")  # Find object in search path
+
+# Use get() for dynamic object access
+if (exists("${OBJECT_NAME}")) {
+  obj <- get("${OBJECT_NAME}")
+}
+
+# Safe object access with default
+${OBJECT_NAME} <- if (exists("${OBJECT_NAME}")) ${OBJECT_NAME} else ${DEFAULT_VALUE}

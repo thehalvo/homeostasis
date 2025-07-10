@@ -1,0 +1,77 @@
+% MATLAB file I/O fix template
+% This template provides safe file handling patterns for MATLAB
+
+% Check if file exists before reading
+if exist('${FILE_PATH}', 'file')
+    % File exists, safe to read
+    try
+        data = load('${FILE_PATH}');
+    catch ME
+        error('Error loading file: %s', ME.message);
+    end
+else
+    error('File ${FILE_PATH} not found');
+end
+
+% Safe file reading with error handling
+try
+    fid = fopen('${FILE_PATH}', 'r');
+    if fid == -1
+        error('Cannot open file ${FILE_PATH}');
+    end
+    
+    data = fscanf(fid, '${FORMAT}');
+    fclose(fid);
+catch ME
+    if exist('fid', 'var') && fid ~= -1
+        fclose(fid);
+    end
+    error('Error reading file: %s', ME.message);
+end
+
+% Check file permissions
+file_info = dir('${FILE_PATH}');
+if isempty(file_info)
+    error('File ${FILE_PATH} not found');
+end
+
+% Get current directory
+current_dir = pwd;
+fprintf('Current directory: %s\n', current_dir);
+
+% Change directory safely
+if exist('${DIRECTORY_PATH}', 'dir')
+    cd('${DIRECTORY_PATH}');
+else
+    error('Directory ${DIRECTORY_PATH} not found');
+end
+
+% Create directory if it doesn't exist
+if ~exist('${NEW_DIRECTORY}', 'dir')
+    mkdir('${NEW_DIRECTORY}');
+end
+
+% Safe file writing
+try
+    fid = fopen('${OUTPUT_FILE}', 'w');
+    if fid == -1
+        error('Cannot create file ${OUTPUT_FILE}');
+    end
+    
+    fprintf(fid, '${FORMAT}', ${DATA});
+    fclose(fid);
+catch ME
+    if exist('fid', 'var') && fid ~= -1
+        fclose(fid);
+    end
+    error('Error writing file: %s', ME.message);
+end
+
+% Use fullfile for cross-platform paths
+full_path = fullfile('${DIRECTORY}', '${FILENAME}');
+
+% Check file extension
+[~, name, ext] = fileparts('${FILE_PATH}');
+if ~strcmp(ext, '.${EXPECTED_EXT}')
+    warning('Unexpected file extension: %s', ext);
+end

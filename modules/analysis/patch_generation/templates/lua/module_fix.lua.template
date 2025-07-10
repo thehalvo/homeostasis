@@ -1,0 +1,42 @@
+# Lua module loading fix template
+# This template provides safe module loading patterns for Lua
+
+# Safe require with pcall
+local ok, ${MODULE_NAME} = pcall(require, "${MODULE_PATH}")
+if not ok then
+    print("Error loading module: " .. tostring(${MODULE_NAME}))
+    ${MODULE_NAME} = nil
+end
+
+# Check if module loaded successfully
+if ${MODULE_NAME} then
+    -- Use module
+    ${MODULE_NAME}.${FUNCTION_NAME}()
+end
+
+# Module path checking
+local function find_module(name)
+    local path = package.path
+    for search_path in string.gmatch(path, "[^;]+") do
+        local file_path = string.gsub(search_path, "%?", name)
+        local file = io.open(file_path, "r")
+        if file then
+            file:close()
+            return file_path
+        end
+    end
+    return nil
+end
+
+# Add custom path to package.path
+package.path = package.path .. ";${CUSTOM_PATH}/?.lua"
+
+# Module creation pattern
+local ${MODULE_NAME} = {}
+
+function ${MODULE_NAME}.${FUNCTION_NAME}()
+    -- Module function implementation
+    ${FUNCTION_BODY}
+end
+
+return ${MODULE_NAME}

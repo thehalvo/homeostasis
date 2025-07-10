@@ -1,0 +1,43 @@
+# R data manipulation fix template
+# This template provides safe data manipulation patterns for R
+
+# Check data frame dimensions
+if (nrow(${DATA_FRAME}) > 0 && ncol(${DATA_FRAME}) > 0) {
+  # Safe to manipulate data
+  result <- ${DATA_FRAME}[${ROWS}, ${COLS}]
+}
+
+# Safe column access
+if ("${COLUMN_NAME}" %in% names(${DATA_FRAME})) {
+  values <- ${DATA_FRAME}$${COLUMN_NAME}
+}
+
+# Handle missing values
+${DATA_FRAME} <- na.omit(${DATA_FRAME})  # Remove NA rows
+${DATA_FRAME}[is.na(${DATA_FRAME})] <- ${DEFAULT_VALUE}  # Replace NA with default
+
+# Check data types
+str(${DATA_FRAME})  # Structure
+class(${DATA_FRAME}$${COLUMN_NAME})  # Column type
+
+# Safe data frame operations
+if (nrow(${DATA_FRAME1}) == nrow(${DATA_FRAME2})) {
+  combined <- cbind(${DATA_FRAME1}, ${DATA_FRAME2})
+}
+
+# Check vector lengths
+if (length(${VECTOR1}) == length(${VECTOR2})) {
+  combined <- c(${VECTOR1}, ${VECTOR2})
+}
+
+# Safe subsetting
+indices <- which(${DATA_FRAME}$${COLUMN_NAME} == ${VALUE})
+if (length(indices) > 0) {
+  subset_data <- ${DATA_FRAME}[indices, ]
+}
+
+# Handle data frame column selection
+selected_cols <- intersect(c("${COL1}", "${COL2}"), names(${DATA_FRAME}))
+if (length(selected_cols) > 0) {
+  subset_data <- ${DATA_FRAME}[, selected_cols]
+}

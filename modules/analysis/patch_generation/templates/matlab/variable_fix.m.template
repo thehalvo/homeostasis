@@ -1,0 +1,56 @@
+% MATLAB variable handling fix template
+% This template provides safe variable handling patterns for MATLAB
+
+% Check if variable exists
+if exist('${VARIABLE_NAME}', 'var')
+    % Variable exists, safe to use
+    result = ${VARIABLE_NAME};
+else
+    % Variable doesn't exist, initialize or handle error
+    warning('Variable ${VARIABLE_NAME} does not exist, initializing');
+    ${VARIABLE_NAME} = ${DEFAULT_VALUE};
+end
+
+% Check variable type
+if isnumeric(${VARIABLE_NAME})
+    % Numeric variable handling
+    if isempty(${VARIABLE_NAME})
+        ${VARIABLE_NAME} = ${DEFAULT_NUMERIC};
+    end
+elseif ischar(${VARIABLE_NAME}) || isstring(${VARIABLE_NAME})
+    % String variable handling
+    if isempty(${VARIABLE_NAME})
+        ${VARIABLE_NAME} = '${DEFAULT_STRING}';
+    end
+end
+
+% Global variable handling
+global ${GLOBAL_VAR};
+if isempty(${GLOBAL_VAR})
+    ${GLOBAL_VAR} = ${INITIAL_VALUE};
+end
+
+% Persistent variable in function
+persistent ${PERSISTENT_VAR};
+if isempty(${PERSISTENT_VAR})
+    ${PERSISTENT_VAR} = ${INITIAL_VALUE};
+end
+
+% Clear variables safely
+if exist('${VARIABLE_TO_CLEAR}', 'var')
+    clear ${VARIABLE_TO_CLEAR};
+end
+
+% Check workspace variables
+workspace_vars = who;
+if ismember('${VARIABLE_NAME}', workspace_vars)
+    % Variable exists in workspace
+    fprintf('Variable ${VARIABLE_NAME} found in workspace\n');
+end
+
+% Save/load variables
+save('${FILENAME}.mat', '${VARIABLE_NAME}');
+
+if exist('${FILENAME}.mat', 'file')
+    load('${FILENAME}.mat', '${VARIABLE_NAME}');
+end

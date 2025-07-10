@@ -1,0 +1,37 @@
+# Lua function call fix template
+# This template provides safe function calling patterns for Lua
+
+# Check if function exists before calling
+if type(${FUNCTION_NAME}) == "function" then
+    ${FUNCTION_NAME}(${ARGUMENTS})
+end
+
+# Using pcall for safe function execution
+local ok, result = pcall(${FUNCTION_NAME}, ${ARGUMENTS})
+if ok then
+    -- Function executed successfully
+    return result
+else
+    -- Handle error
+    print("Error calling function: " .. tostring(result))
+end
+
+# Function argument validation
+local function ${FUNCTION_NAME}(${PARAMETERS})
+    -- Validate arguments
+    if ${PARAMETER_NAME} == nil then
+        error("${PARAMETER_NAME} is required")
+    end
+    
+    if type(${PARAMETER_NAME}) ~= "${EXPECTED_TYPE}" then
+        error("${PARAMETER_NAME} must be a ${EXPECTED_TYPE}")
+    end
+    
+    -- Function body
+    ${FUNCTION_BODY}
+end
+
+# Safe method call
+if ${OBJECT_NAME} and ${OBJECT_NAME}.${METHOD_NAME} then
+    ${OBJECT_NAME}:${METHOD_NAME}(${ARGUMENTS})
+end

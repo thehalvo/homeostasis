@@ -1,0 +1,25 @@
+# Lua nil access fix template
+# This template provides safe nil checking patterns for Lua
+
+# Check for nil before accessing
+if ${VARIABLE_NAME} ~= nil then
+    -- Safe to access ${VARIABLE_NAME}
+    ${VARIABLE_NAME}.${FIELD_NAME}
+else
+    -- Handle nil case
+    print("Error: ${VARIABLE_NAME} is nil")
+end
+
+# Alternative: Using type() function
+if type(${VARIABLE_NAME}) == "table" then
+    ${VARIABLE_NAME}.${FIELD_NAME}
+end
+
+# Using logical operators with default values
+local result = ${VARIABLE_NAME} or ${DEFAULT_VALUE}
+
+# Using assert for required values
+assert(${VARIABLE_NAME}, "${VARIABLE_NAME} is required")
+
+# Safe table access
+local value = ${TABLE_NAME} and ${TABLE_NAME}.${KEY_NAME}

@@ -1,0 +1,66 @@
+# Julia package management fix template
+# This template provides package handling patterns for Julia
+
+# Safe package import
+try
+    using ${PACKAGE_NAME}
+catch e
+    @warn "Failed to load package ${PACKAGE_NAME}: $e"
+    # Try alternative or install
+    using Pkg
+    Pkg.add("${PACKAGE_NAME}")
+    using ${PACKAGE_NAME}
+end
+
+# Conditional package loading
+if ${PACKAGE_NAME} in keys(Pkg.installed())
+    using ${PACKAGE_NAME}
+else
+    @warn "Package ${PACKAGE_NAME} not installed"
+    using Pkg
+    Pkg.add("${PACKAGE_NAME}")
+    using ${PACKAGE_NAME}
+end
+
+# Package version checking
+using Pkg
+pkg_version = Pkg.installed()["${PACKAGE_NAME}"]
+if pkg_version < v"${MIN_VERSION}"
+    @warn "Package ${PACKAGE_NAME} version $pkg_version is too old"
+    Pkg.update("${PACKAGE_NAME}")
+end
+
+# Multiple package imports
+packages = ["${PACKAGE1}", "${PACKAGE2}", "${PACKAGE3}"]
+for pkg in packages
+    try
+        eval(:(using $(Symbol(pkg))))
+    catch e
+        @warn "Failed to load $pkg: $e"
+        using Pkg
+        Pkg.add(pkg)
+        eval(:(using $(Symbol(pkg))))
+    end
+end
+
+# Selective imports
+import ${PACKAGE_NAME}: ${FUNCTION1}, ${FUNCTION2}
+
+# Package status checking
+using Pkg
+Pkg.status()  # Show installed packages
+Pkg.status("${PACKAGE_NAME}")  # Show specific package
+
+# Package environment management
+using Pkg
+Pkg.activate("${PROJECT_PATH}")  # Activate project environment
+Pkg.instantiate()  # Install project dependencies
+
+# Package development mode
+using Pkg
+Pkg.develop("${PACKAGE_NAME}")  # Development mode
+Pkg.test("${PACKAGE_NAME}")     # Run package tests
+
+# Handle package conflicts
+using Pkg
+Pkg.resolve()  # Resolve package dependencies
