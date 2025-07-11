@@ -37,6 +37,25 @@ class LanguageType(Enum):
     CLOJURE = "clojure"
     CPP = "cpp"
     C = "c"
+    # Additional languages from Phase 12.A
+    ZIG = "zig"
+    NIM = "nim"
+    CRYSTAL = "crystal"
+    HASKELL = "haskell"
+    FSHARP = "fsharp"
+    ERLANG = "erlang"
+    SQL = "sql"
+    BASH = "bash"
+    POWERSHELL = "powershell"
+    LUA = "lua"
+    R = "r"
+    MATLAB = "matlab"
+    JULIA = "julia"
+    TERRAFORM = "terraform"
+    ANSIBLE = "ansible"
+    YAML = "yaml"
+    JSON = "json"
+    DOCKERFILE = "dockerfile"
     UNKNOWN = "unknown"
 
 
@@ -409,6 +428,38 @@ class MultiLanguageFrameworkDetector:
             '.c': LanguageType.C,
             '.h': LanguageType.C,
             '.hpp': LanguageType.CPP,
+            # Additional languages from Phase 12.A
+            '.zig': LanguageType.ZIG,
+            '.nim': LanguageType.NIM,
+            '.nims': LanguageType.NIM,
+            '.cr': LanguageType.CRYSTAL,
+            '.hs': LanguageType.HASKELL,
+            '.lhs': LanguageType.HASKELL,
+            '.fs': LanguageType.FSHARP,
+            '.fsi': LanguageType.FSHARP,
+            '.fsx': LanguageType.FSHARP,
+            '.erl': LanguageType.ERLANG,
+            '.hrl': LanguageType.ERLANG,
+            '.sql': LanguageType.SQL,
+            '.ddl': LanguageType.SQL,
+            '.dml': LanguageType.SQL,
+            '.sh': LanguageType.BASH,
+            '.bash': LanguageType.BASH,
+            '.ps1': LanguageType.POWERSHELL,
+            '.psm1': LanguageType.POWERSHELL,
+            '.psd1': LanguageType.POWERSHELL,
+            '.lua': LanguageType.LUA,
+            '.r': LanguageType.R,
+            '.R': LanguageType.R,
+            '.m': LanguageType.MATLAB,
+            '.mat': LanguageType.MATLAB,
+            '.jl': LanguageType.JULIA,
+            '.tf': LanguageType.TERRAFORM,
+            '.tfvars': LanguageType.TERRAFORM,
+            '.yml': LanguageType.YAML,
+            '.yaml': LanguageType.YAML,
+            '.json': LanguageType.JSON,
+            '.jsonc': LanguageType.JSON,
         }
 
     def detect_language_and_frameworks(self, 
@@ -685,6 +736,25 @@ class MultiLanguageFrameworkDetector:
             LanguageType.CLOJURE: ['*.clj', '*.cljs'],
             LanguageType.CPP: ['*.cpp', '*.cc', '*.cxx', '*.hpp'],
             LanguageType.C: ['*.c', '*.h'],
+            # Additional languages from Phase 12.A
+            LanguageType.ZIG: ['*.zig'],
+            LanguageType.NIM: ['*.nim', '*.nims'],
+            LanguageType.CRYSTAL: ['*.cr'],
+            LanguageType.HASKELL: ['*.hs', '*.lhs'],
+            LanguageType.FSHARP: ['*.fs', '*.fsi', '*.fsx'],
+            LanguageType.ERLANG: ['*.erl', '*.hrl'],
+            LanguageType.SQL: ['*.sql', '*.ddl', '*.dml'],
+            LanguageType.BASH: ['*.sh', '*.bash'],
+            LanguageType.POWERSHELL: ['*.ps1', '*.psm1', '*.psd1'],
+            LanguageType.LUA: ['*.lua'],
+            LanguageType.R: ['*.r', '*.R'],
+            LanguageType.MATLAB: ['*.m', '*.mat'],
+            LanguageType.JULIA: ['*.jl'],
+            LanguageType.TERRAFORM: ['*.tf', '*.tfvars'],
+            LanguageType.ANSIBLE: ['*.yml', '*.yaml', 'playbook.yml', 'site.yml'],
+            LanguageType.YAML: ['*.yml', '*.yaml'],
+            LanguageType.JSON: ['*.json', '*.jsonc'],
+            LanguageType.DOCKERFILE: ['Dockerfile', 'Dockerfile.*', '*.dockerfile'],
         }
         
         return patterns_map.get(language, [])
@@ -786,6 +856,204 @@ class MultiLanguageFrameworkDetector:
                 ],
                 'error_handling': 'Use Result<T, E> and Option<T> types',
                 'imports': 'Use explicit use statements'
+            },
+            LanguageType.ZIG: {
+                'style_guide': 'Zig style guide',
+                'common_patterns': [
+                    'Use snake_case for variables and functions',
+                    'Use PascalCase for types',
+                    'Explicit error handling with error unions',
+                    'Comptime for compile-time computation'
+                ],
+                'error_handling': 'Use error unions and try/catch',
+                'imports': 'Use @import() for modules'
+            },
+            LanguageType.NIM: {
+                'style_guide': 'Nim style guide',
+                'common_patterns': [
+                    'Use camelCase for procedures and variables',
+                    'Use PascalCase for types',
+                    'Prefer result types for error handling',
+                    'Use pragmas for compiler hints'
+                ],
+                'error_handling': 'Use exceptions or Option/Result types',
+                'imports': 'Use import statements'
+            },
+            LanguageType.CRYSTAL: {
+                'style_guide': 'Crystal style guide (Ruby-like)',
+                'common_patterns': [
+                    'Use snake_case for methods and variables',
+                    'Use PascalCase for classes and modules',
+                    'Use SCREAMING_SNAKE_CASE for constants',
+                    'Type inference with optional type annotations'
+                ],
+                'error_handling': 'Use exceptions with begin/rescue/end',
+                'imports': 'Use require statements'
+            },
+            LanguageType.HASKELL: {
+                'style_guide': 'Haskell style guide',
+                'common_patterns': [
+                    'Use camelCase for functions and variables',
+                    'Use PascalCase for types and constructors',
+                    'Pattern matching for control flow',
+                    'Pure functions by default'
+                ],
+                'error_handling': 'Use Maybe, Either, or custom monads',
+                'imports': 'Use import statements with qualified names'
+            },
+            LanguageType.FSHARP: {
+                'style_guide': 'F# style guide',
+                'common_patterns': [
+                    'Use camelCase for values and functions',
+                    'Use PascalCase for types and modules',
+                    'Prefer immutability',
+                    'Use pattern matching extensively'
+                ],
+                'error_handling': 'Use Result<\'T,\'TError> or Option types',
+                'imports': 'Use open statements'
+            },
+            LanguageType.ERLANG: {
+                'style_guide': 'Erlang style guide',
+                'common_patterns': [
+                    'Use snake_case for functions and atoms',
+                    'Use PascalCase for variables',
+                    'Actor model with message passing',
+                    'Pattern matching in function heads'
+                ],
+                'error_handling': 'Use pattern matching on {ok, Result} or {error, Reason}',
+                'imports': 'Use -include and -import directives'
+            },
+            LanguageType.SQL: {
+                'style_guide': 'SQL style conventions',
+                'common_patterns': [
+                    'Use UPPERCASE for SQL keywords',
+                    'Use snake_case for table and column names',
+                    'Proper indentation for readability',
+                    'Use meaningful aliases'
+                ],
+                'error_handling': 'Handle NULL values and use transactions',
+                'imports': 'N/A - Use proper schema references'
+            },
+            LanguageType.BASH: {
+                'style_guide': 'Bash style guide (Google)',
+                'common_patterns': [
+                    'Use lowercase with underscores for variables',
+                    'Use uppercase for environment variables',
+                    'Quote variables to prevent word splitting',
+                    'Use [[ ]] for conditionals'
+                ],
+                'error_handling': 'Check exit codes, use set -e, trap errors',
+                'imports': 'Use source or . to include scripts'
+            },
+            LanguageType.POWERSHELL: {
+                'style_guide': 'PowerShell style guide',
+                'common_patterns': [
+                    'Use PascalCase for cmdlets (Verb-Noun)',
+                    'Use camelCase for variables',
+                    'Use approved verbs for functions',
+                    'Explicit type declarations when needed'
+                ],
+                'error_handling': 'Use try/catch blocks and -ErrorAction',
+                'imports': 'Use Import-Module'
+            },
+            LanguageType.LUA: {
+                'style_guide': 'Lua style guide',
+                'common_patterns': [
+                    'Use snake_case for variables and functions',
+                    'Use PascalCase for classes/modules',
+                    'Local variables preferred over global',
+                    'Tables for data structures'
+                ],
+                'error_handling': 'Use pcall/xpcall for protected calls',
+                'imports': 'Use require() for modules'
+            },
+            LanguageType.R: {
+                'style_guide': 'R style guide (tidyverse)',
+                'common_patterns': [
+                    'Use snake_case for variables and functions',
+                    'Use <- for assignment',
+                    'Vectorized operations preferred',
+                    'Use explicit returns'
+                ],
+                'error_handling': 'Use tryCatch() blocks',
+                'imports': 'Use library() or require()'
+            },
+            LanguageType.MATLAB: {
+                'style_guide': 'MATLAB style guide',
+                'common_patterns': [
+                    'Use camelCase for variables and functions',
+                    'Use uppercase for constants',
+                    'Vectorize operations when possible',
+                    'Preallocate arrays'
+                ],
+                'error_handling': 'Use try/catch blocks',
+                'imports': 'Use addpath or import'
+            },
+            LanguageType.JULIA: {
+                'style_guide': 'Julia style guide',
+                'common_patterns': [
+                    'Use snake_case for functions and variables',
+                    'Use PascalCase for types and modules',
+                    'Type annotations for performance',
+                    'Multiple dispatch for polymorphism'
+                ],
+                'error_handling': 'Use try/catch blocks or @error macro',
+                'imports': 'Use using or import'
+            },
+            LanguageType.TERRAFORM: {
+                'style_guide': 'Terraform style conventions',
+                'common_patterns': [
+                    'Use snake_case for all names',
+                    'Group related resources',
+                    'Use meaningful resource names',
+                    'Pin provider versions'
+                ],
+                'error_handling': 'Use validation blocks and preconditions',
+                'imports': 'Use module blocks'
+            },
+            LanguageType.ANSIBLE: {
+                'style_guide': 'Ansible best practices',
+                'common_patterns': [
+                    'Use snake_case for variables',
+                    'Prefix role variables with role name',
+                    'Use meaningful task names',
+                    'YAML formatting with proper indentation'
+                ],
+                'error_handling': 'Use failed_when, ignore_errors, and block/rescue',
+                'imports': 'Use include_tasks or import_playbook'
+            },
+            LanguageType.YAML: {
+                'style_guide': 'YAML style guide',
+                'common_patterns': [
+                    'Consistent indentation (2 or 4 spaces)',
+                    'Use hyphens for lists',
+                    'Quote strings when necessary',
+                    'Avoid tabs'
+                ],
+                'error_handling': 'Validate schema compliance',
+                'imports': 'Use anchors and aliases for reuse'
+            },
+            LanguageType.JSON: {
+                'style_guide': 'JSON formatting conventions',
+                'common_patterns': [
+                    'Use double quotes for strings',
+                    'No trailing commas',
+                    'Consistent indentation',
+                    'Valid data types only'
+                ],
+                'error_handling': 'Ensure valid JSON syntax',
+                'imports': 'N/A - Use references or includes at application level'
+            },
+            LanguageType.DOCKERFILE: {
+                'style_guide': 'Dockerfile best practices',
+                'common_patterns': [
+                    'Use UPPERCASE for instructions',
+                    'One instruction per line',
+                    'Minimize layers',
+                    'Use specific base image tags'
+                ],
+                'error_handling': 'Use HEALTHCHECK and proper error codes',
+                'imports': 'Use FROM for base images, COPY for files'
             }
         }
         

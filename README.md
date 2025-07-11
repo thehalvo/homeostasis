@@ -273,96 +273,50 @@ When running the demo for the first time, you might encounter these issues:
 
 Homeostasis currently provides support for the following programming languages:
 
-- **Python**: Primary language with extensive support for most Python frameworks
-- **JavaScript**: Support for Node.js environments, browser environments, and common JavaScript errors
-- **TypeScript**: Full TypeScript support including compilation errors, type system validation, JSX/TSX handling, and framework integration 
-- **React**: Support for React component lifecycle errors, hooks validation, state management (Redux, Context), JSX issues, and performance optimization
-- **Vue.js**: Support for Vue component and directive errors, Vuex state management, Composition API, Vue Router navigation, and Vue 3 features
-- **Angular**: Support for Angular dependency injection errors, NgRx state management issues, template binding problems, module configuration, and Angular Universal SSR
-- **Svelte**: Support for Svelte component reactivity errors, SvelteKit routing and SSR issues, store management problems, transition and animation errors, and compiler optimization
-- **Next.js**: Support for Next.js data fetching methods, API routes, App Router and Pages Router, image optimization, middleware configuration, and Vercel deployment issues
-- **Ember.js**: Support for Ember components, template errors, Ember Data store, router transitions, Octane features, tracked properties, and modifiers
-- **Web Components**: Support for Custom Elements lifecycle, Shadow DOM operations, HTML templates, slot distribution, framework interoperability, and libraries like Lit and Stencil
+- **Python** ([docs](docs/python_integration.md)): Primary language with extensive support for most Python frameworks
+- **JavaScript** ([docs](docs/javascript_integration.md)): Support for Node.js environments, browser environments, and common JavaScript errors
+- **TypeScript** ([docs](docs/typescript_integration.md)): Full TypeScript support including compilation errors, type system validation, JSX/TSX handling, and framework integration 
+- **React** ([docs](docs/react_integration.md)): Support for React component lifecycle errors, hooks validation, state management (Redux, Context), JSX issues, and performance optimization
+- **Vue.js** ([docs](docs/vue_integration.md)): Support for Vue component and directive errors, Vuex state management, Composition API, Vue Router navigation, and Vue 3 features
+- **Angular** ([docs](docs/angular_integration.md)): Support for Angular dependency injection errors, NgRx state management issues, template binding problems, module configuration, and Angular Universal SSR
+- **Svelte** ([docs](docs/svelte_integration.md)): Support for Svelte component reactivity errors, SvelteKit routing and SSR issues, store management problems, transition and animation errors, and compiler optimization
+- **Next.js** ([docs](docs/nextjs_integration.md)): Support for Next.js data fetching methods, API routes, App Router and Pages Router, image optimization, middleware configuration, and Vercel deployment issues
+- **Ember.js** ([docs](docs/ember_integration.md)): Support for Ember components, template errors, Ember Data store, router transitions, Octane features, tracked properties, and modifiers
+- **Web Components** ([docs](docs/web_components_integration.md)): Support for Custom Elements lifecycle, Shadow DOM operations, HTML templates, slot distribution, framework interoperability, and libraries like Lit and Stencil
 - **CSS Frameworks**: Support for Tailwind CSS utility class validation, CSS-in-JS libraries (Styled Components, Emotion), CSS Modules, SASS/LESS preprocessing, CSS Grid and Flexbox layouts, animations and transitions
-- **Java**: Support for Java exceptions, Spring Framework, Hibernate/JPA, and concurrency issues
-- **Go**: Support for Go runtime errors, goroutine management, and web frameworks like Gin and Echo
-- **Ruby**: Support for Ruby exceptions, Rails ActiveRecord, Sinatra/Rack, and metaprogramming patterns
-- **Rust**: Support for Rust runtime errors, memory safety issues, and frameworks like Actix, Rocket, and Tokio
-- **C#**: Support for .NET exceptions, ASP.NET Core, Entity Framework, and async patterns
-- **PHP**: Support for PHP errors, Laravel and Symfony frameworks, and database interaction issues
-- **Scala**: Support for Scala errors, functional programming patterns, Akka actor system, and Play Framework
-- **Elixir/Erlang**: Support for Elixir errors, Phoenix Framework, Ecto database errors, and OTP supervision tree issues
-- **Clojure**: Support for Clojure JVM errors, functional programming patterns, Ring/Compojure frameworks, and core.async concurrency issues
-- **Swift**: Support for iOS, macOS, watchOS, and tvOS applications with UIKit and SwiftUI frameworks, Core Data persistence, memory management, concurrency, and Swift Package Manager
-- **Kotlin**: Support for Android, JVM, JavaScript, and Native platforms with null safety validation, coroutine management, Android lifecycle handling, Jetpack Compose UI framework, Room database persistence, and multiplatform development
-- **React Native**: Support for React Native mobile applications with Metro bundler error resolution, native module integration, iOS/Android build issues, bridge communication, and platform-specific deployment
-- **Flutter**: Support for Flutter cross-platform applications with Dart language error handling, widget lifecycle management, layout overflow resolution, state management, and mobile/web/desktop deployment
-- **Xamarin**: Support for Xamarin.Forms, Xamarin.iOS, and Xamarin.Android applications with MVVM pattern validation, DependencyService integration, custom renderer handling, and platform binding resolution
-- **Unity**: Support for Unity game development with C# scripting error detection, GameObject/Component lifecycle management, mobile build configuration, Unity UI handling, and performance optimization
-- **Capacitor/Cordova**: Support for hybrid mobile applications with plugin integration, native bridge communication, WebView configuration, Content Security Policy handling, and cross-platform deployment
-- **SQL**: Support for database query errors across PostgreSQL, MySQL, SQLite, SQL Server, and Oracle with syntax validation, constraint violations, and performance optimization
-- **Bash/Shell**: Support for shell scripting errors across Bash, Zsh, Fish, and other shells with syntax validation, command resolution, and script execution issues
-- **YAML/JSON**: Support for configuration file validation across Kubernetes, Docker Compose, Ansible, GitHub Actions, GitLab CI, and other tools with syntax checking and structure validation
-- **Terraform**: Support for infrastructure-as-code errors with multi-provider support for AWS, Azure, Google Cloud, Kubernetes, and other platforms including resource configuration and state management
-- **Dockerfile**: Support for container configuration errors with Docker build issues, multi-stage builds, security best practices, and optimization recommendations
-- **Ansible**: Support for configuration management errors including playbook syntax, module usage, inventory management, variable templating, and role dependencies
-- **Zig**: Support for systems programming errors including memory safety issues, compile-time evaluation, async programming patterns, optional types, and error unions
-- **Nim**: Support for performance-focused systems programming with nil safety, bounds checking, option/result types, async workflows, and compile-time evaluation
-- **Crystal**: Support for Ruby-like syntax with static typing, union types, fiber/channel concurrency, memory safety, and compile-time optimizations
-- **Haskell**: Support for functional programming with Maybe/Either types, pattern matching, monad error handling, lazy evaluation, and type class constraints
-- **F#**: Support for functional .NET programming with Option/Result types, async workflows, pattern matching, computation expressions, and .NET interop
-- **Erlang**: Support for actor model programming with OTP behaviors, GenServer patterns, supervision trees, process management, and distributed systems
-- **PowerShell**: Support for Windows scripting with cmdlet errors, execution policy issues, pipeline operations, module management, and WMI/registry access
-- **Lua**: Support for embedded scripting with nil safety, table operations, coroutine management, module loading, and game engine integration
-- **R**: Support for data science workflows with object access, package management, statistical modeling, data frame operations, and visualization
-- **MATLAB**: Support for scientific computing with matrix operations, toolbox integration, array indexing, function definitions, and numerical analysis
-- **Julia**: Support for high-performance computing with type dispatch, bounds checking, package management, parallel execution, and performance optimization
-
-For more information about language integrations, see:
-- [Python Integration](docs/python_integration.md)
-- [JavaScript Integration](docs/javascript_integration.md)
-- [TypeScript Integration](docs/typescript_integration.md)
-- [React Integration](docs/react_integration.md)
-- [Vue Integration](docs/vue_integration.md)
-- [Angular Integration](docs/angular_integration.md)
-- [Svelte Integration](docs/svelte_integration.md)
-- [Next.js Integration](docs/nextjs_integration.md)
-- [Ember.js Integration](docs/ember_integration.md)
-- [Web Components Integration](docs/web_components_integration.md)
-- [Java Integration](docs/java_integration.md)
-- [Android Integration](docs/android_integration.md)
-- [Go Integration](docs/go_integration.md)
-- [Ruby Integration](docs/ruby_integration.md)
-- [Rust Integration](docs/rust_integration.md)
-- [C# Integration](docs/csharp_integration.md)
-- [PHP Integration](docs/php_integration.md)
-- [Scala Integration](docs/scala_integration.md)
-- [Elixir/Erlang Integration](docs/elixir_integration.md)
-- [Clojure Integration](docs/clojure_integration.md)
-- [Swift Integration](docs/swift_integration.md)
-- [Kotlin Integration](docs/kotlin_integration.md)
-- [React Native Integration](docs/react_native_integration.md)
-- [Flutter Integration](docs/flutter_integration.md)
-- [Xamarin Integration](docs/xamarin_integration.md)
-- [Unity Integration](docs/unity_integration.md)
-- [Capacitor/Cordova Integration](docs/capacitor_cordova_integration.md)
-- [SQL Integration](docs/sql_integration.md)
-- [Bash/Shell Integration](docs/bash_integration.md)
-- [YAML/JSON Integration](docs/yaml_json_integration.md)
-- [Terraform Integration](docs/terraform_integration.md)
-- [Dockerfile Integration](docs/dockerfile_integration.md)
-- [Ansible Integration](docs/ansible_integration.md)
-- [Zig Integration](docs/zig_integration.md)
-- [Nim Integration](docs/nim_integration.md)
-- [Crystal Integration](docs/crystal_integration.md)
-- [Haskell Integration](docs/haskell_integration.md)
-- [F# Integration](docs/fsharp_integration.md)
-- [Erlang Integration](docs/erlang_integration.md)
-- [PowerShell Integration](docs/powershell_integration.md)
-- [Lua Integration](docs/lua_integration.md)
-- [R Integration](docs/r_integration.md)
-- [MATLAB Integration](docs/matlab_integration.md)
-- [Julia Integration](docs/julia_integration.md)
+- **Java** ([docs](docs/java_integration.md)): Support for Java exceptions, Spring Framework, Hibernate/JPA, and concurrency issues
+- **Go** ([docs](docs/go_integration.md)): Support for Go runtime errors, goroutine management, and web frameworks like Gin and Echo
+- **Ruby** ([docs](docs/ruby_integration.md)): Support for Ruby exceptions, Rails ActiveRecord, Sinatra/Rack, and metaprogramming patterns
+- **Rust** ([docs](docs/rust_integration.md)): Support for Rust runtime errors, memory safety issues, and frameworks like Actix, Rocket, and Tokio
+- **C#** ([docs](docs/csharp_integration.md)): Support for .NET exceptions, ASP.NET Core, Entity Framework, and async patterns
+- **PHP** ([docs](docs/php_integration.md)): Support for PHP errors, Laravel and Symfony frameworks, and database interaction issues
+- **Scala** ([docs](docs/scala_integration.md)): Support for Scala errors, functional programming patterns, Akka actor system, and Play Framework
+- **Elixir/Erlang** ([docs](docs/elixir_integration.md)): Support for Elixir errors, Phoenix Framework, Ecto database errors, and OTP supervision tree issues
+- **Clojure** ([docs](docs/clojure_integration.md)): Support for Clojure JVM errors, functional programming patterns, Ring/Compojure frameworks, and core.async concurrency issues
+- **Swift** ([docs](docs/swift_integration.md)): Support for iOS, macOS, watchOS, and tvOS applications with UIKit and SwiftUI frameworks, Core Data persistence, memory management, concurrency, and Swift Package Manager
+- **Kotlin** ([docs](docs/kotlin_integration.md)): Support for Android, JVM, JavaScript, and Native platforms with null safety validation, coroutine management, Android lifecycle handling, Jetpack Compose UI framework, Room database persistence, and multiplatform development
+- **React Native** ([docs](docs/react_native_integration.md)): Support for React Native mobile applications with Metro bundler error resolution, native module integration, iOS/Android build issues, bridge communication, and platform-specific deployment
+- **Flutter** ([docs](docs/flutter_integration.md)): Support for Flutter cross-platform applications with Dart language error handling, widget lifecycle management, layout overflow resolution, state management, and mobile/web/desktop deployment
+- **Xamarin** ([docs](docs/xamarin_integration.md)): Support for Xamarin.Forms, Xamarin.iOS, and Xamarin.Android applications with MVVM pattern validation, DependencyService integration, custom renderer handling, and platform binding resolution
+- **Unity** ([docs](docs/unity_integration.md)): Support for Unity game development with C# scripting error detection, GameObject/Component lifecycle management, mobile build configuration, Unity UI handling, and performance optimization
+- **Capacitor/Cordova** ([docs](docs/capacitor_cordova_integration.md)): Support for hybrid mobile applications with plugin integration, native bridge communication, WebView configuration, Content Security Policy handling, and cross-platform deployment
+- **SQL** ([docs](docs/sql_integration.md)): Support for database query errors across PostgreSQL, MySQL, SQLite, SQL Server, and Oracle with syntax validation, constraint violations, and performance optimization
+- **Bash/Shell** ([docs](docs/bash_integration.md)): Support for shell scripting errors across Bash, Zsh, Fish, and other shells with syntax validation, command resolution, and script execution issues
+- **YAML/JSON** ([docs](docs/yaml_json_integration.md)): Support for configuration file validation across Kubernetes, Docker Compose, Ansible, GitHub Actions, GitLab CI, and other tools with syntax checking and structure validation
+- **Terraform** ([docs](docs/terraform_integration.md)): Support for infrastructure-as-code errors with multi-provider support for AWS, Azure, Google Cloud, Kubernetes, and other platforms including resource configuration and state management
+- **Dockerfile** ([docs](docs/dockerfile_integration.md)): Support for container configuration errors with Docker build issues, multi-stage builds, security best practices, and optimization recommendations
+- **Ansible** ([docs](docs/ansible_integration.md)): Support for configuration management errors including playbook syntax, module usage, inventory management, variable templating, and role dependencies
+- **Zig** ([docs](docs/zig_integration.md)): Support for systems programming errors including memory safety issues, compile-time evaluation, async programming patterns, optional types, and error unions
+- **Nim** ([docs](docs/nim_integration.md)): Support for performance-focused systems programming with nil safety, bounds checking, option/result types, async workflows, and compile-time evaluation
+- **Crystal** ([docs](docs/crystal_integration.md)): Support for Ruby-like syntax with static typing, union types, fiber/channel concurrency, memory safety, and compile-time optimizations
+- **Haskell** ([docs](docs/haskell_integration.md)): Support for functional programming with Maybe/Either types, pattern matching, monad error handling, lazy evaluation, and type class constraints
+- **F#** ([docs](docs/fsharp_integration.md)): Support for functional .NET programming with Option/Result types, async workflows, pattern matching, computation expressions, and .NET interop
+- **Erlang** ([docs](docs/erlang_integration.md)): Support for actor model programming with OTP behaviors, GenServer patterns, supervision trees, process management, and distributed systems
+- **PowerShell** ([docs](docs/powershell_integration.md)): Support for Windows scripting with cmdlet errors, execution policy issues, pipeline operations, module management, and WMI/registry access
+- **Lua** ([docs](docs/lua_integration.md)): Support for embedded scripting with nil safety, table operations, coroutine management, module loading, and game engine integration
+- **R** ([docs](docs/r_integration.md)): Support for data science workflows with object access, package management, statistical modeling, data frame operations, and visualization
+- **MATLAB** ([docs](docs/matlab_integration.md)): Support for scientific computing with matrix operations, toolbox integration, array indexing, function definitions, and numerical analysis
+- **Julia** ([docs](docs/julia_integration.md)): Support for high-performance computing with type dispatch, bounds checking, package management, parallel execution, and performance optimization
 
 ## Recent Updates
 

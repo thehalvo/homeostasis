@@ -154,6 +154,115 @@ class LLMPatchGenerator:
                 'comment_prefix': '//',
                 'indent_size': 4,
                 'common_imports': ['import', 'class', 'struct'],
+            },
+            # Additional languages from Phase 12.A
+            'zig': {
+                'file_extensions': ['.zig'],
+                'comment_prefix': '//',
+                'indent_size': 4,
+                'common_imports': ['const', '@import'],
+            },
+            'nim': {
+                'file_extensions': ['.nim', '.nims'],
+                'comment_prefix': '#',
+                'indent_size': 2,
+                'common_imports': ['import', 'from', 'include'],
+            },
+            'crystal': {
+                'file_extensions': ['.cr'],
+                'comment_prefix': '#',
+                'indent_size': 2,
+                'common_imports': ['require', 'class', 'module'],
+            },
+            'haskell': {
+                'file_extensions': ['.hs', '.lhs'],
+                'comment_prefix': '--',
+                'indent_size': 2,
+                'common_imports': ['import', 'module', 'where'],
+            },
+            'fsharp': {
+                'file_extensions': ['.fs', '.fsi', '.fsx'],
+                'comment_prefix': '//',
+                'indent_size': 4,
+                'common_imports': ['open', 'module', 'namespace'],
+            },
+            'erlang': {
+                'file_extensions': ['.erl', '.hrl'],
+                'comment_prefix': '%',
+                'indent_size': 2,
+                'common_imports': ['-module', '-export', '-import'],
+            },
+            'sql': {
+                'file_extensions': ['.sql', '.ddl', '.dml'],
+                'comment_prefix': '--',
+                'indent_size': 2,
+                'common_imports': ['SELECT', 'FROM', 'CREATE', 'INSERT'],
+            },
+            'bash': {
+                'file_extensions': ['.sh', '.bash'],
+                'comment_prefix': '#',
+                'indent_size': 2,
+                'common_imports': ['#!/bin/bash', 'source', 'export'],
+            },
+            'powershell': {
+                'file_extensions': ['.ps1', '.psm1', '.psd1'],
+                'comment_prefix': '#',
+                'indent_size': 4,
+                'common_imports': ['Import-Module', 'param', 'function'],
+            },
+            'lua': {
+                'file_extensions': ['.lua'],
+                'comment_prefix': '--',
+                'indent_size': 2,
+                'common_imports': ['require', 'local', 'function'],
+            },
+            'r': {
+                'file_extensions': ['.r', '.R'],
+                'comment_prefix': '#',
+                'indent_size': 2,
+                'common_imports': ['library', 'require', 'source'],
+            },
+            'matlab': {
+                'file_extensions': ['.m', '.mat'],
+                'comment_prefix': '%',
+                'indent_size': 4,
+                'common_imports': ['function', 'classdef', 'clear'],
+            },
+            'julia': {
+                'file_extensions': ['.jl'],
+                'comment_prefix': '#',
+                'indent_size': 4,
+                'common_imports': ['using', 'import', 'include'],
+            },
+            'terraform': {
+                'file_extensions': ['.tf', '.tfvars'],
+                'comment_prefix': '#',
+                'indent_size': 2,
+                'common_imports': ['resource', 'variable', 'module', 'provider'],
+            },
+            'ansible': {
+                'file_extensions': ['.yml', '.yaml'],
+                'comment_prefix': '#',
+                'indent_size': 2,
+                'common_imports': ['- name:', 'hosts:', 'tasks:'],
+            },
+            'yaml': {
+                'file_extensions': ['.yml', '.yaml'],
+                'comment_prefix': '#',
+                'indent_size': 2,
+                'common_imports': [],
+            },
+            'json': {
+                'file_extensions': ['.json', '.jsonc'],
+                'comment_prefix': '//',  # Only in JSONC
+                'indent_size': 2,
+                'common_imports': [],
+            },
+            'dockerfile': {
+                'file_extensions': ['Dockerfile', '.dockerfile'],
+                'comment_prefix': '#',
+                'indent_size': 4,
+                'common_imports': ['FROM', 'RUN', 'COPY', 'WORKDIR'],
             }
         }
         
