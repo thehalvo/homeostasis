@@ -1,0 +1,267 @@
+{
+  "name": "Ansible Files Module Errors",
+  "description": "Rules for detecting errors related to Ansible file management modules",
+  "rules": [
+    {
+      "id": "ansible_copy_src_not_found",
+      "pattern": "src file not found|Source .* not found|Unable to find .* in expected paths|could not find src|source file .* does not exist|src is not a file|source file does not exist",
+      "type": "CopyError",
+      "description": "Source file not found for copy module",
+      "root_cause": "ansible_copy_error",
+      "suggestion": "Check source file path and existence",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "copy",
+      "tags": [
+        "ansible",
+        "module",
+        "copy",
+        "src"
+      ],
+      "examples": [
+        "src file not found: /path/to/file.conf",
+        "Source 'templates/config.j2' not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_copy_permission_denied",
+      "pattern": "permission denied|Permission denied|Not authorized|Operation not permitted|Unable to write to|cannot write to|Cannot create file|cannot overwrite|cannot remove|Not allowed|file could not be copied",
+      "type": "PermissionError",
+      "description": "Permission denied when copying file",
+      "root_cause": "ansible_copy_error",
+      "suggestion": "Check file permissions or use become: yes",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "copy",
+      "tags": [
+        "ansible",
+        "module",
+        "copy",
+        "permission"
+      ],
+      "examples": [
+        "Permission denied: '/etc/nginx/nginx.conf'",
+        "Unable to write to /var/www/html/index.html"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_template_not_found",
+      "pattern": "template not found|Unable to find .*.j2|template file .* does not exist|could not find template|template source does not exist|Unable to look up|unable to load template file",
+      "type": "TemplateError",
+      "description": "Template file not found for template module",
+      "root_cause": "ansible_template_error",
+      "suggestion": "Check template file path and existence",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "template",
+      "tags": [
+        "ansible",
+        "module",
+        "template",
+        "j2"
+      ],
+      "examples": [
+        "template not found: templates/nginx.conf.j2",
+        "Unable to find template.j2 in expected paths"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_file_path_error",
+      "pattern": "path is directory|path not a file|operation on directory|not a directory|path already exists|dest is not a directory|path is not a regular file|path should be|not a valid path|destination is a directory",
+      "type": "PathError",
+      "description": "Invalid path type (file/directory mismatch)",
+      "root_cause": "ansible_file_error",
+      "suggestion": "Use appropriate module for file or directory operations",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "file",
+      "tags": [
+        "ansible",
+        "module",
+        "file",
+        "path"
+      ],
+      "examples": [
+        "path is directory, not a file: /etc/nginx",
+        "dest is not a directory: /etc/passwd"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_lineinfile_no_match",
+      "pattern": "no line matched|no match found|pattern not found|no matching lines|no lines matched|no match for pattern|Unable to find matching line|pattern did not match",
+      "type": "LineInFileError",
+      "description": "Pattern not found in file for lineinfile module",
+      "root_cause": "ansible_lineinfile_error",
+      "suggestion": "Check pattern or use create: yes option",
+      "category": "module",
+      "severity": "medium",
+      "confidence": "high",
+      "module": "lineinfile",
+      "tags": [
+        "ansible",
+        "module",
+        "lineinfile",
+        "pattern"
+      ],
+      "examples": [
+        "no line matched regular expression pattern",
+        "no match found for pattern: ^ExecStart="
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_replace_error",
+      "pattern": "error in replace|regular expression error|invalid regular expression|nothing matched|replace pattern|unable to find pattern|failed to replace|No replacements made|no replacement performed",
+      "type": "ReplaceError",
+      "description": "Error with replace module pattern or replacement",
+      "root_cause": "ansible_replace_error",
+      "suggestion": "Check regular expression pattern and replacement",
+      "category": "module",
+      "severity": "medium",
+      "confidence": "high",
+      "module": "replace",
+      "tags": [
+        "ansible",
+        "module",
+        "replace",
+        "regex"
+      ],
+      "examples": [
+        "error in replace: invalid regular expression",
+        "unable to find pattern: ^listen [0-9]+;$"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_unarchive_error",
+      "pattern": "failed to unpack|Cannot extract|unarchive failed|not a supported archive format|need .* to unarchive|failed to extract|destination directory|unknown archive format|unable to extract|not an archive|source is invalid archive",
+      "type": "UnarchiveError",
+      "description": "Failed to extract archive file",
+      "root_cause": "ansible_unarchive_error",
+      "suggestion": "Check archive format and required dependencies",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "unarchive",
+      "tags": [
+        "ansible",
+        "module",
+        "unarchive",
+        "extract"
+      ],
+      "examples": [
+        "failed to unpack /tmp/archive.tar.gz",
+        "not a supported archive format: .rar"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_get_url_error",
+      "pattern": "Request failed|URL not found|Connection refused|Connection error|Timeout|Failed to download|unable to connect to|unable to get|doesn't exist|URL error|status code [4-5][0-9][0-9]|Unable to validate the SSL certificate",
+      "type": "GetUrlError",
+      "description": "Failed to download file from URL",
+      "root_cause": "ansible_get_url_error",
+      "suggestion": "Check URL, connectivity, or SSL certificate",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "get_url",
+      "tags": [
+        "ansible",
+        "module",
+        "get_url",
+        "download"
+      ],
+      "examples": [
+        "Request failed: <urlopen error [Errno 111] Connection refused>",
+        "URL not found: https://example.com/file.txt (404)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_file_mode_error",
+      "pattern": "invalid mode|invalid file mode|mode must be in octal|invalid permission|invalid mode string|must be a valid octal|mode values must be|permission bits must be",
+      "type": "ModeError",
+      "description": "Invalid file mode or permission specification",
+      "root_cause": "ansible_file_error",
+      "suggestion": "Use valid octal mode format (e.g., 0644)",
+      "category": "module",
+      "severity": "medium",
+      "confidence": "high",
+      "module": "file",
+      "tags": [
+        "ansible",
+        "module",
+        "file",
+        "mode"
+      ],
+      "examples": [
+        "invalid mode: 777 (must be in octal)",
+        "mode values must be octal numbers, like 0644"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

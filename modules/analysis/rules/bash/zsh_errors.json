@@ -1,0 +1,320 @@
+{
+  "name": "Zsh-specific Errors",
+  "description": "Rules for detecting errors specific to the Zsh shell",
+  "rules": [
+    {
+      "id": "zsh_command_not_found",
+      "pattern": "zsh: command not found:",
+      "type": "CommandError",
+      "description": "Command not found in Zsh",
+      "root_cause": "bash_command_not_found",
+      "suggestion": "Check if the command is installed and in PATH",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zsh",
+        "command",
+        "path"
+      ],
+      "examples": [
+        "zsh: command not found: git",
+        "zsh: command not found: kubectl"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "zsh",
+      "exit_code": 127
+    },
+    {
+      "id": "zsh_no_matches_found",
+      "pattern": "zsh: no matches found:",
+      "type": "GlobError",
+      "description": "No matches found for glob pattern",
+      "root_cause": "bash_expansion_error",
+      "suggestion": "Quote the pattern to prevent glob expansion or use setopt NO_NOMATCH",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "zsh",
+        "glob",
+        "expansion"
+      ],
+      "examples": [
+        "zsh: no matches found: *.txt",
+        "zsh: no matches found: file?.log"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "zsh",
+      "exit_code": 1
+    },
+    {
+      "id": "zsh_bad_pattern",
+      "pattern": "zsh: bad pattern:",
+      "type": "GlobError",
+      "description": "Bad pattern in glob expression",
+      "root_cause": "bash_expansion_error",
+      "suggestion": "Check and fix the glob pattern syntax",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "zsh",
+        "glob",
+        "pattern"
+      ],
+      "examples": [
+        "zsh: bad pattern: [*",
+        "zsh: bad pattern: file[a-"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "zsh",
+      "exit_code": 1
+    },
+    {
+      "id": "zsh_parse_error",
+      "pattern": "zsh: parse error",
+      "type": "SyntaxError",
+      "description": "Parse error in Zsh script",
+      "root_cause": "bash_syntax_error",
+      "suggestion": "Check for syntax errors in the script",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zsh",
+        "syntax",
+        "parse"
+      ],
+      "examples": [
+        "zsh: parse error near `if'",
+        "zsh: parse error in conditional expression"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "zsh"
+    },
+    {
+      "id": "zsh_parameter_not_set",
+      "pattern": "zsh: parameter not set:",
+      "type": "VariableError",
+      "description": "Parameter or variable not set",
+      "root_cause": "bash_variable_error",
+      "suggestion": "Initialize the variable before use or handle unset variables",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "zsh",
+        "variable",
+        "parameter"
+      ],
+      "examples": [
+        "zsh: parameter not set: VAR",
+        "zsh: parameter not set: PATH"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "zsh"
+    },
+    {
+      "id": "zsh_bad_subscript",
+      "pattern": "zsh: bad subscript",
+      "type": "VariableError",
+      "description": "Bad array or string subscript",
+      "root_cause": "bash_variable_error",
+      "suggestion": "Check array or string index and ensure it's within bounds",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "zsh",
+        "variable",
+        "array",
+        "subscript"
+      ],
+      "examples": [
+        "zsh: bad subscript",
+        "zsh: bad subscript: ARRAY[-1]"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "zsh"
+    },
+    {
+      "id": "zsh_permission_denied",
+      "pattern": "zsh: permission denied:",
+      "type": "PermissionError",
+      "description": "Permission denied when executing file",
+      "root_cause": "bash_permission_error",
+      "suggestion": "Add execute permission (chmod +x) or run with proper privileges",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zsh",
+        "permission",
+        "execution"
+      ],
+      "examples": [
+        "zsh: permission denied: ./script.sh",
+        "zsh: permission denied: /path/to/file"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "zsh",
+      "exit_code": 126
+    },
+    {
+      "id": "zsh_unknown_option",
+      "pattern": "zsh: unknown option:",
+      "type": "ArgumentError",
+      "description": "Unknown command option",
+      "root_cause": "bash_argument_error",
+      "suggestion": "Check command options and syntax",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "zsh",
+        "argument",
+        "option"
+      ],
+      "examples": [
+        "zsh: unknown option: -z",
+        "zsh: unknown option: --invalid"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "zsh"
+    },
+    {
+      "id": "zsh_illegal_hardware_instruction",
+      "pattern": "zsh: illegal hardware instruction",
+      "type": "ExecutionError",
+      "description": "Illegal hardware instruction in command execution",
+      "root_cause": "bash_execution_error",
+      "suggestion": "Check if the program is compatible with your CPU architecture",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zsh",
+        "execution",
+        "hardware"
+      ],
+      "examples": [
+        "zsh: illegal hardware instruction: ./program",
+        "zsh: illegal hardware instruction: command"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "zsh",
+      "exit_code": 132
+    },
+    {
+      "id": "zsh_not_a_function",
+      "pattern": "zsh: not a function",
+      "type": "FunctionError",
+      "description": "Attempted to call a name that is not a function",
+      "root_cause": "bash_function_error",
+      "suggestion": "Ensure the function is defined before calling it",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "zsh",
+        "function",
+        "call"
+      ],
+      "examples": [
+        "zsh: not a function: myfunc",
+        "zsh: not a function: process_data"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "zsh"
+    },
+    {
+      "id": "zsh_read_only_variable",
+      "pattern": "zsh: read-only variable:",
+      "type": "VariableError",
+      "description": "Attempted to modify a read-only variable",
+      "root_cause": "bash_variable_error",
+      "suggestion": "Avoid modifying read-only variables",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "zsh",
+        "variable",
+        "readonly"
+      ],
+      "examples": [
+        "zsh: read-only variable: PATH",
+        "zsh: read-only variable: HOME"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "zsh"
+    }
+  ]
+}

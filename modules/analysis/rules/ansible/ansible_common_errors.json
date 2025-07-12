@@ -1,0 +1,286 @@
+{
+  "name": "Ansible Common Errors",
+  "description": "Rules for detecting common Ansible errors",
+  "rules": [
+    {
+      "id": "ansible_playbook_not_found",
+      "pattern": "the playbook: .* could not be found|file could not read the playbook|unable to find .*.ya?ml",
+      "type": "PlaybookError",
+      "description": "Playbook file not found",
+      "root_cause": "ansible_playbook_error",
+      "suggestion": "Check playbook path and file existence",
+      "category": "ansible",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "playbook",
+        "file",
+        "not_found"
+      ],
+      "examples": [
+        "ERROR! the playbook: site.yml could not be found",
+        "Could not read the playbook file"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_yaml_parse_error",
+      "pattern": "error while parsing YAML|yaml parse error|failed to parse yaml|failed to load data|there appears to be an issue with the line",
+      "type": "ParseError",
+      "description": "Failed to parse YAML in playbook or inventory",
+      "root_cause": "ansible_yaml_error",
+      "suggestion": "Fix YAML syntax in playbook or inventory file",
+      "category": "ansible",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "yaml",
+        "parse",
+        "syntax"
+      ],
+      "examples": [
+        "ERROR! Syntax Error while loading YAML",
+        "yaml parse error: mapping values are not allowed in this context"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_indentation_error",
+      "pattern": "error: indentation|indentation is not a multiple of|inconsistent indentation|wrong indentation|incorrect indentation",
+      "type": "IndentationError",
+      "description": "YAML indentation error in Ansible playbook",
+      "root_cause": "ansible_yaml_error",
+      "suggestion": "Fix indentation to use consistent spacing (usually 2 spaces)",
+      "category": "ansible",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "yaml",
+        "indentation",
+        "whitespace"
+      ],
+      "examples": [
+        "ERROR! Indentation is not a multiple of 2",
+        "yaml parse error: inconsistent indentation"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_failed_to_import_role",
+      "pattern": "failed to import role|couldn't resolve module|ERROR! the role .* was not found|unable to find role",
+      "type": "RoleError",
+      "description": "Failed to import or find Ansible role",
+      "root_cause": "ansible_role_error",
+      "suggestion": "Check role path or install missing role with ansible-galaxy",
+      "category": "ansible",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "role",
+        "import",
+        "missing"
+      ],
+      "examples": [
+        "ERROR! the role 'common' was not found",
+        "failed to import role: the specified role cannot be found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_failed_to_run",
+      "pattern": "Ansible failed to run|command not found: ansible|command not found: ansible-playbook|could not open .*/ansible|Ansible requires Python",
+      "type": "EnvironmentError",
+      "description": "Ansible command not found or failed to run",
+      "root_cause": "ansible_environment_error",
+      "suggestion": "Check Ansible installation or Python environment",
+      "category": "ansible",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "environment",
+        "installation",
+        "command"
+      ],
+      "examples": [
+        "command not found: ansible-playbook",
+        "Ansible requires Python 2.7 or 3.5+"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_unexpected_keyword",
+      "pattern": "ERROR! unexpected keyword|unexpected parameter|unexpected argument|unrecognized keyword|unsupported parameter",
+      "type": "SyntaxError",
+      "description": "Unexpected keyword or parameter in Ansible playbook",
+      "root_cause": "ansible_syntax_error",
+      "suggestion": "Remove or fix unexpected keywords or parameters",
+      "category": "ansible",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "syntax",
+        "keyword",
+        "parameter"
+      ],
+      "examples": [
+        "ERROR! unexpected keyword: tasks2",
+        "ERROR! unrecognized keyword: commads"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_host_unreachable",
+      "pattern": "UNREACHABLE!|Fatal: \\[.*\\]: UNREACHABLE!|Destination unreachable|No hosts matched|Could not reach any hosts",
+      "type": "ConnectionError",
+      "description": "Host unreachable during Ansible execution",
+      "root_cause": "ansible_connection_error",
+      "suggestion": "Check SSH connectivity and host configuration",
+      "category": "ansible",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "connection",
+        "unreachable",
+        "ssh"
+      ],
+      "examples": [
+        "UNREACHABLE! => {\"changed\": false, \"msg\": \"Failed to connect to the host\"}",
+        "Fatal: [webserver]: UNREACHABLE!"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_privilege_escalation_failed",
+      "pattern": "privilege escalation required but disabled|sudo: no tty present|sudo password required|become password required|incorrect sudo password|cannot set tty",
+      "type": "PrivilegeError",
+      "description": "Privilege escalation failed during Ansible execution",
+      "root_cause": "ansible_privilege_error",
+      "suggestion": "Configure sudo access or provide become password",
+      "category": "ansible",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "sudo",
+        "become",
+        "privilege"
+      ],
+      "examples": [
+        "sudo: no tty present and no askpass program specified",
+        "privilege escalation required but disabled"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_invalid_command",
+      "pattern": "ansible-playbook: error: (unrecognized|no such option)|unknown command:|argument error:|invalid argument:|missing required argument",
+      "type": "CommandError",
+      "description": "Invalid command line options or arguments",
+      "root_cause": "ansible_command_error",
+      "suggestion": "Check command line syntax and options",
+      "category": "ansible",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "command",
+        "option",
+        "argument"
+      ],
+      "examples": [
+        "ansible-playbook: error: no such option: --inventory-flie",
+        "ERROR! Missing required argument"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_failed_fact_gathering",
+      "pattern": "fact gathering failed|gathering facts failed|unable to gather facts|setup module failed",
+      "type": "FactError",
+      "description": "Failed to gather facts from host",
+      "root_cause": "ansible_fact_error",
+      "suggestion": "Check host connectivity or disable fact gathering",
+      "category": "ansible",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "facts",
+        "setup",
+        "gathering"
+      ],
+      "examples": [
+        "fatal: [host]: FAILED! => {\"msg\": \"fact gathering failed\"}",
+        "setup module failed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

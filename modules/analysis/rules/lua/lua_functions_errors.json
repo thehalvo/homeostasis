@@ -1,0 +1,287 @@
+{
+  "name": "Lua Function Errors",
+  "description": "Rules for detecting errors related to Lua functions and function calls",
+  "rules": [
+    {
+      "id": "lua_function_call_non_function",
+      "pattern": "attempt to call (a |local )?([^ ]+) value",
+      "type": "FunctionError",
+      "description": "Attempting to call a non-function value",
+      "root_cause": "lua_function_error",
+      "suggestion": "Check that the value is a function before calling it",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "function",
+        "call",
+        "type"
+      ],
+      "examples": [
+        "attempt to call a table value",
+        "attempt to call a number value",
+        "attempt to call a string value"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_function_wrong_argument_count",
+      "pattern": "wrong number of arguments to (call|function)",
+      "type": "FunctionError",
+      "description": "Wrong number of arguments in function call",
+      "root_cause": "lua_function_error",
+      "suggestion": "Check function signature and provide the correct number of arguments",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "function",
+        "argument",
+        "count"
+      ],
+      "examples": [
+        "wrong number of arguments to call",
+        "wrong number of arguments to function 'foo'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_function_bad_argument_type",
+      "pattern": "bad argument #(\\d+) to '([^']+)' \\(([^\\)]+) expected(, got ([^\\)]+))?\\)",
+      "type": "FunctionError",
+      "description": "Invalid argument type passed to function",
+      "root_cause": "lua_function_error",
+      "suggestion": "Use the correct argument type as expected by the function",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "function",
+        "argument",
+        "type"
+      ],
+      "examples": [
+        "bad argument #1 to 'pairs' (table expected, got nil)",
+        "bad argument #2 to 'math.max' (number expected, got string)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_function_argument_out_of_range",
+      "pattern": "bad argument #(\\d+) to '([^']+)' \\(([^\\)]+) out of range\\)",
+      "type": "FunctionError",
+      "description": "Function argument value out of valid range",
+      "root_cause": "lua_function_error",
+      "suggestion": "Ensure argument values are within the valid range for the function",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "function",
+        "argument",
+        "range"
+      ],
+      "examples": [
+        "bad argument #1 to 'string.sub' (index out of range)",
+        "bad argument #2 to 'string.char' (value out of range)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_function_undefined",
+      "pattern": "attempt to call global '([^']+)' \\(a nil value\\)",
+      "type": "FunctionError",
+      "description": "Calling an undefined function",
+      "root_cause": "lua_function_error",
+      "suggestion": "Check function name spelling or ensure the function is defined",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "function",
+        "global",
+        "undefined"
+      ],
+      "examples": [
+        "attempt to call global 'print' (a nil value)",
+        "attempt to call global 'processData' (a nil value)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_function_method_undefined",
+      "pattern": "attempt to call method '([^']+)' \\(a nil value\\)",
+      "type": "FunctionError",
+      "description": "Calling an undefined method on an object",
+      "root_cause": "lua_function_error",
+      "suggestion": "Check if the method exists on the object or use the correct method name",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "function",
+        "method",
+        "object"
+      ],
+      "examples": [
+        "attempt to call method 'update' (a nil value)",
+        "attempt to call method 'process' (a nil value)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_function_closure_error",
+      "pattern": "attempt to access upvalue '([^']+)'",
+      "type": "FunctionError",
+      "description": "Error accessing closure upvalue",
+      "root_cause": "lua_function_error",
+      "suggestion": "Check closure variables and scope",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "function",
+        "closure",
+        "upvalue"
+      ],
+      "examples": [
+        "attempt to access upvalue 'counter'",
+        "attempt to access upvalue 'context'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_function_too_many_returns",
+      "pattern": "too many results to unpack",
+      "type": "FunctionError",
+      "description": "Too many values returned from function for unpacking",
+      "root_cause": "lua_function_error",
+      "suggestion": "Limit the number of return values or use select() to handle extras",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "function",
+        "return",
+        "unpack"
+      ],
+      "examples": [
+        "too many results to unpack",
+        "too many results from function call to unpack"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_function_stack_overflow",
+      "pattern": "C stack overflow",
+      "type": "FunctionError",
+      "description": "C stack overflow from too many nested function calls",
+      "root_cause": "lua_function_error",
+      "suggestion": "Check for infinite recursion or reduce call stack depth",
+      "category": "lua",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "function",
+        "recursion",
+        "stack"
+      ],
+      "examples": [
+        "C stack overflow",
+        "error: C stack overflow"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_function_pcall_error",
+      "pattern": "error in error handling",
+      "type": "FunctionError",
+      "description": "Error occurred during pcall or xpcall error handling",
+      "root_cause": "lua_function_error",
+      "suggestion": "Ensure error handler function doesn't raise errors itself",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "function",
+        "pcall",
+        "error"
+      ],
+      "examples": [
+        "error in error handling",
+        "error in error handling function"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

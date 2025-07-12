@@ -1,0 +1,229 @@
+{
+  "name": "Crystal Macro System Errors",
+  "description": "Rules for detecting Crystal macro system and metaprogramming errors",
+  "rules": [
+    {
+      "id": "crystal_macro_not_found",
+      "pattern": "macro '(.+)' not found",
+      "type": "MacroError",
+      "description": "Macro was not found or is not defined",
+      "root_cause": "crystal_macro_error",
+      "suggestion": "Check macro name and ensure it's defined in scope",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "macro",
+        "metaprogramming"
+      ],
+      "examples": [
+        "macro 'generate_method' not found",
+        "macro 'property' not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_macro_wrong_arguments",
+      "pattern": "wrong number of arguments for macro",
+      "type": "MacroError",
+      "description": "Incorrect number of arguments provided to macro",
+      "root_cause": "crystal_macro_error",
+      "suggestion": "Check macro definition and provide correct arguments",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "macro",
+        "arguments",
+        "metaprogramming"
+      ],
+      "examples": [
+        "wrong number of arguments for macro 'property' (given 0, expected 1+)",
+        "wrong number of arguments for macro 'getter' (given 3, expected 1+)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_macro_expansion_failed",
+      "pattern": "macro '(.+)' expansion failed",
+      "type": "MacroError",
+      "description": "Macro expansion failed during compilation",
+      "root_cause": "crystal_macro_error",
+      "suggestion": "Check macro implementation for errors",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "macro",
+        "expansion",
+        "metaprogramming"
+      ],
+      "examples": [
+        "macro 'property' expansion failed",
+        "macro 'record' expansion failed: undefined local variable or method"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_macro_invalid",
+      "pattern": "invalid macro",
+      "type": "MacroError",
+      "description": "Invalid macro definition or usage",
+      "root_cause": "crystal_macro_error",
+      "suggestion": "Check macro syntax and implementation",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "crystal",
+        "macro",
+        "syntax",
+        "metaprogramming"
+      ],
+      "examples": [
+        "invalid macro",
+        "invalid macro: unterminated macro"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_macro_already_defined",
+      "pattern": "macro '(.+)' already defined",
+      "type": "MacroError",
+      "description": "Macro with same name already defined",
+      "root_cause": "crystal_macro_error",
+      "suggestion": "Rename macro or remove duplicate definition",
+      "category": "crystal",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "macro",
+        "duplicate",
+        "metaprogramming"
+      ],
+      "examples": [
+        "macro 'property' already defined",
+        "macro 'getter' already defined"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_macro_syntax_error",
+      "pattern": "macro syntax error",
+      "type": "MacroError",
+      "description": "Syntax error in macro definition",
+      "root_cause": "crystal_macro_error",
+      "suggestion": "Check macro syntax and fix syntax errors",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "macro",
+        "syntax",
+        "metaprogramming"
+      ],
+      "examples": [
+        "macro syntax error: unexpected token",
+        "macro syntax error: unterminated macro"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_macro_var_already_declared",
+      "pattern": "macro variable '(.+)' already declared",
+      "type": "MacroError",
+      "description": "Macro variable already declared in same scope",
+      "root_cause": "crystal_macro_error",
+      "suggestion": "Use unique names for macro variables",
+      "category": "crystal",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "macro",
+        "variable",
+        "metaprogramming"
+      ],
+      "examples": [
+        "macro variable 'x' already declared",
+        "macro variable 'name' already declared"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_macro_undefined_local",
+      "pattern": "undefined local variable or method '(.+)' in macro",
+      "type": "MacroError",
+      "description": "Undefined variable or method in macro",
+      "root_cause": "crystal_macro_error",
+      "suggestion": "Define variable or method before use in macro",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "macro",
+        "variable",
+        "metaprogramming"
+      ],
+      "examples": [
+        "undefined local variable or method 'name' in macro",
+        "undefined local variable or method 'value' in macro"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,345 @@
+{
+  "name": "Bash-specific Errors",
+  "description": "Rules for detecting errors specific to the Bash shell",
+  "rules": [
+    {
+      "id": "bash_process_substitution_error",
+      "pattern": "syntax error near unexpected token `\\('",
+      "type": "SyntaxError",
+      "description": "Process substitution syntax error",
+      "root_cause": "bash_syntax_error",
+      "suggestion": "Check process substitution syntax <(...) or >(...)",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "syntax",
+        "process_substitution"
+      ],
+      "examples": [
+        "bash: syntax error near unexpected token `('",
+        "syntax error near unexpected token `<('"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash"
+    },
+    {
+      "id": "bash_here_document_error",
+      "pattern": "syntax error: unexpected end of file.*expecting.*EOF",
+      "type": "SyntaxError",
+      "description": "Here document (heredoc) syntax error",
+      "root_cause": "bash_syntax_error",
+      "suggestion": "Check heredoc syntax and ensure matching EOF delimiter",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "syntax",
+        "heredoc"
+      ],
+      "examples": [
+        "syntax error: unexpected end of file while looking for matching `EOF'",
+        "unexpected EOF while looking for matching delimiter"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash"
+    },
+    {
+      "id": "bash_array_error",
+      "pattern": "bad array subscript",
+      "type": "VariableError",
+      "description": "Bad array subscript or index",
+      "root_cause": "bash_variable_error",
+      "suggestion": "Check array index and access syntax",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "variable",
+        "array"
+      ],
+      "examples": [
+        "bash: bad array subscript",
+        "bad array subscript: var"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash"
+    },
+    {
+      "id": "bash_brace_expansion_error",
+      "pattern": "bad substitution",
+      "type": "ExpansionError",
+      "description": "Brace expansion or parameter substitution error",
+      "root_cause": "bash_expansion_error",
+      "suggestion": "Check brace expansion syntax {a,b} or parameter substitution ${var}",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "expansion",
+        "brace"
+      ],
+      "examples": [
+        "bash: ${var:1:}: bad substitution",
+        "bash: ${!prefix*}: bad substitution"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash"
+    },
+    {
+      "id": "bash_conditional_expression_error",
+      "pattern": "syntax error in conditional expression",
+      "type": "SyntaxError",
+      "description": "Syntax error in conditional expression",
+      "root_cause": "bash_conditional_error",
+      "suggestion": "Check conditional expression syntax in if or while statements",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "conditional",
+        "if",
+        "while"
+      ],
+      "examples": [
+        "bash: syntax error in conditional expression",
+        "syntax error in conditional expression near `$var'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash"
+    },
+    {
+      "id": "bash_command_substitution_error",
+      "pattern": "command substitution: line \\d+: syntax error",
+      "type": "SyntaxError",
+      "description": "Syntax error in command substitution",
+      "root_cause": "bash_syntax_error",
+      "suggestion": "Check command substitution syntax $(command) or `command`",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "syntax",
+        "command_substitution"
+      ],
+      "examples": [
+        "bash: command substitution: line 2: syntax error near unexpected token `)'",
+        "command substitution: line 1: syntax error: unexpected end of file"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash"
+    },
+    {
+      "id": "bash_expansion_word_error",
+      "pattern": "word expansion failed",
+      "type": "ExpansionError",
+      "description": "Word expansion failed",
+      "root_cause": "bash_expansion_error",
+      "suggestion": "Check word expansion syntax and quoted strings",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "expansion",
+        "word"
+      ],
+      "examples": [
+        "bash: word expansion failed",
+        "word expansion failed for argument"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash"
+    },
+    {
+      "id": "bash_declare_usage_error",
+      "pattern": "declare: usage:",
+      "type": "BuiltinError",
+      "description": "Incorrect usage of declare builtin",
+      "root_cause": "bash_builtin_misuse",
+      "suggestion": "Check declare command options and syntax",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "builtin",
+        "declare"
+      ],
+      "examples": [
+        "bash: declare: usage: declare [-afFirtx] [-p] [name[=value] ...]",
+        "declare: -z: invalid option"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash",
+      "exit_code": 2
+    },
+    {
+      "id": "bash_readonly_variable",
+      "pattern": "read-only variable",
+      "type": "VariableError",
+      "description": "Attempt to modify read-only variable",
+      "root_cause": "bash_variable_error",
+      "suggestion": "Avoid modifying read-only variables declared with readonly or declare -r",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "variable",
+        "readonly"
+      ],
+      "examples": [
+        "bash: var: readonly variable",
+        "read-only variable: var"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash"
+    },
+    {
+      "id": "bash_eval_error",
+      "pattern": "eval: line \\d+:",
+      "type": "EvalError",
+      "description": "Error in eval command execution",
+      "root_cause": "bash_eval_error",
+      "suggestion": "Check the string being evaluated for syntax errors",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "eval",
+        "execution"
+      ],
+      "examples": [
+        "bash: eval: line 1: syntax error near unexpected token `)'",
+        "eval: line 2: command not found: invalid_command"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash"
+    },
+    {
+      "id": "bash_function_error",
+      "pattern": "function declaration syntax error|syntax error .* function",
+      "type": "SyntaxError",
+      "description": "Function declaration syntax error",
+      "root_cause": "bash_function_error",
+      "suggestion": "Check function declaration syntax: function_name() { commands; }",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "function",
+        "syntax"
+      ],
+      "examples": [
+        "bash: syntax error near unexpected token `function'",
+        "bash: function declaration syntax error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash"
+    },
+    {
+      "id": "bash_shopt_invalid_option",
+      "pattern": "shopt: .*: invalid shell option name",
+      "type": "BuiltinError",
+      "description": "Invalid shopt option",
+      "root_cause": "bash_builtin_misuse",
+      "suggestion": "Check shopt option name",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "bash",
+        "builtin",
+        "shopt"
+      ],
+      "examples": [
+        "bash: shopt: xyz: invalid shell option name",
+        "shopt: invalid option name"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "bash",
+      "exit_code": 1
+    }
+  ]
+}

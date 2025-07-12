@@ -1,0 +1,258 @@
+{
+  "name": "Julia Interoperability Errors",
+  "description": "Rules for detecting errors related to Julia's interoperability with other languages and systems",
+  "rules": [
+    {
+      "id": "julia_ccall_library_error",
+      "pattern": "could not load library \"([^\"]+)\"",
+      "type": "LibraryError",
+      "description": "Failed to load library for C function call",
+      "root_cause": "julia_interop_error",
+      "suggestion": "Check library path or install missing system libraries",
+      "category": "interop",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "ccall",
+        "library",
+        "c"
+      ],
+      "examples": [
+        "could not load library \"libopenblas\"",
+        "Error loading shared library for C function"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_ccall_symbol_error",
+      "pattern": "ccall: could not find function ([\\w_]+)",
+      "type": "SymbolError",
+      "description": "Symbol not found in library for C function call",
+      "root_cause": "julia_interop_error",
+      "suggestion": "Check function name and library for correct symbol",
+      "category": "interop",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "ccall",
+        "symbol",
+        "function"
+      ],
+      "examples": [
+        "ccall: could not find function my_c_function",
+        "Error: Symbol not found in shared library"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_ccall_type_error",
+      "pattern": "ccall: argument type (.*) does not correspond to C type",
+      "type": "TypeError",
+      "description": "Type mismatch in C function call",
+      "root_cause": "julia_interop_error",
+      "suggestion": "Use correct Julia type that corresponds to C type",
+      "category": "interop",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "ccall",
+        "type",
+        "conversion"
+      ],
+      "examples": [
+        "ccall: argument type String does not correspond to C type",
+        "Type mismatch in C function argument"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_py_module_error",
+      "pattern": "PyError: (.*) not found",
+      "type": "PythonError",
+      "description": "Python module or function not found",
+      "root_cause": "julia_interop_error",
+      "suggestion": "Install the required Python package or check name spelling",
+      "category": "interop",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "python",
+        "pycall",
+        "module"
+      ],
+      "examples": [
+        "PyError: ImportError: No module named numpy",
+        "Python module import error in PyCall"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_py_exception",
+      "pattern": "PyError: (.+) occurred while calling (.+)",
+      "type": "PythonError",
+      "description": "Python exception occurred during call",
+      "root_cause": "julia_interop_error",
+      "suggestion": "Debug Python code or check argument values",
+      "category": "interop",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "python",
+        "pycall",
+        "exception"
+      ],
+      "examples": [
+        "PyError: ValueError occurred while calling numpy.array",
+        "Exception raised in Python function call"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_r_package_error",
+      "pattern": "Error in library\\(.+\\) : there is no package called",
+      "type": "RError",
+      "description": "R package not found in RCall",
+      "root_cause": "julia_interop_error",
+      "suggestion": "Install the required R package with R_HOME/bin/R -e \"install.packages()\"",
+      "category": "interop",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "r",
+        "rcall",
+        "package"
+      ],
+      "examples": [
+        "Error in library(dplyr) : there is no package called 'dplyr'",
+        "R package not installed error in RCall"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_r_exception",
+      "pattern": "Error in .+ : (.+)",
+      "type": "RError",
+      "description": "R exception occurred during call",
+      "root_cause": "julia_interop_error",
+      "suggestion": "Debug R code or check argument values",
+      "category": "interop",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "julia",
+        "r",
+        "rcall",
+        "exception"
+      ],
+      "examples": [
+        "Error in lm.fit(x, y, offset = offset, singular.ok = singular.ok, ...) : NA/NaN/Inf in 'y'",
+        "Error in R function execution"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_cxx_error",
+      "pattern": "ERROR: in Cxx.jl: (.*)",
+      "type": "CxxError",
+      "description": "C++ interoperability error",
+      "root_cause": "julia_interop_error",
+      "suggestion": "Check C++ syntax or compiler configuration",
+      "category": "interop",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "cxx",
+        "cpp",
+        "interop"
+      ],
+      "examples": [
+        "ERROR: in Cxx.jl: undefined reference to 'function'",
+        "C++ compilation error in Cxx.jl"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_jni_error",
+      "pattern": "JavaError: (.+)",
+      "type": "JavaError",
+      "description": "Java interoperability error",
+      "root_cause": "julia_interop_error",
+      "suggestion": "Check Java class path or method signature",
+      "category": "interop",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "java",
+        "jni",
+        "interop"
+      ],
+      "examples": [
+        "JavaError: java.lang.ClassNotFoundException",
+        "Java exception in JavaCall.jl"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

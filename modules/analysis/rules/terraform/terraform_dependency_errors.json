@@ -1,0 +1,258 @@
+{
+  "name": "Terraform Dependency Errors",
+  "description": "Rules for detecting errors related to Terraform resource dependencies",
+  "rules": [
+    {
+      "id": "terraform_dependency_cycle",
+      "pattern": "Cycle in graph|Dependency cycle detected|Dependencies form cycle|Found cycle|cycle between resources",
+      "type": "DependencyError",
+      "description": "Cyclic dependency between resources or modules",
+      "root_cause": "terraform_dependency_error",
+      "suggestion": "Break the cycle by removing circular dependencies",
+      "category": "dependency",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "dependency",
+        "cycle",
+        "graph"
+      ],
+      "examples": [
+        "Error: Cycle in graph",
+        "Error: Dependency cycle detected between resources"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_missing_dependency",
+      "pattern": "depends on resource .* which is not declared|References to other resources|Cannot process resource|reference is not a valid resource",
+      "type": "DependencyError",
+      "description": "Reference to non-existent resource",
+      "root_cause": "terraform_dependency_error",
+      "suggestion": "Fix resource references or add missing resource",
+      "category": "dependency",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "dependency",
+        "reference",
+        "resource"
+      ],
+      "examples": [
+        "Error: Resource depends on aws_vpc.main which is not declared",
+        "Error: Reference is not a valid resource"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_count_index_error",
+      "pattern": "References to \"count\" variables|\"count.index\"|reference to count object|count value depends on resource",
+      "type": "DependencyError",
+      "description": "Invalid count expression or reference",
+      "root_cause": "terraform_dependency_error",
+      "suggestion": "Fix count expression to avoid resource attribute references",
+      "category": "dependency",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "dependency",
+        "count",
+        "index"
+      ],
+      "examples": [
+        "Error: References to \"count\" variables must be used consistently",
+        "Error: count value depends on resource attributes"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_for_each_error",
+      "pattern": "The \"for_each\" value depends on|Invalid for_each argument|for_each expression must be|The \"for_each\" set includes",
+      "type": "DependencyError",
+      "description": "Invalid for_each expression or reference",
+      "root_cause": "terraform_dependency_error",
+      "suggestion": "Fix for_each expression to use known values at plan time",
+      "category": "dependency",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "dependency",
+        "for_each",
+        "iteration"
+      ],
+      "examples": [
+        "Error: The \"for_each\" value depends on resource attributes",
+        "Error: Invalid for_each argument"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_depends_on_error",
+      "pattern": "Invalid depends_on|The depends_on|In depends_on:",
+      "type": "DependencyError",
+      "description": "Invalid depends_on configuration",
+      "root_cause": "terraform_dependency_error",
+      "suggestion": "Fix depends_on list to reference valid resources",
+      "category": "dependency",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "dependency",
+        "depends_on",
+        "explicit"
+      ],
+      "examples": [
+        "Error: Invalid depends_on reference",
+        "Error: The depends_on reference cannot be resolved"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_unknown_value_error",
+      "pattern": "value cannot be determined until apply|value will be known only after apply|cannot be computed until|requires resource attributes that cannot be determined until apply",
+      "type": "DependencyError",
+      "description": "Value not known until apply, used in expression requiring known value",
+      "root_cause": "terraform_dependency_error",
+      "suggestion": "Restructure configuration to avoid using computed values in certain contexts",
+      "category": "dependency",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "dependency",
+        "computed",
+        "unknown"
+      ],
+      "examples": [
+        "Error: value cannot be determined until apply",
+        "Error: count value cannot be computed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_conditional_expression_error",
+      "pattern": "Condition is undefined|Error in conditional|Error in condition|Invalid condition|Invalid conditional result",
+      "type": "DependencyError",
+      "description": "Error in conditional expression",
+      "root_cause": "terraform_dependency_error",
+      "suggestion": "Fix conditional expression or ensure all referenced values are known",
+      "category": "dependency",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "dependency",
+        "conditional",
+        "expression"
+      ],
+      "examples": [
+        "Error: Condition is undefined due to unknown value",
+        "Error in conditional expression"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_data_resource_error",
+      "pattern": "cannot be used with the 'depends_on' meta-argument|terraform_data resource cannot|Error in terraform_data|Error in local-exec provisioner",
+      "type": "DependencyError",
+      "description": "Error with terraform_data resource or provisioner",
+      "root_cause": "terraform_dependency_error",
+      "suggestion": "Fix terraform_data resource configuration or provisioner",
+      "category": "dependency",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "dependency",
+        "data",
+        "provisioner"
+      ],
+      "examples": [
+        "Error: terraform_data resource cannot use for_each with depends_on",
+        "Error in local-exec provisioner"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_dependency_error",
+      "pattern": "Provider produced inconsistent final plan|Provider requires additional configuration|Provider configuration depends on|Provider configuration is missing",
+      "type": "DependencyError",
+      "description": "Error with provider dependencies or configuration",
+      "root_cause": "terraform_dependency_error",
+      "suggestion": "Fix provider configuration or dependencies",
+      "category": "dependency",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "dependency",
+        "provider",
+        "configuration"
+      ],
+      "examples": [
+        "Error: Provider produced inconsistent final plan",
+        "Error: Provider configuration depends on resource attributes"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

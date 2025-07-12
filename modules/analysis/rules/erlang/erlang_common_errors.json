@@ -1,0 +1,439 @@
+{
+  "name": "Erlang Common Errors",
+  "description": "Rules for detecting common Erlang programming language errors",
+  "rules": [
+    {
+      "id": "erlang_syntax_error_before",
+      "pattern": "syntax error before:",
+      "type": "SyntaxError",
+      "description": "Erlang syntax error in code",
+      "root_cause": "erlang_syntax_error",
+      "suggestion": "Fix syntax issues in Erlang code",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "syntax error before: ')'",
+        "syntax error before: 'when'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_syntax_error_at_line",
+      "pattern": "syntax error at line (\\d+)",
+      "type": "SyntaxError",
+      "description": "Erlang syntax error at specific line",
+      "root_cause": "erlang_syntax_error",
+      "suggestion": "Check syntax at the indicated line number",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "syntax error at line 42"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_syntax_unexpected",
+      "pattern": "unexpected.*?at line",
+      "type": "SyntaxError",
+      "description": "Unexpected token or symbol in Erlang code",
+      "root_cause": "erlang_syntax_error",
+      "suggestion": "Check for unexpected tokens or symbols",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "syntax",
+        "token"
+      ],
+      "examples": [
+        "unexpected token at line 15",
+        "unexpected '}' at line 23"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_unterminated_string",
+      "pattern": "unterminated.*?at line",
+      "type": "SyntaxError",
+      "description": "Unterminated string or other construct",
+      "root_cause": "erlang_syntax_error",
+      "suggestion": "Close unclosed strings, atoms, or other constructs",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "syntax",
+        "string"
+      ],
+      "examples": [
+        "unterminated string at line 10",
+        "unterminated atom at line 27"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_function_undefined",
+      "pattern": "function.*?undefined",
+      "type": "CompilationError",
+      "description": "Undefined function reference",
+      "root_cause": "erlang_compilation_error",
+      "suggestion": "Define the function or check function name/arity",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "compilation",
+        "function"
+      ],
+      "examples": [
+        "function foo/2 undefined",
+        "function Module:function/1 undefined"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_module_undefined",
+      "pattern": "module.*?undefined",
+      "type": "CompilationError",
+      "description": "Undefined module reference",
+      "root_cause": "erlang_compilation_error",
+      "suggestion": "Check module name or add module dependency",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "compilation",
+        "module"
+      ],
+      "examples": [
+        "module foo undefined",
+        "call to undefined module foo"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_record_undefined",
+      "pattern": "record.*?undefined",
+      "type": "CompilationError",
+      "description": "Undefined record reference",
+      "root_cause": "erlang_compilation_error",
+      "suggestion": "Define the record or include record definition",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "compilation",
+        "record"
+      ],
+      "examples": [
+        "record person undefined",
+        "reference to undefined record person"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_variable_unsafe",
+      "pattern": "variable.*?unsafe",
+      "type": "CompilationError",
+      "description": "Variable used in unsafe context",
+      "root_cause": "erlang_compilation_error",
+      "suggestion": "Check variable usage in guards or patterns",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "compilation",
+        "variable"
+      ],
+      "examples": [
+        "variable 'X' unsafe in 'case'",
+        "variable 'Y' unsafe in guard"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_variable_unbound",
+      "pattern": "variable.*?unbound",
+      "type": "CompilationError",
+      "description": "Unbound variable usage",
+      "root_cause": "erlang_compilation_error",
+      "suggestion": "Bind variable before use or check variable name",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "compilation",
+        "variable"
+      ],
+      "examples": [
+        "variable 'X' is unbound",
+        "unbound variable 'Result'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_bad_arity",
+      "pattern": "bad.*?arity",
+      "type": "CompilationError",
+      "description": "Function called with wrong number of arguments",
+      "root_cause": "erlang_compilation_error",
+      "suggestion": "Check function arity and number of arguments passed",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "compilation",
+        "arity"
+      ],
+      "examples": [
+        "bad arity in function call",
+        "function called with wrong arity"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_badarg",
+      "pattern": "badarg",
+      "type": "RuntimeError",
+      "description": "Bad argument error",
+      "root_cause": "erlang_runtime_error",
+      "suggestion": "Check arguments passed to built-in functions",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "runtime",
+        "argument"
+      ],
+      "examples": [
+        "** exception error: badarg",
+        "Error: {badarg, [...]}",
+        "function_clause:{erlang,list_to_integer,[\"abc\"]}"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_badmatch",
+      "pattern": "badmatch",
+      "type": "RuntimeError",
+      "description": "Pattern match failure",
+      "root_cause": "erlang_runtime_error",
+      "suggestion": "Check pattern matching expressions",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "runtime",
+        "pattern",
+        "match"
+      ],
+      "examples": [
+        "** exception error: no match of right hand side value",
+        "Error: {badmatch, ...}"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_case_clause",
+      "pattern": "case_clause",
+      "type": "RuntimeError",
+      "description": "No matching case clause",
+      "root_cause": "erlang_runtime_error",
+      "suggestion": "Add missing case clauses or a catch-all clause",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "runtime",
+        "case"
+      ],
+      "examples": [
+        "** exception error: no case clause matching",
+        "Error: {case_clause, ...}"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_function_clause",
+      "pattern": "function_clause",
+      "type": "RuntimeError",
+      "description": "No matching function clause",
+      "root_cause": "erlang_runtime_error",
+      "suggestion": "Add function clause for the given arguments",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "runtime",
+        "function"
+      ],
+      "examples": [
+        "** exception error: no function clause matching",
+        "Error: {function_clause, ...}"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_if_clause",
+      "pattern": "if_clause",
+      "type": "RuntimeError",
+      "description": "No matching if clause",
+      "root_cause": "erlang_runtime_error",
+      "suggestion": "Add 'true -> ...' clause to if expression",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "runtime",
+        "if"
+      ],
+      "examples": [
+        "** exception error: no true branch found when evaluating an if expression",
+        "Error: {if_clause, ...}"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_badarith",
+      "pattern": "badarith",
+      "type": "RuntimeError",
+      "description": "Bad arithmetic operation",
+      "root_cause": "erlang_runtime_error",
+      "suggestion": "Check arithmetic operations and operand types",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "runtime",
+        "arithmetic"
+      ],
+      "examples": [
+        "** exception error: bad argument in an arithmetic expression",
+        "Error: {badarith, ...}"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

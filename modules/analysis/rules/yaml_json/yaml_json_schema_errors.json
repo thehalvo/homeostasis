@@ -1,0 +1,267 @@
+{
+  "name": "YAML/JSON Schema Validation Errors",
+  "description": "Rules for detecting schema validation errors in YAML and JSON configurations",
+  "rules": [
+    {
+      "id": "yaml_json_missing_required_property",
+      "pattern": "required property .* not found|missing required|required field .* is missing|required key .* not found|property .* is required|missing mandatory field|required attribute .* not found|property is required|missing required properties|must have required property|missing required property|is missing and it is required|is a required property",
+      "type": "MissingPropertyError",
+      "description": "Required property missing in YAML/JSON configuration",
+      "root_cause": "yaml_json_schema_error",
+      "suggestion": "Add the required property to the configuration",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "schema",
+        "validation"
+      ],
+      "examples": [
+        "required property 'name' not found",
+        "missing required field 'version'",
+        "instance must have required property 'type'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_invalid_property_type",
+      "pattern": "expected type|instance of type .* is not allowed|is not of type|type mismatch|expected .* to be|expected .* got|should be of type|must be an? |not a valid|invalid value type|wrong type|must be of type|data type|should be (string|number|integer|array|object|boolean)|type validation",
+      "type": "PropertyTypeError",
+      "description": "Property has invalid type in YAML/JSON configuration",
+      "root_cause": "yaml_json_schema_error",
+      "suggestion": "Fix the property type to match schema requirements",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "schema",
+        "type"
+      ],
+      "examples": [
+        "expected type string, got number",
+        "instance of type array is not allowed, expected object",
+        "port must be an integer"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_additional_property",
+      "pattern": "additional properties not allowed|unknown property|property .* not defined|unrecognized property|unexpected property|additional property .* is not allowed|unknown field|unknown key|extra property|no additional properties|no such property|property .* is not expected|unsupported property|no such field|undefined property|unknown attribute",
+      "type": "AdditionalPropertyError",
+      "description": "Additional property not allowed in YAML/JSON configuration",
+      "root_cause": "yaml_json_schema_error",
+      "suggestion": "Remove the unsupported property or check for typos",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "schema",
+        "validation"
+      ],
+      "examples": [
+        "additional properties not allowed: 'colour'",
+        "unknown property 'environent' (did you mean 'environment'?)",
+        "property 'extra_field' is not expected"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_enum_validation",
+      "pattern": "value .* not in enumeration|not one of the allowed values|must be one of|should be one of|enum validation|must be equal to one of|value must be one of|is not a valid enum value|not a valid value|allowed values for .* are|invalid enum value|enum constraint|expected one of|value not allowed|must be one of the predefined values",
+      "type": "EnumValidationError",
+      "description": "Value not in allowed enumeration in YAML/JSON configuration",
+      "root_cause": "yaml_json_schema_error",
+      "suggestion": "Use one of the allowed enum values",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "schema",
+        "enum"
+      ],
+      "examples": [
+        "value 'error' not in enumeration ['info', 'warn', 'debug']",
+        "must be one of: ['http', 'https', 'tcp']",
+        "not a valid value, allowed values for 'type' are: ['test', 'build', 'deploy']"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_pattern_validation",
+      "pattern": "does not match pattern|pattern mismatch|regex pattern|string does not match|pattern validation|must match pattern|must match the pattern|string should match|instance does not match|pattern constraint|failed pattern validation|should conform to pattern|must conform to|does not conform to pattern|format validation",
+      "type": "PatternValidationError",
+      "description": "Value does not match required pattern in YAML/JSON configuration",
+      "root_cause": "yaml_json_schema_error",
+      "suggestion": "Fix the value to match the required pattern format",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "schema",
+        "pattern"
+      ],
+      "examples": [
+        "does not match pattern '^[a-z][-a-z0-9]*$'",
+        "string should match pattern: '^[A-Za-z0-9-_]+$'",
+        "instance does not match pattern '^\\d{3}-\\d{2}-\\d{4}$'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_numeric_validation",
+      "pattern": "must be (greater|less) than|minimum|maximum|not (greater|less) than|exceeds maximum|below minimum|must be (>=|<=|>|<)|greater than|less than|must be between|range validation|value out of range|number constraint|multipleOf|divisible by|number must be|integer must be",
+      "type": "NumericValidationError",
+      "description": "Numeric value out of allowed range in YAML/JSON configuration",
+      "root_cause": "yaml_json_schema_error",
+      "suggestion": "Use a numeric value within the allowed range",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "schema",
+        "numeric"
+      ],
+      "examples": [
+        "must be greater than or equal to 1",
+        "exceeds maximum of 100",
+        "value must be between 0 and 65535"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_array_validation",
+      "pattern": "array (too|not) (long|short)|minItems|maxItems|array length|array size|too (many|few) items|must have (at least|at most|no more than)|array validation|items constraint|array must contain|must not have more than|must contain at least|number of items|array constraint|uniqueItems|duplicate items|array contains duplicate|array must not contain duplicates",
+      "type": "ArrayValidationError",
+      "description": "Array validation error in YAML/JSON configuration",
+      "root_cause": "yaml_json_schema_error",
+      "suggestion": "Fix the array length or remove duplicate items",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "schema",
+        "array"
+      ],
+      "examples": [
+        "array too short: must have at least 1 items",
+        "array too long: must have no more than 10 items",
+        "array contains duplicate item: 'apple'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_string_length_validation",
+      "pattern": "string (too|not) (long|short)|minLength|maxLength|string length|must be (at least|at most)|too (many|few) characters|string must be longer|string must be shorter|character constraint|string validation|string size|not enough characters|too many characters|length must be|must be between .* characters",
+      "type": "StringLengthError",
+      "description": "String length validation error in YAML/JSON configuration",
+      "root_cause": "yaml_json_schema_error",
+      "suggestion": "Adjust the string length to meet requirements",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "schema",
+        "string"
+      ],
+      "examples": [
+        "string too short: must be at least 8 characters",
+        "string too long: must be at most 100 characters",
+        "name must be between 3 and 64 characters"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_dependency_validation",
+      "pattern": "depends on|dependency validation|property .* is required when|must be present with|must contain property|when property .* is present|missing dependency|requires property|dependencies constraint|property dependencies|dependent schema|conditional validation|depends on presence of|if .* is present|if-then validation|required by property",
+      "type": "DependencyValidationError",
+      "description": "Property dependency validation error in YAML/JSON configuration",
+      "root_cause": "yaml_json_schema_error",
+      "suggestion": "Add the required dependent property",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "schema",
+        "dependency"
+      ],
+      "examples": [
+        "property 'port' is required when 'host' is present",
+        "missing dependency 'username' - required by property 'password'",
+        "if 'type' is 'oauth', 'clientId' must be present"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

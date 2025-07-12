@@ -1,0 +1,258 @@
+{
+  "name": "Julia Performance Errors",
+  "description": "Rules for detecting performance issues and optimization errors in Julia code",
+  "rules": [
+    {
+      "id": "julia_type_instability",
+      "pattern": "Performance Warning: Type of (.*) could not be inferred",
+      "type": "PerformanceWarning",
+      "description": "Type instability detected in function",
+      "root_cause": "julia_performance_error",
+      "suggestion": "Add type annotations or use more type-stable operations",
+      "category": "performance",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "performance",
+        "type",
+        "stability"
+      ],
+      "examples": [
+        "Performance Warning: Type of variable x could not be inferred",
+        "Type instability detected in function compute()"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_array_allocation_warning",
+      "pattern": "Performance Warning: Array allocation in hot loop",
+      "type": "PerformanceWarning",
+      "description": "Excessive array allocation in performance-critical code",
+      "root_cause": "julia_performance_error",
+      "suggestion": "Pre-allocate arrays or use in-place operations with .= or similar",
+      "category": "performance",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "performance",
+        "allocation",
+        "array"
+      ],
+      "examples": [
+        "Performance Warning: Array allocation in hot loop",
+        "Warning: Excessive allocation in performance-critical section"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_global_variable_performance",
+      "pattern": "Performance Warning: Global variable used in inner loop",
+      "type": "PerformanceWarning",
+      "description": "Global variable access slowing down code",
+      "root_cause": "julia_performance_error",
+      "suggestion": "Use local variables or function parameters instead of globals",
+      "category": "performance",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "performance",
+        "global",
+        "variable"
+      ],
+      "examples": [
+        "Performance Warning: Global variable used in inner loop",
+        "Warning: Global variable access in performance-critical section"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_abstract_array_performance",
+      "pattern": "Performance Warning: Abstract array used in performance-critical code",
+      "type": "PerformanceWarning",
+      "description": "Using abstract array type in performance-critical code",
+      "root_cause": "julia_performance_error",
+      "suggestion": "Use concrete array types like Array{Float64,2} instead of AbstractArray",
+      "category": "performance",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "performance",
+        "abstract",
+        "array"
+      ],
+      "examples": [
+        "Performance Warning: Abstract array used in performance-critical code",
+        "Warning: AbstractArray in tight loop may impact performance"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_dynamic_dispatch_performance",
+      "pattern": "Performance Warning: Dynamic dispatch detected in hot loop",
+      "type": "PerformanceWarning",
+      "description": "Dynamic method dispatch in performance-critical code",
+      "root_cause": "julia_performance_error",
+      "suggestion": "Use more specific types or consider using @nospecialize for intentional dynamic dispatch",
+      "category": "performance",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "performance",
+        "dispatch",
+        "dynamic"
+      ],
+      "examples": [
+        "Performance Warning: Dynamic dispatch detected in hot loop",
+        "Warning: Method dispatch overhead in performance-critical section"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_string_concatenation_performance",
+      "pattern": "Performance Warning: String concatenation in loop",
+      "type": "PerformanceWarning",
+      "description": "Inefficient string concatenation in loop",
+      "root_cause": "julia_performance_error",
+      "suggestion": "Use string interpolation, join(), or IOBuffer for string building",
+      "category": "performance",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "performance",
+        "string",
+        "concatenation"
+      ],
+      "examples": [
+        "Performance Warning: String concatenation in loop",
+        "Warning: Inefficient string handling detected"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_any_array_performance",
+      "pattern": "Performance Warning: Array{Any} detected",
+      "type": "PerformanceWarning",
+      "description": "Using Array{Any} which has poor performance",
+      "root_cause": "julia_performance_error",
+      "suggestion": "Use arrays with specific element types or StaticArrays for small fixed-size arrays",
+      "category": "performance",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "performance",
+        "any",
+        "array"
+      ],
+      "examples": [
+        "Performance Warning: Array{Any} detected",
+        "Warning: Array with Any element type may cause poor performance"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_boxing_performance",
+      "pattern": "Performance Warning: Boxing detected",
+      "type": "PerformanceWarning",
+      "description": "Type boxing causing performance degradation",
+      "root_cause": "julia_performance_error",
+      "suggestion": "Use type-stable code or check for implicit type conversions",
+      "category": "performance",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "performance",
+        "boxing",
+        "type"
+      ],
+      "examples": [
+        "Performance Warning: Boxing detected",
+        "Warning: Type boxing may impact performance"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_closure_performance",
+      "pattern": "Performance Warning: Captured variable in closure",
+      "type": "PerformanceWarning",
+      "description": "Using captured variables in closures affects performance",
+      "root_cause": "julia_performance_error",
+      "suggestion": "Pass variables as arguments instead of capturing them in closures",
+      "category": "performance",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "performance",
+        "closure",
+        "capture"
+      ],
+      "examples": [
+        "Performance Warning: Captured variable in closure",
+        "Warning: Variable capture in anonymous function may affect performance"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

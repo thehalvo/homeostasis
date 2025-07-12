@@ -1,0 +1,267 @@
+{
+  "name": "Ansible Network Module Errors",
+  "description": "Rules for detecting errors related to Ansible network modules",
+  "rules": [
+    {
+      "id": "ansible_uri_connection_error",
+      "pattern": "Connection refused|Connection timed out|Unable to connect|Connection failed|Failed to connect|unreachable|No route to host|Could not connect|Network is unreachable|Connection reset|connect timeout",
+      "type": "ConnectionError",
+      "description": "Connection failed in URI module",
+      "root_cause": "ansible_uri_error",
+      "suggestion": "Check network connectivity and URL",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "uri",
+      "tags": [
+        "ansible",
+        "module",
+        "uri",
+        "connection"
+      ],
+      "examples": [
+        "Connection refused to http://example.com:8080",
+        "Connection timed out after 10 seconds"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_uri_status_error",
+      "pattern": "Status code was not|Status code .* but expected|Invalid return code|Wrong status code|Expecting HTTP response",
+      "type": "StatusCodeError",
+      "description": "Unexpected HTTP status code in URI response",
+      "root_cause": "ansible_uri_error",
+      "suggestion": "Check URI and expected status codes or use status_code: [200, 201]",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "uri",
+      "tags": [
+        "ansible",
+        "module",
+        "uri",
+        "status"
+      ],
+      "examples": [
+        "Status code was not 200: 404",
+        "Status code 500 but expected [200, 201]"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_uri_ssl_error",
+      "pattern": "SSL certificate|SSL verification|SSL handshake|SSL error|CERTIFICATE_VERIFY_FAILED|SSL validation|certificate verify|hostname doesn't match|verify failed|SSL hostname|peer cert|certificate validation",
+      "type": "SSLError",
+      "description": "SSL certificate verification failed",
+      "root_cause": "ansible_uri_error",
+      "suggestion": "Add CA certificate or use validate_certs: no",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "uri",
+      "tags": [
+        "ansible",
+        "module",
+        "uri",
+        "ssl"
+      ],
+      "examples": [
+        "SSL certificate verification failed",
+        "hostname 'example.com' doesn't match 'www.example.com'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_http_authentication_error",
+      "pattern": "Authentication failed|Authorization failed|Invalid credentials|Unauthorized|401 Unauthorized|auth failed|authentication required|authentication needed|not authorized|incorrect username or password",
+      "type": "AuthenticationError",
+      "description": "HTTP authentication failed",
+      "root_cause": "ansible_uri_error",
+      "suggestion": "Check username, password, or authentication method",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "uri",
+      "tags": [
+        "ansible",
+        "module",
+        "uri",
+        "authentication"
+      ],
+      "examples": [
+        "Authentication failed: 401 Unauthorized",
+        "Invalid credentials for HTTP Basic Auth"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_ufw_error",
+      "pattern": "ufw not found|could not find ufw|error running ufw|ufw command failed|ufw failed|ufw permission denied|cannot open|no ufw binary|ufw command not found",
+      "type": "UFWError",
+      "description": "Error with UFW firewall module",
+      "root_cause": "ansible_ufw_error",
+      "suggestion": "Install UFW package or check permissions",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "ufw",
+      "tags": [
+        "ansible",
+        "module",
+        "ufw",
+        "firewall"
+      ],
+      "examples": [
+        "ufw not found on system",
+        "error running ufw: permission denied"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_iptables_error",
+      "pattern": "iptables not found|iptables command failed|iptables: command not found|Failed to modify iptables|Unknown iptables command|iptables-save failed|iptables rule failed|Invalid iptables rule|iptables syntax|error running iptables",
+      "type": "IPTablesError",
+      "description": "Error with iptables firewall module",
+      "root_cause": "ansible_iptables_error",
+      "suggestion": "Check iptables syntax or install package",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "iptables",
+      "tags": [
+        "ansible",
+        "module",
+        "iptables",
+        "firewall"
+      ],
+      "examples": [
+        "iptables: command not found",
+        "Invalid iptables rule syntax"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_firewalld_error",
+      "pattern": "firewalld not found|firewalld command failed|error running firewall-cmd|FirewallD not running|Failed to open|not active|firewalld is not running|firewall-cmd: command not found|error communicating with firewalld",
+      "type": "FirewalldError",
+      "description": "Error with firewalld module",
+      "root_cause": "ansible_firewalld_error",
+      "suggestion": "Install firewalld or check service status",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "firewalld",
+      "tags": [
+        "ansible",
+        "module",
+        "firewalld",
+        "firewall"
+      ],
+      "examples": [
+        "firewalld is not running",
+        "firewall-cmd: command not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_net_ping_error",
+      "pattern": "unable to connect to network device|timed out connecting|NetworkError|connection timed out|Failed to connect to the host|Authentication failed|timeout waiting for privilege escalation|timeout trying to send command|SSH Error: data could not be sent|SSH Error: Unable to authenticate",
+      "type": "NetworkDeviceError",
+      "description": "Error connecting to network device",
+      "root_cause": "ansible_network_error",
+      "suggestion": "Check network device connectivity and credentials",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "net_ping",
+      "tags": [
+        "ansible",
+        "module",
+        "network",
+        "device"
+      ],
+      "examples": [
+        "unable to connect to network device via ssh",
+        "timed out connecting to host 192.168.1.1"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_ios_command_error",
+      "pattern": "command timeout|connection timeout|privilege escalation|invalid command|command rejected|command authorization failed|invalid input|incomplete command|ambiguous command|Error executing command|syntax error detected|invalid input detected",
+      "type": "CommandError",
+      "description": "Error executing command on network device",
+      "root_cause": "ansible_network_error",
+      "suggestion": "Check command syntax and device support",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "ios_command",
+      "tags": [
+        "ansible",
+        "module",
+        "network",
+        "command"
+      ],
+      "examples": [
+        "command timeout triggered, timeout value is 10 secs",
+        "invalid input detected at '^' marker"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

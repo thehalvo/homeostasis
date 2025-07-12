@@ -1,0 +1,369 @@
+{
+  "name": "Oracle Database Errors",
+  "description": "Rules for detecting Oracle Database-specific errors",
+  "rules": [
+    {
+      "id": "oracle_syntax_error",
+      "pattern": "ORA-00936: missing expression",
+      "type": "SyntaxError",
+      "description": "Oracle syntax error - missing expression",
+      "root_cause": "sql_oracle_syntax_error",
+      "suggestion": "Fix Oracle SQL syntax errors",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "syntax"
+      ],
+      "examples": [
+        "ORA-00936: missing expression",
+        "Error: ORA-00936: missing expression"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_syntax_error_keyword",
+      "pattern": "ORA-00933: SQL command not properly ended",
+      "type": "SyntaxError",
+      "description": "Oracle syntax error - command not properly ended",
+      "root_cause": "sql_oracle_syntax_error",
+      "suggestion": "Check for missing semicolons or extra keywords",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "syntax"
+      ],
+      "examples": [
+        "ORA-00933: SQL command not properly ended",
+        "Error: ORA-00933: SQL command not properly ended"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_table_not_exist",
+      "pattern": "ORA-00942: table or view does not exist",
+      "type": "SchemaError",
+      "description": "Table or view does not exist in Oracle",
+      "root_cause": "sql_oracle_table_not_exist",
+      "suggestion": "Verify table/view exists and check spelling. Check schema and permissions",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "table",
+        "schema"
+      ],
+      "examples": [
+        "ORA-00942: table or view does not exist",
+        "Error: ORA-00942: table or view does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_column_not_exist",
+      "pattern": "ORA-00904: .* invalid identifier",
+      "type": "SchemaError",
+      "description": "Column or identifier does not exist in Oracle",
+      "root_cause": "sql_oracle_column_not_exist",
+      "suggestion": "Verify column exists in table and check spelling",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "column",
+        "schema"
+      ],
+      "examples": [
+        "ORA-00904: \"EMAIL\": invalid identifier",
+        "ORA-00904: invalid identifier"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_unique_constraint",
+      "pattern": "ORA-00001: unique constraint .* violated",
+      "type": "ConstraintError",
+      "description": "Unique constraint violation in Oracle",
+      "root_cause": "sql_oracle_unique_constraint",
+      "suggestion": "Use MERGE or check for duplicate values",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "constraint",
+        "unique"
+      ],
+      "examples": [
+        "ORA-00001: unique constraint (SCHEMA.UK_EMAIL) violated",
+        "Error: ORA-00001: unique constraint violated"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_permission_denied",
+      "pattern": "ORA-01031: insufficient privileges",
+      "type": "PermissionError",
+      "description": "Insufficient privileges in Oracle",
+      "root_cause": "sql_oracle_permission_denied",
+      "suggestion": "Grant appropriate privileges to user or connect as privileged user",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "permission",
+        "privileges"
+      ],
+      "examples": [
+        "ORA-01031: insufficient privileges",
+        "Error: ORA-01031: insufficient privileges"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_connection_failed",
+      "pattern": "ORA-12541: TNS:no listener",
+      "type": "ConnectionError",
+      "description": "Failed to connect to Oracle server - no listener",
+      "root_cause": "sql_oracle_connection_failed",
+      "suggestion": "Check Oracle listener status and connection parameters",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "connection",
+        "listener"
+      ],
+      "examples": [
+        "ORA-12541: TNS:no listener",
+        "Error: ORA-12541: TNS:no listener"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_connection_timeout",
+      "pattern": "ORA-12170: TNS:Connect timeout occurred",
+      "type": "ConnectionError",
+      "description": "Oracle connection timeout",
+      "root_cause": "sql_oracle_connection_timeout",
+      "suggestion": "Check network connectivity and firewall settings",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "connection",
+        "timeout"
+      ],
+      "examples": [
+        "ORA-12170: TNS:Connect timeout occurred",
+        "Error: ORA-12170: TNS:Connect timeout occurred"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_foreign_key_constraint",
+      "pattern": "ORA-02291: integrity constraint .* violated - parent key not found",
+      "type": "ConstraintError",
+      "description": "Foreign key constraint violation in Oracle",
+      "root_cause": "sql_oracle_foreign_key_constraint",
+      "suggestion": "Ensure referenced record exists in parent table",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "constraint",
+        "foreign_key"
+      ],
+      "examples": [
+        "ORA-02291: integrity constraint (SCHEMA.FK_USER_ID) violated - parent key not found",
+        "Error: ORA-02291: integrity constraint violated - parent key not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_child_record_found",
+      "pattern": "ORA-02292: integrity constraint .* violated - child record found",
+      "type": "ConstraintError",
+      "description": "Child records exist when deleting parent in Oracle",
+      "root_cause": "sql_oracle_child_record_found",
+      "suggestion": "Delete child records first or use CASCADE DELETE",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "constraint",
+        "foreign_key",
+        "delete"
+      ],
+      "examples": [
+        "ORA-02292: integrity constraint (SCHEMA.FK_USER_ID) violated - child record found",
+        "Error: ORA-02292: integrity constraint violated - child record found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_not_null_constraint",
+      "pattern": "ORA-01400: cannot insert NULL into",
+      "type": "ConstraintError",
+      "description": "NOT NULL constraint violation in Oracle",
+      "root_cause": "sql_oracle_not_null_constraint",
+      "suggestion": "Provide non-NULL values for required columns",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "constraint",
+        "not_null"
+      ],
+      "examples": [
+        "ORA-01400: cannot insert NULL into (\"SCHEMA\".\"USERS\".\"EMAIL\")",
+        "Error: ORA-01400: cannot insert NULL into"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_data_type_mismatch",
+      "pattern": "ORA-01722: invalid number",
+      "type": "DataTypeError",
+      "description": "Data type mismatch in Oracle - invalid number",
+      "root_cause": "sql_oracle_data_type_mismatch",
+      "suggestion": "Ensure value can be converted to number or use explicit conversion",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "data_type",
+        "number"
+      ],
+      "examples": [
+        "ORA-01722: invalid number",
+        "Error: ORA-01722: invalid number"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "oracle_invalid_date",
+      "pattern": "ORA-01858: a non-numeric character was found where a numeric was expected",
+      "type": "DataTypeError",
+      "description": "Invalid date format in Oracle",
+      "root_cause": "sql_oracle_invalid_date",
+      "suggestion": "Use TO_DATE function with proper format mask",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "data_type",
+        "date"
+      ],
+      "examples": [
+        "ORA-01858: a non-numeric character was found where a numeric was expected",
+        "Error: ORA-01858: a non-numeric character was found where a numeric was expected"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

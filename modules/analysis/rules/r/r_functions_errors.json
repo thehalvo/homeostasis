@@ -1,0 +1,286 @@
+{
+  "name": "R Function Errors",
+  "description": "Rules for detecting errors related to R functions and function calls",
+  "rules": [
+    {
+      "id": "r_argument_missing",
+      "pattern": "argument \"([^\"]+)\" is missing, with no default",
+      "type": "ArgumentError",
+      "description": "Required function argument is missing",
+      "root_cause": "r_function_error",
+      "suggestion": "Provide the required argument to the function",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "function",
+        "argument",
+        "missing"
+      ],
+      "examples": [
+        "argument \"x\" is missing, with no default",
+        "argument \"formula\" is missing, with no default"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_argument_not_found",
+      "pattern": "unused argument \\(([^\\)]+)\\)",
+      "type": "ArgumentError",
+      "description": "Argument provided is not used by the function",
+      "root_cause": "r_function_error",
+      "suggestion": "Check function documentation for valid arguments",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "function",
+        "argument",
+        "unused"
+      ],
+      "examples": [
+        "unused argument (color = \"red\")",
+        "unused argument (na.rm = TRUE)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_argument_wrong_type",
+      "pattern": "invalid (type|mode|class|length|dim|shape) .*? for argument",
+      "type": "TypeError",
+      "description": "Argument has wrong type for function",
+      "root_cause": "r_function_error",
+      "suggestion": "Check function documentation for expected argument types",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "function",
+        "argument",
+        "type"
+      ],
+      "examples": [
+        "invalid type (list) for argument",
+        "invalid class 'character' for argument"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_formal_argument_matched_by_multiple",
+      "pattern": "formal argument \"([^\"]+)\" matched by multiple actual arguments",
+      "type": "ArgumentError",
+      "description": "Multiple arguments match the same formal parameter",
+      "root_cause": "r_function_error",
+      "suggestion": "Remove duplicate argument specifications",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "function",
+        "argument",
+        "multiple"
+      ],
+      "examples": [
+        "formal argument \"x\" matched by multiple actual arguments",
+        "formal argument \"data\" matched by multiple actual arguments"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_too_many_arguments",
+      "pattern": "too many arguments, .*? at most (\\d+)",
+      "type": "ArgumentError",
+      "description": "Too many arguments provided to function",
+      "root_cause": "r_function_error",
+      "suggestion": "Check function documentation for expected arguments",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "function",
+        "argument",
+        "count"
+      ],
+      "examples": [
+        "too many arguments, expected at most 3",
+        "too many arguments, expected at most 1"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_closure_not_subsettable",
+      "pattern": "object of type '(function|closure)' is not subsettable",
+      "type": "TypeError",
+      "description": "Attempt to subset a function",
+      "root_cause": "r_function_error",
+      "suggestion": "Function cannot be indexed; call the function instead",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "function",
+        "subset",
+        "closure"
+      ],
+      "examples": [
+        "object of type 'function' is not subsettable",
+        "object of type 'closure' is not subsettable"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_invalid_function_in_do_call",
+      "pattern": "first argument must be a function",
+      "type": "DoCallError",
+      "description": "First argument to do.call is not a function",
+      "root_cause": "r_function_error",
+      "suggestion": "Ensure first argument to do.call is a function name or function object",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "function",
+        "do.call",
+        "apply"
+      ],
+      "examples": [
+        "first argument must be a function",
+        "do.call: first argument must be a function"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_wrong_length_for_function",
+      "pattern": "wrong length for function result",
+      "type": "FunctionError",
+      "description": "Function returned incorrect length result",
+      "root_cause": "r_function_error",
+      "suggestion": "Ensure function returns consistent length results",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "function",
+        "return",
+        "length"
+      ],
+      "examples": [
+        "wrong length for function result",
+        "wrong length for function result (expected 10, got 5)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_argument_evaluated_to_null",
+      "pattern": "argument .*? evaluated to NULL",
+      "type": "ArgumentError",
+      "description": "Argument evaluated to NULL",
+      "root_cause": "r_function_error",
+      "suggestion": "Ensure argument expression evaluates to non-NULL value",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "function",
+        "argument",
+        "null"
+      ],
+      "examples": [
+        "argument 'x' evaluated to NULL",
+        "argument 'data' evaluated to NULL"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_function_not_interpretable_as_logical",
+      "pattern": "argument is not interpretable as logical",
+      "type": "ArgumentError",
+      "description": "Argument cannot be converted to logical",
+      "root_cause": "r_function_error",
+      "suggestion": "Provide a logical value (TRUE/FALSE) for the argument",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "function",
+        "argument",
+        "logical"
+      ],
+      "examples": [
+        "argument is not interpretable as logical",
+        "argument 'na.rm' is not interpretable as logical"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

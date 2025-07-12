@@ -1,0 +1,258 @@
+{
+  "name": "Ansible Inventory Errors",
+  "description": "Rules for detecting errors related to Ansible inventory configuration",
+  "rules": [
+    {
+      "id": "ansible_inventory_not_found",
+      "pattern": "unable to parse inventory|Could not find inventory file|Unable to find inventory|specified inventory file .* does not exist|couldn't parse inventory file|could not be parsed as an inventory source|parsing .*/inventory/ as an inventory source failed",
+      "type": "InventoryError",
+      "description": "Inventory file not found or not parseable",
+      "root_cause": "ansible_inventory_error",
+      "suggestion": "Check inventory file path and format",
+      "category": "inventory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "inventory",
+        "file",
+        "parsing"
+      ],
+      "examples": [
+        "Could not find inventory file hosts.ini",
+        "unable to parse inventory file"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_host_pattern_error",
+      "pattern": "Could not match supplied host pattern|no hosts matched|pattern does not match any hosts|pattern .* is not in your inventory|could not match any of|host pattern did not match any hosts",
+      "type": "HostPatternError",
+      "description": "Host pattern does not match any hosts in inventory",
+      "root_cause": "ansible_inventory_error",
+      "suggestion": "Check host pattern and inventory for matching hosts",
+      "category": "inventory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "inventory",
+        "host",
+        "pattern"
+      ],
+      "examples": [
+        "Could not match supplied host pattern 'webservers'",
+        "pattern 'db' is not in your inventory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_empty_inventory",
+      "pattern": "provided hosts list is empty|no hosts matched|all hosts have been skipped|no hosts in inventory|hosts list is empty|inventory did not parse correctly|parsed empty inventory",
+      "type": "InventoryError",
+      "description": "No hosts found in inventory",
+      "root_cause": "ansible_inventory_error",
+      "suggestion": "Add hosts to inventory or check inventory format",
+      "category": "inventory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "inventory",
+        "empty",
+        "hosts"
+      ],
+      "examples": [
+        "provided hosts list is empty",
+        "no hosts matched in inventory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_inventory_syntax_error",
+      "pattern": "error parsing inventory file|Invalid inventory source|not a valid group name|invalid character in group name|host is member of both|not a valid hostname|host variables .* but no host|group variables .* but no group",
+      "type": "InventorySyntaxError",
+      "description": "Syntax error in inventory file",
+      "root_cause": "ansible_inventory_error",
+      "suggestion": "Fix inventory file syntax according to format (INI or YAML)",
+      "category": "inventory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "inventory",
+        "syntax",
+        "format"
+      ],
+      "examples": [
+        "error parsing inventory file: not a valid group name",
+        "host is member of both 'web' and 'web-servers'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_dynamic_inventory_error",
+      "pattern": "dynamic inventory script|could not execute inventory script|dynamic script .* failed|inventory script did not return valid JSON|dynamic source .* failed|executable permission for inventory script",
+      "type": "DynamicInventoryError",
+      "description": "Error executing dynamic inventory script",
+      "root_cause": "ansible_inventory_error",
+      "suggestion": "Check inventory script permissions and functionality",
+      "category": "inventory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "inventory",
+        "dynamic",
+        "script"
+      ],
+      "examples": [
+        "could not execute inventory script",
+        "dynamic script aws_ec2.py failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_inventory_group_error",
+      "pattern": "Group .* not found|host not in any group|Group .* is not defined|unknown host group|non-existent group|is not a member of a group|is not in a group|group referenced but does not exist",
+      "type": "GroupError",
+      "description": "Group not found or host not in any group",
+      "root_cause": "ansible_inventory_error",
+      "suggestion": "Add missing group or add host to group",
+      "category": "inventory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "inventory",
+        "group",
+        "host"
+      ],
+      "examples": [
+        "Group 'webservers' not found",
+        "host 'app1' not in any group"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_inventory_variable_error",
+      "pattern": "host variable .* not found|group variable .* not found|host vars for .* not found|Could not get inventory variables|inventory variables not loaded|Unable to load inventory variables|error loading host vars|error loading group vars",
+      "type": "VariableError",
+      "description": "Error loading inventory variables",
+      "root_cause": "ansible_inventory_error",
+      "suggestion": "Check host_vars and group_vars directories and files",
+      "category": "inventory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "inventory",
+        "variable",
+        "host_vars"
+      ],
+      "examples": [
+        "host variable 'ansible_ssh_host' not found",
+        "error loading host vars for host1"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_inventory_plugin_error",
+      "pattern": "inventory plugin .* not found|inventory source .* failed|inventory source .* missing required parameters|unable to parse .* as an inventory source|Inventory .* requires Python module|host plugin|plugin for inventory not found",
+      "type": "InventoryPluginError",
+      "description": "Inventory plugin error or missing dependencies",
+      "root_cause": "ansible_inventory_error",
+      "suggestion": "Install required inventory plugin or dependencies",
+      "category": "inventory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "inventory",
+        "plugin",
+        "dependency"
+      ],
+      "examples": [
+        "inventory plugin 'aws_ec2' not found",
+        "Inventory AWS requires Python module 'boto3'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_limit_error",
+      "pattern": "No host found with the specified pattern|--limit .* did not match any hosts|limiting playbook to .* failed|no matching host found|limit does not match any host|host limit .* failed",
+      "type": "LimitError",
+      "description": "Host limit pattern did not match any hosts",
+      "root_cause": "ansible_inventory_error",
+      "suggestion": "Check --limit pattern or remove limit option",
+      "category": "inventory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "inventory",
+        "limit",
+        "pattern"
+      ],
+      "examples": [
+        "--limit 'webservers' did not match any hosts",
+        "no matching host found for limit pattern 'app*'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

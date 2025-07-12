@@ -1,0 +1,286 @@
+{
+  "name": "Terraform Syntax Errors",
+  "description": "Rules for detecting Terraform HCL syntax errors and configuration issues",
+  "rules": [
+    {
+      "id": "terraform_missing_closing_brace",
+      "pattern": "Expected closing brace|unclosed \"{\"",
+      "type": "SyntaxError",
+      "description": "Missing closing brace in Terraform configuration",
+      "root_cause": "terraform_syntax_error",
+      "suggestion": "Add missing closing brace '}' to complete the block",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "syntax",
+        "brace",
+        "hcl"
+      ],
+      "examples": [
+        "Error: Expected closing brace",
+        "Error: unclosed \"{\" starting at line 10"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_unexpected_token",
+      "pattern": "Unexpected token|Expected token|unexpected symbol",
+      "type": "SyntaxError",
+      "description": "Unexpected token or symbol in Terraform configuration",
+      "root_cause": "terraform_syntax_error",
+      "suggestion": "Fix syntax error by removing or replacing the unexpected token",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "syntax",
+        "token",
+        "hcl"
+      ],
+      "examples": [
+        "Error: Unexpected token while parsing",
+        "Error: Expected token type X but found Y"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_missing_equals",
+      "pattern": "Missing equals|Expected equals",
+      "type": "SyntaxError",
+      "description": "Missing equals sign in attribute assignment",
+      "root_cause": "terraform_syntax_error",
+      "suggestion": "Add missing equals sign '=' between attribute name and value",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "syntax",
+        "equals",
+        "assignment"
+      ],
+      "examples": [
+        "Error: Missing equals sign (=) after argument name",
+        "Error: Expected equals sign in attribute assignment"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_invalid_block_name",
+      "pattern": "Invalid block name|Unknown resource type|Unknown provider",
+      "type": "SyntaxError",
+      "description": "Invalid or unknown block name, resource type, or provider",
+      "root_cause": "terraform_syntax_error",
+      "suggestion": "Check spelling of block name, resource type, or provider and ensure it's valid",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "syntax",
+        "block",
+        "resource"
+      ],
+      "examples": [
+        "Error: Invalid block name",
+        "Error: Unknown resource type \"aws_instance2\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_invalid_identifier",
+      "pattern": "Invalid identifier|Invalid character in identifier",
+      "type": "SyntaxError",
+      "description": "Invalid characters in resource or variable name",
+      "root_cause": "terraform_syntax_error",
+      "suggestion": "Use only letters, numbers, underscores, and hyphens in names",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "syntax",
+        "identifier",
+        "naming"
+      ],
+      "examples": [
+        "Error: Invalid identifier",
+        "Error: Invalid character in identifier"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_missing_argument",
+      "pattern": "Missing required argument|The argument \"([^\"]+)\" is required",
+      "type": "SyntaxError",
+      "description": "Missing required argument in block or resource",
+      "root_cause": "terraform_syntax_error",
+      "suggestion": "Add the required argument to the block or resource",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "syntax",
+        "argument",
+        "required"
+      ],
+      "examples": [
+        "Error: Missing required argument",
+        "Error: The argument \"name\" is required, but no definition was found."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_invalid_expression",
+      "pattern": "Invalid expression|Error in function call",
+      "type": "SyntaxError",
+      "description": "Invalid expression or function call syntax",
+      "root_cause": "terraform_syntax_error",
+      "suggestion": "Fix expression syntax or function call parameters",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "syntax",
+        "expression",
+        "function"
+      ],
+      "examples": [
+        "Error: Invalid expression",
+        "Error in function call: Invalid value for \"count\" parameter"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_unsupported_argument",
+      "pattern": "Unsupported argument|An argument named \"([^\"]+)\" is not expected here",
+      "type": "SyntaxError",
+      "description": "Unsupported or unexpected argument in block",
+      "root_cause": "terraform_syntax_error",
+      "suggestion": "Remove unsupported argument or check for typos",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "syntax",
+        "argument",
+        "unsupported"
+      ],
+      "examples": [
+        "Error: Unsupported argument",
+        "Error: An argument named \"cpu_core\" is not expected here."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_invalid_block_definition",
+      "pattern": "Invalid block definition|Blocks of type \"([^\"]+)\" are not expected here",
+      "type": "SyntaxError",
+      "description": "Invalid block definition or placement",
+      "root_cause": "terraform_syntax_error",
+      "suggestion": "Fix block definition or move it to the correct location",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "syntax",
+        "block",
+        "definition"
+      ],
+      "examples": [
+        "Error: Invalid block definition",
+        "Error: Blocks of type \"provisioner\" are not expected here."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_duplicate_resource",
+      "pattern": "Duplicate resource|A resource with the address \"([^\"]+)\" already exists",
+      "type": "SyntaxError",
+      "description": "Duplicate resource definition",
+      "root_cause": "terraform_syntax_error",
+      "suggestion": "Rename one of the duplicate resources to make each resource unique",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "syntax",
+        "resource",
+        "duplicate"
+      ],
+      "examples": [
+        "Error: Duplicate resource \"aws_instance\" configuration",
+        "Error: A resource with the address \"aws_instance.web\" already exists."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

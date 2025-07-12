@@ -1,0 +1,229 @@
+{
+  "name": "Haskell Lazy Evaluation Errors",
+  "description": "Rules for detecting Haskell lazy evaluation and strictness issues",
+  "rules": [
+    {
+      "id": "haskell_infinite_loop",
+      "pattern": "<<loop>>",
+      "type": "RuntimeError",
+      "description": "Infinite loop detected during evaluation",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Check recursive definitions and termination conditions",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "lazy",
+        "recursion",
+        "loop"
+      ],
+      "examples": [
+        "<<loop>>",
+        "program output shows <<loop>>"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_space_leak",
+      "pattern": "space leak",
+      "type": "MemoryError",
+      "description": "Space leak due to lazy evaluation",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Use strict evaluation or add strictness annotations",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "lazy",
+        "memory",
+        "leak"
+      ],
+      "examples": [
+        "space leak detected",
+        "program exhibits space leak behavior"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_memory_leak",
+      "pattern": "memory leak",
+      "type": "MemoryError",
+      "description": "Memory leak detected",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Force evaluation with seq or deepseq",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "lazy",
+        "memory",
+        "leak"
+      ],
+      "examples": [
+        "memory leak detected",
+        "program exhibits memory leak behavior"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_thunk_buildup",
+      "pattern": "(thunk|CAF) buildup",
+      "type": "MemoryError",
+      "description": "Excessive thunk or CAF buildup",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Add strictness to prevent thunk accumulation",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "lazy",
+        "thunk",
+        "caf"
+      ],
+      "examples": [
+        "thunk buildup detected",
+        "CAF buildup causing memory issues"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_strict_field_error",
+      "pattern": "Strict field .+ cannot contain unlifted types",
+      "type": "TypeError",
+      "description": "Strict field with incompatible type",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Use appropriate type or remove strictness annotation",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "strict",
+        "field",
+        "unlifted"
+      ],
+      "examples": [
+        "Strict field 'x' cannot contain unlifted types",
+        "Strict field with unboxed type is not allowed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_bang_pattern",
+      "pattern": "Bang pattern syntax .+ requires BangPatterns extension",
+      "type": "SyntaxError",
+      "description": "Bang pattern used without extension",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Enable BangPatterns extension",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "strict",
+        "bang",
+        "extension"
+      ],
+      "examples": [
+        "Bang pattern syntax requires BangPatterns extension",
+        "Bang pattern !x requires BangPatterns extension"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_strictness_error",
+      "pattern": "forced .+ to evaluate to WHNF",
+      "type": "RuntimeError",
+      "description": "Forcing lazy value caused error",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Check value before forcing evaluation",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "strict",
+        "force",
+        "whnf"
+      ],
+      "examples": [
+        "seq forced undefined to evaluate to WHNF",
+        "forced thunk to evaluate to WHNF resulting in exception"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_strict_unboxed_field",
+      "pattern": "Unboxed (tuples|types) .+ can only be used with GHC.Exts.Unboxed",
+      "type": "TypeError",
+      "description": "Unboxed types used incorrectly",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Use appropriate imports or avoid unboxed types",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "strict",
+        "unboxed"
+      ],
+      "examples": [
+        "Unboxed tuples can only be used with GHC.Exts.Unboxed",
+        "Unboxed types require UnboxedTuples extension"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

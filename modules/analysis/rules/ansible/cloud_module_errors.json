@@ -1,0 +1,267 @@
+{
+  "name": "Ansible Cloud Module Errors",
+  "description": "Rules for detecting errors related to Ansible cloud provider modules",
+  "rules": [
+    {
+      "id": "ansible_aws_authentication_error",
+      "pattern": "AWS authentication error|AccessDenied|InvalidClientTokenId|AuthFailure|SignatureDoesNotMatch|MissingCredentials|No AWS credentials|authentication error|AuthenticationError|Unable to locate credentials|NoCredentialsError|InvalidAccessKeyId|credential_not_found",
+      "type": "AuthenticationError",
+      "description": "AWS authentication or credentials error",
+      "root_cause": "ansible_aws_error",
+      "suggestion": "Configure AWS credentials or IAM role",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "aws",
+      "tags": [
+        "ansible",
+        "module",
+        "aws",
+        "authentication"
+      ],
+      "examples": [
+        "AWS authentication error: InvalidClientTokenId",
+        "Unable to locate credentials. Configure credentials by running \"aws configure\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_aws_resource_error",
+      "pattern": "InvalidParameterValue|MissingParameter|InvalidResourceId|does not exist|InvalidInstanceID|InvalidVpcID|InvalidSubnetID|InvalidZone|InvalidSecurityGroupID|ResourceNotFound|not found in VPC|entity not found|No such entity",
+      "type": "ResourceError",
+      "description": "AWS resource not found or invalid",
+      "root_cause": "ansible_aws_error",
+      "suggestion": "Check resource IDs, names, and existence",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "aws",
+      "tags": [
+        "ansible",
+        "module",
+        "aws",
+        "resource"
+      ],
+      "examples": [
+        "InvalidInstanceID: The instance ID 'i-1234567890abcdef0' does not exist",
+        "InvalidVpcID: The vpc 'vpc-12345' does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_azure_authentication_error",
+      "pattern": "Azure authentication failed|AuthenticationFailed|Failed to authenticate|AADSTS|Authentication error|InvalidAuthenticationTokenTenant|unable to authenticate|Forbidden|InvalidClientSecretCredential",
+      "type": "AuthenticationError",
+      "description": "Azure authentication or credentials error",
+      "root_cause": "ansible_azure_error",
+      "suggestion": "Configure Azure credentials or service principal",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "azure",
+      "tags": [
+        "ansible",
+        "module",
+        "azure",
+        "authentication"
+      ],
+      "examples": [
+        "Azure authentication failed: Failed to obtain access token",
+        "InvalidAuthenticationTokenTenant: The access token is from the wrong issuer"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_azure_resource_error",
+      "pattern": "ResourceNotFound|ResourceGroupNotFound|NotFound|was not found|could not be found|does not exist|resource could not be found|parent resource not found|resource .* doesn't exist|no longer exists",
+      "type": "ResourceError",
+      "description": "Azure resource not found or invalid",
+      "root_cause": "ansible_azure_error",
+      "suggestion": "Check resource names, groups, and existence",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "azure",
+      "tags": [
+        "ansible",
+        "module",
+        "azure",
+        "resource"
+      ],
+      "examples": [
+        "ResourceNotFound: Resource group 'example-rg' could not be found",
+        "NotFound: Storage account 'examplestorage' was not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_gcp_authentication_error",
+      "pattern": "GCP authentication failed|GCP credentials not found|Unauthorized|Permission denied|Required .* permission|Missing Authentication Token|no valid credentials|Invalid authentication|cannot find the credentials|Service Account not found|authentication failed",
+      "type": "AuthenticationError",
+      "description": "GCP authentication or credentials error",
+      "root_cause": "ansible_gcp_error",
+      "suggestion": "Configure GCP credentials or service account",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "gcp",
+      "tags": [
+        "ansible",
+        "module",
+        "gcp",
+        "authentication"
+      ],
+      "examples": [
+        "GCP authentication failed: Permission denied",
+        "no valid credentials were found for GCP"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_gcp_resource_error",
+      "pattern": "Resource not found|Not found: .+|The resource .+ was not found|does not exist|could not be found|no such resource|resource not exist|wasn't found|resource does not exist|doesn't exist",
+      "type": "ResourceError",
+      "description": "GCP resource not found or invalid",
+      "root_cause": "ansible_gcp_error",
+      "suggestion": "Check resource names, projects, and existence",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "gcp",
+      "tags": [
+        "ansible",
+        "module",
+        "gcp",
+        "resource"
+      ],
+      "examples": [
+        "Resource not found: projects/my-project/zones/us-central1-a/instances/instance-name",
+        "Not found: Resource 'projects/my-project/zones/us-central1-a/disks/disk-1'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_docker_error",
+      "pattern": "Docker SDK for Python .* required|Failed to import docker|Error connecting to Docker daemon|Cannot connect to the Docker daemon|Error communicating with Docker API|connection to docker failed|unable to find docker executable|permission denied|Error: No such image|Error: No such container|Error: No such network",
+      "type": "DockerError",
+      "description": "Docker connection or resource error",
+      "root_cause": "ansible_docker_error",
+      "suggestion": "Install Docker SDK or check Docker daemon",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "docker",
+      "tags": [
+        "ansible",
+        "module",
+        "docker",
+        "container"
+      ],
+      "examples": [
+        "Docker SDK for Python >= 2.0.0 required",
+        "Error connecting to Docker daemon at unix:///var/run/docker.sock"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_kubernetes_error",
+      "pattern": "kubernetes\.client.+ required|failed to import kubernetes|Error from server|Authentication failed|Unauthorized|Forbidden|Error loading kubeconfig|Not found|resources of type .+ not found|Could not find .+ resource|invalid resource name|Unable to connect to the server|Error communicating with Kubernetes API",
+      "type": "KubernetesError",
+      "description": "Kubernetes connection or resource error",
+      "root_cause": "ansible_kubernetes_error",
+      "suggestion": "Install Kubernetes Python client or check cluster access",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "k8s",
+      "tags": [
+        "ansible",
+        "module",
+        "kubernetes",
+        "k8s"
+      ],
+      "examples": [
+        "kubernetes.client not found, try `pip install kubernetes`",
+        "Error from server (Forbidden): pods is forbidden: User cannot list resource"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_openstack_error",
+      "pattern": "OpenstackAPI.+ required|Failed to import shade|openstack.+ required|Authentication failed|Error fetching resource|Error finding resource|Error creating resource|resource not found|Error setting .+ in resource|Invalid OpenStack credentials|Could not find|failed to get auth token|Failed validating OpenStack|Error authenticating|Unable to validate authentication",
+      "type": "OpenStackError",
+      "description": "OpenStack connection or resource error",
+      "root_cause": "ansible_openstack_error",
+      "suggestion": "Install OpenStack SDK or check authentication",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "openstack",
+      "tags": [
+        "ansible",
+        "module",
+        "openstack",
+        "cloud"
+      ],
+      "examples": [
+        "OpenstackAPI>=0.9 required for this module",
+        "Authentication failed for user admin"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

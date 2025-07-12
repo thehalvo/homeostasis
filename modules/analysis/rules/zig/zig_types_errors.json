@@ -1,0 +1,221 @@
+{
+  "name": "Zig Type System Errors",
+  "description": "Rules for detecting Zig type system and type checking errors",
+  "rules": [
+    {
+      "id": "zig_type_cannot_represent",
+      "pattern": "error: type '(.*)' cannot represent integer value",
+      "type": "TypeError",
+      "description": "Integer value cannot be represented by the specified type",
+      "root_cause": "zig_type_error",
+      "suggestion": "Use a larger type that can hold the value or modify the value",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "type",
+        "integer"
+      ],
+      "examples": [
+        "error: type 'u8' cannot represent integer value 256",
+        "error: type 'i16' cannot represent integer value 32768"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_type_cannot_cast",
+      "pattern": "error: cannot cast '(.*)' to '(.*)'",
+      "type": "TypeError",
+      "description": "Cannot cast between incompatible types",
+      "root_cause": "zig_type_error",
+      "suggestion": "Use appropriate type conversions or functions",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "type",
+        "casting"
+      ],
+      "examples": [
+        "error: cannot cast 'f64' to '*const u8'",
+        "error: cannot cast 'bool' to '[]const u8'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_type_incompatible",
+      "pattern": "error: incompatible types: '(.*)' and '(.*)'",
+      "type": "TypeError",
+      "description": "Operation between incompatible types",
+      "root_cause": "zig_type_error",
+      "suggestion": "Ensure operands have compatible types or add explicit conversion",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "type",
+        "compatibility"
+      ],
+      "examples": [
+        "error: incompatible types: 'i32' and 'f64'",
+        "error: incompatible types: '[]const u8' and '*const u8'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_type_mismatch",
+      "pattern": "error: type mismatch",
+      "type": "TypeError",
+      "description": "Types do not match as required",
+      "root_cause": "zig_type_error",
+      "suggestion": "Ensure types match for the operation or add appropriate conversion",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "zig",
+        "type",
+        "mismatch"
+      ],
+      "examples": [
+        "error: type mismatch"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_type_optional_unwrap",
+      "pattern": "error: attempt to unwrap null",
+      "type": "TypeError",
+      "description": "Attempting to unwrap a null optional value",
+      "root_cause": "zig_optional_unwrap_null",
+      "suggestion": "Check optional value is not null before unwrapping",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "type",
+        "optional",
+        "null"
+      ],
+      "examples": [
+        "error: attempt to unwrap null"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_type_invalid_sentinel",
+      "pattern": "error: invalid sentinel",
+      "type": "TypeError",
+      "description": "Invalid sentinel value for sentinel-terminated array or slice",
+      "root_cause": "zig_type_error",
+      "suggestion": "Ensure sentinel value is compatible with array type",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "type",
+        "sentinel",
+        "array"
+      ],
+      "examples": [
+        "error: invalid sentinel"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_type_error_set_mismatch",
+      "pattern": "error: expected error set '(.*)', found '(.*)'",
+      "type": "TypeError",
+      "description": "Error set mismatch in error union type",
+      "root_cause": "zig_error_not_handled",
+      "suggestion": "Ensure error sets are compatible or add explicit conversion",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "type",
+        "error_set"
+      ],
+      "examples": [
+        "error: expected error set 'FileOpenError', found 'anyerror'",
+        "error: expected error set 'NetworkError', found 'ConnectionError'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_type_tagged_union",
+      "pattern": "error: incorrect union tag value",
+      "type": "TypeError",
+      "description": "Incorrect tag value for tagged union access",
+      "root_cause": "zig_type_error",
+      "suggestion": "Ensure the union tag matches the field being accessed",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "type",
+        "union",
+        "tag"
+      ],
+      "examples": [
+        "error: incorrect union tag value"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,276 @@
+{
+  "name": "F# Async Workflow Errors",
+  "description": "Rules for detecting F# async workflow and task errors",
+  "rules": [
+    {
+      "id": "fsharp_async_binding_error",
+      "pattern": "The use of '(let|do)!' in this computation expression is invalid",
+      "type": "SyntaxError",
+      "description": "Invalid binding in async workflow",
+      "root_cause": "fsharp_async_error",
+      "suggestion": "Use let! or do! only with async values in async workflows",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "async",
+        "binding"
+      ],
+      "examples": [
+        "The use of 'let!' in this computation expression is invalid because the expression has type 'int'",
+        "The use of 'do!' in this computation expression is invalid"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_async_return_error",
+      "pattern": "The expression should have type 'Async<(.+?)>' but has type '(.+?)'",
+      "type": "TypeError",
+      "description": "Type mismatch in async workflow return",
+      "root_cause": "fsharp_async_error",
+      "suggestion": "Ensure async workflow returns proper Async<T> type",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "async",
+        "return"
+      ],
+      "examples": [
+        "The expression should have type 'Async<int>' but has type 'int'",
+        "The expression should have type 'Async<unit>' but has type 'Task'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_async_task_error",
+      "pattern": "Task<T> requires .NET 4.5 or later",
+      "type": "CompilationError",
+      "description": "Task<T> requires .NET 4.5 or later",
+      "root_cause": "fsharp_async_error",
+      "suggestion": "Use .NET 4.5+ or use Async<T> instead of Task<T>",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "async",
+        "task",
+        "dotnet"
+      ],
+      "examples": [
+        "Task<T> requires .NET 4.5 or later"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_async_exception",
+      "pattern": "Async exception: (.+)",
+      "type": "RuntimeError",
+      "description": "Exception in async workflow",
+      "root_cause": "fsharp_async_error",
+      "suggestion": "Handle exceptions in async workflows with try/with",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "async",
+        "exception"
+      ],
+      "examples": [
+        "Async exception: System.NullReferenceException",
+        "Async exception: The operation was canceled."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_async_canceled",
+      "pattern": "The operation was canceled",
+      "type": "RuntimeError",
+      "description": "Async operation was canceled",
+      "root_cause": "fsharp_async_error",
+      "suggestion": "Handle cancellation in async workflows",
+      "category": "fsharp",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "async",
+        "cancel"
+      ],
+      "examples": [
+        "System.OperationCanceledException: The operation was canceled.",
+        "The async operation was canceled."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_async_await_error",
+      "pattern": "Cannot await in a non-async expression",
+      "type": "SyntaxError",
+      "description": "Cannot use await outside of async block",
+      "root_cause": "fsharp_async_error",
+      "suggestion": "Use async { ... } block for code with await or let!/do!",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "async",
+        "await"
+      ],
+      "examples": [
+        "Cannot await in a non-async expression",
+        "Cannot use let! outside of async expression"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_async_start_forgotten",
+      "pattern": "This expression should have type 'unit' but has type 'Async<unit>'",
+      "type": "TypeError",
+      "description": "Forgot to start async workflow",
+      "root_cause": "fsharp_async_error",
+      "suggestion": "Use Async.Start or Async.RunSynchronously to execute the async workflow",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "async",
+        "execution"
+      ],
+      "examples": [
+        "This expression should have type 'unit' but has type 'Async<unit>'",
+        "Value restriction. The value has been inferred to have type 'Async<unit>'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_task_awaiter",
+      "pattern": "The member or object constructor 'GetAwaiter' taking 0 arguments is not found",
+      "type": "TypeError",
+      "description": "Missing GetAwaiter method for await",
+      "root_cause": "fsharp_async_error",
+      "suggestion": "Convert non-awaitable type to Task or Async",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "async",
+        "awaiter",
+        "task"
+      ],
+      "examples": [
+        "The member or object constructor 'GetAwaiter' taking 0 arguments is not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_computation_missing_type",
+      "pattern": "Computation expressions must be of the form 'expr { ... }'",
+      "type": "SyntaxError",
+      "description": "Invalid computation expression syntax",
+      "root_cause": "fsharp_async_error",
+      "suggestion": "Use proper computation expression syntax like 'async { ... }'",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "async",
+        "computation",
+        "syntax"
+      ],
+      "examples": [
+        "Computation expressions must be of the form 'expr { ... }'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_async_void",
+      "pattern": "Async<Void> has been instantiated",
+      "type": "TypeError",
+      "description": "Async<Void> is not a valid type",
+      "root_cause": "fsharp_async_error",
+      "suggestion": "Use Async<unit> instead of Async<Void>",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "async",
+        "void"
+      ],
+      "examples": [
+        "Async<Void> has been instantiated",
+        "Cannot convert from 'Async<Void>' to 'Async<unit>'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

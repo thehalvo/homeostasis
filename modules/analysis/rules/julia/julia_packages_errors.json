@@ -1,0 +1,258 @@
+{
+  "name": "Julia Package Errors",
+  "description": "Rules for detecting errors related to Julia package management and dependencies",
+  "rules": [
+    {
+      "id": "julia_package_not_found",
+      "pattern": "ArgumentError: Package ([\\w\\.]+) not found",
+      "type": "PackageError",
+      "description": "Package not found in registry",
+      "root_cause": "julia_package_error",
+      "suggestion": "Check package name spelling or add a custom registry",
+      "category": "package",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "package",
+        "registry",
+        "install"
+      ],
+      "examples": [
+        "ArgumentError: Package FancyPackage not found in registry",
+        "Error: Package MyPackage not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_package_load_error",
+      "pattern": "LoadError: ArgumentError: Package ([\\w\\.]+) not found",
+      "type": "PackageError",
+      "description": "Error loading package that is not installed",
+      "root_cause": "julia_package_error",
+      "suggestion": "Install the package with Pkg.add() before using",
+      "category": "package",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "package",
+        "load",
+        "import"
+      ],
+      "examples": [
+        "LoadError: ArgumentError: Package DataFrames not found",
+        "Package loading error: package not installed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_package_version_error",
+      "pattern": "Unsatisfiable requirements detected for package ([\\w\\.]+)",
+      "type": "PackageError",
+      "description": "Package version requirements cannot be satisfied",
+      "root_cause": "julia_package_error",
+      "suggestion": "Check version constraints in Project.toml or Manifest.toml",
+      "category": "package",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "package",
+        "version",
+        "dependency"
+      ],
+      "examples": [
+        "Unsatisfiable requirements detected for package DataFrames",
+        "Version conflict in package dependencies"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_package_precompile_error",
+      "pattern": "ERROR: LoadError: Failed to precompile ([\\w\\.]+) to",
+      "type": "PackageError",
+      "description": "Package precompilation failed",
+      "root_cause": "julia_package_error",
+      "suggestion": "Check package dependencies or rebuild the package",
+      "category": "package",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "package",
+        "precompile",
+        "build"
+      ],
+      "examples": [
+        "ERROR: LoadError: Failed to precompile JSON to /home/user/.julia/compiled/v1.7/JSON.ji",
+        "Precompilation error for package DataFrames"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_package_import_error",
+      "pattern": "UndefVarError: ([\\w\\.]+) not defined",
+      "type": "ImportError",
+      "description": "Module or symbol not properly imported",
+      "root_cause": "julia_package_error",
+      "suggestion": "Check import statement and ensure the module exports this symbol",
+      "category": "package",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "julia",
+        "import",
+        "module",
+        "symbol"
+      ],
+      "examples": [
+        "UndefVarError: DataFrame not defined",
+        "Error: CSV not defined (did you forget to import CSV?)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_manifest_project_mismatch",
+      "pattern": "The manifest contains packages that are not in the project",
+      "type": "PackageError",
+      "description": "Manifest.toml and Project.toml are out of sync",
+      "root_cause": "julia_package_error",
+      "suggestion": "Run Pkg.resolve() to update the manifest to match the project",
+      "category": "package",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "manifest",
+        "project",
+        "dependency"
+      ],
+      "examples": [
+        "The manifest contains packages that are not in the project",
+        "Warning: Project.toml and Manifest.toml are out of sync"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_package_build_error",
+      "pattern": "Error building `([\\w\\.]+)`",
+      "type": "PackageError",
+      "description": "Error during package build process",
+      "root_cause": "julia_package_error",
+      "suggestion": "Check build dependencies or package build script",
+      "category": "package",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "package",
+        "build",
+        "compilation"
+      ],
+      "examples": [
+        "Error building `PyCall`",
+        "Package build process failed for BinaryProvider"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_registry_error",
+      "pattern": "ERROR: Package registry update failed",
+      "type": "PackageError",
+      "description": "Failed to update package registry",
+      "root_cause": "julia_package_error",
+      "suggestion": "Check network connection or registry URL",
+      "category": "package",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "registry",
+        "update",
+        "package"
+      ],
+      "examples": [
+        "ERROR: Package registry update failed",
+        "Registry update error: connection timed out"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_module_not_defined",
+      "pattern": "UndefVarError: Module ([\\w\\.]+) not defined",
+      "type": "ImportError",
+      "description": "Module name not found in current scope",
+      "root_cause": "julia_package_error",
+      "suggestion": "Add using/import statement for the module or check spelling",
+      "category": "package",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "module",
+        "import",
+        "using"
+      ],
+      "examples": [
+        "UndefVarError: Module CSV not defined",
+        "Error: Module DataFrames not defined in current scope"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

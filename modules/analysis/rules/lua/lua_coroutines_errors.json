@@ -1,0 +1,286 @@
+{
+  "name": "Lua Coroutine Errors",
+  "description": "Rules for detecting errors related to Lua coroutines and threading",
+  "rules": [
+    {
+      "id": "lua_coroutine_dead",
+      "pattern": "cannot resume dead coroutine",
+      "type": "CoroutineError",
+      "description": "Attempting to resume a dead coroutine",
+      "root_cause": "lua_coroutine_error",
+      "suggestion": "Check coroutine status before resuming with coroutine.status(co)",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "coroutine",
+        "resume",
+        "dead"
+      ],
+      "examples": [
+        "cannot resume dead coroutine",
+        "attempt to resume dead coroutine"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_coroutine_running",
+      "pattern": "cannot resume running coroutine",
+      "type": "CoroutineError",
+      "description": "Attempting to resume a running coroutine",
+      "root_cause": "lua_coroutine_error",
+      "suggestion": "Only resume suspended coroutines, not running ones",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "coroutine",
+        "resume",
+        "running"
+      ],
+      "examples": [
+        "cannot resume running coroutine",
+        "attempt to resume a running coroutine"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_coroutine_main_yield",
+      "pattern": "attempt to yield(from| across)?(outside a|main|normal) (coroutine|thread)",
+      "type": "CoroutineError",
+      "description": "Attempting to yield from main thread",
+      "root_cause": "lua_coroutine_error",
+      "suggestion": "Only use coroutine.yield inside coroutine functions",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "coroutine",
+        "yield",
+        "main"
+      ],
+      "examples": [
+        "attempt to yield from main thread",
+        "attempt to yield outside a coroutine"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_coroutine_across_c_boundary",
+      "pattern": "attempt to yield across (C-call|metamethod) boundary",
+      "type": "CoroutineError",
+      "description": "Cannot yield across C-call boundary",
+      "root_cause": "lua_coroutine_error",
+      "suggestion": "Avoid yielding inside callbacks to C functions or metamethods",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "coroutine",
+        "yield",
+        "c-call"
+      ],
+      "examples": [
+        "attempt to yield across C-call boundary",
+        "attempt to yield across metamethod boundary"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_coroutine_invalid_status",
+      "pattern": "coroutine (has|in) invalid status",
+      "type": "CoroutineError",
+      "description": "Coroutine has an invalid status",
+      "root_cause": "lua_coroutine_error",
+      "suggestion": "Check coroutine status with coroutine.status(co) before operations",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "coroutine",
+        "status",
+        "invalid"
+      ],
+      "examples": [
+        "coroutine has invalid status",
+        "coroutine in invalid status"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_coroutine_not_suspended",
+      "pattern": "cannot resume non-suspended coroutine",
+      "type": "CoroutineError",
+      "description": "Attempting to resume a non-suspended coroutine",
+      "root_cause": "lua_coroutine_error",
+      "suggestion": "Only resume coroutines in 'suspended' state",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "coroutine",
+        "resume",
+        "suspended"
+      ],
+      "examples": [
+        "cannot resume non-suspended coroutine",
+        "attempt to resume a non-suspended coroutine"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_coroutine_nil",
+      "pattern": "attempt to resume nil",
+      "type": "CoroutineError",
+      "description": "Attempting to resume a nil value as coroutine",
+      "root_cause": "lua_coroutine_error",
+      "suggestion": "Ensure coroutine is created before resuming",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "coroutine",
+        "resume",
+        "nil"
+      ],
+      "examples": [
+        "attempt to resume nil",
+        "cannot resume nil (not a coroutine)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_coroutine_memory_error",
+      "pattern": "not enough memory for coroutine",
+      "type": "CoroutineError",
+      "description": "Not enough memory to create or run coroutine",
+      "root_cause": "lua_coroutine_error",
+      "suggestion": "Reduce memory usage or limit number of active coroutines",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "coroutine",
+        "memory",
+        "allocation"
+      ],
+      "examples": [
+        "not enough memory for coroutine",
+        "out of memory trying to allocate coroutine"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_coroutine_wrapped_error",
+      "pattern": "error in wrapped coroutine",
+      "type": "CoroutineError",
+      "description": "Error in wrapped coroutine",
+      "root_cause": "lua_coroutine_error",
+      "suggestion": "Handle errors properly in coroutine.wrap functions",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "coroutine",
+        "wrap",
+        "error"
+      ],
+      "examples": [
+        "error in wrapped coroutine",
+        "error in coroutine: attempt to index a nil value"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_coroutine_invalid_argument",
+      "pattern": "bad argument #\\d+ to 'coroutine\\.([^']+)' \\(([^\\)]+)\\)",
+      "type": "CoroutineError",
+      "description": "Invalid argument to coroutine function",
+      "root_cause": "lua_coroutine_error",
+      "suggestion": "Check arguments to coroutine functions",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "coroutine",
+        "argument",
+        "type"
+      ],
+      "examples": [
+        "bad argument #1 to 'coroutine.resume' (coroutine expected)",
+        "bad argument #1 to 'coroutine.create' (function expected)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "name": "Nim Async Errors",
+  "description": "Rules for detecting Nim async and concurrent programming errors",
+  "rules": [
+    {
+      "id": "nim_async_await_in_non_async",
+      "pattern": "Error: await in non-async procedure",
+      "type": "AsyncError",
+      "description": "Using await in a non-async procedure",
+      "root_cause": "nim_async_error",
+      "suggestion": "Mark the procedure as async with {.async.} pragma",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "async",
+        "concurrency"
+      ],
+      "examples": [
+        "Error: await in non-async procedure"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_async_cannot_use",
+      "pattern": "Error: cannot use '(.+)' in async context",
+      "type": "AsyncError",
+      "description": "Using unsupported feature in async context",
+      "root_cause": "nim_async_error",
+      "suggestion": "Replace with async-compatible alternatives",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "async",
+        "concurrency"
+      ],
+      "examples": [
+        "Error: cannot use 'sleep' in async context",
+        "Error: cannot use 'stdin.readLine' in async context"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_async_future_not_completed",
+      "pattern": "Error: future not completed",
+      "type": "AsyncError",
+      "description": "Attempting to access an incomplete Future",
+      "root_cause": "nim_async_error",
+      "suggestion": "Use await or ensure Future is completed before access",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "async",
+        "future"
+      ],
+      "examples": [
+        "Error: future not completed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_async_procedure_missing",
+      "pattern": "Error: async procedure '(.+)' not found",
+      "type": "AsyncError",
+      "description": "Async procedure not found",
+      "root_cause": "nim_async_error",
+      "suggestion": "Check if procedure exists and is marked with {.async.}",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "async",
+        "procedure"
+      ],
+      "examples": [
+        "Error: async procedure 'fetchData' not found",
+        "Error: async procedure 'connectDb' not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_async_deadlock",
+      "pattern": "Error: deadlock detected",
+      "type": "AsyncError",
+      "description": "Deadlock detected in async operations",
+      "root_cause": "nim_async_error",
+      "suggestion": "Check for circular awaits or blocking operations",
+      "category": "nim",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "async",
+        "deadlock"
+      ],
+      "examples": [
+        "Error: deadlock detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_async_blocking_operation",
+      "pattern": "Error: blocking operation in async context",
+      "type": "AsyncError",
+      "description": "Using blocking operation in async context",
+      "root_cause": "nim_async_error",
+      "suggestion": "Use async alternatives or move to a separate thread",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "async",
+        "blocking"
+      ],
+      "examples": [
+        "Error: blocking operation in async context"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_async_callback_error",
+      "pattern": "Error: unhandled exception in async callback",
+      "type": "AsyncError",
+      "description": "Unhandled exception in async callback",
+      "root_cause": "nim_async_error",
+      "suggestion": "Add try-except blocks in async callbacks",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "async",
+        "exception"
+      ],
+      "examples": [
+        "Error: unhandled exception in async callback"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_async_type_mismatch",
+      "pattern": "Error: type mismatch: got Future\\[(.+)\\] but expected Future\\[(.+)\\]",
+      "type": "AsyncError",
+      "description": "Type mismatch in Future generic type",
+      "root_cause": "nim_async_error",
+      "suggestion": "Ensure async procedures return correct Future types",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "async",
+        "future",
+        "type"
+      ],
+      "examples": [
+        "Error: type mismatch: got Future[int] but expected Future[string]",
+        "Error: type mismatch: got Future[void] but expected Future[seq[int]]"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

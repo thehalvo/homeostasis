@@ -1,0 +1,256 @@
+{
+  "name": "Crystal Memory Errors",
+  "description": "Rules for detecting Crystal memory management and allocation errors",
+  "rules": [
+    {
+      "id": "crystal_memory_out_of_memory",
+      "pattern": "out of memory",
+      "type": "MemoryError",
+      "description": "Out of memory error during allocation",
+      "root_cause": "crystal_memory_error",
+      "suggestion": "Reduce memory usage or increase available memory",
+      "category": "crystal",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "memory",
+        "allocation"
+      ],
+      "examples": [
+        "out of memory",
+        "failed to allocate memory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_memory_allocation_failed",
+      "pattern": "memory allocation failed",
+      "type": "MemoryError",
+      "description": "Memory allocation failure",
+      "root_cause": "crystal_memory_error",
+      "suggestion": "Check memory usage and allocation patterns",
+      "category": "crystal",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "memory",
+        "allocation"
+      ],
+      "examples": [
+        "memory allocation failed",
+        "allocation of size bytes failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_memory_invalid_pointer",
+      "pattern": "invalid pointer",
+      "type": "MemoryError",
+      "description": "Invalid pointer access",
+      "root_cause": "crystal_memory_error",
+      "suggestion": "Check pointer validity before use",
+      "category": "crystal",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "memory",
+        "pointer",
+        "safety"
+      ],
+      "examples": [
+        "invalid pointer",
+        "invalid pointer dereference"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_memory_use_after_free",
+      "pattern": "use after free",
+      "type": "MemoryError",
+      "description": "Using memory after it has been freed",
+      "root_cause": "crystal_memory_error",
+      "suggestion": "Avoid using pointers after freeing memory",
+      "category": "crystal",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "memory",
+        "pointer",
+        "safety"
+      ],
+      "examples": [
+        "use after free",
+        "access to freed memory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_memory_double_free",
+      "pattern": "double free",
+      "type": "MemoryError",
+      "description": "Attempting to free memory that has already been freed",
+      "root_cause": "crystal_memory_error",
+      "suggestion": "Ensure memory is only freed once",
+      "category": "crystal",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "memory",
+        "pointer",
+        "safety"
+      ],
+      "examples": [
+        "double free",
+        "attempt to free already freed memory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_memory_buffer_overflow",
+      "pattern": "buffer overflow",
+      "type": "MemoryError",
+      "description": "Buffer overflow detected",
+      "root_cause": "crystal_memory_error",
+      "suggestion": "Check buffer boundaries before access",
+      "category": "crystal",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "memory",
+        "buffer",
+        "safety"
+      ],
+      "examples": [
+        "buffer overflow",
+        "buffer overflow detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_memory_null_reference",
+      "pattern": "null reference",
+      "type": "MemoryError",
+      "description": "Null reference exception",
+      "root_cause": "crystal_nil_error",
+      "suggestion": "Check for nil before accessing references",
+      "category": "crystal",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "memory",
+        "nil",
+        "safety"
+      ],
+      "examples": [
+        "null reference",
+        "null pointer dereference"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_memory_index_out_of_bounds",
+      "pattern": "index out of bounds",
+      "type": "MemoryError",
+      "description": "Array or collection index out of bounds",
+      "root_cause": "crystal_bounds_error",
+      "suggestion": "Check array indices are within valid range",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "memory",
+        "array",
+        "bounds"
+      ],
+      "examples": [
+        "index out of bounds",
+        "index 5 out of bounds (size: 3)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_memory_stack_overflow",
+      "pattern": "stack overflow",
+      "type": "MemoryError",
+      "description": "Stack overflow due to excessive recursion or large allocations",
+      "root_cause": "crystal_memory_error",
+      "suggestion": "Check for infinite recursion or reduce stack usage",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "memory",
+        "stack",
+        "recursion"
+      ],
+      "examples": [
+        "stack overflow",
+        "stack level too deep"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

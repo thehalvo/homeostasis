@@ -1,0 +1,427 @@
+{
+  "name": "Dockerfile Common Errors",
+  "description": "Rules for detecting common errors in Dockerfile configurations",
+  "rules": [
+    {
+      "id": "dockerfile_syntax_unknown_instruction",
+      "pattern": "Unknown instruction:|invalid instruction|unknown instruction:|unrecognized directive|Dockerfile parse error line [0-9]+: Unknown directive",
+      "type": "SyntaxError",
+      "description": "Unknown instruction in Dockerfile",
+      "root_cause": "dockerfile_syntax_error",
+      "suggestion": "Check instruction spelling and capitalization",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "syntax",
+        "instruction"
+      ],
+      "examples": [
+        "Unknown instruction: FRMO",
+        "Dockerfile parse error line 5: Unknown directive INSTAL"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_syntax_missing_argument",
+      "pattern": "requires [0-9]+ arguments?|requires at least [0-9]+ arguments?|missing argument|missing instruction argument|requires an argument|expected [0-9]+ arguments?|must have at least [0-9]+ arguments?",
+      "type": "SyntaxError",
+      "description": "Missing required argument for instruction",
+      "root_cause": "dockerfile_syntax_error",
+      "suggestion": "Add the required argument to the instruction",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "syntax",
+        "argument"
+      ],
+      "examples": [
+        "FROM requires 1 argument",
+        "COPY requires at least 2 arguments"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_syntax_invalid_format",
+      "pattern": "invalid format|invalid reference format|invalid syntax|invalid instruction format|invalid format for|invalid argument format|invalid parameter|malformed|incorrect syntax",
+      "type": "SyntaxError",
+      "description": "Invalid instruction format in Dockerfile",
+      "root_cause": "dockerfile_syntax_error",
+      "suggestion": "Fix the instruction format according to Dockerfile syntax",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "syntax",
+        "format"
+      ],
+      "examples": [
+        "invalid reference format",
+        "invalid format for ENV: one environment variable must be provided"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_syntax_unexpected_token",
+      "pattern": "unexpected token|unexpected character|unexpected end of|unexpected line|expected [^\\s]+ but got|unexpected EOF|unexpected \\[",
+      "type": "SyntaxError",
+      "description": "Unexpected token in Dockerfile",
+      "root_cause": "dockerfile_syntax_error",
+      "suggestion": "Fix syntax error with proper delimiters or formatting",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "syntax",
+        "token"
+      ],
+      "examples": [
+        "unexpected token: [",
+        "unexpected end of line"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_instruction_copy_failed",
+      "pattern": "COPY failed:|failed to copy|copy file .* failed|no source files were specified|filesystem layer verification failed|copy file|file not found|copy unexpected",
+      "type": "InstructionError",
+      "description": "COPY instruction failed in Dockerfile",
+      "root_cause": "dockerfile_instruction_error",
+      "suggestion": "Check source file existence and build context paths",
+      "category": "instruction",
+      "severity": "high",
+      "confidence": "high",
+      "instruction": "COPY",
+      "tags": [
+        "dockerfile",
+        "instruction",
+        "copy",
+        "file"
+      ],
+      "examples": [
+        "COPY failed: file not found in build context",
+        "failed to copy files: no source files were specified"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_instruction_add_failed",
+      "pattern": "ADD failed:|add file .* failed|failed to add|add unexpected|add error|unable to add|no source files were specified|unable to download|unable to extract",
+      "type": "InstructionError",
+      "description": "ADD instruction failed in Dockerfile",
+      "root_cause": "dockerfile_instruction_error",
+      "suggestion": "Check source file existence, URL accessibility, or archive format",
+      "category": "instruction",
+      "severity": "high",
+      "confidence": "high",
+      "instruction": "ADD",
+      "tags": [
+        "dockerfile",
+        "instruction",
+        "add",
+        "file"
+      ],
+      "examples": [
+        "ADD failed: unable to download remote file",
+        "failed to add file: unable to extract archive"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_instruction_run_failed",
+      "pattern": "RUN returned a non-zero code:|command .* returned a non-zero code|The command .* returned a non-zero code|exited with [1-9][0-9]*|failed with exit code|failed to execute|exit status [1-9][0-9]*|non-zero exit code",
+      "type": "InstructionError",
+      "description": "RUN command failed in Dockerfile",
+      "root_cause": "dockerfile_instruction_error",
+      "suggestion": "Fix command syntax or handle command execution errors",
+      "category": "instruction",
+      "severity": "high",
+      "confidence": "high",
+      "instruction": "RUN",
+      "tags": [
+        "dockerfile",
+        "instruction",
+        "run",
+        "command"
+      ],
+      "examples": [
+        "RUN returned a non-zero code: 127",
+        "The command '/bin/sh -c apt-get update' returned a non-zero code: 1"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_build_context_empty",
+      "pattern": "build context is empty|no files found in build context|no context specified|no files in context|empty context|no files were matched or the source directory is empty",
+      "type": "BuildContextError",
+      "description": "Empty build context for Docker build",
+      "root_cause": "dockerfile_build_context_error",
+      "suggestion": "Check build context path and ensure files exist",
+      "category": "build",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "build",
+        "context",
+        "empty"
+      ],
+      "examples": [
+        "build context is empty",
+        "no files were matched or the source directory is empty"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_build_context_file_not_found",
+      "pattern": "no such file or directory|file not found|could not find|file does not exist|not found in build context|cannot find the file|unable to locate|not found or not a file|unable to find|can't find",
+      "type": "BuildContextError",
+      "description": "File not found in build context",
+      "root_cause": "dockerfile_build_context_error",
+      "suggestion": "Ensure file exists in build context or correct path",
+      "category": "build",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "build",
+        "context",
+        "file"
+      ],
+      "examples": [
+        "no such file or directory: /app/package.json",
+        "file not found in build context"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_build_context_outside_path",
+      "pattern": "forbidden path outside the build context|path outside the build context|parent directory is inaccessible|references a parent directory|path outside build context|cannot use .. in a path|outside of the build context|../|outside build context",
+      "type": "BuildContextError",
+      "description": "Attempt to access path outside build context",
+      "root_cause": "dockerfile_build_context_error",
+      "suggestion": "Use paths relative to build context without parent directory references",
+      "category": "build",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "build",
+        "context",
+        "path"
+      ],
+      "examples": [
+        "forbidden path outside the build context: ../config.json",
+        "cannot use .. in a path"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_base_image_not_found",
+      "pattern": "pull access denied|image not found|repository does not exist|no such image|manifest unknown|image .* not found|unable to find image|not found in registry|manifest for .* not found|reference does not exist|error pulling image|tag .* not found|error pulling",
+      "type": "BaseImageError",
+      "description": "Base image not found or inaccessible",
+      "root_cause": "dockerfile_base_image_error",
+      "suggestion": "Check image name, tag, and registry accessibility",
+      "category": "base_image",
+      "severity": "high",
+      "confidence": "high",
+      "instruction": "FROM",
+      "tags": [
+        "dockerfile",
+        "from",
+        "image",
+        "registry"
+      ],
+      "examples": [
+        "pull access denied for myorg/myimage",
+        "manifest for alpine:3.99 not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_base_image_authentication",
+      "pattern": "authentication required|unauthorized|not authorized|authorization failed|need to login|login required|denied: requested access to the resource is denied|authentication is required|permission denied|not authenticated|need credentials|invalid authentication|invalid username/password",
+      "type": "BaseImageError",
+      "description": "Authentication error for base image",
+      "root_cause": "dockerfile_base_image_error",
+      "suggestion": "Login to registry with valid credentials",
+      "category": "base_image",
+      "severity": "high",
+      "confidence": "high",
+      "instruction": "FROM",
+      "tags": [
+        "dockerfile",
+        "from",
+        "image",
+        "authentication"
+      ],
+      "examples": [
+        "unauthorized: authentication required",
+        "denied: requested access to the resource is denied"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_network_error",
+      "pattern": "network timeout|connection refused|temporary failure in name resolution|no route to host|connection timed out|network is unreachable|cannot resolve|DNS problem|failed to connect|dial tcp|i/o timeout|TLS handshake timeout|timeout exceeded",
+      "type": "NetworkError",
+      "description": "Network error during Docker build",
+      "root_cause": "dockerfile_network_error",
+      "suggestion": "Check network connectivity and DNS resolution",
+      "category": "network",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "network",
+        "connectivity",
+        "timeout"
+      ],
+      "examples": [
+        "network timeout connecting to repository",
+        "temporary failure in name resolution 'registry.docker.io'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_filesystem_space",
+      "pattern": "no space left on device|disk space|insufficient space|out of space|not enough space|disk quota exceeded|filesystem is full|file too large|filesystem has no space",
+      "type": "FilesystemError",
+      "description": "No space left on device",
+      "root_cause": "dockerfile_filesystem_error",
+      "suggestion": "Free up disk space or prune Docker system",
+      "category": "filesystem",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "filesystem",
+        "space",
+        "disk"
+      ],
+      "examples": [
+        "no space left on device",
+        "disk quota exceeded while writing file"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_filesystem_permission",
+      "pattern": "permission denied|operation not permitted|cannot create directory|cannot remove|cannot write|access denied|not allowed|insufficient permissions|permission error|ownership|read-only filesystem|can't create|permission issue",
+      "type": "FilesystemError",
+      "description": "Permission denied on filesystem operation",
+      "root_cause": "dockerfile_filesystem_error",
+      "suggestion": "Check file permissions and ownership",
+      "category": "filesystem",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "filesystem",
+        "permission",
+        "access"
+      ],
+      "examples": [
+        "permission denied: /app/logs",
+        "cannot create directory '/var/www': Permission denied"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

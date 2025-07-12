@@ -1,0 +1,362 @@
+{
+  "name": "SQL Common Errors",
+  "description": "Rules for detecting common SQL errors across different database systems",
+  "rules": [
+    {
+      "id": "sql_syntax_error",
+      "pattern": "syntax error",
+      "type": "SyntaxError",
+      "description": "SQL syntax error",
+      "root_cause": "sql_syntax_error",
+      "suggestion": "Check SQL syntax for missing keywords, commas, or parentheses",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "syntax error at or near '('",
+        "You have an error in your SQL syntax"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_missing_comma",
+      "pattern": "missing (comma|,)",
+      "type": "SyntaxError",
+      "description": "Missing comma in SQL query",
+      "root_cause": "sql_syntax_error",
+      "suggestion": "Add missing comma between list items or columns",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "syntax",
+        "comma"
+      ],
+      "examples": [
+        "missing comma between items",
+        "expected comma but got"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_table_not_exist",
+      "pattern": "(table|relation) .*? (does not|doesn't) exist",
+      "type": "SchemaError",
+      "description": "Referenced table does not exist",
+      "root_cause": "sql_table_not_exist",
+      "suggestion": "Verify table name spelling and existence in the database",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "schema",
+        "table"
+      ],
+      "examples": [
+        "relation \"users\" does not exist",
+        "Table 'database.table' doesn't exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_column_not_exist",
+      "pattern": "(column|field) .*? (does not|doesn't) exist|unknown column",
+      "type": "SchemaError",
+      "description": "Referenced column does not exist",
+      "root_cause": "sql_column_not_exist",
+      "suggestion": "Check column name spelling and table schema",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "schema",
+        "column"
+      ],
+      "examples": [
+        "column \"username\" does not exist",
+        "Unknown column 'email' in 'field list'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_unique_constraint_violation",
+      "pattern": "(unique|duplicate|uniqueness) (constraint|key|entry|violation)",
+      "type": "ConstraintError",
+      "description": "Unique constraint violation",
+      "root_cause": "sql_unique_constraint_violation",
+      "suggestion": "Check for duplicate values or modify unique constraints",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "constraint",
+        "unique"
+      ],
+      "examples": [
+        "duplicate key value violates unique constraint",
+        "Duplicate entry '123' for key 'email'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_foreign_key_violation",
+      "pattern": "foreign key (constraint|violation|failed)",
+      "type": "ConstraintError",
+      "description": "Foreign key constraint violation",
+      "root_cause": "sql_foreign_key_violation",
+      "suggestion": "Ensure referenced values exist in parent table",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "constraint",
+        "foreign_key"
+      ],
+      "examples": [
+        "foreign key constraint fails",
+        "insert or update on table violates foreign key constraint"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_not_null_constraint",
+      "pattern": "(not null|null value|cannot be null)",
+      "type": "ConstraintError",
+      "description": "NOT NULL constraint violation",
+      "root_cause": "sql_not_null_constraint",
+      "suggestion": "Provide non-NULL values for required columns",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "constraint",
+        "not_null"
+      ],
+      "examples": [
+        "null value in column violates not-null constraint",
+        "Column 'name' cannot be null"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_permission_denied",
+      "pattern": "(permission|access) denied",
+      "type": "PermissionError",
+      "description": "Permission denied for database operation",
+      "root_cause": "sql_permission_denied",
+      "suggestion": "Check database user permissions and privileges",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "permission",
+        "access"
+      ],
+      "examples": [
+        "permission denied for relation users",
+        "Access denied for user 'username'@'localhost'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_connection_failed",
+      "pattern": "(connection|connect) (failed|error|refused)",
+      "type": "ConnectionError",
+      "description": "Database connection failed",
+      "root_cause": "sql_connection_failed",
+      "suggestion": "Check database server status and connection parameters",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "connection",
+        "network"
+      ],
+      "examples": [
+        "connection refused",
+        "could not connect to server",
+        "Can't connect to database server"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_data_type_mismatch",
+      "pattern": "(data type|type) mismatch|incompatible (data types|types)",
+      "type": "DataTypeError",
+      "description": "Data type mismatch in operation",
+      "root_cause": "sql_data_type_mismatch",
+      "suggestion": "Ensure compatible data types or add explicit type casting",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "data_type",
+        "casting"
+      ],
+      "examples": [
+        "data type mismatch",
+        "cannot compare varchar with integer",
+        "Incompatible data types in expression"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_invalid_date_format",
+      "pattern": "invalid (date|datetime|timestamp) (format|value)",
+      "type": "DataTypeError",
+      "description": "Invalid date format or value",
+      "root_cause": "sql_invalid_date_format",
+      "suggestion": "Use valid date format or date literal syntax",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "data_type",
+        "date"
+      ],
+      "examples": [
+        "invalid date format",
+        "invalid datetime value",
+        "Incorrect DATE value"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_transaction_error",
+      "pattern": "transaction|deadlock|rollback",
+      "type": "TransactionError",
+      "description": "Transaction-related error",
+      "root_cause": "sql_transaction_error",
+      "suggestion": "Check transaction isolation level and concurrent modifications",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "transaction",
+        "deadlock",
+        "rollback"
+      ],
+      "examples": [
+        "deadlock detected",
+        "transaction rolled back",
+        "could not serialize access due to concurrent update"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_function_not_found",
+      "pattern": "(function|procedure) .*? (does not|doesn't) exist",
+      "type": "FunctionError",
+      "description": "Referenced function or procedure does not exist",
+      "root_cause": "sql_function_not_found",
+      "suggestion": "Check function name and parameter count",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "function",
+        "procedure"
+      ],
+      "examples": [
+        "function get_user() does not exist",
+        "procedure calculate_total doesn't exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "name": "Julia Method Errors",
+  "description": "Rules for detecting errors related to Julia method definitions and dispatch",
+  "rules": [
+    {
+      "id": "julia_no_matching_method",
+      "pattern": "MethodError: no method matching ([\\w\\!]+)\\(([^\\)]+)\\)",
+      "type": "MethodError",
+      "description": "No method matching the given argument types",
+      "root_cause": "julia_method_error",
+      "suggestion": "Check function name and argument types, or define a new method for these types",
+      "category": "method",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "method",
+        "dispatch",
+        "argument"
+      ],
+      "examples": [
+        "MethodError: no method matching process(::String, ::Int64)",
+        "MethodError: no method matching sqrt(::String)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_method_redefinition",
+      "pattern": "Warning: Method definition ([\\w\\!]+)\\(([^\\)]+)\\) overwritten",
+      "type": "MethodWarning",
+      "description": "Method is being redefined",
+      "root_cause": "julia_method_error",
+      "suggestion": "Check for duplicate method definitions or intended method overwriting",
+      "category": "method",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "method",
+        "overwrite",
+        "redefinition"
+      ],
+      "examples": [
+        "Warning: Method definition process(String, Int64) overwritten",
+        "Method definition convert(Type{Float64}, Int64) overwritten"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_ambiguous_dispatch",
+      "pattern": "WARNING: ambiguous method definition for ([\\w\\!]+)",
+      "type": "MethodWarning",
+      "description": "Method definition creates ambiguity in dispatch",
+      "root_cause": "julia_method_error",
+      "suggestion": "Make method signatures more specific to avoid ambiguity",
+      "category": "method",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "method",
+        "ambiguous",
+        "dispatch"
+      ],
+      "examples": [
+        "WARNING: ambiguous method definition for process",
+        "Warning: ambiguous method definition detected"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_function_argument_error",
+      "pattern": "ArgumentError: wrong number of arguments",
+      "type": "ArgumentError",
+      "description": "Wrong number of arguments in function call",
+      "root_cause": "julia_method_error",
+      "suggestion": "Check function documentation for correct argument count",
+      "category": "method",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "function",
+        "argument",
+        "count"
+      ],
+      "examples": [
+        "ArgumentError: wrong number of arguments (given 2, expected 3)",
+        "ArgumentError: function requires 3 arguments but received 2"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_method_too_specific",
+      "pattern": "MethodError: no method is more specific than another",
+      "type": "MethodError",
+      "description": "Method specificity cannot be determined",
+      "root_cause": "julia_method_error",
+      "suggestion": "Make method signatures with clear specificity relationships",
+      "category": "method",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "method",
+        "specific",
+        "dispatch"
+      ],
+      "examples": [
+        "MethodError: no method is more specific than another",
+        "Error in determining method specificity"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_abstract_method_call",
+      "pattern": "MethodError: no method matching.*\\(::Type\\{\\<:([\\w\\.]+)\\}",
+      "type": "MethodError",
+      "description": "Attempting to call method on abstract type",
+      "root_cause": "julia_method_error",
+      "suggestion": "Define methods for concrete subtypes or use more specific types",
+      "category": "method",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "method",
+        "abstract",
+        "type"
+      ],
+      "examples": [
+        "MethodError: no method matching size(::Type{<:AbstractArray})",
+        "MethodError: no method matching convert(::Type{<:Number})"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_function_keyword_arg_error",
+      "pattern": "UndefKeywordError: keyword argument ([\\w]+) not assigned",
+      "type": "KeywordError",
+      "description": "Required keyword argument not provided",
+      "root_cause": "julia_method_error",
+      "suggestion": "Provide all required keyword arguments in function call",
+      "category": "method",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "keyword",
+        "argument",
+        "function"
+      ],
+      "examples": [
+        "UndefKeywordError: keyword argument size not assigned",
+        "UndefKeywordError: required keyword argument missing"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_function_vararg_error",
+      "pattern": "MethodError: Expected (\\.\\.\\.|\\.\\.\\.)",
+      "type": "MethodError",
+      "description": "Error with varargs in function call",
+      "root_cause": "julia_method_error",
+      "suggestion": "Check usage of varargs in function definition and call",
+      "category": "method",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "varargs",
+        "function",
+        "method"
+      ],
+      "examples": [
+        "MethodError: Expected ...",
+        "Error in varargs handling"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_invalid_return_type",
+      "pattern": "TypeError: return type ([\\w\\.]+) does not match inferred return type ([\\w\\.]+)",
+      "type": "TypeError",
+      "description": "Function return type doesn't match annotation",
+      "root_cause": "julia_type_error",
+      "suggestion": "Ensure function actually returns the annotated type",
+      "category": "method",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "return",
+        "type",
+        "annotation"
+      ],
+      "examples": [
+        "TypeError: return type Int64 does not match inferred return type String",
+        "Type mismatch between annotated and actual return type"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

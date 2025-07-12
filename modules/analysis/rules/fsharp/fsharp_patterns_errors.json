@@ -1,0 +1,279 @@
+{
+  "name": "F# Pattern Matching Errors",
+  "description": "Rules for detecting F# pattern matching and case expression errors",
+  "rules": [
+    {
+      "id": "fsharp_incomplete_patterns",
+      "pattern": "(Incomplete pattern matches|This pattern match is incomplete)",
+      "type": "RuntimeError",
+      "description": "Pattern matching does not cover all possible cases",
+      "root_cause": "fsharp_pattern_error",
+      "suggestion": "Add missing patterns or use a wildcard pattern (_)",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "pattern",
+        "match",
+        "exhaustive"
+      ],
+      "examples": [
+        "Incomplete pattern matches on this expression",
+        "This pattern match is incomplete. The value 'None' may indicate a case not covered by the pattern(s)."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_pattern_match_redundant",
+      "pattern": "Warning: This rule will never be matched",
+      "type": "Warning",
+      "description": "Redundant pattern match rule that will never be reached",
+      "root_cause": "fsharp_pattern_error",
+      "suggestion": "Remove or reorder pattern match rules",
+      "category": "fsharp",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "pattern",
+        "match",
+        "redundant"
+      ],
+      "examples": [
+        "Warning: This rule will never be matched",
+        "Warning: The pattern is unreachable because a previous pattern covers it"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_when_guard_type_error",
+      "pattern": "Type mismatch .+ in 'when' guard expression",
+      "type": "TypeError",
+      "description": "Type error in pattern match when guard",
+      "root_cause": "fsharp_pattern_error",
+      "suggestion": "Fix the type error in the when guard expression",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "pattern",
+        "when",
+        "guard"
+      ],
+      "examples": [
+        "Type mismatch. Expected 'bool' but got 'int' in 'when' guard expression"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_active_pattern_syntax",
+      "pattern": "Invalid active pattern",
+      "type": "SyntaxError",
+      "description": "Invalid active pattern syntax",
+      "root_cause": "fsharp_pattern_error",
+      "suggestion": "Check active pattern syntax (should be '(|...|)')",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "pattern",
+        "active"
+      ],
+      "examples": [
+        "Invalid active pattern",
+        "Error in active pattern syntax"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_pattern_binding_duplicate",
+      "pattern": "Duplicate definition of pattern variable '(.+?)'",
+      "type": "SyntaxError",
+      "description": "Duplicate pattern variable in pattern binding",
+      "root_cause": "fsharp_pattern_error",
+      "suggestion": "Use unique names for pattern variables",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "pattern",
+        "binding",
+        "duplicate"
+      ],
+      "examples": [
+        "Duplicate definition of pattern variable 'x'",
+        "The variable 'x' is bound twice in this pattern"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_pattern_match_function",
+      "pattern": "Match expressions should have at least one pattern match rule",
+      "type": "SyntaxError",
+      "description": "Empty match expression",
+      "root_cause": "fsharp_pattern_error",
+      "suggestion": "Add at least one pattern match rule",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "pattern",
+        "match",
+        "empty"
+      ],
+      "examples": [
+        "Match expressions should have at least one pattern match rule"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_pattern_match_ternary",
+      "pattern": "Expected 'with' expression or '->' in pattern matching",
+      "type": "SyntaxError",
+      "description": "Invalid pattern matching syntax",
+      "root_cause": "fsharp_pattern_error",
+      "suggestion": "Use proper pattern matching syntax with 'match ... with' or function",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "pattern",
+        "match",
+        "syntax"
+      ],
+      "examples": [
+        "Expected 'with' expression or '->' in pattern matching"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_active_pattern_return",
+      "pattern": "Active pattern '(.+?)' returns wrong type",
+      "type": "TypeError",
+      "description": "Active pattern returns wrong type",
+      "root_cause": "fsharp_pattern_error",
+      "suggestion": "Ensure active pattern returns correct result type (option or choice)",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "pattern",
+        "active",
+        "return"
+      ],
+      "examples": [
+        "Active pattern 'Even' returns wrong type",
+        "Active pattern should return 'Choice<...>'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_pattern_match_result",
+      "pattern": "The result of a match expression must be a function",
+      "type": "TypeError",
+      "description": "Match expression result used incorrectly",
+      "root_cause": "fsharp_pattern_error",
+      "suggestion": "Ensure match expression is used correctly in the context",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "pattern",
+        "match",
+        "result"
+      ],
+      "examples": [
+        "The result of a match expression must be a function"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_pattern_type_error",
+      "pattern": "Type mismatch in pattern",
+      "type": "TypeError",
+      "description": "Type mismatch in pattern matching",
+      "root_cause": "fsharp_pattern_error",
+      "suggestion": "Ensure pattern types match the scrutinee type",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "pattern",
+        "type"
+      ],
+      "examples": [
+        "Type mismatch in pattern. Expected 'Option<int>' but got 'Result<int, string>'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

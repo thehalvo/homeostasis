@@ -1,0 +1,353 @@
+{
+  "name": "Zig Common Errors",
+  "description": "Rules for detecting common Zig programming language errors",
+  "rules": [
+    {
+      "id": "zig_syntax_error_expected_token",
+      "pattern": "error: expected (.*), found (.*)",
+      "type": "SyntaxError",
+      "description": "Zig syntax error due to unexpected token",
+      "root_cause": "zig_syntax_error",
+      "suggestion": "Check code structure and syntax at the specified location",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "error: expected ';', found '}'",
+        "error: expected token ')', found ','",
+        "error: expected expression, found '}'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_syntax_error_invalid_token",
+      "pattern": "error: invalid token: '(.*)'",
+      "type": "SyntaxError",
+      "description": "Zig syntax error due to invalid token",
+      "root_cause": "zig_syntax_error",
+      "suggestion": "Remove or replace the invalid token",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "error: invalid token: '#'",
+        "error: invalid token: '\\'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_syntax_error_unterminated_string",
+      "pattern": "error: unterminated string literal",
+      "type": "SyntaxError",
+      "description": "Zig syntax error due to unterminated string literal",
+      "root_cause": "zig_syntax_error",
+      "suggestion": "Add missing closing quote for string literal",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "syntax",
+        "string"
+      ],
+      "examples": [
+        "error: unterminated string literal"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_type_error_mismatch",
+      "pattern": "error: expected type '(.*)', found '(.*)'",
+      "type": "TypeError",
+      "description": "Zig type mismatch error",
+      "root_cause": "zig_type_error",
+      "suggestion": "Ensure that types are compatible or add appropriate type conversion",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "type",
+        "casting"
+      ],
+      "examples": [
+        "error: expected type 'i32', found 'f64'",
+        "error: expected type '*const []const u8', found '[]const u8'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_undefined_identifier",
+      "pattern": "error: use of undeclared identifier '(.*)'",
+      "type": "UndefinedError",
+      "description": "Using an undeclared identifier in Zig",
+      "root_cause": "zig_undefined_error",
+      "suggestion": "Ensure the variable or function is declared before use",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "undefined",
+        "identifier"
+      ],
+      "examples": [
+        "error: use of undeclared identifier 'foo'",
+        "error: use of undeclared identifier 'println'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_container_no_member",
+      "pattern": "error: container '(.*)' has no member named '(.*)'",
+      "type": "UndefinedError",
+      "description": "Attempting to access a non-existent member of a container",
+      "root_cause": "zig_undefined_error",
+      "suggestion": "Check the container definition for available members or fix typo",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "undefined",
+        "struct",
+        "container"
+      ],
+      "examples": [
+        "error: container 'std.debug' has no member named 'Print'",
+        "error: container 'MyStruct' has no member named 'nonExistentField'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_import_error",
+      "pattern": "error: unable to find '(.*)'",
+      "type": "ImportError",
+      "description": "Unable to find an imported file or module",
+      "root_cause": "zig_import_error",
+      "suggestion": "Check the import path and ensure the file exists",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "import",
+        "module"
+      ],
+      "examples": [
+        "error: unable to find 'config.zig'",
+        "error: unable to find 'lib/utils.zig'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_null_pointer",
+      "pattern": "error: null pointer dereference",
+      "type": "MemoryError",
+      "description": "Attempting to dereference a null pointer",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Add null check before dereferencing the pointer",
+      "category": "zig",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "safety",
+        "null"
+      ],
+      "examples": [
+        "error: null pointer dereference"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_error",
+      "pattern": "error: unable to evaluate constant expression",
+      "type": "ComptimeError",
+      "description": "Error evaluating a compile-time expression",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Ensure the expression can be evaluated at compile time",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "evaluation"
+      ],
+      "examples": [
+        "error: unable to evaluate constant expression"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_async_error",
+      "pattern": "error: async function cannot be called directly",
+      "type": "AsyncError",
+      "description": "Calling an async function without await",
+      "root_cause": "zig_async_error",
+      "suggestion": "Use 'await' to call async functions or ensure caller is also async",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "async",
+        "concurrency"
+      ],
+      "examples": [
+        "error: async function cannot be called directly"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_error_union_not_handled",
+      "pattern": "error: error is not handled",
+      "type": "ErrorHandlingError",
+      "description": "Error union is not properly handled",
+      "root_cause": "zig_error_not_handled",
+      "suggestion": "Use 'try', 'catch', or unwrap with '|err|' to handle potential errors",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "error_handling",
+        "safety"
+      ],
+      "examples": [
+        "error: error is not handled"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_integer_overflow",
+      "pattern": "error: integer overflow",
+      "type": "ArithmeticError",
+      "description": "Integer overflow during arithmetic operation",
+      "root_cause": "zig_type_error",
+      "suggestion": "Use a larger integer type or wrapping operators (+%, *%, etc.)",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "arithmetic",
+        "overflow"
+      ],
+      "examples": [
+        "error: integer overflow"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_build_error",
+      "pattern": "error: build.zig error",
+      "type": "BuildError",
+      "description": "Error in build.zig configuration",
+      "root_cause": "zig_build_error",
+      "suggestion": "Check the build.zig file for errors or configuration issues",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "build",
+        "configuration"
+      ],
+      "examples": [
+        "error: build.zig error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "name": "MATLAB Function Errors",
+  "description": "Rules for detecting errors related to MATLAB functions and function calls",
+  "rules": [
+    {
+      "id": "matlab_function_requires_toolbox",
+      "pattern": "Function '(.+?)' requires ([\\w\\s]+) Toolbox",
+      "type": "ToolboxError",
+      "description": "Function requires a toolbox that is not installed",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Install the required toolbox or use alternative functions",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "function",
+        "toolbox",
+        "license"
+      ],
+      "examples": [
+        "Function 'fmincon' requires Optimization Toolbox",
+        "Function 'findpeaks' requires Signal Processing Toolbox"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_function_nargout_error",
+      "pattern": "Too many output arguments",
+      "type": "FunctionError",
+      "description": "Too many output arguments requested from function",
+      "root_cause": "matlab_function_error",
+      "suggestion": "Check function documentation for correct number of outputs",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "function",
+        "output",
+        "argument"
+      ],
+      "examples": [
+        "Error: Too many output arguments.",
+        "Too many output arguments for function 'plot'."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_function_nargin_error",
+      "pattern": "Not enough (arguments|input arguments|inputs)",
+      "type": "FunctionError",
+      "description": "Function called with insufficient arguments",
+      "root_cause": "matlab_function_error",
+      "suggestion": "Provide all required arguments to the function",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "function",
+        "input",
+        "argument"
+      ],
+      "examples": [
+        "Error: Not enough input arguments.",
+        "Not enough arguments for function 'plot'."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_function_name_conflict",
+      "pattern": "Function name conflict",
+      "type": "FunctionError",
+      "description": "Function name conflicts with another function or variable",
+      "root_cause": "matlab_function_error",
+      "suggestion": "Rename function or use full path specification",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "function",
+        "conflict",
+        "name"
+      ],
+      "examples": [
+        "Warning: Function name conflict.",
+        "Function name conflict between user function and built-in."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_invalid_function_handle",
+      "pattern": "Invalid (function|function handle|handle)",
+      "type": "FunctionError",
+      "description": "Invalid or corrupt function handle",
+      "root_cause": "matlab_function_error",
+      "suggestion": "Ensure function handle refers to a valid function",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "function",
+        "handle",
+        "invalid"
+      ],
+      "examples": [
+        "Error: Invalid function handle.",
+        "Invalid function handle used in feval."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_anonymous_function_error",
+      "pattern": "Error in ==> @\\((.+?)\\)",
+      "type": "FunctionError",
+      "description": "Error in anonymous function execution",
+      "root_cause": "matlab_function_error",
+      "suggestion": "Check anonymous function definition and variables in scope",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "function",
+        "anonymous",
+        "lambda"
+      ],
+      "examples": [
+        "Error in ==> @(x)x^2",
+        "Error in anonymous function evaluation."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_function_argument_type_mismatch",
+      "pattern": "Expected input (\\w+) to be",
+      "type": "FunctionError",
+      "description": "Function argument has incorrect type",
+      "root_cause": "matlab_function_error",
+      "suggestion": "Provide arguments with correct data types",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "function",
+        "argument",
+        "type"
+      ],
+      "examples": [
+        "Expected input number 1 to be double.",
+        "Error: Expected input to be a matrix."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_input_validation_error",
+      "pattern": "Validation (failed|error)",
+      "type": "FunctionError",
+      "description": "Input validation failed for function argument",
+      "root_cause": "matlab_function_error",
+      "suggestion": "Ensure input meets validation requirements in function definition",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "function",
+        "validation",
+        "argument"
+      ],
+      "examples": [
+        "Error: Validation failed for input 'x'.",
+        "Validation error: Array values must be positive."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_function_not_on_path",
+      "pattern": "Cannot find an exact (match|file) for '(.+?)'",
+      "type": "FunctionError",
+      "description": "Function file not found on MATLAB path",
+      "root_cause": "matlab_function_error",
+      "suggestion": "Add function directory to MATLAB path with addpath()",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "function",
+        "path",
+        "file"
+      ],
+      "examples": [
+        "Cannot find an exact match for 'myFunction'.",
+        "Cannot find an exact file for 'processData.m'."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_function_recursion_limit",
+      "pattern": "Maximum recursion limit",
+      "type": "FunctionError",
+      "description": "Function exceeded maximum recursion limit",
+      "root_cause": "matlab_function_error",
+      "suggestion": "Add base case to recursive function or rewrite as iterative",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "function",
+        "recursion",
+        "limit"
+      ],
+      "examples": [
+        "Error: Maximum recursion limit reached.",
+        "Maximum recursion limit of 500 reached."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

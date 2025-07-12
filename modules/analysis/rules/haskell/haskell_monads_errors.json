@@ -1,0 +1,227 @@
+{
+  "name": "Haskell Monad Errors",
+  "description": "Rules for detecting Haskell monad and do-notation errors",
+  "rules": [
+    {
+      "id": "haskell_do_block_empty",
+      "pattern": "empty 'do' block",
+      "type": "SyntaxError",
+      "description": "Empty do block is not allowed",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Add statements to do block or remove the do keyword",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "do",
+        "syntax"
+      ],
+      "examples": [
+        "empty 'do' block",
+        "do block with no statements"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_missing_do_keyword",
+      "pattern": "The last statement in a 'do' block must be an expression",
+      "type": "SyntaxError",
+      "description": "Missing do keyword before monad sequence",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Add 'do' keyword before monadic sequence",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "do",
+        "syntax"
+      ],
+      "examples": [
+        "The last statement in a 'do' block must be an expression",
+        "A do-block must end with an expression"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_bind_no_monad_instance",
+      "pattern": "No instance for \\(Monad ([^)]+)\\)",
+      "type": "TypeError",
+      "description": "Type lacks Monad instance required for do-notation",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Use a type with Monad instance or implement the instance",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "instance"
+      ],
+      "examples": [
+        "No instance for (Monad MyType)",
+        "No instance for (Monad (Either String))"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_bind_wrong_type",
+      "pattern": "Couldn't match type '[^']+' with 'm [^']+'",
+      "type": "TypeError",
+      "description": "Type mismatch in monadic bind",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Ensure all expressions in do-block return monadic values",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "do",
+        "bind"
+      ],
+      "examples": [
+        "Couldn't match type 'Int' with 'm Int'",
+        "Couldn't match type 'String' with 'IO a'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_monad_wrong_return",
+      "pattern": "Couldn't match expected type '[^']+' with actual type 'Monad m => m [^']+'",
+      "type": "TypeError",
+      "description": "Returning monadic value where non-monadic was expected",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Use 'return' to wrap value or extract with bind",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "return"
+      ],
+      "examples": [
+        "Couldn't match expected type 'Int' with actual type 'Monad m => m Int'",
+        "Couldn't match expected type 'String' with actual type 'IO String'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_do_let_in",
+      "pattern": "'let' used without 'in' in a 'do' block",
+      "type": "SyntaxError",
+      "description": "Using 'in' after 'let' in do-block",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "In do-blocks, use 'let x = y' without 'in'",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "do",
+        "let"
+      ],
+      "examples": [
+        "'let' used without 'in' in a 'do' block",
+        "Do not use 'in' with 'let' in do blocks"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_monad_transformer_lift",
+      "pattern": "No instance for \\((Monad|MonadTrans|MonadIO) ([^)]+)\\)",
+      "type": "TypeError",
+      "description": "Missing lift for monad transformer",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Use lift, liftIO, or the proper transformer method",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "transformer",
+        "lift"
+      ],
+      "examples": [
+        "No instance for (MonadIO m)",
+        "No instance for (MonadTrans t)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_monad_wrong_context",
+      "pattern": "The function '(>>=|>>|return)' is applied to (too many|too few) arguments",
+      "type": "TypeError",
+      "description": "Incorrect use of monadic operators",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Check monadic operator usage and arguments",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "operator"
+      ],
+      "examples": [
+        "The function '>>=' is applied to too many arguments",
+        "The function 'return' is applied to too few arguments"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

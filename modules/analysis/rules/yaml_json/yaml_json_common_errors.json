@@ -1,0 +1,266 @@
+{
+  "name": "YAML/JSON Common Errors",
+  "description": "Rules for detecting common errors in YAML and JSON configuration files",
+  "rules": [
+    {
+      "id": "yaml_json_syntax_error",
+      "pattern": "unexpected character|expected ',' or '}'|unexpected end of|found unexpected|mapping values are not allowed|mapping keys are not allowed|expected a mapping|expected a sequence|unacceptable character|found character '\\t'|unknown escape character|invalid token|unterminated string|document contains trailing content|invalid escape sequence|expected ':'|expected key",
+      "type": "SyntaxError",
+      "description": "Syntax error in YAML or JSON file",
+      "root_cause": "yaml_json_syntax_error",
+      "suggestion": "Check file syntax for missing commas, quotes, colons, or invalid characters",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "expected ',' or '}' in flow mapping",
+        "found character '\\t' that cannot start any token",
+        "unexpected character encountered while parsing value"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_indentation_error",
+      "pattern": "indentation is not a multiple of|wrong indentation|inconsistent indentation|bad indentation|improper indentation|invalid indentation|mapping values are not allowed|could not find expected ':'|found unexpected indent|expected <block end>",
+      "type": "IndentationError",
+      "description": "Indentation error in YAML file",
+      "root_cause": "yaml_indentation_error",
+      "suggestion": "Fix YAML indentation - use consistent spaces (usually 2 or 4 spaces)",
+      "category": "indentation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "indentation",
+        "whitespace"
+      ],
+      "examples": [
+        "indentation is not a multiple of 2",
+        "could not find expected ':' at line 42, column 3",
+        "found unexpected indent at line 17, column 5"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_duplicate_key",
+      "pattern": "duplicate key|key .* already exists|found duplicate key|mapping key .* already defined|key appears twice|duplicate mapping key|duplicate field",
+      "type": "DuplicateKeyError",
+      "description": "Duplicate key in YAML or JSON configuration",
+      "root_cause": "yaml_json_structure_error",
+      "suggestion": "Remove or rename duplicate keys in configuration",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "structure",
+        "key"
+      ],
+      "examples": [
+        "duplicate key: 'name' already defined at line 5",
+        "found duplicate key 'version' in mapping",
+        "key 'dependencies' appears twice in object"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_anchor_alias_error",
+      "pattern": "found undefined alias|unknown alias|undefined anchor|found duplicate anchor|circular reference|recursive objects|alias name|circular objects are not allowed|references itself",
+      "type": "AnchorError",
+      "description": "Anchor or alias error in YAML configuration",
+      "root_cause": "yaml_reference_error",
+      "suggestion": "Fix anchor references or remove circular references",
+      "category": "reference",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "anchor",
+        "alias",
+        "reference"
+      ],
+      "examples": [
+        "found undefined alias 'baseConfig'",
+        "found duplicate anchor 'defaults'",
+        "circular reference detected in YAML"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_encoding_error",
+      "pattern": "invalid byte sequence|illegal character|invalid encoding|Unicode error|invalid UTF-8|non-ASCII character|encoding error|invalid character|character encoding",
+      "type": "EncodingError",
+      "description": "Character encoding error in YAML or JSON file",
+      "root_cause": "yaml_json_encoding_error",
+      "suggestion": "Ensure file is saved with UTF-8 encoding without BOM",
+      "category": "encoding",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "encoding",
+        "utf8"
+      ],
+      "examples": [
+        "invalid byte sequence in UTF-8",
+        "illegal character found in input",
+        "Unicode error: invalid character in string"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_type_error",
+      "pattern": "expected a mapping|expected a sequence|expected scalar|expected boolean|expected integer|expected string|expected array|expected object|expected number|not of expected type|type mismatch",
+      "type": "TypeError",
+      "description": "Type error in YAML or JSON configuration",
+      "root_cause": "yaml_json_type_error",
+      "suggestion": "Fix data type - ensure values match expected types",
+      "category": "type",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "type",
+        "validation"
+      ],
+      "examples": [
+        "expected a mapping, got sequence",
+        "expected string, got integer",
+        "expected array, got object at path $.items"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_schema_validation_error",
+      "pattern": "does not match schema|schema validation|required property|validation failed|property .* not found|invalid against schema|failed schema validation|missing required|unknown property|unrecognized property|additional properties not allowed|no schema matching|failed to match",
+      "type": "SchemaValidationError",
+      "description": "Schema validation error in YAML or JSON configuration",
+      "root_cause": "yaml_json_schema_error",
+      "suggestion": "Check schema requirements and fix missing or invalid properties",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "schema",
+        "validation"
+      ],
+      "examples": [
+        "required property 'name' not found",
+        "property 'version' does not match schema: expected string, got number",
+        "additional properties not allowed: 'unknown_field'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_format_error",
+      "pattern": "invalid format|wrong format|invalid date|invalid time|invalid datetime|invalid UUID|invalid email|invalid URL|invalid IP|not in format|format validation|invalid pattern|pattern mismatch|regex mismatch",
+      "type": "FormatError",
+      "description": "Format validation error in YAML or JSON configuration",
+      "root_cause": "yaml_json_format_error",
+      "suggestion": "Ensure values match required formats (email, URL, date, etc.)",
+      "category": "format",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "format",
+        "validation"
+      ],
+      "examples": [
+        "invalid email format: 'not-an-email'",
+        "invalid date format: '2023-13-45'",
+        "invalid URL format: 'not a url'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_json_security_error",
+      "pattern": "security vulnerability|insecure configuration|security risk|security warning|potentially unsafe|password in plaintext|secret exposed|hardcoded credentials|unsafe permission|permission too open|access too permissive",
+      "type": "SecurityError",
+      "description": "Security issue in YAML or JSON configuration",
+      "root_cause": "yaml_json_security_error",
+      "suggestion": "Fix security issues like hardcoded credentials or overly permissive settings",
+      "category": "security",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "json",
+        "security",
+        "credentials"
+      ],
+      "examples": [
+        "security warning: password in plaintext",
+        "hardcoded credentials detected in configuration",
+        "permissions too open: '0777' detected"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

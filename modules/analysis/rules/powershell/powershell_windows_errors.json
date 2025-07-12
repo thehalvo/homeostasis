@@ -1,0 +1,314 @@
+{
+  "name": "PowerShell Windows Specific Errors",
+  "description": "Rules for detecting Windows-specific errors in PowerShell scripts",
+  "rules": [
+    {
+      "id": "powershell_registry_access_denied",
+      "pattern": "Access to the registry key '([^']+)' is denied",
+      "type": "RegistryError",
+      "description": "Access denied to Windows registry key",
+      "root_cause": "powershell_registry_error",
+      "suggestion": "Run PowerShell as administrator or adjust registry permissions",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "windows",
+        "registry",
+        "permission"
+      ],
+      "examples": [
+        "Access to the registry key 'HKLM\\Software\\MyApp' is denied",
+        "Cannot open registry key: Access is denied"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_registry_key_not_found",
+      "pattern": "Cannot find registry key '([^']+)'",
+      "type": "RegistryError",
+      "description": "Registry key not found in Windows",
+      "root_cause": "powershell_registry_error",
+      "suggestion": "Verify registry key path or create the key if needed",
+      "category": "powershell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "windows",
+        "registry",
+        "path"
+      ],
+      "examples": [
+        "Cannot find registry key 'HKCU\\Software\\MyApp'",
+        "Get-ItemProperty : Cannot find path 'HKLM:\\Software\\NonExistentApp' because it does not exist"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_wmi_access_denied",
+      "pattern": "Access (is|was) denied.+WMI",
+      "type": "WMIError",
+      "description": "Access denied to WMI service",
+      "root_cause": "powershell_wmi_error",
+      "suggestion": "Run PowerShell as administrator or adjust WMI permissions",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "windows",
+        "wmi",
+        "permission"
+      ],
+      "examples": [
+        "Access is denied. (Exception from HRESULT: 0x80070005 (E_ACCESSDENIED)) WMI",
+        "Get-WmiObject : Access was denied when connecting to the WMI namespace"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_wmi_class_not_found",
+      "pattern": "Invalid class.+WMI",
+      "type": "WMIError",
+      "description": "WMI class not found",
+      "root_cause": "powershell_wmi_error",
+      "suggestion": "Verify WMI class name and namespace",
+      "category": "powershell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "windows",
+        "wmi",
+        "class"
+      ],
+      "examples": [
+        "Invalid class. (HRESULT: 0x80041010) (WIN32: 4116) WMI",
+        "Get-WmiObject : Invalid class 'Win32_NonExistentClass'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_com_object_error",
+      "pattern": "COM object.+(not found|is not registered)",
+      "type": "COMError",
+      "description": "COM object creation error",
+      "root_cause": "powershell_com_error",
+      "suggestion": "Ensure COM object is properly registered or accessible",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "windows",
+        "com",
+        "object"
+      ],
+      "examples": [
+        "New-Object : Creating an instance of the COM component with CLSID {X} failed: 80040154 Class not registered",
+        "COM object with PROGID 'Word.Application' is not registered"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_active_directory_error",
+      "pattern": "The server is not operational.+active directory",
+      "type": "ADError",
+      "description": "Active Directory connection error",
+      "root_cause": "powershell_ad_error",
+      "suggestion": "Verify Active Directory connectivity and permissions",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "windows",
+        "active directory",
+        "ad"
+      ],
+      "examples": [
+        "The server is not operational. (Exception from HRESULT: 0x8007203A) active directory",
+        "Get-ADUser : The server is not operational"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_service_error",
+      "pattern": "Service '([^']+)' cannot be (started|stopped|found)",
+      "type": "ServiceError",
+      "description": "Windows service operation error",
+      "root_cause": "powershell_service_error",
+      "suggestion": "Verify service exists and you have appropriate permissions",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "windows",
+        "service",
+        "management"
+      ],
+      "examples": [
+        "Service 'wuauserv' cannot be started",
+        "Service 'NonExistentService' cannot be found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_event_log_error",
+      "pattern": "The event log '([^']+)' (does not exist|cannot be accessed)",
+      "type": "EventLogError",
+      "description": "Windows event log access error",
+      "root_cause": "powershell_eventlog_error",
+      "suggestion": "Verify event log name and access permissions",
+      "category": "powershell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "windows",
+        "eventlog",
+        "logging"
+      ],
+      "examples": [
+        "The event log 'CustomLog' does not exist",
+        "The event log 'Security' cannot be accessed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_group_policy_error",
+      "pattern": "Group Policy.+(failed|error|cannot)",
+      "type": "GPOError",
+      "description": "Group Policy operation error",
+      "root_cause": "powershell_gpo_error",
+      "suggestion": "Verify Group Policy object exists and you have appropriate permissions",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "windows",
+        "gpo",
+        "policy"
+      ],
+      "examples": [
+        "Group Policy processing failed",
+        "Group Policy Object cannot be found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_scheduled_task_error",
+      "pattern": "The task (definition|scheduler).+(failed|error|cannot)",
+      "type": "TaskError",
+      "description": "Windows scheduled task error",
+      "root_cause": "powershell_task_error",
+      "suggestion": "Verify task parameters and access permissions",
+      "category": "powershell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "windows",
+        "scheduled task",
+        "automation"
+      ],
+      "examples": [
+        "The task definition does not conform to the schema",
+        "The task scheduler service is not available"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_net_framework_error",
+      "pattern": "Exception calling \"([^\"]+)\" with \"([^\"]+)\" argument\\(s\\)",
+      "type": ".NETError",
+      "description": ".NET Framework method invocation error",
+      "root_cause": "powershell_dotnet_error",
+      "suggestion": "Check .NET method parameters and exception details",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "windows",
+        ".net",
+        "framework"
+      ],
+      "examples": [
+        "Exception calling \"Open\" with \"1\" argument(s)",
+        "Exception calling \"Connect\" with \"2\" argument(s)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

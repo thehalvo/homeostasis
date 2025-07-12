@@ -1,0 +1,258 @@
+{
+  "name": "Terraform Provider Errors",
+  "description": "Rules for detecting errors related to Terraform provider configurations",
+  "rules": [
+    {
+      "id": "terraform_provider_not_found",
+      "pattern": "Provider .+ not available|unknown provider|Could not find provider|Required provider .+ not found",
+      "type": "ProviderError",
+      "description": "Provider not found or not available",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Run 'terraform init' or specify provider source in required_providers block",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "initialization",
+        "source"
+      ],
+      "examples": [
+        "Error: Provider \"aws\" not available",
+        "Error: Required provider 'google' not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_version_constraint",
+      "pattern": "Provider version constraint|Unable to satisfy provider constraints|provider doesn't support version",
+      "type": "ProviderError",
+      "description": "Provider version constraint cannot be satisfied",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Update provider version constraint in required_providers block",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "version",
+        "constraint"
+      ],
+      "examples": [
+        "Error: Provider version constraint not satisfied",
+        "Error: Unable to satisfy provider constraints for \"aws\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_authentication_failed",
+      "pattern": "Provider authentication failed|Failed to get existing workspaces|failed to authenticate|InvalidClientTokenId|AccessDenied",
+      "type": "ProviderError",
+      "description": "Provider authentication failed",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Check provider credentials and authentication configuration",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "authentication",
+        "credentials"
+      ],
+      "examples": [
+        "Error: Provider authentication failed",
+        "Error: failed to authenticate with AWS provider"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_invalid_configuration",
+      "pattern": "Invalid provider configuration|Invalid configuration for provider|Provider configuration not present",
+      "type": "ProviderError",
+      "description": "Invalid provider configuration",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Fix provider configuration according to provider documentation",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "configuration",
+        "invalid"
+      ],
+      "examples": [
+        "Error: Invalid provider configuration",
+        "Error: Invalid configuration for provider \"aws\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_initialization_error",
+      "pattern": "Failed to initialize provider|Error initializing provider|Error configuring provider",
+      "type": "ProviderError",
+      "description": "Provider initialization failed",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Check provider configuration and run 'terraform init'",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "initialization",
+        "configuration"
+      ],
+      "examples": [
+        "Error: Failed to initialize provider \"aws\"",
+        "Error: Error initializing provider \"google\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_registry_error",
+      "pattern": "Error accessing registry|Failed to download provider|Failed to fetch provider|failed to retrieve provider",
+      "type": "ProviderError",
+      "description": "Error accessing provider registry or downloading provider",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Check network connectivity or use -plugin-dir flag with local providers",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "registry",
+        "download"
+      ],
+      "examples": [
+        "Error accessing Terraform registry",
+        "Error: Failed to download provider \"aws\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_region_error",
+      "pattern": "Invalid region|No valid credential sources|region not provided|Region .+ is not supported",
+      "type": "ProviderError",
+      "description": "Invalid or unsupported provider region",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Set a valid region in provider configuration or environment variables",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "region",
+        "configuration"
+      ],
+      "examples": [
+        "Error: Invalid region specified",
+        "Error: Region \"us-west-3\" is not supported"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_permission_error",
+      "pattern": "Permission denied|Not authorized|unauthorized|Forbidden|AccessDenied|InsufficientPermissions",
+      "type": "ProviderError",
+      "description": "Insufficient permissions for provider operations",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Check IAM permissions or service account roles for required actions",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "permission",
+        "iam"
+      ],
+      "examples": [
+        "Error: AccessDenied: Access denied",
+        "Error: User is not authorized to perform action"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_alias_error",
+      "pattern": "Provider with alias .+ not found|Referenced provider .+ was not found",
+      "type": "ProviderError",
+      "description": "Provider alias not found or misconfigured",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Define provider with specified alias or fix provider reference",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "alias",
+        "reference"
+      ],
+      "examples": [
+        "Error: Provider with alias \"west\" not found",
+        "Error: Referenced provider \"aws.east\" was not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

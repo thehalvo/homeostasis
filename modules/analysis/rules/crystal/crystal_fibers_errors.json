@@ -1,0 +1,226 @@
+{
+  "name": "Crystal Fiber and Concurrency Errors",
+  "description": "Rules for detecting Crystal fiber and concurrency-related errors",
+  "rules": [
+    {
+      "id": "crystal_fiber_error_general",
+      "pattern": "fiber.*?error",
+      "type": "FiberError",
+      "description": "Generic fiber-related error",
+      "root_cause": "crystal_fiber_error",
+      "suggestion": "Check fiber scheduling and management",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "crystal",
+        "fiber",
+        "concurrency"
+      ],
+      "examples": [
+        "fiber error: cannot resume a running fiber",
+        "fiber error: attempting to resume a dead fiber"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_fiber_deadlock",
+      "pattern": "deadlock detected",
+      "type": "FiberError",
+      "description": "Deadlock detected in fiber execution",
+      "root_cause": "crystal_fiber_error",
+      "suggestion": "Check for circular waits or blocked fibers",
+      "category": "crystal",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "fiber",
+        "deadlock",
+        "concurrency"
+      ],
+      "examples": [
+        "deadlock detected",
+        "deadlock detected: all fibers are blocked"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_fiber_not_started",
+      "pattern": "fiber.*?not started",
+      "type": "FiberError",
+      "description": "Attempting to resume a fiber that hasn't been started",
+      "root_cause": "crystal_fiber_error",
+      "suggestion": "Start the fiber before attempting to resume it",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "fiber",
+        "concurrency"
+      ],
+      "examples": [
+        "fiber not started",
+        "cannot resume a fiber that hasn't been started"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_channel_error",
+      "pattern": "channel.*?error",
+      "type": "FiberError",
+      "description": "Channel-related error in concurrent operations",
+      "root_cause": "crystal_channel_error",
+      "suggestion": "Check channel operations and synchronization",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "crystal",
+        "channel",
+        "concurrency"
+      ],
+      "examples": [
+        "channel error: send on closed channel",
+        "channel error: receive on closed channel"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_channel_closed",
+      "pattern": "(send|receive) on closed channel",
+      "type": "FiberError",
+      "description": "Attempting to use a closed channel",
+      "root_cause": "crystal_channel_error",
+      "suggestion": "Check if channel is closed before sending or receiving",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "channel",
+        "concurrency"
+      ],
+      "examples": [
+        "send on closed channel",
+        "receive on closed channel"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_concurrent_modification",
+      "pattern": "concurrent modification",
+      "type": "FiberError",
+      "description": "Concurrent modification of collection",
+      "root_cause": "crystal_fiber_error",
+      "suggestion": "Use proper synchronization when modifying collections across fibers",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "concurrency",
+        "collection",
+        "fiber"
+      ],
+      "examples": [
+        "concurrent modification of array",
+        "concurrent modification during iteration"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_race_condition",
+      "pattern": "race condition detected",
+      "type": "FiberError",
+      "description": "Race condition detected in concurrent code",
+      "root_cause": "crystal_fiber_error",
+      "suggestion": "Use proper synchronization mechanisms like Mutex or Channel",
+      "category": "crystal",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "concurrency",
+        "race",
+        "fiber"
+      ],
+      "examples": [
+        "race condition detected",
+        "race condition detected in concurrent access"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_mutex_error",
+      "pattern": "mutex.*?error",
+      "type": "FiberError",
+      "description": "Error in Mutex synchronization",
+      "root_cause": "crystal_fiber_error",
+      "suggestion": "Check Mutex lock/unlock operations",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "crystal",
+        "concurrency",
+        "mutex",
+        "fiber"
+      ],
+      "examples": [
+        "mutex error: unlock of unlocked mutex",
+        "mutex error: deadlock"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

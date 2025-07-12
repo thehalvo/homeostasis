@@ -1,0 +1,224 @@
+{
+  "name": "Haskell Pattern Matching Errors",
+  "description": "Rules for detecting Haskell pattern matching and case expression errors",
+  "rules": [
+    {
+      "id": "haskell_non_exhaustive_patterns",
+      "pattern": "Non-exhaustive patterns in (function|case|pattern)",
+      "type": "RuntimeError",
+      "description": "Pattern matching does not cover all possible cases",
+      "root_cause": "haskell_pattern_error",
+      "suggestion": "Add missing patterns or use a catch-all pattern (_)",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "pattern",
+        "match",
+        "exhaustive"
+      ],
+      "examples": [
+        "Non-exhaustive patterns in function 'head'",
+        "Non-exhaustive patterns in case expression at line 10"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_pattern_match_overlap",
+      "pattern": "Pattern match(es) (are|is) overlapped",
+      "type": "Warning",
+      "description": "Overlapping patterns in function definition",
+      "root_cause": "haskell_pattern_error",
+      "suggestion": "Remove or combine overlapping patterns",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "pattern",
+        "overlap"
+      ],
+      "examples": [
+        "Pattern match is overlapped at line 15",
+        "Pattern matches are overlapped in function definition"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_pattern_type_mismatch",
+      "pattern": "Pattern match(es) .* different type from the annotation",
+      "type": "TypeError",
+      "description": "Pattern type does not match function type signature",
+      "root_cause": "haskell_pattern_error",
+      "suggestion": "Make pattern type match function type signature",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "pattern",
+        "type"
+      ],
+      "examples": [
+        "Pattern matches have different type from the annotation",
+        "Pattern match has type 'Int' but function is declared to return 'String'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_pattern_syntax_error",
+      "pattern": "Parse error in pattern",
+      "type": "SyntaxError",
+      "description": "Syntax error in pattern",
+      "root_cause": "haskell_pattern_error",
+      "suggestion": "Fix syntax in pattern definition",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "pattern",
+        "syntax"
+      ],
+      "examples": [
+        "Parse error in pattern: x :",
+        "Parse error in pattern at line 20"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_irrefutable_pattern",
+      "pattern": "Pattern match(es) .* irrefutable",
+      "type": "Warning",
+      "description": "Irrefutable pattern in situation that requires refutable pattern",
+      "root_cause": "haskell_pattern_error",
+      "suggestion": "Use refutable pattern or add appropriate extension",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "pattern",
+        "irrefutable"
+      ],
+      "examples": [
+        "Pattern match is irrefutable: use ~pat for a lazy pattern",
+        "Pattern matches are irrefutable in a function definition"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_pattern_bind_n_plus_k",
+      "pattern": "n\\+k pattern",
+      "type": "SyntaxError",
+      "description": "n+k pattern used without extension",
+      "root_cause": "haskell_pattern_error",
+      "suggestion": "Use regular pattern or enable NPlusKPatterns extension",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "pattern",
+        "extension"
+      ],
+      "examples": [
+        "n+k pattern used without NPlusKPatterns extension",
+        "n+k pattern is not enabled by default"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_view_pattern",
+      "pattern": "View pattern .* requires ViewPatterns extension",
+      "type": "SyntaxError",
+      "description": "View pattern used without extension",
+      "root_cause": "haskell_pattern_error",
+      "suggestion": "Enable ViewPatterns extension",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "pattern",
+        "extension",
+        "view"
+      ],
+      "examples": [
+        "View pattern in function definition requires ViewPatterns extension",
+        "View pattern (f -> x) requires ViewPatterns extension"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_pattern_bind_duplicate",
+      "pattern": "Multiple declarations of '(.+?)'",
+      "type": "SyntaxError",
+      "description": "Same variable bound multiple times in pattern",
+      "root_cause": "haskell_pattern_error",
+      "suggestion": "Use different variable names in pattern binding",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "pattern",
+        "binding"
+      ],
+      "examples": [
+        "Multiple declarations of 'x'",
+        "Multiple declarations of 'y' in pattern"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

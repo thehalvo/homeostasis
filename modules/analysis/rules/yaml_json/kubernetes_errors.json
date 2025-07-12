@@ -1,0 +1,296 @@
+{
+  "name": "Kubernetes Configuration Errors",
+  "description": "Rules for detecting errors in Kubernetes YAML configurations",
+  "rules": [
+    {
+      "id": "kubernetes_apiversion_error",
+      "pattern": "unknown API version|apiVersion .* not available|no matches for kind|no kind|unsupported version|API version .* is not available|unknown api|version not found|resource .* is not supported|API version .* not recognized",
+      "type": "APIVersionError",
+      "description": "Invalid or unsupported Kubernetes API version",
+      "root_cause": "kubernetes_config_error",
+      "suggestion": "Use a supported apiVersion for your Kubernetes cluster version",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "kubernetes",
+        "k8s",
+        "apiversion",
+        "yaml"
+      ],
+      "examples": [
+        "no matches for kind \"Deployment\" in version \"apps/v2\"",
+        "apiVersion \"networking.k8s.io/v2\" not available",
+        "unknown API version \"batch/v2alpha2\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "kubernetes_kind_error",
+      "pattern": "no matches for kind|unknown kind|kind .* not found|kind cannot be empty|no kind \"|unable to recognize|not recognized|unrecognized resource|unknown resource type|no matches for",
+      "type": "KindError",
+      "description": "Unknown or invalid Kubernetes resource kind",
+      "root_cause": "kubernetes_config_error",
+      "suggestion": "Use a valid resource kind or install the required CRD",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "kubernetes",
+        "k8s",
+        "kind",
+        "yaml"
+      ],
+      "examples": [
+        "no matches for kind \"Ingres\" in version \"networking.k8s.io/v1\"",
+        "kind cannot be empty",
+        "unknown kind \"CronJobs\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "kubernetes_metadata_error",
+      "pattern": "metadata.name|name is required|invalid name|name .* not valid|name too long|name must be|name or generateName is required|name must consist of|contains invalid characters|Invalid value: \"[^\"]+\": a DNS-1123|metadata validation failed",
+      "type": "MetadataError",
+      "description": "Invalid metadata in Kubernetes resource",
+      "root_cause": "kubernetes_config_error",
+      "suggestion": "Fix metadata fields, especially name field formatting",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "kubernetes",
+        "k8s",
+        "metadata",
+        "name"
+      ],
+      "examples": [
+        "metadata.name: Required value",
+        "Invalid value: \"my-name!\": a DNS-1123 subdomain must consist of lower case alphanumeric characters",
+        "name too long: maximum length is 63 characters"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "kubernetes_selector_error",
+      "pattern": "selector required|invalid selector|selector validation|missing required field selector|field selector|invalid label selector|selector does not match|labels must match|selector doesn't match|selector.matchLabels|selector not matching template labels",
+      "type": "SelectorError",
+      "description": "Invalid or missing selector in Kubernetes resource",
+      "root_cause": "kubernetes_config_error",
+      "suggestion": "Fix selector and ensure it matches template labels",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "kubernetes",
+        "k8s",
+        "selector",
+        "labels"
+      ],
+      "examples": [
+        "selector required",
+        "selector.matchLabels: Required value",
+        "selector doesn't match template labels"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "kubernetes_container_image_error",
+      "pattern": "container .* has an invalid image name|Invalid or missing image name|image .* not found|image cannot be pulled|failed to pull image|pull access denied|image spec is missing|ErrImagePull|ImagePullBackOff|invalid reference format|image name cannot be empty",
+      "type": "ContainerImageError",
+      "description": "Invalid or inaccessible container image",
+      "root_cause": "kubernetes_container_error",
+      "suggestion": "Check image name, registry access, and image existence",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "kubernetes",
+        "k8s",
+        "container",
+        "image"
+      ],
+      "examples": [
+        "container \"web\" has an invalid image name \"my/image:@latest\"",
+        "image \"privateregistry.com/app:v1\" not found",
+        "pull access denied for myapp, repository does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "kubernetes_port_error",
+      "pattern": "invalid port|port number .* must be|port number out of range|invalid containerPort|port cannot be 0|duplicate port|port is not valid|port number must be between|port mapping|hostPort cannot be set without containerPort",
+      "type": "PortError",
+      "description": "Invalid port configuration in container",
+      "root_cause": "kubernetes_container_error",
+      "suggestion": "Use valid port numbers (1-65535) and check for duplicates",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "kubernetes",
+        "k8s",
+        "container",
+        "port"
+      ],
+      "examples": [
+        "port number 0 must be between 1 and 65535, inclusive",
+        "duplicate port definition for port 80",
+        "invalid containerPort: must be between 1 and 65535"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "kubernetes_resource_limits_error",
+      "pattern": "invalid resource|resource limits|resources.limits|invalid quantity|quantity cannot be negative|memory limit|CPU limit|resource requirements|cannot be parsed|not a valid resource|memory request|invalid memory quantifier|memory value exceeds|resource format",
+      "type": "ResourceLimitsError",
+      "description": "Invalid resource limits or requests",
+      "root_cause": "kubernetes_container_error",
+      "suggestion": "Fix resource format (e.g., '500Mi', '2Gi', '500m', '2')",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "kubernetes",
+        "k8s",
+        "resources",
+        "limits"
+      ],
+      "examples": [
+        "invalid quantity: \"2g\": unable to parse quantity's suffix",
+        "memory value exceeds maximum allowed: 2Ti",
+        "CPU limit cannot be negative: -200m"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "kubernetes_volume_error",
+      "pattern": "unknown volume type|invalid volume|volume validation|volume .* not found|PersistentVolumeClaim .* not found|volume source is empty|no persistent volumes available|volume mount .* not found|hostPath is required|invalid mountPath|invalid volumeMount|volumeMounts.mountPath|subPath|volume cannot be mounted",
+      "type": "VolumeError",
+      "description": "Invalid volume configuration",
+      "root_cause": "kubernetes_volume_error",
+      "suggestion": "Check volume definitions, PVC existence, and mount paths",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "kubernetes",
+        "k8s",
+        "volume",
+        "pvc"
+      ],
+      "examples": [
+        "unknown volume type \"nfs\"",
+        "PersistentVolumeClaim \"data-pvc\" not found",
+        "invalid mountPath: must be an absolute path"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "kubernetes_service_error",
+      "pattern": "service ports|servicePort|invalid service|service validation|service port .* is not valid|targetPort|invalid port|unknown service|service .* not found|no endpoints available|port .* already allocated|service type .* not supported|servicePort.protocol|loadBalancer",
+      "type": "ServiceError",
+      "description": "Invalid Service configuration",
+      "root_cause": "kubernetes_service_error",
+      "suggestion": "Check service ports, types, and selector matches",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "kubernetes",
+        "k8s",
+        "service",
+        "networking"
+      ],
+      "examples": [
+        "service port 0 is not valid: must be between 1-65535",
+        "no endpoints available for service \"my-service\"",
+        "port 80 already allocated"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "kubernetes_ingress_error",
+      "pattern": "invalid ingress|ingress validation|ingress.spec|invalid host|no backend|invalid backend|backend not found|unknown ingress|ingress class .* not found|ingress resource .* is invalid|invalid regex pattern|invalid path type|invalid TLS|tls configuration",
+      "type": "IngressError",
+      "description": "Invalid Ingress configuration",
+      "root_cause": "kubernetes_ingress_error",
+      "suggestion": "Check Ingress paths, hosts, TLS config, and backend references",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "kubernetes",
+        "k8s",
+        "ingress",
+        "networking"
+      ],
+      "examples": [
+        "invalid host: \"*.example*.com\"",
+        "backend not found: service \"web\" not found",
+        "invalid regex pattern in path: \"/hello(/\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

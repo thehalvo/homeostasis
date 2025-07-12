@@ -1,0 +1,335 @@
+{
+  "name": "Erlang Process Management Errors",
+  "description": "Rules for detecting Erlang process management and actor model errors",
+  "rules": [
+    {
+      "id": "erlang_noproc",
+      "pattern": "noproc",
+      "type": "RuntimeError",
+      "description": "Process does not exist",
+      "root_cause": "erlang_process_error",
+      "suggestion": "Check if process is alive before sending messages",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "noproc"
+      ],
+      "examples": [
+        "** exception exit: noproc",
+        "Error: {noproc, [...]}",
+        "Process <0.123.0> does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_process_killed",
+      "pattern": "(process.*?killed|killed)",
+      "type": "RuntimeError",
+      "description": "Process was killed",
+      "root_cause": "erlang_process_error",
+      "suggestion": "Check why process was killed and handle exit signals",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "killed"
+      ],
+      "examples": [
+        "process <0.123.0> killed",
+        "Process was killed with reason"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_process_normal_exit",
+      "pattern": "(process.*?normal|normal)",
+      "type": "Info",
+      "description": "Process exited normally",
+      "root_cause": "erlang_process_error",
+      "suggestion": "Normal process exit, may be expected behavior",
+      "category": "erlang",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "normal",
+        "exit"
+      ],
+      "examples": [
+        "process <0.123.0> exited with reason: normal",
+        "Process exited normally"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_process_shutdown",
+      "pattern": "(process.*?shutdown|shutdown)",
+      "type": "RuntimeError",
+      "description": "Process was shut down",
+      "root_cause": "erlang_process_error",
+      "suggestion": "Check why process was shut down and handle gracefully",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "shutdown"
+      ],
+      "examples": [
+        "process <0.123.0> exited with reason: shutdown",
+        "Process was shut down"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_process_died",
+      "pattern": "process.*?died",
+      "type": "RuntimeError",
+      "description": "Process died unexpectedly",
+      "root_cause": "erlang_process_error",
+      "suggestion": "Handle process failures and use proper supervision",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "died"
+      ],
+      "examples": [
+        "process <0.123.0> died",
+        "Process died with reason"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_process_terminated",
+      "pattern": "process.*?terminated",
+      "type": "RuntimeError",
+      "description": "Process terminated unexpectedly",
+      "root_cause": "erlang_process_error",
+      "suggestion": "Handle process termination and restart if needed",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "terminated"
+      ],
+      "examples": [
+        "process <0.123.0> terminated",
+        "Process terminated with reason"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_link_process",
+      "pattern": "link.*?process",
+      "type": "RuntimeError",
+      "description": "Linked process failure",
+      "root_cause": "erlang_process_error",
+      "suggestion": "Use process monitors instead of links or trap exits",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "link"
+      ],
+      "examples": [
+        "linked process <0.123.0> exited",
+        "link to process failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_monitor_process",
+      "pattern": "monitor.*?process",
+      "type": "RuntimeError",
+      "description": "Monitored process failure",
+      "root_cause": "erlang_process_error",
+      "suggestion": "Handle DOWN messages from process monitors",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "monitor"
+      ],
+      "examples": [
+        "monitored process <0.123.0> exited",
+        "process monitor detected failure"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_exit_reason",
+      "pattern": "exit.*?reason",
+      "type": "RuntimeError",
+      "description": "Process exit with specific reason",
+      "root_cause": "erlang_process_error",
+      "suggestion": "Handle specific exit reasons appropriately",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "exit",
+        "reason"
+      ],
+      "examples": [
+        "exit with reason: {badmatch, ...}",
+        "process exited with reason"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_trap_exit",
+      "pattern": "trap_exit",
+      "type": "Info",
+      "description": "Process trapping exits",
+      "root_cause": "erlang_process_error",
+      "suggestion": "Make sure to handle EXIT messages in receive loop",
+      "category": "erlang",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "trap_exit"
+      ],
+      "examples": [
+        "process is trapping exits",
+        "EXIT message received in trap_exit process"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_timeout",
+      "pattern": "timeout",
+      "type": "RuntimeError",
+      "description": "Operation timeout",
+      "root_cause": "erlang_runtime_error",
+      "suggestion": "Increase timeout or optimize the operation",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "timeout"
+      ],
+      "examples": [
+        "** exception exit: timeout",
+        "Error: {timeout, [...]}",
+        "operation timed out"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_receive_timeout",
+      "pattern": "receive.*?timeout",
+      "type": "RuntimeError",
+      "description": "Receive expression timeout",
+      "root_cause": "erlang_process_error",
+      "suggestion": "Handle receive timeouts appropriately",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "process",
+        "receive",
+        "timeout"
+      ],
+      "examples": [
+        "receive timeout",
+        "message receive timed out"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

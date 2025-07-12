@@ -1,0 +1,376 @@
+{
+  "name": "Dockerfile Best Practices",
+  "description": "Rules for detecting best practice violations in Dockerfile configurations",
+  "rules": [
+    {
+      "id": "dockerfile_security_root_user",
+      "pattern": "running as root|USER root|container runs as root|container is running as root|privileged user|privileged container|running with root privileges|running with superuser privileges",
+      "type": "SecurityIssue",
+      "description": "Container running as root user",
+      "root_cause": "dockerfile_security_issue",
+      "suggestion": "Add USER instruction to run as non-root user",
+      "category": "security",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "security",
+        "user",
+        "root"
+      ],
+      "examples": [
+        "Container is running as root user",
+        "No USER instruction found - container runs as root"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_security_latest_tag",
+      "pattern": "FROM .*:latest|using latest tag|latest tag|latest version|unspecified version|unversioned|latest is not recommended|non-specific tag|no specific version|using generic tag",
+      "type": "SecurityIssue",
+      "description": "Using 'latest' tag for base image",
+      "root_cause": "dockerfile_security_issue",
+      "suggestion": "Use specific version tags for reproducible builds",
+      "category": "security",
+      "severity": "medium",
+      "confidence": "high",
+      "instruction": "FROM",
+      "tags": [
+        "dockerfile",
+        "security",
+        "tag",
+        "versioning"
+      ],
+      "examples": [
+        "FROM node:latest",
+        "Using 'latest' tag is not recommended for production"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_security_sudo_usage",
+      "pattern": "RUN sudo|using sudo|sudo command|privilege escalation|sudoers|superuser do|sudo apt|sudo npm|sudo pip|sudo install|sudo yum|sudo dnf",
+      "type": "SecurityIssue",
+      "description": "Using sudo in container",
+      "root_cause": "dockerfile_security_issue",
+      "suggestion": "Avoid using sudo in containers, use USER instruction instead",
+      "category": "security",
+      "severity": "medium",
+      "confidence": "high",
+      "instruction": "RUN",
+      "tags": [
+        "dockerfile",
+        "security",
+        "sudo",
+        "privilege"
+      ],
+      "examples": [
+        "RUN sudo apt-get update",
+        "Using sudo in containers is unnecessary and creates security risks"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_security_exposed_secret",
+      "pattern": "password|secret|key|token|credential|api key|auth token|private key|ssh key|access key|certificate|sensitive data|confidential|credentials",
+      "type": "SecurityIssue",
+      "description": "Potential hardcoded secrets in Dockerfile",
+      "root_cause": "dockerfile_security_issue",
+      "suggestion": "Use ARG, build-time secrets, or environment variables from secure sources",
+      "category": "security",
+      "severity": "critical",
+      "confidence": "medium",
+      "tags": [
+        "dockerfile",
+        "security",
+        "secret",
+        "credential"
+      ],
+      "examples": [
+        "ENV API_KEY=1234567890abcdef",
+        "RUN echo 'password123' | sudo -S command"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_performance_multiple_runs",
+      "pattern": "RUN apt-get update.*\\nRUN apt-get install|RUN npm|multiple RUN instructions|multiple layer|excessive layers|RUN apt|RUN yum|RUN dnf|RUN pip|RUN go|RUN curl|too many layers",
+      "type": "PerformanceIssue",
+      "description": "Multiple RUN instructions create unnecessary layers",
+      "root_cause": "dockerfile_performance_issue",
+      "suggestion": "Combine RUN instructions using && to reduce layer count",
+      "category": "performance",
+      "severity": "medium",
+      "confidence": "medium",
+      "instruction": "RUN",
+      "tags": [
+        "dockerfile",
+        "performance",
+        "layers",
+        "optimization"
+      ],
+      "examples": [
+        "RUN apt-get update\nRUN apt-get install -y nginx",
+        "Multiple RUN instructions create unnecessary layers"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_performance_no_dockerignore",
+      "pattern": "no .dockerignore|missing .dockerignore|consider using .dockerignore|large build context|build context size|slow build|should use .dockerignore|recommend .dockerignore|optimize build context",
+      "type": "PerformanceIssue",
+      "description": "No .dockerignore file detected",
+      "root_cause": "dockerfile_performance_issue",
+      "suggestion": "Create .dockerignore to exclude unnecessary files from build context",
+      "category": "performance",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "dockerfile",
+        "performance",
+        "dockerignore",
+        "context"
+      ],
+      "examples": [
+        "No .dockerignore file detected",
+        "Build context size can be reduced with .dockerignore"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "low",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_performance_cache_invalidation",
+      "pattern": "cache invalidation|unnecessary cache invalidation|cache locality|cache optimization|COPY requirements|ADD package.json|cache efficiently|COPY before RUN|optimize caching|layer caching",
+      "type": "PerformanceIssue",
+      "description": "Inefficient layer caching",
+      "root_cause": "dockerfile_performance_issue",
+      "suggestion": "Order instructions by change frequency to optimize layer caching",
+      "category": "performance",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "dockerfile",
+        "performance",
+        "cache",
+        "optimization"
+      ],
+      "examples": [
+        "Inefficient layer caching detected",
+        "Consider moving COPY requirements.txt before RUN pip install"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_performance_no_multistage",
+      "pattern": "no multi-stage|missing multi-stage|consider multi-stage|could use multi-stage|single stage build|optimize with multi-stage|reduce image size with multi-stage|large final image|image size optimization|build tools in final image",
+      "type": "PerformanceIssue",
+      "description": "Not using multi-stage builds",
+      "root_cause": "dockerfile_performance_issue",
+      "suggestion": "Use multi-stage builds to reduce final image size",
+      "category": "performance",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "dockerfile",
+        "performance",
+        "multi-stage",
+        "size"
+      ],
+      "examples": [
+        "Consider using multi-stage builds to reduce image size",
+        "Build tools remain in final image, use multi-stage builds"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_maintainability_no_workdir",
+      "pattern": "no WORKDIR|missing WORKDIR|WORKDIR not set|WORKDIR instruction|explicit working directory|implicit working directory|working from root directory|avoid root directory|default working directory",
+      "type": "MaintainabilityIssue",
+      "description": "No WORKDIR instruction found",
+      "root_cause": "dockerfile_maintainability_issue",
+      "suggestion": "Set explicit WORKDIR to avoid using root directory",
+      "category": "maintainability",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "maintainability",
+        "workdir",
+        "organization"
+      ],
+      "examples": [
+        "No WORKDIR instruction found",
+        "Set explicit WORKDIR to avoid using root directory"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_maintainability_no_labels",
+      "pattern": "no LABEL|missing LABEL|metadata missing|LABEL not used|missing metadata|consider adding LABEL|add metadata|maintainer information|LABEL maintainer|version label|description label",
+      "type": "MaintainabilityIssue",
+      "description": "No LABEL instructions for metadata",
+      "root_cause": "dockerfile_maintainability_issue",
+      "suggestion": "Add LABEL instructions for metadata (maintainer, version, etc.)",
+      "category": "maintainability",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "dockerfile",
+        "maintainability",
+        "label",
+        "metadata"
+      ],
+      "examples": [
+        "No LABEL instructions found for metadata",
+        "Consider adding LABELs for maintainer, version, and description"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "low",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_maintainability_undocumented_expose",
+      "pattern": "EXPOSE [0-9]+|port exposed|undocumented port|missing port documentation|exposed ports|service port|container port|port mapping|service endpoint",
+      "type": "MaintainabilityIssue",
+      "description": "Undocumented EXPOSE instruction",
+      "root_cause": "dockerfile_maintainability_issue",
+      "suggestion": "Add comments to document the purpose of exposed ports",
+      "category": "maintainability",
+      "severity": "low",
+      "confidence": "medium",
+      "instruction": "EXPOSE",
+      "tags": [
+        "dockerfile",
+        "maintainability",
+        "expose",
+        "documentation"
+      ],
+      "examples": [
+        "EXPOSE 8080 without documentation",
+        "Document the purpose of exposed ports with comments"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "low",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_maintainability_apt_cleanup",
+      "pattern": "apt-get (update|install)|apt install|apt-get update && apt-get install|apt cache|apt lists|apt packages|RUN apt|apt repositories|apt-get clean|apt-get autoremove|apt cleanup|cache not removed",
+      "type": "MaintainabilityIssue",
+      "description": "APT cache not cleaned after package installation",
+      "root_cause": "dockerfile_maintainability_issue",
+      "suggestion": "Clean up APT cache with 'rm -rf /var/lib/apt/lists/*' after installation",
+      "category": "maintainability",
+      "severity": "medium",
+      "confidence": "high",
+      "instruction": "RUN",
+      "tags": [
+        "dockerfile",
+        "maintainability",
+        "apt",
+        "cleanup"
+      ],
+      "examples": [
+        "RUN apt-get update && apt-get install -y nginx without cleanup",
+        "Clean up APT cache to reduce image size"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_layer_add_vs_copy",
+      "pattern": "ADD .*\\.(tar|gz|zip)|ADD http|ADD https|ADD instead of COPY|use COPY instead of ADD|ADD used for simple files|ADD instruction|ADD can be replaced|prefer COPY over ADD",
+      "type": "LayerOptimizationIssue",
+      "description": "Using ADD instead of COPY for simple file copying",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Use COPY instead of ADD for simple file copying",
+      "category": "layer",
+      "severity": "low",
+      "confidence": "medium",
+      "instruction": "ADD",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "add",
+        "copy"
+      ],
+      "examples": [
+        "ADD file.txt /app/ can be replaced with COPY",
+        "Use COPY for simple file copying, ADD for archives or URLs"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "low",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

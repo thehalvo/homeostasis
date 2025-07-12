@@ -1,0 +1,286 @@
+{
+  "name": "MATLAB Plotting Errors",
+  "description": "Rules for detecting errors related to MATLAB plotting and visualization",
+  "rules": [
+    {
+      "id": "matlab_invalid_axes_handle",
+      "pattern": "Invalid (axes|axis) handle",
+      "type": "PlotError",
+      "description": "Invalid or deleted axes handle",
+      "root_cause": "matlab_plot_error",
+      "suggestion": "Use valid axes handle or create new axes with axes() or subplot()",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "plot",
+        "axes",
+        "handle"
+      ],
+      "examples": [
+        "Error: Invalid axes handle.",
+        "Invalid axis handle used in plot command."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_invalid_figure_handle",
+      "pattern": "Invalid (figure|Figure) handle",
+      "type": "PlotError",
+      "description": "Invalid or deleted figure handle",
+      "root_cause": "matlab_plot_error",
+      "suggestion": "Use valid figure handle or create new figure with figure()",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "plot",
+        "figure",
+        "handle"
+      ],
+      "examples": [
+        "Error: Invalid figure handle.",
+        "Invalid Figure handle used in subplot."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_plot_incompatible_sizes",
+      "pattern": "Vectors must be the same lengths",
+      "type": "PlotError",
+      "description": "Plot vectors have incompatible sizes",
+      "root_cause": "matlab_plot_error",
+      "suggestion": "Ensure x and y vectors have the same length",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "plot",
+        "vector",
+        "length"
+      ],
+      "examples": [
+        "Error using plot Vectors must be the same lengths.",
+        "Vectors must be the same lengths for plotting."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_plot_requires_numeric_data",
+      "pattern": "Numeric (data|values) required",
+      "type": "PlotError",
+      "description": "Plotting requires numeric data values",
+      "root_cause": "matlab_plot_error",
+      "suggestion": "Convert plot data to numeric values with double() or str2num()",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "plot",
+        "numeric",
+        "data"
+      ],
+      "examples": [
+        "Error: Numeric data required.",
+        "Numeric values required for plot function."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_colormap_error",
+      "pattern": "Colormap must be an m-by-3 array",
+      "type": "PlotError",
+      "description": "Invalid colormap format",
+      "root_cause": "matlab_plot_error",
+      "suggestion": "Ensure colormap is an m-by-3 array of RGB values between 0 and 1",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "plot",
+        "colormap",
+        "color"
+      ],
+      "examples": [
+        "Error using colormap Colormap must be an m-by-3 array.",
+        "Colormap must be an m-by-3 array of RGB values."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_3d_plot_dimension_error",
+      "pattern": "Requires 3D data",
+      "type": "PlotError",
+      "description": "3D plotting function requires 3D data",
+      "root_cause": "matlab_plot_error",
+      "suggestion": "Provide x, y, and z coordinates for 3D plotting",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "plot",
+        "3d",
+        "dimension"
+      ],
+      "examples": [
+        "Error using surf Requires 3D data.",
+        "Error: Function requires 3D data for plotting."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_hold_on_error",
+      "pattern": "Cannot (hold on|set hold) for this (type of axes|plot)",
+      "type": "PlotError",
+      "description": "Cannot use hold on for this type of plot",
+      "root_cause": "matlab_plot_error",
+      "suggestion": "Create a new figure or use compatible plot types",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "plot",
+        "hold",
+        "compatibility"
+      ],
+      "examples": [
+        "Error: Cannot hold on for this type of axes.",
+        "Cannot set hold for this plot type."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_axes_limit_error",
+      "pattern": "(Axis|Axes) limits must be finite",
+      "type": "PlotError",
+      "description": "Axis limits must be finite values",
+      "root_cause": "matlab_plot_error",
+      "suggestion": "Use finite values for axis limits, not Inf or NaN",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "plot",
+        "axes",
+        "limits"
+      ],
+      "examples": [
+        "Error: Axis limits must be finite.",
+        "Axes limits must be finite real values."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_graphics_not_available",
+      "pattern": "Graphics (driver|device|hardware) (not available|failed)",
+      "type": "PlotError",
+      "description": "Graphics hardware or driver not available",
+      "root_cause": "matlab_plot_error",
+      "suggestion": "Check graphics drivers or use -noFigureWindows startup option",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "plot",
+        "graphics",
+        "hardware"
+      ],
+      "examples": [
+        "Error: Graphics driver not available.",
+        "Graphics hardware failed to initialize."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_opengl_error",
+      "pattern": "OpenGL (error|rendering error|not supported)",
+      "type": "PlotError",
+      "description": "OpenGL rendering error or not supported",
+      "root_cause": "matlab_plot_error",
+      "suggestion": "Use software OpenGL with 'opengl software' command",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "plot",
+        "opengl",
+        "rendering"
+      ],
+      "examples": [
+        "Error: OpenGL rendering error.",
+        "OpenGL not supported on this system."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

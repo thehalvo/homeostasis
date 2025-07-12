@@ -1,0 +1,267 @@
+{
+  "name": "Azure Provider Errors",
+  "description": "Rules for detecting errors related to Azure (azurerm) provider in Terraform",
+  "rules": [
+    {
+      "id": "azurerm_authentication_error",
+      "pattern": "AuthenticationFailed|InvalidAuthenticationTokenTenant|Forbidden|InvalidClientSecretCredential|AADSTS|failed to obtain access token|failed to authenticate",
+      "type": "AuthenticationError",
+      "description": "Azure authentication or credentials error",
+      "root_cause": "terraform_azurerm_auth_error",
+      "suggestion": "Configure valid Azure credentials using environment variables, service principal, or Azure CLI",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "azurerm",
+      "tags": [
+        "terraform",
+        "azure",
+        "authentication",
+        "credentials"
+      ],
+      "examples": [
+        "Error: AuthenticationFailed: Failed to obtain access token",
+        "Error: InvalidAuthenticationTokenTenant: The access token is from the wrong issuer"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "azurerm_resource_not_found",
+      "pattern": "ResourceNotFound|ResourceGroupNotFound|SubscriptionNotFound|NotFound|was not found|could not be found|does not exist",
+      "type": "ResourceError",
+      "description": "Azure resource not found",
+      "root_cause": "terraform_azurerm_resource_error",
+      "suggestion": "Check resource IDs, names, and existence in the specified resource group",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "azurerm",
+      "tags": [
+        "terraform",
+        "azure",
+        "resource",
+        "not_found"
+      ],
+      "examples": [
+        "Error: ResourceNotFound: Resource group 'example-rg' could not be found",
+        "Error: NotFound: Storage account 'example' was not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "azurerm_permission_denied",
+      "pattern": "AuthorizationFailed|Unauthorized|does not have permission|insufficient privileges|access denied|Forbidden|does not have authorization",
+      "type": "PermissionError",
+      "description": "Azure permission denied or insufficient privileges",
+      "root_cause": "terraform_azurerm_permission_error",
+      "suggestion": "Update Azure RBAC roles to grant necessary permissions for resources",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "azurerm",
+      "tags": [
+        "terraform",
+        "azure",
+        "permission",
+        "rbac"
+      ],
+      "examples": [
+        "Error: AuthorizationFailed: The client does not have authorization to perform action",
+        "Error: Forbidden: The user does not have access to the resource"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "azurerm_quota_exceeded",
+      "pattern": "QuotaExceeded|TooManyRequests|Throttling|RequestThrottled|exceeded quota|exceeded limits|capacity constraints",
+      "type": "QuotaError",
+      "description": "Azure service quota or rate limit exceeded",
+      "root_cause": "terraform_azurerm_quota_error",
+      "suggestion": "Request quota increase or reduce resource usage",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "azurerm",
+      "tags": [
+        "terraform",
+        "azure",
+        "quota",
+        "limit"
+      ],
+      "examples": [
+        "Error: QuotaExceeded: Subscription quota of storage accounts has been reached",
+        "Error: TooManyRequests: The request is being throttled"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "azurerm_duplicate_resource",
+      "pattern": "AlreadyExists|DuplicateResourceName|Conflict|already exists in another resource group|already exists in subscription|name is already taken",
+      "type": "ResourceError",
+      "description": "Azure resource already exists",
+      "root_cause": "terraform_azurerm_resource_error",
+      "suggestion": "Use a different resource name or import existing resource",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "azurerm",
+      "tags": [
+        "terraform",
+        "azure",
+        "resource",
+        "duplicate"
+      ],
+      "examples": [
+        "Error: AlreadyExists: The resource with name 'example' already exists",
+        "Error: Conflict: Storage account name is already taken"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "azurerm_resource_in_use",
+      "pattern": "ResourceInUse|InUseByOtherResource|OperationNotAllowed|StillInUse|in use by other resources|still has resources|subnet is in use|NetworkConfigurationInUse",
+      "type": "DependencyError",
+      "description": "Azure resource still in use or has dependencies",
+      "root_cause": "terraform_azurerm_dependency_error",
+      "suggestion": "Delete dependent resources first or break association",
+      "category": "dependency",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "azurerm",
+      "tags": [
+        "terraform",
+        "azure",
+        "dependency",
+        "in_use"
+      ],
+      "examples": [
+        "Error: ResourceInUse: Virtual network cannot be deleted because it is in use",
+        "Error: InUseByOtherResource: Resource group still has resources"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "azurerm_invalid_parameter",
+      "pattern": "InvalidParameter|ValidationError|BadRequest|not a valid|invalid value|validation failed|invalid format|invalid name",
+      "type": "ParameterError",
+      "description": "Invalid parameter value for Azure resource",
+      "root_cause": "terraform_azurerm_parameter_error",
+      "suggestion": "Check parameter values and constraints in Azure documentation",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "azurerm",
+      "tags": [
+        "terraform",
+        "azure",
+        "parameter",
+        "validation"
+      ],
+      "examples": [
+        "Error: InvalidParameter: Resource name must be between 3 and 24 characters",
+        "Error: ValidationError: Parameter validation failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "azurerm_subscription_error",
+      "pattern": "SubscriptionNotFound|Invalid subscription|MissingSubscription|SubscriptionDoesNotHaveServer|does not exist in tenant|SubscriptionIdNotSpecified",
+      "type": "SubscriptionError",
+      "description": "Azure subscription error or invalid subscription",
+      "root_cause": "terraform_azurerm_subscription_error",
+      "suggestion": "Check subscription ID and ensure it's active and accessible",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "azurerm",
+      "tags": [
+        "terraform",
+        "azure",
+        "subscription",
+        "tenant"
+      ],
+      "examples": [
+        "Error: SubscriptionNotFound: The subscription 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' could not be found",
+        "Error: Invalid subscription ID specified"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "azurerm_service_unavailable",
+      "pattern": "ServiceUnavailable|InternalServerError|ServerTimeout|GatewayTimeout|ServiceBusy|OperationTimedOut|TemporarilyUnavailable",
+      "type": "ServiceError",
+      "description": "Azure service unavailable or internal error",
+      "root_cause": "terraform_azurerm_service_error",
+      "suggestion": "Retry operation later or check Azure service status",
+      "category": "provider",
+      "severity": "medium",
+      "confidence": "high",
+      "provider": "azurerm",
+      "tags": [
+        "terraform",
+        "azure",
+        "service",
+        "availability"
+      ],
+      "examples": [
+        "Error: ServiceUnavailable: The service is currently unavailable",
+        "Error: InternalServerError: An internal server error occurred"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

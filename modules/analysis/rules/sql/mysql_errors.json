@@ -1,0 +1,340 @@
+{
+  "name": "MySQL Errors",
+  "description": "Rules for detecting MySQL-specific database errors",
+  "rules": [
+    {
+      "id": "mysql_syntax_error",
+      "pattern": "You have an error in your SQL syntax",
+      "type": "SyntaxError",
+      "description": "MySQL syntax error",
+      "root_cause": "sql_mysql_syntax_error",
+      "suggestion": "Fix MySQL syntax errors",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "syntax"
+      ],
+      "examples": [
+        "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near",
+        "Syntax error or access violation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mysql_table_not_exist",
+      "pattern": "Table '(.+?)' doesn't exist",
+      "type": "SchemaError",
+      "description": "Table does not exist in MySQL",
+      "root_cause": "sql_mysql_table_not_exist",
+      "suggestion": "Verify table exists and check spelling. Check database name",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "table",
+        "schema"
+      ],
+      "examples": [
+        "Table 'mydb.users' doesn't exist",
+        "Table 'customers' doesn't exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mysql_column_not_exist",
+      "pattern": "Unknown column '(.+?)' in",
+      "type": "SchemaError",
+      "description": "Column does not exist in MySQL table",
+      "root_cause": "sql_mysql_column_not_exist",
+      "suggestion": "Verify column exists in table and check spelling",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "column",
+        "schema"
+      ],
+      "examples": [
+        "Unknown column 'email' in 'field list'",
+        "Unknown column 'users.name' in 'where clause'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mysql_duplicate_entry",
+      "pattern": "Duplicate entry '(.+?)' for key",
+      "type": "ConstraintError",
+      "description": "Unique constraint violation in MySQL",
+      "root_cause": "sql_mysql_duplicate_entry",
+      "suggestion": "Use INSERT IGNORE or ON DUPLICATE KEY UPDATE",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "constraint",
+        "unique"
+      ],
+      "examples": [
+        "Duplicate entry 'john@example.com' for key 'email'",
+        "Duplicate entry '1' for key 'PRIMARY'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mysql_access_denied",
+      "pattern": "Access denied for user '(.+?)'@'(.+?)'",
+      "type": "PermissionError",
+      "description": "Access denied for MySQL user",
+      "root_cause": "sql_mysql_access_denied",
+      "suggestion": "Check user credentials and permissions",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "permission",
+        "access"
+      ],
+      "examples": [
+        "Access denied for user 'username'@'localhost'",
+        "Access denied for user 'root'@'127.0.0.1' (using password: YES)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mysql_connection_failed",
+      "pattern": "Can't connect to (MySQL|MariaDB) server",
+      "type": "ConnectionError",
+      "description": "Failed to connect to MySQL server",
+      "root_cause": "sql_mysql_connection_failed",
+      "suggestion": "Check server status, connection parameters, and network",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "connection"
+      ],
+      "examples": [
+        "Can't connect to MySQL server on 'localhost' (10061)",
+        "Can't connect to MariaDB server on '127.0.0.1' (111)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mysql_foreign_key_constraint",
+      "pattern": "Cannot add or update a child row: a foreign key constraint fails",
+      "type": "ConstraintError",
+      "description": "Foreign key constraint violation in MySQL",
+      "root_cause": "sql_mysql_foreign_key_constraint",
+      "suggestion": "Ensure referenced record exists or disable foreign key checks",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "constraint",
+        "foreign_key"
+      ],
+      "examples": [
+        "Cannot add or update a child row: a foreign key constraint fails (`mydb`.`orders`, CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`))",
+        "Cannot add or update a child row: a foreign key constraint fails"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mysql_database_not_exist",
+      "pattern": "Unknown database '(.+?)'",
+      "type": "SchemaError",
+      "description": "Database does not exist in MySQL",
+      "root_cause": "sql_mysql_database_not_exist",
+      "suggestion": "Create database or check database name",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "database",
+        "schema"
+      ],
+      "examples": [
+        "Unknown database 'mydb'",
+        "Unknown database 'test_db'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mysql_deadlock",
+      "pattern": "Deadlock found when trying to get lock",
+      "type": "TransactionError",
+      "description": "Deadlock detected in MySQL",
+      "root_cause": "sql_mysql_deadlock",
+      "suggestion": "Redesign transaction order or implement retry logic",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "transaction",
+        "deadlock"
+      ],
+      "examples": [
+        "Deadlock found when trying to get lock; try restarting transaction",
+        "ERROR 1213 (40001): Deadlock found when trying to get lock"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mysql_incorrect_datetime",
+      "pattern": "Incorrect (date|datetime|timestamp) value",
+      "type": "DataTypeError",
+      "description": "Incorrect date/time format in MySQL",
+      "root_cause": "sql_mysql_incorrect_datetime",
+      "suggestion": "Use YYYY-MM-DD HH:MM:SS format for datetime values",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "data_type",
+        "datetime"
+      ],
+      "examples": [
+        "Incorrect datetime value: '2022-02-31' for column 'date' at row 1",
+        "Incorrect date value: 'not-a-date' for column 'created_at'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mysql_division_by_zero",
+      "pattern": "Division by 0",
+      "type": "ArithmeticError",
+      "description": "Division by zero in MySQL",
+      "root_cause": "sql_mysql_division_by_zero",
+      "suggestion": "Check divisor before division or use NULLIF(divisor, 0)",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "arithmetic",
+        "division"
+      ],
+      "examples": [
+        "ERROR 1365 (22012): Division by 0",
+        "Division by 0"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "mysql_incorrect_integer",
+      "pattern": "Incorrect integer value",
+      "type": "DataTypeError",
+      "description": "Non-integer value for integer column in MySQL",
+      "root_cause": "sql_mysql_incorrect_integer",
+      "suggestion": "Ensure value is a valid integer for the column",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "data_type",
+        "integer"
+      ],
+      "examples": [
+        "Incorrect integer value: 'abc' for column 'id' at row 1",
+        "Incorrect integer value: '12.34' for column 'quantity'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

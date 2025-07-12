@@ -1,0 +1,258 @@
+{
+  "name": "Terraform Variable Errors",
+  "description": "Rules for detecting errors related to Terraform variables and inputs",
+  "rules": [
+    {
+      "id": "terraform_variable_not_defined",
+      "pattern": "Reference to undeclared input variable|Variable .+ not declared|No variable named",
+      "type": "VariableError",
+      "description": "Reference to undefined variable",
+      "root_cause": "terraform_variable_error",
+      "suggestion": "Define the variable using a variable block in your configuration",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "variable",
+        "undefined",
+        "reference"
+      ],
+      "examples": [
+        "Error: Reference to undeclared input variable",
+        "Error: Variable \"region\" not declared"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_variable_no_value",
+      "pattern": "No value for required variable|Required variable not set|Missing required value for variable",
+      "type": "VariableError",
+      "description": "Required variable has no value",
+      "root_cause": "terraform_variable_error",
+      "suggestion": "Provide value in .tfvars file, via command line, or add a default value",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "variable",
+        "required",
+        "value"
+      ],
+      "examples": [
+        "Error: No value for required variable \"region\"",
+        "Error: Required variable \"environment\" not set"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_variable_type_mismatch",
+      "pattern": "Variable .+ should be|Expected type|Error: Unsuitable value for variable",
+      "type": "VariableError",
+      "description": "Variable value doesn't match expected type",
+      "root_cause": "terraform_variable_error",
+      "suggestion": "Provide value of the correct type as defined in the variable block",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "variable",
+        "type",
+        "validation"
+      ],
+      "examples": [
+        "Error: Variable \"count\" should be \"number\", got \"string\"",
+        "Error: Expected type string for variable \"region\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_variable_validation_failed",
+      "pattern": "Variable validation failed|Validation error:",
+      "type": "VariableError",
+      "description": "Variable value failed validation rules",
+      "root_cause": "terraform_variable_error",
+      "suggestion": "Provide value that meets the validation conditions in variable block",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "variable",
+        "validation",
+        "constraint"
+      ],
+      "examples": [
+        "Error: Variable validation failed",
+        "Error: Validation error: region must be one of [us-east-1, us-west-2]"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_variable_interpolation_error",
+      "pattern": "Error in interpolation|Incorrect interpolation syntax|Invalid template|Invalid expression for",
+      "type": "VariableError",
+      "description": "Error in variable interpolation or template",
+      "root_cause": "terraform_variable_error",
+      "suggestion": "Fix interpolation syntax, typically using ${var.name} format",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "variable",
+        "interpolation",
+        "template"
+      ],
+      "examples": [
+        "Error in interpolation: Invalid template interpolation value",
+        "Error: Incorrect interpolation syntax"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_invalid_variable_name",
+      "pattern": "Invalid variable name|names must start with a letter|not a valid identifier",
+      "type": "VariableError",
+      "description": "Invalid variable name or format",
+      "root_cause": "terraform_variable_error",
+      "suggestion": "Use valid variable names (letters, numbers, underscores) starting with a letter",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "variable",
+        "name",
+        "syntax"
+      ],
+      "examples": [
+        "Error: Invalid variable name \"1region\"",
+        "Error: Variable names must start with a letter"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_local_value_error",
+      "pattern": "Error in locals|Reference to undefined local value|Local value depends on resource|locals is invalid",
+      "type": "VariableError",
+      "description": "Error in local value definition or reference",
+      "root_cause": "terraform_variable_error",
+      "suggestion": "Fix local value reference or definition in locals block",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "variable",
+        "locals",
+        "reference"
+      ],
+      "examples": [
+        "Error: Reference to undefined local value",
+        "Error: Local value 'name' depends on resource attributes"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_output_error",
+      "pattern": "Error in output|Invalid output|Output refers to undefined",
+      "type": "VariableError",
+      "description": "Error in output variable definition",
+      "root_cause": "terraform_variable_error",
+      "suggestion": "Fix output definition or reference to other resources/variables",
+      "category": "variable",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "variable",
+        "output",
+        "reference"
+      ],
+      "examples": [
+        "Error in output \"instance_ip\"",
+        "Error: Output refers to undefined resource"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_tfvars_error",
+      "pattern": "Error loading .tfvars file|Error loading terraform.tfvars|Invalid .tfvars syntax",
+      "type": "VariableError",
+      "description": "Error loading .tfvars file",
+      "root_cause": "terraform_variable_error",
+      "suggestion": "Fix syntax in .tfvars file or check file path",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "variable",
+        "tfvars",
+        "file"
+      ],
+      "examples": [
+        "Error loading terraform.tfvars file",
+        "Error: Invalid .tfvars syntax"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

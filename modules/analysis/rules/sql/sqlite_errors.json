@@ -1,0 +1,344 @@
+{
+  "name": "SQLite Errors",
+  "description": "Rules for detecting SQLite-specific database errors",
+  "rules": [
+    {
+      "id": "sqlite_syntax_error",
+      "pattern": "near \"(.+?)\": syntax error",
+      "type": "SyntaxError",
+      "description": "SQLite syntax error",
+      "root_cause": "sql_sqlite_syntax_error",
+      "suggestion": "Fix SQLite syntax errors",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "syntax"
+      ],
+      "examples": [
+        "near \"WHERE\": syntax error",
+        "near \")\": syntax error",
+        "near \"SELECT\": syntax error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlite_table_not_exist",
+      "pattern": "no such table: (.+)",
+      "type": "SchemaError",
+      "description": "Table does not exist in SQLite",
+      "root_cause": "sql_sqlite_table_not_exist",
+      "suggestion": "Verify table exists and check spelling",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "table",
+        "schema"
+      ],
+      "examples": [
+        "no such table: users",
+        "no such table: customers"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlite_column_not_exist",
+      "pattern": "no such column: (.+)",
+      "type": "SchemaError",
+      "description": "Column does not exist in SQLite table",
+      "root_cause": "sql_sqlite_column_not_exist",
+      "suggestion": "Verify column exists in table and check spelling",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "column",
+        "schema"
+      ],
+      "examples": [
+        "no such column: email",
+        "no such column: users.name"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlite_unique_constraint",
+      "pattern": "UNIQUE constraint failed: (.+)",
+      "type": "ConstraintError",
+      "description": "Unique constraint violation in SQLite",
+      "root_cause": "sql_sqlite_unique_constraint",
+      "suggestion": "Use INSERT OR REPLACE or check for duplicate values",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "constraint",
+        "unique"
+      ],
+      "examples": [
+        "UNIQUE constraint failed: users.email",
+        "UNIQUE constraint failed: table.column"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlite_foreign_key_constraint",
+      "pattern": "FOREIGN KEY constraint failed",
+      "type": "ConstraintError",
+      "description": "Foreign key constraint violation in SQLite",
+      "root_cause": "sql_sqlite_foreign_key_constraint",
+      "suggestion": "Ensure referenced record exists or disable foreign key checks",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "constraint",
+        "foreign_key"
+      ],
+      "examples": [
+        "FOREIGN KEY constraint failed",
+        "foreign key constraint failed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlite_not_null_constraint",
+      "pattern": "NOT NULL constraint failed: (.+)",
+      "type": "ConstraintError",
+      "description": "NOT NULL constraint violation in SQLite",
+      "root_cause": "sql_sqlite_not_null_constraint",
+      "suggestion": "Provide values for required columns",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "constraint",
+        "not_null"
+      ],
+      "examples": [
+        "NOT NULL constraint failed: users.name",
+        "NOT NULL constraint failed: table.column"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlite_database_locked",
+      "pattern": "database is locked",
+      "type": "TransactionError",
+      "description": "SQLite database is locked",
+      "root_cause": "sql_sqlite_database_locked",
+      "suggestion": "Wait for other transactions or check for long-running operations",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "transaction",
+        "lock"
+      ],
+      "examples": [
+        "database is locked",
+        "Error: database is locked"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlite_readonly_database",
+      "pattern": "attempt to write a readonly database",
+      "type": "PermissionError",
+      "description": "Attempted write operation on read-only SQLite database",
+      "root_cause": "sql_sqlite_readonly_database",
+      "suggestion": "Check file permissions or open database with write permissions",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "permission",
+        "readonly"
+      ],
+      "examples": [
+        "attempt to write a readonly database",
+        "Error: attempt to write a readonly database"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlite_unable_open_database",
+      "pattern": "unable to open database file",
+      "type": "ConnectionError",
+      "description": "Unable to open SQLite database file",
+      "root_cause": "sql_sqlite_unable_open_database",
+      "suggestion": "Check file path and permissions",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "connection",
+        "file"
+      ],
+      "examples": [
+        "unable to open database file",
+        "Error: unable to open database file"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlite_disk_full",
+      "pattern": "disk (I/O error|full)",
+      "type": "StorageError",
+      "description": "Disk full or I/O error in SQLite",
+      "root_cause": "sql_sqlite_disk_error",
+      "suggestion": "Free up disk space or check storage permissions",
+      "category": "sql",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "storage",
+        "disk"
+      ],
+      "examples": [
+        "disk I/O error",
+        "disk full",
+        "Error: disk full"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlite_busy",
+      "pattern": "database or disk is busy",
+      "type": "TransactionError",
+      "description": "SQLite database is busy",
+      "root_cause": "sql_sqlite_busy",
+      "suggestion": "Implement retry logic or use PRAGMA busy_timeout",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "transaction",
+        "busy"
+      ],
+      "examples": [
+        "database or disk is busy",
+        "Error: database or disk is busy"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlite_corrupt_database",
+      "pattern": "database (disk image|file) is malformed",
+      "type": "DatabaseError",
+      "description": "SQLite database file is corrupt",
+      "root_cause": "sql_sqlite_corrupt_database",
+      "suggestion": "Restore from backup or use PRAGMA integrity_check",
+      "category": "sql",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "database",
+        "corrupt"
+      ],
+      "examples": [
+        "database disk image is malformed",
+        "database file is malformed",
+        "Error: database disk image is malformed"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,217 @@
+{
+  "name": "Zig Comptime Errors",
+  "description": "Rules for detecting Zig compile-time evaluation errors",
+  "rules": [
+    {
+      "id": "zig_comptime_eval_error",
+      "pattern": "error: unable to evaluate constant expression",
+      "type": "ComptimeError",
+      "description": "Unable to evaluate a compile-time constant expression",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Ensure all values in the expression are known at compile time",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "evaluation"
+      ],
+      "examples": [
+        "error: unable to evaluate constant expression"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_non_comptime_fn",
+      "pattern": "error: comptime call of non-comptime function",
+      "type": "ComptimeError",
+      "description": "Calling a non-comptime function at compile time",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Mark the function as comptime or call it at runtime",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "function"
+      ],
+      "examples": [
+        "error: comptime call of non-comptime function"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_var_runtime_mod",
+      "pattern": "error: comptime variable cannot be modified at runtime",
+      "type": "ComptimeError",
+      "description": "Attempting to modify a comptime variable at runtime",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Remove comptime or make the modification at compile time",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "variable"
+      ],
+      "examples": [
+        "error: comptime variable cannot be modified at runtime"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_expected_constant",
+      "pattern": "error: expected compile-time constant",
+      "type": "ComptimeError",
+      "description": "Expected a compile-time constant value",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Use comptime or ensure the value is known at compile time",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "constant"
+      ],
+      "examples": [
+        "error: expected compile-time constant"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_runtime_cond",
+      "pattern": "error: condition of comptime if must be comptime-known",
+      "type": "ComptimeError",
+      "description": "Condition in comptime if statement must be known at compile time",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Ensure condition expression is evaluable at compile time",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "condition",
+        "if"
+      ],
+      "examples": [
+        "error: condition of comptime if must be comptime-known"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_type_not_known",
+      "pattern": "error: type is not known at comptime",
+      "type": "ComptimeError",
+      "description": "Type information is not available at compile time",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Provide explicit type or ensure type is known at compile time",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "type"
+      ],
+      "examples": [
+        "error: type is not known at comptime"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_assign_var",
+      "pattern": "error: variable of type '@Type' must be const or comptime",
+      "type": "ComptimeError",
+      "description": "Variables holding types must be const or comptime",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Use 'const' or 'comptime var' for type variables",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "type",
+        "variable"
+      ],
+      "examples": [
+        "error: variable of type '@Type' must be const or comptime"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_generic_type",
+      "pattern": "error: generic function parameter must be comptime-known",
+      "type": "ComptimeError",
+      "description": "Generic parameter must be known at compile time",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Add 'comptime' keyword to the generic parameter",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "generic",
+        "parameter"
+      ],
+      "examples": [
+        "error: generic function parameter must be comptime-known"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

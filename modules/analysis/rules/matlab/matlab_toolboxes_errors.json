@@ -1,0 +1,286 @@
+{
+  "name": "MATLAB Toolbox Errors",
+  "description": "Rules for detecting errors related to MATLAB toolboxes and licensing",
+  "rules": [
+    {
+      "id": "matlab_toolbox_not_installed",
+      "pattern": "Undefined function .+ for input arguments of type .+\\. (.+) (toolbox|package) may be missing",
+      "type": "ToolboxError",
+      "description": "Required toolbox is not installed",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Install the missing toolbox or use alternative functions",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "toolbox",
+        "installation",
+        "missing"
+      ],
+      "examples": [
+        "Undefined function 'fmincon' for input arguments of type 'double'. Optimization toolbox may be missing",
+        "Undefined function 'findpeaks' for input arguments of type 'double'. Signal Processing toolbox may be missing"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_license_error",
+      "pattern": "License checkout failed",
+      "type": "LicenseError",
+      "description": "License checkout failed for MATLAB or toolbox",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Check license status or contact license administrator",
+      "category": "matlab",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "license",
+        "checkout",
+        "toolbox"
+      ],
+      "examples": [
+        "License checkout failed",
+        "License checkout failed for Toolbox: Signal Processing Toolbox"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_license_manager_error",
+      "pattern": "(License|MATLAB license) manager (error|communications link broken)",
+      "type": "LicenseError",
+      "description": "License manager error or connection issue",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Check network connection to license server or restart license manager",
+      "category": "matlab",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "license",
+        "manager",
+        "network"
+      ],
+      "examples": [
+        "License manager error -15",
+        "MATLAB license manager communications link broken"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_feature_not_licensed",
+      "pattern": "feature (is )?not (licensed|enabled)",
+      "type": "LicenseError",
+      "description": "Feature or functionality not licensed",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Acquire license for required feature or use alternative approaches",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "license",
+        "feature",
+        "toolbox"
+      ],
+      "examples": [
+        "This feature is not licensed",
+        "Feature not enabled: Parallel Computing Toolbox"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_toolbox_version_incompatible",
+      "pattern": "This functionality requires version (\\d+.\\d+) of the (.+) Toolbox",
+      "type": "ToolboxError",
+      "description": "Installed toolbox version is incompatible",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Update toolbox to required version",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "toolbox",
+        "version",
+        "compatibility"
+      ],
+      "examples": [
+        "This functionality requires version 9.2 of the Statistics and Machine Learning Toolbox",
+        "This functionality requires version 3.5 of the Deep Learning Toolbox"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_toolbox_dependency_missing",
+      "pattern": "(.+) Toolbox depends on (.+) Toolbox",
+      "type": "ToolboxError",
+      "description": "Required toolbox dependency is missing",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Install the required dependency toolbox",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "toolbox",
+        "dependency",
+        "missing"
+      ],
+      "examples": [
+        "Control System Toolbox depends on Signal Processing Toolbox",
+        "System Identification Toolbox depends on Control System Toolbox"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_library_load_error",
+      "pattern": "Failed to load (library|MEX-file|shared library|engine)",
+      "type": "LibraryError",
+      "description": "Failed to load shared library or MEX file",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Check library path or reinstall toolbox",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "library",
+        "mex",
+        "toolbox"
+      ],
+      "examples": [
+        "Failed to load MEX-file",
+        "Failed to load library: libmwmclmcrrt.so"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_license_expired",
+      "pattern": "(License|Feature|Product) (expired|has expired)",
+      "type": "LicenseError",
+      "description": "License or feature has expired",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Renew license or use alternative approaches",
+      "category": "matlab",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "license",
+        "expired",
+        "toolbox"
+      ],
+      "examples": [
+        "License has expired",
+        "Feature expired: Parallel Computing Toolbox"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_toolbox_activation_error",
+      "pattern": "(Failed to|Could not|Cannot) activate (.+) (Toolbox|toolbox|license)",
+      "type": "ActivationError",
+      "description": "Failed to activate toolbox or license",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Contact license administrator or check activation process",
+      "category": "matlab",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "activation",
+        "license",
+        "toolbox"
+      ],
+      "examples": [
+        "Failed to activate Curve Fitting Toolbox",
+        "Could not activate license: contact your administrator"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_license_server_unavailable",
+      "pattern": "(License|FLEXlm) server (not running|unavailable|cannot connect)",
+      "type": "LicenseError",
+      "description": "License server is not running or unavailable",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Check license server status or network connection",
+      "category": "matlab",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "license",
+        "server",
+        "network"
+      ],
+      "examples": [
+        "License server not running",
+        "FLEXlm server cannot connect to license server system"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,316 @@
+{
+  "name": "Fish-specific Errors",
+  "description": "Rules for detecting errors specific to the Fish shell",
+  "rules": [
+    {
+      "id": "fish_command_not_found",
+      "pattern": "fish: Unknown command",
+      "type": "CommandError",
+      "description": "Command not found in Fish shell",
+      "root_cause": "bash_command_not_found",
+      "suggestion": "Check if the command is installed and in PATH",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fish",
+        "command",
+        "path"
+      ],
+      "examples": [
+        "fish: Unknown command: git",
+        "fish: Unknown command: kubectl"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "fish",
+      "exit_code": 127
+    },
+    {
+      "id": "fish_unexpected_token",
+      "pattern": "fish: Unexpected token",
+      "type": "SyntaxError",
+      "description": "Unexpected token in Fish syntax",
+      "root_cause": "bash_syntax_error",
+      "suggestion": "Check Fish syntax and fix unexpected tokens",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fish",
+        "syntax",
+        "token"
+      ],
+      "examples": [
+        "fish: Unexpected token ')'",
+        "fish: Unexpected token in command substitution"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "fish"
+    },
+    {
+      "id": "fish_syntax_error",
+      "pattern": "fish: syntax error",
+      "type": "SyntaxError",
+      "description": "Syntax error in Fish script",
+      "root_cause": "bash_syntax_error",
+      "suggestion": "Check for syntax errors in Fish commands",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fish",
+        "syntax",
+        "script"
+      ],
+      "examples": [
+        "fish: syntax error near 'end'",
+        "fish: syntax error in if statement"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "fish"
+    },
+    {
+      "id": "fish_missing_end",
+      "pattern": "fish: Missing end",
+      "type": "SyntaxError",
+      "description": "Missing 'end' for block in Fish",
+      "root_cause": "bash_syntax_error",
+      "suggestion": "Add missing 'end' to close block (if, while, for, function)",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fish",
+        "syntax",
+        "block"
+      ],
+      "examples": [
+        "fish: Missing end for 'if' block",
+        "fish: Missing end for 'while' block"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "fish"
+    },
+    {
+      "id": "fish_job_control_error",
+      "pattern": "fish: job control not enabled",
+      "type": "JobControlError",
+      "description": "Job control not enabled in Fish",
+      "root_cause": "bash_execution_error",
+      "suggestion": "Check job control settings or avoid job control commands",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "fish",
+        "job",
+        "control"
+      ],
+      "examples": [
+        "fish: job control not enabled",
+        "fish: job control is not available in this session"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "fish"
+    },
+    {
+      "id": "fish_redirection_error",
+      "pattern": "fish: An error occurred while redirecting",
+      "type": "RedirectionError",
+      "description": "Error in file redirection",
+      "root_cause": "bash_redirection_error",
+      "suggestion": "Check redirection syntax and file paths",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "fish",
+        "redirection",
+        "io"
+      ],
+      "examples": [
+        "fish: An error occurred while redirecting file '/path/to/file'",
+        "fish: An error occurred while redirecting file descriptor"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "fish"
+    },
+    {
+      "id": "fish_permission_denied",
+      "pattern": "fish: Permission denied",
+      "type": "PermissionError",
+      "description": "Permission denied when executing command",
+      "root_cause": "bash_permission_error",
+      "suggestion": "Check file permissions or run with appropriate privileges",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fish",
+        "permission",
+        "access"
+      ],
+      "examples": [
+        "fish: Permission denied: './script.sh'",
+        "fish: Permission denied: '/path/to/file'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "fish",
+      "exit_code": 126
+    },
+    {
+      "id": "fish_unknown_function",
+      "pattern": "fish: Unknown function",
+      "type": "FunctionError",
+      "description": "Unknown function called in Fish",
+      "root_cause": "bash_function_error",
+      "suggestion": "Define the function before calling it",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "fish",
+        "function",
+        "call"
+      ],
+      "examples": [
+        "fish: Unknown function 'myfunc'",
+        "fish: Unknown function 'process_data'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "fish"
+    },
+    {
+      "id": "fish_bad_fd",
+      "pattern": "fish: Invalid file descriptor",
+      "type": "RedirectionError",
+      "description": "Invalid file descriptor in redirection",
+      "root_cause": "bash_redirection_error",
+      "suggestion": "Use valid file descriptors (0=stdin, 1=stdout, 2=stderr)",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "fish",
+        "redirection",
+        "descriptor"
+      ],
+      "examples": [
+        "fish: Invalid file descriptor: 3",
+        "fish: Invalid file descriptor in redirection"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "fish"
+    },
+    {
+      "id": "fish_variable_not_set",
+      "pattern": "fish: Variable '(.+?)' is not set",
+      "type": "VariableError",
+      "description": "Variable not set in Fish shell",
+      "root_cause": "bash_variable_error",
+      "suggestion": "Set the variable before use or provide a default value",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "fish",
+        "variable",
+        "undefined"
+      ],
+      "examples": [
+        "fish: Variable 'foo' is not set",
+        "fish: Variable 'PATH' is not set"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "fish"
+    },
+    {
+      "id": "fish_command_substitution_error",
+      "pattern": "fish: Error while executing command substitution",
+      "type": "SubstitutionError",
+      "description": "Error in command substitution",
+      "root_cause": "bash_expansion_error",
+      "suggestion": "Check command in substitution for errors",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fish",
+        "substitution",
+        "command"
+      ],
+      "examples": [
+        "fish: Error while executing command substitution",
+        "fish: Command substitution failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "fish"
+    }
+  ]
+}

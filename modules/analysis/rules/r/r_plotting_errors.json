@@ -1,0 +1,286 @@
+{
+  "name": "R Plotting Errors",
+  "description": "Rules for detecting errors related to R plotting and visualization",
+  "rules": [
+    {
+      "id": "r_plot_new_not_called",
+      "pattern": "plot\\.new has not been called yet",
+      "type": "PlotError",
+      "description": "Attempt to add to a plot before initializing",
+      "root_cause": "r_plot_error",
+      "suggestion": "Call plot() or plot.new() first before adding to a plot",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "plot",
+        "graphics",
+        "initialization"
+      ],
+      "examples": [
+        "plot.new has not been called yet",
+        "there is no current plot to add to"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_figure_margins_too_large",
+      "pattern": "figure margins too large",
+      "type": "PlotError",
+      "description": "Plot margins exceed device size",
+      "root_cause": "r_plot_error",
+      "suggestion": "Increase plot size or decrease margins with par(mar=c())",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "plot",
+        "margins",
+        "size"
+      ],
+      "examples": [
+        "figure margins too large",
+        "Error in plot.new() : figure margins too large"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_plot_region_too_small",
+      "pattern": "plot region too small",
+      "type": "PlotError",
+      "description": "Plot region size is too small",
+      "root_cause": "r_plot_error",
+      "suggestion": "Increase plot size or adjust margins and layout",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "plot",
+        "region",
+        "size"
+      ],
+      "examples": [
+        "plot region too small",
+        "Error: plot region too small for adding legend"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_invalid_graphics_parameter",
+      "pattern": "invalid (graphics|graphical) parameter\\(?s?\\)?",
+      "type": "PlotError",
+      "description": "Invalid graphics parameter specified",
+      "root_cause": "r_plot_error",
+      "suggestion": "Check valid graphics parameters with ?par",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "plot",
+        "parameter",
+        "graphics"
+      ],
+      "examples": [
+        "invalid graphics parameter",
+        "invalid graphical parameters"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_ggplot_no_layers",
+      "pattern": "ggplot2?.*: (\\+|geom_\\w+) requires (a mapping|the following missing aesthetics): ",
+      "type": "GgplotError",
+      "description": "ggplot missing required aesthetics or mapping",
+      "root_cause": "r_plot_error",
+      "suggestion": "Add required aesthetics with aes() function",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "ggplot2",
+        "aesthetics",
+        "layers"
+      ],
+      "examples": [
+        "geom_point requires the following missing aesthetics: x, y",
+        "+ requires a mapping with x and y aesthetics"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_device_not_available",
+      "pattern": "(device|graphics device) (.*?) not available",
+      "type": "DeviceError",
+      "description": "Graphics device not available",
+      "root_cause": "r_plot_error",
+      "suggestion": "Check device dependencies or use a different graphics device",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "plot",
+        "device",
+        "graphics"
+      ],
+      "examples": [
+        "device 'cairo' not available",
+        "graphics device 'quartz' not available"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_unable_to_open_device",
+      "pattern": "unable to (start|open) (.*?) device",
+      "type": "DeviceError",
+      "description": "Unable to open graphics device",
+      "root_cause": "r_plot_error",
+      "suggestion": "Check permissions or use a different graphics device",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "plot",
+        "device",
+        "open"
+      ],
+      "examples": [
+        "unable to start device PNG",
+        "unable to open PDF device"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_undefined_color",
+      "pattern": "undefined color(s)?: '([^']+)'",
+      "type": "ColorError",
+      "description": "Undefined color specified in plot",
+      "root_cause": "r_plot_error",
+      "suggestion": "Use valid color names or hex color codes",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "plot",
+        "color",
+        "parameter"
+      ],
+      "examples": [
+        "undefined color: 'blu'",
+        "undefined colors: 'pinc', 'reed'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_no_current_plot",
+      "pattern": "(no current plot|no plot to (modify|replace))",
+      "type": "PlotError",
+      "description": "No current plot exists to modify",
+      "root_cause": "r_plot_error",
+      "suggestion": "Create a plot with plot() before modifying it",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "plot",
+        "current",
+        "modify"
+      ],
+      "examples": [
+        "no current plot to replace",
+        "no plot to modify"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_cannot_clip_to_figure_region",
+      "pattern": "cannot clip to figure region",
+      "type": "PlotError",
+      "description": "Cannot clip to figure region",
+      "root_cause": "r_plot_error",
+      "suggestion": "Adjust plot margins or size",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "plot",
+        "clip",
+        "region"
+      ],
+      "examples": [
+        "cannot clip to figure region",
+        "Error: cannot clip to figure region when adding to plot"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

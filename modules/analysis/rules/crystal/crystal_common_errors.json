@@ -1,0 +1,330 @@
+{
+  "name": "Crystal Common Errors",
+  "description": "Rules for detecting common Crystal programming language errors",
+  "rules": [
+    {
+      "id": "crystal_syntax_error_unexpected_token",
+      "pattern": "syntax error in.*?unexpected token",
+      "type": "SyntaxError",
+      "description": "Crystal syntax error due to unexpected token",
+      "root_cause": "crystal_syntax_error",
+      "suggestion": "Check code syntax at the specified location",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "syntax error in line 10: unexpected token: ;",
+        "syntax error in line 5, column 3: unexpected token: end"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_syntax_error_expecting",
+      "pattern": "syntax error.*?expecting",
+      "type": "SyntaxError",
+      "description": "Crystal syntax error with expected token missing",
+      "root_cause": "crystal_syntax_error",
+      "suggestion": "Add the expected token or fix the syntax",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "syntax error: expecting token 'end', got EOF",
+        "syntax error: expecting token ')', got ','"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_syntax_error_unterminated_string",
+      "pattern": "unterminated string literal",
+      "type": "SyntaxError",
+      "description": "Crystal syntax error due to unterminated string",
+      "root_cause": "crystal_syntax_error",
+      "suggestion": "Add missing closing quote for string literal",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "syntax",
+        "string"
+      ],
+      "examples": [
+        "unterminated string literal"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_error_no_overload",
+      "pattern": "no overload matches",
+      "type": "TypeError",
+      "description": "No matching method overload found for given arguments",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Check method arguments and their types",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "method",
+        "overload"
+      ],
+      "examples": [
+        "no overload matches 'Array#<<' with type Int32",
+        "no overload matches 'fetch' with types String, Int32"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_error_expected_type",
+      "pattern": "expected (.*?) but got (.*)",
+      "type": "TypeError",
+      "description": "Type mismatch between expected and actual types",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Ensure types are compatible or add explicit type conversion",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "mismatch"
+      ],
+      "examples": [
+        "expected String but got Int32",
+        "expected Array(String) but got Array(Int32)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_error_cant_infer",
+      "pattern": "can't infer type of",
+      "type": "TypeError",
+      "description": "Crystal type inference failed",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Add explicit type annotation or initialize variable with a value",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "inference"
+      ],
+      "examples": [
+        "can't infer type of variable 'x'",
+        "can't infer type of instance variable '@data'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_method_undefined",
+      "pattern": "undefined method '(.+)' for",
+      "type": "MethodError",
+      "description": "Method not defined for the given type",
+      "root_cause": "crystal_method_error",
+      "suggestion": "Check method name spelling or ensure method exists for this type",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "method",
+        "undefined"
+      ],
+      "examples": [
+        "undefined method 'push' for String",
+        "undefined method 'each' for Int32"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_nil_reference",
+      "pattern": "null reference",
+      "type": "RuntimeError",
+      "description": "Attempting to access a nil value",
+      "root_cause": "crystal_nil_error",
+      "suggestion": "Add nil check before accessing or use safe navigation operator",
+      "category": "crystal",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "nil",
+        "safety"
+      ],
+      "examples": [
+        "null reference",
+        "Nil assertion failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_undefined_constant",
+      "pattern": "undefined constant (.+)",
+      "type": "CompilationError",
+      "description": "Constant not defined",
+      "root_cause": "crystal_compilation_error",
+      "suggestion": "Define the constant or check spelling and module scope",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "constant",
+        "compilation"
+      ],
+      "examples": [
+        "undefined constant MyClass",
+        "undefined constant HTTP::Client::Config"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_file_not_found",
+      "pattern": "can't find file '(.+)'",
+      "type": "CompilationError",
+      "description": "Required file not found",
+      "root_cause": "crystal_compilation_error",
+      "suggestion": "Check file path and ensure file exists",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "require",
+        "file"
+      ],
+      "examples": [
+        "can't find file 'my_module'",
+        "can't find file './lib/helper'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_wrong_argument_count",
+      "pattern": "wrong number of arguments",
+      "type": "MethodError",
+      "description": "Incorrect number of arguments for method call",
+      "root_cause": "crystal_method_error",
+      "suggestion": "Check method signature and provide correct number of arguments",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "method",
+        "arguments"
+      ],
+      "examples": [
+        "wrong number of arguments for 'def foo(a, b)' (given 3, expected 2)",
+        "wrong number of arguments for 'def bar()' (given 1, expected 0)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_already_defined",
+      "pattern": "already defined",
+      "type": "CompilationError",
+      "description": "Symbol already defined",
+      "root_cause": "crystal_compilation_error",
+      "suggestion": "Rename one of the conflicting identifiers",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "compilation",
+        "duplicate"
+      ],
+      "examples": [
+        "method 'foo' already defined",
+        "class MyClass already defined"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "name": "Nim Memory Errors",
+  "description": "Rules for detecting Nim memory management and allocation errors",
+  "rules": [
+    {
+      "id": "nim_nil_access_defect",
+      "pattern": "Error: unhandled exception: NilAccessDefect",
+      "type": "MemoryError",
+      "description": "Attempting to access a nil reference",
+      "root_cause": "nim_nil_access",
+      "suggestion": "Check that references are not nil before accessing them",
+      "category": "nim",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "memory",
+        "nil",
+        "safety"
+      ],
+      "examples": [
+        "Error: unhandled exception: NilAccessDefect"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_out_of_memory",
+      "pattern": "Error: out of memory",
+      "type": "MemoryError",
+      "description": "Out of memory error during allocation",
+      "root_cause": "nim_memory_error",
+      "suggestion": "Reduce memory usage or increase available memory",
+      "category": "nim",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "memory",
+        "allocation"
+      ],
+      "examples": [
+        "Error: out of memory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_access_violation",
+      "pattern": "Error: access violation",
+      "type": "MemoryError",
+      "description": "Memory access violation",
+      "root_cause": "nim_memory_error",
+      "suggestion": "Check pointer validity and array bounds before access",
+      "category": "nim",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "memory",
+        "safety",
+        "access"
+      ],
+      "examples": [
+        "Error: access violation"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_index_bounds",
+      "pattern": "Error: index (.*) out of bounds",
+      "type": "MemoryError",
+      "description": "Accessing an array or sequence with an out-of-bounds index",
+      "root_cause": "nim_bounds_error",
+      "suggestion": "Check array/sequence bounds before access",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "memory",
+        "bounds",
+        "array"
+      ],
+      "examples": [
+        "Error: index 5 out of bounds",
+        "Error: index -1 out of bounds"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_stack_overflow",
+      "pattern": "Error: stack overflow",
+      "type": "MemoryError",
+      "description": "Stack overflow due to excessive recursion or large local variables",
+      "root_cause": "nim_memory_error",
+      "suggestion": "Reduce recursion depth or use iteration instead",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "memory",
+        "stack",
+        "recursion"
+      ],
+      "examples": [
+        "Error: stack overflow"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_alloc_ref_error",
+      "pattern": "Error: allocation of ref object failed",
+      "type": "MemoryError",
+      "description": "Failed to allocate memory for a ref object",
+      "root_cause": "nim_memory_error",
+      "suggestion": "Check memory usage and allocation patterns",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "memory",
+        "allocation",
+        "ref"
+      ],
+      "examples": [
+        "Error: allocation of ref object failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_range_check_error",
+      "pattern": "Error: unhandled exception: RangeDefect",
+      "type": "MemoryError",
+      "description": "Range check failed for a value",
+      "root_cause": "nim_bounds_error",
+      "suggestion": "Ensure values are within the expected range",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "memory",
+        "bounds",
+        "range"
+      ],
+      "examples": [
+        "Error: unhandled exception: RangeDefect"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_overflow_error",
+      "pattern": "Error: unhandled exception: OverflowDefect",
+      "type": "MemoryError",
+      "description": "Integer overflow detected",
+      "root_cause": "nim_memory_error",
+      "suggestion": "Use larger integer types or check for overflow",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "memory",
+        "overflow",
+        "integer"
+      ],
+      "examples": [
+        "Error: unhandled exception: OverflowDefect"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

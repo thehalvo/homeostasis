@@ -1,0 +1,304 @@
+{
+  "name": "F# .NET Interop Errors",
+  "description": "Rules for detecting F# .NET interoperability and framework errors",
+  "rules": [
+    {
+      "id": "fsharp_assembly_not_found",
+      "pattern": "Assembly '(.+?)' not found",
+      "type": "CompilationError",
+      "description": "Assembly reference not found",
+      "root_cause": "fsharp_dotnet_error",
+      "suggestion": "Add the assembly reference or check assembly name/path",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "dotnet",
+        "assembly",
+        "reference"
+      ],
+      "examples": [
+        "Assembly 'System.Text.Json' not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_member_not_found",
+      "pattern": "The member or object constructor '(.+?)' taking (\\d+) arguments is not found",
+      "type": "TypeError",
+      "description": "Member or constructor not found",
+      "root_cause": "fsharp_dotnet_error",
+      "suggestion": "Check member name, arguments count, or import required namespaces",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "dotnet",
+        "member",
+        "constructor"
+      ],
+      "examples": [
+        "The member or object constructor 'Add' taking 2 arguments is not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_pinvoke_error",
+      "pattern": "P/Invoke (function|method) '(.+?)' not found",
+      "type": "CompilationError",
+      "description": "P/Invoke function not found",
+      "root_cause": "fsharp_dotnet_error",
+      "suggestion": "Check DllImport attribute and function name",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "dotnet",
+        "pinvoke",
+        "dllimport"
+      ],
+      "examples": [
+        "P/Invoke function 'CreateProcess' not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_com_error",
+      "pattern": "COM exception: (.+)",
+      "type": "RuntimeError",
+      "description": "COM interop exception",
+      "root_cause": "fsharp_dotnet_error",
+      "suggestion": "Check COM object usage and error handling",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "dotnet",
+        "com",
+        "interop"
+      ],
+      "examples": [
+        "COM exception: Class not registered",
+        "COM exception: HRESULT: 0x80004005"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_clr_version",
+      "pattern": "The .NET (Framework|Core|Standard) (\\d+\\.\\d+) is required",
+      "type": "CompilationError",
+      "description": ".NET version mismatch",
+      "root_cause": "fsharp_dotnet_error",
+      "suggestion": "Use compatible .NET version or update project settings",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "dotnet",
+        "version",
+        "framework"
+      ],
+      "examples": [
+        "The .NET Framework 4.5 is required",
+        "The .NET Core 3.1 is required"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_attribute_error",
+      "pattern": "Attribute '(.+?)' is not valid for this declaration type",
+      "type": "SyntaxError",
+      "description": "Invalid attribute usage",
+      "root_cause": "fsharp_dotnet_error",
+      "suggestion": "Use the attribute on the correct declaration type",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "dotnet",
+        "attribute"
+      ],
+      "examples": [
+        "Attribute 'DllImport' is not valid for this declaration type"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_nuget_reference",
+      "pattern": "(Package|NuGet) '(.+?)' (not found|could not be resolved)",
+      "type": "CompilationError",
+      "description": "NuGet package reference error",
+      "root_cause": "fsharp_dotnet_error",
+      "suggestion": "Add or fix NuGet package reference",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "dotnet",
+        "nuget",
+        "package"
+      ],
+      "examples": [
+        "Package 'Newtonsoft.Json' not found",
+        "NuGet 'FSharp.Data' could not be resolved"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_interop_delegate",
+      "pattern": "The delegate type '(.+?)' does not match the expected delegate type",
+      "type": "TypeError",
+      "description": "Delegate type mismatch",
+      "root_cause": "fsharp_dotnet_error",
+      "suggestion": "Match delegate signature or use compatible function type",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "dotnet",
+        "delegate",
+        "interop"
+      ],
+      "examples": [
+        "The delegate type 'EventHandler' does not match the expected delegate type"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_marshalling_error",
+      "pattern": "Marshalling error: (.+)",
+      "type": "RuntimeError",
+      "description": "Marshalling error in P/Invoke or COM interop",
+      "root_cause": "fsharp_dotnet_error",
+      "suggestion": "Check marshalling attributes and data types",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "dotnet",
+        "marshalling",
+        "interop"
+      ],
+      "examples": [
+        "Marshalling error: Cannot marshal 'structure' with layout kind 'Auto'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_reflection_error",
+      "pattern": "Reflection (error|exception): (.+)",
+      "type": "RuntimeError",
+      "description": "Reflection error",
+      "root_cause": "fsharp_dotnet_error",
+      "suggestion": "Check reflection code and ensure target types/members exist",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "dotnet",
+        "reflection"
+      ],
+      "examples": [
+        "Reflection error: Type 'Customer' does not have a public property named 'Address'",
+        "Reflection exception: MissingMethodException"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_event_subscription",
+      "pattern": "The event '(.+?)' does not have an accessible 'AddHandler' method",
+      "type": "TypeError",
+      "description": "Cannot subscribe to event",
+      "root_cause": "fsharp_dotnet_error",
+      "suggestion": "Check event accessibility and subscription syntax",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "dotnet",
+        "event"
+      ],
+      "examples": [
+        "The event 'Click' does not have an accessible 'AddHandler' method"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

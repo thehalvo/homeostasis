@@ -1,0 +1,258 @@
+{
+  "name": "Terraform Module Errors",
+  "description": "Rules for detecting errors related to Terraform modules",
+  "rules": [
+    {
+      "id": "terraform_module_not_found",
+      "pattern": "Module not found|Failed to download module|Unable to find module|Failed to fetch module|No module exists",
+      "type": "ModuleError",
+      "description": "Module source not found or download failed",
+      "root_cause": "terraform_module_error",
+      "suggestion": "Check module source path or URL and run terraform init",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "module",
+        "source",
+        "download"
+      ],
+      "examples": [
+        "Error: Module not found",
+        "Error: Failed to download module"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_module_version_constraint",
+      "pattern": "Module version constraint|Invalid version constraint|No versions matching",
+      "type": "ModuleError",
+      "description": "Module version constraint cannot be satisfied",
+      "root_cause": "terraform_module_error",
+      "suggestion": "Update module version constraint to match available versions",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "module",
+        "version",
+        "constraint"
+      ],
+      "examples": [
+        "Error: Module version constraint not satisfied",
+        "Error: No versions matching \">=2.0.0\" for module"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_module_missing_required_input",
+      "pattern": "Module input variable .+ not specified|Required variable .+ not set in module|Module requires input variable",
+      "type": "ModuleError",
+      "description": "Required module input variable not provided",
+      "root_cause": "terraform_module_error",
+      "suggestion": "Provide all required input variables when calling the module",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "module",
+        "input",
+        "variable"
+      ],
+      "examples": [
+        "Error: Module input variable \"region\" not specified",
+        "Error: Required variable \"environment\" not set in module"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_module_invalid_source",
+      "pattern": "Invalid module source|Unrecognized remote source|Invalid Git source|Unsupported source address|Source address must be",
+      "type": "ModuleError",
+      "description": "Invalid module source format or protocol",
+      "root_cause": "terraform_module_error",
+      "suggestion": "Use valid module source format (local path, git URL, registry)",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "module",
+        "source",
+        "format"
+      ],
+      "examples": [
+        "Error: Invalid module source",
+        "Error: Unrecognized remote source format"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_module_output_error",
+      "pattern": "Error referencing module output|Module does not declare output|Module output '.*' does not exist",
+      "type": "ModuleError",
+      "description": "Error referencing non-existent module output",
+      "root_cause": "terraform_module_error",
+      "suggestion": "Check module outputs and ensure referenced output exists",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "module",
+        "output",
+        "reference"
+      ],
+      "examples": [
+        "Error referencing module output \"ip_address\"",
+        "Error: Module does not declare output \"endpoint\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_module_registry_error",
+      "pattern": "Error accessing Terraform Registry|Failed to retrieve module|Registry module not found|Invalid registry module",
+      "type": "ModuleError",
+      "description": "Error accessing module from Terraform Registry",
+      "root_cause": "terraform_module_error",
+      "suggestion": "Check module path in registry or network connectivity",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "module",
+        "registry",
+        "download"
+      ],
+      "examples": [
+        "Error accessing Terraform Registry",
+        "Error: Registry module not found at specified address"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_module_cyclic_dependency",
+      "pattern": "Cyclic module dependency|Module cycle detected|Cannot process module",
+      "type": "ModuleError",
+      "description": "Cyclic dependency between modules",
+      "root_cause": "terraform_module_error",
+      "suggestion": "Restructure modules to remove circular dependencies",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "module",
+        "dependency",
+        "cycle"
+      ],
+      "examples": [
+        "Error: Cyclic module dependency",
+        "Error: Module cycle detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_module_authentication_error",
+      "pattern": "Authentication required|Could not access module source|Permissions error when accessing module|Unauthorized access",
+      "type": "ModuleError",
+      "description": "Authentication error when accessing module source",
+      "root_cause": "terraform_module_error",
+      "suggestion": "Set up authentication for private module source (SSH keys, tokens)",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "module",
+        "authentication",
+        "access"
+      ],
+      "examples": [
+        "Error: Authentication required for module source",
+        "Error: Could not access private module source"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_module_invalid_input_value",
+      "pattern": "Invalid value for module input|Unsuitable value for module argument|Cannot convert module argument",
+      "type": "ModuleError",
+      "description": "Invalid value provided for module input variable",
+      "root_cause": "terraform_module_error",
+      "suggestion": "Provide value that matches the expected type and constraints",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "module",
+        "input",
+        "validation"
+      ],
+      "examples": [
+        "Error: Invalid value for module input \"count\"",
+        "Error: Unsuitable value for module argument \"region\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

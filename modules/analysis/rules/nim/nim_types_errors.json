@@ -1,0 +1,221 @@
+{
+  "name": "Nim Type System Errors",
+  "description": "Rules for detecting Nim type system and type checking errors",
+  "rules": [
+    {
+      "id": "nim_type_mismatch_general",
+      "pattern": "Error: type mismatch: got (.+) but expected (.+)",
+      "type": "TypeError",
+      "description": "Type mismatch between actual and expected types",
+      "root_cause": "nim_type_error",
+      "suggestion": "Ensure types match or add appropriate type conversion",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "mismatch"
+      ],
+      "examples": [
+        "Error: type mismatch: got int but expected string",
+        "Error: type mismatch: got seq[int] but expected array[0..10, int]"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_conversion_error",
+      "pattern": "Error: cannot convert (.+) to (.+)",
+      "type": "TypeError",
+      "description": "Cannot convert between incompatible types",
+      "root_cause": "nim_type_error",
+      "suggestion": "Use appropriate type conversion functions",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "conversion"
+      ],
+      "examples": [
+        "Error: cannot convert float to seq[int]",
+        "Error: cannot convert string to bool"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_no_constructor",
+      "pattern": "Error: type '(.+)' doesn't have a correct constructor",
+      "type": "TypeError",
+      "description": "Type doesn't have a constructor for initialization",
+      "root_cause": "nim_type_error",
+      "suggestion": "Define appropriate constructor or use initialization syntax",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "constructor"
+      ],
+      "examples": [
+        "Error: type 'CustomType' doesn't have a correct constructor"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_no_member",
+      "pattern": "Error: type '(.+)' has no member named '(.+)'",
+      "type": "TypeError",
+      "description": "Accessing non-existent member of a type",
+      "root_cause": "nim_type_error",
+      "suggestion": "Check type definition for available members",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "member"
+      ],
+      "examples": [
+        "Error: type 'Person' has no member named 'age'",
+        "Error: type 'File' has no member named 'size'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_invalid_context",
+      "pattern": "Error: invalid type '(.+)' in this context",
+      "type": "TypeError",
+      "description": "Using a type in an invalid context",
+      "root_cause": "nim_type_error",
+      "suggestion": "Check if the type can be used in this context",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "context"
+      ],
+      "examples": [
+        "Error: invalid type 'void' in this context",
+        "Error: invalid type 'typedesc' in this context"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_not_instantiated",
+      "pattern": "Error: type '(.+)' cannot be instantiated",
+      "type": "TypeError",
+      "description": "Cannot instantiate the type",
+      "root_cause": "nim_type_error",
+      "suggestion": "Check if type is abstract or incomplete",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "instantiation"
+      ],
+      "examples": [
+        "Error: type 'Protocol' cannot be instantiated",
+        "Error: type 'Interface' cannot be instantiated"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_generic_mismatch",
+      "pattern": "Error: generic type instantiation too nested",
+      "type": "TypeError",
+      "description": "Generic type instantiation is too deeply nested",
+      "root_cause": "nim_type_error",
+      "suggestion": "Simplify generic type hierarchy",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "generic"
+      ],
+      "examples": [
+        "Error: generic type instantiation too nested"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_option_error",
+      "pattern": "Error: unhandled exception: (.*Option.*)",
+      "type": "TypeError",
+      "description": "Unhandled Option type error",
+      "root_cause": "nim_option_error",
+      "suggestion": "Check if Option has a value before unwrapping",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "option",
+        "safety"
+      ],
+      "examples": [
+        "Error: unhandled exception: UnpackDefect: Option is none",
+        "Error: unhandled exception: tried to get value of none"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

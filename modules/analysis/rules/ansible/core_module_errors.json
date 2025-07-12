@@ -1,0 +1,267 @@
+{
+  "name": "Ansible Core Module Errors",
+  "description": "Rules for detecting errors related to Ansible core modules",
+  "rules": [
+    {
+      "id": "ansible_command_not_found",
+      "pattern": "command not found|executable was not found|not found in PATH|executable location not valid|executable does not exist|executable could not be found|executable .* not found|no such file or directory",
+      "type": "CommandError",
+      "description": "Command executable not found",
+      "root_cause": "ansible_command_error",
+      "suggestion": "Check command path or install required package",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "command",
+      "tags": [
+        "ansible",
+        "module",
+        "command",
+        "shell"
+      ],
+      "examples": [
+        "fatal: [host]: FAILED! => {\"msg\": \"/usr/bin/foo: command not found\"}",
+        "executable /bin/bar was not found on the system"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_command_failed",
+      "pattern": "non-zero return code|rc=[1-9]|failed with return code|failed with rc|command failed|command returned|exit status [1-9]|exited with value [1-9]",
+      "type": "CommandError",
+      "description": "Command execution failed with non-zero return code",
+      "root_cause": "ansible_command_error",
+      "suggestion": "Check command syntax or use ignore_errors: yes",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "command",
+      "tags": [
+        "ansible",
+        "module",
+        "command",
+        "return code"
+      ],
+      "examples": [
+        "non-zero return code: 1",
+        "command failed with return code 127"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_set_fact_error",
+      "pattern": "error setting fact|key is not a legal value|failed to set fact|cannot use 'set_fact' directly|error in set_fact|invalid key name|invalid JSON|invalid YAML",
+      "type": "FactError",
+      "description": "Error in set_fact module usage",
+      "root_cause": "ansible_set_fact_error",
+      "suggestion": "Check fact name and value syntax",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "set_fact",
+      "tags": [
+        "ansible",
+        "module",
+        "set_fact",
+        "variable"
+      ],
+      "examples": [
+        "error setting fact 'version'",
+        "failed to set fact: invalid JSON"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_wait_for_error",
+      "pattern": "timeout exceeded|timeout waiting for|Timeout when waiting for|timed out waiting for|wait_for timeout|timeout condition|timeout while waiting",
+      "type": "WaitError",
+      "description": "Timeout waiting for condition in wait_for module",
+      "root_cause": "ansible_wait_for_error",
+      "suggestion": "Increase timeout value or check condition",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "wait_for",
+      "tags": [
+        "ansible",
+        "module",
+        "wait_for",
+        "timeout"
+      ],
+      "examples": [
+        "timeout exceeded while waiting for port 80",
+        "timed out waiting for condition"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_register_error",
+      "pattern": "error registering variable|register variable|must be a string|registered invalid variable|register requires a name|not a valid variable name|register is not a valid keyword|invalid variable name",
+      "type": "RegisterError",
+      "description": "Error registering task output to variable",
+      "root_cause": "ansible_register_error",
+      "suggestion": "Use valid variable name with register keyword",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "register",
+      "tags": [
+        "ansible",
+        "module",
+        "register",
+        "variable"
+      ],
+      "examples": [
+        "error registering variable: must be a string",
+        "register requires a name"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_async_error",
+      "pattern": "async tasks require a poll value|async requires a positive value|async task failed|job did not complete within|unable to async execute|missing required for async|async action completed with error|async_wrapper|async_status",
+      "type": "AsyncError",
+      "description": "Error with async task execution",
+      "root_cause": "ansible_async_error",
+      "suggestion": "Check async and poll values or remove async",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "async",
+      "tags": [
+        "ansible",
+        "module",
+        "async",
+        "poll"
+      ],
+      "examples": [
+        "async tasks require a poll value",
+        "job did not complete within the requested time"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_assert_failed",
+      "pattern": "Assertion failed|assert failed|failed condition|assertion failed|assertion was not successful|assert returned false|condition not met",
+      "type": "AssertError",
+      "description": "Assertion condition failed",
+      "root_cause": "ansible_assert_error",
+      "suggestion": "Check condition or fix failing assertion",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "assert",
+      "tags": [
+        "ansible",
+        "module",
+        "assert",
+        "condition"
+      ],
+      "examples": [
+        "Assertion failed: version == '2.0'",
+        "assertion was not successful"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_debug_error",
+      "pattern": "debug requires|parameter missing in debug|debug module requires|msg or var must be specified|error in debug module|debug failed",
+      "type": "DebugError",
+      "description": "Error in debug module usage",
+      "root_cause": "ansible_debug_error",
+      "suggestion": "Provide msg or var parameter to debug module",
+      "category": "module",
+      "severity": "medium",
+      "confidence": "high",
+      "module": "debug",
+      "tags": [
+        "ansible",
+        "module",
+        "debug",
+        "variable"
+      ],
+      "examples": [
+        "debug requires 'msg' or 'var' parameter",
+        "msg or var must be specified in debug module"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_fail_module_error",
+      "pattern": "failed as requested|deliberately failed|intentional failure|failed intentionally|explicit failure|failure requested",
+      "type": "FailError",
+      "description": "Task failed by fail module",
+      "root_cause": "ansible_fail_error",
+      "suggestion": "Check conditions that trigger fail module",
+      "category": "module",
+      "severity": "medium",
+      "confidence": "high",
+      "module": "fail",
+      "tags": [
+        "ansible",
+        "module",
+        "fail",
+        "intentional"
+      ],
+      "examples": [
+        "failed as requested: deliberately failed",
+        "Task deliberately failed as requested"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

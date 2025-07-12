@@ -1,0 +1,296 @@
+{
+  "name": "GitHub Actions Configuration Errors",
+  "description": "Rules for detecting errors in GitHub Actions workflow files",
+  "rules": [
+    {
+      "id": "github_actions_syntax_error",
+      "pattern": "Invalid workflow file|Workflow is not valid|YML validation|syntax error|parsing error|must be a mapping|must contain a mapping|expected mapping|unparsable|property is not defined|invalid format|invalid property|unrecognized key|contains invalid configuration",
+      "type": "SyntaxError",
+      "description": "Invalid syntax in GitHub Actions workflow file",
+      "root_cause": "github_actions_syntax_error",
+      "suggestion": "Fix YAML syntax and verify workflow structure",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "github",
+        "actions",
+        "workflow",
+        "syntax"
+      ],
+      "examples": [
+        "Invalid workflow file: .github/workflows/ci.yml#L5-L5",
+        "Workflow is not valid: property 'on' is not defined",
+        "Parsing error: expected mapping at line 10"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "github_actions_trigger_error",
+      "pattern": "on must contain|invalid event type|event type .* is not supported|event configuration is invalid|invalid workflow trigger|invalid event name|trigger validation|unknown event|unrecognized event|on configuration is invalid|invalid on value|Unsupported event name",
+      "type": "TriggerError",
+      "description": "Invalid workflow trigger configuration",
+      "root_cause": "github_actions_trigger_error",
+      "suggestion": "Use valid event types (e.g., push, pull_request, workflow_dispatch)",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "github",
+        "actions",
+        "workflow",
+        "trigger"
+      ],
+      "examples": [
+        "on must contain at least one trigger",
+        "invalid event type: pul_request",
+        "event type 'merges' is not supported"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "github_actions_jobs_error",
+      "pattern": "jobs validation|job .* is invalid|job .* not found|jobs must contain|jobs must be a mapping|jobs is not defined|invalid job definition|job ID cannot be empty|job requires runs-on|job ID may only contain|runs-on required|job ID contains invalid characters",
+      "type": "JobsError",
+      "description": "Invalid jobs configuration in workflow",
+      "root_cause": "github_actions_jobs_error",
+      "suggestion": "Ensure jobs are properly defined with required fields",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "github",
+        "actions",
+        "workflow",
+        "jobs"
+      ],
+      "examples": [
+        "job 'build' is invalid: runs-on is required",
+        "jobs must contain at least one job",
+        "job ID 'test job' contains invalid characters"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "github_actions_steps_error",
+      "pattern": "steps validation|step .* is invalid|step requires|steps must be a sequence|invalid step definition|uses or run is required|step .* must define|step is empty|step must be|step format|step configuration|invalid step format|steps cannot be empty",
+      "type": "StepsError",
+      "description": "Invalid steps configuration in job",
+      "root_cause": "github_actions_steps_error",
+      "suggestion": "Ensure steps are properly defined with uses or run",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "github",
+        "actions",
+        "workflow",
+        "steps"
+      ],
+      "examples": [
+        "step 2 is invalid: must define either 'uses' or 'run'",
+        "steps must be a sequence",
+        "steps cannot be empty"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "github_actions_action_error",
+      "pattern": "action not found|Action .* not found|action does not exist|unable to resolve action|invalid action reference|action format is invalid|action must be a valid|Cannot find action|Unable to find action|action validation|action is invalid|action reference must be",
+      "type": "ActionError",
+      "description": "Action reference not found or invalid",
+      "root_cause": "github_actions_action_error",
+      "suggestion": "Check action name, owner, and version/ref",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "github",
+        "actions",
+        "workflow",
+        "action"
+      ],
+      "examples": [
+        "Action 'actions/checkot@v2' not found",
+        "Unable to find action 'actions/setup-node@v1.2.3'",
+        "invalid action reference: must be owner/repo@ref or ./local/path"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "github_actions_runner_error",
+      "pattern": "runs-on validation|runs-on value .* is invalid|invalid runs-on|unknown runner|runner not found|runs-on must be|unsupported runner|runner does not exist|runs-on must be a string|self-hosted runners|runs-on format|runner label format|runner group",
+      "type": "RunnerError",
+      "description": "Invalid runner configuration",
+      "root_cause": "github_actions_runner_error",
+      "suggestion": "Use valid runner labels (e.g., ubuntu-latest, windows-latest)",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "github",
+        "actions",
+        "workflow",
+        "runner"
+      ],
+      "examples": [
+        "runs-on value 'ubuntoo-latest' is invalid",
+        "unknown runner: windows-latest-2018",
+        "runs-on must be a string or array of strings"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "github_actions_needs_error",
+      "pattern": "needs validation|needs .* not found|needs must be|circular dependency|job depends on itself|unknown dependent job|needs refers to unknown job|job dependency cycle|needs job .* not defined|needs must be a string|dependent job|needs format|job dependency",
+      "type": "NeedsError",
+      "description": "Invalid job dependencies in workflow",
+      "root_cause": "github_actions_needs_error",
+      "suggestion": "Ensure referenced jobs exist and avoid circular dependencies",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "github",
+        "actions",
+        "workflow",
+        "needs"
+      ],
+      "examples": [
+        "needs 'test' not found",
+        "circular dependency detected: job 'deploy' depends on itself",
+        "needs refers to unknown job 'missing_job'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "github_actions_env_error",
+      "pattern": "env validation|environment variable|invalid environment variable|env must be a mapping|invalid env value|env key .* is invalid|invalid env format|environment variable name|env name validation|env key format|invalid character in environment variable|env key contains|env variable validation",
+      "type": "EnvError",
+      "description": "Invalid environment variables in workflow",
+      "root_cause": "github_actions_env_error",
+      "suggestion": "Fix environment variable names and values",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "github",
+        "actions",
+        "workflow",
+        "env"
+      ],
+      "examples": [
+        "env must be a mapping, not a string",
+        "env key 'NODE VERSION' is invalid (must not contain spaces)",
+        "invalid character in environment variable name: '123_VAR'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "github_actions_secrets_error",
+      "pattern": "secrets|secret .* not found|secret .* is invalid|required secret|Missing required secrets|secret name validation|secret must be set|secret was not set|unrecognized secret|masked value|secret name contains invalid characters|sensitive information|secret .* not available",
+      "type": "SecretsError",
+      "description": "Missing or invalid secrets in workflow",
+      "root_cause": "github_actions_secrets_error",
+      "suggestion": "Add required secrets in repository or organization settings",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "github",
+        "actions",
+        "workflow",
+        "secrets"
+      ],
+      "examples": [
+        "secret 'API_KEY' not found",
+        "Missing required secrets: AWS_ACCESS_KEY, AWS_SECRET_KEY",
+        "secret 'GITHUB TOKEN' contains invalid characters"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "github_actions_permission_error",
+      "pattern": "permission denied|insufficient permission|no permission|missing permission|doesn't have permission|requires permission|not authorized|authorization failed|permission validation|cannot access|access denied|token lacks permission|GITHUB_TOKEN lacks permission",
+      "type": "PermissionError",
+      "description": "Insufficient permissions for workflow operations",
+      "root_cause": "github_actions_permission_error",
+      "suggestion": "Configure required permissions in workflow or repository settings",
+      "category": "security",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "github",
+        "actions",
+        "workflow",
+        "permissions"
+      ],
+      "examples": [
+        "permission denied: GITHUB_TOKEN lacks permission 'contents: write'",
+        "insufficient permission to create release",
+        "not authorized to access resources in repository"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "name": "Nim Macro Errors",
+  "description": "Rules for detecting Nim macro and template system errors",
+  "rules": [
+    {
+      "id": "nim_macro_not_found",
+      "pattern": "Error: macro '(.+)' not found",
+      "type": "MacroError",
+      "description": "Macro was not found",
+      "root_cause": "nim_macro_error",
+      "suggestion": "Check if macro is defined and imported correctly",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "macro",
+        "import"
+      ],
+      "examples": [
+        "Error: macro 'createEnum' not found",
+        "Error: macro 'debugDump' not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_template_not_found",
+      "pattern": "Error: template '(.+)' not found",
+      "type": "MacroError",
+      "description": "Template was not found",
+      "root_cause": "nim_macro_error",
+      "suggestion": "Check if template is defined and imported correctly",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "template",
+        "import"
+      ],
+      "examples": [
+        "Error: template 'forEach' not found",
+        "Error: template 'withLock' not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_macro_instantiation_error",
+      "pattern": "Error: macro '(.+)' instantiation",
+      "type": "MacroError",
+      "description": "Error during macro instantiation",
+      "root_cause": "nim_macro_error",
+      "suggestion": "Check macro usage and arguments",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "macro",
+        "instantiation"
+      ],
+      "examples": [
+        "Error: macro 'debugMacro' instantiation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_template_instantiation_error",
+      "pattern": "Error: template '(.+)' instantiation",
+      "type": "MacroError",
+      "description": "Error during template instantiation",
+      "root_cause": "nim_macro_error",
+      "suggestion": "Check template usage and arguments",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "template",
+        "instantiation"
+      ],
+      "examples": [
+        "Error: template 'withFile' instantiation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_invalid_macro",
+      "pattern": "Error: invalid macro '(.+)'",
+      "type": "MacroError",
+      "description": "Invalid macro definition or usage",
+      "root_cause": "nim_macro_error",
+      "suggestion": "Check macro definition and usage",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "macro",
+        "definition"
+      ],
+      "examples": [
+        "Error: invalid macro 'genCode'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_macro_type_error",
+      "pattern": "Error: macro '(.+)': (.*) type mismatch",
+      "type": "MacroError",
+      "description": "Type mismatch in macro parameters",
+      "root_cause": "nim_macro_error",
+      "suggestion": "Check types of arguments passed to macro",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "macro",
+        "type"
+      ],
+      "examples": [
+        "Error: macro 'buildQuery': argument type mismatch"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_ast_manipulation_error",
+      "pattern": "Error: cannot manipulate AST in this context",
+      "type": "MacroError",
+      "description": "Invalid AST manipulation in macro",
+      "root_cause": "nim_macro_error",
+      "suggestion": "Check if AST manipulation is valid in this context",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "macro",
+        "ast"
+      ],
+      "examples": [
+        "Error: cannot manipulate AST in this context"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_macro_recursion_limit",
+      "pattern": "Error: recursion limit reached while expanding macro",
+      "type": "MacroError",
+      "description": "Macro expansion hit recursion limit",
+      "root_cause": "nim_macro_error",
+      "suggestion": "Check for infinite recursion in macro definition",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "macro",
+        "recursion"
+      ],
+      "examples": [
+        "Error: recursion limit reached while expanding macro"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

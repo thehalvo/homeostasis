@@ -1,0 +1,258 @@
+{
+  "name": "Ansible Syntax Errors",
+  "description": "Rules for detecting YAML syntax and structure errors in Ansible",
+  "rules": [
+    {
+      "id": "ansible_invalid_yaml_colon",
+      "pattern": "could not find expected ':'|missing ':' in mapping|mapping values are not allowed here|expected ':' but found|no key\/value separator found",
+      "type": "SyntaxError",
+      "description": "Missing or incorrect colon in YAML mapping",
+      "root_cause": "ansible_yaml_syntax_error",
+      "suggestion": "Add missing colon or fix mapping syntax",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "yaml",
+        "colon",
+        "mapping"
+      ],
+      "examples": [
+        "mapping values are not allowed here at line 5 column 3",
+        "could not find expected ':' at line 12 column 4"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_tab_character",
+      "pattern": "found character '\\\\t'|tabs not allowed|tab character found|not permitted to use tab",
+      "type": "SyntaxError",
+      "description": "Tab character used in YAML instead of spaces",
+      "root_cause": "ansible_yaml_syntax_error",
+      "suggestion": "Replace tabs with spaces (2 spaces per indentation level)",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "yaml",
+        "tab",
+        "whitespace"
+      ],
+      "examples": [
+        "found character '\\t' that cannot start any token",
+        "YAML does not allow use of tab characters for indentation"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_block_end_error",
+      "pattern": "expected <block end>|unexpected end of block|block sequence entries are not allowed|expected end of block|unclosed block",
+      "type": "SyntaxError",
+      "description": "Incorrect block structure or missing block end",
+      "root_cause": "ansible_yaml_syntax_error",
+      "suggestion": "Fix block structure and indentation",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "yaml",
+        "block",
+        "structure"
+      ],
+      "examples": [
+        "expected <block end>, but found '<block mapping start>'",
+        "unexpected end of block at line 34"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_invalid_anchor",
+      "pattern": "found undefined alias|found undefined anchor|duplicate anchor|invalid anchor name|alias node contains itself",
+      "type": "SyntaxError",
+      "description": "Invalid YAML anchor or alias",
+      "root_cause": "ansible_yaml_syntax_error",
+      "suggestion": "Fix anchor/alias definitions and references",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "yaml",
+        "anchor",
+        "alias"
+      ],
+      "examples": [
+        "found undefined alias 'config'",
+        "duplicate anchor 'settings' found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_quotes_error",
+      "pattern": "unbalanced quotes|unclosed quotation|unpaired quotes|unmatched quotes|unexpected quotes",
+      "type": "SyntaxError",
+      "description": "Unbalanced or incorrect quotation marks",
+      "root_cause": "ansible_yaml_syntax_error",
+      "suggestion": "Balance quotation marks or escape special characters",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "yaml",
+        "quotes",
+        "string"
+      ],
+      "examples": [
+        "unbalanced quotes at line 12",
+        "found unclosed quotation at line 8 column 5"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_invalid_list_structure",
+      "pattern": "invalid list structure|list items should be at the same level|block sequence entries are not allowed here|expected list item",
+      "type": "SyntaxError",
+      "description": "Invalid YAML list structure",
+      "root_cause": "ansible_yaml_syntax_error",
+      "suggestion": "Fix list structure and indentation",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "yaml",
+        "list",
+        "sequence"
+      ],
+      "examples": [
+        "block sequence entries are not allowed here at line 15 column 3",
+        "invalid list structure at line 23"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_special_character_error",
+      "pattern": "special characters must be escaped|invalid escape sequence|found forbidden character|found unknown escape character|invalid character|disallowed character",
+      "type": "SyntaxError",
+      "description": "Unescaped special characters in YAML",
+      "root_cause": "ansible_yaml_syntax_error",
+      "suggestion": "Escape special characters or use quotation marks",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "yaml",
+        "character",
+        "escape"
+      ],
+      "examples": [
+        "found forbidden character at line 23",
+        "special characters must be escaped at line 18 column 7"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_json_syntax_error",
+      "pattern": "invalid JSON syntax|JSONDecodeError|expecting property name|expecting value|invalid control character|unterminated string",
+      "type": "SyntaxError",
+      "description": "Invalid JSON syntax in Ansible variable or file",
+      "root_cause": "ansible_json_syntax_error",
+      "suggestion": "Fix JSON syntax in variable or file",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "json",
+        "syntax",
+        "variable"
+      ],
+      "examples": [
+        "JSONDecodeError: Expecting property name at line 2 column 1",
+        "invalid JSON syntax: unterminated string starting at line 3 column 24"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_duplicate_dictionary_key",
+      "pattern": "duplicate key|key already exists|duplicate mapping key|duplicated key|multiple key definitions",
+      "type": "SyntaxError",
+      "description": "Duplicate key in YAML dictionary",
+      "root_cause": "ansible_yaml_syntax_error",
+      "suggestion": "Remove or rename duplicate keys in dictionary",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "yaml",
+        "dictionary",
+        "key"
+      ],
+      "examples": [
+        "duplicate key 'name' found at line 24",
+        "duplicated mapping key at line 18 column 3"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "name": "Terraform Common Errors",
+  "description": "Rules for detecting common Terraform errors and configuration issues",
+  "rules": [
+    {
+      "id": "terraform_init_required",
+      "pattern": "Error: Could not satisfy plugin requirements|Error: Initialization required",
+      "type": "InitializationError",
+      "description": "Terraform needs to be initialized before use",
+      "root_cause": "terraform_init_error",
+      "suggestion": "Run 'terraform init' to initialize working directory",
+      "category": "terraform",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "initialization",
+        "plugin",
+        "backend"
+      ],
+      "examples": [
+        "Error: Could not satisfy plugin requirements",
+        "Error: Initialization required. Please run \"terraform init\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_version_mismatch",
+      "pattern": "Error: Unsupported Terraform Core version|version constraint",
+      "type": "VersionError",
+      "description": "Terraform version doesn't meet required_version constraint",
+      "root_cause": "terraform_version_error",
+      "suggestion": "Update Terraform or adjust version constraint in terraform block",
+      "category": "terraform",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "version",
+        "compatibility",
+        "constraint"
+      ],
+      "examples": [
+        "Error: Unsupported Terraform Core version",
+        "Error: The currently running version of Terraform doesn't meet the version requirements"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_plan_failed",
+      "pattern": "Error: Error creating plan|Error: Failed to generate plan",
+      "type": "PlanError",
+      "description": "Terraform plan generation failed",
+      "root_cause": "terraform_plan_error",
+      "suggestion": "Review error details and fix configuration issues",
+      "category": "terraform",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "plan",
+        "execution",
+        "configuration"
+      ],
+      "examples": [
+        "Error: Error creating plan",
+        "Error: Failed to generate plan"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_apply_failed",
+      "pattern": "Error: Error applying plan|Error: Failed to apply plan",
+      "type": "ApplyError",
+      "description": "Terraform apply operation failed",
+      "root_cause": "terraform_apply_error",
+      "suggestion": "Review error details and fix configuration issues or resource errors",
+      "category": "terraform",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "apply",
+        "execution",
+        "configuration"
+      ],
+      "examples": [
+        "Error: Error applying plan",
+        "Error: Failed to apply plan"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_destroy_failed",
+      "pattern": "Error: Error destroying|Error: Failed to destroy",
+      "type": "DestroyError",
+      "description": "Terraform destroy operation failed",
+      "root_cause": "terraform_destroy_error",
+      "suggestion": "Review error details and check for resource dependencies or permission issues",
+      "category": "terraform",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "destroy",
+        "execution",
+        "dependency"
+      ],
+      "examples": [
+        "Error: Error destroying resources",
+        "Error: Failed to destroy infrastructure"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_workspace_error",
+      "pattern": "Error: Workspace .* does not exist|Error: Workspace .* already exists",
+      "type": "WorkspaceError",
+      "description": "Terraform workspace error",
+      "root_cause": "terraform_workspace_error",
+      "suggestion": "Check workspace name and use 'terraform workspace list' to see available workspaces",
+      "category": "terraform",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "workspace",
+        "state",
+        "environment"
+      ],
+      "examples": [
+        "Error: Workspace \"dev\" does not exist",
+        "Error: Workspace \"prod\" already exists"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_validation_failed",
+      "pattern": "Error: Invalid value|Error: Unsupported value|Error: Unsuitable value",
+      "type": "ValidationError",
+      "description": "Terraform validation failed due to invalid values",
+      "root_cause": "terraform_validation_error",
+      "suggestion": "Fix invalid values according to the validation rules or argument specifications",
+      "category": "terraform",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "validation",
+        "value",
+        "constraint"
+      ],
+      "examples": [
+        "Error: Invalid value for module argument",
+        "Error: Unsupported value for attribute"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_operation_timeout",
+      "pattern": "timeout waiting for|Error: operation timed out|Error: deadline exceeded",
+      "type": "TimeoutError",
+      "description": "Terraform operation timed out",
+      "root_cause": "terraform_timeout_error",
+      "suggestion": "Increase timeouts in resource configuration or check service responsiveness",
+      "category": "terraform",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "timeout",
+        "operation",
+        "wait"
+      ],
+      "examples": [
+        "Error: timeout waiting for resource to be created",
+        "Error: operation timed out after 10 minutes"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_quota_exceeded",
+      "pattern": "quota exceeded|resource limits exceeded|rate limit exceeded",
+      "type": "QuotaError",
+      "description": "Provider quota or rate limit exceeded",
+      "root_cause": "terraform_quota_error",
+      "suggestion": "Wait and retry, request quota increase, or optimize resource usage",
+      "category": "terraform",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "quota",
+        "limit",
+        "rate"
+      ],
+      "examples": [
+        "Error: quota exceeded for resource type",
+        "Error: rate limit exceeded for API calls"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_configuration_directory",
+      "pattern": "Error: No configuration files|Error: Could not load plugin|Error: Failed to read",
+      "type": "ConfigurationError",
+      "description": "Terraform could not find or load configuration files",
+      "root_cause": "terraform_configuration_error",
+      "suggestion": "Check working directory and ensure configuration files are present",
+      "category": "terraform",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "configuration",
+        "directory",
+        "file"
+      ],
+      "examples": [
+        "Error: No configuration files found",
+        "Error: Could not load plugin due to missing directory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

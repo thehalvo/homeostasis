@@ -1,0 +1,267 @@
+{
+  "name": "Ansible System Module Errors",
+  "description": "Rules for detecting errors related to Ansible system management modules",
+  "rules": [
+    {
+      "id": "ansible_service_not_found",
+      "pattern": "service not found|could not find service|Unable to find service|unit .* not found|no service named|service could not be found|unknown service|service does not exist|Could not find the requested service",
+      "type": "ServiceError",
+      "description": "Service not found on target system",
+      "root_cause": "ansible_service_error",
+      "suggestion": "Check service name or install the service",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "service",
+      "tags": [
+        "ansible",
+        "module",
+        "service",
+        "systemd"
+      ],
+      "examples": [
+        "service not found: nginx",
+        "unit nginx.service not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_service_permission_error",
+      "pattern": "permission denied|privileges required|requires root privileges|access denied|not authorized|Failed to .* unit|insufficient privileges|requires superuser privileges|Operation not permitted",
+      "type": "PermissionError",
+      "description": "Permission denied when managing service",
+      "root_cause": "ansible_service_error",
+      "suggestion": "Use become: yes or run as privileged user",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "service",
+      "tags": [
+        "ansible",
+        "module",
+        "service",
+        "permission"
+      ],
+      "examples": [
+        "permission denied, privileges required to manage services",
+        "Failed to start unit: Access denied"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_package_not_found",
+      "pattern": "No package .* available|package not found|Could not find package|No matching packages|Unable to locate package|No candidate found|no package matched|no matching packages|package does not exist|not found in repository",
+      "type": "PackageError",
+      "description": "Package not found in repositories",
+      "root_cause": "ansible_package_error",
+      "suggestion": "Check package name or add additional repositories",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "package",
+      "tags": [
+        "ansible",
+        "module",
+        "package",
+        "apt"
+      ],
+      "examples": [
+        "No package nginx available",
+        "Unable to locate package docker-ce"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_package_manager_error",
+      "pattern": "dpkg (lock|error|failed)|apt (lock|error|failed)|yum (lock|error|failed)|dnf (lock|error|failed)|Another copy is running|Failed to lock|Could not get lock|public key is not installed|requires a repository|GPG key retrieval failed|Failed to update|resource temporarily unavailable",
+      "type": "PackageManagerError",
+      "description": "Package manager lock or operation error",
+      "root_cause": "ansible_package_error",
+      "suggestion": "Wait for other package operations to complete or fix repository issues",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "package",
+      "tags": [
+        "ansible",
+        "module",
+        "package",
+        "lock"
+      ],
+      "examples": [
+        "dpkg: error: dpkg status database is locked by another process",
+        "Could not get lock /var/lib/apt/lists/lock"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_user_exists_error",
+      "pattern": "user already exists|User .* already exists|already exists, use|user name already exists|user already present|login name already in use|exists with uid",
+      "type": "UserError",
+      "description": "User already exists when creating user",
+      "root_cause": "ansible_user_error",
+      "suggestion": "Use update_password: on_create or state: present",
+      "category": "module",
+      "severity": "medium",
+      "confidence": "high",
+      "module": "user",
+      "tags": [
+        "ansible",
+        "module",
+        "user",
+        "exists"
+      ],
+      "examples": [
+        "user 'nginx' already exists",
+        "User 'webadmin' already exists, use different user name"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_user_not_found",
+      "pattern": "user not found|User .* does not exist|Unable to find user|user does not exist|user is not present|unknown user|cannot find the user|could not remove user|no user named",
+      "type": "UserError",
+      "description": "User not found when modifying or removing",
+      "root_cause": "ansible_user_error",
+      "suggestion": "Check user name or create user first",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "user",
+      "tags": [
+        "ansible",
+        "module",
+        "user",
+        "not_found"
+      ],
+      "examples": [
+        "user 'nginx' not found",
+        "User 'webadmin' does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_group_error",
+      "pattern": "group already exists|Group .* already exists|GID .* already exists|group does not exist|Group .* does not exist|Unable to find group|unknown group|group is not present|cannot create group|could not modify group",
+      "type": "GroupError",
+      "description": "Group already exists or not found",
+      "root_cause": "ansible_group_error",
+      "suggestion": "Check group name or state based on operation",
+      "category": "module",
+      "severity": "medium",
+      "confidence": "high",
+      "module": "group",
+      "tags": [
+        "ansible",
+        "module",
+        "group",
+        "user"
+      ],
+      "examples": [
+        "group 'www-data' already exists",
+        "Group 'developers' does not exist"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_mount_error",
+      "pattern": "mount failed|Unable to mount|failed to mount|device not found|mount point not found|is not a block device|not mounted|cannot remount|mount error|failed to unmount|Invalid mount options|mount point does not exist",
+      "type": "MountError",
+      "description": "Failed to mount filesystem",
+      "root_cause": "ansible_mount_error",
+      "suggestion": "Check device, mount point, and filesystem type",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "mount",
+      "tags": [
+        "ansible",
+        "module",
+        "mount",
+        "filesystem"
+      ],
+      "examples": [
+        "mount failed: /dev/sdb1 is not a block device",
+        "Unable to mount: mount point /mnt/data not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_systemd_error",
+      "pattern": "systemd not available|Could not find systemd|systemctl not found|systemd not supported|systemd scope error|systemd daemon-reload|Failed to (start|stop|restart|reload)|Unit .* failed to load|Unit is masked",
+      "type": "SystemdError",
+      "description": "Error with systemd service management",
+      "root_cause": "ansible_systemd_error",
+      "suggestion": "Check systemd availability and unit file syntax",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "module": "systemd",
+      "tags": [
+        "ansible",
+        "module",
+        "systemd",
+        "service"
+      ],
+      "examples": [
+        "systemd not available: command not found",
+        "Failed to start unit: Unit nginx.service failed to load"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

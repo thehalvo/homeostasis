@@ -1,0 +1,267 @@
+{
+  "name": "AWS Provider Errors",
+  "description": "Rules for detecting errors related to AWS provider in Terraform",
+  "rules": [
+    {
+      "id": "aws_authentication_error",
+      "pattern": "NoCredentialProviders|ExpiredToken|InvalidClientTokenId|UnauthorizedOperation|AuthFailure|InvalidAccessKeyId|SignatureDoesNotMatch",
+      "type": "AuthenticationError",
+      "description": "AWS authentication or credentials error",
+      "root_cause": "terraform_aws_auth_error",
+      "suggestion": "Configure valid AWS credentials using environment variables, AWS CLI, or provider block",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "aws",
+      "tags": [
+        "terraform",
+        "aws",
+        "authentication",
+        "credentials"
+      ],
+      "examples": [
+        "Error: NoCredentialProviders: no valid providers in chain",
+        "Error: UnauthorizedOperation: You are not authorized to perform this operation"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "aws_resource_not_found",
+      "pattern": "InvalidInstanceID\\.NotFound|InvalidSubnetID\\.NotFound|InvalidVpcID\\.NotFound|InvalidSecurityGroupID\\.NotFound|NoSuchBucket|NoSuchKey|NoSuchEntity|NotFound",
+      "type": "ResourceError",
+      "description": "AWS resource not found",
+      "root_cause": "terraform_aws_resource_error",
+      "suggestion": "Check resource IDs or ensure resources exist before referencing them",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "aws",
+      "tags": [
+        "terraform",
+        "aws",
+        "resource",
+        "not_found"
+      ],
+      "examples": [
+        "Error: InvalidInstanceID.NotFound: The instance ID 'i-1234567890abcdef0' does not exist",
+        "Error: NoSuchBucket: The specified bucket does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "aws_permission_denied",
+      "pattern": "AccessDenied|PermissionDenied|unauthorized|UnauthorizedOperation|InsufficientPermissions|NotAuthorized",
+      "type": "PermissionError",
+      "description": "AWS permission denied or insufficient privileges",
+      "root_cause": "terraform_aws_permission_error",
+      "suggestion": "Update IAM policies to grant necessary permissions for resources",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "aws",
+      "tags": [
+        "terraform",
+        "aws",
+        "permission",
+        "iam"
+      ],
+      "examples": [
+        "Error: AccessDenied: Access Denied",
+        "Error: User is not authorized to perform action on resource"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "aws_quota_exceeded",
+      "pattern": "LimitExceeded|QuotaExceeded|TooManyRequests|Throttling|RequestLimitExceeded|ResourceLimitExceeded",
+      "type": "QuotaError",
+      "description": "AWS service quota or rate limit exceeded",
+      "root_cause": "terraform_aws_quota_error",
+      "suggestion": "Request quota increase or reduce usage rate",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "aws",
+      "tags": [
+        "terraform",
+        "aws",
+        "quota",
+        "limit"
+      ],
+      "examples": [
+        "Error: LimitExceeded: You have reached your limit of VPCs",
+        "Error: Throttling: Rate exceeded"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "aws_duplicate_resource",
+      "pattern": "AlreadyExists|DuplicateResourceName|EntityAlreadyExists|BucketAlreadyExists|BucketAlreadyOwnedByYou",
+      "type": "ResourceError",
+      "description": "AWS resource already exists",
+      "root_cause": "terraform_aws_resource_error",
+      "suggestion": "Use a different resource name or import existing resource",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "aws",
+      "tags": [
+        "terraform",
+        "aws",
+        "resource",
+        "duplicate"
+      ],
+      "examples": [
+        "Error: BucketAlreadyExists: The requested bucket name already exists",
+        "Error: AlreadyExists: Resource with name already exists"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "aws_resource_in_use",
+      "pattern": "DependencyViolation|ResourceInUse|VpcInUse|SubnetInUse|InvalidParameterValue: Network interface .* is currently in use|has dependencies|InvalidState|OperationNotPermitted",
+      "type": "DependencyError",
+      "description": "AWS resource still in use or has dependencies",
+      "root_cause": "terraform_aws_dependency_error",
+      "suggestion": "Delete dependent resources first or check resource state",
+      "category": "dependency",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "aws",
+      "tags": [
+        "terraform",
+        "aws",
+        "dependency",
+        "in_use"
+      ],
+      "examples": [
+        "Error: DependencyViolation: The VPC has dependencies and cannot be deleted",
+        "Error: ResourceInUse: Security group is currently in use"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "aws_invalid_parameter",
+      "pattern": "InvalidParameterValue|MalformedQueryString|InvalidParameter|InvalidArgument|ValidationError",
+      "type": "ParameterError",
+      "description": "Invalid parameter value for AWS resource",
+      "root_cause": "terraform_aws_parameter_error",
+      "suggestion": "Check parameter values and constraints in AWS documentation",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "aws",
+      "tags": [
+        "terraform",
+        "aws",
+        "parameter",
+        "validation"
+      ],
+      "examples": [
+        "Error: InvalidParameterValue: Invalid value for parameter",
+        "Error: ValidationError: Parameter validation failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "aws_region_error",
+      "pattern": "InvalidClientTokenId: The security token included in the request is invalid|NoSuchEntity: The role .* cannot be found|not authorized to perform|UnrecognizedClientException",
+      "type": "RegionError",
+      "description": "AWS region configuration error or invalid region",
+      "root_cause": "terraform_aws_region_error",
+      "suggestion": "Check AWS region configuration in provider block or environment variables",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "medium",
+      "provider": "aws",
+      "tags": [
+        "terraform",
+        "aws",
+        "region",
+        "configuration"
+      ],
+      "examples": [
+        "Error: InvalidClientTokenId: The security token included in the request is invalid",
+        "Error: UnrecognizedClientException: The security token is invalid"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "aws_service_unavailable",
+      "pattern": "ServiceUnavailable|InternalError|Unavailable|InternalFailure|InternalServiceError|ServiceError|RequestTimeout|ConnectionError",
+      "type": "ServiceError",
+      "description": "AWS service unavailable or internal error",
+      "root_cause": "terraform_aws_service_error",
+      "suggestion": "Retry operation later or check AWS service status",
+      "category": "provider",
+      "severity": "medium",
+      "confidence": "high",
+      "provider": "aws",
+      "tags": [
+        "terraform",
+        "aws",
+        "service",
+        "availability"
+      ],
+      "examples": [
+        "Error: ServiceUnavailable: Service is currently unavailable",
+        "Error: InternalError: An internal error occurred"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

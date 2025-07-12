@@ -1,0 +1,258 @@
+{
+  "name": "Ansible Task Errors",
+  "description": "Rules for detecting errors related to Ansible task definition and execution",
+  "rules": [
+    {
+      "id": "ansible_no_action",
+      "pattern": "no action detected in task|ERROR! no action specified in task|required action not found|missing required action|unable to determine task action|could not find action",
+      "type": "TaskError",
+      "description": "No action or module specified in task",
+      "root_cause": "ansible_task_error",
+      "suggestion": "Add module name or action to the task",
+      "category": "task",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "task",
+        "action",
+        "module"
+      ],
+      "examples": [
+        "ERROR! no action detected in task",
+        "required action not found in task"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_conflicting_action",
+      "pattern": "conflicting action statements|both .* and .* found|multiple module paths|conflicting actions|specified multiple times|only one action per task|only one module allowed",
+      "type": "TaskError",
+      "description": "Multiple conflicting actions in task",
+      "root_cause": "ansible_task_error",
+      "suggestion": "Keep only one action or module per task",
+      "category": "task",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "task",
+        "action",
+        "conflict"
+      ],
+      "examples": [
+        "conflicting action statements: both 'command' and 'shell' found",
+        "multiple module paths found in task"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_when_condition_error",
+      "pattern": "invalid conditional|error in conditional|The conditional|unexpected '('|unexpected ')'|unexpected ':'|Error in conditional|invalid 'when'|failed at conditional",
+      "type": "ConditionError",
+      "description": "Invalid 'when' condition syntax",
+      "root_cause": "ansible_task_error",
+      "suggestion": "Fix 'when' condition syntax",
+      "category": "task",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "task",
+        "when",
+        "conditional"
+      ],
+      "examples": [
+        "Error in conditional: unexpected ')'",
+        "failed at conditional: 'when: item.value is defined'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_loop_error",
+      "pattern": "with_.* must be an iteration|with_items requires a list|Invalid data passed to with_|is undefined in with_|not a valid with_ value|loop expects a list|is not a list|loop expression needs to be|not a valid loop",
+      "type": "LoopError",
+      "description": "Invalid loop definition or iteration",
+      "root_cause": "ansible_task_error",
+      "suggestion": "Provide valid list for loop or with_items",
+      "category": "task",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "task",
+        "loop",
+        "with_items"
+      ],
+      "examples": [
+        "with_items requires a list",
+        "loop expects a list but got a string"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_handler_error",
+      "pattern": "handler not found|No handler named|no handler named .* was found|error in handler|notify requires handler|no notify statement found|handlers must be a list",
+      "type": "HandlerError",
+      "description": "Handler not found or invalid notification",
+      "root_cause": "ansible_handler_error",
+      "suggestion": "Define missing handler or fix notification name",
+      "category": "task",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "task",
+        "handler",
+        "notify"
+      ],
+      "examples": [
+        "No handler named 'restart apache' was found",
+        "notify requires handler name as a string"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_include_error",
+      "pattern": "include_tasks requires a file name|file not found in include_tasks|include statement missing path|file name for include|include_role requires|file not found for include|include_vars requires|failed to include|not a valid path",
+      "type": "IncludeError",
+      "description": "Include task, role, or vars error",
+      "root_cause": "ansible_task_error",
+      "suggestion": "Check included file path and parameters",
+      "category": "task",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "task",
+        "include",
+        "import"
+      ],
+      "examples": [
+        "include_tasks requires a file name",
+        "file not found for include: tasks/setup.yml"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_block_error",
+      "pattern": "invalid block|error in block|block must be a list|missing name in block|invalid parameters for block|unexpected parameters|block requires|not a valid attribute for a block",
+      "type": "BlockError",
+      "description": "Invalid block definition or parameters",
+      "root_cause": "ansible_task_error",
+      "suggestion": "Fix block structure or parameters",
+      "category": "task",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "task",
+        "block",
+        "rescue"
+      ],
+      "examples": [
+        "invalid block: block must be a list",
+        "not a valid attribute for a block: module"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_delegate_to_error",
+      "pattern": "delegate_to|delegation|delegated host .* not found|not in inventory|unreachable delegated host|delegate_facts requires delegate_to|unable to delegate to|failed to delegate to",
+      "type": "DelegationError",
+      "description": "Error in delegate_to directive",
+      "root_cause": "ansible_task_error",
+      "suggestion": "Check delegated host exists in inventory",
+      "category": "task",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "task",
+        "delegate",
+        "inventory"
+      ],
+      "examples": [
+        "delegated host 'localhost' not found in inventory",
+        "unable to delegate to non-existent host"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_task_format_error",
+      "pattern": "Invalid task format|expected key=value format|task attributes must be a dictionary|invalid task declaration|tasks must be a list|not a valid task definition|not a task object",
+      "type": "FormatError",
+      "description": "Invalid task format or structure",
+      "root_cause": "ansible_task_error",
+      "suggestion": "Fix task YAML structure and format",
+      "category": "task",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "task",
+        "format",
+        "structure"
+      ],
+      "examples": [
+        "Invalid task format: expected key=value format",
+        "task attributes must be a dictionary"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "name": "Julia Type System Errors",
+  "description": "Rules for detecting errors related to Julia's type system and method dispatch",
+  "rules": [
+    {
+      "id": "julia_type_assertion_failed",
+      "pattern": "TypeError: type assertion failed",
+      "type": "TypeError",
+      "description": "Type assertion failed in Julia code",
+      "root_cause": "julia_type_error",
+      "suggestion": "Ensure variable types match the assertions in your code",
+      "category": "type",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "type",
+        "assertion",
+        "static_type"
+      ],
+      "examples": [
+        "TypeError: type assertion failed",
+        "TypeError: type assertion on assignment to variable"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_expected_type",
+      "pattern": "TypeError: expected ([\\w.]+), got ([\\w.]+)",
+      "type": "TypeError",
+      "description": "Expected one type but got another",
+      "root_cause": "julia_type_error",
+      "suggestion": "Check variable types and ensure they match function expectations",
+      "category": "type",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "type",
+        "mismatch",
+        "expected"
+      ],
+      "examples": [
+        "TypeError: expected Float64, got Int64",
+        "TypeError: expected String, got Symbol"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_ambiguous_method",
+      "pattern": "MethodError: ambiguous method matching",
+      "type": "MethodError",
+      "description": "Multiple methods match the given arguments",
+      "root_cause": "julia_method_error",
+      "suggestion": "Add more specific method definitions or use type annotations",
+      "category": "type",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "method",
+        "ambiguous",
+        "dispatch"
+      ],
+      "examples": [
+        "MethodError: ambiguous method matching process(::Any)",
+        "MethodError: ambiguous method matching convert(::Type{Any}, ::Int64)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_type_parameter_error",
+      "pattern": "TypeError: Type{...} expression: expected type parameter",
+      "type": "TypeError",
+      "description": "Invalid type parameter in parametric type definition",
+      "root_cause": "julia_type_error",
+      "suggestion": "Use valid types as type parameters",
+      "category": "type",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "type",
+        "parameter",
+        "parametric"
+      ],
+      "examples": [
+        "TypeError: Type{...} expression: expected type parameter",
+        "TypeError: invalid type parameter"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_abstract_type_instantiation",
+      "pattern": "MethodError: Cannot `new` abstract type",
+      "type": "MethodError",
+      "description": "Attempting to instantiate an abstract type",
+      "root_cause": "julia_type_error",
+      "suggestion": "Instantiate concrete subtypes instead of abstract types",
+      "category": "type",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "abstract",
+        "type",
+        "instantiation"
+      ],
+      "examples": [
+        "MethodError: Cannot `new` abstract type AbstractArray",
+        "MethodError: Cannot `new` abstract type Number"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_type_parameter_bounds",
+      "pattern": "TypeError: type bound error",
+      "type": "TypeError",
+      "description": "Type parameter violates bounds constraint",
+      "root_cause": "julia_type_error",
+      "suggestion": "Ensure type parameters satisfy their bounds constraints",
+      "category": "type",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "type",
+        "bounds",
+        "constraint"
+      ],
+      "examples": [
+        "TypeError: type bound error",
+        "TypeError: type parameter must be a subtype of Number"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_promote_type_error",
+      "pattern": "MethodError: no method matching promote_type",
+      "type": "MethodError",
+      "description": "Cannot determine common supertype for promotion",
+      "root_cause": "julia_type_error",
+      "suggestion": "Ensure types have a common supertype or define custom promotion rules",
+      "category": "type",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "promotion",
+        "type",
+        "supertype"
+      ],
+      "examples": [
+        "MethodError: no method matching promote_type(::Type{String}, ::Type{Int64})",
+        "Error in type promotion"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_typealias_deprecated",
+      "pattern": "syntax: `typealias` is deprecated",
+      "type": "DeprecationWarning",
+      "description": "Using deprecated typealias syntax",
+      "root_cause": "julia_syntax_error",
+      "suggestion": "Use `const Type1 = Type2` syntax instead of typealias",
+      "category": "type",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "typealias",
+        "deprecated",
+        "syntax"
+      ],
+      "examples": [
+        "syntax: `typealias MyInt Int` is deprecated, use `const MyInt = Int` instead",
+        "Warning: typealias is deprecated"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_union_type_error",
+      "pattern": "TypeError: Union{.*}: invalid Union type",
+      "type": "TypeError",
+      "description": "Invalid Union type construction",
+      "root_cause": "julia_type_error",
+      "suggestion": "Ensure all types in Union are valid types",
+      "category": "type",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "union",
+        "type",
+        "composition"
+      ],
+      "examples": [
+        "TypeError: Union{Int64, 3}: invalid Union type",
+        "TypeError: Union{} is an invalid type"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

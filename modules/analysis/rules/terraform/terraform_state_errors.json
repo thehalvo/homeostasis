@@ -1,0 +1,258 @@
+{
+  "name": "Terraform State Errors",
+  "description": "Rules for detecting errors related to Terraform state management",
+  "rules": [
+    {
+      "id": "terraform_state_lock_error",
+      "pattern": "Error acquiring the state lock|Lock file .* already exists|Could not acquire lock|Failed to unlock state|Error releasing the state lock",
+      "type": "StateLockError",
+      "description": "Error with state locking mechanism",
+      "root_cause": "terraform_state_lock_error",
+      "suggestion": "Wait for other operations to complete or use force-unlock if stuck",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "lock",
+        "concurrency"
+      ],
+      "examples": [
+        "Error acquiring the state lock",
+        "Error: Lock file .tflock already exists"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_not_found",
+      "pattern": "No state file found|No existing state was found|No state snapshot found|Unable to find remote state",
+      "type": "StateError",
+      "description": "State file not found or doesn't exist",
+      "root_cause": "terraform_state_error",
+      "suggestion": "Run terraform init or check backend configuration",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "missing",
+        "initialization"
+      ],
+      "examples": [
+        "Error: No state file found",
+        "Error: No existing state was found in the given backend"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_version_error",
+      "pattern": "State version \\d+ is not supported|Unsupported state file format version|State snapshot was created by Terraform v",
+      "type": "StateVersionError",
+      "description": "State file version incompatibility",
+      "root_cause": "terraform_state_error",
+      "suggestion": "Use compatible Terraform version or migrate state with terraform init -upgrade",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "version",
+        "compatibility"
+      ],
+      "examples": [
+        "Error: State version 4 is not supported",
+        "Error: State snapshot was created by Terraform v0.12.0"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_corrupt",
+      "pattern": "Failed to load state|Error reading state file|Invalid state file|State file is corrupt|State file is invalid|Failed to decode state file",
+      "type": "StateCorruptError",
+      "description": "State file is corrupt or invalid",
+      "root_cause": "terraform_state_error",
+      "suggestion": "Restore from backup or recreate state using terraform import",
+      "category": "state",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "corrupt",
+        "invalid"
+      ],
+      "examples": [
+        "Error: Failed to load state",
+        "Error: State file is corrupt"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_backend_error",
+      "pattern": "Backend configuration changed|Backend initialization required|Backend config changes require|Error configuring the backend|Failed to configure remote backend",
+      "type": "BackendError",
+      "description": "Backend configuration error or change",
+      "root_cause": "terraform_backend_error",
+      "suggestion": "Run terraform init to configure backend or accept backend changes",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "backend",
+        "configuration"
+      ],
+      "examples": [
+        "Error: Backend configuration changed",
+        "Error: Backend initialization required"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_access_denied",
+      "pattern": "AccessDenied|Error accessing remote state|Forbidden|Permission denied|Unauthorized|credentials are invalid",
+      "type": "StateAccessError",
+      "description": "Access denied to state backend",
+      "root_cause": "terraform_backend_error",
+      "suggestion": "Check backend credentials and permissions",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "access",
+        "permissions"
+      ],
+      "examples": [
+        "Error: AccessDenied when accessing state backend",
+        "Error: Permission denied when reading state"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_migration_error",
+      "pattern": "Error migrating state|Failed to migrate state|Error during state migration|State migration failed",
+      "type": "StateMigrationError",
+      "description": "Error during state migration",
+      "root_cause": "terraform_state_error",
+      "suggestion": "Check migration logs and backend configurations",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "migration",
+        "backend"
+      ],
+      "examples": [
+        "Error migrating state from local to remote",
+        "Error: Failed to migrate state"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_import_error",
+      "pattern": "Error importing|Error: resource address .* does not exist|Cannot import non-existent remote object|Error importing resource",
+      "type": "StateImportError",
+      "description": "Error during resource import to state",
+      "root_cause": "terraform_state_error",
+      "suggestion": "Check resource ID and ensure resource exists before importing",
+      "category": "state",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "import",
+        "resource"
+      ],
+      "examples": [
+        "Error importing aws_s3_bucket",
+        "Error: Cannot import non-existent remote object"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_workspace_state_error",
+      "pattern": "Error reading workspace|Error switching workspace|Workspace .* does not exist|Cannot delete the currently selected workspace",
+      "type": "WorkspaceError",
+      "description": "Error with workspace state operations",
+      "root_cause": "terraform_workspace_error",
+      "suggestion": "Check workspace name or select a different workspace first",
+      "category": "state",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "workspace",
+        "environment"
+      ],
+      "examples": [
+        "Error reading workspace \"dev\"",
+        "Error: Cannot delete the currently selected workspace"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

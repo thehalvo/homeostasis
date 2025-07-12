@@ -1,0 +1,369 @@
+{
+  "name": "Erlang OTP Errors",
+  "description": "Rules for detecting Erlang OTP (Open Telecom Platform) behavior errors",
+  "rules": [
+    {
+      "id": "erlang_gen_server_terminated",
+      "pattern": "gen_server.*?terminated",
+      "type": "RuntimeError",
+      "description": "GenServer process terminated unexpectedly",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Handle errors in GenServer callbacks and prevent crashes",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_server",
+        "terminate"
+      ],
+      "examples": [
+        "gen_server terminated with reason: {badarg, [...]}",
+        "gen_server <0.123.0> terminated"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_gen_statem_terminated",
+      "pattern": "gen_statem.*?terminated",
+      "type": "RuntimeError",
+      "description": "GenStateMachine process terminated unexpectedly",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Handle errors in GenStateMachine callbacks and prevent crashes",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_statem",
+        "terminate"
+      ],
+      "examples": [
+        "gen_statem terminated with reason: {badarg, [...]}",
+        "gen_statem <0.123.0> terminated"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_gen_event_terminated",
+      "pattern": "gen_event.*?terminated",
+      "type": "RuntimeError",
+      "description": "GenEvent process terminated unexpectedly",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Handle errors in GenEvent callbacks and prevent crashes",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_event",
+        "terminate"
+      ],
+      "examples": [
+        "gen_event terminated with reason: {badarg, [...]}",
+        "gen_event <0.123.0> terminated"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_application_failed",
+      "pattern": "application.*?failed",
+      "type": "RuntimeError",
+      "description": "Application start or stop failed",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Check application dependencies and initialization",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "application",
+        "start"
+      ],
+      "examples": [
+        "application myapp failed to start: {error, reason}",
+        "application failed during startup phase"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_callback_failed",
+      "pattern": "callback.*?failed",
+      "type": "RuntimeError",
+      "description": "Callback function failed",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Check callback function implementation",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "callback"
+      ],
+      "examples": [
+        "callback module:function/2 failed",
+        "callback handler failed with reason"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_init_failed",
+      "pattern": "init.*?failed",
+      "type": "RuntimeError",
+      "description": "Initialization callback failed",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Check init/1 callback implementation and return value",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "init",
+        "callback"
+      ],
+      "examples": [
+        "init function failed with reason",
+        "module init callback failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_gen_server_call_failed",
+      "pattern": "gen_server.*?call.*?failed",
+      "type": "RuntimeError",
+      "description": "GenServer call failed",
+      "root_cause": "erlang_genserver_error",
+      "suggestion": "Check gen_server:call timeout and error handling",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_server",
+        "call"
+      ],
+      "examples": [
+        "gen_server call failed: timeout",
+        "gen_server call to <0.123.0> failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_gen_server_cast_failed",
+      "pattern": "gen_server.*?cast.*?failed",
+      "type": "RuntimeError",
+      "description": "GenServer cast failed",
+      "root_cause": "erlang_genserver_error",
+      "suggestion": "Check gen_server:cast error handling",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_server",
+        "cast"
+      ],
+      "examples": [
+        "gen_server cast failed",
+        "gen_server cast to <0.123.0> failed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_gen_server_timeout",
+      "pattern": "gen_server.*?timeout",
+      "type": "RuntimeError",
+      "description": "GenServer call timeout",
+      "root_cause": "erlang_genserver_error",
+      "suggestion": "Increase timeout or optimize handle_call implementation",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_server",
+        "timeout"
+      ],
+      "examples": [
+        "gen_server call timeout",
+        "timeout in gen_server call"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_handle_call_crashed",
+      "pattern": "gen_server.*?handle_call.*?crashed",
+      "type": "RuntimeError",
+      "description": "GenServer handle_call callback crashed",
+      "root_cause": "erlang_genserver_error",
+      "suggestion": "Add error handling to handle_call callback",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_server",
+        "handle_call"
+      ],
+      "examples": [
+        "gen_server handle_call crashed with reason",
+        "handle_call callback crashed in module"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_handle_cast_crashed",
+      "pattern": "gen_server.*?handle_cast.*?crashed",
+      "type": "RuntimeError",
+      "description": "GenServer handle_cast callback crashed",
+      "root_cause": "erlang_genserver_error",
+      "suggestion": "Add error handling to handle_cast callback",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_server",
+        "handle_cast"
+      ],
+      "examples": [
+        "gen_server handle_cast crashed with reason",
+        "handle_cast callback crashed in module"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_handle_info_crashed",
+      "pattern": "gen_server.*?handle_info.*?crashed",
+      "type": "RuntimeError",
+      "description": "GenServer handle_info callback crashed",
+      "root_cause": "erlang_genserver_error",
+      "suggestion": "Add error handling to handle_info callback",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_server",
+        "handle_info"
+      ],
+      "examples": [
+        "gen_server handle_info crashed with reason",
+        "handle_info callback crashed in module"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_terminate_failed",
+      "pattern": "gen_server.*?terminate.*?failed",
+      "type": "RuntimeError",
+      "description": "GenServer terminate callback failed",
+      "root_cause": "erlang_genserver_error",
+      "suggestion": "Fix error in terminate/2 callback",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_server",
+        "terminate"
+      ],
+      "examples": [
+        "gen_server terminate failed",
+        "terminate callback failed in module"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

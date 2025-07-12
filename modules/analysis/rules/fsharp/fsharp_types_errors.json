@@ -1,0 +1,323 @@
+{
+  "name": "F# Type System Errors",
+  "description": "Rules for detecting F# type system and type checking errors",
+  "rules": [
+    {
+      "id": "fsharp_type_mismatch_detail",
+      "pattern": "This expression was expected to have type\\s+'(.+?)'\\s+but has type\\s+'(.+?)'",
+      "type": "TypeError",
+      "description": "Type mismatch between expected and actual types",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Ensure types match by converting the value or changing the function signature",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "mismatch"
+      ],
+      "examples": [
+        "This expression was expected to have type 'int' but has type 'string'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_type_constraint",
+      "pattern": "Type constraint mismatch",
+      "type": "TypeError",
+      "description": "Type constraint does not match the inferred type",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Check type annotations and constraints for consistency",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "constraint"
+      ],
+      "examples": [
+        "Type constraint mismatch. The type 'int' does not match the type 'string'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_type_instantiation",
+      "pattern": "The type '(.+?)' cannot be instantiated",
+      "type": "TypeError",
+      "description": "Attempting to instantiate a type that cannot be instantiated",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Check if the type is abstract, a type function, or requires generic parameters",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "instantiation"
+      ],
+      "examples": [
+        "The type 'IEnumerable' cannot be instantiated. It should be instantiated with an appropriate generic parameter."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_generic_parameter",
+      "pattern": "The generic parameter '(.+?)' cannot be determined",
+      "type": "TypeError",
+      "description": "Generic parameter type cannot be determined",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Provide explicit type annotations or use functions with more type information",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "generic"
+      ],
+      "examples": [
+        "The generic parameter 'T' cannot be determined"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_record_field_not_found",
+      "pattern": "The record field '(.+?)' is not defined",
+      "type": "TypeError",
+      "description": "Record field not found in record type",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Check record field names for typos or use the correct record type",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "record",
+        "field"
+      ],
+      "examples": [
+        "The record field 'Name' is not defined in type 'Person'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_union_case_not_found",
+      "pattern": "The union case '(.+?)' is not defined",
+      "type": "TypeError",
+      "description": "Union case not found in discriminated union type",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Check union case names for typos or use the correct union type",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "union",
+        "case"
+      ],
+      "examples": [
+        "The union case 'Some' is not defined in type 'Result<_,_>'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_recursive_type",
+      "pattern": "Recursive types cannot contain members",
+      "type": "TypeError",
+      "description": "Recursive type definition with invalid members",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Move member definitions outside the recursive type or use a workaround",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "recursive"
+      ],
+      "examples": [
+        "Recursive types cannot contain members or inherit from classes"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_member_access",
+      "pattern": "Member, override, interface, or end of class expected",
+      "type": "SyntaxError",
+      "description": "Invalid syntax in type or class definition",
+      "root_cause": "fsharp_syntax_error",
+      "suggestion": "Check syntax for class members, methods, or interfaces",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "class",
+        "member"
+      ],
+      "examples": [
+        "Member, override, interface, or end of class expected"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_unit_of_measure",
+      "pattern": "The unit of measure '(.+?)' does not match",
+      "type": "TypeError",
+      "description": "Unit of measure mismatch",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Ensure consistent units of measure or use conversion functions",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "unit",
+        "measure"
+      ],
+      "examples": [
+        "The unit of measure 'kg' does not match the unit of measure 'm'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_no_explicit_conversion",
+      "pattern": "No implicit conversion from '(.+?)' to '(.+?)'",
+      "type": "TypeError",
+      "description": "No implicit conversion between types",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Use explicit conversion or appropriate functions",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "conversion"
+      ],
+      "examples": [
+        "No implicit conversion from 'int' to 'string'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_type_abbreviation",
+      "pattern": "Type abbreviations cannot have members",
+      "type": "TypeError",
+      "description": "Type abbreviation with invalid members",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Use a proper type definition instead of abbreviation",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "abbreviation"
+      ],
+      "examples": [
+        "Type abbreviations cannot have members"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_struct_record",
+      "pattern": "Struct records cannot implement interfaces",
+      "type": "TypeError",
+      "description": "Struct record with invalid interface implementation",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Use regular record instead of struct record",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "struct",
+        "record"
+      ],
+      "examples": [
+        "Struct records cannot implement interfaces"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

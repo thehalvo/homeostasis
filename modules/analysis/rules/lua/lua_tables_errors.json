@@ -1,0 +1,287 @@
+{
+  "name": "Lua Table Errors",
+  "description": "Rules for detecting errors related to Lua table operations",
+  "rules": [
+    {
+      "id": "lua_table_index_non_table",
+      "pattern": "attempt to index (a |local )?([^ ]+) value",
+      "type": "TableError",
+      "description": "Attempting to index a non-table value",
+      "root_cause": "lua_table_error",
+      "suggestion": "Check that the value is a table before indexing it",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "table",
+        "index",
+        "type"
+      ],
+      "examples": [
+        "attempt to index a number value",
+        "attempt to index a string value",
+        "attempt to index a boolean value"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_table_nil_key",
+      "pattern": "table index is nil",
+      "type": "TableError",
+      "description": "Attempting to use nil as a table key",
+      "root_cause": "lua_table_error",
+      "suggestion": "Ensure table keys are not nil",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "table",
+        "key",
+        "nil"
+      ],
+      "examples": [
+        "table index is nil",
+        "table index is nil in assignment"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_invalid_key_next",
+      "pattern": "invalid key to 'next'",
+      "type": "TableError",
+      "description": "Invalid key used with next() function",
+      "root_cause": "lua_table_error",
+      "suggestion": "Ensure key used with next() is either nil or an existing key in the table",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "table",
+        "iteration",
+        "next"
+      ],
+      "examples": [
+        "invalid key to 'next'",
+        "invalid key (a number) to 'next'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_table_array_index_out_of_bounds",
+      "pattern": "attempt to access (a |local )?table at index ([0-9]+)",
+      "type": "TableError",
+      "description": "Array index out of bounds",
+      "root_cause": "lua_table_error",
+      "suggestion": "Check array bounds before accessing elements",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "table",
+        "array",
+        "index",
+        "bounds"
+      ],
+      "examples": [
+        "attempt to access a table at index 0",
+        "attempt to access a table at index 11 (table size is 10)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_table_metatable_error",
+      "pattern": "cannot (use|modify) (a |local )?([^ ]+) as a table",
+      "type": "MetatableError",
+      "description": "Error using or modifying a value with a metatable",
+      "root_cause": "lua_metamethod_error",
+      "suggestion": "Check metatable implementation for __index and __newindex metamethods",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "table",
+        "metatable",
+        "metamethod"
+      ],
+      "examples": [
+        "cannot use a userdata as a table",
+        "cannot modify a string as a table"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_table_key_type_error",
+      "pattern": "table index is (a |an )?([^ ]+)",
+      "type": "TableError",
+      "description": "Invalid table key type",
+      "root_cause": "lua_table_error",
+      "suggestion": "Use only valid table key types (string, number, boolean, or table)",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "table",
+        "key",
+        "type"
+      ],
+      "examples": [
+        "table index is a function",
+        "table index is NaN"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_table_nan_key",
+      "pattern": "table index is NaN",
+      "type": "TableError",
+      "description": "Attempting to use NaN as a table key",
+      "root_cause": "lua_table_error",
+      "suggestion": "Avoid using NaN as a table key",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "table",
+        "key",
+        "nan"
+      ],
+      "examples": [
+        "table index is NaN"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_circular_table_reference",
+      "pattern": "cannot convert circular table",
+      "type": "TableError",
+      "description": "Circular reference in table",
+      "root_cause": "lua_table_error",
+      "suggestion": "Avoid circular references in tables or use weak references",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "table",
+        "circular",
+        "reference"
+      ],
+      "examples": [
+        "cannot convert circular table to JSON",
+        "cannot convert circular table to string"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_table_memory_error",
+      "pattern": "not enough memory (for|to create) table",
+      "type": "MemoryError",
+      "description": "Not enough memory to create or resize table",
+      "root_cause": "lua_memory_error",
+      "suggestion": "Reduce table size or use incremental approaches",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "table",
+        "memory",
+        "allocation"
+      ],
+      "examples": [
+        "not enough memory for table",
+        "not enough memory to create table with 1000000 elements"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_table_metamethod_error",
+      "pattern": "attempt to (call|index) metamethod '(__[^']+)'",
+      "type": "MetatableError",
+      "description": "Error in table metamethod",
+      "root_cause": "lua_metamethod_error",
+      "suggestion": "Check metamethod implementation for errors",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "table",
+        "metatable",
+        "metamethod"
+      ],
+      "examples": [
+        "attempt to call metamethod '__index'",
+        "attempt to index metamethod '__newindex'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

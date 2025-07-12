@@ -1,0 +1,285 @@
+{
+  "name": "PowerShell Cmdlet Errors",
+  "description": "Rules for detecting errors related to PowerShell cmdlets and their usage",
+  "rules": [
+    {
+      "id": "powershell_parameter_binding_validation",
+      "pattern": "Cannot validate argument on parameter '([^']+)'",
+      "type": "ParameterError",
+      "description": "Parameter validation failure for PowerShell cmdlet",
+      "root_cause": "powershell_parameter_error",
+      "suggestion": "Provide a valid parameter value that meets validation requirements",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "parameter",
+        "validation"
+      ],
+      "examples": [
+        "Cannot validate argument on parameter 'Path'. The argument is null or empty.",
+        "Cannot validate argument on parameter 'Count'. The argument must be between 1 and 10."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_parameter_set_ambiguous",
+      "pattern": "Parameter set cannot be resolved using the specified named parameters",
+      "type": "ParameterError",
+      "description": "Ambiguous parameter set in PowerShell cmdlet",
+      "root_cause": "powershell_parameter_error",
+      "suggestion": "Specify parameters that uniquely identify a parameter set",
+      "category": "powershell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "parameter",
+        "ambiguous"
+      ],
+      "examples": [
+        "Parameter set cannot be resolved using the specified named parameters",
+        "Ambiguous parameter set. Multiple parameter sets matched based on supplied parameters."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_invalid_parameter_value",
+      "pattern": "Cannot process argument because the (value|parameter) '([^']+)' is (invalid|not valid)",
+      "type": "ParameterError",
+      "description": "Invalid parameter value for PowerShell cmdlet",
+      "root_cause": "powershell_parameter_error",
+      "suggestion": "Provide a valid value for the parameter",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "parameter",
+        "value"
+      ],
+      "examples": [
+        "Cannot process argument because the value 'abc' is not valid for parameter 'Port'",
+        "Cannot process argument because the parameter 'Encoding' is invalid"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_parameter_binding_error",
+      "pattern": "A parameter cannot be found that matches parameter name '([^']+)'",
+      "type": "ParameterError",
+      "description": "Parameter name not found for PowerShell cmdlet",
+      "root_cause": "powershell_parameter_error",
+      "suggestion": "Check parameter name spelling and verify it exists for the cmdlet",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "parameter",
+        "binding"
+      ],
+      "examples": [
+        "A parameter cannot be found that matches parameter name 'Fliter'",
+        "A parameter cannot be found that matches parameter name 'PathName'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_positional_parameter_error",
+      "pattern": "The positional parameter at position (\\d+) named '([^']+)' is not allowed",
+      "type": "ParameterError",
+      "description": "Invalid positional parameter usage in PowerShell cmdlet",
+      "root_cause": "powershell_parameter_error",
+      "suggestion": "Use named parameters instead of positional parameters",
+      "category": "powershell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "parameter",
+        "positional"
+      ],
+      "examples": [
+        "The positional parameter at position 1 named 'Path' is not allowed",
+        "The positional parameter at position 2 named 'Value' is not allowed in this context"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_parameter_type_error",
+      "pattern": "Cannot convert (value|argument) '([^']+)' (to type|for parameter) '([^']+)'",
+      "type": "TypeError",
+      "description": "Type conversion error for PowerShell parameter",
+      "root_cause": "powershell_type_error",
+      "suggestion": "Provide a value of the correct type for the parameter",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "parameter",
+        "type"
+      ],
+      "examples": [
+        "Cannot convert value \"abc\" to type \"System.Int32\"",
+        "Cannot convert argument \"2023-01-AA\" for parameter \"Date\" to type \"System.DateTime\""
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_cmdlet_terminated",
+      "pattern": "Cmdlet '([^']+)' has terminated unexpectedly",
+      "type": "CmdletError",
+      "description": "PowerShell cmdlet terminated unexpectedly",
+      "root_cause": "powershell_cmdlet_error",
+      "suggestion": "Check for exceptions in the cmdlet execution",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "execution",
+        "termination"
+      ],
+      "examples": [
+        "Cmdlet 'Get-Content' has terminated unexpectedly",
+        "Cmdlet 'Invoke-WebRequest' has terminated unexpectedly"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_pipeline_error",
+      "pattern": "The input object cannot be bound to any parameters for the command",
+      "type": "PipelineError",
+      "description": "PowerShell pipeline binding error",
+      "root_cause": "powershell_pipeline_error",
+      "suggestion": "Ensure the objects in the pipeline are compatible with the cmdlet receiving them",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "pipeline",
+        "binding"
+      ],
+      "examples": [
+        "The input object cannot be bound to any parameters for the command",
+        "The pipeline object type 'System.String' is not compatible with the parameter type 'System.IO.FileInfo'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_cmdlet_not_implemented",
+      "pattern": "The cmdlet '([^']+)' is not implemented",
+      "type": "CmdletError",
+      "description": "PowerShell cmdlet not implemented",
+      "root_cause": "powershell_cmdlet_error",
+      "suggestion": "Use an alternative cmdlet or install the required module",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "implementation"
+      ],
+      "examples": [
+        "The cmdlet 'Get-AzureService' is not implemented",
+        "The cmdlet 'Start-Transaction' is not implemented"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_parameter_mandatory",
+      "pattern": "The (\\w+) parameter is mandatory",
+      "type": "ParameterError",
+      "description": "Missing mandatory parameter for PowerShell cmdlet",
+      "root_cause": "powershell_parameter_error",
+      "suggestion": "Provide a value for the mandatory parameter",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "parameter",
+        "mandatory"
+      ],
+      "examples": [
+        "The Path parameter is mandatory",
+        "The Credential parameter is mandatory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

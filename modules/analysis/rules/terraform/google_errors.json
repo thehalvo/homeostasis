@@ -1,0 +1,296 @@
+{
+  "name": "Google Cloud Provider Errors",
+  "description": "Rules for detecting errors related to Google Cloud (google) provider in Terraform",
+  "rules": [
+    {
+      "id": "google_authentication_error",
+      "pattern": "googleapi: Error 401|credential.*not found|could not find default credentials|Application Default Credentials not available|invalid_grant|Request had invalid authentication|no valid credentials",
+      "type": "AuthenticationError",
+      "description": "Google Cloud authentication or credentials error",
+      "root_cause": "terraform_google_auth_error",
+      "suggestion": "Configure valid GCP credentials using service account key, gcloud CLI, or environment variables",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "google",
+      "tags": [
+        "terraform",
+        "gcp",
+        "authentication",
+        "credentials"
+      ],
+      "examples": [
+        "Error: googleapi: Error 401: Request is missing required authentication credential",
+        "Error: could not find default credentials. See https://developers.google.com/accounts/docs/application-default-credentials"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "google_resource_not_found",
+      "pattern": "googleapi: Error 404|Resource .* was not found|Not found: .+|The resource .* was not found|does not exist",
+      "type": "ResourceError",
+      "description": "Google Cloud resource not found",
+      "root_cause": "terraform_google_resource_error",
+      "suggestion": "Check resource IDs, names, and existence in the specified project",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "google",
+      "tags": [
+        "terraform",
+        "gcp",
+        "resource",
+        "not_found"
+      ],
+      "examples": [
+        "Error: googleapi: Error 404: Resource projects/my-project/zones/us-central1-a/instances/instance-name was not found",
+        "Error: Not found: Project 'my-project'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "google_permission_denied",
+      "pattern": "googleapi: Error 403|Permission .* denied|Required .* permission|PERMISSION_DENIED|Permission denied|not authorized|does not have .* permission|lacks IAM permission",
+      "type": "PermissionError",
+      "description": "Google Cloud permission denied or insufficient privileges",
+      "root_cause": "terraform_google_permission_error",
+      "suggestion": "Update IAM roles to grant necessary permissions for resources",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "google",
+      "tags": [
+        "terraform",
+        "gcp",
+        "permission",
+        "iam"
+      ],
+      "examples": [
+        "Error: googleapi: Error 403: Permission 'compute.instances.create' denied on resource",
+        "Error: PERMISSION_DENIED: The caller does not have permission"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "google_quota_exceeded",
+      "pattern": "QUOTA_EXCEEDED|RESOURCE_EXHAUSTED|Rate Limit Exceeded|Quota exceeded|exceeded quota|limit reached|too many requests",
+      "type": "QuotaError",
+      "description": "Google Cloud service quota or rate limit exceeded",
+      "root_cause": "terraform_google_quota_error",
+      "suggestion": "Request quota increase or reduce resource usage",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "google",
+      "tags": [
+        "terraform",
+        "gcp",
+        "quota",
+        "limit"
+      ],
+      "examples": [
+        "Error: QUOTA_EXCEEDED: Quota exceeded for quota metric 'Virtual machine instances'",
+        "Error: RESOURCE_EXHAUSTED: Rate Limit Exceeded"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "google_duplicate_resource",
+      "pattern": "googleapi: Error 409|ALREADY_EXISTS|resource already exists|Conflict|duplicate|already in use|already exists",
+      "type": "ResourceError",
+      "description": "Google Cloud resource already exists",
+      "root_cause": "terraform_google_resource_error",
+      "suggestion": "Use a different resource name or import existing resource",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "google",
+      "tags": [
+        "terraform",
+        "gcp",
+        "resource",
+        "duplicate"
+      ],
+      "examples": [
+        "Error: googleapi: Error 409: The resource 'projects/my-project/global/networks/default' already exists",
+        "Error: ALREADY_EXISTS: The requested entity already exists"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "google_resource_in_use",
+      "pattern": "FAILED_PRECONDITION|RESOURCE_IN_USE|is in use by|inuse by another resource|resource is in use|currently using|being used by",
+      "type": "DependencyError",
+      "description": "Google Cloud resource still in use or has dependencies",
+      "root_cause": "terraform_google_dependency_error",
+      "suggestion": "Delete dependent resources first or break association",
+      "category": "dependency",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "google",
+      "tags": [
+        "terraform",
+        "gcp",
+        "dependency",
+        "in_use"
+      ],
+      "examples": [
+        "Error: FAILED_PRECONDITION: The resource 'projects/my-project/zones/us-central1-a/disks/disk-1' is in use",
+        "Error: RESOURCE_IN_USE: The instance is currently in use by another resource"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "google_invalid_parameter",
+      "pattern": "INVALID_ARGUMENT|Invalid value|invalid format|Field .* is invalid|Invalid request|is invalid|invalid value for field|Invalid value for|Bad Request",
+      "type": "ParameterError",
+      "description": "Invalid parameter value for Google Cloud resource",
+      "root_cause": "terraform_google_parameter_error",
+      "suggestion": "Check parameter values and constraints in Google Cloud documentation",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "google",
+      "tags": [
+        "terraform",
+        "gcp",
+        "parameter",
+        "validation"
+      ],
+      "examples": [
+        "Error: INVALID_ARGUMENT: Invalid value for field 'resource.name'",
+        "Error: Invalid value for field: machine_type must match pattern"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "google_project_error",
+      "pattern": "Project .* not found|project was not found|The project you're trying to access|PROJECT_DISABLED|PROJECT_INVALID|billing is disabled|billing is not enabled",
+      "type": "ProjectError",
+      "description": "Google Cloud project error or invalid project",
+      "root_cause": "terraform_google_project_error",
+      "suggestion": "Check project ID, ensure project exists, and billing is enabled",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "google",
+      "tags": [
+        "terraform",
+        "gcp",
+        "project",
+        "billing"
+      ],
+      "examples": [
+        "Error: Project 'my-project' not found or it was deleted",
+        "Error: Billing is disabled for project 'my-project'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "google_service_unavailable",
+      "pattern": "UNAVAILABLE|INTERNAL|Internal error|Service Unavailable|temporarily unavailable|backend error|currently unavailable|server error|service is unavailable|error encountered",
+      "type": "ServiceError",
+      "description": "Google Cloud service unavailable or internal error",
+      "root_cause": "terraform_google_service_error",
+      "suggestion": "Retry operation later or check Google Cloud service status",
+      "category": "provider",
+      "severity": "medium",
+      "confidence": "high",
+      "provider": "google",
+      "tags": [
+        "terraform",
+        "gcp",
+        "service",
+        "availability"
+      ],
+      "examples": [
+        "Error: UNAVAILABLE: The service is currently unavailable",
+        "Error: INTERNAL: Internal error occurred"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "google_api_not_enabled",
+      "pattern": "API .* not enabled|API has not been used|Service .* is disabled|requires the API to be enabled|is disabled for project|API not enabled",
+      "type": "APIError",
+      "description": "Google Cloud API not enabled for project",
+      "root_cause": "terraform_google_api_error",
+      "suggestion": "Enable required APIs in the Google Cloud Console or using gcloud",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "provider": "google",
+      "tags": [
+        "terraform",
+        "gcp",
+        "api",
+        "service"
+      ],
+      "examples": [
+        "Error: API compute.googleapis.com not enabled on project",
+        "Error: Service 'compute.googleapis.com' is disabled for project"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "name": "Lua Module Errors",
+  "description": "Rules for detecting errors related to Lua module loading and require",
+  "rules": [
+    {
+      "id": "lua_module_not_found",
+      "pattern": "module '([^']+)' not found",
+      "type": "ModuleError",
+      "description": "Module not found in require path",
+      "root_cause": "lua_module_error",
+      "suggestion": "Check module name and package.path",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "module",
+        "require",
+        "path"
+      ],
+      "examples": [
+        "module 'socket' not found",
+        "module 'luasql.mysql' not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_module_no_file",
+      "pattern": "no file '([^']+)'",
+      "type": "ModuleError",
+      "description": "Module file not found in require path",
+      "root_cause": "lua_module_error",
+      "suggestion": "Check module file path and package.path setting",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "module",
+        "require",
+        "file"
+      ],
+      "examples": [
+        "no file './mymodule.lua'",
+        "no file '/usr/local/share/lua/5.1/socket.lua'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_module_error_loading",
+      "pattern": "error loading module '([^']+)'",
+      "type": "ModuleError",
+      "description": "Error while loading module",
+      "root_cause": "lua_module_error",
+      "suggestion": "Check for syntax errors in the module file",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "module",
+        "require",
+        "loading"
+      ],
+      "examples": [
+        "error loading module 'mymodule'",
+        "error loading module 'socket': syntax error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_module_loop",
+      "pattern": "loop or previous error loading module '([^']+)'",
+      "type": "ModuleError",
+      "description": "Circular dependency in module loading",
+      "root_cause": "lua_module_error",
+      "suggestion": "Check for circular dependencies between modules",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "module",
+        "require",
+        "circular"
+      ],
+      "examples": [
+        "loop or previous error loading module 'mymodule'",
+        "loop or previous error loading module 'config'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_module_not_callable",
+      "pattern": "module '([^']+)' not a callable table",
+      "type": "ModuleError",
+      "description": "Module returned a non-callable value",
+      "root_cause": "lua_module_error",
+      "suggestion": "Check if module is properly returning a table or function",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "module",
+        "require",
+        "callable"
+      ],
+      "examples": [
+        "module 'mymodule' not a callable table",
+        "module 'config' not a callable table"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_module_nil_chunk",
+      "pattern": "error loading module '([^']+)': nil chunk returned",
+      "type": "ModuleError",
+      "description": "Module loader returned nil chunk",
+      "root_cause": "lua_module_error",
+      "suggestion": "Check if module file is valid and returns a value",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "module",
+        "require",
+        "nil"
+      ],
+      "examples": [
+        "error loading module 'mymodule': nil chunk returned",
+        "error loading module 'utils': nil chunk returned"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_module_bad_return",
+      "pattern": "module '([^']+)' returned a ([^ ]+) value",
+      "type": "ModuleError",
+      "description": "Module returned an unexpected value type",
+      "root_cause": "lua_module_error",
+      "suggestion": "Ensure module returns a table, function, or userdata",
+      "category": "lua",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "module",
+        "require",
+        "return"
+      ],
+      "examples": [
+        "module 'mymodule' returned a nil value",
+        "module 'config' returned a string value"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_module_bad_argument",
+      "pattern": "bad argument #1 to 'require' \\(string expected, got ([^\\)]+)\\)",
+      "type": "ModuleError",
+      "description": "Bad argument to require function",
+      "root_cause": "lua_module_error",
+      "suggestion": "Use a string module name with require",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "module",
+        "require",
+        "argument"
+      ],
+      "examples": [
+        "bad argument #1 to 'require' (string expected, got nil)",
+        "bad argument #1 to 'require' (string expected, got table)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_module_load_error",
+      "pattern": "error in module '([^']+)' ([^:]+)",
+      "type": "ModuleError",
+      "description": "Error in module code execution",
+      "root_cause": "lua_module_error",
+      "suggestion": "Check for runtime errors in the module code",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "module",
+        "require",
+        "runtime"
+      ],
+      "examples": [
+        "error in module 'mymodule' attempt to index a nil value",
+        "error in module 'config' bad argument #1"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "lua_module_c_library_error",
+      "pattern": "could not load C library '([^']+)'",
+      "type": "ModuleError",
+      "description": "Failed to load C library module",
+      "root_cause": "lua_module_error",
+      "suggestion": "Check if the C module is installed and in package.cpath",
+      "category": "lua",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "lua",
+        "module",
+        "c",
+        "library"
+      ],
+      "examples": [
+        "could not load C library 'socket.core'",
+        "could not load C library 'luasql.mysql'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

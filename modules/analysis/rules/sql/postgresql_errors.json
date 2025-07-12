@@ -1,0 +1,340 @@
+{
+  "name": "PostgreSQL Errors",
+  "description": "Rules for detecting PostgreSQL-specific database errors",
+  "rules": [
+    {
+      "id": "postgresql_syntax_error",
+      "pattern": "syntax error at or near",
+      "type": "SyntaxError",
+      "description": "PostgreSQL syntax error",
+      "root_cause": "sql_postgresql_syntax_error",
+      "suggestion": "Fix PostgreSQL syntax errors",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "syntax"
+      ],
+      "examples": [
+        "syntax error at or near \"WHERE\"",
+        "syntax error at or near \"(\"",
+        "syntax error at end of input"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "postgresql_relation_not_exist",
+      "pattern": "relation \"(.+?)\" does not exist",
+      "type": "SchemaError",
+      "description": "Table or view does not exist in PostgreSQL",
+      "root_cause": "sql_postgresql_relation_not_exist",
+      "suggestion": "Verify table/view exists and check spelling. Check search_path and schema",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "relation",
+        "table",
+        "schema"
+      ],
+      "examples": [
+        "relation \"users\" does not exist",
+        "relation \"public.customers\" does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "postgresql_column_not_exist",
+      "pattern": "column \"(.+?)\" does not exist",
+      "type": "SchemaError",
+      "description": "Column does not exist in PostgreSQL table",
+      "root_cause": "sql_postgresql_column_not_exist",
+      "suggestion": "Verify column exists in table and check spelling",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "column",
+        "schema"
+      ],
+      "examples": [
+        "column \"email\" does not exist",
+        "column \"users.name\" does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "postgresql_duplicate_key",
+      "pattern": "duplicate key value violates unique constraint \"(.+?)\"",
+      "type": "ConstraintError",
+      "description": "Unique constraint violation in PostgreSQL",
+      "root_cause": "sql_postgresql_duplicate_key",
+      "suggestion": "Use ON CONFLICT clause or check for duplicate values",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "constraint",
+        "unique"
+      ],
+      "examples": [
+        "duplicate key value violates unique constraint \"users_email_key\"",
+        "duplicate key value violates unique constraint \"idx_unique_name\""
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "postgresql_permission_denied",
+      "pattern": "permission denied for (relation|table|sequence|database|schema) \"(.+?)\"",
+      "type": "PermissionError",
+      "description": "Permission denied for PostgreSQL object",
+      "root_cause": "sql_postgresql_permission_denied",
+      "suggestion": "Grant appropriate permissions to user or use superuser",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "permission",
+        "access"
+      ],
+      "examples": [
+        "permission denied for relation users",
+        "permission denied for table customers"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "postgresql_connection_failed",
+      "pattern": "could not connect to server",
+      "type": "ConnectionError",
+      "description": "Failed to connect to PostgreSQL server",
+      "root_cause": "sql_postgresql_connection_failed",
+      "suggestion": "Check server status, connection parameters, and network",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "connection"
+      ],
+      "examples": [
+        "could not connect to server: Connection refused",
+        "could not connect to server: No such file or directory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "postgresql_invalid_schema",
+      "pattern": "schema \"(.+?)\" does not exist",
+      "type": "SchemaError",
+      "description": "Schema does not exist in PostgreSQL",
+      "root_cause": "sql_postgresql_invalid_schema",
+      "suggestion": "Create schema or check schema name",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "schema"
+      ],
+      "examples": [
+        "schema \"analytics\" does not exist",
+        "schema \"custom\" does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "postgresql_transaction_rollback",
+      "pattern": "current transaction is aborted, commands ignored until end of transaction block",
+      "type": "TransactionError",
+      "description": "Transaction aborted due to error",
+      "root_cause": "sql_postgresql_transaction_rollback",
+      "suggestion": "Issue ROLLBACK and start a new transaction",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "transaction",
+        "rollback"
+      ],
+      "examples": [
+        "current transaction is aborted, commands ignored until end of transaction block",
+        "ERROR: current transaction is aborted"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "postgresql_deadlock",
+      "pattern": "deadlock detected",
+      "type": "TransactionError",
+      "description": "Deadlock detected in PostgreSQL",
+      "root_cause": "sql_postgresql_deadlock",
+      "suggestion": "Redesign transaction order or implement retry logic",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "transaction",
+        "deadlock"
+      ],
+      "examples": [
+        "deadlock detected",
+        "ERROR: deadlock detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "postgresql_function_not_exist",
+      "pattern": "function (.+?)\\(.*?\\) does not exist",
+      "type": "FunctionError",
+      "description": "Function does not exist in PostgreSQL",
+      "root_cause": "sql_postgresql_function_not_exist",
+      "suggestion": "Check function name, parameters, and schema",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "function"
+      ],
+      "examples": [
+        "function get_user(integer) does not exist",
+        "function calculate_total() does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "postgresql_data_exception",
+      "pattern": "invalid input syntax for (type|integer|uuid|timestamp|numeric)",
+      "type": "DataTypeError",
+      "description": "Invalid data format for PostgreSQL type",
+      "root_cause": "sql_postgresql_data_exception",
+      "suggestion": "Ensure data matches the expected type format",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "data_type",
+        "format"
+      ],
+      "examples": [
+        "invalid input syntax for type integer: \"abc\"",
+        "invalid input syntax for type uuid: \"not-a-uuid\""
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "postgresql_division_by_zero",
+      "pattern": "division by zero",
+      "type": "ArithmeticError",
+      "description": "Division by zero in PostgreSQL",
+      "root_cause": "sql_postgresql_division_by_zero",
+      "suggestion": "Check divisor before division or use NULLIF(divisor, 0)",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "arithmetic",
+        "division"
+      ],
+      "examples": [
+        "division by zero",
+        "ERROR: division by zero"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

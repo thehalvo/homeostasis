@@ -1,0 +1,258 @@
+{
+  "name": "Ansible Module Errors",
+  "description": "Rules for detecting errors related to Ansible module usage and parameters",
+  "rules": [
+    {
+      "id": "ansible_module_not_found",
+      "pattern": "No module named|ERROR! couldn't resolve module|module .* not found|unable to find module|could not find|The module .* was not found|plugin loader for ",
+      "type": "ModuleError",
+      "description": "Module not found or not installed",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Install missing module with ansible-galaxy or check module name spelling",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "missing",
+        "not_found"
+      ],
+      "examples": [
+        "ERROR! couldn't resolve module/action 'docker_container'",
+        "The module azure_rm_virtualmachine was not found in configured module paths"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_illegal_parameter",
+      "pattern": "is not a legal parameter|unknown parameter|unsupported parameter|invalid parameter|unrecognized parameter|invalid option|parameter .* is not valid",
+      "type": "ParameterError",
+      "description": "Illegal or invalid module parameter",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Remove or fix illegal parameters according to module documentation",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "parameter",
+        "illegal"
+      ],
+      "examples": [
+        "ERROR! 'source' is not a legal parameter in an Ansible task or handler",
+        "unknown parameter: srcc"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_required_parameter_missing",
+      "pattern": "missing required arguments|required parameter|is required|required argument|required field|is mandatory|must provide|one of the following is required",
+      "type": "ParameterError",
+      "description": "Required module parameter is missing",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Add required parameters according to module documentation",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "parameter",
+        "required"
+      ],
+      "examples": [
+        "ERROR! missing required arguments: name",
+        "one of the following is required: src, content"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_parameter_value_error",
+      "pattern": "Invalid value|Value of|not valid for|must be one of|not a valid|not allowed|invalid choice|not a supported|only accepts|Unsupported value|doesn't support",
+      "type": "ParameterError",
+      "description": "Invalid parameter value",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Fix parameter value according to module documentation",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "parameter",
+        "value"
+      ],
+      "examples": [
+        "state must be one of: present, absent, got: installed",
+        "Invalid value for parameter mode: 0777"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_mutually_exclusive_parameters",
+      "pattern": "mutually exclusive|cannot be used with|parameters are mutually exclusive|cannot set both|conflicts with|not compatible with",
+      "type": "ParameterError",
+      "description": "Mutually exclusive parameters used together",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Remove one of the conflicting parameters",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "parameter",
+        "exclusive"
+      ],
+      "examples": [
+        "parameters are mutually exclusive: content, src",
+        "path cannot be used with file, content"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_dependency_missing",
+      "pattern": "requires .* module|module requires|dependency .* not found|dependency .* is not installed|module .* requires|requires pip module|Python module .* not found",
+      "type": "DependencyError",
+      "description": "Module dependency not installed",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Install required dependencies for the module",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "dependency",
+        "missing"
+      ],
+      "examples": [
+        "ERROR! The 'docker' python module is required",
+        "Python module 'boto3' not found, but required for AWS modules"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_execution_error",
+      "pattern": "module execution failed|non-zero return code|command failed|module failed|failed to execute|module returned|failed to run|exited with code",
+      "type": "ExecutionError",
+      "description": "Module execution failed",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Check module parameters and target system state",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "execution",
+        "failed"
+      ],
+      "examples": [
+        "module execution failed: command failed",
+        "non-zero return code: exited with code 1"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_deprecated",
+      "pattern": "module .* is deprecated|has been deprecated|is deprecated and will be removed|deprecated module|deprecated alias|use .* instead|replaced by",
+      "type": "DeprecationWarning",
+      "description": "Module is deprecated and may be removed in future versions",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Use recommended replacement module",
+      "category": "module",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "deprecated",
+        "warning"
+      ],
+      "examples": [
+        "[DEPRECATION WARNING]: The 'docker' module is deprecated, use 'docker_container' instead",
+        "module 'yum' is deprecated and will be removed in version 2.14"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_collection_error",
+      "pattern": "collection .* not installed|collection .* not found|collections .* was not installed|unable to load collection|unable to find collection",
+      "type": "CollectionError",
+      "description": "Ansible collection containing module not installed",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Install required collection with ansible-galaxy collection install",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "collection",
+        "galaxy"
+      ],
+      "examples": [
+        "ERROR! Collection community.docker not installed",
+        "unable to load collection kubernetes.core"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

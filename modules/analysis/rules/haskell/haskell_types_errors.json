@@ -1,0 +1,224 @@
+{
+  "name": "Haskell Type System Errors",
+  "description": "Rules for detecting Haskell type system and type checking errors",
+  "rules": [
+    {
+      "id": "haskell_could_not_deduce",
+      "pattern": "Could not deduce \\((.+?)\\)",
+      "type": "TypeError",
+      "description": "Compiler could not deduce a required type class constraint",
+      "root_cause": "haskell_type_error",
+      "suggestion": "Add the missing type class constraint to the function signature",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "constraint"
+      ],
+      "examples": [
+        "Could not deduce (Eq a) arising from a use of '=='",
+        "Could not deduce (Show a) arising from a use of 'show'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_rigid_type_variable",
+      "pattern": "Rigid type variable",
+      "type": "TypeError",
+      "description": "Type variable cannot be instantiated due to scope restrictions",
+      "root_cause": "haskell_type_error",
+      "suggestion": "Add explicit type signature or fix type variable scoping",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "variable"
+      ],
+      "examples": [
+        "Rigid type variable 'a' in the constraint: Num a",
+        "Rigid type variable 'm' in the type: m a"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_occurs_check",
+      "pattern": "Occurs check: cannot construct the infinite type",
+      "type": "TypeError",
+      "description": "Recursive type definition created an infinite type",
+      "root_cause": "haskell_type_error",
+      "suggestion": "Fix recursive type definition or use newtype",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "recursive"
+      ],
+      "examples": [
+        "Occurs check: cannot construct the infinite type: a = [a]",
+        "Occurs check: cannot construct the infinite type: t = t -> t"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_kind_mismatch",
+      "pattern": "(Kind|kind) mis(match|application)",
+      "type": "TypeError",
+      "description": "Type constructor applied to wrong kind of arguments",
+      "root_cause": "haskell_type_error",
+      "suggestion": "Check type constructor application and fix kinds",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "kind"
+      ],
+      "examples": [
+        "Kind mismatch: Expected kind '* -> *', but 'Int' has kind '*'",
+        "Kind mis-application in type 'Maybe Int Bool'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_wrong_number_type_arguments",
+      "pattern": "(Wrong number of type arguments|expects [0-9]+ type argument)",
+      "type": "TypeError",
+      "description": "Wrong number of type arguments to type constructor",
+      "root_cause": "haskell_type_error",
+      "suggestion": "Provide correct number of type arguments",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "arguments"
+      ],
+      "examples": [
+        "Wrong number of type arguments: expected 1, got 2",
+        "Type constructor 'Maybe' expects 1 type argument"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_illegal_type_signature",
+      "pattern": "Illegal (type signature|polymorphic type)",
+      "type": "TypeError",
+      "description": "Illegal type signature in invalid context",
+      "root_cause": "haskell_type_error",
+      "suggestion": "Move type signature to correct location",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "signature"
+      ],
+      "examples": [
+        "Illegal type signature: use TypeApplications",
+        "Illegal polymorphic type: All type variables must be explicitly quantified"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_partial_type_signatures",
+      "pattern": "Found type wildcard",
+      "type": "TypeError",
+      "description": "Type wildcard not supported without extension",
+      "root_cause": "haskell_type_error",
+      "suggestion": "Enable PartialTypeSignatures extension or provide full type",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "signature",
+        "extension"
+      ],
+      "examples": [
+        "Found type wildcard '_' standing for 'a'",
+        "Found type wildcard '_' requires PartialTypeSignatures extension"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_rank_n_types",
+      "pattern": "(Illegal (polymorphic|quantified) type|RankNTypes|Rank2Types)",
+      "type": "TypeError",
+      "description": "Higher-rank polymorphic type without required extension",
+      "root_cause": "haskell_type_error",
+      "suggestion": "Enable RankNTypes extension",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "polymorphic",
+        "extension"
+      ],
+      "examples": [
+        "Illegal polymorphic type: forall a. a -> a",
+        "RankNTypes needed for this binding"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

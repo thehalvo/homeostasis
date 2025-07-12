@@ -1,0 +1,276 @@
+{
+  "name": "PowerShell Common Errors",
+  "description": "Rules for detecting common PowerShell syntax, cmdlet, and execution errors",
+  "rules": [
+    {
+      "id": "powershell_syntax_unexpected_token",
+      "pattern": "Unexpected token '([^']+)' in expression or statement",
+      "type": "SyntaxError",
+      "description": "Unexpected token in PowerShell script",
+      "root_cause": "powershell_syntax_error",
+      "suggestion": "Check syntax around the unexpected token",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "syntax",
+        "token"
+      ],
+      "examples": [
+        "Unexpected token '(' in expression or statement",
+        "Unexpected token '}' in expression or statement"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_missing_brace",
+      "pattern": "Missing closing '\\}' in statement block",
+      "type": "SyntaxError",
+      "description": "Missing closing brace in PowerShell script",
+      "root_cause": "powershell_syntax_error",
+      "suggestion": "Add missing closing brace to complete the statement block",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "syntax",
+        "brace"
+      ],
+      "examples": [
+        "Missing closing '}' in statement block",
+        "Missing closing '}' in if statement"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_missing_parenthesis",
+      "pattern": "Missing closing '\\)' (in|after) .+",
+      "type": "SyntaxError",
+      "description": "Missing closing parenthesis in PowerShell script",
+      "root_cause": "powershell_syntax_error",
+      "suggestion": "Add missing closing parenthesis",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "syntax",
+        "parenthesis"
+      ],
+      "examples": [
+        "Missing closing ')' in expression",
+        "Missing closing ')' after function parameter list"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_command_not_found",
+      "pattern": "The term '([^']+)' is not recognized as the name of a cmdlet",
+      "type": "CommandError",
+      "description": "PowerShell command or cmdlet not found",
+      "root_cause": "powershell_cmdlet_error",
+      "suggestion": "Verify command name spelling or install required module",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "command"
+      ],
+      "examples": [
+        "The term 'Get-AzureVM' is not recognized as the name of a cmdlet",
+        "The term 'kubectl' is not recognized as the name of a cmdlet"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_missing_parameter",
+      "pattern": "Missing (an argument|parameter) for parameter '([^']+)'",
+      "type": "ParameterError",
+      "description": "Missing required parameter for PowerShell cmdlet",
+      "root_cause": "powershell_cmdlet_error",
+      "suggestion": "Provide the required parameter value",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "cmdlet",
+        "parameter"
+      ],
+      "examples": [
+        "Missing an argument for parameter 'Path'",
+        "Missing parameter required by parameter set"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_execution_policy",
+      "pattern": "execution of scripts is disabled on this system",
+      "type": "ExecutionPolicyError",
+      "description": "PowerShell execution policy prevents script execution",
+      "root_cause": "powershell_execution_error",
+      "suggestion": "Adjust execution policy with Set-ExecutionPolicy command",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "execution",
+        "policy"
+      ],
+      "examples": [
+        "execution of scripts is disabled on this system",
+        "File cannot be loaded because running scripts is disabled on this system"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_module_not_found",
+      "pattern": "The specified module '([^']+)' was not loaded because no valid module file was found",
+      "type": "ModuleError",
+      "description": "PowerShell module not found",
+      "root_cause": "powershell_module_error",
+      "suggestion": "Install the required PowerShell module",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "module",
+        "import"
+      ],
+      "examples": [
+        "The specified module 'Az' was not loaded because no valid module file was found",
+        "The specified module 'ActiveDirectory' was not loaded because no valid module file was found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_variable_not_found",
+      "pattern": "The variable '([^']+)' cannot be retrieved because it has not been set",
+      "type": "VariableError",
+      "description": "Undefined PowerShell variable",
+      "root_cause": "powershell_variable_error",
+      "suggestion": "Initialize the variable before use",
+      "category": "powershell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "variable",
+        "scope"
+      ],
+      "examples": [
+        "The variable '$user' cannot be retrieved because it has not been set",
+        "The variable '$config' cannot be retrieved because it has not been set"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_property_not_found",
+      "pattern": "The property '([^']+)' cannot be found on this object",
+      "type": "PropertyError",
+      "description": "Object property not found in PowerShell",
+      "root_cause": "powershell_object_error",
+      "suggestion": "Verify the object has the property you're trying to access",
+      "category": "powershell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "object",
+        "property"
+      ],
+      "examples": [
+        "The property 'Name' cannot be found on this object",
+        "The property 'Status' cannot be found on this object"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_method_not_found",
+      "pattern": "Method invocation failed because \\[([^\\]]+)\\] (doesn't contain a method|does not contain a method named) '([^']+)'",
+      "type": "MethodError",
+      "description": "Object method not found in PowerShell",
+      "root_cause": "powershell_object_error",
+      "suggestion": "Verify the object has the method you're trying to invoke",
+      "category": "powershell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "object",
+        "method"
+      ],
+      "examples": [
+        "Method invocation failed because [System.String] doesn't contain a method named 'ToJson'",
+        "Method invocation failed because [System.Object] does not contain a method named 'Connect'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

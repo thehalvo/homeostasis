@@ -1,0 +1,258 @@
+{
+  "name": "Julia Parallel Computing Errors",
+  "description": "Rules for detecting errors related to Julia parallel computing, threads, and distributed processing",
+  "rules": [
+    {
+      "id": "julia_task_exception",
+      "pattern": "TaskFailedException: (.*) in task",
+      "type": "TaskError",
+      "description": "Exception occurred in an asynchronous task",
+      "root_cause": "julia_parallel_error",
+      "suggestion": "Add error handling in tasks or check task exception with fetch",
+      "category": "parallel",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "task",
+        "async",
+        "exception"
+      ],
+      "examples": [
+        "TaskFailedException: ArgumentError: invalid argument in task",
+        "Exception occurred in background task"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_worker_communication_error",
+      "pattern": "Worker ([0-9]+) terminated",
+      "type": "DistributedError",
+      "description": "Worker process terminated unexpectedly",
+      "root_cause": "julia_parallel_error",
+      "suggestion": "Check for errors in worker processes or increase worker memory",
+      "category": "parallel",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "distributed",
+        "worker",
+        "terminate"
+      ],
+      "examples": [
+        "Worker 2 terminated",
+        "Error: Worker process unexpectedly exited"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_channel_closed_error",
+      "pattern": "InvalidStateException: Channel is closed",
+      "type": "ChannelError",
+      "description": "Attempting to put! or take! from a closed channel",
+      "root_cause": "julia_parallel_error",
+      "suggestion": "Check channel state before operations or use isopen",
+      "category": "parallel",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "channel",
+        "closed",
+        "concurrency"
+      ],
+      "examples": [
+        "InvalidStateException: Channel is closed",
+        "Error: Cannot put! to closed channel"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_race_condition",
+      "pattern": "Warning: Possible race condition detected",
+      "type": "ConcurrencyWarning",
+      "description": "Potential race condition in parallel code",
+      "root_cause": "julia_parallel_error",
+      "suggestion": "Use atomic operations, locks, or thread-safe data structures",
+      "category": "parallel",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "julia",
+        "race",
+        "condition",
+        "thread"
+      ],
+      "examples": [
+        "Warning: Possible race condition detected",
+        "Race condition warning: multiple threads modifying same variable"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_deadlock_detection",
+      "pattern": "WARNING: Deadlock detected",
+      "type": "DeadlockError",
+      "description": "Deadlock detected in concurrent execution",
+      "root_cause": "julia_parallel_error",
+      "suggestion": "Check lock acquisition order and ensure locks are always released",
+      "category": "parallel",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "deadlock",
+        "lock",
+        "thread"
+      ],
+      "examples": [
+        "WARNING: Deadlock detected",
+        "Critical error: Thread deadlock detected"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_worker_pool_exhausted",
+      "pattern": "No workers available",
+      "type": "DistributedError",
+      "description": "Worker pool is exhausted or no workers available",
+      "root_cause": "julia_parallel_error",
+      "suggestion": "Add more workers with addprocs() or check worker health",
+      "category": "parallel",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "distributed",
+        "worker",
+        "pool"
+      ],
+      "examples": [
+        "No workers available",
+        "Error: Cannot schedule task - worker pool exhausted"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_remote_call_error",
+      "pattern": "RemoteException: (.*) on worker ([0-9]+)",
+      "type": "DistributedError",
+      "description": "Exception in remote function call on worker",
+      "root_cause": "julia_parallel_error",
+      "suggestion": "Add error handling for remote calls or check worker-specific issues",
+      "category": "parallel",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "remote",
+        "call",
+        "distributed"
+      ],
+      "examples": [
+        "RemoteException: ArgumentError: invalid argument on worker 2",
+        "Error in remote function execution on distributed worker"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_thread_data_race",
+      "pattern": "Warning: Thread data race detected",
+      "type": "ThreadError",
+      "description": "Data race between threads detected",
+      "root_cause": "julia_parallel_error",
+      "suggestion": "Use Threads.Atomic, locks, or thread-local storage",
+      "category": "parallel",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "thread",
+        "race",
+        "concurrent"
+      ],
+      "examples": [
+        "Warning: Thread data race detected",
+        "Data race warning: threads accessing shared data without synchronization"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_thread_exception",
+      "pattern": "Error in thread ([0-9]+)",
+      "type": "ThreadError",
+      "description": "Exception occurred in a thread",
+      "root_cause": "julia_parallel_error",
+      "suggestion": "Add try-catch blocks in threaded code to prevent thread termination",
+      "category": "parallel",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "thread",
+        "exception",
+        "parallel"
+      ],
+      "examples": [
+        "Error in thread 3",
+        "Exception occurred in background thread"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

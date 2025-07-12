@@ -1,0 +1,335 @@
+{
+  "name": "Erlang Distribution Errors",
+  "description": "Rules for detecting Erlang distributed system and node connection errors",
+  "rules": [
+    {
+      "id": "erlang_distribution_failed",
+      "pattern": "distribution.*?failed",
+      "type": "RuntimeError",
+      "description": "Erlang distribution protocol failed",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Check network connectivity and node configuration",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "protocol"
+      ],
+      "examples": [
+        "distribution protocol failed",
+        "distribution handshake failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_node_down",
+      "pattern": "node.*?down",
+      "type": "RuntimeError",
+      "description": "Remote Erlang node is down",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Handle node down events and reconnection",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "node",
+        "down"
+      ],
+      "examples": [
+        "node 'node@host' down",
+        "nodedown received for node"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_node_not_responding",
+      "pattern": "node.*?not.*?responding",
+      "type": "RuntimeError",
+      "description": "Remote Erlang node not responding",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Check network connectivity and node health",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "node",
+        "responding"
+      ],
+      "examples": [
+        "node 'node@host' not responding",
+        "remote node not responding"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_net_kernel_failed",
+      "pattern": "net_kernel.*?failed",
+      "type": "RuntimeError",
+      "description": "Net kernel failure",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Check Erlang distribution configuration",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "net_kernel"
+      ],
+      "examples": [
+        "net_kernel failed",
+        "net_kernel operation failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_connection_closed",
+      "pattern": "connection.*?closed",
+      "type": "RuntimeError",
+      "description": "Node connection closed unexpectedly",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Handle connection failures and reconnection",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "connection",
+        "closed"
+      ],
+      "examples": [
+        "connection closed",
+        "distribution connection closed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_nodedown",
+      "pattern": "nodedown",
+      "type": "RuntimeError",
+      "description": "Node down event received",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Handle node down events in distributed applications",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "nodedown"
+      ],
+      "examples": [
+        "nodedown",
+        "nodedown event received"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_noconnection",
+      "pattern": "noconnection",
+      "type": "RuntimeError",
+      "description": "No connection to remote node",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Handle connection errors in distributed calls",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "noconnection"
+      ],
+      "examples": [
+        "noconnection",
+        "noconnection error in distributed call"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_net_adm_failed",
+      "pattern": "net_adm.*?failed",
+      "type": "RuntimeError",
+      "description": "Network administration operation failed",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Check network administration commands and configuration",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "net_adm"
+      ],
+      "examples": [
+        "net_adm operation failed",
+        "net_adm:ping failed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_global_name_conflict",
+      "pattern": "global.*?name.*?conflict",
+      "type": "RuntimeError",
+      "description": "Global name conflict in distributed system",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Resolve global name conflicts or use unique names",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "global",
+        "name"
+      ],
+      "examples": [
+        "global name conflict",
+        "global name registration conflict"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_cookie_mismatch",
+      "pattern": "cookie.*?mismatch",
+      "type": "RuntimeError",
+      "description": "Authentication cookie mismatch",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Ensure consistent authentication cookies across nodes",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "cookie",
+        "security"
+      ],
+      "examples": [
+        "cookie mismatch",
+        "authentication cookie mismatch"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_epmd_error",
+      "pattern": "epmd.*?error",
+      "type": "RuntimeError",
+      "description": "Erlang Port Mapper Daemon error",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Check EPMD service status and configuration",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "epmd"
+      ],
+      "examples": [
+        "epmd error",
+        "cannot connect to epmd"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_distributed_process_not_found",
+      "pattern": "distributed.*?process.*?not.*?found",
+      "type": "RuntimeError",
+      "description": "Process not found in distributed call",
+      "root_cause": "erlang_distribution_error",
+      "suggestion": "Handle remote process availability in distributed calls",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "distribution",
+        "process"
+      ],
+      "examples": [
+        "distributed process not found",
+        "remote process not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

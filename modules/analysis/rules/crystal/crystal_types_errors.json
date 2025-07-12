@@ -1,0 +1,223 @@
+{
+  "name": "Crystal Type System Errors",
+  "description": "Rules for detecting Crystal type system and type checking errors",
+  "rules": [
+    {
+      "id": "crystal_type_mismatch",
+      "pattern": "expected (.*?) but got (.*)",
+      "type": "TypeError",
+      "description": "Type mismatch between expected and actual types",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Ensure types are compatible or add explicit type conversion",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "mismatch"
+      ],
+      "examples": [
+        "expected String but got Int32",
+        "expected Array(String) but got Array(Int32)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_cant_infer",
+      "pattern": "can't infer type of (.*)",
+      "type": "TypeError",
+      "description": "Crystal type inference failed",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Add explicit type annotation or initialize variable with a value",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "inference"
+      ],
+      "examples": [
+        "can't infer type of variable 'x'",
+        "can't infer type of instance variable '@data'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_no_method",
+      "pattern": "type (.*?) doesn't have method '(.*?)'",
+      "type": "TypeError",
+      "description": "Method does not exist for the given type",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Check if method exists for this type or convert to compatible type",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "method"
+      ],
+      "examples": [
+        "type Int32 doesn't have method 'push'",
+        "type String doesn't have method 'map'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_no_overload",
+      "pattern": "no overload matches '(.*?)' with types? (.*)",
+      "type": "TypeError",
+      "description": "No matching method overload for given argument types",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Check method arguments and their types or convert arguments to compatible types",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "overload"
+      ],
+      "examples": [
+        "no overload matches 'Array#<<' with type String",
+        "no overload matches 'HTTP::Client#get' with types Int32, String"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_union_error",
+      "pattern": "undefined method '(.*?)' for Union\\((.*?)\\)",
+      "type": "TypeError",
+      "description": "Method not defined for union type",
+      "root_cause": "crystal_union_error",
+      "suggestion": "Check union types with is_a? or use methods available to all types in the union",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "union"
+      ],
+      "examples": [
+        "undefined method 'size' for Union(String | Int32)",
+        "undefined method 'keys' for Union(Hash(String, Int32) | Array(String))"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_cant_use",
+      "pattern": "can't use (.*?) as (.*)",
+      "type": "TypeError",
+      "description": "Cannot use type for the specified purpose",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Convert to compatible type or use appropriate type",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "conversion"
+      ],
+      "examples": [
+        "can't use Int32 as String",
+        "can't use Array(Int32) as Hash(String, Int32)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_must_be",
+      "pattern": "type must be (.*)",
+      "type": "TypeError",
+      "description": "Type constraint not satisfied",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Use required type or convert to compatible type",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "constraint"
+      ],
+      "examples": [
+        "type must be String",
+        "type must be Reference"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_nil_not_allowed",
+      "pattern": "(.*?) can't be nil",
+      "type": "TypeError",
+      "description": "Nil not allowed in non-nilable type",
+      "root_cause": "crystal_nil_error",
+      "suggestion": "Use nilable type (Type?) or ensure value is not nil",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "nil",
+        "safety"
+      ],
+      "examples": [
+        "instance variable @name can't be nil",
+        "argument x can't be nil"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

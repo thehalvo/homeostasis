@@ -1,0 +1,286 @@
+{
+  "name": "R Package Errors",
+  "description": "Rules for detecting errors related to R packages and dependencies",
+  "rules": [
+    {
+      "id": "r_package_not_available",
+      "pattern": "package '([^']+)' is not available",
+      "type": "PackageError",
+      "description": "Package is not available for installation",
+      "root_cause": "r_package_error",
+      "suggestion": "Check package name or repository settings",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "package",
+        "install",
+        "repository"
+      ],
+      "examples": [
+        "package 'dplyr' is not available",
+        "package 'tidyverse' is not available (for R version 3.6.0)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_package_namespace_not_found",
+      "pattern": "there is no package called '([^']+)'",
+      "type": "PackageError",
+      "description": "Package is not installed",
+      "root_cause": "r_package_error",
+      "suggestion": "Install the package with install.packages()",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "package",
+        "namespace",
+        "library"
+      ],
+      "examples": [
+        "there is no package called 'ggplot2'",
+        "there is no package called 'data.table'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_namespace_import_failed",
+      "pattern": "(namespace|package:namespace) ([^\\s]+) (import|loading) failed",
+      "type": "PackageError",
+      "description": "Package namespace import failed",
+      "root_cause": "r_package_error",
+      "suggestion": "Check package dependencies or reinstall the package",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "package",
+        "namespace",
+        "import"
+      ],
+      "examples": [
+        "namespace 'dplyr' import failed",
+        "package:namespace tidyr loading failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_package_version_not_compatible",
+      "pattern": "package '([^']+)' (was built|requires) R version (\\d+\\.\\d+\\.\\d+)",
+      "type": "PackageError",
+      "description": "Package is not compatible with installed R version",
+      "root_cause": "r_package_error",
+      "suggestion": "Update R or install compatible package version",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "package",
+        "version",
+        "compatibility"
+      ],
+      "examples": [
+        "package 'vctrs' was built under R version 4.0.2",
+        "package 'Rcpp' requires R version 3.6.0"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_package_function_not_found",
+      "pattern": "(could not find function|object) '([^']+)' in package '([^']+)'",
+      "type": "PackageError",
+      "description": "Function not found in specified package",
+      "root_cause": "r_package_error",
+      "suggestion": "Check function name or update package to newer version",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "package",
+        "function",
+        "namespace"
+      ],
+      "examples": [
+        "could not find function 'arrange' in package 'dplyr'",
+        "object 'filter' not found in package 'dplyr'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_package_dependency_not_found",
+      "pattern": "package '([^']+)' required by '([^']+)' could not be found",
+      "type": "PackageError",
+      "description": "Required package dependency not found",
+      "root_cause": "r_package_error",
+      "suggestion": "Install missing dependency package",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "package",
+        "dependency",
+        "requirement"
+      ],
+      "examples": [
+        "package 'Rcpp' required by 'dplyr' could not be found",
+        "package 'vctrs' required by 'tidyr' could not be found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_package_loading_error",
+      "pattern": "error in loadNamespace\\(name = \"([^\"]+)\"",
+      "type": "PackageError",
+      "description": "Error loading package namespace",
+      "root_cause": "r_package_error",
+      "suggestion": "Check package installation or dependencies",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "package",
+        "namespace",
+        "loading"
+      ],
+      "examples": [
+        "error in loadNamespace(name = \"dplyr\")",
+        "error in loadNamespace(name = \"ggplot2\")"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_package_installation_error",
+      "pattern": "installation of package '([^']+)' had non-zero exit status",
+      "type": "PackageError",
+      "description": "Package installation failed",
+      "root_cause": "r_package_error",
+      "suggestion": "Check system dependencies or compiler requirements",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "package",
+        "installation",
+        "build"
+      ],
+      "examples": [
+        "installation of package 'Rcpp' had non-zero exit status",
+        "installation of package 'rJava' had non-zero exit status"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_package_masking_object",
+      "pattern": "The following object is masked from '([^']+)'",
+      "type": "PackageWarning",
+      "description": "Package object is masked by another package",
+      "root_cause": "r_package_error",
+      "suggestion": "Use namespace operators (::) to specify which package's function to use",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "package",
+        "namespace",
+        "masking"
+      ],
+      "examples": [
+        "The following object is masked from 'package:stats': filter",
+        "The following object is masked from 'package:base': as.data.frame"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_package_conflict_error",
+      "pattern": "conflicting bindings? for ([^:]+)::",
+      "type": "PackageError",
+      "description": "Conflicting bindings between packages",
+      "root_cause": "r_package_error",
+      "suggestion": "Use namespace operators (::) to specify which package's function to use",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "package",
+        "namespace",
+        "conflict"
+      ],
+      "examples": [
+        "conflicting bindings for dplyr::",
+        "conflicting binding for MASS::"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

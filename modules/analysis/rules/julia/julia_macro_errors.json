@@ -1,0 +1,258 @@
+{
+  "name": "Julia Macro Errors",
+  "description": "Rules for detecting errors related to Julia macros and metaprogramming",
+  "rules": [
+    {
+      "id": "julia_macro_syntax_error",
+      "pattern": "LoadError: syntax: macro argument (.*) is not a valid expression",
+      "type": "MacroError",
+      "description": "Invalid syntax in macro argument",
+      "root_cause": "julia_macro_error",
+      "suggestion": "Check macro argument syntax and ensure it's a valid Julia expression",
+      "category": "macro",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "macro",
+        "syntax",
+        "argument"
+      ],
+      "examples": [
+        "LoadError: syntax: macro argument x, is not a valid expression",
+        "Error in macro: invalid syntax in argument"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_macro_undefined",
+      "pattern": "UndefVarError: @([\\w_]+) not defined",
+      "type": "MacroError",
+      "description": "Macro not defined or not in scope",
+      "root_cause": "julia_macro_error",
+      "suggestion": "Check macro name and ensure the macro is imported or defined",
+      "category": "macro",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "macro",
+        "undefined",
+        "scope"
+      ],
+      "examples": [
+        "UndefVarError: @time not defined",
+        "Error: Macro @async not defined in current scope"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_macro_wrong_number_args",
+      "pattern": "LoadError: MethodError: no method matching ([\\w_]+)Expr",
+      "type": "MacroError",
+      "description": "Wrong number of arguments to macro",
+      "root_cause": "julia_macro_error",
+      "suggestion": "Check macro documentation for correct number of arguments",
+      "category": "macro",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "macro",
+        "argument",
+        "count"
+      ],
+      "examples": [
+        "LoadError: MethodError: no method matching timeExpr",
+        "Error: Wrong number of arguments provided to macro"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_expression_evaluation_error",
+      "pattern": "ERROR: LoadError: error during expansion of .*@([\\w_]+)",
+      "type": "MacroError",
+      "description": "Error during macro expansion",
+      "root_cause": "julia_macro_error",
+      "suggestion": "Debug the macro expansion with @macroexpand or check macro implementation",
+      "category": "macro",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "macro",
+        "expansion",
+        "evaluation"
+      ],
+      "examples": [
+        "ERROR: LoadError: error during expansion of \"@time\"",
+        "Error occurred while expanding macro expression"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_hygiene_error",
+      "pattern": "Warning: Variable (.*) is used in macro expansion but not declared",
+      "type": "MacroWarning",
+      "description": "Macro hygiene warning for variable capture",
+      "root_cause": "julia_macro_error",
+      "suggestion": "Use hygienic macro practices with esc() for intentional symbol capture",
+      "category": "macro",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "macro",
+        "hygiene",
+        "variable"
+      ],
+      "examples": [
+        "Warning: Variable x is used in macro expansion but not declared",
+        "Macro hygiene warning: implicit variable capture"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_quote_nesting_error",
+      "pattern": "syntax: invalid nesting of $(quote)",
+      "type": "MacroError",
+      "description": "Invalid nesting of quotes in macro",
+      "root_cause": "julia_macro_error",
+      "suggestion": "Check quote and unquote nesting in macro code",
+      "category": "macro",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "macro",
+        "quote",
+        "nesting"
+      ],
+      "examples": [
+        "syntax: invalid nesting of $(quote)",
+        "Error: Invalid quoting or unquoting in macro"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_splice_error",
+      "pattern": "syntax: \"...\" expression outside call",
+      "type": "MacroError",
+      "description": "Splatting operator used incorrectly in macro",
+      "root_cause": "julia_macro_error",
+      "suggestion": "Use ... operator only in function calls or comprehensions",
+      "category": "macro",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "macro",
+        "splice",
+        "splat"
+      ],
+      "examples": [
+        "syntax: \"...\" expression outside call",
+        "Error: Splatting operator used in invalid context"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_generated_function_error",
+      "pattern": "ERROR: LoadError: error in @generated function",
+      "type": "MacroError",
+      "description": "Error in @generated function body",
+      "root_cause": "julia_macro_error",
+      "suggestion": "Ensure @generated function returns valid expression and only uses type information",
+      "category": "macro",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "generated",
+        "function",
+        "metaprogramming"
+      ],
+      "examples": [
+        "ERROR: LoadError: error in @generated function",
+        "Error in code generation for @generated function"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_interpolation_error",
+      "pattern": "syntax: \"$\" expression outside quote",
+      "type": "MacroError",
+      "description": "Interpolation used outside of quoted expression",
+      "root_cause": "julia_macro_error",
+      "suggestion": "Use $ interpolation only within quotes (: or quote blocks)",
+      "category": "macro",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "macro",
+        "interpolation",
+        "quote"
+      ],
+      "examples": [
+        "syntax: \"$\" expression outside quote",
+        "Error: Interpolation syntax used in invalid context"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

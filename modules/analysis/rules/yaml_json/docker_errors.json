@@ -1,0 +1,267 @@
+{
+  "name": "Docker Compose Configuration Errors",
+  "description": "Rules for detecting errors in Docker Compose YAML configurations",
+  "rules": [
+    {
+      "id": "docker_compose_version_error",
+      "pattern": "version .* is invalid|unsupported Compose file version|version not found|unsupported version|version out of range|unknown version|Compose file version|version not specified|minimum supported version|maximum supported version",
+      "type": "VersionError",
+      "description": "Invalid Docker Compose version",
+      "root_cause": "docker_compose_error",
+      "suggestion": "Use a supported Compose file version (e.g., '3', '3.8', '2')",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "docker",
+        "compose",
+        "version",
+        "yaml"
+      ],
+      "examples": [
+        "version '4.9' is invalid - supported versions are 2.x and 3.x",
+        "unsupported Compose file version: 1.0",
+        "Compose file version not specified"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "docker_compose_service_error",
+      "pattern": "service .* must be a mapping|service .* not found|service must be a mapping|service .* is invalid|service .* has no build context|no such service|service .* not defined|service must be a mapping, not|services key|service configuration invalid|unknown service|service needs to be a dictionary",
+      "type": "ServiceError",
+      "description": "Invalid service definition in Docker Compose",
+      "root_cause": "docker_compose_error",
+      "suggestion": "Fix service definition format and required fields",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "docker",
+        "compose",
+        "service",
+        "yaml"
+      ],
+      "examples": [
+        "service 'web' must be a mapping, not a string",
+        "service 'database' has no build context specified",
+        "no such service: worker"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "docker_compose_image_error",
+      "pattern": "image .* not found|pull access denied|repository .* not found|image .* is invalid|no such image|invalid reference format|reference format|image name format|invalid image name|error pulling image|image cannot be pulled|image must be a string|authentication required",
+      "type": "ImageError",
+      "description": "Invalid or inaccessible Docker image",
+      "root_cause": "docker_compose_error",
+      "suggestion": "Check image name, registry access, and image existence",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "docker",
+        "compose",
+        "image",
+        "registry"
+      ],
+      "examples": [
+        "image 'myapp:latest' not found",
+        "pull access denied for myregistry/myapp",
+        "invalid reference format: repository name must be lowercase"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "docker_compose_port_error",
+      "pattern": "invalid port|port .* is invalid|invalid port mapping|invalid port format|port must be|port out of range|port conflicts|bind: address already in use|port is already allocated|port format|port number|port mapping format|ports must be|already in use|invalid published port|invalid target port",
+      "type": "PortError",
+      "description": "Invalid port configuration in Docker Compose",
+      "root_cause": "docker_compose_error",
+      "suggestion": "Fix port mapping format (e.g., '8080:80') and check for conflicts",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "docker",
+        "compose",
+        "ports",
+        "networking"
+      ],
+      "examples": [
+        "invalid port mapping: '8080'",
+        "port '70000:80' is invalid - port number out of range",
+        "bind: address already in use - port 8080 is already allocated"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "docker_compose_volume_error",
+      "pattern": "volume .* not found|volume .* is invalid|volume path does not exist|invalid volume specification|volume .* already exists|volume must be a mapping|volume must be a string|invalid volume format|invalid bind mount|invalid volume type|volume definition|mount path|mount source|volume source|volumes must be a mapping|bind mount source|no such volume",
+      "type": "VolumeError",
+      "description": "Invalid volume configuration in Docker Compose",
+      "root_cause": "docker_compose_error",
+      "suggestion": "Check volume definitions, paths, and format",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "docker",
+        "compose",
+        "volumes",
+        "storage"
+      ],
+      "examples": [
+        "volume 'db_data' not found",
+        "invalid volume specification: '/var/run/docker.sock:/var/run/docker.sock:rw:wrong'",
+        "volume path '/nonexistent/path' does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "docker_compose_network_error",
+      "pattern": "network .* not found|network .* is invalid|network .* already exists|network name invalid|invalid network|conflicting network|network driver|network configuration|external network|network must be a mapping|unknown network|networks must be|network definition|driver not supported|ipam configuration",
+      "type": "NetworkError",
+      "description": "Invalid network configuration in Docker Compose",
+      "root_cause": "docker_compose_error",
+      "suggestion": "Check network definitions, drivers, and references",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "docker",
+        "compose",
+        "networks",
+        "networking"
+      ],
+      "examples": [
+        "network 'frontend' not found",
+        "network name 'my_network!' is invalid",
+        "network 'default' already exists"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "docker_compose_dependency_error",
+      "pattern": "depends_on|dependency error|circular dependency|service .* has circular reference|circular reference|dependency cycle|depends on itself|dependency validation|unknown service in depends_on|invalid depends_on format|depends_on must be|circular reference in|cycle detected in",
+      "type": "DependencyError",
+      "description": "Invalid service dependencies in Docker Compose",
+      "root_cause": "docker_compose_error",
+      "suggestion": "Fix circular dependencies and reference valid services",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "docker",
+        "compose",
+        "depends_on",
+        "dependencies"
+      ],
+      "examples": [
+        "service 'web' has circular reference to 'app'",
+        "unknown service 'cache' in depends_on",
+        "cycle detected in services dependency graph"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "docker_compose_environment_error",
+      "pattern": "environment variable|environment must be|invalid environment|environment format|invalid environment variable|environment validation|invalid format for environment|malformed environment|environment variable value|parse error .* environment|variable is empty|invalid variable name|environment variable name",
+      "type": "EnvironmentError",
+      "description": "Invalid environment variables in Docker Compose",
+      "root_cause": "docker_compose_error",
+      "suggestion": "Fix environment variable format",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "docker",
+        "compose",
+        "environment",
+        "variables"
+      ],
+      "examples": [
+        "environment must be a mapping or a list, not a string",
+        "parse error: invalid format for environment: 'KEY:'",
+        "invalid environment variable name: '123_VAR'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "docker_compose_build_error",
+      "pattern": "build context|build path|build must be|context must be|dockerfile|cannot locate specified Dockerfile|invalid build context|dockerfile not found|build context .* not found|no such file or directory|build configuration|invalid argument for build|build error|dockerfile parse error|invalid build arg|invalid build configuration",
+      "type": "BuildError",
+      "description": "Invalid build configuration in Docker Compose",
+      "root_cause": "docker_compose_error",
+      "suggestion": "Check build context path, Dockerfile path, and build arguments",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "docker",
+        "compose",
+        "build",
+        "dockerfile"
+      ],
+      "examples": [
+        "build context './app' not found",
+        "cannot locate specified Dockerfile: 'Dockerfile.prod'",
+        "invalid build configuration: build must be a string or an object"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,341 @@
+{
+  "name": "SQL Server Errors",
+  "description": "Rules for detecting Microsoft SQL Server-specific database errors",
+  "rules": [
+    {
+      "id": "sqlserver_syntax_error",
+      "pattern": "Incorrect syntax near",
+      "type": "SyntaxError",
+      "description": "SQL Server syntax error",
+      "root_cause": "sql_sqlserver_syntax_error",
+      "suggestion": "Fix SQL Server syntax errors",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "syntax"
+      ],
+      "examples": [
+        "Incorrect syntax near 'WHERE'",
+        "Incorrect syntax near the keyword 'FROM'",
+        "Incorrect syntax near ')'."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlserver_object_not_exist",
+      "pattern": "Invalid object name '(.+?)'",
+      "type": "SchemaError",
+      "description": "Object does not exist in SQL Server",
+      "root_cause": "sql_sqlserver_object_not_exist",
+      "suggestion": "Verify object exists and check spelling. Check schema name",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "object",
+        "schema"
+      ],
+      "examples": [
+        "Invalid object name 'users'",
+        "Invalid object name 'dbo.customers'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlserver_column_not_exist",
+      "pattern": "Invalid column name '(.+?)'",
+      "type": "SchemaError",
+      "description": "Column does not exist in SQL Server table",
+      "root_cause": "sql_sqlserver_column_not_exist",
+      "suggestion": "Verify column exists in table and check spelling",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "column",
+        "schema"
+      ],
+      "examples": [
+        "Invalid column name 'email'",
+        "Invalid column name 'user_id'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlserver_constraint_violation",
+      "pattern": "Violation of (.+?) constraint",
+      "type": "ConstraintError",
+      "description": "Constraint violation in SQL Server",
+      "root_cause": "sql_sqlserver_constraint_violation",
+      "suggestion": "Check constraint requirements for data being inserted or updated",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "constraint"
+      ],
+      "examples": [
+        "Violation of PRIMARY KEY constraint 'PK_Users'",
+        "Violation of UNIQUE KEY constraint 'UQ_Email'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlserver_login_failed",
+      "pattern": "Login failed for user '(.+?)'",
+      "type": "PermissionError",
+      "description": "Login failed for SQL Server user",
+      "root_cause": "sql_sqlserver_login_failed",
+      "suggestion": "Check user credentials and server login settings",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "permission",
+        "login"
+      ],
+      "examples": [
+        "Login failed for user 'sa'",
+        "Login failed for user 'domain\\user'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlserver_connection_failed",
+      "pattern": "A network-related or instance-specific error",
+      "type": "ConnectionError",
+      "description": "Failed to connect to SQL Server",
+      "root_cause": "sql_sqlserver_connection_failed",
+      "suggestion": "Check server status, connection parameters, and network",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "connection",
+        "network"
+      ],
+      "examples": [
+        "A network-related or instance-specific error occurred while establishing a connection to SQL Server",
+        "Could not open a connection to SQL Server"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlserver_foreign_key_constraint",
+      "pattern": "The (INSERT|DELETE|UPDATE) statement conflicted with the (FOREIGN KEY|REFERENCE) constraint",
+      "type": "ConstraintError",
+      "description": "Foreign key constraint violation in SQL Server",
+      "root_cause": "sql_sqlserver_foreign_key_constraint",
+      "suggestion": "Ensure referenced record exists or disable foreign key constraints",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "constraint",
+        "foreign_key"
+      ],
+      "examples": [
+        "The INSERT statement conflicted with the FOREIGN KEY constraint \"FK_Orders_Users\"",
+        "The DELETE statement conflicted with the REFERENCE constraint \"FK_Child_Parent\""
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlserver_arithmetic_overflow",
+      "pattern": "Arithmetic overflow error",
+      "type": "ArithmeticError",
+      "description": "Arithmetic overflow in SQL Server",
+      "root_cause": "sql_sqlserver_arithmetic_overflow",
+      "suggestion": "Use larger data type or check calculation",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "arithmetic",
+        "overflow"
+      ],
+      "examples": [
+        "Arithmetic overflow error converting expression to data type int",
+        "Arithmetic overflow error for data type tinyint, value = 256"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlserver_division_by_zero",
+      "pattern": "Divide by zero error",
+      "type": "ArithmeticError",
+      "description": "Division by zero in SQL Server",
+      "root_cause": "sql_sqlserver_division_by_zero",
+      "suggestion": "Check divisor before division or use NULLIF(divisor, 0)",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "arithmetic",
+        "division"
+      ],
+      "examples": [
+        "Divide by zero error encountered",
+        "Error: Divide by zero error encountered"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlserver_conversion_failed",
+      "pattern": "Conversion failed when converting",
+      "type": "DataTypeError",
+      "description": "Data type conversion failed in SQL Server",
+      "root_cause": "sql_sqlserver_conversion_failed",
+      "suggestion": "Check data types and use explicit conversion functions",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "data_type",
+        "conversion"
+      ],
+      "examples": [
+        "Conversion failed when converting the varchar value 'abc' to data type int",
+        "Conversion failed when converting date and/or time from character string"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlserver_duplicate_key",
+      "pattern": "Cannot insert duplicate key in object",
+      "type": "ConstraintError",
+      "description": "Duplicate key value in SQL Server",
+      "root_cause": "sql_sqlserver_duplicate_key",
+      "suggestion": "Check for duplicate values or use MERGE statement",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "constraint",
+        "unique"
+      ],
+      "examples": [
+        "Cannot insert duplicate key in object 'dbo.Users'",
+        "Violation of UNIQUE KEY constraint 'UQ_Email'. Cannot insert duplicate key in object 'dbo.Customers'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sqlserver_deadlock",
+      "pattern": "Transaction .* was deadlocked",
+      "type": "TransactionError",
+      "description": "Deadlock detected in SQL Server",
+      "root_cause": "sql_sqlserver_deadlock",
+      "suggestion": "Redesign transaction order or implement retry logic",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "transaction",
+        "deadlock"
+      ],
+      "examples": [
+        "Transaction (Process ID) was deadlocked on lock resources with another process and has been chosen as the deadlock victim",
+        "Transaction was deadlocked on resources with another process"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

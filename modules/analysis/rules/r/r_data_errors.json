@@ -1,0 +1,286 @@
+{
+  "name": "R Data Manipulation Errors",
+  "description": "Rules for detecting errors related to R data manipulation and analysis",
+  "rules": [
+    {
+      "id": "r_data_frame_column_not_found",
+      "pattern": "column '([^']+)' not found",
+      "type": "DataFrameError",
+      "description": "Attempt to access non-existent column in data frame",
+      "root_cause": "r_dataframe_error",
+      "suggestion": "Check column names with names() or colnames()",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "dataframe",
+        "column",
+        "access"
+      ],
+      "examples": [
+        "column 'Age' not found",
+        "column 'UserID' not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_non_conformable_arrays",
+      "pattern": "non-conformable arrays",
+      "type": "ArrayError",
+      "description": "Operation between arrays with incompatible dimensions",
+      "root_cause": "r_data_error",
+      "suggestion": "Check dimensions with dim() and ensure arrays are compatible",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "array",
+        "matrix",
+        "dimension"
+      ],
+      "examples": [
+        "non-conformable arrays",
+        "non-conformable arrays: 10 != 5"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_data_frame_rows_differ",
+      "pattern": "arguments imply differing number of rows",
+      "type": "DataFrameError",
+      "description": "Attempt to create data frame with vectors of unequal length",
+      "root_cause": "r_dataframe_error",
+      "suggestion": "Ensure all vectors have the same length when creating a data frame",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "dataframe",
+        "creation",
+        "length"
+      ],
+      "examples": [
+        "arguments imply differing number of rows: 10, 5",
+        "arguments imply differing number of rows: 100, 50, 75"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_replacement_length_error",
+      "pattern": "replacement has (\\d+) rows, data has (\\d+)",
+      "type": "ReplacementError",
+      "description": "Replacement value has different length than target",
+      "root_cause": "r_data_error",
+      "suggestion": "Ensure replacement value matches the length of the target",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "replacement",
+        "length",
+        "assignment"
+      ],
+      "examples": [
+        "replacement has 3 rows, data has 10",
+        "replacement has 7 rows, data has 5"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_na_nan_inf_in_call",
+      "pattern": "NA/NaN/Inf in (call|foreign function call)",
+      "type": "MissingValueError",
+      "description": "Missing or infinite values in function call",
+      "root_cause": "r_data_error",
+      "suggestion": "Handle missing values with na.omit() or use na.rm=TRUE",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "missing",
+        "na",
+        "inf"
+      ],
+      "examples": [
+        "NA/NaN/Inf in foreign function call",
+        "NA/NaN/Inf in call to log"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_duplicate_row_names",
+      "pattern": "duplicate row.names",
+      "type": "DataFrameError",
+      "description": "Duplicate row names in data frame",
+      "root_cause": "r_dataframe_error",
+      "suggestion": "Ensure row names are unique or use row.names=FALSE",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "dataframe",
+        "rownames",
+        "unique"
+      ],
+      "examples": [
+        "duplicate row.names are not allowed",
+        "duplicate row.names: [1, 2, 3, 1]"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_factor_level_error",
+      "pattern": "(factor|level) (has|contains) new level\\(s\\)",
+      "type": "FactorError",
+      "description": "Factor contains new levels not in original factor",
+      "root_cause": "r_data_error",
+      "suggestion": "Use factor() with levels= parameter to specify all possible levels",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "factor",
+        "level",
+        "categorical"
+      ],
+      "examples": [
+        "factor contains new level(s) 'NewGroup'",
+        "level has new level 'Unknown'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_dimension_mismatch",
+      "pattern": "dimensions? don'?t match",
+      "type": "DimensionError",
+      "description": "Matrix or array dimensions don't match for operation",
+      "root_cause": "r_data_error",
+      "suggestion": "Check dimensions with dim() and ensure compatible operations",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "matrix",
+        "dimension",
+        "match"
+      ],
+      "examples": [
+        "dimensions don't match",
+        "dimension don't match (need 5x3 matrix)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_names_attribute_mismatch",
+      "pattern": "names attribute \\[(\\d+)\\] must be the same length as the vector \\[(\\d+)\\]",
+      "type": "NamesError",
+      "description": "Names attribute length doesn't match vector length",
+      "root_cause": "r_data_error",
+      "suggestion": "Ensure names vector has same length as the data vector",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "names",
+        "vector",
+        "attribute"
+      ],
+      "examples": [
+        "names attribute [3] must be the same length as the vector [5]",
+        "names attribute [10] must be the same length as the vector [8]"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_recycling_warning",
+      "pattern": "longer object length is not a multiple of shorter object length",
+      "type": "RecyclingWarning",
+      "description": "Vector recycling with incompatible lengths",
+      "root_cause": "r_data_error",
+      "suggestion": "Ensure vector lengths are compatible for recycling",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "recycling",
+        "vector",
+        "length"
+      ],
+      "examples": [
+        "longer object length is not a multiple of shorter object length",
+        "longer object length is not a multiple of shorter object length (7 vs 3)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

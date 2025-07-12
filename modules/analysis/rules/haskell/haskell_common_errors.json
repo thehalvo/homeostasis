@@ -1,0 +1,334 @@
+{
+  "name": "Haskell Common Errors",
+  "description": "Rules for detecting common Haskell programming language errors",
+  "rules": [
+    {
+      "id": "haskell_syntax_error_parse",
+      "pattern": "parse error",
+      "type": "SyntaxError",
+      "description": "Haskell syntax error during parsing",
+      "root_cause": "haskell_syntax_error",
+      "suggestion": "Fix syntax issues in Haskell code",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "parse error on input '='",
+        "parse error: unexpected symbol"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_syntax_error_unexpected",
+      "pattern": "unexpected.*?expecting",
+      "type": "SyntaxError",
+      "description": "Unexpected token in Haskell code",
+      "root_cause": "haskell_syntax_error",
+      "suggestion": "Check for misplaced tokens or missing syntax elements",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "unexpected ')', expecting '->' or other token",
+        "unexpected 'let', expecting 'in' or other token"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_indent_error",
+      "pattern": "indent.*?error",
+      "type": "SyntaxError",
+      "description": "Indentation error in Haskell code",
+      "root_cause": "haskell_syntax_error",
+      "suggestion": "Fix indentation in do-blocks, where clauses, or case expressions",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "syntax",
+        "indentation"
+      ],
+      "examples": [
+        "indent error on input 'where'",
+        "indent error, unexpected indentation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_type_mismatch",
+      "pattern": "Couldn't match (type|expected type) '(.+)' with '(.+)'",
+      "type": "TypeError",
+      "description": "Type mismatch between expected and actual types",
+      "root_cause": "haskell_type_error",
+      "suggestion": "Ensure types match in function calls and expressions",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "mismatch"
+      ],
+      "examples": [
+        "Couldn't match type 'Int' with 'String'",
+        "Couldn't match expected type '[a]' with actual type 'a'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_no_instance",
+      "pattern": "No instance for \\((.+?)\\)",
+      "type": "TypeError",
+      "description": "Missing type class instance",
+      "root_cause": "haskell_instance_error",
+      "suggestion": "Add required instance or use a type that has the instance",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "instance",
+        "typeclass"
+      ],
+      "examples": [
+        "No instance for (Show MyType)",
+        "No instance for (Eq (IO Int))"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_not_in_scope",
+      "pattern": "Not in scope: (data constructor|variable|type constructor) '(.+)'",
+      "type": "CompilationError",
+      "description": "Identifier not in scope",
+      "root_cause": "haskell_compilation_error",
+      "suggestion": "Import required module or define the identifier before use",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "compilation",
+        "scope"
+      ],
+      "examples": [
+        "Not in scope: data constructor 'Just'",
+        "Not in scope: variable 'map'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_module_not_found",
+      "pattern": "(Could not find module|Module) '(.+?)' (not found|is not found)",
+      "type": "ImportError",
+      "description": "Module not found during import",
+      "root_cause": "haskell_import_error",
+      "suggestion": "Install the required package or fix module path",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "import",
+        "module"
+      ],
+      "examples": [
+        "Could not find module 'Data.Text'",
+        "Module 'Control.Lens' is not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_ambiguous_type",
+      "pattern": "Ambiguous type (variable|variables) '(.+?)'",
+      "type": "TypeError",
+      "description": "Ambiguous type variable",
+      "root_cause": "haskell_type_error",
+      "suggestion": "Add type signature to disambiguate types",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "ambiguous"
+      ],
+      "examples": [
+        "Ambiguous type variable 'a' in the constraint: Show a",
+        "Ambiguous type variables 'a', 'b' in the function: f x y"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_non_exhaustive_patterns",
+      "pattern": "Non-exhaustive patterns in (function|case|pattern match)",
+      "type": "RuntimeError",
+      "description": "Pattern matching is not exhaustive",
+      "root_cause": "haskell_pattern_error",
+      "suggestion": "Add missing patterns or use a catch-all pattern",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "pattern",
+        "matching",
+        "runtime"
+      ],
+      "examples": [
+        "Non-exhaustive patterns in function 'safeHead'",
+        "Non-exhaustive patterns in case"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_undefined",
+      "pattern": "Exception: (Prelude\\.)?undefined",
+      "type": "RuntimeError",
+      "description": "Called undefined function at runtime",
+      "root_cause": "haskell_runtime_error",
+      "suggestion": "Replace undefined with proper implementation",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "runtime",
+        "undefined"
+      ],
+      "examples": [
+        "Exception: Prelude.undefined",
+        "Exception: undefined"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_stack_overflow",
+      "pattern": "stack overflow",
+      "type": "RuntimeError",
+      "description": "Stack overflow error",
+      "root_cause": "haskell_runtime_error",
+      "suggestion": "Fix infinite recursion or use tail recursion",
+      "category": "haskell",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "runtime",
+        "recursion",
+        "stack"
+      ],
+      "examples": [
+        "stack overflow",
+        "*** Exception: stack overflow"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_overlapping_instances",
+      "pattern": "Overlapping instances for",
+      "type": "TypeError",
+      "description": "Multiple overlapping instances for type class",
+      "root_cause": "haskell_instance_error",
+      "suggestion": "Use more specific instance or enable overlapping instances",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "type",
+        "instance",
+        "overlap"
+      ],
+      "examples": [
+        "Overlapping instances for Show a",
+        "Overlapping instances for Eq (Maybe a)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "name": "Zig Memory Errors",
+  "description": "Rules for detecting Zig memory management and allocation errors",
+  "rules": [
+    {
+      "id": "zig_memory_out_of_memory",
+      "pattern": "error: out of memory",
+      "type": "MemoryError",
+      "description": "Out of memory error during allocation",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Review memory usage and allocation patterns, or use fixed buffer allocator",
+      "category": "zig",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "allocation"
+      ],
+      "examples": [
+        "error: out of memory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_use_after_free",
+      "pattern": "error: use after free",
+      "type": "MemoryError",
+      "description": "Accessing memory after it has been freed",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Ensure pointers are not used after calling allocator.free()",
+      "category": "zig",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "safety",
+        "free"
+      ],
+      "examples": [
+        "error: use after free"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_double_free",
+      "pattern": "error: double free",
+      "type": "MemoryError",
+      "description": "Freeing memory that has already been freed",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Track memory ownership and avoid freeing the same memory twice",
+      "category": "zig",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "safety",
+        "free"
+      ],
+      "examples": [
+        "error: double free"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_leak",
+      "pattern": "error: memory leak detected",
+      "type": "MemoryError",
+      "description": "Memory leak detected in Zig code",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Ensure all allocated memory is properly freed",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "leak"
+      ],
+      "examples": [
+        "error: memory leak detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_invalid_pointer",
+      "pattern": "error: invalid pointer",
+      "type": "MemoryError",
+      "description": "Using an invalid or uninitialized pointer",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Ensure pointers are properly initialized before use",
+      "category": "zig",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "safety",
+        "pointer"
+      ],
+      "examples": [
+        "error: invalid pointer"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_buffer_overflow",
+      "pattern": "error: buffer overflow",
+      "type": "MemoryError",
+      "description": "Buffer overflow detected in Zig code",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Ensure buffer access is within bounds",
+      "category": "zig",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "safety",
+        "overflow"
+      ],
+      "examples": [
+        "error: buffer overflow"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_alignment_error",
+      "pattern": "error: memory alignment error",
+      "type": "MemoryError",
+      "description": "Memory alignment error in Zig code",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Ensure proper memory alignment for the data type",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "alignment"
+      ],
+      "examples": [
+        "error: memory alignment error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_allocator_not_found",
+      "pattern": "error: allocator not found",
+      "type": "MemoryError",
+      "description": "Attempting to use an allocator that is not available",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Pass allocator parameter to functions that need it",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "allocator"
+      ],
+      "examples": [
+        "error: allocator not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

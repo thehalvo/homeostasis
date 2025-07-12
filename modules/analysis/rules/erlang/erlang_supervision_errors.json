@@ -1,0 +1,335 @@
+{
+  "name": "Erlang Supervision Tree Errors",
+  "description": "Rules for detecting Erlang supervision tree and child specification errors",
+  "rules": [
+    {
+      "id": "erlang_supervisor_child_died",
+      "pattern": "supervisor.*?child.*?died",
+      "type": "RuntimeError",
+      "description": "Supervisor child process died",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Check child process for errors and proper termination",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "child",
+        "died"
+      ],
+      "examples": [
+        "supervisor child process died",
+        "child process in supervisor died with reason"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_supervisor_restart_failed",
+      "pattern": "supervisor.*?restart.*?failed",
+      "type": "RuntimeError",
+      "description": "Supervisor failed to restart child",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Check child initialization and restart strategy",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "restart",
+        "failed"
+      ],
+      "examples": [
+        "supervisor restart of child failed",
+        "failed to restart child process"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_supervisor_shutdown_failed",
+      "pattern": "supervisor.*?shutdown.*?failed",
+      "type": "RuntimeError",
+      "description": "Supervisor failed to shut down child",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Check child shutdown handling and timeout value",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "shutdown",
+        "failed"
+      ],
+      "examples": [
+        "supervisor shutdown of child failed",
+        "failed to shut down child process"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_child_specification_invalid",
+      "pattern": "child.*?specification.*?invalid",
+      "type": "RuntimeError",
+      "description": "Invalid child specification",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Fix child specification map or tuple format",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "child",
+        "specification"
+      ],
+      "examples": [
+        "child specification is invalid",
+        "invalid child specification"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_restart_intensity_exceeded",
+      "pattern": "restart.*?intensity.*?exceeded",
+      "type": "RuntimeError",
+      "description": "Supervisor restart intensity exceeded",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Adjust restart intensity or fix child crash issues",
+      "category": "erlang",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "restart",
+        "intensity"
+      ],
+      "examples": [
+        "restart intensity exceeded",
+        "supervisor restart intensity threshold exceeded"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_max_restarts_exceeded",
+      "pattern": "max_restarts.*?exceeded",
+      "type": "RuntimeError",
+      "description": "Maximum number of restarts exceeded",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Adjust max_restarts or fix child crash issues",
+      "category": "erlang",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "max_restarts"
+      ],
+      "examples": [
+        "max_restarts exceeded",
+        "maximum number of restarts exceeded"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_supervisor_bridge_failed",
+      "pattern": "supervisor.*?bridge.*?failed",
+      "type": "RuntimeError",
+      "description": "Supervisor bridge failed",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Check supervisor bridge implementation",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "bridge"
+      ],
+      "examples": [
+        "supervisor bridge failed",
+        "supervisor_bridge failed with reason"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_supervisor_terminated",
+      "pattern": "supervisor.*?terminated",
+      "type": "RuntimeError",
+      "description": "Supervisor process terminated",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Check supervisor initialization and error handling",
+      "category": "erlang",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "terminated"
+      ],
+      "examples": [
+        "supervisor terminated",
+        "supervisor process terminated with reason"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_one_for_one_strategy",
+      "pattern": "one_for_one.*?strategy.*?failed",
+      "type": "RuntimeError",
+      "description": "one_for_one restart strategy failure",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Check child process and restart handling",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "one_for_one"
+      ],
+      "examples": [
+        "one_for_one strategy failed",
+        "one_for_one restart strategy error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_one_for_all_strategy",
+      "pattern": "one_for_all.*?strategy.*?failed",
+      "type": "RuntimeError",
+      "description": "one_for_all restart strategy failure",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Check child dependencies and restart handling",
+      "category": "erlang",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "one_for_all"
+      ],
+      "examples": [
+        "one_for_all strategy failed",
+        "one_for_all restart strategy error"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_rest_for_one_strategy",
+      "pattern": "rest_for_one.*?strategy.*?failed",
+      "type": "RuntimeError",
+      "description": "rest_for_one restart strategy failure",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Check child dependencies and order",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "rest_for_one"
+      ],
+      "examples": [
+        "rest_for_one strategy failed",
+        "rest_for_one restart strategy error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_simple_one_for_one_strategy",
+      "pattern": "simple_one_for_one.*?strategy.*?failed",
+      "type": "RuntimeError",
+      "description": "simple_one_for_one restart strategy failure",
+      "root_cause": "erlang_supervision_error",
+      "suggestion": "Check dynamic child process management",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "supervision",
+        "simple_one_for_one"
+      ],
+      "examples": [
+        "simple_one_for_one strategy failed",
+        "simple_one_for_one restart strategy error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

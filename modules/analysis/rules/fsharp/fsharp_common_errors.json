@@ -1,0 +1,326 @@
+{
+  "name": "F# Common Errors",
+  "description": "Rules for detecting common F# programming language errors",
+  "rules": [
+    {
+      "id": "fsharp_syntax_error_parse",
+      "pattern": "syntax error",
+      "type": "SyntaxError",
+      "description": "F# syntax error during parsing",
+      "root_cause": "fsharp_syntax_error",
+      "suggestion": "Fix syntax issues in F# code",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "syntax error at or near '('"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_syntax_error_unexpected",
+      "pattern": "unexpected.*?expecting",
+      "type": "SyntaxError",
+      "description": "Unexpected token in F# code",
+      "root_cause": "fsharp_syntax_error",
+      "suggestion": "Check for misplaced tokens or missing syntax elements",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "unexpected ')', expecting '->' or other token"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_syntax_error_incomplete",
+      "pattern": "Incomplete.*?expression",
+      "type": "SyntaxError",
+      "description": "Incomplete expression in F# code",
+      "root_cause": "fsharp_syntax_error",
+      "suggestion": "Complete the expression by adding missing parts",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "syntax",
+        "expression"
+      ],
+      "examples": [
+        "Incomplete expression",
+        "Incomplete let binding"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_syntax_error_unfinished_block",
+      "pattern": "Block.*?following.*?this.*?let.*?is.*?unfinished",
+      "type": "SyntaxError",
+      "description": "Unfinished block after let binding",
+      "root_cause": "fsharp_syntax_error",
+      "suggestion": "Complete the block or expression after let binding",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "syntax",
+        "block",
+        "let"
+      ],
+      "examples": [
+        "Block following this 'let' is unfinished"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_undefined_value",
+      "pattern": "The (value|identifier) '(.+?)' is not defined",
+      "type": "CompilationError",
+      "description": "Undefined value or identifier",
+      "root_cause": "fsharp_compilation_error",
+      "suggestion": "Define the value or open required namespaces/modules",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "compilation",
+        "undefined"
+      ],
+      "examples": [
+        "The value 'x' is not defined",
+        "The identifier 'List.map' is not defined"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_undefined_type",
+      "pattern": "The type '(.+?)' is not defined",
+      "type": "CompilationError",
+      "description": "Undefined type",
+      "root_cause": "fsharp_compilation_error",
+      "suggestion": "Define the type or open required namespaces/modules",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "compilation",
+        "type",
+        "undefined"
+      ],
+      "examples": [
+        "The type 'Option' is not defined",
+        "The type 'List<int>' is not defined"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_type_mismatch",
+      "pattern": "(This expression was expected to have type|Type mismatch)",
+      "type": "TypeError",
+      "description": "Type mismatch between expected and actual types",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Ensure types match in function calls and expressions",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "mismatch"
+      ],
+      "examples": [
+        "Type mismatch. Expected 'string' but got 'int'",
+        "This expression was expected to have type 'int' but has type 'string'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_undefined_namespace",
+      "pattern": "The namespace '(.+?)' is not defined",
+      "type": "CompilationError",
+      "description": "Undefined namespace",
+      "root_cause": "fsharp_compilation_error",
+      "suggestion": "Check namespace spelling or add required references",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "compilation",
+        "namespace"
+      ],
+      "examples": [
+        "The namespace 'System.Text' is not defined"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_recursive_binding",
+      "pattern": "The (value|definition) '(.+?)' is recursive",
+      "type": "CompilationError",
+      "description": "Recursive binding requires 'rec' keyword",
+      "root_cause": "fsharp_compilation_error",
+      "suggestion": "Add 'rec' keyword to recursive function definition",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "compilation",
+        "recursive"
+      ],
+      "examples": [
+        "The value 'factorial' is recursive",
+        "The definition 'map' is recursive"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_missing_qualification",
+      "pattern": "Lookup on object of indeterminate type",
+      "type": "TypeError",
+      "description": "Member access requires qualified object type",
+      "root_cause": "fsharp_type_error",
+      "suggestion": "Add type annotation or use a more specific type",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "type",
+        "member"
+      ],
+      "examples": [
+        "Lookup on object of indeterminate type. Either provide a type annotation or make the reference fully qualified."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_nullref_exception",
+      "pattern": "NullReferenceException",
+      "type": "RuntimeError",
+      "description": "Null reference exception",
+      "root_cause": "fsharp_runtime_error",
+      "suggestion": "Use Option types instead of null values",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "runtime",
+        "null"
+      ],
+      "examples": [
+        "System.NullReferenceException: Object reference not set to an instance of an object"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_indexoutofrange_exception",
+      "pattern": "IndexOutOfRangeException",
+      "type": "RuntimeError",
+      "description": "Index out of range exception",
+      "root_cause": "fsharp_runtime_error",
+      "suggestion": "Check array bounds or use safe access functions",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "runtime",
+        "array",
+        "index"
+      ],
+      "examples": [
+        "System.IndexOutOfRangeException: Index was outside the bounds of the array"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

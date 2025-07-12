@@ -1,0 +1,286 @@
+{
+  "name": "PowerShell Execution Errors",
+  "description": "Rules for detecting errors related to PowerShell execution policy and security",
+  "rules": [
+    {
+      "id": "powershell_execution_policy_restricted",
+      "pattern": "Running scripts is disabled on this system",
+      "type": "ExecutionPolicyError",
+      "description": "PowerShell execution policy is set to Restricted",
+      "root_cause": "powershell_execution_error",
+      "suggestion": "Change execution policy using Set-ExecutionPolicy RemoteSigned -Scope CurrentUser",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "execution",
+        "policy",
+        "security"
+      ],
+      "examples": [
+        "Running scripts is disabled on this system",
+        "File cannot be loaded because running scripts is disabled on this system"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_unauthorized_access",
+      "pattern": "Unauthorized access to (\\S+)",
+      "type": "SecurityError",
+      "description": "Unauthorized access error in PowerShell",
+      "root_cause": "powershell_security_error",
+      "suggestion": "Run PowerShell as administrator or adjust access permissions",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "security",
+        "access",
+        "permission"
+      ],
+      "examples": [
+        "Unauthorized access to registry key",
+        "Unauthorized access to file"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_unsigned_script",
+      "pattern": "Script cannot be run because it contains untrusted code",
+      "type": "SecurityError",
+      "description": "PowerShell script is not digitally signed",
+      "root_cause": "powershell_security_error",
+      "suggestion": "Sign the script or use Set-ExecutionPolicy to allow unsigned scripts",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "security",
+        "signing",
+        "policy"
+      ],
+      "examples": [
+        "Script cannot be run because it contains untrusted code",
+        "File is not digitally signed. The script will not execute on the system"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_remote_execution_error",
+      "pattern": "Access is denied. (Only|The) trusted hosts list (may be|can be) modified",
+      "type": "RemotingError",
+      "description": "PowerShell remote execution access denied",
+      "root_cause": "powershell_remoting_error",
+      "suggestion": "Configure TrustedHosts setting or use authentication",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "remoting",
+        "security",
+        "trusted"
+      ],
+      "examples": [
+        "Access is denied. Only trusted hosts list can be modified",
+        "Access is denied. The trusted hosts list may be modified using Set-Item"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_remoting_not_enabled",
+      "pattern": "WinRM (service is not running|client cannot process the request)",
+      "type": "RemotingError",
+      "description": "PowerShell remoting not enabled",
+      "root_cause": "powershell_remoting_error",
+      "suggestion": "Enable PowerShell remoting with Enable-PSRemoting",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "remoting",
+        "winrm",
+        "service"
+      ],
+      "examples": [
+        "WinRM service is not running",
+        "WinRM client cannot process the request because the server name cannot be resolved"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_credential_error",
+      "pattern": "(The credential|The user name or password) (is|are) (invalid|incorrect)",
+      "type": "CredentialError",
+      "description": "Invalid credentials in PowerShell",
+      "root_cause": "powershell_security_error",
+      "suggestion": "Provide correct credentials",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "security",
+        "credential",
+        "authentication"
+      ],
+      "examples": [
+        "The credential is invalid",
+        "The user name or password are incorrect"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_elevation_required",
+      "pattern": "Administrator privileges required",
+      "type": "SecurityError",
+      "description": "PowerShell requires administrator privileges",
+      "root_cause": "powershell_security_error",
+      "suggestion": "Run PowerShell as administrator",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "security",
+        "administrator",
+        "elevation"
+      ],
+      "examples": [
+        "Administrator privileges required",
+        "This operation requires elevated administrator privileges"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_certificate_validation",
+      "pattern": "The SSL certificate (is|could not be) (invalid|validated)",
+      "type": "SecurityError",
+      "description": "SSL certificate validation error in PowerShell",
+      "root_cause": "powershell_security_error",
+      "suggestion": "Use a valid SSL certificate or set -SkipCertificateCheck parameter",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "security",
+        "certificate",
+        "ssl"
+      ],
+      "examples": [
+        "The SSL certificate is invalid",
+        "The SSL certificate could not be validated"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_constrained_language_mode",
+      "pattern": "The syntax is not supported by the language mode",
+      "type": "LanguageModeError",
+      "description": "PowerShell constrained language mode restriction",
+      "root_cause": "powershell_security_error",
+      "suggestion": "Use only allowed syntax in constrained language mode or change language mode",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "security",
+        "language",
+        "constrained"
+      ],
+      "examples": [
+        "The syntax is not supported by the language mode",
+        "This language feature is not available in constrained language mode"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "powershell_applocker_restriction",
+      "pattern": "This script is blocked by AppLocker policy",
+      "type": "SecurityError",
+      "description": "PowerShell script blocked by AppLocker policy",
+      "root_cause": "powershell_security_error",
+      "suggestion": "Update AppLocker policy to allow script execution",
+      "category": "powershell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "powershell",
+        "security",
+        "applocker",
+        "policy"
+      ],
+      "examples": [
+        "This script is blocked by AppLocker policy",
+        "Access to the file is restricted by AppLocker policy"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

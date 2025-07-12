@@ -1,0 +1,258 @@
+{
+  "name": "Ansible Variable Errors",
+  "description": "Rules for detecting errors related to Ansible variables and templating",
+  "rules": [
+    {
+      "id": "ansible_undefined_variable",
+      "pattern": "'.*' is undefined|variable .* is not defined|undefined variable|AnsibleUndefinedVariable|object has no attribute|referenced before assignment|Unable to look up a name|is not a valid variable name",
+      "type": "VariableError",
+      "description": "Undefined variable in playbook or template",
+      "root_cause": "ansible_variable_error",
+      "suggestion": "Define the variable or use default filter",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "variable",
+        "undefined",
+        "reference"
+      ],
+      "examples": [
+        "fatal: [host]: FAILED! => {\"msg\": \"'item' is undefined\"}",
+        "AnsibleUndefinedVariable: 'server_name' is undefined"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_template_syntax_error",
+      "pattern": "template error while templating|TemplateSyntaxError|template syntax error|Error in jinja2|Error rendering template|error during template rendering|unexpected '}}'|unexpected '{{'",
+      "type": "TemplateError",
+      "description": "Syntax error in Jinja2 template",
+      "root_cause": "ansible_template_error",
+      "suggestion": "Fix Jinja2 template syntax (braces, tags, filters)",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "variable",
+        "template",
+        "jinja2"
+      ],
+      "examples": [
+        "template error while templating string: unexpected '}'",
+        "TemplateSyntaxError: unexpected end of template"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_dict_attribute_error",
+      "pattern": "'dict object' has no attribute|attribute .* not found|no attribute|no such attribute|not an attribute of|has no element|cannot be accessed|Key .* not found",
+      "type": "AttributeError",
+      "description": "Attempting to access non-existent dictionary attribute",
+      "root_cause": "ansible_variable_error",
+      "suggestion": "Check dictionary key or use default filter",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "variable",
+        "dictionary",
+        "attribute"
+      ],
+      "examples": [
+        "'dict object' has no attribute 'status'",
+        "Key 'version' not found in dictionary"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_list_index_error",
+      "pattern": "list index out of range|index .* out of range|list assignment index out of range|list index .* exceeds list length|index .* does not exist",
+      "type": "IndexError",
+      "description": "List index out of range",
+      "root_cause": "ansible_variable_error",
+      "suggestion": "Check list length or use conditional to ensure index exists",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "variable",
+        "list",
+        "index"
+      ],
+      "examples": [
+        "list index out of range",
+        "index 5 exceeds list length"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_filter_error",
+      "pattern": "unable to find filter|no filter named|unknown filter|undefined filter|Error in filter:|Filter .* not found|filter .* is not defined",
+      "type": "FilterError",
+      "description": "Unknown or undefined Jinja2 filter",
+      "root_cause": "ansible_template_error",
+      "suggestion": "Check filter name or install missing filter plugin",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "variable",
+        "filter",
+        "jinja2"
+      ],
+      "examples": [
+        "unable to find filter: to_yaml",
+        "no filter named 'to_json'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_vars_file_error",
+      "pattern": "Error loading vars file|Could not find file|Unable to parse|vars file .* not found|errors were encountered while reading variable files|unable to load vars|cannot load",
+      "type": "VarsFileError",
+      "description": "Error loading variables file",
+      "root_cause": "ansible_variable_error",
+      "suggestion": "Check file path, permissions, and syntax",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "variable",
+        "file",
+        "vars"
+      ],
+      "examples": [
+        "Error loading vars file group_vars/all.yml",
+        "unable to load vars file host_vars/webserver.yml"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_type_error",
+      "pattern": "cannot concatenate|operand type|is not a valid|expected .* to be a|cannot be converted|cannot combine|not a valid index|not a valid key|not iterable|not a string|not a list|not a dict|not a number",
+      "type": "TypeError",
+      "description": "Variable type error in expression or template",
+      "root_cause": "ansible_variable_error",
+      "suggestion": "Ensure variables are of correct type or use type conversion",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "variable",
+        "type",
+        "conversion"
+      ],
+      "examples": [
+        "cannot concatenate 'str' and 'dict' objects",
+        "expected 'port' to be a integer"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_lookup_error",
+      "pattern": "lookup plugin.*not found|lookup failed|unable to find lookup|Error during lookup|Cannot find|error during lookup of key",
+      "type": "LookupError",
+      "description": "Error in variable lookup plugin",
+      "root_cause": "ansible_variable_error",
+      "suggestion": "Check lookup syntax or install missing lookup plugin",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "variable",
+        "lookup",
+        "plugin"
+      ],
+      "examples": [
+        "lookup plugin 'redis' not found",
+        "lookup failed: file not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_variable_recursion",
+      "pattern": "recursive loop detected|maximum recursion depth exceeded|infinite recursion|too many levels of recursion|cyclic reference|maximum include depth",
+      "type": "RecursionError",
+      "description": "Recursive variable reference or include",
+      "root_cause": "ansible_variable_error",
+      "suggestion": "Break recursive variable references or includes",
+      "category": "variable",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "variable",
+        "recursion",
+        "include"
+      ],
+      "examples": [
+        "recursive loop detected in template",
+        "maximum recursion depth exceeded"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

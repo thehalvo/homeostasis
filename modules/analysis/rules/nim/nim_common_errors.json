@@ -1,0 +1,330 @@
+{
+  "name": "Nim Common Errors",
+  "description": "Rules for detecting common Nim programming language errors",
+  "rules": [
+    {
+      "id": "nim_syntax_error_expected",
+      "pattern": "Error: expected (.*), got (.*)",
+      "type": "SyntaxError",
+      "description": "Nim syntax error due to unexpected token",
+      "root_cause": "nim_syntax_error",
+      "suggestion": "Check code structure and syntax at the specified location",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "Error: expected ':', got '='",
+        "Error: expected ';', got identifier",
+        "Error: expected 'while', got 'for'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_syntax_error_invalid_indentation",
+      "pattern": "Error: invalid indentation",
+      "type": "SyntaxError",
+      "description": "Nim syntax error due to incorrect indentation",
+      "root_cause": "nim_syntax_error",
+      "suggestion": "Fix indentation - Nim uses significant whitespace (2 spaces per level)",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "syntax",
+        "indentation"
+      ],
+      "examples": [
+        "Error: invalid indentation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_syntax_error_unexpected_token",
+      "pattern": "Error: unexpected token: (.+)",
+      "type": "SyntaxError",
+      "description": "Nim syntax error due to unexpected token",
+      "root_cause": "nim_syntax_error",
+      "suggestion": "Remove or replace the unexpected token",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "syntax",
+        "parsing"
+      ],
+      "examples": [
+        "Error: unexpected token: @",
+        "Error: unexpected token: else"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_error_mismatch",
+      "pattern": "Error: type mismatch: got (.+) but expected (.+)",
+      "type": "TypeError",
+      "description": "Nim type mismatch error",
+      "root_cause": "nim_type_error",
+      "suggestion": "Ensure that types are compatible or add appropriate type conversion",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "casting"
+      ],
+      "examples": [
+        "Error: type mismatch: got string but expected int",
+        "Error: type mismatch: got seq[int] but expected array"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_undeclared_identifier",
+      "pattern": "Error: undeclared identifier: '(.+)'",
+      "type": "CompilationError",
+      "description": "Using an undeclared identifier in Nim",
+      "root_cause": "nim_compilation_error",
+      "suggestion": "Ensure the variable or procedure is declared before use",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "compilation",
+        "identifier"
+      ],
+      "examples": [
+        "Error: undeclared identifier: 'myVar'",
+        "Error: undeclared identifier: 'printLine'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_member_not_found",
+      "pattern": "Error: type '(.+)' has no member named '(.+)'",
+      "type": "TypeError",
+      "description": "Attempting to access a non-existent member of a type",
+      "root_cause": "nim_type_error",
+      "suggestion": "Check the type definition for available members or fix typo",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "object",
+        "member"
+      ],
+      "examples": [
+        "Error: type 'Person' has no member named 'middle_name'",
+        "Error: type 'File' has no member named 'append'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_module_not_found",
+      "pattern": "Error: cannot open file: (.+)",
+      "type": "ImportError",
+      "description": "Unable to find an imported file or module",
+      "root_cause": "nim_import_error",
+      "suggestion": "Check the import path and ensure the file exists",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "import",
+        "module"
+      ],
+      "examples": [
+        "Error: cannot open file: config.nim",
+        "Error: cannot open file: lib/utils.nim"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_nil_access",
+      "pattern": "Error: unhandled exception: NilAccessDefect",
+      "type": "RuntimeError",
+      "description": "Attempting to dereference a nil pointer",
+      "root_cause": "nim_nil_access",
+      "suggestion": "Add nil check before accessing the reference",
+      "category": "nim",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "memory",
+        "safety",
+        "nil"
+      ],
+      "examples": [
+        "Error: unhandled exception: NilAccessDefect"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_index_out_of_bounds",
+      "pattern": "Error: index out of bounds",
+      "type": "RuntimeError",
+      "description": "Array or sequence index out of bounds",
+      "root_cause": "nim_bounds_error",
+      "suggestion": "Check array/sequence bounds before accessing elements",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "bounds",
+        "safety",
+        "array"
+      ],
+      "examples": [
+        "Error: index out of bounds"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_ambiguous_call",
+      "pattern": "Error: ambiguous call",
+      "type": "ProcedureError",
+      "description": "Ambiguous procedure call with multiple matching overloads",
+      "root_cause": "nim_proc_error",
+      "suggestion": "Add explicit type annotations to disambiguate procedure call",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "proc",
+        "overload"
+      ],
+      "examples": [
+        "Error: ambiguous call"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_procedure_not_found",
+      "pattern": "Error: procedure '(.+)' not found",
+      "type": "ProcedureError",
+      "description": "Attempting to call a procedure that doesn't exist",
+      "root_cause": "nim_proc_error",
+      "suggestion": "Check procedure name and import the correct module",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "proc",
+        "function"
+      ],
+      "examples": [
+        "Error: procedure 'readFile' not found",
+        "Error: procedure 'connect' not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_macro_not_found",
+      "pattern": "Error: macro '(.+)' not found",
+      "type": "MacroError",
+      "description": "Attempting to use a macro that doesn't exist",
+      "root_cause": "nim_macro_error",
+      "suggestion": "Check macro name and import the correct module",
+      "category": "nim",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "macro",
+        "template"
+      ],
+      "examples": [
+        "Error: macro 'customMacro' not found",
+        "Error: macro 'debugInfo' not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

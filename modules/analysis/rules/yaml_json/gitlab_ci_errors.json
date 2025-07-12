@@ -1,0 +1,296 @@
+{
+  "name": "GitLab CI/CD Configuration Errors",
+  "description": "Rules for detecting errors in GitLab CI/CD pipeline configurations",
+  "rules": [
+    {
+      "id": "gitlab_ci_syntax_error",
+      "pattern": "Invalid configuration|configuration error|syntax is incorrect|invalid YAML|malformed YAML|not a valid YAML|configuration syntax|syntax check|yaml syntax|invalid format|unexpected key|failed to parse|parsing error|config contains error|YAML invalid|YAML parsing error",
+      "type": "SyntaxError",
+      "description": "Syntax error in GitLab CI configuration",
+      "root_cause": "gitlab_ci_syntax_error",
+      "suggestion": "Fix YAML syntax and verify GitLab CI structure",
+      "category": "syntax",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "gitlab",
+        "ci",
+        "pipeline",
+        "yaml"
+      ],
+      "examples": [
+        "Invalid configuration format",
+        "configuration syntax is incorrect",
+        "YAML parsing error: mapping values are not allowed in this context"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "gitlab_ci_stage_error",
+      "pattern": "stage .* not defined|unknown stage|invalid stage|stage validation|stage must be|stages must be|stages list|undefined stage|stage .* does not exist|stage .* is not defined|unknown value .* for stage|stage must be a string|stages is empty|stage list|duplicate stage|stage name",
+      "type": "StageError",
+      "description": "Invalid stage configuration in GitLab CI",
+      "root_cause": "gitlab_ci_stage_error",
+      "suggestion": "Define stages in the stages list before using them in jobs",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "gitlab",
+        "ci",
+        "stages",
+        "pipeline"
+      ],
+      "examples": [
+        "stage 'deploy' not defined in stages",
+        "unknown stage 'test-and-build'",
+        "stages must be an array of strings"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "gitlab_ci_job_error",
+      "pattern": "job config|job validation|job must define|job config should contain|job .* is invalid|job requires|invalid job|job configuration is invalid|job must be a hash|job needs script|empty job|job cannot be empty|invalid job definition|job missing required",
+      "type": "JobError",
+      "description": "Invalid job configuration in GitLab CI",
+      "root_cause": "gitlab_ci_job_error",
+      "suggestion": "Ensure jobs contain required elements like script",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "gitlab",
+        "ci",
+        "job",
+        "pipeline"
+      ],
+      "examples": [
+        "job config should contain at least one of: script, trigger, extends, or template",
+        "job 'build' is invalid: script must be a string or an array of strings",
+        "empty job 'test' detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "gitlab_ci_script_error",
+      "pattern": "script validation|script must be|script is required|script cannot be empty|script must contain|invalid script|script configuration|script must be a string|script must be an array|before_script|after_script|empty script|script section|invalid script value",
+      "type": "ScriptError",
+      "description": "Invalid script configuration in GitLab CI",
+      "root_cause": "gitlab_ci_script_error",
+      "suggestion": "Fix script section format (string or array of strings)",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "gitlab",
+        "ci",
+        "script",
+        "pipeline"
+      ],
+      "examples": [
+        "script must be a string or an array of strings",
+        "script cannot be empty",
+        "invalid script: must be a string or array, found integer"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "gitlab_ci_image_error",
+      "pattern": "image validation|image must be|invalid image|image name|image tag|image not found|failed to pull image|image does not exist|could not pull image|not such image|image configuration|image format|image section|entrypoint validation|image is invalid",
+      "type": "ImageError",
+      "description": "Invalid image configuration in GitLab CI",
+      "root_cause": "gitlab_ci_image_error",
+      "suggestion": "Check image name, tag, and availability",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "gitlab",
+        "ci",
+        "image",
+        "docker"
+      ],
+      "examples": [
+        "image must be a string",
+        "image 'node:42' not found",
+        "failed to pull image 'custom/image:latest'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "gitlab_ci_variables_error",
+      "pattern": "variables validation|variables must be|variable .* is invalid|invalid variable|variable format|environment variable|duplicate variable|variables must be a hash|invalid variables definition|variables configuration|variable validation|invalid variable name|invalid variable value|variable name validation",
+      "type": "VariablesError",
+      "description": "Invalid variables configuration in GitLab CI",
+      "root_cause": "gitlab_ci_variables_error",
+      "suggestion": "Fix variables format (must be a hash/dictionary)",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "gitlab",
+        "ci",
+        "variables",
+        "environment"
+      ],
+      "examples": [
+        "variables must be a hash",
+        "variable 'NODE VERSION' is invalid (should not contain spaces)",
+        "duplicate variable 'API_KEY' detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "gitlab_ci_needs_error",
+      "pattern": "needs validation|needs must be|needs job .* not found|needs unknown job|invalid needs|unknown job in needs|needs refers to|undefined job in needs|job .* not found in needs|needs configuration|needs invalid|needs format|needs must be an array|needs must be a string",
+      "type": "NeedsError",
+      "description": "Invalid needs configuration in GitLab CI",
+      "root_cause": "gitlab_ci_needs_error",
+      "suggestion": "Ensure referenced jobs exist in the configuration",
+      "category": "validation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "gitlab",
+        "ci",
+        "needs",
+        "dependencies"
+      ],
+      "examples": [
+        "needs job 'build' not found",
+        "needs must be an array of strings or hashes",
+        "unknown job 'missing-job' in needs"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "gitlab_ci_cache_error",
+      "pattern": "cache validation|invalid cache|cache key|cache paths|cache configuration|cache policy|cache must be a hash|cache.paths|cache.key|cache.policy|cache section|invalid cache definition|cache.paths must be an array|invalid cache key|cache config",
+      "type": "CacheError",
+      "description": "Invalid cache configuration in GitLab CI",
+      "root_cause": "gitlab_ci_cache_error",
+      "suggestion": "Fix cache configuration format and keys",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "gitlab",
+        "ci",
+        "cache",
+        "pipeline"
+      ],
+      "examples": [
+        "cache must be a hash",
+        "cache.paths must be an array of strings",
+        "invalid cache key format"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "gitlab_ci_artifacts_error",
+      "pattern": "artifacts validation|invalid artifacts|artifacts configuration|artifacts paths|artifacts.paths|artifacts must be a hash|artifacts.expire_in|invalid expire_in|artifacts.reports|artifacts.when|invalid artifacts definition|artifacts section|artifacts.paths must be an array",
+      "type": "ArtifactsError",
+      "description": "Invalid artifacts configuration in GitLab CI",
+      "root_cause": "gitlab_ci_artifacts_error",
+      "suggestion": "Fix artifacts configuration format and paths",
+      "category": "validation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "gitlab",
+        "ci",
+        "artifacts",
+        "pipeline"
+      ],
+      "examples": [
+        "artifacts must be a hash",
+        "artifacts.paths must be an array of strings",
+        "invalid expire_in format: '1days'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "gitlab_ci_secret_error",
+      "pattern": "missing secret|secret variable|secret not defined|masked variable|variable .* is not defined|missing variable|variable .* is missing|CI/CD variable not found|secret must be provided|variable should be set|missing required variable|undefined secret|variables missing",
+      "type": "SecretError",
+      "description": "Missing required secrets or variables in GitLab CI",
+      "root_cause": "gitlab_ci_secret_error",
+      "suggestion": "Add required variables in CI/CD settings",
+      "category": "security",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "gitlab",
+        "ci",
+        "secrets",
+        "variables"
+      ],
+      "examples": [
+        "missing secret variable 'API_TOKEN'",
+        "variable 'AWS_ACCESS_KEY' is not defined",
+        "CI/CD variable 'DEPLOY_KEY' not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

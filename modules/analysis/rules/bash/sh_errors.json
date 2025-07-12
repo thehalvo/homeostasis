@@ -1,0 +1,319 @@
+{
+  "name": "Sh-specific Errors",
+  "description": "Rules for detecting errors specific to the POSIX sh shell",
+  "rules": [
+    {
+      "id": "sh_command_not_found",
+      "pattern": "sh: \\d+: .*: not found",
+      "type": "CommandError",
+      "description": "Command not found in sh shell",
+      "root_cause": "bash_command_not_found",
+      "suggestion": "Check if the command is installed and in PATH",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sh",
+        "command",
+        "path"
+      ],
+      "examples": [
+        "sh: 1: git: not found",
+        "sh: 42: kubectl: not found"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "sh",
+      "exit_code": 127
+    },
+    {
+      "id": "sh_syntax_error",
+      "pattern": "sh: \\d+: Syntax error:",
+      "type": "SyntaxError",
+      "description": "Syntax error in sh script",
+      "root_cause": "bash_syntax_error",
+      "suggestion": "Check shell script syntax and ensure POSIX compatibility",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sh",
+        "syntax",
+        "posix"
+      ],
+      "examples": [
+        "sh: 5: Syntax error: \"(\" unexpected",
+        "sh: 10: Syntax error: end of file unexpected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "sh"
+    },
+    {
+      "id": "sh_bad_number",
+      "pattern": "sh: \\d+: .*: Bad number",
+      "type": "ArgumentError",
+      "description": "Bad number for command argument",
+      "root_cause": "bash_argument_error",
+      "suggestion": "Check numeric arguments for commands",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sh",
+        "argument",
+        "number"
+      ],
+      "examples": [
+        "sh: 1: kill: Bad number: abc",
+        "sh: 5: sleep: Bad number: -x"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "sh"
+    },
+    {
+      "id": "sh_permission_denied",
+      "pattern": "sh: \\d+: .*: Permission denied",
+      "type": "PermissionError",
+      "description": "Permission denied when executing command",
+      "root_cause": "bash_permission_error",
+      "suggestion": "Check file permissions or run with appropriate privileges",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sh",
+        "permission",
+        "access"
+      ],
+      "examples": [
+        "sh: 1: ./script.sh: Permission denied",
+        "sh: 15: /path/to/file: Permission denied"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "sh",
+      "exit_code": 126
+    },
+    {
+      "id": "sh_cannot_open",
+      "pattern": "sh: \\d+: cannot open",
+      "type": "FileError",
+      "description": "Cannot open file",
+      "root_cause": "bash_file_error",
+      "suggestion": "Check if the file exists and the path is correct",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sh",
+        "file",
+        "open"
+      ],
+      "examples": [
+        "sh: 1: cannot open file.txt: No such file",
+        "sh: 3: cannot open /path/to/file: No such file or directory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "sh"
+    },
+    {
+      "id": "sh_illegal_option",
+      "pattern": "sh: \\d+: .*: Illegal option",
+      "type": "ArgumentError",
+      "description": "Illegal command option",
+      "root_cause": "bash_argument_error",
+      "suggestion": "Check command options and use valid ones",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sh",
+        "argument",
+        "option"
+      ],
+      "examples": [
+        "sh: 1: ls: Illegal option -- z",
+        "sh: 12: grep: Illegal option -- P"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "sh"
+    },
+    {
+      "id": "sh_not_found_in_path",
+      "pattern": "sh: \\d+: .*: not found in PATH",
+      "type": "CommandError",
+      "description": "Command not found in PATH",
+      "root_cause": "bash_command_not_found",
+      "suggestion": "Install the command or add its location to PATH",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sh",
+        "command",
+        "path"
+      ],
+      "examples": [
+        "sh: 1: python3: not found in PATH",
+        "sh: 4: git: not found in PATH"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "sh",
+      "exit_code": 127
+    },
+    {
+      "id": "sh_argument_list_too_long",
+      "pattern": "sh: \\d+: .*: Argument list too long",
+      "type": "ArgumentError",
+      "description": "Argument list exceeds system limit",
+      "root_cause": "bash_argument_error",
+      "suggestion": "Use fewer arguments or process in batches using xargs or find",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sh",
+        "argument",
+        "limit"
+      ],
+      "examples": [
+        "sh: 1: ls: Argument list too long",
+        "sh: 5: cp: Argument list too long"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "sh",
+      "exit_code": 7
+    },
+    {
+      "id": "sh_cannot_execute",
+      "pattern": "sh: \\d+: .*: Cannot execute",
+      "type": "ExecutionError",
+      "description": "Cannot execute binary file",
+      "root_cause": "bash_execution_error",
+      "suggestion": "Check file format and architecture compatibility",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sh",
+        "execution",
+        "binary"
+      ],
+      "examples": [
+        "sh: 1: ./program: Cannot execute binary file",
+        "sh: 3: /path/to/file: Cannot execute: Is a directory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "sh"
+    },
+    {
+      "id": "sh_bad_substitution",
+      "pattern": "sh: \\d+: .*: Bad substitution",
+      "type": "SyntaxError",
+      "description": "Bad variable substitution syntax",
+      "root_cause": "bash_variable_error",
+      "suggestion": "Use POSIX-compatible variable expansion syntax (avoid ${var:x:y} etc.)",
+      "category": "bash",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sh",
+        "variable",
+        "substitution",
+        "posix"
+      ],
+      "examples": [
+        "sh: 1: ${PATH:0:10}: Bad substitution",
+        "sh: 8: ${var/old/new}: Bad substitution"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "sh"
+    },
+    {
+      "id": "sh_read_only_variable",
+      "pattern": "sh: \\d+: .*: read-only variable",
+      "type": "VariableError",
+      "description": "Attempt to modify read-only variable",
+      "root_cause": "bash_variable_error",
+      "suggestion": "Avoid modifying read-only variables",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sh",
+        "variable",
+        "readonly"
+      ],
+      "examples": [
+        "sh: 1: PATH: read-only variable",
+        "sh: 5: HOME: read-only variable"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "shell_type": "sh"
+    }
+  ]
+}

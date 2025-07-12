@@ -1,0 +1,221 @@
+{
+  "name": "Zig Async Errors",
+  "description": "Rules for detecting Zig async and concurrent programming errors",
+  "rules": [
+    {
+      "id": "zig_async_no_suspend",
+      "pattern": "error: async function cannot be called directly",
+      "type": "AsyncError",
+      "description": "Calling an async function without await",
+      "root_cause": "zig_async_error",
+      "suggestion": "Use 'await' keyword when calling async functions or ensure caller is also async",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "async",
+        "concurrency"
+      ],
+      "examples": [
+        "error: async function cannot be called directly"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_async_suspend_point",
+      "pattern": "error: suspend point not reachable",
+      "type": "AsyncError",
+      "description": "Unreachable suspend point in async function",
+      "root_cause": "zig_async_error",
+      "suggestion": "Ensure suspend points are reachable in control flow",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "async",
+        "concurrency",
+        "suspend"
+      ],
+      "examples": [
+        "error: suspend point not reachable"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_async_frame_too_large",
+      "pattern": "error: async frame too large",
+      "type": "AsyncError",
+      "description": "Async frame size exceeds limits",
+      "root_cause": "zig_async_error",
+      "suggestion": "Reduce local variables or split function into smaller functions",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "async",
+        "concurrency",
+        "frame"
+      ],
+      "examples": [
+        "error: async frame too large"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_async_await_in_non_async",
+      "pattern": "error: await in non-async function",
+      "type": "AsyncError",
+      "description": "Using await in a non-async function",
+      "root_cause": "zig_async_error",
+      "suggestion": "Mark the function as async using 'async' keyword",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "async",
+        "concurrency",
+        "await"
+      ],
+      "examples": [
+        "error: await in non-async function"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_async_suspend_in_defer",
+      "pattern": "error: cannot suspend inside defer expression",
+      "type": "AsyncError",
+      "description": "Attempting to suspend inside a defer block",
+      "root_cause": "zig_async_error",
+      "suggestion": "Move the suspend point outside of the defer block",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "async",
+        "concurrency",
+        "defer"
+      ],
+      "examples": [
+        "error: cannot suspend inside defer expression"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_async_allocator_required",
+      "pattern": "error: async function requires allocator",
+      "type": "AsyncError",
+      "description": "Async function called without providing required allocator",
+      "root_cause": "zig_async_error",
+      "suggestion": "Pass an allocator to the async function call",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "async",
+        "concurrency",
+        "allocator"
+      ],
+      "examples": [
+        "error: async function requires allocator"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_async_event_loop",
+      "pattern": "error: event loop not found",
+      "type": "AsyncError",
+      "description": "No event loop available for async operation",
+      "root_cause": "zig_async_error",
+      "suggestion": "Create or pass an event loop to the async function",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "async",
+        "concurrency",
+        "event_loop"
+      ],
+      "examples": [
+        "error: event loop not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_async_nosuspend_error",
+      "pattern": "error: nosuspend expression resumed",
+      "type": "AsyncError",
+      "description": "A nosuspend expression attempted to suspend",
+      "root_cause": "zig_async_error",
+      "suggestion": "Remove nosuspend or ensure the code cannot suspend",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "async",
+        "concurrency",
+        "nosuspend"
+      ],
+      "examples": [
+        "error: nosuspend expression resumed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "name": "Terraform Resource Errors",
+  "description": "Rules for detecting errors related to Terraform resource configurations",
+  "rules": [
+    {
+      "id": "terraform_resource_not_found",
+      "pattern": "Resource (.*) not found|No such resource",
+      "type": "ResourceError",
+      "description": "Resource not found during read or update operation",
+      "root_cause": "terraform_resource_error",
+      "suggestion": "Check if the resource exists or use 'terraform import' to import existing resource",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "resource",
+        "not_found",
+        "read"
+      ],
+      "examples": [
+        "Error: Resource aws_instance.example not found",
+        "Error: No such resource found in state"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_resource_already_exists",
+      "pattern": "already exists|Resource already exists|with the same name already exists",
+      "type": "ResourceError",
+      "description": "Resource already exists during creation",
+      "root_cause": "terraform_resource_error",
+      "suggestion": "Use a different name or use 'terraform import' to import the existing resource",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "resource",
+        "exists",
+        "create"
+      ],
+      "examples": [
+        "Error: Resource with name 'my-bucket' already exists",
+        "Error: aws_security_group with the same name already exists"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_resource_still_in_use",
+      "pattern": "still in use|being used by|cannot be deleted because it is in use|has dependent objects",
+      "type": "ResourceError",
+      "description": "Resource cannot be deleted because it's still in use",
+      "root_cause": "terraform_resource_error",
+      "suggestion": "Delete dependent resources first or set force_destroy=true if applicable",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "resource",
+        "dependency",
+        "delete"
+      ],
+      "examples": [
+        "Error: VPC still in use by subnet",
+        "Error: Security group cannot be deleted because it is in use by an instance"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_resource_invalid_parameter",
+      "pattern": "Invalid parameter|Invalid value for parameter|Unsupported parameter",
+      "type": "ResourceError",
+      "description": "Invalid parameter value for resource",
+      "root_cause": "terraform_resource_error",
+      "suggestion": "Fix the parameter value according to provider documentation",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "resource",
+        "parameter",
+        "validation"
+      ],
+      "examples": [
+        "Error: Invalid parameter 'instance_type'",
+        "Error: Invalid value for parameter 'region'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_resource_immutable_attribute",
+      "pattern": "Cannot change (.*) after creation|Cannot be updated|Immutable field",
+      "type": "ResourceError",
+      "description": "Attempting to change immutable attribute",
+      "root_cause": "terraform_resource_error",
+      "suggestion": "Recreate the resource instead by using 'terraform taint' or 'force_new' attribute",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "resource",
+        "immutable",
+        "update"
+      ],
+      "examples": [
+        "Error: Cannot change 'name' after creation",
+        "Error: region cannot be updated"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_resource_import_error",
+      "pattern": "Error importing|Error: resource address .* does not exist",
+      "type": "ResourceError",
+      "description": "Error during resource import",
+      "root_cause": "terraform_resource_error",
+      "suggestion": "Check resource ID and ensure resource exists before importing",
+      "category": "resource",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "resource",
+        "import",
+        "state"
+      ],
+      "examples": [
+        "Error importing aws_s3_bucket",
+        "Error: resource address aws_instance.example does not exist in the configuration"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_invalid_resource_address",
+      "pattern": "Invalid resource address|Unknown resource",
+      "type": "ResourceError",
+      "description": "Invalid resource address or reference",
+      "root_cause": "terraform_resource_error",
+      "suggestion": "Check resource type and name in configuration or references",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "resource",
+        "address",
+        "reference"
+      ],
+      "examples": [
+        "Error: Invalid resource address",
+        "Error: Unknown resource 'aws_instance.web' referenced"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_resource_operation_failed",
+      "pattern": "Error creating .+:|Error updating .+:|Error deleting .+:",
+      "type": "ResourceError",
+      "description": "Resource operation failed (create, update, or delete)",
+      "root_cause": "terraform_resource_error",
+      "suggestion": "Check provider logs and resource configuration",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "resource",
+        "operation",
+        "api"
+      ],
+      "examples": [
+        "Error creating aws_instance:",
+        "Error updating aws_security_group:"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_resource_data_conflict",
+      "pattern": "Resource data conflicts|conflicts with external state|conflicts with another resource",
+      "type": "ResourceError",
+      "description": "Resource data conflicts with external state or another resource",
+      "root_cause": "terraform_resource_error",
+      "suggestion": "Run 'terraform refresh' or resolve conflicts between resources",
+      "category": "resource",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "resource",
+        "conflict",
+        "state"
+      ],
+      "examples": [
+        "Error: Resource data conflicts with external state",
+        "Error: aws_route conflicts with another resource"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

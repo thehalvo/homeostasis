@@ -1,0 +1,286 @@
+{
+  "name": "MATLAB Matrix Errors",
+  "description": "Rules for detecting errors related to MATLAB matrix operations",
+  "rules": [
+    {
+      "id": "matlab_inner_matrix_dimension",
+      "pattern": "Inner matrix dimensions must agree",
+      "type": "MatrixError",
+      "description": "Inner dimensions of matrices do not match for multiplication",
+      "root_cause": "matlab_matrix_error",
+      "suggestion": "Check matrix dimensions with size() before multiplication",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "matrix",
+        "dimension",
+        "multiplication"
+      ],
+      "examples": [
+        "Error using * Inner matrix dimensions must agree.",
+        "Inner matrix dimensions must agree for multiplication."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_matrix_not_square",
+      "pattern": "Matrix must be square",
+      "type": "MatrixError",
+      "description": "Operation requires a square matrix",
+      "root_cause": "matlab_matrix_error",
+      "suggestion": "Ensure matrix has equal number of rows and columns",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "matrix",
+        "square",
+        "determinant"
+      ],
+      "examples": [
+        "Error using det Matrix must be square.",
+        "Matrix must be square for eigenvalue computation."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_incompatible_array_sizes",
+      "pattern": "Arrays have incompatible sizes",
+      "type": "MatrixError",
+      "description": "Arrays have incompatible sizes for the operation",
+      "root_cause": "matlab_matrix_error",
+      "suggestion": "Ensure arrays have compatible sizes or use element-wise operations",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "array",
+        "size",
+        "operation"
+      ],
+      "examples": [
+        "Error using + Arrays have incompatible sizes.",
+        "Arrays have incompatible sizes for concatenation."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_subscripted_assignment_dimension_mismatch",
+      "pattern": "Subscripted assignment dimension mismatch",
+      "type": "MatrixError",
+      "description": "Dimensions of left and right sides in assignment do not match",
+      "root_cause": "matlab_matrix_error",
+      "suggestion": "Ensure the dimensions of the assigned value match the target",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "assignment",
+        "dimension",
+        "mismatch"
+      ],
+      "examples": [
+        "Subscripted assignment dimension mismatch.",
+        "Error: Subscripted assignment dimension mismatch."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_ill_conditioned_matrix",
+      "pattern": "Matrix is (close to|ill-conditioned|badly conditioned)",
+      "type": "MatrixError",
+      "description": "Matrix is ill-conditioned, making computations numerically unstable",
+      "root_cause": "matlab_matrix_error",
+      "suggestion": "Check matrix condition number with cond() and use regularization",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "matrix",
+        "condition",
+        "numerical"
+      ],
+      "examples": [
+        "Matrix is close to singular or badly scaled.",
+        "Warning: Matrix is ill-conditioned."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_dimension_argument_must_be_positive",
+      "pattern": "Dimension argument must be a positive integer scalar",
+      "type": "MatrixError",
+      "description": "Dimension argument must be a positive integer",
+      "root_cause": "matlab_matrix_error",
+      "suggestion": "Use positive integers for dimension arguments",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "dimension",
+        "argument",
+        "positive"
+      ],
+      "examples": [
+        "Error using size Dimension argument must be a positive integer scalar.",
+        "Dimension argument must be a positive integer scalar within indexing range."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_matrix_must_be_2d",
+      "pattern": "Matrix must be 2-D",
+      "type": "MatrixError",
+      "description": "Operation requires a 2D matrix, not a higher-dimensional array",
+      "root_cause": "matlab_matrix_error",
+      "suggestion": "Ensure input is a 2D matrix, not a multidimensional array",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "matrix",
+        "dimension",
+        "2d"
+      ],
+      "examples": [
+        "Error using svd Matrix must be 2-D.",
+        "Matrix must be 2-D for LU decomposition."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_colon_arguments_must_be_scalars",
+      "pattern": "All arguments to : must be scalars",
+      "type": "MatrixError",
+      "description": "Colon operator arguments must be scalars",
+      "root_cause": "matlab_matrix_error",
+      "suggestion": "Use scalar values in colon operator (start:step:end)",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "colon",
+        "operator",
+        "scalar"
+      ],
+      "examples": [
+        "Error: All arguments to : must be scalars.",
+        "All arguments to colon operator must be scalars."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_size_mismatch_concatenation",
+      "pattern": "Dimensions of (arrays|matrices) being concatenated are not consistent",
+      "type": "MatrixError",
+      "description": "Size mismatch when concatenating arrays",
+      "root_cause": "matlab_matrix_error",
+      "suggestion": "Ensure arrays have matching dimensions for concatenation",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "concatenation",
+        "dimension",
+        "array"
+      ],
+      "examples": [
+        "Error using horzcat Dimensions of arrays being concatenated are not consistent.",
+        "Dimensions of matrices being concatenated are not consistent."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_nan_inf_detection",
+      "pattern": "(NaN|Inf|infinite value) (detected|encountered|produced)",
+      "type": "NumericalError",
+      "description": "NaN or Infinity detected in computation",
+      "root_cause": "matlab_matrix_error",
+      "suggestion": "Check for division by zero or other numerical issues",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "numerical",
+        "nan",
+        "infinity"
+      ],
+      "examples": [
+        "Warning: NaN detected in computation.",
+        "Infinite value encountered during matrix inversion."
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}
