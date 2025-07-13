@@ -1,0 +1,258 @@
+{
+  "name": "Haskell Type Class Errors",
+  "description": "Rules for detecting Haskell type class and instance errors",
+  "rules": [
+    {
+      "id": "haskell_missing_typeclass_instance",
+      "pattern": "No instance for \\(([^)]+)\\)",
+      "type": "TypeError",
+      "description": "Missing instance for type class",
+      "root_cause": "haskell_typeclass_error",
+      "suggestion": "Implement the missing type class instance or use a type with the required instance",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "typeclass",
+        "instance",
+        "constraint"
+      ],
+      "examples": [
+        "No instance for (Show MyType)",
+        "No instance for (Eq (Maybe Int))"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_ambiguous_typeclass_instance",
+      "pattern": "Ambiguous (occurrence|instance) '([^']+)'",
+      "type": "TypeError",
+      "description": "Ambiguous type class instance",
+      "root_cause": "haskell_typeclass_error",
+      "suggestion": "Add type annotations to disambiguate or modify instance declarations",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "typeclass",
+        "ambiguous",
+        "instance"
+      ],
+      "examples": [
+        "Ambiguous occurrence 'fromList'",
+        "Ambiguous instance 'Monad'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_overlapping_instances",
+      "pattern": "Overlapping instances for ([^\\n]+)",
+      "type": "TypeError",
+      "description": "Overlapping type class instances",
+      "root_cause": "haskell_typeclass_error",
+      "suggestion": "Make instances non-overlapping or use OverlappingInstances extension",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "typeclass",
+        "overlapping",
+        "instance"
+      ],
+      "examples": [
+        "Overlapping instances for Show [Int]",
+        "Overlapping instances for Eq (Maybe a)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_flexible_instance_error",
+      "pattern": "need FlexibleInstances to write instance of the form",
+      "type": "TypeError",
+      "description": "Instance requires FlexibleInstances extension",
+      "root_cause": "haskell_typeclass_error",
+      "suggestion": "Enable FlexibleInstances language extension",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "typeclass",
+        "flexible",
+        "extension"
+      ],
+      "examples": [
+        "need FlexibleInstances to write instance of the form",
+        "FlexibleInstances needed for this instance declaration"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_undecidable_instance",
+      "pattern": "requires undecidable instances",
+      "type": "TypeError",
+      "description": "Instance requires UndecidableInstances extension",
+      "root_cause": "haskell_typeclass_error",
+      "suggestion": "Enable UndecidableInstances or restructure instance declaration",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "typeclass",
+        "undecidable",
+        "extension"
+      ],
+      "examples": [
+        "requires undecidable instances",
+        "UndecidableInstances needed for recursive instance"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_fundep_error",
+      "pattern": "requires functional dependencies",
+      "type": "TypeError",
+      "description": "Type class requires functional dependencies",
+      "root_cause": "haskell_typeclass_error",
+      "suggestion": "Add functional dependencies to type class or enable extensions",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "typeclass",
+        "fundep",
+        "dependency"
+      ],
+      "examples": [
+        "requires functional dependencies",
+        "FunctionalDependencies needed for this type class"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_orphan_instance",
+      "pattern": "Warning: .*orphan instance.*",
+      "type": "Warning",
+      "description": "Orphan instance detected",
+      "root_cause": "haskell_typeclass_error",
+      "suggestion": "Move instance to the module of the type class or data type",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "typeclass",
+        "orphan",
+        "instance"
+      ],
+      "examples": [
+        "Warning: orphan instance: instance Show MyType",
+        "Warning: orphan instance detected"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_missing_method",
+      "pattern": "No explicit implementation for '([^']+)'",
+      "type": "TypeError",
+      "description": "Missing method implementation in type class instance",
+      "root_cause": "haskell_typeclass_error",
+      "suggestion": "Implement all required methods of the type class",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "typeclass",
+        "method",
+        "implementation"
+      ],
+      "examples": [
+        "No explicit implementation for 'show'",
+        "No explicit implementation for 'fmap'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_multi_param_error",
+      "pattern": "requires (MultiParamTypeClasses|FlexibleContexts)",
+      "type": "TypeError",
+      "description": "Multi-parameter type class requires extension",
+      "root_cause": "haskell_typeclass_error",
+      "suggestion": "Enable required language extensions (MultiParamTypeClasses or FlexibleContexts)",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "typeclass",
+        "multiparam",
+        "extension"
+      ],
+      "examples": [
+        "requires MultiParamTypeClasses",
+        "requires FlexibleContexts"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

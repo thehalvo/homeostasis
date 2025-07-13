@@ -1,0 +1,253 @@
+{
+  "name": "F# Computation Expression Errors",
+  "description": "Rules for detecting F# computation expression errors",
+  "rules": [
+    {
+      "id": "fsharp_ce_missing_method",
+      "pattern": "The custom operation '([^']+)' is not defined",
+      "type": "ComputationExpressionError",
+      "description": "Missing method in computation expression builder",
+      "root_cause": "fsharp_ce_error",
+      "suggestion": "Implement the required method in the computation expression builder class",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "computation_expression",
+        "method",
+        "builder"
+      ],
+      "examples": [
+        "The custom operation 'whileLoop' is not defined",
+        "The custom operation 'forLoop' is not defined"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_ce_invalid_syntax",
+      "pattern": "Invalid (computation|workflow) expression",
+      "type": "ComputationExpressionError",
+      "description": "Invalid syntax in computation expression",
+      "root_cause": "fsharp_ce_error",
+      "suggestion": "Check computation expression syntax and structure",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "computation_expression",
+        "syntax",
+        "workflow"
+      ],
+      "examples": [
+        "Invalid computation expression",
+        "Invalid workflow expression"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_ce_return_type",
+      "pattern": "The expression has type '([^']+)' but is used with type '([^']+)'",
+      "type": "ComputationExpressionError",
+      "description": "Type mismatch in computation expression return value",
+      "root_cause": "fsharp_ce_error",
+      "suggestion": "Ensure the computation expression returns the correct type",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "computation_expression",
+        "type",
+        "return"
+      ],
+      "examples": [
+        "The expression has type 'int' but is used with type 'string'",
+        "The expression has type 'Result<int, string>' but is used with type 'Option<int>'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_ce_yield_type",
+      "pattern": "Type mismatch in 'yield' expression",
+      "type": "ComputationExpressionError",
+      "description": "Type mismatch in yield statement in computation expression",
+      "root_cause": "fsharp_ce_error",
+      "suggestion": "Ensure yield returns the correct type for the computation expression",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "computation_expression",
+        "yield",
+        "type"
+      ],
+      "examples": [
+        "Type mismatch in 'yield' expression",
+        "Type mismatch. Expecting 'a' but got 'b'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_ce_missing_let_bang",
+      "pattern": "This control construct may only be used if the computation expression builder defines a 'Bind' method",
+      "type": "ComputationExpressionError",
+      "description": "Missing Bind method for let! in computation expression",
+      "root_cause": "fsharp_ce_error",
+      "suggestion": "Implement the Bind method in the computation expression builder",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "computation_expression",
+        "bind",
+        "let_bang"
+      ],
+      "examples": [
+        "This control construct may only be used if the computation expression builder defines a 'Bind' method"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_ce_missing_return",
+      "pattern": "This control construct may only be used if the computation expression builder defines a 'Return' method",
+      "type": "ComputationExpressionError",
+      "description": "Missing Return method in computation expression builder",
+      "root_cause": "fsharp_ce_error",
+      "suggestion": "Implement the Return method in the computation expression builder",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "computation_expression",
+        "return",
+        "builder"
+      ],
+      "examples": [
+        "This control construct may only be used if the computation expression builder defines a 'Return' method"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_ce_delayed",
+      "pattern": "Computation expressions that implicitly yield (e.g. 'seq') must have a 'Delay' method",
+      "type": "ComputationExpressionError",
+      "description": "Missing Delay method in computation expression builder",
+      "root_cause": "fsharp_ce_error",
+      "suggestion": "Implement the Delay method in the computation expression builder",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "computation_expression",
+        "delay",
+        "yield"
+      ],
+      "examples": [
+        "Computation expressions that implicitly yield (e.g. 'seq') must have a 'Delay' method"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_ce_custom_operation",
+      "pattern": "Custom operation '([^']+)' has argument named '([^']+)' that doesn't correspond to a value in the input record",
+      "type": "ComputationExpressionError",
+      "description": "Invalid custom operation parameter in computation expression",
+      "root_cause": "fsharp_ce_error",
+      "suggestion": "Ensure custom operation parameters match input record fields",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "computation_expression",
+        "custom_operation",
+        "parameter"
+      ],
+      "examples": [
+        "Custom operation 'where' has argument named 'predicate' that doesn't correspond to a value in the input record"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_ce_missing_combine",
+      "pattern": "This control construct may only be used if the computation expression builder defines a 'Combine' method",
+      "type": "ComputationExpressionError",
+      "description": "Missing Combine method in computation expression builder",
+      "root_cause": "fsharp_ce_error",
+      "suggestion": "Implement the Combine method in the computation expression builder",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "computation_expression",
+        "combine",
+        "builder"
+      ],
+      "examples": [
+        "This control construct may only be used if the computation expression builder defines a 'Combine' method"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

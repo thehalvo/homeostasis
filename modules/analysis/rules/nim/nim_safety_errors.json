@@ -1,0 +1,223 @@
+{
+  "name": "Nim Safety Errors",
+  "description": "Rules for detecting Nim nil safety, result/option types, and safety features errors",
+  "rules": [
+    {
+      "id": "nim_nil_safety_uninitialized",
+      "pattern": "Error: use of uninitialized variable '(.+)'",
+      "type": "NilSafetyError",
+      "description": "Using an uninitialized variable that could be nil",
+      "root_cause": "nim_nil_error",
+      "suggestion": "Initialize the variable before use",
+      "category": "nim",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "nil",
+        "safety",
+        "uninitialized"
+      ],
+      "examples": [
+        "Error: use of uninitialized variable 'person'",
+        "Error: use of uninitialized variable 'connection'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_nil_safety_option_unwrap",
+      "pattern": "Error: cannot unwrap nil Option",
+      "type": "NilSafetyError",
+      "description": "Attempting to unwrap a nil Option type",
+      "root_cause": "nim_nil_error",
+      "suggestion": "Check if Option is some() before unwrapping or use get() with default value",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "nil",
+        "safety",
+        "option"
+      ],
+      "examples": [
+        "Error: cannot unwrap nil Option"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_nil_safety_deref",
+      "pattern": "Error: attempt to dereference nil",
+      "type": "NilSafetyError",
+      "description": "Attempting to dereference a nil pointer",
+      "root_cause": "nim_nil_error",
+      "suggestion": "Add nil check before dereferencing pointer",
+      "category": "nim",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "nil",
+        "safety",
+        "pointer"
+      ],
+      "examples": [
+        "Error: attempt to dereference nil"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_nil_safety_result_unwrap",
+      "pattern": "Error: cannot unwrap error Result",
+      "type": "NilSafetyError",
+      "description": "Attempting to unwrap a Result type containing an error",
+      "root_cause": "nim_nil_error",
+      "suggestion": "Check if Result isOk() before unwrapping or use value() with default",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "nil",
+        "safety",
+        "result"
+      ],
+      "examples": [
+        "Error: cannot unwrap error Result"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_nil_safety_not_nil",
+      "pattern": "Error: cannot convert nil to not nil",
+      "type": "NilSafetyError",
+      "description": "Attempting to assign nil to a not nil type",
+      "root_cause": "nim_nil_error",
+      "suggestion": "Initialize not nil types with a valid value",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "nil",
+        "safety",
+        "not_nil"
+      ],
+      "examples": [
+        "Error: cannot convert nil to not nil"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_nil_safety_unsafeaddr",
+      "pattern": "Error: taking unsafe address",
+      "type": "NilSafetyError",
+      "description": "Taking unsafe address of a value",
+      "root_cause": "nim_nil_error",
+      "suggestion": "Avoid using unsafeAddr or ensure value lifetime is managed correctly",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "nil",
+        "safety",
+        "address"
+      ],
+      "examples": [
+        "Error: taking unsafe address"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_nil_safety_mixed_nil",
+      "pattern": "Error: cannot mix non-nilable and nilable types in container",
+      "type": "NilSafetyError",
+      "description": "Mixing nilable and non-nilable types in container",
+      "root_cause": "nim_nil_error",
+      "suggestion": "Use consistent nil safety types in containers",
+      "category": "nim",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "nil",
+        "safety",
+        "container"
+      ],
+      "examples": [
+        "Error: cannot mix non-nilable and nilable types in container"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_nil_safety_noreturn",
+      "pattern": "Error: expected return type, but procedure has no return",
+      "type": "NilSafetyError",
+      "description": "Procedure with return type doesn't return a value",
+      "root_cause": "nim_proc_error",
+      "suggestion": "Add return statement or change procedure signature to void",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "nil",
+        "safety",
+        "return"
+      ],
+      "examples": [
+        "Error: expected return type, but procedure has no return"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

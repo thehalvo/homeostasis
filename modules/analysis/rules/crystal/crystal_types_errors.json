@@ -219,5 +219,169 @@
       "rule_type": "error_detection",
       "dependencies": []
     }
+  ],
+    {
+      "id": "crystal_type_inference_recursive",
+      "pattern": "recursive type inference",
+      "type": "TypeError",
+      "description": "Recursive type inference encountered",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Add explicit type annotations to break recursion cycle",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "inference",
+        "recursive"
+      ],
+      "examples": [
+        "recursive type inference"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_inference_block",
+      "pattern": "can't infer block type without usage context",
+      "type": "TypeError",
+      "description": "Cannot infer block parameter types without context",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Add explicit type annotations for block parameters",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "inference",
+        "block"
+      ],
+      "examples": [
+        "can't infer block type without usage context"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_inference_generic",
+      "pattern": "can't infer (.*?) type parameter",
+      "type": "TypeError",
+      "description": "Cannot infer generic type parameter",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Specify generic type parameters explicitly",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "inference",
+        "generic"
+      ],
+      "examples": [
+        "can't infer T type parameter",
+        "can't infer K type parameter"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_inference_array_literal",
+      "pattern": "can't infer type of empty array literal",
+      "type": "TypeError",
+      "description": "Cannot infer type of empty array literal",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Use type annotation for empty arrays: [] of Type",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "inference",
+        "array"
+      ],
+      "examples": [
+        "can't infer type of empty array literal"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_inference_hash_literal",
+      "pattern": "can't infer type of empty hash literal",
+      "type": "TypeError",
+      "description": "Cannot infer type of empty hash literal",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Use type annotation for empty hashes: {} of KeyType => ValueType",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "inference",
+        "hash"
+      ],
+      "examples": [
+        "can't infer type of empty hash literal"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_type_inference_instance_var",
+      "pattern": "instance variable '(.*)' of (.*?) was inferred to be (.*?), but ends up being (.*)",
+      "type": "TypeError",
+      "description": "Instance variable type changed after initial inference",
+      "root_cause": "crystal_type_error",
+      "suggestion": "Add explicit type annotation for instance variable",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "type",
+        "inference",
+        "instance_var"
+      ],
+      "examples": [
+        "instance variable '@name' of Person was inferred to be String, but ends up being Int32"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
   ]
 }

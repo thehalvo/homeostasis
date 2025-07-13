@@ -222,5 +222,173 @@
       "rule_type": "error_detection",
       "dependencies": []
     }
+  ],
+    {
+      "id": "crystal_fiber_blocking_operation",
+      "pattern": "warning: blocking operation inside fiber",
+      "type": "FiberError",
+      "description": "Blocking operation in a fiber can prevent other fibers from running",
+      "root_cause": "crystal_fiber_error",
+      "suggestion": "Use non-blocking operations or move blocking code to a separate thread",
+      "category": "crystal",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "fiber",
+        "blocking",
+        "concurrency"
+      ],
+      "examples": [
+        "warning: blocking operation inside fiber"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_fiber_select_timeout",
+      "pattern": "timeout on select statement",
+      "type": "FiberError",
+      "description": "Timeout occurred while waiting on a select statement",
+      "root_cause": "crystal_fiber_error",
+      "suggestion": "Handle timeout case or increase timeout duration",
+      "category": "crystal",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "fiber",
+        "select",
+        "timeout",
+        "concurrency"
+      ],
+      "examples": [
+        "timeout on select statement"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_fiber_unhandled_exception",
+      "pattern": "unhandled exception in spawn: (.*)",
+      "type": "FiberError",
+      "description": "Unhandled exception in spawned fiber",
+      "root_cause": "crystal_fiber_error",
+      "suggestion": "Add exception handling inside spawned fibers",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "fiber",
+        "exception",
+        "spawn",
+        "concurrency"
+      ],
+      "examples": [
+        "unhandled exception in spawn: Index out of bounds"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_fiber_spawn_limit",
+      "pattern": "too many fibers",
+      "type": "FiberError",
+      "description": "Too many fibers spawned, exceeding system limits",
+      "root_cause": "crystal_fiber_error",
+      "suggestion": "Limit number of concurrent fibers or use a fiber pool",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "fiber",
+        "spawn",
+        "limit",
+        "concurrency"
+      ],
+      "examples": [
+        "too many fibers",
+        "fiber limit exceeded"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_channel_buffer_overflow",
+      "pattern": "channel buffer overflow",
+      "type": "FiberError",
+      "description": "Buffered channel overflow",
+      "root_cause": "crystal_channel_error",
+      "suggestion": "Increase channel buffer size or consume messages faster",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "channel",
+        "buffer",
+        "overflow",
+        "concurrency"
+      ],
+      "examples": [
+        "channel buffer overflow"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_fiber_event_loop_stalled",
+      "pattern": "event loop stalled",
+      "type": "FiberError",
+      "description": "Event loop stalled due to blocking operations",
+      "root_cause": "crystal_fiber_error",
+      "suggestion": "Avoid blocking operations in main event loop",
+      "category": "crystal",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "fiber",
+        "event_loop",
+        "concurrency"
+      ],
+      "examples": [
+        "event loop stalled"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
   ]
 }

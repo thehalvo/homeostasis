@@ -217,5 +217,195 @@
       "rule_type": "error_detection",
       "dependencies": []
     }
+  ],
+    {
+      "id": "nim_type_generic_constraint",
+      "pattern": "Error: cannot instantiate: '(.+)'.*?not derived from required super type",
+      "type": "TypeError",
+      "description": "Type doesn't satisfy generic type constraint",
+      "root_cause": "nim_type_error",
+      "suggestion": "Ensure type satisfies all constraints of the generic type parameter",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "generic",
+        "constraint"
+      ],
+      "examples": [
+        "Error: cannot instantiate: 'CustomType' is not derived from required super type 'Printable'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_concept_constraint",
+      "pattern": "Error: type '(.+)' has no member '(.+)' to satisfy concept",
+      "type": "TypeError",
+      "description": "Type doesn't implement required interface/concept",
+      "root_cause": "nim_type_error",
+      "suggestion": "Implement required methods for the concept",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "concept",
+        "interface"
+      ],
+      "examples": [
+        "Error: type 'User' has no member 'serialize' to satisfy concept"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_distinct_operation",
+      "pattern": "Error: no (.*?) operator defined for types: (.+)",
+      "type": "TypeError",
+      "description": "Missing operator for distinct type",
+      "root_cause": "nim_type_error",
+      "suggestion": "Define required operators for distinct types",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "distinct",
+        "operator"
+      ],
+      "examples": [
+        "Error: no + operator defined for types: Meters and Meters"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_recursive_definition",
+      "pattern": "Error: illegal recursion in type '(.+)'",
+      "type": "TypeError",
+      "description": "Illegal recursive type definition",
+      "root_cause": "nim_type_error",
+      "suggestion": "Use ref object for recursive type definitions",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "recursive",
+        "definition"
+      ],
+      "examples": [
+        "Error: illegal recursion in type 'LinkedList'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_variant_case",
+      "pattern": "Error: unhandled case in variant",
+      "type": "TypeError",
+      "description": "Unhandled case in variant object",
+      "root_cause": "nim_type_error",
+      "suggestion": "Add missing case branches for variant object",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "variant",
+        "case"
+      ],
+      "examples": [
+        "Error: unhandled case in variant"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_sealed_inheritance",
+      "pattern": "Error: inheritance only works with non-final objects",
+      "type": "TypeError",
+      "description": "Attempting to inherit from a final/sealed object type",
+      "root_cause": "nim_type_error",
+      "suggestion": "Remove {.final.} pragma or inherit from a non-final object",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "inheritance",
+        "final"
+      ],
+      "examples": [
+        "Error: inheritance only works with non-final objects"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_type_result_error",
+      "pattern": "Error: unhandled exception: (.*Result.*)",
+      "type": "TypeError",
+      "description": "Unhandled Result type error",
+      "root_cause": "nim_result_error",
+      "suggestion": "Check if Result is ok before accessing value",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "type",
+        "result",
+        "safety"
+      ],
+      "examples": [
+        "Error: unhandled exception: UnpackDefect: Result contains an error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
   ]
 }

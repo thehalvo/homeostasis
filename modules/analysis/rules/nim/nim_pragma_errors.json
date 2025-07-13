@@ -1,0 +1,254 @@
+{
+  "name": "Nim Pragma Errors",
+  "description": "Rules for detecting Nim pragma usage errors",
+  "rules": [
+    {
+      "id": "nim_pragma_unknown",
+      "pattern": "Error: unknown pragma: '(.+)'",
+      "type": "PragmaError",
+      "description": "Using an unknown pragma",
+      "root_cause": "nim_pragma_error",
+      "suggestion": "Check pragma name or add a custom pragma definition",
+      "category": "nim",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "pragma",
+        "unknown"
+      ],
+      "examples": [
+        "Error: unknown pragma: 'customPragma'",
+        "Error: unknown pragma: 'memoize'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_pragma_invalid_context",
+      "pattern": "Error: invalid context for pragma '(.+)'",
+      "type": "PragmaError",
+      "description": "Using pragma in an invalid context",
+      "root_cause": "nim_pragma_error",
+      "suggestion": "Move pragma to appropriate location or use a different pragma",
+      "category": "nim",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "pragma",
+        "context"
+      ],
+      "examples": [
+        "Error: invalid context for pragma 'inline'",
+        "Error: invalid context for pragma 'exportc'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_pragma_inline_recursive",
+      "pattern": "Error: recursive call is not supported for inline proc '(.+)'",
+      "type": "PragmaError",
+      "description": "Inline procedure contains recursive call",
+      "root_cause": "nim_pragma_error",
+      "suggestion": "Remove inline pragma or refactor to avoid recursion",
+      "category": "nim",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "pragma",
+        "inline",
+        "recursion"
+      ],
+      "examples": [
+        "Error: recursive call is not supported for inline proc 'factorial'",
+        "Error: recursive call is not supported for inline proc 'traverse'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_pragma_noside",
+      "pattern": "Error: 'noSideEffect' pragma expected",
+      "type": "PragmaError",
+      "description": "Missing noSideEffect pragma for procedure with side effects",
+      "root_cause": "nim_pragma_error",
+      "suggestion": "Add {.noSideEffect.} pragma or refactor procedure to avoid side effects",
+      "category": "nim",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "pragma",
+        "noSideEffect",
+        "purity"
+      ],
+      "examples": [
+        "Error: 'noSideEffect' pragma expected"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_pragma_compile_time",
+      "pattern": "Error: '(.+)' is not a compile-time proc",
+      "type": "PragmaError",
+      "description": "Procedure used in compileTime context is not marked as compileTime",
+      "root_cause": "nim_pragma_error",
+      "suggestion": "Add {.compileTime.} pragma to procedure",
+      "category": "nim",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "pragma",
+        "compileTime",
+        "macro"
+      ],
+      "examples": [
+        "Error: 'generateCode' is not a compile-time proc",
+        "Error: 'processTemplate' is not a compile-time proc"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_pragma_raises",
+      "pattern": "Error: can raise an unlisted exception: (.+)",
+      "type": "PragmaError",
+      "description": "Procedure raises exceptions not listed in raises pragma",
+      "root_cause": "nim_pragma_error",
+      "suggestion": "Update {.raises: [].} pragma to include all possible exceptions or handle them",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "pragma",
+        "raises",
+        "exception"
+      ],
+      "examples": [
+        "Error: can raise an unlisted exception: IOError",
+        "Error: can raise an unlisted exception: ValueError"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_pragma_missing_extern",
+      "pattern": "Error: for a .dll import, a declarator needs the '(.+)' pragma",
+      "type": "PragmaError",
+      "description": "Missing extern pragma for DLL import",
+      "root_cause": "nim_pragma_error",
+      "suggestion": "Add {.importc.} or {.dynlib.} pragma for external imports",
+      "category": "nim",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "pragma",
+        "importc",
+        "dynlib"
+      ],
+      "examples": [
+        "Error: for a .dll import, a declarator needs the 'importc' pragma",
+        "Error: for a .dll import, a declarator needs the 'dynlib' pragma"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_pragma_invalid_push",
+      "pattern": "Error: invalid pragma pop: '(.+)'",
+      "type": "PragmaError",
+      "description": "Invalid pragma pop with no matching push",
+      "root_cause": "nim_pragma_error",
+      "suggestion": "Ensure each {.pop.} has a matching {.push.}",
+      "category": "nim",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "pragma",
+        "push",
+        "pop"
+      ],
+      "examples": [
+        "Error: invalid pragma pop: 'checks'",
+        "Error: invalid pragma pop: 'inline'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "nim_pragma_experimental",
+      "pattern": "Error: '(.+)' is an experimental feature",
+      "type": "PragmaError",
+      "description": "Using an experimental feature without the experimental pragma",
+      "root_cause": "nim_pragma_error",
+      "suggestion": "Add {.experimental: \"featureName\".} pragma to enable the feature",
+      "category": "nim",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "pragma",
+        "experimental"
+      ],
+      "examples": [
+        "Error: 'dotOperators' is an experimental feature",
+        "Error: 'strictFuncs' is an experimental feature"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

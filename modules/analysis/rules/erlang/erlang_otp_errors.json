@@ -365,5 +365,204 @@
       "rule_type": "error_detection",
       "dependencies": []
     }
+  ],
+    {
+      "id": "erlang_behaviour_callback_missing",
+      "pattern": "undefined (callback|behaviour) function ([\\w:]+/\\d+)",
+      "type": "RuntimeError",
+      "description": "Required behaviour callback function is missing",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Implement all required callback functions for the OTP behaviour",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "behaviour",
+        "callback"
+      ],
+      "examples": [
+        "undefined callback function handle_call/3",
+        "undefined behaviour function init/1"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_behaviour_callback_wrong_arity",
+      "pattern": "(callback|behaviour) function ([\\w:]+/\\d+) has wrong arity",
+      "type": "RuntimeError",
+      "description": "Behaviour callback function has wrong arity",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Fix the arity of the callback function to match the behaviour specification",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "behaviour",
+        "callback",
+        "arity"
+      ],
+      "examples": [
+        "callback function handle_call/2 has wrong arity",
+        "behaviour function init/2 has wrong arity"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_gen_server_noreply_timeout",
+      "pattern": "gen_server.*?timeout.*?in state",
+      "type": "RuntimeError",
+      "description": "GenServer timeout in noreply state",
+      "root_cause": "erlang_genserver_error",
+      "suggestion": "Handle timeout in handle_info callback or remove timeout from noreply tuple",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_server",
+        "timeout",
+        "noreply"
+      ],
+      "examples": [
+        "gen_server timeout in state",
+        "timeout event in current state"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_gen_statem_callback_mode",
+      "pattern": "undefined callback_mode for gen_statem",
+      "type": "RuntimeError",
+      "description": "Missing callback_mode function in gen_statem",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Implement callback_mode/0 to return state_functions or handle_event_function",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "gen_statem",
+        "callback_mode"
+      ],
+      "examples": [
+        "undefined callback_mode for gen_statem",
+        "missing callback_mode function"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_supervisor_wrong_return",
+      "pattern": "supervisor.*?init/1 callback (failed|returned bad value)",
+      "type": "RuntimeError",
+      "description": "Supervisor init/1 callback returned incorrect value",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Return {ok, {SupFlags, ChildSpecs}} from supervisor init/1 callback",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "supervisor",
+        "init"
+      ],
+      "examples": [
+        "supervisor init/1 callback failed",
+        "supervisor init/1 callback returned bad value"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_supervisor_child_failed",
+      "pattern": "supervisor.*?child.*?failed to start",
+      "type": "RuntimeError",
+      "description": "Supervisor child failed to start",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Check child specification and start function",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "supervisor",
+        "child"
+      ],
+      "examples": [
+        "supervisor child process failed to start",
+        "child specification failed to start child"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_otp_application_env",
+      "pattern": "application environment for key (\\w+) not found",
+      "type": "RuntimeError",
+      "description": "Missing application environment variable",
+      "root_cause": "erlang_otp_error",
+      "suggestion": "Set environment variable in application specification or config file",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "otp",
+        "application",
+        "environment"
+      ],
+      "examples": [
+        "application environment for key database_url not found",
+        "missing application environment variable"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
   ]
 }

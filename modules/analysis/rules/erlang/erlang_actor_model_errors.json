@@ -1,0 +1,342 @@
+{
+  "name": "Erlang Actor Model Errors",
+  "description": "Rules for detecting Erlang actor model and concurrency pattern errors",
+  "rules": [
+    {
+      "id": "erlang_message_queue_overflow",
+      "pattern": "message queue overflow",
+      "type": "RuntimeError",
+      "description": "Process message queue overflow",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Optimize message handling or increase message queue limit",
+      "category": "erlang",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "message_queue",
+        "overflow"
+      ],
+      "examples": [
+        "message queue overflow",
+        "process <0.123.0> message queue overflow"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_mailbox_overload",
+      "pattern": "mailbox.*?overload",
+      "type": "RuntimeError",
+      "description": "Process mailbox overload",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Improve message processing speed or reduce message volume",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "mailbox",
+        "overload"
+      ],
+      "examples": [
+        "mailbox overload",
+        "process mailbox overload detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_blocking_operation",
+      "pattern": "blocking operation in process",
+      "type": "RuntimeError",
+      "description": "Blocking operation in actor process",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Use non-blocking operations or spawn separate process",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "blocking",
+        "operation"
+      ],
+      "examples": [
+        "blocking operation in process",
+        "process blocked by long operation"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_message_format_error",
+      "pattern": "unexpected message format",
+      "type": "RuntimeError",
+      "description": "Unexpected message format in receive",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Handle unexpected message formats or fix sender",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "message",
+        "format"
+      ],
+      "examples": [
+        "unexpected message format",
+        "message pattern did not match"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_process_limit_reached",
+      "pattern": "process limit reached",
+      "type": "RuntimeError",
+      "description": "System process limit reached",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Reduce number of processes or increase system limits",
+      "category": "erlang",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "process",
+        "limit"
+      ],
+      "examples": [
+        "process limit reached",
+        "system cannot create more processes"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_selective_receive_bottleneck",
+      "pattern": "selective receive performance",
+      "type": "PerformanceWarning",
+      "description": "Selective receive causing performance bottleneck",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Restructure receive patterns or use separate processes",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "selective_receive",
+        "performance"
+      ],
+      "examples": [
+        "selective receive performance bottleneck",
+        "message queue scan performance issue"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_message_loop_detected",
+      "pattern": "message loop detected",
+      "type": "RuntimeError",
+      "description": "Message loop between processes detected",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Fix message handling logic to prevent infinite loops",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "message",
+        "loop"
+      ],
+      "examples": [
+        "message loop detected",
+        "infinite message cycle between processes"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_process_leak",
+      "pattern": "process leak detected",
+      "type": "RuntimeError",
+      "description": "Process leak detected",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Ensure processes are properly terminated when no longer needed",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "process",
+        "leak"
+      ],
+      "examples": [
+        "process leak detected",
+        "processes accumulating without termination"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_process_state_corruption",
+      "pattern": "process state corruption",
+      "type": "RuntimeError",
+      "description": "Process state corrupted",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Check state management logic in process loop",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "state",
+        "corruption"
+      ],
+      "examples": [
+        "process state corruption",
+        "invalid state transition in process"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_registered_name_conflict",
+      "pattern": "registered name.*?conflict",
+      "type": "RuntimeError",
+      "description": "Registered process name conflict",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Ensure unique registered names or handle registration failures",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "registered",
+        "name"
+      ],
+      "examples": [
+        "registered name conflict",
+        "process name already registered"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_race_condition",
+      "pattern": "race condition detected",
+      "type": "RuntimeError",
+      "description": "Race condition between processes",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Use proper synchronization mechanisms or redesign message flow",
+      "category": "erlang",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "race",
+        "condition"
+      ],
+      "examples": [
+        "race condition detected",
+        "concurrent state modification issue"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "erlang_too_many_links",
+      "pattern": "too many links",
+      "type": "RuntimeError",
+      "description": "Process has too many links",
+      "root_cause": "erlang_actor_model_error",
+      "suggestion": "Reduce number of links or use monitors instead",
+      "category": "erlang",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "erlang",
+        "actor_model",
+        "link",
+        "limit"
+      ],
+      "examples": [
+        "too many links",
+        "process link limit exceeded"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

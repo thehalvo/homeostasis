@@ -214,5 +214,171 @@
       "rule_type": "error_detection",
       "dependencies": []
     }
+  ],
+    {
+      "id": "zig_memory_slice_bounds",
+      "pattern": "error: slice access out of bounds",
+      "type": "MemoryError",
+      "description": "Accessing a slice beyond its bounds",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Check slice bounds and ensure indexes are valid",
+      "category": "zig",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "safety",
+        "slice",
+        "bounds"
+      ],
+      "examples": [
+        "error: slice access out of bounds"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_sentinel_mismatch",
+      "pattern": "error: expected sentinel '(.*)' but found '(.*)'",
+      "type": "MemoryError",
+      "description": "Sentinel-terminated pointer with incorrect sentinel value",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Ensure sentinel-terminated pointers have the correct termination value",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "safety",
+        "sentinel"
+      ],
+      "examples": [
+        "error: expected sentinel '0' but found '10'",
+        "error: expected sentinel 'null' but found 'undefined'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_size_mismatch",
+      "pattern": "error: expected size (\\d+) but got size (\\d+)",
+      "type": "MemoryError",
+      "description": "Memory size mismatch in allocation or copy operation",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Ensure correct memory size calculations",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "allocation",
+        "size"
+      ],
+      "examples": [
+        "error: expected size 64 but got size 32"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_undefined_behavior",
+      "pattern": "error: undefined behavior",
+      "type": "MemoryError",
+      "description": "Undefined behavior detected in memory operations",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Avoid unsafe memory operations and ensure all behavior is well-defined",
+      "category": "zig",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "safety",
+        "undefined"
+      ],
+      "examples": [
+        "error: undefined behavior"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_dereference_null",
+      "pattern": "error: null pointer dereference",
+      "type": "MemoryError",
+      "description": "Dereferencing a null pointer",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Add null check before dereferencing optional pointers",
+      "category": "zig",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "safety",
+        "null",
+        "optional"
+      ],
+      "examples": [
+        "error: null pointer dereference"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_memory_unaligned_access",
+      "pattern": "error: unaligned access",
+      "type": "MemoryError",
+      "description": "Accessing memory with improper alignment",
+      "root_cause": "zig_memory_error",
+      "suggestion": "Ensure memory access is properly aligned for the data type",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "memory",
+        "alignment",
+        "access"
+      ],
+      "examples": [
+        "error: unaligned access"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
   ]
 }

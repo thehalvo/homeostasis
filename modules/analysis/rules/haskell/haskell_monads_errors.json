@@ -223,5 +223,171 @@
       "rule_type": "error_detection",
       "dependencies": []
     }
+  ],
+    {
+      "id": "haskell_monad_fail_no_instance",
+      "pattern": "No instance for \\(MonadFail ([^)]+)\\)",
+      "type": "TypeError",
+      "description": "Type lacks MonadFail instance required for pattern matching in do-notation",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Use a type with MonadFail instance or avoid pattern matching in do-notation",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "monadfail",
+        "pattern"
+      ],
+      "examples": [
+        "No instance for (MonadFail MyType)",
+        "No instance for (MonadFail (Either String))"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_monad_applicative_superclass",
+      "pattern": "No instance for \\(Applicative ([^)]+)\\).*arising from the superclasses of an instance declaration",
+      "type": "TypeError",
+      "description": "Missing Applicative instance when defining Monad",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Define Applicative instance before Monad instance",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "applicative",
+        "superclass"
+      ],
+      "examples": [
+        "No instance for (Applicative MyType) arising from the superclasses of an instance declaration"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_monad_law_violation",
+      "pattern": "warning: .*not obey.*(monad|applicative) laws",
+      "type": "TypeError",
+      "description": "Potential violation of monad laws",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Ensure monad instance follows the monad laws",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "haskell",
+        "monad",
+        "laws",
+        "warning"
+      ],
+      "examples": [
+        "warning: instance does not obey monad laws",
+        "warning: definition may not obey applicative laws"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_monad_join_error",
+      "pattern": "Couldn't match type '[^']+' with 'm \\(m [^']+'\\)",
+      "type": "TypeError",
+      "description": "Error using join or flattening nested monads",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Use join or (>>=/=<<) to flatten nested monads",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "join",
+        "nested"
+      ],
+      "examples": [
+        "Couldn't match type 'IO Int' with 'IO (IO Int)'",
+        "Couldn't match type 'Maybe a' with 'Maybe (Maybe a)'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_monad_stack_order",
+      "pattern": "Couldn't match type '([^']+) \\(([^']+) [^']+\\)' with '([^']+) \\(([^']+) [^']+\\)'",
+      "type": "TypeError",
+      "description": "Incorrect monad transformer stack order",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Check monad transformer stack order",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "haskell",
+        "monad",
+        "transformer",
+        "stack"
+      ],
+      "examples": [
+        "Couldn't match type 'ReaderT r (StateT s IO)' with 'StateT s (ReaderT r IO)'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_monad_comprehension_error",
+      "pattern": "parse error in do-notation",
+      "type": "SyntaxError",
+      "description": "Syntax error in do-notation or monad comprehension",
+      "root_cause": "haskell_monad_error",
+      "suggestion": "Check do-notation syntax for missing <- or missing expressions",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "monad",
+        "do",
+        "comprehension"
+      ],
+      "examples": [
+        "parse error in do-notation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
   ]
 }

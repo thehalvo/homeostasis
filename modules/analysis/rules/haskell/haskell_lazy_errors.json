@@ -225,5 +225,173 @@
       "rule_type": "error_detection",
       "dependencies": []
     }
+  ],
+    {
+      "id": "haskell_stack_overflow",
+      "pattern": "stack overflow",
+      "type": "RuntimeError",
+      "description": "Stack overflow due to excessive recursion or lazy evaluation",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Add strictness or use tail recursion",
+      "category": "haskell",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "lazy",
+        "stack",
+        "recursion"
+      ],
+      "examples": [
+        "stack overflow",
+        "program exceeded the stack limit"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_lazy_pattern_matching",
+      "pattern": "non-exhaustive patterns in .*",
+      "type": "RuntimeError",
+      "description": "Lazy evaluation led to non-exhaustive pattern match",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Make pattern matches exhaustive or add guards",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "lazy",
+        "pattern",
+        "match"
+      ],
+      "examples": [
+        "non-exhaustive patterns in function",
+        "non-exhaustive patterns in case expression"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_irrefutable_pattern",
+      "pattern": "irrefutable pattern failed",
+      "type": "RuntimeError",
+      "description": "Lazy irrefutable pattern match failed",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Replace irrefutable pattern with explicit pattern matching",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "lazy",
+        "pattern",
+        "irrefutable"
+      ],
+      "examples": [
+        "irrefutable pattern failed",
+        "irrefutable pattern in let binding failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_bottom_value",
+      "pattern": "Exception: (.*)undefined",
+      "type": "RuntimeError",
+      "description": "Lazy evaluation of undefined/bottom value",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Remove undefined values or add exception handling",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "lazy",
+        "undefined",
+        "bottom"
+      ],
+      "examples": [
+        "Exception: Prelude.undefined",
+        "Exception: <interactive>:1:1-9: undefined"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_deepseq_error",
+      "pattern": "error evaluating (.*)with Control.DeepSeq.deepseq",
+      "type": "RuntimeError",
+      "description": "Error during strict evaluation with deepseq",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Check data structure for undefined values before deepseq",
+      "category": "haskell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "lazy",
+        "deepseq",
+        "nf"
+      ],
+      "examples": [
+        "error evaluating value with Control.DeepSeq.deepseq",
+        "deepseq encountered undefined value"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "haskell_strict_pragma_error",
+      "pattern": "STRICT pragma used without StrictData extension",
+      "type": "SyntaxError",
+      "description": "STRICT pragma used without enabling required extension",
+      "root_cause": "haskell_lazy_error",
+      "suggestion": "Enable StrictData language extension",
+      "category": "haskell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "haskell",
+        "strict",
+        "pragma",
+        "extension"
+      ],
+      "examples": [
+        "STRICT pragma used without StrictData extension"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
   ]
 }

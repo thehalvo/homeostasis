@@ -1,0 +1,254 @@
+{
+  "name": "F# Discriminated Union Errors",
+  "description": "Rules for detecting F# discriminated union and pattern matching errors",
+  "rules": [
+    {
+      "id": "fsharp_du_incomplete_pattern_match",
+      "pattern": "Incomplete pattern matches on this expression.\\s*The (.+) case(s?) [^.]+.",
+      "type": "PatternMatchError",
+      "description": "Incomplete pattern match for discriminated union",
+      "root_cause": "fsharp_du_error",
+      "suggestion": "Add missing cases to pattern match or use a wildcard pattern",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "discriminated_union",
+        "pattern_matching",
+        "incomplete"
+      ],
+      "examples": [
+        "Incomplete pattern matches on this expression. The 'None' case is not covered.",
+        "Incomplete pattern matches on this expression. The 'Failure' case is not covered."
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_du_missing_field",
+      "pattern": "The field '([^']+)' is not defined in type '([^']+)'",
+      "type": "DiscriminatedUnionError",
+      "description": "Attempting to access a field that doesn't exist in a discriminated union case",
+      "root_cause": "fsharp_du_error",
+      "suggestion": "Use pattern matching to access fields of specific union cases",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "discriminated_union",
+        "field",
+        "access"
+      ],
+      "examples": [
+        "The field 'Value' is not defined in type 'Option<int>'",
+        "The field 'Message' is not defined in type 'Result<int, string>'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_du_redundant_pattern",
+      "pattern": "This pattern will never be matched",
+      "type": "PatternMatchError",
+      "description": "Redundant pattern in discriminated union pattern matching",
+      "root_cause": "fsharp_du_error",
+      "suggestion": "Remove redundant pattern or reorder patterns",
+      "category": "fsharp",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "discriminated_union",
+        "pattern_matching",
+        "redundant"
+      ],
+      "examples": [
+        "This pattern will never be matched",
+        "This rule is unreachable"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_du_recursive_definition",
+      "pattern": "The struct, record or union type '([^']+)' has a direct cyclic dependency on itself",
+      "type": "DiscriminatedUnionError",
+      "description": "Recursive discriminated union definition without indirection",
+      "root_cause": "fsharp_du_error",
+      "suggestion": "Use references (pointers) to break recursive dependency cycle",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "discriminated_union",
+        "recursive",
+        "cycle"
+      ],
+      "examples": [
+        "The struct, record or union type 'BinaryTree' has a direct cyclic dependency on itself"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_du_active_pattern_error",
+      "pattern": "The active pattern '([^']+)' is not defined",
+      "type": "PatternMatchError",
+      "description": "Undefined active pattern in pattern matching",
+      "root_cause": "fsharp_du_error",
+      "suggestion": "Define the active pattern or correct its name",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "discriminated_union",
+        "active_pattern",
+        "undefined"
+      ],
+      "examples": [
+        "The active pattern 'IsEven' is not defined",
+        "The active pattern '(|Positive|Negative|Zero|)' is not defined"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_du_parameter_mismatch",
+      "pattern": "This pattern is matched by the pattern at line ([0-9]+), column ([0-9]+)",
+      "type": "PatternMatchError",
+      "description": "Pattern match parameter count mismatch",
+      "root_cause": "fsharp_du_error",
+      "suggestion": "Ensure pattern matches have the correct number of parameters",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "discriminated_union",
+        "pattern_matching",
+        "parameter"
+      ],
+      "examples": [
+        "This pattern is matched by the pattern at line 10, column 5"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_du_type_mismatch",
+      "pattern": "Type mismatch\\. Expecting a\\s+(.+?)\\s+but given a\\s+(.+)",
+      "type": "DiscriminatedUnionError",
+      "description": "Type mismatch in discriminated union usage",
+      "root_cause": "fsharp_du_error",
+      "suggestion": "Ensure types match in discriminated union construction and pattern matching",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "discriminated_union",
+        "type",
+        "mismatch"
+      ],
+      "examples": [
+        "Type mismatch. Expecting a 'Option<int>' but given a 'Option<string>'",
+        "Type mismatch. Expecting a 'Result<int, string>' but given a 'Result<int, int>'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_du_struct_limitation",
+      "pattern": "Discriminated unions cannot have the 'Struct' attribute",
+      "type": "DiscriminatedUnionError",
+      "description": "Struct attribute applied to discriminated union",
+      "root_cause": "fsharp_du_error",
+      "suggestion": "Remove the 'Struct' attribute or use a different type",
+      "category": "fsharp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "discriminated_union",
+        "struct",
+        "attribute"
+      ],
+      "examples": [
+        "Discriminated unions cannot have the 'Struct' attribute"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "fsharp_du_single_case_warning",
+      "pattern": "This construct is for creating a union type with multiple cases\\. Consider using a simple type with fields instead.",
+      "type": "DiscriminatedUnionError",
+      "description": "Single-case discriminated union warning",
+      "root_cause": "fsharp_du_error",
+      "suggestion": "Use a record type instead of a single-case discriminated union",
+      "category": "fsharp",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "fsharp",
+        "discriminated_union",
+        "single_case",
+        "warning"
+      ],
+      "examples": [
+        "This construct is for creating a union type with multiple cases. Consider using a simple type with fields instead."
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

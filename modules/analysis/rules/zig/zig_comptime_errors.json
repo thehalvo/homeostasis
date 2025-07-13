@@ -213,5 +213,167 @@
       "rule_type": "error_detection",
       "dependencies": []
     }
+  ],
+    {
+      "id": "zig_comptime_switch_not_exhaustive",
+      "pattern": "error: switch must handle all possibilities",
+      "type": "ComptimeError",
+      "description": "Switch statement must handle all enum values or include else clause",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Add missing enum cases or an else clause to the switch statement",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "switch",
+        "exhaustive"
+      ],
+      "examples": [
+        "error: switch must handle all possibilities"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_self_referential_type",
+      "pattern": "error: type is not fully resolved",
+      "type": "ComptimeError",
+      "description": "Type definition contains self-reference that cannot be resolved",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Fix circular type definition or use indirection (pointer type)",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "type",
+        "circular"
+      ],
+      "examples": [
+        "error: type is not fully resolved"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_stage1_value_limit",
+      "pattern": "error: value too complex for stage1 compiler",
+      "type": "ComptimeError",
+      "description": "Compile-time computation too complex for the stage1 compiler",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Simplify compile-time computation or move calculation to runtime",
+      "category": "zig",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "stage1",
+        "complexity"
+      ],
+      "examples": [
+        "error: value too complex for stage1 compiler"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_inline_loop",
+      "pattern": "error: 'comptime' is redundant here; it applies to the innermost container, block, or declaration",
+      "type": "ComptimeError",
+      "description": "Redundant comptime usage in code",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Remove redundant comptime keyword",
+      "category": "zig",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "redundant"
+      ],
+      "examples": [
+        "error: 'comptime' is redundant here; it applies to the innermost container, block, or declaration"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_eval_branch",
+      "pattern": "error: unable to evaluate branch while compiling",
+      "type": "ComptimeError",
+      "description": "Cannot evaluate if/switch condition at compile time",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Ensure if/switch condition can be evaluated at compile time or move to runtime",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "branch",
+        "conditional"
+      ],
+      "examples": [
+        "error: unable to evaluate branch while compiling"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_comptime_recursive_type",
+      "pattern": "error: recursive type has infinite size",
+      "type": "ComptimeError",
+      "description": "Type definition is recursive without using pointers",
+      "root_cause": "zig_comptime_error",
+      "suggestion": "Use pointers to break recursive type definition cycles",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "comptime",
+        "type",
+        "recursive"
+      ],
+      "examples": [
+        "error: recursive type has infinite size"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
   ]
 }

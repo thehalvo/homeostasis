@@ -1,0 +1,255 @@
+{
+  "name": "Crystal Union Types Errors",
+  "description": "Rules for detecting Crystal union types and type inference errors",
+  "rules": [
+    {
+      "id": "crystal_union_no_overload",
+      "pattern": "no overload matches '(.*?)' with types (.*)",
+      "type": "UnionTypeError",
+      "description": "No method overload for union type arguments",
+      "root_cause": "crystal_union_type_error",
+      "suggestion": "Use `is_a?` or `as` to narrow down the union type before method call",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "union",
+        "type",
+        "overload"
+      ],
+      "examples": [
+        "no overload matches 'process' with types Union(String, Int32)",
+        "no overload matches 'to_json' with types Union(Array(Int32), Hash(String, String))"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_union_undefined_method",
+      "pattern": "undefined method '(.*?)' for (Union\\(.*?\\))",
+      "type": "UnionTypeError",
+      "description": "Method not defined for all types in the union",
+      "root_cause": "crystal_union_type_error",
+      "suggestion": "Ensure method is defined for all types in the union or use `is_a?` to narrow the type",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "union",
+        "type",
+        "method"
+      ],
+      "examples": [
+        "undefined method 'size' for Union(String, Int32)",
+        "undefined method 'keys' for Union(Hash(String, Int32), Array(String))"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_union_cast_error",
+      "pattern": "cast from (.*) to (.*) failed",
+      "type": "UnionTypeError",
+      "description": "Unsuccessful cast from union type to specific type",
+      "root_cause": "crystal_union_type_error",
+      "suggestion": "Use `is_a?` check before casting or handle cast failure with rescue",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "union",
+        "type",
+        "cast"
+      ],
+      "examples": [
+        "cast from Union(String, Int32) to String failed",
+        "cast from Union(Nil, Bool) to Bool failed"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_union_nilable_error",
+      "pattern": "undefined method '(.*?)' for Nil",
+      "type": "UnionTypeError",
+      "description": "Attempting to call a method on a nilable type that is nil",
+      "root_cause": "crystal_union_type_error",
+      "suggestion": "Use safe navigation operator '?' or check for nil before method call",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "union",
+        "nilable",
+        "nil"
+      ],
+      "examples": [
+        "undefined method 'size' for Nil",
+        "undefined method 'to_s' for Nil"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_union_not_restricted",
+      "pattern": "can't restrict (Union\\(.*?\\)) to (.*)",
+      "type": "UnionTypeError",
+      "description": "Cannot restrict union type to a type not included in the union",
+      "root_cause": "crystal_union_type_error",
+      "suggestion": "Check that type restrictions only include types present in the union",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "union",
+        "type",
+        "restriction"
+      ],
+      "examples": [
+        "can't restrict Union(String, Int32) to Bool",
+        "can't restrict Union(Nil, Int32) to String"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_union_ambiguous_call",
+      "pattern": "ambiguous call, implicit cast of (.*) to (.*) is forbidden",
+      "type": "UnionTypeError",
+      "description": "Ambiguous method call with union type arguments",
+      "root_cause": "crystal_union_type_error",
+      "suggestion": "Use explicit type cast to disambiguate method call",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "union",
+        "type",
+        "ambiguous"
+      ],
+      "examples": [
+        "ambiguous call, implicit cast of Union(Int32, Float64) to Int32 is forbidden",
+        "ambiguous call, implicit cast of Union(String, Symbol) to String is forbidden"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_union_incorrect_usage",
+      "pattern": "expected argument #(\\d+) to '(.*?)' to be (.*), not (Union\\(.*?\\))",
+      "type": "UnionTypeError",
+      "description": "Union type used where specific type is required",
+      "root_cause": "crystal_union_type_error",
+      "suggestion": "Cast union type to specific type or use method that accepts union types",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "union",
+        "type",
+        "argument"
+      ],
+      "examples": [
+        "expected argument #1 to 'process' to be String, not Union(String, Int32)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_union_type_cant_infer",
+      "pattern": "can't infer type of variable '(.*?)' with initializer",
+      "type": "UnionTypeError",
+      "description": "Cannot infer type due to complex union or conditional initialization",
+      "root_cause": "crystal_union_type_error",
+      "suggestion": "Add explicit type annotation for variable",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "union",
+        "type",
+        "inference"
+      ],
+      "examples": [
+        "can't infer type of variable 'result' with initializer"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "crystal_union_type_flow",
+      "pattern": "type must be (.*), not (Union\\(.*?\\))",
+      "type": "UnionTypeError",
+      "description": "Union type where flow-sensitive typing wasn't able to narrow the type",
+      "root_cause": "crystal_union_type_error",
+      "suggestion": "Add explicit type checks to narrow union type",
+      "category": "crystal",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "crystal",
+        "union",
+        "type",
+        "flow"
+      ],
+      "examples": [
+        "type must be String, not Union(String, Int32)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

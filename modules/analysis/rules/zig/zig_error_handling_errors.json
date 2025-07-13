@@ -1,0 +1,249 @@
+{
+  "name": "Zig Error Handling Errors",
+  "description": "Rules for detecting Zig error union and error handling issues",
+  "rules": [
+    {
+      "id": "zig_error_not_handled",
+      "pattern": "error: error is not handled",
+      "type": "ErrorHandlingError",
+      "description": "Error is not handled in a function that returns an error union",
+      "root_cause": "zig_error_not_handled",
+      "suggestion": "Add try, catch, or unwrap with |err| to handle the error",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "error_handling",
+        "error_union"
+      ],
+      "examples": [
+        "error: error is not handled"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_error_payload_missing",
+      "pattern": "error: expected error union type, found '(.*)'",
+      "type": "ErrorHandlingError",
+      "description": "Attempting to catch an error from a non-error type",
+      "root_cause": "zig_error_not_union",
+      "suggestion": "Only use catch/try with error union types",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "error_handling",
+        "error_union",
+        "catch"
+      ],
+      "examples": [
+        "error: expected error union type, found 'u32'",
+        "error: expected error union type, found 'void'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_error_return_non_error",
+      "pattern": "error: expected type '(error{.*}|anyerror)!(.+)', found '(.+)'",
+      "type": "ErrorHandlingError",
+      "description": "Returning a non-error union from a function that should return an error union",
+      "root_cause": "zig_error_return_type",
+      "suggestion": "Ensure the returned value matches the error union return type",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "error_handling",
+        "error_union",
+        "return_type"
+      ],
+      "examples": [
+        "error: expected type 'error{OutOfMemory}![]u8', found '*[]u8'",
+        "error: expected type 'anyerror!void', found 'void'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_error_missing_payload",
+      "pattern": "error: error.(.+) not a member of 'error{(.*)}'",
+      "type": "ErrorHandlingError",
+      "description": "Error set does not contain the specified error",
+      "root_cause": "zig_error_set_mismatch",
+      "suggestion": "Add the missing error to the error set or use a catch-all error set",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "error_handling",
+        "error_set"
+      ],
+      "examples": [
+        "error: error.OutOfBounds not a member of 'error{OutOfMemory,InvalidArgument}'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_error_unreachable",
+      "pattern": "error: reached unreachable code",
+      "type": "ErrorHandlingError",
+      "description": "Hit unreachable code at runtime",
+      "root_cause": "zig_logic_error",
+      "suggestion": "Fix logic error or add missing case handling",
+      "category": "zig",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "error_handling",
+        "unreachable",
+        "logic"
+      ],
+      "examples": [
+        "error: reached unreachable code"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_error_ignored_result",
+      "pattern": "error: unused (function|expression) result",
+      "type": "ErrorHandlingError",
+      "description": "Ignoring a result that might contain an error",
+      "root_cause": "zig_error_ignored",
+      "suggestion": "Use _ = to explicitly ignore result or handle the possible error",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "error_handling",
+        "unused",
+        "result"
+      ],
+      "examples": [
+        "error: unused function result",
+        "error: unused expression result"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_error_merge_conflict",
+      "pattern": "error: cannot merge error sets",
+      "type": "ErrorHandlingError",
+      "description": "Cannot merge incompatible error sets",
+      "root_cause": "zig_error_set_conflict",
+      "suggestion": "Use a more general error set or ensure error sets are compatible",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "error_handling",
+        "error_set",
+        "merge"
+      ],
+      "examples": [
+        "error: cannot merge error sets"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_error_payload_capture",
+      "pattern": "error: capture of error payload requires '\\|([^|]+)\\|' syntax",
+      "type": "ErrorHandlingError",
+      "description": "Error in the syntax for capturing error payload",
+      "root_cause": "zig_error_catch_syntax",
+      "suggestion": "Use proper |err| syntax to capture error payload",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "error_handling",
+        "catch",
+        "syntax"
+      ],
+      "examples": [
+        "error: capture of error payload requires '|err|' syntax"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "zig_error_discard_nonconstant",
+      "pattern": "error: cannot discard non-constant error",
+      "type": "ErrorHandlingError",
+      "description": "Cannot ignore a runtime error without handling it",
+      "root_cause": "zig_error_discard",
+      "suggestion": "Use 'catch unreachable' or handle the error properly",
+      "category": "zig",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "zig",
+        "error_handling",
+        "discard"
+      ],
+      "examples": [
+        "error: cannot discard non-constant error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}
