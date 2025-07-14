@@ -1,0 +1,267 @@
+{
+  "name": "Shell Script Portability Issues",
+  "description": "Rules for detecting portability issues in shell scripts across different environments",
+  "rules": [
+    {
+      "id": "shell_bash_specific_feature",
+      "pattern": "\\[\\[|\\|\\||\\&\\&|<<\\<|array\\[|array=\\(|\\$\\{.*:-.*\\}|\\$\\{.*:=.*\\}|\\$\\{.*:?.*\\}|\\$\\{.*:+.*\\}|\\$\\{#.*\\}|\\$\\{.*#.*\\}|\\$\\{.*##.*\\}|\\$\\{.*%.*\\}|\\$\\{.*%%.*\\}|\\$\\{.*:.*:.*\\}|\\$\\{.*//.*\\}|\\$\\{.*/@.*\\}|read -p|read -t|read -n|read -s|read -a|declare -[aAilnrtux]|local |typeset |function |select |mapfile|readarray|let |coproc|herestring",
+      "type": "PortabilityIssue",
+      "description": "Using Bash-specific features not available in POSIX sh",
+      "root_cause": "shell_portability_issue",
+      "suggestion": "Use POSIX-compatible syntax or explicitly use #!/bin/bash",
+      "category": "shell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "bash",
+        "portability",
+        "posix"
+      ],
+      "examples": [
+        "Using [[ instead of [ for conditionals",
+        "Array syntax like array=(item1 item2)",
+        "${variable//pattern/replacement} string manipulation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_non_portable_command",
+      "pattern": "\\bgrep -[PE]\\b|\\bgrep --extended-regexp\\b|\\bgrep --perl-regexp\\b|\\bsed -[rEi]\\b|\\bsed --regexp-extended\\b|\\bsed --expression\\b|\\bcp -[uz]\\b|\\bls -[chSX]\\b|\\bmkdir -[pv]\\b|\\brm -[dirv]\\b|\\bfind -[HLPDOdpsx]\\b|\\bfind .* -regex\\b|\\bfind .* -printf\\b|\\bps -[aAdeflj]\\b|\\becho -[neE]\\b|\\bprintf\\b",
+      "type": "PortabilityIssue",
+      "description": "Using non-portable command options",
+      "root_cause": "shell_portability_issue",
+      "suggestion": "Use basic command options available across UNIX variants",
+      "category": "shell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "command",
+        "portability",
+        "unix"
+      ],
+      "examples": [
+        "grep -P for Perl regex",
+        "sed -i for in-place editing",
+        "echo -e for escape sequences"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_system_specific_path",
+      "pattern": "/proc/|/sys/|/dev/sd[a-z]|/dev/hd[a-z]|/dev/xvd[a-z]|/dev/nvme|/dev/mapper/|/etc/init.d/|/etc/rc.d/|/etc/systemd/|/lib/modules/|/lib/systemd/|/boot/grub/|/boot/grub2/|/opt/homebrew/|/usr/local/Cellar/|/Library/|/System/|/Users/|/home/[^/]+/|/mnt/c/|/mnt/d/|C:\\\\|D:\\\\|\\%APPDATA\\%|\\%PROGRAMFILES\\%",
+      "type": "PortabilityIssue",
+      "description": "Using system-specific filesystem paths",
+      "root_cause": "shell_portability_issue",
+      "suggestion": "Use variables or configuration for system-specific paths",
+      "category": "shell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "filesystem",
+        "portability",
+        "path"
+      ],
+      "examples": [
+        "Accessing Linux-specific /proc filesystem",
+        "Using macOS-specific /Library paths",
+        "Referencing Windows paths like C:\\"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_gnu_specific_utility",
+      "pattern": "\\bgnuplot\\b|\\bgawk\\b|\\bgfind\\b|\\bgsed\\b|\\bggrep\\b|\\bgmake\\b|\\bgcc\\b|\\bgdb\\b|\\bgtar\\b|\\bgzip\\b|\\bgmake\\b|\\bgreadlink\\b|\\bgdu\\b|\\bgdf\\b|\\bgdircolors\\b|\\bgpatch\\b|\\bgwc\\b|\\bgtouch\\b|\\bgmkdir\\b|\\ggrm\\b|\\bgchmod\\b|\\bgchown\\b",
+      "type": "PortabilityIssue",
+      "description": "Using GNU-specific utilities not available on all UNIX systems",
+      "root_cause": "shell_portability_issue",
+      "suggestion": "Use POSIX alternatives or check for utility availability",
+      "category": "shell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "gnu",
+        "portability",
+        "utility"
+      ],
+      "examples": [
+        "Using gawk instead of awk",
+        "Relying on GNU-specific options in core utilities",
+        "Using GNU extensions without checking availability"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_non_portable_interpreter_path",
+      "pattern": "#!((?!(\\/bin\\/sh|\\/usr\\/bin\\/env sh)).)*$",
+      "type": "PortabilityIssue",
+      "description": "Using non-portable interpreter path in shebang",
+      "root_cause": "shell_portability_issue",
+      "suggestion": "Use #!/usr/bin/env interpreter for more portable scripts",
+      "category": "shell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "shebang",
+        "portability",
+        "interpreter"
+      ],
+      "examples": [
+        "#!/bin/bash (not portable to systems without bash in /bin)",
+        "#!/usr/local/bin/python",
+        "#!/opt/homebrew/bin/perl"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_os_specific_command",
+      "pattern": "\\bapt-get\\b|\\bapt\\b|\\bdpkg\\b|\\byum\\b|\\bdnf\\b|\\bzypper\\b|\\bpacman\\b|\\byast\\b|\\bemerge\\b|\\bbrew\\b|\\bport\\b|\\bpkg\\b|\\bipkg\\b|\\bswupd\\b|\\bxbps-install\\b|\\bapk\\b|\\bnixos-rebuild\\b|\\bcygwin\\b|\\bchocolatey\\b|\\bscoop\\b|\\bwinget\\b|\\bnuget\\b|\\bpowershell\\b|\\bcmd\\.exe\\b|\\bwsl\\b|\\bcyg\\b|\\bmingw\\b",
+      "type": "PortabilityIssue",
+      "description": "Using OS-specific package management or system commands",
+      "root_cause": "shell_portability_issue",
+      "suggestion": "Check OS type before using OS-specific commands",
+      "category": "shell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "os",
+        "portability",
+        "package"
+      ],
+      "examples": [
+        "apt-get install on Debian/Ubuntu",
+        "brew install on macOS",
+        "pacman -S on Arch Linux"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_non_posix_redirection",
+      "pattern": "[0-9]<>|&>|>&|\\d>&\\d|<\\(|>\\(|\\d<&\\d|\\d<&-|\\d>&-|\\|&|<&[0-9]|\\d>>|\\d<<|\\d<<<",
+      "type": "PortabilityIssue",
+      "description": "Using non-POSIX file descriptor operations and redirections",
+      "root_cause": "shell_portability_issue",
+      "suggestion": "Use standard POSIX redirections for maximum compatibility",
+      "category": "shell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "redirection",
+        "portability",
+        "posix"
+      ],
+      "examples": [
+        "command &> file (Bash-specific)",
+        "exec 3<> file (non-POSIX)",
+        "command > file 2>&1 (POSIX-compliant)"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_non_posix_test",
+      "pattern": "\\[ .* == .* \\]|\\[ .* =~ .* \\]|\\[ .* < .* \\]|\\[ .* > .* \\]|\\[ -a .* \\]|\\[ -o .* \\]|\\[ .* -nt .* \\]|\\[ .* -ot .* \\]|\\[ .* -ef .* \\]|\\[ -v .* \\]",
+      "type": "PortabilityIssue",
+      "description": "Using non-POSIX test operations in [ ] constructs",
+      "root_cause": "shell_portability_issue",
+      "suggestion": "Use POSIX-compatible test operators like = instead of ==",
+      "category": "shell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "test",
+        "portability",
+        "posix"
+      ],
+      "examples": [
+        "[ \"$string\" == \"value\" ]",
+        "[ \"$file1\" -nt \"$file2\" ]",
+        "[ -v variable_name ]"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_bashism_in_sh",
+      "pattern": "#!/bin/sh[\\r\\n]+.*(\\.\\.|\\[\\[|\\|\\||\\&\\&|<<\\<|array\\[|array=\\(|\\$\\{.*:-.*\\}|\\$\\{.*:=.*\\}|\\$\\{.*:?.*\\}|\\$\\{.*:+.*\\}|\\$\\{#.*\\}|\\$\\{.*#.*\\}|\\$\\{.*##.*\\}|\\$\\{.*%.*\\}|\\$\\{.*%%.*\\}|\\$\\{.*:.*:.*\\}|\\$\\{.*//.*\\}|\\$\\{.*/@.*\\}|read -p|read -t|read -n|read -s|read -a|declare -[aAilnrtux]|local |typeset |function |select |mapfile|readarray|let |coproc)",
+      "type": "PortabilityIssue",
+      "description": "Using Bash-specific features in scripts with #!/bin/sh shebang",
+      "root_cause": "shell_portability_issue",
+      "suggestion": "Change shebang to #!/bin/bash or use POSIX-compatible syntax",
+      "category": "shell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "shebang",
+        "bash",
+        "posix"
+      ],
+      "examples": [
+        "#!/bin/sh script using [[ ]] conditionals",
+        "#!/bin/sh script with array=(a b c)",
+        "#!/bin/sh script using ${var//pattern/replacement}"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,267 @@
+{
+  "name": "Shell Script Common Pitfalls",
+  "description": "Rules for detecting common pitfalls and mistakes in shell scripts",
+  "rules": [
+    {
+      "id": "shell_unquoted_variables",
+      "pattern": "\\$[A-Za-z0-9_]+\\s|\\$\\{[A-Za-z0-9_]+\\}\\s|\\$[A-Za-z0-9_]+$|\\$\\{[A-Za-z0-9_]+\\}$|\\$[A-Za-z0-9_]+[^\"']|\\$\\{[A-Za-z0-9_]+\\}[^\"']|if\\s+\\[\\s+-[zn]\\s+\\$[A-Za-z0-9_]+\\s+\\]|if\\s+\\[\\s+\\$[A-Za-z0-9_]+\\s+(-eq|-ne|-lt|-le|-gt|-ge)\\s+|for\\s+[a-zA-Z0-9_]+\\s+in\\s+\\$[A-Za-z0-9_]+",
+      "type": "ShellPitfall",
+      "description": "Unquoted variables in shell script",
+      "root_cause": "shell_scripting_pitfall",
+      "suggestion": "Always quote variables to prevent word splitting and globbing",
+      "category": "shell",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "shell",
+        "bash",
+        "variable",
+        "quoting"
+      ],
+      "examples": [
+        "if [ -z $VAR ]",
+        "for file in $FILES",
+        "rm -rf $DIRECTORY/*"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_uninitialized_variable",
+      "pattern": "\\$\\{[A-Za-z0-9_]+:\\-|\\$\\{[A-Za-z0-9_]+:-|\\$\\{[A-Za-z0-9_]+:=|\\$\\{[A-Za-z0-9_]+:=|set -u|set -o nounset|unbound variable|parameter null or not set|undefined variable|variable not set|parameter not set",
+      "type": "ShellPitfall",
+      "description": "Using uninitialized variables without defaults",
+      "root_cause": "shell_scripting_pitfall",
+      "suggestion": "Set defaults with ${VAR:-default} or enable 'set -u' to catch unset variables",
+      "category": "shell",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "bash",
+        "variable",
+        "initialization"
+      ],
+      "examples": [
+        "#!/bin/bash without set -u",
+        "rm -rf ${DIRECTORY}/",
+        "filename=${FILENAME}"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_command_injection",
+      "pattern": "eval.*\\$|`.*\\$|\\$(\\(|\\().*\\$|\\$\\(.*\\$|\\`.*\\$|\\$(.*\\$\\{[^}]+\\})|\\$(.*\\$[a-zA-Z0-9_]+)|\\`.*\\$\\{[^}]+\\}|\\`.*\\$[a-zA-Z0-9_]+|\\$\\(.*\\$\\{[^}]+\\}|\\$\\(.*\\$[a-zA-Z0-9_]+",
+      "type": "ShellPitfall",
+      "description": "Potential command injection vulnerability",
+      "root_cause": "shell_security_pitfall",
+      "suggestion": "Avoid using eval with variables or properly validate and sanitize inputs",
+      "category": "shell",
+      "severity": "critical",
+      "confidence": "medium",
+      "tags": [
+        "shell",
+        "bash",
+        "security",
+        "injection"
+      ],
+      "examples": [
+        "eval \"$USER_INPUT\"",
+        "$(echo $COMMAND)",
+        "bash -c \"$SCRIPT\""
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_unsafe_file_operations",
+      "pattern": "rm -rf /|rm -rf \\$[^\"'{]|rm -rf \\${[^}]+}[^\"']|rm -rf [^\"']*\\*|rm -rf [^\"']*\\?|rm -rf \\.|rm -f /|rm -f \\$[^\"'{]|rm -f \\${[^}]+}[^\"']|rm -f [^\"']*\\*|rm -f [^\"']*\\?|rm -f \\.",
+      "type": "ShellPitfall",
+      "description": "Unsafe use of rm with wildcards or unquoted variables",
+      "root_cause": "shell_scripting_pitfall",
+      "suggestion": "Always quote variables with rm and check if variables are set before using them",
+      "category": "shell",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "bash",
+        "file",
+        "deletion"
+      ],
+      "examples": [
+        "rm -rf $DIR/*",
+        "rm -rf /tmp/$USER/",
+        "rm -f *.backup"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_cd_without_error_check",
+      "pattern": "cd [^;\\n\\|\\&]+($|[^;\\n]*(;|\\|\\||\\&\\&))|cd [^;\\n\\|\\&]+($|[^;\\n]*[^;\\n]*(;|\\n))|cd .*[^;\\n]*($|[^;\\n]*(;|\\n))",
+      "type": "ShellPitfall",
+      "description": "Using cd without checking if it succeeded",
+      "root_cause": "shell_scripting_pitfall",
+      "suggestion": "Use 'cd /path || exit' pattern or set -e to exit on errors",
+      "category": "shell",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "shell",
+        "bash",
+        "directory",
+        "error_checking"
+      ],
+      "examples": [
+        "cd /tmp/dir",
+        "cd $DIRECTORY",
+        "cd $dir; rm -rf *"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_missing_shebang",
+      "pattern": "^[^#]|^#[^!]|^#![^/](?!bin/bash|bin/sh|usr/bin/env bash|usr/bin/env sh)",
+      "type": "ShellPitfall",
+      "description": "Missing or incorrect shebang line",
+      "root_cause": "shell_scripting_pitfall",
+      "suggestion": "Start scripts with #!/bin/bash or #!/usr/bin/env bash",
+      "category": "shell",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "bash",
+        "shebang",
+        "portability"
+      ],
+      "examples": [
+        "Script with no shebang line",
+        "#This is a bash script",
+        "#!/bin/tcsh"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_lack_of_error_handling",
+      "pattern": "set -e|set -o errexit|set -pipefail|set -o pipefail|set -E|set -o errtrace|trap .* ERR|trap .* EXIT|if .* command |if ! command |\\$\\?|\\$\\? -eq 0|\\$\\? -ne 0|status=\\$\\?|exit code|return code|failed with|command failed|operation failed",
+      "type": "ShellPitfall",
+      "description": "Missing error handling in shell script",
+      "root_cause": "shell_scripting_pitfall",
+      "suggestion": "Use set -e, set -o pipefail, or check return codes with $?",
+      "category": "shell",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "shell",
+        "bash",
+        "error",
+        "handling"
+      ],
+      "examples": [
+        "Script without set -e",
+        "Critical command without error checking",
+        "Pipeline without set -o pipefail"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_broken_pipe_chains",
+      "pattern": "grep .* \\| [^|]*$|grep .* \\| [^|]* \\| [^|]*$|awk .* \\| [^|]*$|sed .* \\| [^|]*$|sort .* \\| [^|]*$|uniq .* \\| [^|]*$|cut .* \\| [^|]*$|tr .* \\| [^|]*$",
+      "type": "ShellPitfall",
+      "description": "Using pipes without error checking",
+      "root_cause": "shell_scripting_pitfall",
+      "suggestion": "Add 'set -o pipefail' to catch errors in pipeline commands",
+      "category": "shell",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "shell",
+        "bash",
+        "pipe",
+        "error_checking"
+      ],
+      "examples": [
+        "grep pattern file.txt | awk '{print $2}'",
+        "cat file.txt | grep error | mail -s \"Errors\" admin",
+        "find . -type f | xargs rm"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_hardcoded_paths",
+      "pattern": "/usr/local/bin/|/usr/bin/|/bin/|/usr/sbin/|/sbin/|/opt/|/etc/|/var/|/home/|/tmp/|/dev/|/mnt/|/media/|/proc/|/sys/|/usr/share/|/usr/local/share/",
+      "type": "ShellPitfall",
+      "description": "Hardcoded filesystem paths in script",
+      "root_cause": "shell_portability_issue",
+      "suggestion": "Use variables or configuration files for paths to improve portability",
+      "category": "shell",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "shell",
+        "bash",
+        "portability",
+        "paths"
+      ],
+      "examples": [
+        "/usr/local/bin/python",
+        "/etc/apache2/sites-available/",
+        "/home/user/scripts/"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

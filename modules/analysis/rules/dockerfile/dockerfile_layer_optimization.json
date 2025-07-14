@@ -1,0 +1,325 @@
+{
+  "name": "Dockerfile Layer Optimization Errors",
+  "description": "Rules for detecting Dockerfile layer optimization issues and best practices",
+  "rules": [
+    {
+      "id": "dockerfile_layer_large_cache_invalidation",
+      "pattern": "large cache invalidation|unnecessary rebuild|cache busting|invalidates cache|breaks caching|inefficient layer caching|cache efficiency|layer rebuild|cache locality|improper layer order|inefficient ordering|layer dependency|layer invalidation",
+      "type": "LayerOptimizationIssue",
+      "description": "Dockerfile instruction ordering invalidates cache unnecessarily",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Order instructions from least to most frequently changing to optimize caching",
+      "category": "layer",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "cache",
+        "optimization"
+      ],
+      "examples": [
+        "COPY . /app before RUN npm install invalidates cache unnecessarily",
+        "Adding source code before installing dependencies breaks layer caching",
+        "Frequently changing files copied before stable dependencies"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_layer_large_copy",
+      "pattern": "large copy|large file|large artifact|large data|copying large|copying unnecessary|unnecessary files|bloated layer|layer size|excessive data|redundant files|large directory|size optimization|image bloat",
+      "type": "LayerOptimizationIssue",
+      "description": "Copying large or unnecessary files increases image size",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Use .dockerignore to exclude unnecessary files or multi-stage builds",
+      "category": "layer",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "size",
+        "optimization"
+      ],
+      "examples": [
+        "COPY . /app includes large files like node_modules or .git",
+        "Copying unnecessary build artifacts increases image size",
+        "Large data files included in image without .dockerignore"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_layer_multiple_runs",
+      "pattern": "multiple RUN|consecutive RUN|separate RUN|combining RUN|combining commands|chaining commands|multiple layers|excessive layers|too many layers|layer count|reduce layers|consolidate layers|unnecessary layers",
+      "type": "LayerOptimizationIssue",
+      "description": "Multiple RUN instructions create unnecessary layers",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Combine RUN instructions with && to reduce layer count",
+      "category": "layer",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "run",
+        "optimization"
+      ],
+      "examples": [
+        "RUN apt-get update followed by separate RUN apt-get install",
+        "Multiple consecutive RUN instructions that could be combined",
+        "Excessive layers due to separate package installation commands"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_layer_cleanup_missing",
+      "pattern": "missing cleanup|no cleanup|package cache|apt cache|yum cache|dnf cache|pip cache|npm cache|temporary files|cache cleanup|file cleanup|lingering files|unnecessary files|cleanup step|remove cache|delete temporary",
+      "type": "LayerOptimizationIssue",
+      "description": "Missing cleanup of package caches and temporary files",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Clean up package caches and temporary files in the same RUN instruction",
+      "category": "layer",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "cleanup",
+        "optimization"
+      ],
+      "examples": [
+        "apt-get update && apt-get install without removing /var/lib/apt/lists/*",
+        "npm install without clearing npm cache",
+        "Downloaded artifacts not removed after installation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_layer_build_dependencies",
+      "pattern": "build dependencies|build tools|build-time dependencies|development dependencies|build-only packages|compilation tools|build essentials|build packages|compiler|build environment|unnecessary tools|development tools|dev dependencies",
+      "type": "LayerOptimizationIssue",
+      "description": "Build dependencies remain in final image",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Use multi-stage builds to exclude build dependencies from final image",
+      "category": "layer",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "dependencies",
+        "optimization"
+      ],
+      "examples": [
+        "gcc and build-essential remain in final production image",
+        "python-dev and compilation tools not removed after building",
+        "Development dependencies installed but not needed for runtime"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_layer_no_multistage",
+      "pattern": "multi-stage build|multistage build|no multi-stage|missing multi-stage|could use multi-stage|single stage|build stage|multiple FROM|separate stages|builder pattern|build context|optimize with multi-stage|production stage",
+      "type": "LayerOptimizationIssue",
+      "description": "Not using multi-stage builds for optimization",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Implement multi-stage builds to separate build and runtime environments",
+      "category": "layer",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "multistage",
+        "optimization"
+      ],
+      "examples": [
+        "Build and runtime environments mixed in a single stage",
+        "Complex application built without multi-stage optimization",
+        "Build artifacts and tools remain in final image"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_layer_inefficient_apt",
+      "pattern": "apt-get update|apt update|apt-get install|apt install|apt repository|package installation|version pinning|no version constraint|latest package|unspecified version|apt-get upgrade|apt upgrade|package version|specific version",
+      "type": "LayerOptimizationIssue",
+      "description": "Inefficient APT package installation",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Combine apt-get commands, pin versions, and clean cache in single layer",
+      "category": "layer",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "apt",
+        "optimization"
+      ],
+      "examples": [
+        "apt-get update in separate layer from apt-get install",
+        "Installing packages without version pinning",
+        "Missing apt-get clean or rm -rf /var/lib/apt/lists/*"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_layer_unneeded_files",
+      "pattern": "unneeded files|unnecessary files|delete files|remove files|cleanup files|leftover files|source files|intermediate files|temporary directories|build artifacts|compilation output|unused files|unnecessary content|large files",
+      "type": "LayerOptimizationIssue",
+      "description": "Unneeded files remain in Docker image",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Remove unnecessary files in the same layer they're created",
+      "category": "layer",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "cleanup",
+        "optimization"
+      ],
+      "examples": [
+        "Source tarballs not removed after extraction",
+        "Temporary build files not cleaned up",
+        "Downloaded files not deleted after installation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_layer_granular_copy",
+      "pattern": "granular COPY|specific files|copying individually|copying specific|individual files|separate COPY|file selection|selective copying|targeted files|specific artifacts|precise copying|explicit files|optimize COPY",
+      "type": "LayerOptimizationIssue",
+      "description": "Not using granular COPY instructions for better caching",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Copy specific files/directories individually based on change frequency",
+      "category": "layer",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "copy",
+        "optimization"
+      ],
+      "examples": [
+        "COPY . /app instead of copying package.json separately",
+        "Copying entire source instead of specific required files",
+        "Broad COPY invalidates cache when only one file changes"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_layer_install_after_copy",
+      "pattern": "install after copy|package installation after|dependencies after source|install after source|COPY before install|COPY source before|dependency installation after|code copied before|code before dependencies|app before requirements",
+      "type": "LayerOptimizationIssue",
+      "description": "Installing dependencies after copying application code",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Install dependencies before copying application code for better caching",
+      "category": "layer",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "order",
+        "optimization"
+      ],
+      "examples": [
+        "COPY . /app followed by RUN npm install",
+        "Copying source code before installing dependencies",
+        "Installing packages after copying application files"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "dockerfile_layer_inefficient_add",
+      "pattern": "ADD instead of COPY|ADD for simple|ADD when COPY|unnecessary ADD|misuse of ADD|wrong use of ADD|ADD not needed|use COPY instead|replace ADD with COPY|ADD for copying|improper ADD|ADD misused",
+      "type": "LayerOptimizationIssue",
+      "description": "Using ADD instead of COPY for simple file copying",
+      "root_cause": "dockerfile_layer_issue",
+      "suggestion": "Use COPY for simple file copying, ADD only for archives/URLs",
+      "category": "layer",
+      "severity": "low",
+      "confidence": "high",
+      "tags": [
+        "dockerfile",
+        "layer",
+        "add",
+        "copy"
+      ],
+      "examples": [
+        "ADD file.txt /app/ instead of COPY file.txt /app/",
+        "Using ADD for simple file copying operations",
+        "ADD unnecessarily used for non-archive, non-URL files"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

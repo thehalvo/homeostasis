@@ -1,0 +1,296 @@
+{
+  "name": "Ansible Playbook Structure Errors",
+  "description": "Rules for detecting Ansible playbook structure and formatting errors",
+  "rules": [
+    {
+      "id": "ansible_playbook_invalid_format",
+      "pattern": "Invalid (format|syntax) in (playbook|file)|not a valid (YAML|Ansible) file|parsing error in playbook|malformed playbook|could not parse|YAML syntax error|Ansible syntax error|parsing failed|error parsing|syntax error in playbook|playbook parse error|yaml parse error",
+      "type": "PlaybookStructureError",
+      "description": "Invalid YAML syntax in Ansible playbook",
+      "root_cause": "ansible_playbook_structure_error",
+      "suggestion": "Fix YAML syntax issues in playbook file",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "playbook",
+        "syntax",
+        "yaml"
+      ],
+      "examples": [
+        "Syntax Error while loading YAML: mapping values are not allowed here",
+        "Invalid format in playbook: improper indentation",
+        "YAML parsing error in playbook file"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_playbook_undefined_variable",
+      "pattern": "undefined variable|no variable found|variable is not defined|not defined in|unknown variable|undefined var|variable not found|no such variable|variable '.*' is not defined|unknown variable name|could not find variable|undefined name|variable undefined",
+      "type": "PlaybookStructureError",
+      "description": "Using undefined variables in Ansible playbook",
+      "root_cause": "ansible_playbook_structure_error",
+      "suggestion": "Define variables in vars, vars_files, or use default values with | default",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "playbook",
+        "variable",
+        "undefined"
+      ],
+      "examples": [
+        "The task includes an option with an undefined variable: {{ undefined_var }}",
+        "Error: variable 'app_version' is not defined",
+        "No variable found with name 'server_address'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_playbook_missing_name",
+      "pattern": "missing name|no name specified|unnamed task|unnamed play|missing play name|missing task name|task needs a name|play needs a name|missing name attribute|playbook name missing|no name attribute|task should have a name|play should have a name",
+      "type": "PlaybookStructureError",
+      "description": "Missing name attribute for plays or tasks",
+      "root_cause": "ansible_playbook_structure_error",
+      "suggestion": "Add descriptive name attribute to all plays and tasks",
+      "category": "structure",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "playbook",
+        "name",
+        "attribute"
+      ],
+      "examples": [
+        "Warning: no name specified for task",
+        "Play has no name attribute",
+        "All tasks should have a name for better playbook readability"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_playbook_invalid_hosts",
+      "pattern": "invalid hosts|no hosts matched|hosts pattern|could not match supplied host pattern|no hosts found|no inventory|missing inventory|empty inventory|all hosts skipped|hosts not found|no matching hosts|hosts list empty|host pattern did not match",
+      "type": "PlaybookStructureError",
+      "description": "Invalid or unmatched hosts pattern in playbook",
+      "root_cause": "ansible_playbook_structure_error",
+      "suggestion": "Check inventory and hosts patterns in playbook",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "playbook",
+        "hosts",
+        "inventory"
+      ],
+      "examples": [
+        "ERROR! No hosts matched the pattern 'production'",
+        "Invalid hosts pattern: could not find group 'webservers'",
+        "No inventory was parsed, only implicit localhost"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_playbook_indentation_error",
+      "pattern": "indentation|wrong indentation|incorrect indentation|bad indentation|inconsistent indentation|improper indentation|invalid indentation|indentation error|not properly indented|must be indented|same indentation|indentation level",
+      "type": "PlaybookStructureError",
+      "description": "Indentation errors in Ansible playbook",
+      "root_cause": "ansible_playbook_structure_error",
+      "suggestion": "Fix indentation using consistent spaces (usually 2 spaces)",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "playbook",
+        "indentation",
+        "yaml"
+      ],
+      "examples": [
+        "Error: Indentation is not a multiple of 2",
+        "Task options must be indented by 2 spaces",
+        "Wrong indentation detected in playbook"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_playbook_missing_module",
+      "pattern": "missing module|no module specified|no action specified|unknown module|module not found|no module named|did you mean|could not find|missing required arguments|unable to find module|module .* not found|action plugin not found|action plugin missing",
+      "type": "PlaybookStructureError",
+      "description": "Missing or unknown module in task",
+      "root_cause": "ansible_playbook_structure_error",
+      "suggestion": "Specify valid module name or install missing collection",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "playbook",
+        "module",
+        "missing"
+      ],
+      "examples": [
+        "No module named 'my_custom_module'",
+        "Missing required arguments for module 'copy'",
+        "The module 'docker_container' was not found in configured module paths"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_playbook_deprecated_syntax",
+      "pattern": "deprecated|deprecation warning|deprecated syntax|deprecated feature|no longer supported|use instead|will be removed|has moved|is kept for backwards compatibility|replaced by|is an alias|is deprecated|obsolete syntax|legacy syntax",
+      "type": "PlaybookStructureError",
+      "description": "Using deprecated syntax or features in playbook",
+      "root_cause": "ansible_playbook_structure_error",
+      "suggestion": "Update to current syntax according to deprecation warnings",
+      "category": "structure",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "playbook",
+        "deprecated",
+        "syntax"
+      ],
+      "examples": [
+        "DEPRECATION WARNING: include is kept for backwards compatibility",
+        "The 'include' module is deprecated, use 'include_tasks' instead",
+        "Syntax is deprecated and will be removed in a future version"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_playbook_recursive_loop",
+      "pattern": "recursive loop|maximum recursion depth|too many levels of recursion|include recursion|include nested|include depth exceeded|include cycle|circular dependency|circular include|recursion detected|recursive include|include loop|cycle detected",
+      "type": "PlaybookStructureError",
+      "description": "Recursive or circular dependencies in playbook includes",
+      "root_cause": "ansible_playbook_structure_error",
+      "suggestion": "Restructure includes to avoid circular references",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "playbook",
+        "recursion",
+        "include"
+      ],
+      "examples": [
+        "ERROR! Recursion detected: task includes itself",
+        "Maximum recursion depth exceeded in include_tasks",
+        "Circular dependency detected: playbook_a.yml -> playbook_b.yml -> playbook_a.yml"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_playbook_missing_handler",
+      "pattern": "unknown handler|handler not found|no handler named|missing handler|handler .* not found|is not a handler|could not find handler|undefined handler|handler does not exist|no handler called|handler not defined|no handlers matching",
+      "type": "PlaybookStructureError",
+      "description": "Referencing undefined handlers in notify",
+      "root_cause": "ansible_playbook_structure_error",
+      "suggestion": "Define handlers before referencing them in notify",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "playbook",
+        "handler",
+        "notify"
+      ],
+      "examples": [
+        "ERROR! handler 'restart apache' not found",
+        "Could not find referenced handler 'reload service'",
+        "Referenced handler 'reload nginx' does not exist in playbook"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_playbook_invalid_jinja2",
+      "pattern": "template error|Jinja2 error|jinja2.exceptions|syntax error in template|template syntax|unexpected .* in template|expected .* in template|jinja templating|jinja syntax|template syntax error|undefined jinja variable|unknown tag|undefined jinja|malformed template",
+      "type": "PlaybookStructureError",
+      "description": "Invalid Jinja2 template syntax in playbook",
+      "root_cause": "ansible_playbook_structure_error",
+      "suggestion": "Fix Jinja2 syntax in templates and variable expressions",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "playbook",
+        "jinja2",
+        "template"
+      ],
+      "examples": [
+        "template error: unexpected '}' in expression",
+        "Jinja2 error: unexpected end of template",
+        "Template syntax error: expected name or number"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,325 @@
+{
+  "name": "YAML Structure Errors",
+  "description": "Rules for detecting YAML document structure and formatting errors",
+  "rules": [
+    {
+      "id": "yaml_structure_invalid_block_mapping",
+      "pattern": "invalid block mapping|not a valid mapping|mapping values are not allowed|expected a mapping node|block mapping|invalid mapping|unexpected mapping|mapping expected|invalid map|improper mapping|not a mapping node",
+      "type": "StructureError",
+      "description": "Invalid block mapping structure in YAML",
+      "root_cause": "yaml_structure_error",
+      "suggestion": "Fix YAML mapping syntax with proper key-value pairs",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "structure",
+        "mapping",
+        "block"
+      ],
+      "examples": [
+        "mapping values are not allowed in this context",
+        "expected a mapping node but found sequence",
+        "invalid block mapping entry"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_structure_invalid_sequence",
+      "pattern": "invalid sequence|not a valid sequence|expected a sequence|sequence expected|invalid list|improper sequence|sequence items|unexpected sequence|not a sequence node|invalid array|expected an array",
+      "type": "StructureError",
+      "description": "Invalid sequence structure in YAML",
+      "root_cause": "yaml_structure_error",
+      "suggestion": "Fix YAML sequence syntax with proper item formatting",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "structure",
+        "sequence",
+        "list"
+      ],
+      "examples": [
+        "expected a sequence node but found mapping",
+        "invalid sequence entry",
+        "not a valid sequence structure"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_structure_mixed_mapping_sequence",
+      "pattern": "mapping values and sequence elements mixed|mixed mapping and sequence|cannot combine|mixed node types|incompatible node types|cannot mix sequence and mapping|mixed list and object|mixed mapping and list|mixed array and object",
+      "type": "StructureError",
+      "description": "Mixed mapping and sequence nodes in YAML",
+      "root_cause": "yaml_structure_error",
+      "suggestion": "Use consistent structure, either all mappings or all sequences",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "structure",
+        "mixed",
+        "node_types"
+      ],
+      "examples": [
+        "mapping values and sequence elements cannot be mixed at this level",
+        "mixed mapping and sequence nodes",
+        "incompatible node types: cannot combine sequence and mapping"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_structure_invalid_scalar",
+      "pattern": "invalid scalar|not a valid scalar|expected scalar|scalar expected|invalid string|improper scalar|scalar node|unexpected scalar|not a scalar node|invalid value|invalid literal",
+      "type": "StructureError",
+      "description": "Invalid scalar structure in YAML",
+      "root_cause": "yaml_structure_error",
+      "suggestion": "Fix YAML scalar syntax with proper quoting or formatting",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "structure",
+        "scalar",
+        "string"
+      ],
+      "examples": [
+        "expected a scalar node but found mapping",
+        "invalid scalar value",
+        "not a valid scalar: contains invalid characters"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_structure_flow_style_error",
+      "pattern": "flow style|flow mapping|flow sequence|invalid flow|improper flow|flow notation|flow format|flow collection|unexpected flow|flow-style|flow style syntax",
+      "type": "StructureError",
+      "description": "Flow-style syntax error in YAML",
+      "root_cause": "yaml_structure_error",
+      "suggestion": "Fix flow-style syntax with proper brackets and commas",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "structure",
+        "flow",
+        "style"
+      ],
+      "examples": [
+        "invalid flow mapping syntax",
+        "unexpected comma in flow sequence",
+        "flow-style notation error: missing closing bracket"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_structure_multiline_string_error",
+      "pattern": "multiline string|block scalar|literal block|folded scalar|block chomping|indentation indicator|chomping indicator|leading whitespace|trailing whitespace|block header|multiline format|block format",
+      "type": "StructureError",
+      "description": "Multiline string formatting error in YAML",
+      "root_cause": "yaml_structure_error",
+      "suggestion": "Fix multiline string syntax with correct indicators and indentation",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "structure",
+        "multiline",
+        "block"
+      ],
+      "examples": [
+        "invalid block scalar header",
+        "incorrect indentation in multiline string",
+        "improper use of literal block indicator"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_structure_alias_anchor_error",
+      "pattern": "invalid alias|invalid anchor|duplicate anchor|undefined alias|anchor already defined|alias not defined|anchor name|alias name|anchor declaration|invalid node alias|invalid node anchor|anchor reference",
+      "type": "StructureError",
+      "description": "Alias or anchor error in YAML",
+      "root_cause": "yaml_structure_error",
+      "suggestion": "Fix anchor and alias syntax, ensure anchors are defined before use",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "structure",
+        "alias",
+        "anchor"
+      ],
+      "examples": [
+        "invalid anchor name: spaces not allowed",
+        "duplicate anchor 'config' defined",
+        "undefined alias 'baseConfig'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_structure_tag_error",
+      "pattern": "invalid tag|unknown tag|tag not resolved|tag directive|unresolved tag|tag prefix|tag shorthand|tag handle|tag suffix|invalid node tag|tag declaration|tag reference",
+      "type": "StructureError",
+      "description": "Tag resolution error in YAML",
+      "root_cause": "yaml_structure_error",
+      "suggestion": "Fix tag syntax or ensure tag is properly defined",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "structure",
+        "tag",
+        "directive"
+      ],
+      "examples": [
+        "invalid tag: prefix not declared",
+        "unknown tag handle '!c!'",
+        "tag directive not properly formatted"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_structure_directive_error",
+      "pattern": "invalid directive|unknown directive|directive syntax|directive not resolved|%YAML|%TAG|YAML version|directive line|unexpected directive|directive formatting|directive argument|directive declaration",
+      "type": "StructureError",
+      "description": "Directive syntax error in YAML",
+      "root_cause": "yaml_structure_error",
+      "suggestion": "Fix directive syntax at the beginning of the document",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "structure",
+        "directive",
+        "version"
+      ],
+      "examples": [
+        "invalid directive: %YAML 2.0",
+        "unknown directive: %CUSTOM",
+        "directive syntax error in %TAG directive"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_structure_document_marker_error",
+      "pattern": "document marker|document separator|invalid document|document boundary|document indicator|directives end marker|multiple documents|--- marker|... marker|unexpected document|document start|document end",
+      "type": "StructureError",
+      "description": "Document marker error in YAML",
+      "root_cause": "yaml_structure_error",
+      "suggestion": "Fix document markers (---, ...) and ensure proper formatting",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "structure",
+        "document",
+        "marker"
+      ],
+      "examples": [
+        "invalid document marker placement",
+        "unexpected document end marker",
+        "directives end marker (---) not at start of line"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_structure_trailing_content",
+      "pattern": "trailing content|unexpected content|content after|unexpected data|extra content|trailing data|document contains trailing|document already ended|content outside|unexpected node|unexpected line|document end",
+      "type": "StructureError",
+      "description": "Unexpected trailing content in YAML document",
+      "root_cause": "yaml_structure_error",
+      "suggestion": "Remove content after document end or use multiple document markers",
+      "category": "structure",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "structure",
+        "trailing",
+        "content"
+      ],
+      "examples": [
+        "document contains trailing content after end marker",
+        "unexpected content after document end",
+        "content found outside document boundaries"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

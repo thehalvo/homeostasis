@@ -1,0 +1,325 @@
+{
+  "name": "SQL Performance Errors",
+  "description": "Rules for detecting SQL performance issues across different database systems",
+  "rules": [
+    {
+      "id": "sql_performance_missing_index",
+      "pattern": "missing index|consider adding index|recommended index|index might not be used|no matching index|could not use index|sequential scan|full table scan|consider an index|add an index",
+      "type": "PerformanceError",
+      "description": "Query performance issue due to missing index",
+      "root_cause": "sql_performance_error",
+      "suggestion": "Add appropriate index for frequently queried columns",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "performance",
+        "index",
+        "optimization"
+      ],
+      "examples": [
+        "missing index on column user_id",
+        "consider adding index to improve query performance",
+        "query performs full table scan on large table"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_performance_query_timeout",
+      "pattern": "query timeout|statement timeout|execution timeout|query exceeded time limit|query canceled due to timeout|query execution was interrupted|long-running query|exceeded maximum execution time|query terminated due to timeout|query timed out",
+      "type": "PerformanceError",
+      "description": "Query execution timeout",
+      "root_cause": "sql_performance_error",
+      "suggestion": "Optimize query, add indexes, or increase timeout limit",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "performance",
+        "timeout",
+        "execution"
+      ],
+      "examples": [
+        "query timeout after 60 seconds",
+        "statement timeout exceeded",
+        "query canceled due to statement timeout"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_performance_cartesian_product",
+      "pattern": "cartesian product|cross join without condition|missing join condition|missing join predicate|joins without a join condition|results in cross product|large result set|too many rows|row count exceeds limit",
+      "type": "PerformanceError",
+      "description": "Cartesian product due to missing join condition",
+      "root_cause": "sql_performance_error",
+      "suggestion": "Add join conditions to avoid cartesian products",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "performance",
+        "join",
+        "cartesian"
+      ],
+      "examples": [
+        "cartesian product detected in query",
+        "missing join condition results in cross product",
+        "query produces too many rows due to missing join predicate"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_performance_memory_exceeded",
+      "pattern": "memory limit exceeded|out of memory|insufficient memory|not enough memory|memory allocation|memory exhausted|query requires|exceeds memory|work_mem|sort_mem|hash_mem",
+      "type": "PerformanceError",
+      "description": "Query exceeds available memory",
+      "root_cause": "sql_performance_error",
+      "suggestion": "Optimize query to use less memory, increase memory settings, or use pagination",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "performance",
+        "memory",
+        "resource"
+      ],
+      "examples": [
+        "memory limit exceeded for sort operation",
+        "query requires more memory than available",
+        "insufficient memory for hash table"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_performance_temp_table_spill",
+      "pattern": "temporary table|spill to disk|temporary file|disk sort|external sort|disk-based temporary table|sorting in tempdb|temp table created|worktable|workfile|temporary tablespace",
+      "type": "PerformanceError",
+      "description": "Query operation spilling to disk or temporary tables",
+      "root_cause": "sql_performance_error",
+      "suggestion": "Optimize query to reduce data volume or increase memory settings",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "sql",
+        "performance",
+        "temporary",
+        "disk"
+      ],
+      "examples": [
+        "operation spilled to disk: sort",
+        "temporary table created for query execution",
+        "external sort performed due to data size"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_performance_suboptimal_plan",
+      "pattern": "suboptimal plan|better plan exists|optimization level|optimization time limit|plan quality|plan cost|expensive operation|better execution path|statistics out of date|outdated statistics|consider rewriting|rewrite query",
+      "type": "PerformanceError",
+      "description": "Suboptimal query execution plan selected",
+      "root_cause": "sql_performance_error",
+      "suggestion": "Update statistics, rewrite query, or add query hints",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "sql",
+        "performance",
+        "plan",
+        "optimization"
+      ],
+      "examples": [
+        "suboptimal plan chosen due to outdated statistics",
+        "better execution plan exists for this query",
+        "query optimizer time limit reached before finding optimal plan"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_performance_inefficient_function",
+      "pattern": "inefficient function|scalar function|user-defined function|function in WHERE clause|function applied to column|non-sargable|function prevents index|table-valued function|multi-statement function|expensive function call",
+      "type": "PerformanceError",
+      "description": "Inefficient function usage in query",
+      "root_cause": "sql_performance_error",
+      "suggestion": "Avoid functions in WHERE clauses, use computed columns or indexes",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "performance",
+        "function",
+        "sargable"
+      ],
+      "examples": [
+        "function in WHERE clause prevents index usage",
+        "scalar function applied to column in predicate",
+        "inefficient use of user-defined function"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_performance_lock_timeout",
+      "pattern": "lock timeout|deadlock victim|lock wait timeout|could not obtain lock|lock contention|row lock|table lock|lock escalation|object is locked|resource is locked|waiting for lock|transaction blocked",
+      "type": "PerformanceError",
+      "description": "Query lock timeout or deadlock",
+      "root_cause": "sql_performance_error",
+      "suggestion": "Reduce transaction scope, use row-level locking, or implement retry logic",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "performance",
+        "lock",
+        "concurrency"
+      ],
+      "examples": [
+        "lock wait timeout exceeded",
+        "transaction chosen as deadlock victim",
+        "could not obtain exclusive lock on table"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_performance_excessive_joins",
+      "pattern": "too many joins|excessive joins|many table joins|join depth|maximum join depth|complex join tree|join complexity|joins exceed|maximum number of tables in join|too many tables|too many joined tables",
+      "type": "PerformanceError",
+      "description": "Query with excessive table joins",
+      "root_cause": "sql_performance_error",
+      "suggestion": "Simplify query by reducing joins or using intermediate results",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "sql",
+        "performance",
+        "join",
+        "complexity"
+      ],
+      "examples": [
+        "query contains too many joins (15 tables)",
+        "join depth exceeds optimizer capabilities",
+        "excessive number of tables in join operation"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_performance_correlated_subquery",
+      "pattern": "correlated subquery|subquery in WHERE|subquery in SELECT|nested subquery|subquery performance|correlated query|subquery executed per row|expensive subquery|subquery could be rewritten|convert subquery to join",
+      "type": "PerformanceError",
+      "description": "Inefficient correlated subquery",
+      "root_cause": "sql_performance_error",
+      "suggestion": "Rewrite using JOIN, EXISTS, or derived table",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "sql",
+        "performance",
+        "subquery",
+        "correlated"
+      ],
+      "examples": [
+        "correlated subquery executed for each outer row",
+        "subquery in WHERE clause could be rewritten as JOIN",
+        "expensive nested subquery detected"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_performance_implicit_conversion",
+      "pattern": "implicit conversion|type conversion in expression|data type conflict|implicit cast|type precedence|datatype mismatch in predicate|convert implicit|implicit datatype conversion|conversion may affect cardinality|conversion prevents index",
+      "type": "PerformanceError",
+      "description": "Implicit data type conversion affecting performance",
+      "root_cause": "sql_performance_error",
+      "suggestion": "Use consistent data types or add explicit conversions",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "performance",
+        "conversion",
+        "datatype"
+      ],
+      "examples": [
+        "implicit conversion from varchar to int prevents index usage",
+        "data type conflict in predicate",
+        "implicit cast affects cardinality estimate"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

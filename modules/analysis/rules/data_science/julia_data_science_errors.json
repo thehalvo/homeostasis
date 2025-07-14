@@ -1,0 +1,238 @@
+{
+  "name": "Julia Data Science Errors",
+  "description": "Rules for detecting domain-specific errors in Julia for data science applications",
+  "rules": [
+    {
+      "id": "julia_type_error",
+      "pattern": "MethodError|no method matching|does not match|expected .*type|could not convert|not defined|type mismatch|not a subtype|converting|cannot convert|type error|type assertion|type piracy|ambiguous method|missing method|expected|UndefVarError|method error|expected .*got|type parameter|type parameter N|parametric type",
+      "type": "TypeSystemError",
+      "description": "Type system errors in Julia",
+      "root_cause": "julia_type_error",
+      "suggestion": "Check type compatibility and method definitions",
+      "category": "julia",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "type",
+        "method",
+        "data_science"
+      ],
+      "examples": [
+        "MethodError: no method matching +(::String, ::Int64)",
+        "TypeError: non-boolean (Int64) used in boolean context",
+        "could not convert Int64 to type String"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_array_indexing_error",
+      "pattern": "BoundsError|index .* out of bounds|invalid index|dimension mismatch|size mismatch|array indices|index must be|out of bounds|has size|expected dimensions|dimension|dimensionality|indices|index|bounds error|multi-dimensional|broadcasting|axis|axes|non-scalar indexing",
+      "type": "ArrayError",
+      "description": "Array indexing and dimension errors in Julia",
+      "root_cause": "julia_array_error",
+      "suggestion": "Check array dimensions with size() and ensure indices are within bounds",
+      "category": "julia",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "array",
+        "indexing",
+        "data_science"
+      ],
+      "examples": [
+        "BoundsError: attempt to access 3×3 Array{Float64,2} at index [4, 2]",
+        "DimensionMismatch: arrays could not be broadcast to a common size",
+        "ArgumentError: array could not be broadcast to match destination"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_package_error",
+      "pattern": "Package .* not found|unknown package|cannot find package|failed to precompile|unsatisfiable package requirements|Pkg|package not installed|package load error|import error|using error|import .* not defined|failed to resolve package|conflict|requirements|dependencies|version conflict|julia registry|registry error|pkg error|package manager|precompilation|precompile",
+      "type": "PackageError",
+      "description": "Package management and loading errors in Julia",
+      "root_cause": "julia_package_error",
+      "suggestion": "Check package installation status and version compatibility",
+      "category": "julia",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "package",
+        "dependency",
+        "data_science"
+      ],
+      "examples": [
+        "Package DataFrames not found in current path",
+        "Unsatisfiable requirements detected for package CSV",
+        "ERROR: LoadError: ArgumentError: Package Statistics not found in current path"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_dataframe_error",
+      "pattern": "DataFrame|DataFrames|column not found|column .* not found|column names|invalid column|unknown column|column name|columns|data frame|missing value|missing values|can't convert|data table|mismatched dimensions|data set|vector of length|no columns called|no columns selected|unrecognized column name|column selection|column access|column range|column type|row selection|join",
+      "type": "DataFrameError",
+      "description": "DataFrame manipulation errors in Julia",
+      "root_cause": "julia_dataframe_error",
+      "suggestion": "Check column names, types, and dimensions in DataFrames",
+      "category": "julia",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "dataframe",
+        "data",
+        "data_science"
+      ],
+      "examples": [
+        "ArgumentError: column name :Age not found in the data frame",
+        "MethodError: no method matching getindex(::DataFrame, ::Symbol)",
+        "BoundsError: attempt to access 100×5 DataFrame at index [101]"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_plotting_error",
+      "pattern": "Plots|plot|figure|axes|axis|graphics|chart|histogram|scatter|bar|boxplot|surface|mesh|contour|quiver|polar|loglog|semilogx|semilogy|subplot|savefig|PyPlot|GR|Plotly|backend|plot recipe|plotting|visualization|seriestype|layout|attribute|keyword argument|plotting package|recipe not found|cannot find suitable|plotting backend",
+      "type": "VisualizationError",
+      "description": "Errors in Julia plotting and visualization",
+      "root_cause": "julia_visualization_error",
+      "suggestion": "Check plotting package installation and function arguments",
+      "category": "julia",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "julia",
+        "plot",
+        "visualization",
+        "data_science"
+      ],
+      "examples": [
+        "UndefVarError: Plots not defined",
+        "ArgumentError: Cannot use GR backend because GR is not installed",
+        "Recipe for input type Array{Float64,2} not found"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_parallel_error",
+      "pattern": "parallel|distributed|@threads|@distributed|remotecall|worker|process|addprocs|nprocs|multi-threading|thread|task|channel|remote|cluster|parallel execution|worker process|process pool|thread pool|pmap|asyncmap|spawn|Threads|task coordination|synchronization|race condition|deadlock|lock|atomic|shared array|distributed array|parallel array|barrier|reduction|addprocs",
+      "type": "ParallelComputingError",
+      "description": "Errors in Julia parallel and distributed computing",
+      "root_cause": "julia_parallel_error",
+      "suggestion": "Check worker setup, data sharing, and synchronization",
+      "category": "julia",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "julia",
+        "parallel",
+        "distributed",
+        "data_science"
+      ],
+      "examples": [
+        "ErrorException: could not spawn new worker",
+        "RemoteException: ProcessExitedException()",
+        "ERROR: LoadError: OnError: error on worker 2 during remotecall_fetch"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_stats_model_error",
+      "pattern": "GLM|model|linear|regression|fit|curve_fit|lm|glm|predict|fitted|coefficients|coef|residuals|resid|formula|StatsModels|StatsBase|Distributions|statistical|distribution|hypothesis|test|p-value|significance|confidence interval|standard error|degrees of freedom|parameter|estimate|gradient descent|optimization|singular|rank deficient|matrix singularity|collinearity|convergence|maximum iterations|stepsize|hessian",
+      "type": "StatisticalModelingError",
+      "description": "Errors in statistical modeling and analysis in Julia",
+      "root_cause": "julia_stats_error",
+      "suggestion": "Check model specification, data quality, and convergence criteria",
+      "category": "julia",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "statistics",
+        "modeling",
+        "data_science"
+      ],
+      "examples": [
+        "SingularException: matrix is singular",
+        "ArgumentError: Rank-deficient model matrix",
+        "ErrorException: convergence not achieved after 30 iterations"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "julia_file_io_error",
+      "pattern": "IOError|file not found|cannot open|open file|read file|write file|no such file|permission denied|file exists|invalid filename|is a directory|not a file|file I/O|end of file|eof|file access|file open|file permission|file handle|file descriptor|CSV|CSV.File|DelimitedFiles|readcsv|writecsv|MAT|JLD|FileIO|save|load|file input|file output|file extension|file format",
+      "type": "FileIOError",
+      "description": "File input/output errors in Julia",
+      "root_cause": "julia_file_error",
+      "suggestion": "Check file paths, permissions, and format specifications",
+      "category": "julia",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "julia",
+        "file",
+        "io",
+        "data_science"
+      ],
+      "examples": [
+        "SystemError: opening file \"data.csv\": No such file or directory",
+        "ArgumentError: Unable to read from closed stream",
+        "MethodError: no method matching open(::String, ::String)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

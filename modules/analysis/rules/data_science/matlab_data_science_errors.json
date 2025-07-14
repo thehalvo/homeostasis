@@ -1,0 +1,267 @@
+{
+  "name": "MATLAB Data Science Errors",
+  "description": "Rules for detecting domain-specific errors in MATLAB for data science applications",
+  "rules": [
+    {
+      "id": "matlab_matrix_dimension_error",
+      "pattern": "matrix dimensions must agree|dimensions of matrices being concatenated are not consistent|dimensions of arrays being indexed are not consistent|matrix dimensions must agree for addition|matrix dimensions must agree for subtraction|inner matrix dimensions must agree|matrix dimensions must agree for element-by-element|index exceeds( the number of)? (matrix|array) dimensions|index exceeds( the)? (matrix|array) dimensions",
+      "type": "MatrixDimensionError",
+      "description": "Matrix dimension mismatch errors in MATLAB",
+      "root_cause": "matlab_matrix_error",
+      "suggestion": "Check matrix dimensions with size() and ensure consistent dimensions",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "matrix",
+        "dimensions",
+        "data_science"
+      ],
+      "examples": [
+        "Error: Matrix dimensions must agree",
+        "Dimensions of matrices being concatenated are not consistent",
+        "Inner matrix dimensions must agree for matrix multiply"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_indexing_error",
+      "pattern": "index exceeds (matrix|array) dimensions|index must be a positive integer or logical|invalid index|index out of bounds|index exceeds dimensions|subscript indices must either be real positive integers or logicals|array indices must be positive integers or logical values|attempts to access element|index in position|subscripted assignment dimension mismatch|index exceeds the number of array elements|ndices must be numeric, logical, or cells of character vectors",
+      "type": "IndexingError",
+      "description": "Array indexing errors in MATLAB",
+      "root_cause": "matlab_indexing_error",
+      "suggestion": "Check array dimensions and ensure indices are within bounds",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "indexing",
+        "array",
+        "data_science"
+      ],
+      "examples": [
+        "Index exceeds matrix dimensions",
+        "Subscript indices must either be real positive integers or logicals",
+        "Index in position 2 exceeds array bounds"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_function_error",
+      "pattern": "undefined function|not enough input arguments|too many input arguments|not enough output arguments|too many output arguments|function is not defined|no function|no appropriate method|undefined variable|not defined|unrecognized function or variable|not a valid|invalid function handle|function .* not found|no method|No constructor for class",
+      "type": "FunctionError",
+      "description": "Function usage errors in MATLAB",
+      "root_cause": "matlab_function_error",
+      "suggestion": "Check function name, path, and correct number of arguments",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "function",
+        "method",
+        "data_science"
+      ],
+      "examples": [
+        "Undefined function or variable 'plot3d'",
+        "Not enough input arguments",
+        "Unrecognized function or variable 'rando'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_data_type_error",
+      "pattern": "conversion to .* from .* is not possible|cannot convert|unable to convert|function expected inputs of type|argument must be|input must be of type|expected input number .* to be|first input must be|expected data type|requires .* input|invalid data type|implicit conversion|nonscalar arrays of function handles|numeric arrays expected",
+      "type": "DataTypeError",
+      "description": "Data type conversion or compatibility errors in MATLAB",
+      "root_cause": "matlab_data_type_error",
+      "suggestion": "Check data types with class() and use appropriate conversion functions",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "data_type",
+        "conversion",
+        "data_science"
+      ],
+      "examples": [
+        "Conversion to double from struct is not possible",
+        "Function expected inputs of type numeric, character, or string",
+        "Input argument must be numeric or logical"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_toolbox_error",
+      "pattern": "requires .* toolbox|toolbox license|toolbox is not installed|toolbox required|toolbox is required|requires license for .* toolbox|license checkout failed|toolbox products|does not support|license not found|feature not available|license manager|License Manager Error|dependency on|invalid license|license unavailable",
+      "type": "ToolboxError",
+      "description": "MATLAB toolbox licensing or availability errors",
+      "root_cause": "matlab_toolbox_error",
+      "suggestion": "Install required toolbox or modify code to use available functions",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "toolbox",
+        "license",
+        "data_science"
+      ],
+      "examples": [
+        "Requires Statistics and Machine Learning Toolbox",
+        "Toolbox is not installed or license is not available",
+        "License checkout failed: No license available"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_plot_error",
+      "pattern": "plot|figure|axes|axis|graphics|chart|histogram|stem|scatter|bar|boxplot|surface|mesh|contour|quiver|polar|loglog|semilogx|semilogy|subplot|hold on|hold off|grid on|grid off|legend|title|xlabel|ylabel|zlabel|colorbar|colormap|graphics object|figure window|renderer|interpreter|handle",
+      "type": "VisualizationError",
+      "description": "Errors in MATLAB plotting and visualization",
+      "root_cause": "matlab_visualization_error",
+      "suggestion": "Check plot function arguments and figure handling",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "matlab",
+        "plot",
+        "visualization",
+        "data_science"
+      ],
+      "examples": [
+        "Error in scatter: X and Y must be vectors of the same length",
+        "Invalid handle object",
+        "Failed to parse the MATLAB data format"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_file_io_error",
+      "pattern": "file not found|cannot open file|unable to open file|file|no such file or directory|permission denied|invalid file identifier|file identifier|no permission|access denied|file I/O|read permission|write permission|invalid filename|not a valid path|not a valid file|invalid file name|no such file|invalid file identifier|I/O operation|file access",
+      "type": "FileIOError",
+      "description": "File input/output errors in MATLAB",
+      "root_cause": "matlab_file_error",
+      "suggestion": "Check file paths, permissions, and use fullfile() for path construction",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "file",
+        "io",
+        "data_science"
+      ],
+      "examples": [
+        "File not found: 'data.csv'",
+        "Unable to open file. You may not have write permission",
+        "Invalid file identifier. Use fopen to get a valid file identifier"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_memory_error",
+      "pattern": "out of memory|memory allocation|cannot allocate|not enough memory|insufficient memory|memory error|memory limit|memory usage|unable to allocate|failed to allocate|system resources|available memory|maximum variable size|exceeds maximum|virtual memory|physical memory",
+      "type": "MemoryError",
+      "description": "Memory allocation errors in MATLAB",
+      "root_cause": "matlab_memory_error",
+      "suggestion": "Reduce data size, use sparse matrices, or clear unused variables",
+      "category": "matlab",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "matlab",
+        "memory",
+        "allocation",
+        "data_science"
+      ],
+      "examples": [
+        "Out of memory. Type HELP MEMORY for your options",
+        "Maximum variable size allowed by the program is exceeded",
+        "Unable to allocate memory for matrix"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "matlab_parallel_error",
+      "pattern": "parallel|parfor|spmd|parfeval|parpool|createJob|batch|worker|cluster|distributed|gpuArray|cuda|gpu|parfor loops|parallel pool|parallel computing|parallel server|parallel execution|worker process|task|job|future|pool size|cluster profile|backgroundPool",
+      "type": "ParallelComputingError",
+      "description": "Errors in MATLAB parallel computing",
+      "root_cause": "matlab_parallel_error",
+      "suggestion": "Check parallel pool setup and data sharing between workers",
+      "category": "matlab",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "matlab",
+        "parallel",
+        "performance",
+        "data_science"
+      ],
+      "examples": [
+        "Error using parfor. Loop body cannot be parsed",
+        "Unable to start parallel pool",
+        "Error using distributed. Transparent variables must be Composite objects"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

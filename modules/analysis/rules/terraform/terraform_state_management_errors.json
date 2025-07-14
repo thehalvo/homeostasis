@@ -1,0 +1,296 @@
+{
+  "name": "Terraform State Management Errors",
+  "description": "Rules for detecting Terraform state management issues and best practices",
+  "rules": [
+    {
+      "id": "terraform_state_missing_remote_backend",
+      "pattern": "local state|no remote backend|missing backend|backend not configured|default local backend|state stored locally|locally-stored state|state in working directory|no backend block|backend section missing|terraform.tfstate local|local terraform.tfstate",
+      "type": "StateManagementIssue",
+      "description": "Missing remote backend configuration for state",
+      "root_cause": "terraform_state_management_issue",
+      "suggestion": "Configure a remote backend (S3, Azure Storage, GCS) for team collaboration",
+      "category": "state",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "backend",
+        "remote"
+      ],
+      "examples": [
+        "Terraform state is stored locally without remote backend",
+        "No backend configuration found for state management",
+        "Using default local state storage instead of remote backend"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_missing_locking",
+      "pattern": "state locking disabled|no state locking|missing state lock|state lock not configured|dynamodb table missing|dynamodb_table not set|lock table missing|lockable false|lock ID missing|lock mechanism|missing lock table|state locking mechanism|storage lock",
+      "type": "StateManagementIssue",
+      "description": "Missing state locking configuration",
+      "root_cause": "terraform_state_management_issue",
+      "suggestion": "Enable state locking with dynamodb_table, storage_account, etc.",
+      "category": "state",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "locking",
+        "concurrency"
+      ],
+      "examples": [
+        "S3 backend without dynamodb_table for state locking",
+        "State locking disabled in backend configuration",
+        "Missing locking mechanism for concurrent state access"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_dependency_cycle",
+      "pattern": "dependency cycle|circular dependency|cycle in graph|circular reference|recursive dependency|depends_on cycle|module dependency cycle|resource dependency cycle|circular logic|cyclic dependencies|cycle error|cycle detected",
+      "type": "StateManagementIssue",
+      "description": "Circular dependencies in resource configurations",
+      "root_cause": "terraform_state_management_issue",
+      "suggestion": "Restructure dependencies to form a directed acyclic graph (DAG)",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "dependency",
+        "cycle"
+      ],
+      "examples": [
+        "Error: Dependency cycle detected in graph",
+        "Circular reference between resource A and resource B",
+        "Module dependency cycle cannot be resolved"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_large_objects",
+      "pattern": "state too large|large state file|oversized state|state size|state performance|state exceeds|large terraform.tfstate|growing state|state scaling|state too big|state file size|huge state",
+      "type": "StateManagementIssue",
+      "description": "Large state file causing performance issues",
+      "root_cause": "terraform_state_management_issue",
+      "suggestion": "Break into smaller modules, use -target, or filter sensitive data",
+      "category": "state",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "terraform",
+        "state",
+        "size",
+        "performance"
+      ],
+      "examples": [
+        "State file exceeds recommended size limits",
+        "Performance degradation due to oversized state",
+        "State operations timing out with large state file"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_sensitive_data",
+      "pattern": "sensitive data in state|state contains sensitive|plaintext secrets|unencrypted state|sensitive values|clear text secrets|password in state|token in state|key in state|credential in state|secret in state|sensitive attributes",
+      "type": "StateManagementIssue",
+      "description": "Sensitive data stored in Terraform state",
+      "root_cause": "terraform_state_management_issue",
+      "suggestion": "Use sensitive = true, environment variables, or external secrets management",
+      "category": "state",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "terraform",
+        "state",
+        "sensitive",
+        "security"
+      ],
+      "examples": [
+        "Plaintext passwords stored in state file",
+        "API keys and tokens captured in state",
+        "Sensitive data not marked with sensitive = true attribute"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_refresh_needed",
+      "pattern": "refresh needed|state out of date|stale state|refresh state|terraform refresh|state refresh|not match reality|actual resources|reality drift|infrastructure changed|need to refresh|state refresh required",
+      "type": "StateManagementIssue",
+      "description": "State doesn't match actual infrastructure",
+      "root_cause": "terraform_state_management_issue",
+      "suggestion": "Run terraform refresh to update state with real-world resources",
+      "category": "state",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "refresh",
+        "drift"
+      ],
+      "examples": [
+        "State file doesn't match actual cloud resources",
+        "Manual changes to infrastructure not reflected in state",
+        "Need to refresh state to reconcile with reality"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_backend_conflict",
+      "pattern": "backend conflict|backend configuration changed|backend mismatch|backend reinitialization|terraform init|init required|backend type changed|backend settings|reconfigure backend|backend changed|reinitialize required|cannot change backend",
+      "type": "StateManagementIssue",
+      "description": "Backend configuration changed without reinitialization",
+      "root_cause": "terraform_state_management_issue",
+      "suggestion": "Run terraform init when backend configuration changes",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "backend",
+        "initialization"
+      ],
+      "examples": [
+        "Backend configuration changed from S3 to Azure",
+        "Backend settings modified without running terraform init",
+        "Cannot use backend with current workspace without reinitialization"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_import_required",
+      "pattern": "resource exists|import required|not in state|needs to be imported|terraform import|import command|resource already exists|import existing|manually created|resource pre-exists|needs to be imported|resource not managed",
+      "type": "StateManagementIssue",
+      "description": "Existing resources need to be imported into state",
+      "root_cause": "terraform_state_management_issue",
+      "suggestion": "Use terraform import to add existing resources to state",
+      "category": "state",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "import",
+        "existing"
+      ],
+      "examples": [
+        "Resource already exists but is not in Terraform state",
+        "Manually created infrastructure needs terraform import",
+        "Error creating resource that already exists in cloud provider"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_version_mismatch",
+      "pattern": "state version|incompatible state|state format version|state version mismatch|state file version|terraform version|state schema version|version incompatibility|state upgrade|cannot read state|state downgrade|legacy state format",
+      "type": "StateManagementIssue",
+      "description": "State file version incompatibility",
+      "root_cause": "terraform_state_management_issue",
+      "suggestion": "Use compatible Terraform versions or explicitly upgrade state",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "version",
+        "compatibility"
+      ],
+      "examples": [
+        "State file created with newer Terraform version",
+        "Incompatible state version format",
+        "State schema version mismatch with current Terraform version"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_missing_backup",
+      "pattern": "no state backup|backup disabled|backup not configured|missing backup|no state history|state backup mechanism|backup configuration|backup strategy|version history|state versioning|backup policy|backup plan",
+      "type": "StateManagementIssue",
+      "description": "Missing state backup configuration",
+      "root_cause": "terraform_state_management_issue",
+      "suggestion": "Enable versioning on state storage or use additional backup mechanisms",
+      "category": "state",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "terraform",
+        "state",
+        "backup",
+        "versioning"
+      ],
+      "examples": [
+        "S3 bucket for state without versioning enabled",
+        "No backup mechanism configured for state file",
+        "Missing version history for Terraform state"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

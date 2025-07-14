@@ -1,0 +1,325 @@
+{
+  "name": "Terraform Provider-Specific Errors",
+  "description": "Rules for detecting Terraform provider-specific issues and errors",
+  "rules": [
+    {
+      "id": "terraform_aws_invalid_resource_configuration",
+      "pattern": "aws_.*: (invalid|unsupported|unknown) (value|type|argument)|AWS provider error|aws_.*: expected|configuration error in aws_|aws provider validation|aws_.*: cannot parse|aws validation|aws validation failed|invalid aws configuration|unsupported AWS resource|unsupported AWS attribute",
+      "type": "ProviderError",
+      "description": "Invalid AWS resource configuration in Terraform",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Check AWS provider documentation for correct resource configuration",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "aws",
+        "provider",
+        "resource"
+      ],
+      "examples": [
+        "aws_instance: invalid instance_type \"t999.mega\"",
+        "aws_s3_bucket: expected acl to be one of [private public-read public-read-write]",
+        "configuration error in aws_iam_role: unsupported argument"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_azure_invalid_resource_configuration",
+      "pattern": "azurerm_.*: (invalid|unsupported|unknown) (value|type|argument)|Azure provider error|azurerm_.*: expected|configuration error in azurerm_|azure provider validation|azurerm_.*: cannot parse|azure validation|azure validation failed|invalid azure configuration|unsupported Azure resource|unsupported Azure attribute",
+      "type": "ProviderError",
+      "description": "Invalid Azure resource configuration in Terraform",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Check Azure provider documentation for correct resource configuration",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "azure",
+        "provider",
+        "resource"
+      ],
+      "examples": [
+        "azurerm_virtual_machine: invalid vm_size \"SuperLarge\"",
+        "azurerm_storage_account: expected account_tier to be one of [Standard Premium]",
+        "configuration error in azurerm_resource_group: unsupported attribute"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_gcp_invalid_resource_configuration",
+      "pattern": "google_.*: (invalid|unsupported|unknown) (value|type|argument)|GCP provider error|google_.*: expected|configuration error in google_|gcp provider validation|google_.*: cannot parse|gcp validation|gcp validation failed|invalid gcp configuration|unsupported GCP resource|unsupported GCP attribute",
+      "type": "ProviderError",
+      "description": "Invalid GCP resource configuration in Terraform",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Check GCP provider documentation for correct resource configuration",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "gcp",
+        "provider",
+        "resource"
+      ],
+      "examples": [
+        "google_compute_instance: invalid machine_type \"n5-ultralarge\"",
+        "google_storage_bucket: expected storage_class to be one of [STANDARD NEARLINE COLDLINE ARCHIVE]",
+        "configuration error in google_project: unsupported argument"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_version_incompatibility",
+      "pattern": "provider version|provider upgrade|incompatible provider|provider compatibility|version constraint|provider version constraint|required providers|terraform init -upgrade|upgrade provider|provider compatibility issue|terraform init failed|outdated provider",
+      "type": "ProviderError",
+      "description": "Provider version compatibility issues",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Specify compatible provider versions in required_providers block",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "version",
+        "compatibility"
+      ],
+      "examples": [
+        "provider version incompatible with current Terraform version",
+        "version constraint conflict between providers",
+        "outdated provider version causing compatibility issues"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_authentication_error",
+      "pattern": "provider authentication|provider credentials|authentication failed|failed to authenticate|credentials not found|missing credentials|invalid credentials|permission denied|access denied|unauthorized|no valid credential|not authenticated|authentication error|provider login|provider token",
+      "type": "ProviderError",
+      "description": "Provider authentication or credential issues",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Check provider credentials and authentication configuration",
+      "category": "provider",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "authentication",
+        "credentials"
+      ],
+      "examples": [
+        "failed to authenticate with AWS provider",
+        "Azure provider credentials not found",
+        "GCP provider authentication error: invalid service account key"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_lock_error",
+      "pattern": "state lock|error acquiring state lock|could not lock state|state already locked|failed to obtain lock|waiting for state lock|state locking timeout|breaking state lock|lock acquisition|lock id|lock info|ForceUnlock|Error locking state|Unable to obtain lock|Lock Info",
+      "type": "StateError",
+      "description": "Terraform state locking issues",
+      "root_cause": "terraform_state_error",
+      "suggestion": "Investigate current lock holder or use force-unlock with caution",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "lock",
+        "concurrency"
+      ],
+      "examples": [
+        "Error: Error acquiring the state lock",
+        "State already locked by another Terraform process",
+        "Timeout waiting for state lock acquisition"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_access_error",
+      "pattern": "error accessing remote state|cannot access state|error reading state|failed to read state|state access denied|state bucket not found|state storage error|state file not found|error opening state|state backend error|backend configuration|remote state data",
+      "type": "StateError",
+      "description": "Errors accessing remote Terraform state",
+      "root_cause": "terraform_state_error",
+      "suggestion": "Check backend configuration and access permissions",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "backend",
+        "remote"
+      ],
+      "examples": [
+        "Error accessing remote state in S3 bucket",
+        "Failed to read state file from Azure Storage",
+        "State access denied: insufficient permissions for GCS bucket"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_migration_error",
+      "pattern": "state migration|error migrating state|failed to migrate|migration failed|terraform init -migrate-state|backend migration|state conversion|state move|state copy|error moving state|state transfer|state transition|backend change",
+      "type": "StateError",
+      "description": "Errors during Terraform state migration",
+      "root_cause": "terraform_state_error",
+      "suggestion": "Backup state before migration and ensure consistent backend configuration",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "migration",
+        "backend"
+      ],
+      "examples": [
+        "Error migrating state from local to S3 backend",
+        "Failed to migrate state: invalid backend configuration",
+        "State migration failed: version incompatibility"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_corruption",
+      "pattern": "state corruption|corrupt state|invalid state file|malformed state|state file invalid|state parse error|cannot unmarshal state|state file syntax|json parse error|state file corrupt|state integrity|damaged state|state consistency",
+      "type": "StateError",
+      "description": "Terraform state file corruption",
+      "root_cause": "terraform_state_error",
+      "suggestion": "Restore from backup or recreate state through import commands",
+      "category": "state",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "corruption",
+        "integrity"
+      ],
+      "examples": [
+        "Error: state file corruption detected",
+        "Invalid state file format: cannot unmarshal JSON",
+        "State file parse error at line 137"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_state_inconsistency",
+      "pattern": "state inconsistency|state drift|resource not found in state|state out of sync|unexpected state|state mismatch|import required|resource exists but|doesn't exist in state|exists in state but|orphaned resource|dangling resource|inconsistent state",
+      "type": "StateError",
+      "description": "Terraform state inconsistency with actual infrastructure",
+      "root_cause": "terraform_state_error",
+      "suggestion": "Use terraform refresh, import, or targeted apply to reconcile state",
+      "category": "state",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "state",
+        "drift",
+        "inconsistency"
+      ],
+      "examples": [
+        "Resource exists in infrastructure but not in state",
+        "State references resources that no longer exist",
+        "State drift detected: manual changes outside of Terraform"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "terraform_provider_rate_limit",
+      "pattern": "rate limit|rate limiting|rate exceeded|too many requests|throttling|throttled|request limit|api limit|API quotas|quota exceeded|request quota|throttle limit|service limits|limits exceeded|API rate",
+      "type": "ProviderError",
+      "description": "Provider API rate limiting or throttling",
+      "root_cause": "terraform_provider_error",
+      "suggestion": "Implement rate limiting strategies or request quota increases",
+      "category": "provider",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "terraform",
+        "provider",
+        "rate_limit",
+        "throttling"
+      ],
+      "examples": [
+        "AWS API rate limit exceeded during apply",
+        "Azure throttling detected: too many requests",
+        "GCP quota exceeded for API requests per minute"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

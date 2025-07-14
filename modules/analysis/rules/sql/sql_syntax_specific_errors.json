@@ -1,0 +1,329 @@
+{
+  "name": "SQL Database-Specific Syntax Errors",
+  "description": "Rules for detecting syntax errors specific to different database systems",
+  "rules": [
+    {
+      "id": "sql_postgresql_window_function_syntax",
+      "pattern": "window function requires an OVER clause|window functions must have OVER|over clause required|missing over clause|invalid window specification|window function frame clause|window function order by|partition by syntax|window frame",
+      "type": "SyntaxError",
+      "description": "PostgreSQL window function syntax error",
+      "root_cause": "sql_postgresql_syntax_error",
+      "suggestion": "Add OVER clause with proper window specification",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "syntax",
+        "window_function"
+      ],
+      "examples": [
+        "window function requires an OVER clause",
+        "invalid window specification in OVER clause",
+        "window function frame clause error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_postgresql_jsonb_syntax",
+      "pattern": "invalid input syntax for type json|invalid input syntax for type jsonb|malformed JSON|invalid JSON path expression|invalid jsonb subscript|JSON syntax error|jsonb_path_query syntax|jsonpath syntax",
+      "type": "SyntaxError",
+      "description": "PostgreSQL JSON/JSONB syntax error",
+      "root_cause": "sql_postgresql_syntax_error",
+      "suggestion": "Fix JSON format or JSONPath expression syntax",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "postgresql",
+        "syntax",
+        "json",
+        "jsonb"
+      ],
+      "examples": [
+        "invalid input syntax for type json",
+        "malformed JSON document",
+        "invalid JSON path expression"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_mysql_group_by_syntax",
+      "pattern": "isn't in GROUP BY|not in GROUP BY|must appear in the GROUP BY clause|Expression .* is not in GROUP BY clause|non-aggregated column|GROUP BY clause|expression refers to a column that is neither grouped nor aggregated",
+      "type": "SyntaxError",
+      "description": "MySQL GROUP BY syntax error with non-aggregated columns",
+      "root_cause": "sql_mysql_syntax_error",
+      "suggestion": "Add all non-aggregated columns to GROUP BY clause or use aggregation functions",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "syntax",
+        "group_by"
+      ],
+      "examples": [
+        "Column 'name' isn't in GROUP BY",
+        "Expression #2 of SELECT list is not in GROUP BY clause",
+        "field must appear in the GROUP BY clause or be used in an aggregate function"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_mysql_limit_offset_syntax",
+      "pattern": "LIMIT clause syntax error|LIMIT offset, row_count|LIMIT row_count OFFSET offset|You have an error in your SQL syntax.*LIMIT|unexpected error in LIMIT clause|LIMIT must be positive|OFFSET must be non-negative",
+      "type": "SyntaxError",
+      "description": "MySQL LIMIT/OFFSET syntax error",
+      "root_cause": "sql_mysql_syntax_error",
+      "suggestion": "Use correct LIMIT syntax: LIMIT count or LIMIT offset, count or LIMIT count OFFSET offset",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "mysql",
+        "syntax",
+        "limit",
+        "offset"
+      ],
+      "examples": [
+        "You have an error in your SQL syntax near 'LIMIT'",
+        "LIMIT offset syntax error",
+        "LIMIT must be positive integer"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_sqlserver_top_syntax",
+      "pattern": "TOP syntax error|The TOP clause|TOP must be followed by|TOP requires|Incorrect syntax near 'TOP'|TOP clause must|TOP expression must be|TOP with PERCENT|TOP with TIES",
+      "type": "SyntaxError",
+      "description": "SQL Server TOP clause syntax error",
+      "root_cause": "sql_sqlserver_syntax_error",
+      "suggestion": "Use correct TOP syntax: TOP (n) [PERCENT] [WITH TIES]",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "syntax",
+        "top"
+      ],
+      "examples": [
+        "Incorrect syntax near 'TOP'",
+        "TOP expression must be a positive integer",
+        "TOP clause must specify a number or percentage"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_sqlserver_cte_syntax",
+      "pattern": "common table expression|WITH clause|CTE syntax|recursive CTE|WITH RECURSIVE|Incorrect syntax near the keyword 'WITH'|Missing terminating semicolon|CTE definition|requires a terminating semicolon|recursive query",
+      "type": "SyntaxError",
+      "description": "SQL Server CTE syntax error",
+      "root_cause": "sql_sqlserver_syntax_error",
+      "suggestion": "Ensure semicolon before WITH clause and proper CTE definition",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlserver",
+        "syntax",
+        "cte",
+        "with_clause"
+      ],
+      "examples": [
+        "Incorrect syntax near the keyword 'WITH'",
+        "Previous statement must be terminated with a semicolon",
+        "Common Table Expression must have at least one column specified"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_oracle_rownum_syntax",
+      "pattern": "ROWNUM syntax|invalid use of ROWNUM|ROWNUM comparison|ROWNUM must be|ROWNUM in subquery|ORA-00904|ROWNUM <= 0|ROWNUM < 1|ROWNUM = 0",
+      "type": "SyntaxError",
+      "description": "Oracle ROWNUM syntax error",
+      "root_cause": "sql_oracle_syntax_error",
+      "suggestion": "ROWNUM can only compare with positive values and cannot be used in some contexts",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "syntax",
+        "rownum"
+      ],
+      "examples": [
+        "invalid use of ROWNUM in ORDER BY clause",
+        "ORA-00904: invalid identifier ROWNUM",
+        "ROWNUM = 0 will always return no rows"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_oracle_connect_by_syntax",
+      "pattern": "CONNECT BY|START WITH|CONNECT_BY_ROOT|CONNECT_BY_ISLEAF|CONNECT_BY_ISCYCLE|ORA-01788|ORA-01437|ORA-01436|hierarchical query|connect by loop|cycle detected|loop in connect by",
+      "type": "SyntaxError",
+      "description": "Oracle hierarchical query syntax error",
+      "root_cause": "sql_oracle_syntax_error",
+      "suggestion": "Fix CONNECT BY syntax or resolve recursive loop",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "oracle",
+        "syntax",
+        "connect_by",
+        "hierarchical"
+      ],
+      "examples": [
+        "ORA-01788: CONNECT BY clause required in this query",
+        "ORA-01436: CONNECT BY loop in user data",
+        "cycle detected while executing CONNECT BY"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_sqlite_foreign_key_syntax",
+      "pattern": "foreign key mismatch|FOREIGN KEY constraint failed|no such table: referenced|foreign key constraint|references non-existent table|references non-existent column|REFERENCES syntax|constraint failed|foreign key",
+      "type": "SyntaxError",
+      "description": "SQLite foreign key constraint syntax error",
+      "root_cause": "sql_sqlite_syntax_error",
+      "suggestion": "Ensure referenced table and column exist and match the foreign key",
+      "category": "sql",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "sqlite",
+        "syntax",
+        "foreign_key"
+      ],
+      "examples": [
+        "foreign key mismatch - \"users\" referencing \"accounts\"",
+        "FOREIGN KEY constraint failed",
+        "foreign key references non-existent table"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_database_specific_function",
+      "pattern": "function not supported|function not compatible|database-specific function|vendor-specific function|not standard SQL|non-portable function|function not available in|unsupported function|not recognized|function does not exist|unknown function|database compatibility",
+      "type": "SyntaxError",
+      "description": "Database-specific function causing compatibility issues",
+      "root_cause": "sql_database_compatibility_error",
+      "suggestion": "Use standard SQL functions or database-specific alternatives",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "compatibility",
+        "function",
+        "portable"
+      ],
+      "examples": [
+        "function DATEDIFF not supported in PostgreSQL",
+        "NVL is an Oracle-specific function, use COALESCE instead",
+        "TOP clause not supported in MySQL, use LIMIT instead"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "sql_database_specific_datatype",
+      "pattern": "data type not supported|unknown data type|invalid data type|data type compatibility|vendor-specific data type|not recognized as a valid data type|unsupported data type|data type not available|unknown type|type not found",
+      "type": "SyntaxError",
+      "description": "Database-specific data type causing compatibility issues",
+      "root_cause": "sql_database_compatibility_error",
+      "suggestion": "Use standard SQL data types or appropriate alternatives for the database",
+      "category": "sql",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "sql",
+        "compatibility",
+        "datatype",
+        "portable"
+      ],
+      "examples": [
+        "data type TINYINT not supported in PostgreSQL",
+        "NVARCHAR is SQL Server specific, use VARCHAR or TEXT instead",
+        "CLOB data type not recognized in SQLite"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

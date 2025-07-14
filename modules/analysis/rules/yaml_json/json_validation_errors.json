@@ -1,0 +1,355 @@
+{
+  "name": "JSON Validation Errors",
+  "description": "Rules for detecting JSON schema validation and data type mismatch errors",
+  "rules": [
+    {
+      "id": "json_schema_type_mismatch",
+      "pattern": "type mismatch|is not of type|expected type|wrong type|type constraint|must be|should be a|should be an|incompatible type|not an? |must be an?|invalid type|type must be|expected to be",
+      "type": "SchemaValidationError",
+      "description": "Data type mismatch in JSON schema validation",
+      "root_cause": "json_schema_error",
+      "suggestion": "Ensure value matches the expected type in the schema",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "schema",
+        "validation",
+        "type"
+      ],
+      "examples": [
+        "property 'age' is not of type 'integer'",
+        "expected type 'boolean', got 'string'",
+        "value at '/config/enabled' is not a boolean"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "json_schema_required_property",
+      "pattern": "required property|missing property|is required|field is required|property missing|required field|missing required|mandatory field|mandatory property|requires property",
+      "type": "SchemaValidationError",
+      "description": "Required property missing in JSON",
+      "root_cause": "json_schema_error",
+      "suggestion": "Add the required property to the JSON object",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "schema",
+        "validation",
+        "required"
+      ],
+      "examples": [
+        "required property 'id' missing",
+        "'/user' is missing required property 'email'",
+        "required field 'name' not found in object"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "json_schema_additional_property",
+      "pattern": "additional properties|property .* not allowed|unexpected property|additional fields|unexpected field|property not defined|unknown property|unrecognized key|unknown field|unrecognized property",
+      "type": "SchemaValidationError",
+      "description": "Additional properties not allowed in JSON schema",
+      "root_cause": "json_schema_error",
+      "suggestion": "Remove properties not defined in the schema",
+      "category": "schema",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "schema",
+        "validation",
+        "additional"
+      ],
+      "examples": [
+        "additional properties ['extraField'] are not allowed",
+        "property 'unknownProperty' is not allowed",
+        "object contains unrecognized key 'customValue'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "json_schema_string_format",
+      "pattern": "format validation|invalid format|not a valid|does not conform to format|invalid .* format|expected format|string does not match format|format constraint|not in format|invalid value for format|format validation",
+      "type": "SchemaValidationError",
+      "description": "String format validation error in JSON",
+      "root_cause": "json_schema_error",
+      "suggestion": "Ensure string value conforms to the required format (e.g., email, URI, date-time)",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "schema",
+        "validation",
+        "format"
+      ],
+      "examples": [
+        "string 'not-an-email' does not conform to format 'email'",
+        "invalid URI format at '/links/0/href'",
+        "'/date' is not a valid date-time format"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "json_schema_string_pattern",
+      "pattern": "pattern constraint|does not match pattern|must match pattern|string does not match|regex pattern|not match the pattern|pattern validation|regular expression|pattern mismatch|regex mismatch|pattern constraint|must conform to",
+      "type": "SchemaValidationError",
+      "description": "String pattern mismatch in JSON schema",
+      "root_cause": "json_schema_error",
+      "suggestion": "Ensure string value matches the required regex pattern",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "schema",
+        "validation",
+        "pattern"
+      ],
+      "examples": [
+        "string 'abc' does not match pattern '^[0-9]+$'",
+        "'/version' does not match the pattern 'v\\d+\\.\\d+\\.\\d+'",
+        "value must conform to regex pattern '^[A-Z][a-z]+$'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "json_schema_number_range",
+      "pattern": "maximum|minimum|less than or equal to|greater than or equal to|exceeds maximum|below minimum|exclusive maximum|exclusive minimum|number too small|number too large|multiple of|divisible by|range constraint",
+      "type": "SchemaValidationError",
+      "description": "Number range constraint violation in JSON schema",
+      "root_cause": "json_schema_error",
+      "suggestion": "Ensure numeric value is within the required range",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "schema",
+        "validation",
+        "number",
+        "range"
+      ],
+      "examples": [
+        "value 100 exceeds maximum of 10",
+        "value -5 is less than minimum of 0",
+        "value 15 is not a multiple of 2"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "json_schema_array_constraints",
+      "pattern": "array too long|array too short|minItems|maxItems|min items|max items|too many items|too few items|array length|array size|items constraint|unique items|uniqueItems|contains constraint|array validation|contains valid item",
+      "type": "SchemaValidationError",
+      "description": "Array constraint violation in JSON schema",
+      "root_cause": "json_schema_error",
+      "suggestion": "Ensure array meets size constraints and other requirements",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "schema",
+        "validation",
+        "array"
+      ],
+      "examples": [
+        "array has 0 items but must have at least 1",
+        "array has duplicate items but must be unique",
+        "array does not contain a valid item matching the 'contains' schema"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "json_schema_object_constraints",
+      "pattern": "too many properties|too few properties|minProperties|maxProperties|min properties|max properties|required properties|property names|propertyNames|property constraint|dependencies|dependent schemas|dependent required",
+      "type": "SchemaValidationError",
+      "description": "Object constraint violation in JSON schema",
+      "root_cause": "json_schema_error",
+      "suggestion": "Ensure object meets property count and dependency requirements",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "schema",
+        "validation",
+        "object"
+      ],
+      "examples": [
+        "object has 2 properties but must have at least 3",
+        "property name 'invalid-name' does not match pattern '^[a-zA-Z]+$'",
+        "property 'shipping' has missing dependencies: ['billing']"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "json_schema_enum_constraint",
+      "pattern": "enum constraint|not one of|must be one of|allowed values|permitted values|enum validation|enum value|not in enum|value must be|expected one of|allowed options|valid options|not among the allowed",
+      "type": "SchemaValidationError",
+      "description": "Enum constraint violation in JSON schema",
+      "root_cause": "json_schema_error",
+      "suggestion": "Use one of the allowed enum values",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "schema",
+        "validation",
+        "enum"
+      ],
+      "examples": [
+        "value 'invalid' is not one of ['option1', 'option2', 'option3']",
+        "'/status' must be one of: active, inactive, pending",
+        "property 'type' has value that is not among the allowed values"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "json_schema_conditional_validation",
+      "pattern": "if-then|if-then-else|conditional validation|condition not met|conditional schema|when property|condition schema|then schema|else schema|if schema|conditional constraint|condition invalid",
+      "type": "SchemaValidationError",
+      "description": "Conditional schema validation error in JSON",
+      "root_cause": "json_schema_error",
+      "suggestion": "Satisfy the conditional requirements in the schema",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "schema",
+        "validation",
+        "conditional"
+      ],
+      "examples": [
+        "if-then validation failed: 'then' schema validation failed",
+        "if condition is valid, then validation errors were found",
+        "conditional schema validation failed at '/shipping'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "json_schema_reference_resolution",
+      "pattern": "reference resolution|$ref|could not resolve|reference error|JSON reference|JSON pointer|$ref error|reference not found|unresolved reference|invalid reference|cannot resolve|unable to resolve",
+      "type": "SchemaValidationError",
+      "description": "Schema reference resolution error in JSON",
+      "root_cause": "json_schema_error",
+      "suggestion": "Fix JSON schema references to ensure they point to valid locations",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "schema",
+        "validation",
+        "reference"
+      ],
+      "examples": [
+        "could not resolve reference: '#/definitions/User'",
+        "$ref error: path '/schemas/User' not found in schema",
+        "unresolved JSON pointer in schema reference"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "json_data_type_precision",
+      "pattern": "precision loss|decimal precision|floating point precision|numeric precision|number precision|integer overflow|integer range|integer precision|number overflow|floating point|decimal places|numeric overflow|numeric range",
+      "type": "DataTypeError",
+      "description": "Numeric precision or range issues in JSON",
+      "root_cause": "json_data_type_error",
+      "suggestion": "Handle numeric values within JSON safe ranges and precision limits",
+      "category": "data_type",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "json",
+        "data_type",
+        "precision",
+        "number"
+      ],
+      "examples": [
+        "potential precision loss in large integer 9007199254740993",
+        "floating point value exceeds safe decimal precision",
+        "integer value outside the range of safe integers in JSON"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

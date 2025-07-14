@@ -1,0 +1,267 @@
+{
+  "name": "R Data Science Errors",
+  "description": "Rules for detecting domain-specific errors in R for data science applications",
+  "rules": [
+    {
+      "id": "r_dataframe_indexing_error",
+      "pattern": "incorrect number of dimensions|incorrect number of subscripts|subscript out of bounds|subscript out of range|undefined columns|non-numeric argument to binary operator|$ operator is invalid|object of type 'closure'|incorrect number of dimensions|undefined columns selected|invalid subscript type",
+      "type": "DataFrameError",
+      "description": "Errors in R dataframe indexing or column access",
+      "root_cause": "r_dataframe_error",
+      "suggestion": "Check dataframe column names and indexing syntax",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "dataframe",
+        "indexing",
+        "data_science"
+      ],
+      "examples": [
+        "Error: incorrect number of dimensions",
+        "$ operator is invalid for atomic vectors",
+        "undefined columns selected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_package_error",
+      "pattern": "could not find function|there is no package called|package .* not found|namespace .* not found|could not find package|failed to load namespace|package or namespace load failed|package.*is not available|unable to load required package|no package called|no package named|library not found",
+      "type": "PackageError",
+      "description": "Errors with R package loading or function availability",
+      "root_cause": "r_package_error",
+      "suggestion": "Install missing package or check package name spelling",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "package",
+        "library",
+        "data_science"
+      ],
+      "examples": [
+        "could not find function \"ggplot\"",
+        "there is no package called 'tidyverse'",
+        "package or namespace load failed for 'dplyr'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_data_type_error",
+      "pattern": "cannot coerce|argument is not numeric|argument is not a.*vector|arguments imply differing number of rows|arguments imply differing length|object cannot be coerced|NAs introduced by coercion|incompatible dimensions|non-numeric argument|not meaningful for factors|unimplemented type|invalid factor level|factor level mismatch",
+      "type": "DataTypeError",
+      "description": "Data type coercion or compatibility errors in R",
+      "root_cause": "r_data_type_error",
+      "suggestion": "Check data types and use appropriate conversion functions",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "data_type",
+        "coercion",
+        "data_science"
+      ],
+      "examples": [
+        "cannot coerce type 'closure' to vector of type 'double'",
+        "NAs introduced by coercion",
+        "arguments imply differing number of rows: 10, 5"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_ggplot_error",
+      "pattern": "ggplot|geom_|aes|coord_|scale_|theme|facet_|stat_|annotation_|position_|element_|guide_|ggplot2|geom_histogram|geom_point|geom_line|aesthetics|mapping|aesthetic",
+      "type": "VisualizationError",
+      "description": "Errors in ggplot2 visualization creation",
+      "root_cause": "r_visualization_error",
+      "suggestion": "Check ggplot2 syntax, aesthetics mapping, and data structure",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "ggplot2",
+        "visualization",
+        "data_science"
+      ],
+      "examples": [
+        "geom_point requires the following missing aesthetics: x, y",
+        "stat_count() must not be used with a y aesthetic",
+        "Error in layout_base(data, rows, drop = drop) : At least one layer must contain all faceting variables"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_dplyr_error",
+      "pattern": "dplyr|mutate|filter|select|arrange|summarize|summarise|group_by|ungroup|join|inner_join|left_join|right_join|full_join|rename|distinct|slice|pull|transmute|across|where|everything|starts_with|ends_with|contains",
+      "type": "DataManipulationError",
+      "description": "Errors in dplyr data manipulation functions",
+      "root_cause": "r_data_manipulation_error",
+      "suggestion": "Check dplyr syntax, column names, and operation sequence",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "dplyr",
+        "data_manipulation",
+        "data_science"
+      ],
+      "examples": [
+        "Error: Column `name` not found in `.data`",
+        "Must group by variables found in `.data`",
+        "joining factors with different levels"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_model_error",
+      "pattern": "lm|glm|formula|model.matrix|model.frame|singular|singularity|non-conformable|non-convergence|convergence|fit failed|fitted probabilities|model fit|formula interface|response variable|predictors|coefficients|residuals|non-positive definite|algorithm did not converge|perfect separation|complete separation|fitted values|model.response",
+      "type": "ModelingError",
+      "description": "Errors in statistical modeling functions in R",
+      "root_cause": "r_modeling_error",
+      "suggestion": "Check model formula, data completeness, and variable types",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "modeling",
+        "statistics",
+        "data_science"
+      ],
+      "examples": [
+        "Error in model.frame.default: variable lengths differ",
+        "error in evaluating the argument 'x' in selecting a method for function 'summary'",
+        "system is computationally singular: reciprocal condition number"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_data_import_error",
+      "pattern": "read.csv|read.table|read_csv|read_excel|import|fread|readxl|file not found|file does not exist|cannot open file|cannot open connection|incomplete final line|no such file|does not exist|file not specified|sheet not found|encoding error|wrong number of columns|more columns than column names|duplicate 'row.names'|invalid 'sep' value",
+      "type": "DataImportError",
+      "description": "Errors in data import functions in R",
+      "root_cause": "r_data_import_error",
+      "suggestion": "Check file paths, existence, and format specifications",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "import",
+        "data",
+        "data_science"
+      ],
+      "examples": [
+        "cannot open file 'data.csv': No such file or directory",
+        "more columns than column names",
+        "line 1 did not have 5 elements"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_parallel_processing_error",
+      "pattern": "parallel|mclapply|parLapply|foreach|doParallel|futures|promises|cluster|socket|node|fork|worker|core|thread|registerDoParallel|makeCluster|stopCluster|clusterApply|%dopar%|socket|PSOCK|MPI",
+      "type": "ParallelProcessingError",
+      "description": "Errors in parallel processing in R",
+      "root_cause": "r_parallel_error",
+      "suggestion": "Check parallel setup, cluster management, and data sharing",
+      "category": "r",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "r",
+        "parallel",
+        "performance",
+        "data_science"
+      ],
+      "examples": [
+        "Error in summary(model): task 1 failed - \"object 'df' not found\"",
+        "socket cluster with 8 nodes on host 'localhost' failed",
+        "Error in serialize: error writing to connection"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "r_memory_error",
+      "pattern": "cannot allocate vector|memory exhausted|cannot allocate memory|vector memory exhausted|cannot allocate|Calloc|insufficient memory|Error: vector memory exhausted|out of memory|memory not available|memory limit|allocation failed|memory allocation|heap size|heap limit",
+      "type": "MemoryError",
+      "description": "Memory allocation errors in R",
+      "root_cause": "r_memory_error",
+      "suggestion": "Reduce data size, use more efficient data structures, or increase memory limits",
+      "category": "r",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "r",
+        "memory",
+        "allocation",
+        "data_science"
+      ],
+      "examples": [
+        "Error: cannot allocate vector of size 1.5 Gb",
+        "vector memory exhausted (limit reached?)",
+        "Error: memory exhausted (limit reached?)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

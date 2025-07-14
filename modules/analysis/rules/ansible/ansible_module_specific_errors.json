@@ -1,0 +1,296 @@
+{
+  "name": "Ansible Module-Specific Errors",
+  "description": "Rules for detecting errors specific to various Ansible modules",
+  "rules": [
+    {
+      "id": "ansible_module_apt_errors",
+      "pattern": "apt module|apt: failed|apt-get|dpkg|apt-cache|apt_key|apt_repository|E: Unable to locate package|no installation candidate|Could not lock /var/lib/apt/lists|dpkg was interrupted|E: Unmet dependencies|apt authentication|Packages have unmet dependencies|apt-key deprecated|apt repository|apt cache",
+      "type": "ModuleError",
+      "description": "Errors with apt module for package management",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Check package names, apt repository configuration, and server connectivity",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "apt",
+        "package"
+      ],
+      "examples": [
+        "E: Unable to locate package nginx",
+        "Could not lock /var/lib/apt/lists/lock - open",
+        "apt-key is deprecated, use apt-key import to add repository key"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_yum_errors",
+      "pattern": "yum module|yum: failed|yum|dnf|rpm|yum_repository|package not found|no package .* available|No package .* available|cannot find a valid baseurl for repo|could not get metalink|yum repo|rpm install|no matching package|nothing provides|repository not found|yum clean|yum update",
+      "type": "ModuleError",
+      "description": "Errors with yum module for package management",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Check package names, yum repository configuration, and server connectivity",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "yum",
+        "package"
+      ],
+      "examples": [
+        "No package httpd available",
+        "Cannot find a valid baseurl for repo: base",
+        "Nothing provides dependency required by package"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_service_errors",
+      "pattern": "service module|service:|systemd:|service not found|could not find service|unit .* not found|no such service|unknown service|service not loaded|Unit .* could not be found|Could not find the requested service|service failed to start|system has not been booted with systemd|service failed|systemd daemon|reload failed",
+      "type": "ModuleError",
+      "description": "Errors with service or systemd module",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Verify service name and ensure the service exists on the target system",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "service",
+        "systemd"
+      ],
+      "examples": [
+        "Could not find the requested service apache2",
+        "Unit nginx.service could not be found",
+        "System has not been booted with systemd as init system"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_file_errors",
+      "pattern": "file module|file:|could not find|no such file|directory not found|permission denied|failed to create|not a directory|is a directory|dest is required|source is required|path is required|failed to remove|cannot remove|cannot set mode|invalid mode|chown failed|cannot chown|failed to set owner|failed to set group",
+      "type": "ModuleError",
+      "description": "Errors with file module operations",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Check file paths, permissions, and user/group existence",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "file",
+        "path"
+      ],
+      "examples": [
+        "could not find /path/to/file",
+        "permission denied when creating /var/www/html",
+        "failed to set owner: user www-data does not exist"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_template_errors",
+      "pattern": "template module|template:|no such file or directory|could not find template|unable to lookup|source file not found|template file not found|template error|jinja2 error|template not found|src file not found|lookup plugin|file not readable|permission denied|template lookup",
+      "type": "ModuleError",
+      "description": "Errors with template module",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Check template file paths and Jinja2 syntax",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "template",
+        "jinja2"
+      ],
+      "examples": [
+        "could not find template /path/to/template.j2",
+        "template error: unexpected '}'",
+        "template file not found: 'nginx.conf.j2'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_copy_errors",
+      "pattern": "copy module|copy:|no such file or directory|could not find src|source file not found|unable to copy|failed to copy|copy failed|source does not exist|permission denied|destination not writable|copy src|copy dest|not a regular file|is a directory|dest is required|src is required",
+      "type": "ModuleError",
+      "description": "Errors with copy module",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Check source and destination paths and permissions",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "copy",
+        "file"
+      ],
+      "examples": [
+        "could not find src=/path/to/source.conf",
+        "permission denied when copying to /etc/config.conf",
+        "copy failed: source file is a directory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_fetch_errors",
+      "pattern": "fetch module|fetch:|no such file or directory|could not find|unable to fetch|fetch failed|remote file not found|permission denied|source does not exist|not a regular file|is a directory|dest is required|src is required|fetch src|fetch dest",
+      "type": "ModuleError",
+      "description": "Errors with fetch module",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Check remote source paths and local destination permissions",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "fetch",
+        "file"
+      ],
+      "examples": [
+        "could not find remote src=/etc/nginx/nginx.conf",
+        "permission denied when reading remote file",
+        "fetch failed: remote source is a directory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_git_errors",
+      "pattern": "git module|git:|repository not found|could not resolve host|authentication failed|permission denied|does not appear to be a git repository|git clone failed|git checkout failed|git pull failed|host key verification failed|ssh key|git error|git failed|clone failed|update failed|could not checkout|repo not found|repository does not exist",
+      "type": "ModuleError",
+      "description": "Errors with git module",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Check repository URL, authentication credentials, and SSH keys",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "git",
+        "repository"
+      ],
+      "examples": [
+        "repository https://github.com/org/repo.git not found",
+        "Permission denied (publickey). fatal: Could not read from remote repository",
+        "does not appear to be a git repository"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_docker_errors",
+      "pattern": "docker module|docker:|docker-py|docker.errors|image not found|container not found|docker daemon|docker api|connection refused|invalid image|error pulling image|docker command not found|docker network|docker volume|docker service|docker stack|docker swarm|dockerd|docker-compose|docker hub|container exit|container crash",
+      "type": "ModuleError",
+      "description": "Errors with Docker-related modules",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Check Docker installation, service status, and image names",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "docker",
+        "container"
+      ],
+      "examples": [
+        "Error: image not found: nginx:1.99",
+        "docker-py: docker daemon not running",
+        "Cannot connect to the Docker daemon at unix:///var/run/docker.sock"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "ansible_module_shell_command_errors",
+      "pattern": "shell module|command module|shell:|command:|executable not found|command not found|executable permission denied|non-zero return code|command failed|return code [1-9][0-9]*|execution failed|cannot execute|no such command|command could not be found|binary not found|not executable|executable parameter|failure return code",
+      "type": "ModuleError",
+      "description": "Errors with shell or command modules",
+      "root_cause": "ansible_module_error",
+      "suggestion": "Check command existence, permissions, and expected return codes",
+      "category": "module",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "ansible",
+        "module",
+        "shell",
+        "command"
+      ],
+      "examples": [
+        "command not found: pip3",
+        "non-zero return code: 127",
+        "executable /usr/local/bin/custom-script permission denied"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

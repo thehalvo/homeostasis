@@ -1,0 +1,326 @@
+{
+  "name": "YAML Schema Validation Errors",
+  "description": "Rules for detecting YAML schema validation and structure errors",
+  "rules": [
+    {
+      "id": "yaml_schema_required_property",
+      "pattern": "required property missing|missing required property|is required|required field|is a required property|mandatory field|mandatory property|property is required|missing mandatory|missing a required|field is required|missing required field",
+      "type": "SchemaValidationError",
+      "description": "Required property missing in YAML",
+      "root_cause": "yaml_schema_error",
+      "suggestion": "Add the required property to the YAML document",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "schema",
+        "validation",
+        "required"
+      ],
+      "examples": [
+        "required property 'name' missing",
+        "field 'version' is required",
+        "Error: missing mandatory field 'apiVersion'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_schema_type_mismatch",
+      "pattern": "type mismatch|expected type|expected .* to be|should be of type|is not of type|is not a|invalid type|not an? |must be an?|must be of type|type must be|expected to be|wrong type",
+      "type": "SchemaValidationError",
+      "description": "Type mismatch in YAML schema validation",
+      "root_cause": "yaml_schema_error",
+      "suggestion": "Ensure value matches the expected type in the schema",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "schema",
+        "validation",
+        "type"
+      ],
+      "examples": [
+        "expected 'count' to be integer, got string",
+        "property 'replicas' is not a number",
+        "Error: type mismatch, 'timeout' must be of type number"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_schema_pattern_mismatch",
+      "pattern": "does not match pattern|pattern mismatch|invalid format|must match pattern|should match pattern|must conform to|pattern validation|format validation|regex pattern|must match regex|format constraint|pattern constraint",
+      "type": "SchemaValidationError",
+      "description": "Value does not match required pattern in YAML schema",
+      "root_cause": "yaml_schema_error",
+      "suggestion": "Ensure value conforms to the required pattern or format",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "schema",
+        "validation",
+        "pattern",
+        "format"
+      ],
+      "examples": [
+        "property 'email' does not match pattern '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'",
+        "value 'invalid-version' does not match pattern '^v\\d+\\.\\d+\\.\\d+$'",
+        "Error: 'apiVersion' must match pattern 'v\\d+'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_schema_enum_violation",
+      "pattern": "not in enum|not one of|must be one of|allowed values|permitted values|allowed options|valid options|enum values|expected one of|expected to be one of|not among the allowed|unexpected value|invalid value|not a valid|value must be",
+      "type": "SchemaValidationError",
+      "description": "Value not in allowed enum in YAML schema",
+      "root_cause": "yaml_schema_error",
+      "suggestion": "Use one of the allowed values from the enum",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "schema",
+        "validation",
+        "enum"
+      ],
+      "examples": [
+        "property 'color' not in enum ['red', 'green', 'blue']",
+        "value must be one of: debug, info, warn, error",
+        "Error: 'strategy' not among the allowed values [RollingUpdate, Recreate]"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_schema_range_violation",
+      "pattern": "exceeds maximum|below minimum|greater than|less than|maximum value|minimum value|out of range|not in range|above maximum|below minimum|must be greater|must be less|must be between|too many items|too few items|max items|min items|maximum length|minimum length|max length|min length",
+      "type": "SchemaValidationError",
+      "description": "Value outside allowed range in YAML schema",
+      "root_cause": "yaml_schema_error",
+      "suggestion": "Ensure value is within the allowed range limits",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "schema",
+        "validation",
+        "range"
+      ],
+      "examples": [
+        "property 'replicas' exceeds maximum value of 10",
+        "array 'tags' must have at least 1 item",
+        "Error: 'timeout' must be between 1 and 3600"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_schema_additional_properties",
+      "pattern": "additional properties|unexpected property|unknown property|unexpected field|unknown field|not allowed|extraneous property|unrecognized property|property not defined|additional fields|unrecognized key|unrecognized field|unknown key|unknown attribute|additional attributes",
+      "type": "SchemaValidationError",
+      "description": "Additional properties not allowed in YAML schema",
+      "root_cause": "yaml_schema_error",
+      "suggestion": "Remove properties not defined in the schema",
+      "category": "schema",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "schema",
+        "validation",
+        "properties"
+      ],
+      "examples": [
+        "additional properties ['extraSetting'] not allowed",
+        "unexpected field 'unknown_key'",
+        "Error: extraneous property 'customField' not permitted"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_schema_exclusive_properties",
+      "pattern": "properties are exclusive|exactly one of|mutually exclusive|exclusive property|cannot both be present|one of the properties|either or but not both|choose between|conflict between|only one of|exclusive fields|exactly one property",
+      "type": "SchemaValidationError",
+      "description": "Mutually exclusive properties in YAML schema",
+      "root_cause": "yaml_schema_error",
+      "suggestion": "Use only one of the mutually exclusive properties",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "schema",
+        "validation",
+        "exclusive"
+      ],
+      "examples": [
+        "properties 'hostPath' and 'configMap' are exclusive",
+        "exactly one of [nfs, hostPath, emptyDir] must be present",
+        "Error: conflict between 'command' and 'args'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_schema_dependent_properties",
+      "pattern": "dependent property|requires property|depends on|dependency|missing dependent|dependent schema|dependency violation|must be present with|requires also|conditional property|conditional requirement|conditional schema",
+      "type": "SchemaValidationError",
+      "description": "Missing dependent property in YAML schema",
+      "root_cause": "yaml_schema_error",
+      "suggestion": "Add the required dependent properties",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "schema",
+        "validation",
+        "dependency"
+      ],
+      "examples": [
+        "property 'port' requires property 'protocol'",
+        "missing dependent property 'namespace' required by 'name'",
+        "Error: 'password' depends on 'username' being present"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_schema_uniqueness_violation",
+      "pattern": "duplicate|not unique|uniqueness|uniqueItems|unique items|items must be unique|contains duplicate|must be unique|violates unique|must contain unique|duplicate value|duplicate entry|duplicate key|duplicate id|duplicate name",
+      "type": "SchemaValidationError",
+      "description": "Uniqueness constraint violation in YAML schema",
+      "root_cause": "yaml_schema_error",
+      "suggestion": "Remove duplicate items or ensure unique values",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "schema",
+        "validation",
+        "unique"
+      ],
+      "examples": [
+        "array 'tags' contains duplicate item: 'test'",
+        "items in 'ports' must be unique",
+        "Error: 'name' field must be unique within array"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_schema_conditional_validation",
+      "pattern": "conditional validation|failed conditional|if-then|if-then-else|when condition|condition not met|conditional schema|condition matches but|condition requires|schema condition|conditional requirement|schema dependency|property condition",
+      "type": "SchemaValidationError",
+      "description": "Conditional validation failure in YAML schema",
+      "root_cause": "yaml_schema_error",
+      "suggestion": "Satisfy the conditional requirements in the schema",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "schema",
+        "validation",
+        "conditional"
+      ],
+      "examples": [
+        "when 'type' is 'service', property 'port' is required",
+        "failed conditional validation: if 'enabled' is true, 'config' must be present",
+        "Error: condition matched but validation failed for dependent schema"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "yaml_schema_reference_resolution",
+      "pattern": "could not resolve reference|reference error|$ref|JSON pointer|unresolved reference|cannot resolve|reference not found|schema reference|couldn't resolve|unable to resolve|reference resolution|reference to non-existent|invalid reference",
+      "type": "SchemaValidationError",
+      "description": "Reference resolution error in YAML schema",
+      "root_cause": "yaml_schema_error",
+      "suggestion": "Fix references to ensure they point to valid locations",
+      "category": "schema",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "yaml",
+        "schema",
+        "validation",
+        "reference"
+      ],
+      "examples": [
+        "could not resolve reference '#/definitions/User'",
+        "reference error: path '/components/schemas/Pet' not found",
+        "Error: unable to resolve $ref pointer"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}
