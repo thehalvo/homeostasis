@@ -398,6 +398,676 @@ class MultiLanguageFrameworkDetector:
                 ],
                 'files': [],
                 'config_files': ['Cargo.toml']
+            },
+            
+            # Zig Frameworks
+            'zap': {
+                'language': LanguageType.ZIG,
+                'patterns': [
+                    r'const\s+zap\s*=\s*@import\("zap"\)',
+                    r'zap\.HttpServer',
+                    r'zap\.SimpleHttpServer',
+                    r'zap\.SimpleEndpoint',
+                    r'\.get\("',
+                    r'\.post\("',
+                ],
+                'files': [],
+                'config_files': ['build.zig']
+            },
+            'ziggy': {
+                'language': LanguageType.ZIG,
+                'patterns': [
+                    r'const\s+ziggy\s*=\s*@import\("ziggy"\)',
+                    r'ziggy\.Http',
+                    r'ziggy\.Router',
+                    r'ziggy\.Request',
+                    r'ziggy\.Response',
+                ],
+                'files': [],
+                'config_files': ['build.zig']
+            },
+            'mecha': {
+                'language': LanguageType.ZIG,
+                'patterns': [
+                    r'const\s+mecha\s*=\s*@import\("mecha"\)',
+                    r'mecha\.combine',
+                    r'mecha\.oneOf',
+                    r'mecha\.discard',
+                    r'mecha\.ParseError',
+                ],
+                'files': [],
+                'config_files': ['build.zig']
+            },
+            'zig-network': {
+                'language': LanguageType.ZIG,
+                'patterns': [
+                    r'const\s+network\s*=\s*@import\("network"\)',
+                    r'network\.Socket',
+                    r'network\.Address',
+                    r'network\.tcp',
+                    r'network\.udp',
+                ],
+                'files': [],
+                'config_files': ['build.zig']
+            },
+            'ziglings': {
+                'language': LanguageType.ZIG,
+                'patterns': [
+                    r'const\s+ziglings\s*=\s*@import\("ziglings"\)',
+                    r'// This is a Ziglings exercise',
+                    r'// See https://github.com/ratfactor/ziglings',
+                ],
+                'files': ['exercises.zig'],
+                'config_files': ['build.zig']
+            },
+            
+            # Nim Frameworks
+            'jester': {
+                'language': LanguageType.NIM,
+                'patterns': [
+                    r'import\s+jester',
+                    r'routes:',
+                    r'resp\s+"',
+                    r'@".*"\s*\(',
+                    r'initJester\s*\(',
+                ],
+                'files': [],
+                'config_files': ['nimble.json', 'nim.cfg']
+            },
+            'karax': {
+                'language': LanguageType.NIM,
+                'patterns': [
+                    r'import\s+karax',
+                    r'karax/karaxdsl',
+                    r'karax/vdom',
+                    r'karax/kdom',
+                    r'proc\s+\w+Node\s*\(',
+                    r'buildHtml:',
+                ],
+                'files': [],
+                'config_files': ['nimble.json', 'nim.cfg']
+            },
+            'nimx': {
+                'language': LanguageType.NIM,
+                'patterns': [
+                    r'import\s+nimx/',
+                    r'nimx/window',
+                    r'nimx/view',
+                    r'nimx/timer',
+                    r'nimx/animation',
+                    r'newWindow\s*\(',
+                ],
+                'files': [],
+                'config_files': ['nimble.json', 'nim.cfg']
+            },
+            'prologue': {
+                'language': LanguageType.NIM,
+                'patterns': [
+                    r'import\s+prologue',
+                    r'newApp\s*\(',
+                    r'proc\s+\w+\s*\(ctx:\s*Context\)',
+                    r'resp\s+\w+',
+                    r'Prologue\s*\(',
+                ],
+                'files': [],
+                'config_files': ['nimble.json', 'nim.cfg']
+            },
+            'norm': {
+                'language': LanguageType.NIM,
+                'patterns': [
+                    r'import\s+norm/',
+                    r'model\s+\w+',
+                    r'proc\s+dbValue\s*\(',
+                    r'init\s+\w+Db\s*\(',
+                    r'type\s+\w+\s*=\s*ref\s+object\s+of\s+Model',
+                ],
+                'files': [],
+                'config_files': ['nimble.json', 'nim.cfg']
+            },
+            
+            # Crystal Frameworks
+            'lucky': {
+                'language': LanguageType.CRYSTAL,
+                'patterns': [
+                    r'require\s+"lucky"',
+                    r'class\s+\w+\s+<\s+Lucky::Action',
+                    r'Lucky::BaseAppServer',
+                    r'Lucky::Env',
+                    r'Lucky::Router',
+                    r'Lucky::RouteHandler',
+                ],
+                'files': ['lucky.cr'],
+                'config_files': ['shard.yml']
+            },
+            'amber': {
+                'language': LanguageType.CRYSTAL,
+                'patterns': [
+                    r'require\s+"amber"',
+                    r'Amber::Server',
+                    r'Amber::Controller::Base',
+                    r'Amber::Pipe',
+                    r'Amber::Router',
+                    r'Amber::Validator',
+                ],
+                'files': ['amber.cr'],
+                'config_files': ['shard.yml']
+            },
+            'kemal': {
+                'language': LanguageType.CRYSTAL,
+                'patterns': [
+                    r'require\s+"kemal"',
+                    r'Kemal\.run',
+                    r'Kemal\.config',
+                    r'get\s+"\/\w*"\s+do',
+                    r'post\s+"\/\w*"\s+do',
+                    r'HTTP::Server::Context',
+                ],
+                'files': ['app.cr'],
+                'config_files': ['shard.yml']
+            },
+            'granite': {
+                'language': LanguageType.CRYSTAL,
+                'patterns': [
+                    r'require\s+"granite"',
+                    r'class\s+\w+\s+<\s+Granite::Base',
+                    r'Granite::Connections',
+                    r'Granite::Query',
+                    r'Granite::Columns',
+                ],
+                'files': [],
+                'config_files': ['shard.yml']
+            },
+            'crecto': {
+                'language': LanguageType.CRYSTAL,
+                'patterns': [
+                    r'require\s+"crecto"',
+                    r'module\s+\w+Repo\s*;?\s*include\s+Crecto::Repo',
+                    r'class\s+\w+\s+<\s+Crecto::Model',
+                    r'Crecto::Changeset',
+                    r'Crecto::Query',
+                ],
+                'files': [],
+                'config_files': ['shard.yml']
+            },
+            
+            # Haskell Frameworks
+            'yesod': {
+                'language': LanguageType.HASKELL,
+                'patterns': [
+                    r'import\s+Yesod',
+                    r'import\s+Yesod\.\w+',
+                    r'mkYesod\s+"\w+"',
+                    r'mkMigrate\s+"\w+"',
+                    r'instance\s+Yesod\s+\w+',
+                    r'warp\s+\d+\s+\w+',
+                ],
+                'files': [],
+                'config_files': ['package.yaml', 'stack.yaml', 'cabal.project']
+            },
+            'scotty': {
+                'language': LanguageType.HASKELL,
+                'patterns': [
+                    r'import\s+Web\.Scotty',
+                    r'import\s+Web\.Scotty\.\w+',
+                    r'scotty\s+\d+',
+                    r'ScottyM',
+                    r'get\s+"[^"]+"',
+                    r'post\s+"[^"]+"',
+                ],
+                'files': [],
+                'config_files': ['package.yaml', 'stack.yaml', 'cabal.project']
+            },
+            'servant': {
+                'language': LanguageType.HASKELL,
+                'patterns': [
+                    r'import\s+Servant',
+                    r'import\s+Servant\.\w+',
+                    r'type\s+API\s*=',
+                    r'serve\s+\(Proxy\s*::',
+                    r'::>\s+',
+                    r'type\s+\w+API',
+                ],
+                'files': [],
+                'config_files': ['package.yaml', 'stack.yaml', 'cabal.project']
+            },
+            'snap': {
+                'language': LanguageType.HASKELL,
+                'patterns': [
+                    r'import\s+Snap',
+                    r'import\s+Snap\.\w+',
+                    r'Snap\s*\(',
+                    r'makeSnaplet',
+                    r'addRoutes',
+                    r'SnapletInit',
+                ],
+                'files': [],
+                'config_files': ['package.yaml', 'stack.yaml', 'cabal.project']
+            },
+            'reflex': {
+                'language': LanguageType.HASKELL,
+                'patterns': [
+                    r'import\s+Reflex',
+                    r'import\s+Reflex\.Dom',
+                    r'MonadWidget',
+                    r'mainWidget',
+                    r'el\s+"\w+"',
+                    r'Dynamic\s+t',
+                ],
+                'files': [],
+                'config_files': ['package.yaml', 'stack.yaml', 'cabal.project']
+            },
+            
+            # F# Frameworks
+            'giraffe': {
+                'language': LanguageType.FSHARP,
+                'patterns': [
+                    r'open\s+Giraffe',
+                    r'open\s+Giraffe\.\w+',
+                    r'webApp\s*{',
+                    r'choose\s*\[',
+                    r'route\s+"[^"]+"',
+                    r'HttpHandler',
+                ],
+                'files': [],
+                'config_files': ['paket.dependencies', 'fsproj', 'fsharplint.json']
+            },
+            'saturn': {
+                'language': LanguageType.FSHARP,
+                'patterns': [
+                    r'open\s+Saturn',
+                    r'open\s+Saturn\.\w+',
+                    r'application\s*{',
+                    r'router\s*{',
+                    r'Controller\.\w+',
+                    r'endpoint\s*{',
+                ],
+                'files': [],
+                'config_files': ['paket.dependencies', 'fsproj', 'fsharplint.json']
+            },
+            'falco': {
+                'language': LanguageType.FSHARP,
+                'patterns': [
+                    r'open\s+Falco',
+                    r'open\s+Falco\.\w+',
+                    r'webHost\s*{',
+                    r'Response\.\w+',
+                    r'Request\.\w+',
+                    r'Route\.\w+',
+                ],
+                'files': [],
+                'config_files': ['paket.dependencies', 'fsproj', 'fsharplint.json']
+            },
+            'fable': {
+                'language': LanguageType.FSHARP,
+                'patterns': [
+                    r'open\s+Fable',
+                    r'open\s+Fable\.\w+',
+                    r'importAll\s+"[^"]+"',
+                    r'importMember\s+"[^"]+"',
+                    r'\[<Global>\]',
+                    r'\[<Emit\([^)]+\)>\]',
+                ],
+                'files': [],
+                'config_files': ['paket.dependencies', 'fsproj', 'webpack.config.js']
+            },
+            'elmish': {
+                'language': LanguageType.FSHARP,
+                'patterns': [
+                    r'open\s+Elmish',
+                    r'open\s+Elmish\.\w+',
+                    r'Program\.mkProgram',
+                    r'Program\.mkSimple',
+                    r'\|>\s*Program\.withReactSynchronous',
+                    r'type\s+Msg\s*=',
+                    r'type\s+Model\s*=',
+                ],
+                'files': [],
+                'config_files': ['paket.dependencies', 'fsproj', 'webpack.config.js']
+            },
+            
+            # Erlang Frameworks
+            'cowboy': {
+                'language': LanguageType.ERLANG,
+                'patterns': [
+                    r'-include_lib\("cowboy/.*"\)',
+                    r'cowboy:start_clear',
+                    r'cowboy:start_tls',
+                    r'cowboy_router',
+                    r'cowboy_req:',
+                    r':cowboy_handler',
+                ],
+                'files': [],
+                'config_files': ['rebar.config', 'erlang.mk']
+            },
+            'otp': {
+                'language': LanguageType.ERLANG,
+                'patterns': [
+                    r'-behaviour\(gen_server\)',
+                    r'-behaviour\(supervisor\)',
+                    r'gen_server:start_link',
+                    r'gen_server:call',
+                    r'handle_call\(\w+,\s*From,\s*State\)',
+                    r'handle_cast\(\w+,\s*State\)',
+                ],
+                'files': [],
+                'config_files': ['rebar.config', 'erlang.mk']
+            },
+            'phoenix': {
+                'language': LanguageType.ERLANG,
+                'patterns': [
+                    r'use\s+Phoenix\.\w+',
+                    r'Phoenix\.Router',
+                    r'Phoenix\.Controller',
+                    r'Phoenix\.Endpoint',
+                    r'Phoenix\.Channel',
+                    r'Phoenix\.Presence',
+                ],
+                'files': ['mix.exs'],
+                'config_files': ['config.exs']
+            },
+            'chicago_boss': {
+                'language': LanguageType.ERLANG,
+                'patterns': [
+                    r'-compile\(\[boss_db\]\)',
+                    r'boss\.config',
+                    r'boss_db:find',
+                    r'boss_mail',
+                    r'boss_news',
+                    r'boss_web',
+                ],
+                'files': [],
+                'config_files': ['boss.config']
+            },
+            'ejabberd': {
+                'language': LanguageType.ERLANG,
+                'patterns': [
+                    r'-include\("ejabberd\.hrl"\)',
+                    r'-include\("logger\.hrl"\)',
+                    r'ejabberd_commands',
+                    r'ejabberd_config',
+                    r'ejabberd_router',
+                    r'gen_mod',
+                ],
+                'files': [],
+                'config_files': ['ejabberd.yml']
+            },
+            
+            # R Frameworks
+            'shiny': {
+                'language': LanguageType.R,
+                'patterns': [
+                    r'library\(shiny\)',
+                    r'require\(shiny\)',
+                    r'shinyApp\(',
+                    r'renderPlot\(',
+                    r'renderTable\(',
+                    r'fluidPage\(',
+                    r'ui <- fluidPage',
+                    r'server <- function\(input, output',
+                ],
+                'files': ['app.R', 'ui.R', 'server.R'],
+                'config_files': ['DESCRIPTION']
+            },
+            'plumber': {
+                'language': LanguageType.R,
+                'patterns': [
+                    r'library\(plumber\)',
+                    r'require\(plumber\)',
+                    r'#\* @get',
+                    r'#\* @post',
+                    r'#\* @apiTitle',
+                    r'plumb\(',
+                    r'pr\(\)',
+                ],
+                'files': ['plumber.R'],
+                'config_files': ['DESCRIPTION']
+            },
+            'tidyverse': {
+                'language': LanguageType.R,
+                'patterns': [
+                    r'library\(tidyverse\)',
+                    r'require\(tidyverse\)',
+                    r'library\(dplyr\)',
+                    r'library\(ggplot2\)',
+                    r'library\(tidyr\)',
+                    r'library\(purrr\)',
+                    r'%>%',
+                    r'mutate\(',
+                    r'filter\(',
+                    r'select\(',
+                    r'group_by\(',
+                ],
+                'files': [],
+                'config_files': ['DESCRIPTION']
+            },
+            'rmarkdown': {
+                'language': LanguageType.R,
+                'patterns': [
+                    r'library\(rmarkdown\)',
+                    r'require\(rmarkdown\)',
+                    r'```\{r',
+                    r'knitr::opts_chunk',
+                    r'render\(',
+                ],
+                'files': ['*.Rmd'],
+                'config_files': ['DESCRIPTION']
+            },
+            'testthat': {
+                'language': LanguageType.R,
+                'patterns': [
+                    r'library\(testthat\)',
+                    r'require\(testthat\)',
+                    r'test_that\(',
+                    r'expect_equal\(',
+                    r'expect_true\(',
+                    r'expect_error\(',
+                ],
+                'files': ['testthat.R'],
+                'config_files': ['DESCRIPTION']
+            },
+            
+            # Julia Frameworks
+            'genie': {
+                'language': LanguageType.JULIA,
+                'patterns': [
+                    r'using\s+Genie',
+                    r'import\s+Genie',
+                    r'Genie\.render',
+                    r'Genie\.Router',
+                    r'route\("[^"]+"',
+                    r'@get\s+"',
+                    r'@post\s+"',
+                ],
+                'files': ['routes.jl'],
+                'config_files': ['Project.toml', 'Manifest.toml']
+            },
+            'franklin': {
+                'language': LanguageType.JULIA,
+                'patterns': [
+                    r'using\s+Franklin',
+                    r'import\s+Franklin',
+                    r'@def\s+',
+                    r'\{\{[^}]+\}\}',
+                    r'\{\{fill[^}]+\}\}',
+                ],
+                'files': ['_layout', 'index.md'],
+                'config_files': ['Project.toml', 'Manifest.toml']
+            },
+            'pluto': {
+                'language': LanguageType.JULIA,
+                'patterns': [
+                    r'using\s+Pluto',
+                    r'import\s+Pluto',
+                    r'Pluto\.run',
+                    r'# \^\^\^',
+                    r'html"',
+                    r'md"',
+                ],
+                'files': ['*.jl'],
+                'config_files': ['Project.toml', 'Manifest.toml']
+            },
+            'flux': {
+                'language': LanguageType.JULIA,
+                'patterns': [
+                    r'using\s+Flux',
+                    r'import\s+Flux',
+                    r'Flux\.\w+',
+                    r'Dense\(',
+                    r'Chain\(',
+                    r'Flux\.train!',
+                    r'Flux\.params',
+                ],
+                'files': [],
+                'config_files': ['Project.toml', 'Manifest.toml']
+            },
+            'jumpjl': {
+                'language': LanguageType.JULIA,
+                'patterns': [
+                    r'using\s+JuMP',
+                    r'import\s+JuMP',
+                    r'Model\(',
+                    r'@variable',
+                    r'@constraint',
+                    r'@objective',
+                    r'optimize!',
+                ],
+                'files': [],
+                'config_files': ['Project.toml', 'Manifest.toml']
+            },
+            
+            # Terraform Provider Patterns
+            'terraform_aws': {
+                'language': LanguageType.TERRAFORM,
+                'patterns': [
+                    r'provider\s+"aws"',
+                    r'resource\s+"aws_',
+                    r'data\s+"aws_',
+                    r'aws_vpc',
+                    r'aws_instance',
+                    r'aws_s3_bucket',
+                    r'aws_lambda_function',
+                ],
+                'files': [],
+                'config_files': ['terraform.tfvars', 'terraform.tfstate']
+            },
+            'terraform_azure': {
+                'language': LanguageType.TERRAFORM,
+                'patterns': [
+                    r'provider\s+"azurerm"',
+                    r'resource\s+"azurerm_',
+                    r'data\s+"azurerm_',
+                    r'azurerm_virtual_machine',
+                    r'azurerm_resource_group',
+                    r'azurerm_app_service',
+                    r'azurerm_storage_account',
+                ],
+                'files': [],
+                'config_files': ['terraform.tfvars', 'terraform.tfstate']
+            },
+            'terraform_gcp': {
+                'language': LanguageType.TERRAFORM,
+                'patterns': [
+                    r'provider\s+"google"',
+                    r'resource\s+"google_',
+                    r'data\s+"google_',
+                    r'google_compute_instance',
+                    r'google_storage_bucket',
+                    r'google_container_cluster',
+                    r'google_cloud_run_service',
+                ],
+                'files': [],
+                'config_files': ['terraform.tfvars', 'terraform.tfstate']
+            },
+            'terraform_kubernetes': {
+                'language': LanguageType.TERRAFORM,
+                'patterns': [
+                    r'provider\s+"kubernetes"',
+                    r'resource\s+"kubernetes_',
+                    r'data\s+"kubernetes_',
+                    r'kubernetes_namespace',
+                    r'kubernetes_deployment',
+                    r'kubernetes_service',
+                    r'kubernetes_pod',
+                ],
+                'files': [],
+                'config_files': ['terraform.tfvars', 'terraform.tfstate']
+            },
+            'terraform_modules': {
+                'language': LanguageType.TERRAFORM,
+                'patterns': [
+                    r'module\s+"\w+"\s+{',
+                    r'source\s+=\s+"',
+                    r'variable\s+"\w+"\s+{',
+                    r'output\s+"\w+"\s+{',
+                    r'terraform\s+{',
+                    r'backend\s+"\w+"\s+{',
+                ],
+                'files': [],
+                'config_files': ['terraform.tfvars', 'terraform.tfstate']
+            },
+            
+            # Ansible Module Patterns
+            'ansible_apt': {
+                'language': LanguageType.ANSIBLE,
+                'patterns': [
+                    r'\s+apt:',
+                    r'\s+name:\s+\w+',
+                    r'\s+state:\s+(present|latest|absent)',
+                    r'\s+update_cache:\s+(yes|no)',
+                    r'become:\s+true',
+                ],
+                'files': ['playbook.yml', 'site.yml'],
+                'config_files': ['ansible.cfg']
+            },
+            'ansible_yum': {
+                'language': LanguageType.ANSIBLE,
+                'patterns': [
+                    r'\s+yum:',
+                    r'\s+name:\s+\w+',
+                    r'\s+state:\s+(present|latest|absent)',
+                    r'\s+enablerepo:\s+\w+',
+                    r'become:\s+true',
+                ],
+                'files': ['playbook.yml', 'site.yml'],
+                'config_files': ['ansible.cfg']
+            },
+            'ansible_service': {
+                'language': LanguageType.ANSIBLE,
+                'patterns': [
+                    r'\s+service:',
+                    r'\s+name:\s+\w+',
+                    r'\s+state:\s+(started|stopped|restarted|reloaded)',
+                    r'\s+enabled:\s+(yes|no)',
+                    r'become:\s+true',
+                ],
+                'files': ['playbook.yml', 'site.yml'],
+                'config_files': ['ansible.cfg']
+            },
+            'ansible_file': {
+                'language': LanguageType.ANSIBLE,
+                'patterns': [
+                    r'\s+file:',
+                    r'\s+path:\s+.+',
+                    r'\s+state:\s+(directory|file|touch|absent|link)',
+                    r'\s+mode:\s+["\']?[0-7]{3,4}["\']?',
+                    r'\s+owner:\s+\w+',
+                    r'\s+group:\s+\w+',
+                ],
+                'files': ['playbook.yml', 'site.yml'],
+                'config_files': ['ansible.cfg']
+            },
+            'ansible_git': {
+                'language': LanguageType.ANSIBLE,
+                'patterns': [
+                    r'\s+git:',
+                    r'\s+repo:\s+.+',
+                    r'\s+dest:\s+.+',
+                    r'\s+version:\s+.+',
+                    r'\s+clone:\s+(yes|no)',
+                    r'\s+update:\s+(yes|no)',
+                ],
+                'files': ['playbook.yml', 'site.yml'],
+                'config_files': ['ansible.cfg']
             }
         }
 
@@ -779,11 +1449,13 @@ class MultiLanguageFrameworkDetector:
         
         # Add framework information
         for framework in language_info.frameworks:
-            context['frameworks'].append({
+            framework_info = {
                 'name': framework.name,
                 'confidence': framework.confidence,
-                'indicators': framework.indicators
-            })
+                'indicators': framework.indicators,
+                'guidance': self._get_framework_guidance(framework.name)
+            }
+            context['frameworks'].append(framework_info)
         
         # Add language-specific guidance for LLMs
         language_guidance = self._get_language_guidance(language_info.language)
@@ -791,6 +1463,265 @@ class MultiLanguageFrameworkDetector:
         
         return context
 
+    def _get_framework_guidance(self, framework_name: str) -> Dict[str, Any]:
+        """
+        Get framework-specific guidance for LLM patch generation.
+        
+        Args:
+            framework_name: Name of the framework
+            
+        Returns:
+            Guidance dictionary for the framework
+        """
+        framework_guidance = {
+            # Zig Frameworks
+            'zap': {
+                'conventions': 'Zap web server style',
+                'patterns': [
+                    'Use const for server and router instances',
+                    'Follow Zig style for error handling with try',
+                    'Use explicit allocator management',
+                    'Use idiomatic route handlers with context parameter'
+                ],
+                'imports': 'Use @import("zap") for imports',
+                'best_practices': 'Follow memory safety practices with allocators'
+            },
+            'ziggy': {
+                'conventions': 'Ziggy HTTP framework style',
+                'patterns': [
+                    'Use const for router definitions',
+                    'Handle errors with try/catch or return',
+                    'Use proper response builders',
+                    'Explicit memory management'
+                ],
+                'imports': 'Use @import("ziggy") for imports',
+                'best_practices': 'Use consistent error handling with try/catch'
+            },
+            
+            # Nim Frameworks
+            'jester': {
+                'conventions': 'Jester web framework style',
+                'patterns': [
+                    'Use routes: block for route definitions',
+                    'Return responses with resp function',
+                    'Use @"" for routes with params',
+                    'Async compatibility with {.async.} pragma'
+                ],
+                'imports': 'Use import jester for imports',
+                'best_practices': 'Handle exceptions properly with try/except'
+            },
+            'karax': {
+                'conventions': 'Karax UI framework style',
+                'patterns': [
+                    'Use buildHtml: for DOM construction',
+                    'Follow reactive style for state management',
+                    'Use proper event handlers',
+                    'Define components as procs returning VNode'
+                ],
+                'imports': 'Use import karax/[karaxdsl, vdom]',
+                'best_practices': 'Minimize DOM manipulations for performance'
+            },
+            
+            # Crystal Frameworks
+            'lucky': {
+                'conventions': 'Lucky web framework style',
+                'patterns': [
+                    'Use class inheritance from Lucky::Action',
+                    'Define routes in src/actions',
+                    'Use method_name.cr naming pattern',
+                    'Follow Ruby-like syntax conventions'
+                ],
+                'imports': 'Use require "lucky"',
+                'best_practices': 'Use type annotations for method parameters'
+            },
+            'kemal': {
+                'conventions': 'Kemal web framework style',
+                'patterns': [
+                    'Define routes with get, post, put, etc.',
+                    'Use env.response for HTTP responses',
+                    'Use env.params for request parameters',
+                    'Handle exceptions with error block'
+                ],
+                'imports': 'Use require "kemal"',
+                'best_practices': 'Set content_type for responses'
+            },
+            
+            # Haskell Frameworks
+            'yesod': {
+                'conventions': 'Yesod web framework style',
+                'patterns': [
+                    'Use mkYesod and instance Yesod',
+                    'Define routes with pattern syntax',
+                    'Use hamlet templates with #{var}',
+                    'Handle forms with renderForm'
+                ],
+                'imports': 'Use import Yesod',
+                'best_practices': 'Use type-safe URLs with proper routing'
+            },
+            'servant': {
+                'conventions': 'Servant API framework style',
+                'patterns': [
+                    'Define API types with type API =',
+                    'Use type-level operators like :>',
+                    'Implement handlers with proper types',
+                    'Use proper content-type combinators'
+                ],
+                'imports': 'Use import Servant.API, Servant.Server',
+                'best_practices': 'Leverage type system for API guarantees'
+            },
+            
+            # F# Frameworks
+            'giraffe': {
+                'conventions': 'Giraffe web framework style',
+                'patterns': [
+                    'Compose HttpHandlers with >=>',
+                    'Use route and routef for routing',
+                    'Use choose for alternative routes',
+                    'JSON serialization with json'
+                ],
+                'imports': 'Use open Giraffe',
+                'best_practices': 'Use computation expressions for complex flows'
+            },
+            'saturn': {
+                'conventions': 'Saturn web framework style',
+                'patterns': [
+                    'Use application CE for app config',
+                    'Use controller CE for controllers',
+                    'Define routes with router CE',
+                    'Configure endpoints with scope'
+                ],
+                'imports': 'Use open Saturn',
+                'best_practices': 'Group related endpoints with scope'
+            },
+            
+            # Erlang Frameworks
+            'cowboy': {
+                'conventions': 'Cowboy web server style',
+                'patterns': [
+                    'Define routes as tuples',
+                    'Implement handlers with init/terminate',
+                    'Pattern match on requests',
+                    'Use proper response tuples'
+                ],
+                'imports': 'Use -include_lib("cowboy/include/cowboy.hrl").',
+                'best_practices': 'Use proper OTP principles for state management'
+            },
+            'otp': {
+                'conventions': 'OTP behavior style',
+                'patterns': [
+                    'Use -behaviour(gen_server).',
+                    'Implement callback functions',
+                    'Use proper state management',
+                    'Pattern match for message handling'
+                ],
+                'imports': 'Use proper OTP includes',
+                'best_practices': 'Follow OTP principles for fault tolerance'
+            },
+            
+            # R Frameworks
+            'shiny': {
+                'conventions': 'Shiny web app style',
+                'patterns': [
+                    'Split UI and server logic',
+                    'Use reactive expressions',
+                    'Use input$ for inputs',
+                    'Use output$ for outputs'
+                ],
+                'imports': 'Use library(shiny)',
+                'best_practices': 'Minimize code in reactive contexts'
+            },
+            'tidyverse': {
+                'conventions': 'Tidyverse data analysis style',
+                'patterns': [
+                    'Use pipe operator %>%',
+                    'Use tibbles instead of data frames',
+                    'Use ggplot2 with proper aesthetics',
+                    'Use tidyr functions for reshaping'
+                ],
+                'imports': 'Use library(tidyverse)',
+                'best_practices': 'Chain operations with the pipe operator'
+            },
+            
+            # Julia Frameworks
+            'genie': {
+                'conventions': 'Genie web framework style',
+                'patterns': [
+                    'Define routes with route()',
+                    'Use decorators like @get, @post',
+                    'Use params for request parameters',
+                    'Return response with html()'
+                ],
+                'imports': 'Use using Genie',
+                'best_practices': 'Use MVC architecture with models/controllers/views'
+            },
+            'flux': {
+                'conventions': 'Flux ML framework style',
+                'patterns': [
+                    'Define models with Chain()',
+                    'Use Dense, Conv layers',
+                    'Use Flux.train! for training',
+                    'Use CUDA for GPU acceleration'
+                ],
+                'imports': 'Use using Flux',
+                'best_practices': 'Use batches for better performance'
+            },
+            
+            # Terraform Providers
+            'terraform_aws': {
+                'conventions': 'Terraform AWS provider style',
+                'patterns': [
+                    'Define provider before resources',
+                    'Use consistent naming convention',
+                    'Use variables and locals',
+                    'Reference resources with proper syntax'
+                ],
+                'imports': 'Use provider "aws" block',
+                'best_practices': 'Use modules for reusable components'
+            },
+            'terraform_azure': {
+                'conventions': 'Terraform Azure provider style',
+                'patterns': [
+                    'Define azurerm provider',
+                    'Create resource groups first',
+                    'Use proper naming convention',
+                    'Reference resources with proper syntax'
+                ],
+                'imports': 'Use provider "azurerm" block',
+                'best_practices': 'Use tags for resource organization'
+            },
+            
+            # Ansible Modules
+            'ansible_apt': {
+                'conventions': 'Ansible Apt module style',
+                'patterns': [
+                    'Use yaml indentation consistently',
+                    'Use name parameter for packages',
+                    'Use state: present/absent/latest',
+                    'Use become: true for sudo'
+                ],
+                'imports': 'N/A - Use proper module reference',
+                'best_practices': 'Use update_cache when installing packages'
+            },
+            'ansible_service': {
+                'conventions': 'Ansible Service module style',
+                'patterns': [
+                    'Use name parameter for service name',
+                    'Use state: started/stopped/restarted',
+                    'Use enabled: yes/no for boot behavior',
+                    'Use become: true for sudo'
+                ],
+                'imports': 'N/A - Use proper module reference',
+                'best_practices': 'Ensure dependent packages are installed first'
+            }
+        }
+        
+        return framework_guidance.get(framework_name, {
+            'conventions': 'Follow framework conventions',
+            'patterns': ['Use appropriate patterns for the framework'],
+            'imports': 'Follow import conventions for the framework',
+            'best_practices': 'Follow best practices for the framework'
+        })
+    
     def _get_language_guidance(self, language: LanguageType) -> Dict[str, Any]:
         """
         Get language-specific guidance for LLM patch generation.
