@@ -1,37 +1,37 @@
 """
-Tests for the Nim language plugin.
+Tests for the Zig language plugin.
 """
 import pytest
 import json
 from unittest.mock import Mock, patch
 
-from modules.analysis.plugins.nim_plugin import (
-    NimLanguagePlugin, 
-    NimExceptionHandler, 
-    NimPatchGenerator
+from modules.analysis.plugins.zig_plugin import (
+    ZigLanguagePlugin, 
+    ZigExceptionHandler, 
+    ZigPatchGenerator
 )
 
 
-class TestNimExceptionHandler:
-    """Test the Nim exception handler."""
+class TestZigExceptionHandler:
+    """Test the Zig exception handler."""
     
     def setup_method(self):
         """Set up test fixtures."""
-        self.handler = NimExceptionHandler()
+        self.handler = ZigExceptionHandler()
     
     def test_analyze_syntax_error(self):
         """Test analysis of syntax errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: invalid indentation",
-            "file_path": "test.nim",
+            "error_type": "ZigError",
+            "message": "error: expected ';', found 'const'",
+            "file_path": "test.zig",
             "line_number": 10,
             "column_number": 5
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
+        assert analysis["category"] == "zig"
         assert analysis["subcategory"] == "syntax"
         assert analysis["confidence"] == "high"
         assert "syntax" in analysis["tags"]
@@ -39,139 +39,139 @@ class TestNimExceptionHandler:
     def test_analyze_type_error(self):
         """Test analysis of type errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: type mismatch: got <int> but expected <string>",
-            "file_path": "test.nim",
+            "error_type": "ZigError",
+            "message": "error: expected type 'u32', found 'i32'",
+            "file_path": "test.zig",
             "line_number": 15,
             "column_number": 8
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
+        assert analysis["category"] == "zig"
         assert analysis["subcategory"] == "type"
         assert analysis["confidence"] == "high"
         assert "type" in analysis["tags"]
     
-    def test_analyze_nil_error(self):
-        """Test analysis of nil errors."""
+    def test_analyze_memory_error(self):
+        """Test analysis of memory errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: cannot access field of nil object",
-            "file_path": "test.nim",
+            "error_type": "ZigError",
+            "message": "error: null pointer dereference",
+            "file_path": "test.zig",
             "line_number": 20,
             "column_number": 12
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
-        assert analysis["subcategory"] == "nil"
+        assert analysis["category"] == "zig"
+        assert analysis["subcategory"] == "memory"
         assert analysis["confidence"] == "high"
-        assert "nil" in analysis["tags"]
+        assert "memory" in analysis["tags"]
     
     def test_analyze_undefined_error(self):
         """Test analysis of undefined identifier errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: undeclared identifier: 'myVar'",
-            "file_path": "test.nim",
+            "error_type": "ZigError",
+            "message": "error: use of undeclared identifier 'myFunc'",
+            "file_path": "test.zig",
             "line_number": 25,
             "column_number": 15
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
+        assert analysis["category"] == "zig"
         assert analysis["subcategory"] == "undefined"
         assert analysis["confidence"] == "high"
         assert "undefined" in analysis["tags"]
     
-    def test_analyze_pragma_error(self):
-        """Test analysis of pragma errors."""
+    def test_analyze_comptime_error(self):
+        """Test analysis of compile-time errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: invalid pragma: nosuchpragma",
-            "file_path": "test.nim",
+            "error_type": "ZigError",
+            "message": "error: unable to evaluate constant expression",
+            "file_path": "test.zig",
             "line_number": 30,
             "column_number": 10
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
-        assert analysis["subcategory"] == "pragma"
+        assert analysis["category"] == "zig"
+        assert analysis["subcategory"] == "comptime"
         assert analysis["confidence"] == "high"
-        assert "pragma" in analysis["tags"]
+        assert "comptime" in analysis["tags"]
     
     def test_analyze_import_error(self):
         """Test analysis of import errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: cannot open file: somemodule",
-            "file_path": "test.nim",
+            "error_type": "ZigError",
+            "message": "error: unable to find 'std'",
+            "file_path": "test.zig",
             "line_number": 1,
             "column_number": 1
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
+        assert analysis["category"] == "zig"
         assert analysis["subcategory"] == "import"
         assert analysis["confidence"] == "high"
         assert "import" in analysis["tags"]
     
-    def test_analyze_compilation_error(self):
-        """Test analysis of compilation errors."""
+    def test_analyze_async_error(self):
+        """Test analysis of async errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: internal error: getTypeDescAux",
-            "file_path": "test.nim",
+            "error_type": "ZigError",
+            "message": "error: async function called without await",
+            "file_path": "test.zig",
             "line_number": 40,
             "column_number": 1
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
-        assert analysis["subcategory"] == "compilation"
+        assert analysis["category"] == "zig"
+        assert analysis["subcategory"] == "async"
         assert analysis["confidence"] == "high"
-        assert "compilation" in analysis["tags"]
+        assert "async" in analysis["tags"]
     
     def test_analyze_unknown_error(self):
         """Test analysis of unknown errors."""
         error_data = {
-            "error_type": "NimError",
+            "error_type": "ZigError",
             "message": "Some unknown error message",
-            "file_path": "test.nim",
+            "file_path": "test.zig",
             "line_number": 45,
             "column_number": 1
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
+        assert analysis["category"] == "zig"
         assert analysis["subcategory"] == "unknown"
         assert analysis["confidence"] == "low"
         assert "generic" in analysis["tags"]
 
 
-class TestNimPatchGenerator:
-    """Test the Nim patch generator."""
+class TestZigPatchGenerator:
+    """Test the Zig patch generator."""
     
     def setup_method(self):
         """Set up test fixtures."""
-        self.generator = NimPatchGenerator()
+        self.generator = ZigPatchGenerator()
     
     def test_generate_syntax_fix(self):
         """Test generation of syntax fixes."""
         error_data = {
-            "message": "Error: invalid indentation",
-            "file_path": "test.nim"
+            "message": "error: expected ';', found 'const'",
+            "file_path": "test.zig"
         }
         
         analysis = {
-            "root_cause": "nim_syntax_error",
+            "root_cause": "zig_syntax_error",
             "subcategory": "syntax",
             "confidence": "high"
         }
@@ -180,17 +180,17 @@ class TestNimPatchGenerator:
         
         assert patch is not None
         assert patch["type"] == "suggestion"
-        assert "indentation" in patch["description"].lower()
+        assert "semicolon" in patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
         error_data = {
-            "message": "Error: type mismatch: got <int> but expected <string>",
-            "file_path": "test.nim"
+            "message": "error: expected type 'u32', found 'i32'",
+            "file_path": "test.zig"
         }
         
         analysis = {
-            "root_cause": "nim_type_error",
+            "root_cause": "zig_type_error",
             "subcategory": "type",
             "confidence": "high"
         }
@@ -201,16 +201,16 @@ class TestNimPatchGenerator:
         assert patch["type"] == "suggestion"
         assert "type" in patch["description"].lower()
     
-    def test_generate_nil_fix(self):
-        """Test generation of nil fixes."""
+    def test_generate_memory_fix(self):
+        """Test generation of memory fixes."""
         error_data = {
-            "message": "Error: cannot access field of nil object",
-            "file_path": "test.nim"
+            "message": "error: null pointer dereference",
+            "file_path": "test.zig"
         }
         
         analysis = {
-            "root_cause": "nim_nil_error",
-            "subcategory": "nil",
+            "root_cause": "zig_memory_error",
+            "subcategory": "memory",
             "confidence": "high"
         }
         
@@ -218,17 +218,17 @@ class TestNimPatchGenerator:
         
         assert patch is not None
         assert patch["type"] == "suggestion"
-        assert "nil" in patch["description"].lower()
+        assert "null" in patch["description"].lower() or "pointer" in patch["description"].lower()
     
     def test_generate_undefined_fix(self):
         """Test generation of undefined identifier fixes."""
         error_data = {
-            "message": "Error: undeclared identifier: 'myVar'",
-            "file_path": "test.nim"
+            "message": "error: use of undeclared identifier 'myFunc'",
+            "file_path": "test.zig"
         }
         
         analysis = {
-            "root_cause": "nim_undefined_error",
+            "root_cause": "zig_undefined_error",
             "subcategory": "undefined",
             "confidence": "high"
         }
@@ -239,16 +239,16 @@ class TestNimPatchGenerator:
         assert patch["type"] == "suggestion"
         assert "identifier" in patch["description"].lower() or "undefined" in patch["description"].lower()
     
-    def test_generate_pragma_fix(self):
-        """Test generation of pragma fixes."""
+    def test_generate_comptime_fix(self):
+        """Test generation of compile-time fixes."""
         error_data = {
-            "message": "Error: invalid pragma: nosuchpragma",
-            "file_path": "test.nim"
+            "message": "error: unable to evaluate constant expression",
+            "file_path": "test.zig"
         }
         
         analysis = {
-            "root_cause": "nim_pragma_error",
-            "subcategory": "pragma",
+            "root_cause": "zig_comptime_error",
+            "subcategory": "comptime",
             "confidence": "high"
         }
         
@@ -256,17 +256,17 @@ class TestNimPatchGenerator:
         
         assert patch is not None
         assert patch["type"] == "suggestion"
-        assert "pragma" in patch["description"].lower()
+        assert "comptime" in patch["description"].lower() or "constant" in patch["description"].lower()
     
     def test_generate_import_fix(self):
         """Test generation of import fixes."""
         error_data = {
-            "message": "Error: cannot open file: somemodule",
-            "file_path": "test.nim"
+            "message": "error: unable to find 'std'",
+            "file_path": "test.zig"
         }
         
         analysis = {
-            "root_cause": "nim_import_error",
+            "root_cause": "zig_import_error",
             "subcategory": "import",
             "confidence": "high"
         }
@@ -275,18 +275,18 @@ class TestNimPatchGenerator:
         
         assert patch is not None
         assert patch["type"] == "suggestion"
-        assert "import" in patch["description"].lower() or "module" in patch["description"].lower()
+        assert "import" in patch["description"].lower()
     
-    def test_generate_compilation_fix(self):
-        """Test generation of compilation fixes."""
+    def test_generate_async_fix(self):
+        """Test generation of async fixes."""
         error_data = {
-            "message": "Error: internal error: getTypeDescAux",
-            "file_path": "test.nim"
+            "message": "error: async function called without await",
+            "file_path": "test.zig"
         }
         
         analysis = {
-            "root_cause": "nim_compilation_error",
-            "subcategory": "compilation",
+            "root_cause": "zig_async_error",
+            "subcategory": "async",
             "confidence": "high"
         }
         
@@ -294,90 +294,90 @@ class TestNimPatchGenerator:
         
         assert patch is not None
         assert patch["type"] == "suggestion"
-        assert "compilation" in patch["description"].lower() or "internal" in patch["description"].lower()
+        assert "async" in patch["description"].lower() or "await" in patch["description"].lower()
 
 
-class TestNimLanguagePlugin:
-    """Test the Nim language plugin."""
+class TestZigLanguagePlugin:
+    """Test the Zig language plugin."""
     
     def setup_method(self):
         """Set up test fixtures."""
-        self.plugin = NimLanguagePlugin()
+        self.plugin = ZigLanguagePlugin()
     
     def test_plugin_metadata(self):
         """Test plugin metadata."""
-        assert self.plugin.get_language_id() == "nim"
-        assert self.plugin.get_language_name() == "Nim"
-        assert self.plugin.get_language_version() == "2.0+"
+        assert self.plugin.get_language_id() == "zig"
+        assert self.plugin.get_language_name() == "Zig"
+        assert self.plugin.get_language_version() == "0.11+"
         
         frameworks = self.plugin.get_supported_frameworks()
-        assert "nim" in frameworks
-        assert "nimble" in frameworks
+        assert "zig" in frameworks
+        assert "build.zig" in frameworks
     
     def test_normalize_error(self):
         """Test error normalization."""
-        nim_error = {
-            "error_type": "NimError",
+        zig_error = {
+            "error_type": "ZigError",
             "message": "Test error",
-            "file": "test.nim",
+            "file": "test.zig",
             "line": 10,
             "column": 5,
             "description": "Test error description"
         }
         
-        normalized = self.plugin.normalize_error(nim_error)
+        normalized = self.plugin.normalize_error(zig_error)
         
-        assert normalized["language"] == "nim"
-        assert normalized["error_type"] == "NimError"
+        assert normalized["language"] == "zig"
+        assert normalized["error_type"] == "ZigError"
         assert normalized["message"] == "Test error"
-        assert normalized["file_path"] == "test.nim"
+        assert normalized["file_path"] == "test.zig"
         assert normalized["line_number"] == 10
         assert normalized["column_number"] == 5
     
     def test_denormalize_error(self):
         """Test error denormalization."""
         standard_error = {
-            "language": "nim",
-            "error_type": "NimError",
+            "language": "zig",
+            "error_type": "ZigError",
             "message": "Test error",
-            "file_path": "test.nim",
+            "file_path": "test.zig",
             "line_number": 10,
             "column_number": 5,
             "severity": "high"
         }
         
-        nim_error = self.plugin.denormalize_error(standard_error)
+        zig_error = self.plugin.denormalize_error(standard_error)
         
-        assert nim_error["error_type"] == "NimError"
-        assert nim_error["message"] == "Test error"
-        assert nim_error["file_path"] == "test.nim"
-        assert nim_error["line_number"] == 10
-        assert nim_error["column_number"] == 5
-        assert nim_error["file"] == "test.nim"  # Alternative format
-        assert nim_error["line"] == 10  # Alternative format
+        assert zig_error["error_type"] == "ZigError"
+        assert zig_error["message"] == "Test error"
+        assert zig_error["file_path"] == "test.zig"
+        assert zig_error["line_number"] == 10
+        assert zig_error["column_number"] == 5
+        assert zig_error["file"] == "test.zig"  # Alternative format
+        assert zig_error["line"] == 10  # Alternative format
     
     def test_analyze_error(self):
         """Test error analysis."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: type mismatch: got <int> but expected <string>",
-            "file_path": "test.nim",
+            "error_type": "ZigError",
+            "message": "error: expected type 'u32', found 'i32'",
+            "file_path": "test.zig",
             "line_number": 15,
             "column_number": 8
         }
         
         analysis = self.plugin.analyze_error(error_data)
         
-        assert analysis["plugin"] == "nim"
-        assert analysis["language"] == "nim"
+        assert analysis["plugin"] == "zig"
+        assert analysis["language"] == "zig"
         assert analysis["plugin_version"] == "1.0.0"
-        assert analysis["category"] == "nim"
+        assert analysis["category"] == "zig"
         assert analysis["subcategory"] == "type"
     
     def test_generate_fix(self):
         """Test fix generation."""
         analysis = {
-            "root_cause": "nim_type_error",
+            "root_cause": "zig_type_error",
             "subcategory": "type",
             "confidence": "high",
             "suggested_fix": "Fix type mismatch"
@@ -385,10 +385,10 @@ class TestNimLanguagePlugin:
         
         context = {
             "error_data": {
-                "message": "Error: type mismatch: got <int> but expected <string>",
-                "file_path": "test.nim"
+                "message": "error: expected type 'u32', found 'i32'",
+                "file_path": "test.zig"
             },
-            "source_code": 'let x: string = 42'
+            "source_code": "const x: u32 = -42;"
         }
         
         fix = self.plugin.generate_fix(analysis, context)
@@ -399,9 +399,7 @@ class TestNimLanguagePlugin:
     
     def test_supported_extensions(self):
         """Test supported file extensions."""
-        assert ".nim" in self.plugin.supported_extensions
-        assert ".nims" in self.plugin.supported_extensions
-        assert ".nimble" in self.plugin.supported_extensions
+        assert ".zig" in self.plugin.supported_extensions
     
     def test_error_analysis_with_invalid_data(self):
         """Test error analysis with invalid data."""
@@ -409,8 +407,8 @@ class TestNimLanguagePlugin:
         
         analysis = self.plugin.analyze_error(error_data)
         
-        assert analysis["plugin"] == "nim"
-        assert analysis["language"] == "nim"
+        assert analysis["plugin"] == "zig"
+        assert analysis["language"] == "zig"
         # Should handle invalid data gracefully
         assert "category" in analysis
         assert "confidence" in analysis

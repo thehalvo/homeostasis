@@ -1,37 +1,37 @@
 """
-Tests for the Nim language plugin.
+Tests for the F# language plugin.
 """
 import pytest
 import json
 from unittest.mock import Mock, patch
 
-from modules.analysis.plugins.nim_plugin import (
-    NimLanguagePlugin, 
-    NimExceptionHandler, 
-    NimPatchGenerator
+from modules.analysis.plugins.fsharp_plugin import (
+    FSharpLanguagePlugin, 
+    FSharpExceptionHandler, 
+    FSharpPatchGenerator
 )
 
 
-class TestNimExceptionHandler:
-    """Test the Nim exception handler."""
+class TestFSharpExceptionHandler:
+    """Test the F# exception handler."""
     
     def setup_method(self):
         """Set up test fixtures."""
-        self.handler = NimExceptionHandler()
+        self.handler = FSharpExceptionHandler()
     
     def test_analyze_syntax_error(self):
         """Test analysis of syntax errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: invalid indentation",
-            "file_path": "test.nim",
+            "error_type": "FSharpError",
+            "message": "Unexpected token 'let' in expression",
+            "file_path": "test.fs",
             "line_number": 10,
             "column_number": 5
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
+        assert analysis["category"] == "fsharp"
         assert analysis["subcategory"] == "syntax"
         assert analysis["confidence"] == "high"
         assert "syntax" in analysis["tags"]
@@ -39,139 +39,139 @@ class TestNimExceptionHandler:
     def test_analyze_type_error(self):
         """Test analysis of type errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: type mismatch: got <int> but expected <string>",
-            "file_path": "test.nim",
+            "error_type": "FSharpError",
+            "message": "Type mismatch. Expecting a 'int' but given a 'string'",
+            "file_path": "test.fs",
             "line_number": 15,
             "column_number": 8
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
+        assert analysis["category"] == "fsharp"
         assert analysis["subcategory"] == "type"
         assert analysis["confidence"] == "high"
         assert "type" in analysis["tags"]
     
-    def test_analyze_nil_error(self):
-        """Test analysis of nil errors."""
+    def test_analyze_pattern_error(self):
+        """Test analysis of pattern match errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: cannot access field of nil object",
-            "file_path": "test.nim",
+            "error_type": "FSharpError",
+            "message": "Incomplete pattern matches on this expression",
+            "file_path": "test.fs",
             "line_number": 20,
             "column_number": 12
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
-        assert analysis["subcategory"] == "nil"
+        assert analysis["category"] == "fsharp"
+        assert analysis["subcategory"] == "pattern"
         assert analysis["confidence"] == "high"
-        assert "nil" in analysis["tags"]
+        assert "pattern" in analysis["tags"]
     
-    def test_analyze_undefined_error(self):
-        """Test analysis of undefined identifier errors."""
+    def test_analyze_computation_expression_error(self):
+        """Test analysis of computation expression errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: undeclared identifier: 'myVar'",
-            "file_path": "test.nim",
+            "error_type": "FSharpError",
+            "message": "This computation expression requires a 'Bind' method",
+            "file_path": "test.fs",
             "line_number": 25,
             "column_number": 15
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
-        assert analysis["subcategory"] == "undefined"
+        assert analysis["category"] == "fsharp"
+        assert analysis["subcategory"] == "computation"
         assert analysis["confidence"] == "high"
-        assert "undefined" in analysis["tags"]
+        assert "computation" in analysis["tags"]
     
-    def test_analyze_pragma_error(self):
-        """Test analysis of pragma errors."""
+    def test_analyze_discriminated_union_error(self):
+        """Test analysis of discriminated union errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: invalid pragma: nosuchpragma",
-            "file_path": "test.nim",
+            "error_type": "FSharpError",
+            "message": "The union case 'Some' expects 1 argument",
+            "file_path": "test.fs",
             "line_number": 30,
             "column_number": 10
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
-        assert analysis["subcategory"] == "pragma"
+        assert analysis["category"] == "fsharp"
+        assert analysis["subcategory"] == "union"
         assert analysis["confidence"] == "high"
-        assert "pragma" in analysis["tags"]
+        assert "union" in analysis["tags"]
     
     def test_analyze_import_error(self):
         """Test analysis of import errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: cannot open file: somemodule",
-            "file_path": "test.nim",
+            "error_type": "FSharpError",
+            "message": "The namespace or module 'MyModule' is not defined",
+            "file_path": "test.fs",
             "line_number": 1,
             "column_number": 1
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
+        assert analysis["category"] == "fsharp"
         assert analysis["subcategory"] == "import"
         assert analysis["confidence"] == "high"
         assert "import" in analysis["tags"]
     
-    def test_analyze_compilation_error(self):
-        """Test analysis of compilation errors."""
+    def test_analyze_null_reference_error(self):
+        """Test analysis of null reference errors."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: internal error: getTypeDescAux",
-            "file_path": "test.nim",
-            "line_number": 40,
+            "error_type": "FSharpError",
+            "message": "Object reference not set to an instance of an object",
+            "file_path": "test.fs",
+            "line_number": 35,
             "column_number": 1
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
-        assert analysis["subcategory"] == "compilation"
+        assert analysis["category"] == "fsharp"
+        assert analysis["subcategory"] == "null"
         assert analysis["confidence"] == "high"
-        assert "compilation" in analysis["tags"]
+        assert "null" in analysis["tags"]
     
     def test_analyze_unknown_error(self):
         """Test analysis of unknown errors."""
         error_data = {
-            "error_type": "NimError",
+            "error_type": "FSharpError",
             "message": "Some unknown error message",
-            "file_path": "test.nim",
+            "file_path": "test.fs",
             "line_number": 45,
             "column_number": 1
         }
         
         analysis = self.handler.analyze_exception(error_data)
         
-        assert analysis["category"] == "nim"
+        assert analysis["category"] == "fsharp"
         assert analysis["subcategory"] == "unknown"
         assert analysis["confidence"] == "low"
         assert "generic" in analysis["tags"]
 
 
-class TestNimPatchGenerator:
-    """Test the Nim patch generator."""
+class TestFSharpPatchGenerator:
+    """Test the F# patch generator."""
     
     def setup_method(self):
         """Set up test fixtures."""
-        self.generator = NimPatchGenerator()
+        self.generator = FSharpPatchGenerator()
     
     def test_generate_syntax_fix(self):
         """Test generation of syntax fixes."""
         error_data = {
-            "message": "Error: invalid indentation",
-            "file_path": "test.nim"
+            "message": "Unexpected token 'let' in expression",
+            "file_path": "test.fs"
         }
         
         analysis = {
-            "root_cause": "nim_syntax_error",
+            "root_cause": "fsharp_syntax_error",
             "subcategory": "syntax",
             "confidence": "high"
         }
@@ -180,17 +180,17 @@ class TestNimPatchGenerator:
         
         assert patch is not None
         assert patch["type"] == "suggestion"
-        assert "indentation" in patch["description"].lower()
+        assert "syntax" in patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
         error_data = {
-            "message": "Error: type mismatch: got <int> but expected <string>",
-            "file_path": "test.nim"
+            "message": "Type mismatch. Expecting a 'int' but given a 'string'",
+            "file_path": "test.fs"
         }
         
         analysis = {
-            "root_cause": "nim_type_error",
+            "root_cause": "fsharp_type_error",
             "subcategory": "type",
             "confidence": "high"
         }
@@ -201,16 +201,16 @@ class TestNimPatchGenerator:
         assert patch["type"] == "suggestion"
         assert "type" in patch["description"].lower()
     
-    def test_generate_nil_fix(self):
-        """Test generation of nil fixes."""
+    def test_generate_pattern_fix(self):
+        """Test generation of pattern match fixes."""
         error_data = {
-            "message": "Error: cannot access field of nil object",
-            "file_path": "test.nim"
+            "message": "Incomplete pattern matches on this expression",
+            "file_path": "test.fs"
         }
         
         analysis = {
-            "root_cause": "nim_nil_error",
-            "subcategory": "nil",
+            "root_cause": "fsharp_pattern_error",
+            "subcategory": "pattern",
             "confidence": "high"
         }
         
@@ -218,18 +218,18 @@ class TestNimPatchGenerator:
         
         assert patch is not None
         assert patch["type"] == "suggestion"
-        assert "nil" in patch["description"].lower()
+        assert "pattern" in patch["description"].lower()
     
-    def test_generate_undefined_fix(self):
-        """Test generation of undefined identifier fixes."""
+    def test_generate_computation_expression_fix(self):
+        """Test generation of computation expression fixes."""
         error_data = {
-            "message": "Error: undeclared identifier: 'myVar'",
-            "file_path": "test.nim"
+            "message": "This computation expression requires a 'Bind' method",
+            "file_path": "test.fs"
         }
         
         analysis = {
-            "root_cause": "nim_undefined_error",
-            "subcategory": "undefined",
+            "root_cause": "fsharp_computation_error",
+            "subcategory": "computation",
             "confidence": "high"
         }
         
@@ -237,18 +237,18 @@ class TestNimPatchGenerator:
         
         assert patch is not None
         assert patch["type"] == "suggestion"
-        assert "identifier" in patch["description"].lower() or "undefined" in patch["description"].lower()
+        assert "computation" in patch["description"].lower() or "bind" in patch["description"].lower()
     
-    def test_generate_pragma_fix(self):
-        """Test generation of pragma fixes."""
+    def test_generate_union_fix(self):
+        """Test generation of discriminated union fixes."""
         error_data = {
-            "message": "Error: invalid pragma: nosuchpragma",
-            "file_path": "test.nim"
+            "message": "The union case 'Some' expects 1 argument",
+            "file_path": "test.fs"
         }
         
         analysis = {
-            "root_cause": "nim_pragma_error",
-            "subcategory": "pragma",
+            "root_cause": "fsharp_union_error",
+            "subcategory": "union",
             "confidence": "high"
         }
         
@@ -256,17 +256,17 @@ class TestNimPatchGenerator:
         
         assert patch is not None
         assert patch["type"] == "suggestion"
-        assert "pragma" in patch["description"].lower()
+        assert "union" in patch["description"].lower() or "argument" in patch["description"].lower()
     
     def test_generate_import_fix(self):
         """Test generation of import fixes."""
         error_data = {
-            "message": "Error: cannot open file: somemodule",
-            "file_path": "test.nim"
+            "message": "The namespace or module 'MyModule' is not defined",
+            "file_path": "test.fs"
         }
         
         analysis = {
-            "root_cause": "nim_import_error",
+            "root_cause": "fsharp_import_error",
             "subcategory": "import",
             "confidence": "high"
         }
@@ -275,18 +275,18 @@ class TestNimPatchGenerator:
         
         assert patch is not None
         assert patch["type"] == "suggestion"
-        assert "import" in patch["description"].lower() or "module" in patch["description"].lower()
+        assert "namespace" in patch["description"].lower() or "module" in patch["description"].lower()
     
-    def test_generate_compilation_fix(self):
-        """Test generation of compilation fixes."""
+    def test_generate_null_reference_fix(self):
+        """Test generation of null reference fixes."""
         error_data = {
-            "message": "Error: internal error: getTypeDescAux",
-            "file_path": "test.nim"
+            "message": "Object reference not set to an instance of an object",
+            "file_path": "test.fs"
         }
         
         analysis = {
-            "root_cause": "nim_compilation_error",
-            "subcategory": "compilation",
+            "root_cause": "fsharp_null_error",
+            "subcategory": "null",
             "confidence": "high"
         }
         
@@ -294,90 +294,90 @@ class TestNimPatchGenerator:
         
         assert patch is not None
         assert patch["type"] == "suggestion"
-        assert "compilation" in patch["description"].lower() or "internal" in patch["description"].lower()
+        assert "null" in patch["description"].lower() or "reference" in patch["description"].lower()
 
 
-class TestNimLanguagePlugin:
-    """Test the Nim language plugin."""
+class TestFSharpLanguagePlugin:
+    """Test the F# language plugin."""
     
     def setup_method(self):
         """Set up test fixtures."""
-        self.plugin = NimLanguagePlugin()
+        self.plugin = FSharpLanguagePlugin()
     
     def test_plugin_metadata(self):
         """Test plugin metadata."""
-        assert self.plugin.get_language_id() == "nim"
-        assert self.plugin.get_language_name() == "Nim"
-        assert self.plugin.get_language_version() == "2.0+"
+        assert self.plugin.get_language_id() == "fsharp"
+        assert self.plugin.get_language_name() == "F#"
+        assert self.plugin.get_language_version() == "7.0+"
         
         frameworks = self.plugin.get_supported_frameworks()
-        assert "nim" in frameworks
-        assert "nimble" in frameworks
+        assert "fsharp" in frameworks
+        assert "dotnet" in frameworks
     
     def test_normalize_error(self):
         """Test error normalization."""
-        nim_error = {
-            "error_type": "NimError",
+        fsharp_error = {
+            "error_type": "FSharpError",
             "message": "Test error",
-            "file": "test.nim",
+            "file": "test.fs",
             "line": 10,
             "column": 5,
             "description": "Test error description"
         }
         
-        normalized = self.plugin.normalize_error(nim_error)
+        normalized = self.plugin.normalize_error(fsharp_error)
         
-        assert normalized["language"] == "nim"
-        assert normalized["error_type"] == "NimError"
+        assert normalized["language"] == "fsharp"
+        assert normalized["error_type"] == "FSharpError"
         assert normalized["message"] == "Test error"
-        assert normalized["file_path"] == "test.nim"
+        assert normalized["file_path"] == "test.fs"
         assert normalized["line_number"] == 10
         assert normalized["column_number"] == 5
     
     def test_denormalize_error(self):
         """Test error denormalization."""
         standard_error = {
-            "language": "nim",
-            "error_type": "NimError",
+            "language": "fsharp",
+            "error_type": "FSharpError",
             "message": "Test error",
-            "file_path": "test.nim",
+            "file_path": "test.fs",
             "line_number": 10,
             "column_number": 5,
             "severity": "high"
         }
         
-        nim_error = self.plugin.denormalize_error(standard_error)
+        fsharp_error = self.plugin.denormalize_error(standard_error)
         
-        assert nim_error["error_type"] == "NimError"
-        assert nim_error["message"] == "Test error"
-        assert nim_error["file_path"] == "test.nim"
-        assert nim_error["line_number"] == 10
-        assert nim_error["column_number"] == 5
-        assert nim_error["file"] == "test.nim"  # Alternative format
-        assert nim_error["line"] == 10  # Alternative format
+        assert fsharp_error["error_type"] == "FSharpError"
+        assert fsharp_error["message"] == "Test error"
+        assert fsharp_error["file_path"] == "test.fs"
+        assert fsharp_error["line_number"] == 10
+        assert fsharp_error["column_number"] == 5
+        assert fsharp_error["file"] == "test.fs"  # Alternative format
+        assert fsharp_error["line"] == 10  # Alternative format
     
     def test_analyze_error(self):
         """Test error analysis."""
         error_data = {
-            "error_type": "NimError",
-            "message": "Error: type mismatch: got <int> but expected <string>",
-            "file_path": "test.nim",
+            "error_type": "FSharpError",
+            "message": "Type mismatch. Expecting a 'int' but given a 'string'",
+            "file_path": "test.fs",
             "line_number": 15,
             "column_number": 8
         }
         
         analysis = self.plugin.analyze_error(error_data)
         
-        assert analysis["plugin"] == "nim"
-        assert analysis["language"] == "nim"
+        assert analysis["plugin"] == "fsharp"
+        assert analysis["language"] == "fsharp"
         assert analysis["plugin_version"] == "1.0.0"
-        assert analysis["category"] == "nim"
+        assert analysis["category"] == "fsharp"
         assert analysis["subcategory"] == "type"
     
     def test_generate_fix(self):
         """Test fix generation."""
         analysis = {
-            "root_cause": "nim_type_error",
+            "root_cause": "fsharp_type_error",
             "subcategory": "type",
             "confidence": "high",
             "suggested_fix": "Fix type mismatch"
@@ -385,10 +385,10 @@ class TestNimLanguagePlugin:
         
         context = {
             "error_data": {
-                "message": "Error: type mismatch: got <int> but expected <string>",
-                "file_path": "test.nim"
+                "message": "Type mismatch. Expecting a 'int' but given a 'string'",
+                "file_path": "test.fs"
             },
-            "source_code": 'let x: string = 42'
+            "source_code": 'let x: int = "hello"'
         }
         
         fix = self.plugin.generate_fix(analysis, context)
@@ -399,9 +399,10 @@ class TestNimLanguagePlugin:
     
     def test_supported_extensions(self):
         """Test supported file extensions."""
-        assert ".nim" in self.plugin.supported_extensions
-        assert ".nims" in self.plugin.supported_extensions
-        assert ".nimble" in self.plugin.supported_extensions
+        assert ".fs" in self.plugin.supported_extensions
+        assert ".fsx" in self.plugin.supported_extensions
+        assert ".fsi" in self.plugin.supported_extensions
+        assert ".fsproj" in self.plugin.supported_extensions
     
     def test_error_analysis_with_invalid_data(self):
         """Test error analysis with invalid data."""
@@ -409,8 +410,8 @@ class TestNimLanguagePlugin:
         
         analysis = self.plugin.analyze_error(error_data)
         
-        assert analysis["plugin"] == "nim"
-        assert analysis["language"] == "nim"
+        assert analysis["plugin"] == "fsharp"
+        assert analysis["language"] == "fsharp"
         # Should handle invalid data gracefully
         assert "category" in analysis
         assert "confidence" in analysis
