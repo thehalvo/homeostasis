@@ -1,0 +1,144 @@
+{
+  "name": "C++ Memory Management Errors",
+  "description": "Rules for detecting C++ memory management and RAII errors",
+  "rules": [
+    {
+      "id": "cpp_new_delete_mismatch",
+      "pattern": "operator delete\\[\\].*single object|operator delete(?!\\[\\]).*array|new\\[\\].*delete(?!\\[\\])|new(?!\\[\\]).*delete\\[\\]",
+      "type": "NewDeleteMismatch",
+      "description": "Mismatched new/delete or new[]/delete[] operators",
+      "root_cause": "cpp_allocation_mismatch",
+      "suggestion": "Use delete for new, delete[] for new[]. Consider using std::vector or std::array instead of raw arrays.",
+      "category": "cpp",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["cpp", "memory", "new", "delete"],
+      "examples": [
+        "allocated with new[] but deleted with delete",
+        "operator delete[] called on single object"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_malloc_delete_mismatch",
+      "pattern": "free\\(\\).*new|delete.*malloc|malloc.*delete|new.*free\\(\\)",
+      "type": "MallocDeleteMismatch",
+      "description": "Mixing C and C++ memory allocation/deallocation",
+      "root_cause": "cpp_c_cpp_allocation_mix",
+      "suggestion": "Use malloc/free together or new/delete together. Don't mix C and C++ memory management.",
+      "category": "cpp",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["cpp", "memory", "malloc", "free"],
+      "examples": [
+        "delete called on malloc'd memory",
+        "free() called on new'd object"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_object_slicing",
+      "pattern": "object slicing|slicing.*derived.*base|loss of polymorphic behavior",
+      "type": "ObjectSlicing",
+      "description": "Object slicing when copying derived class to base class",
+      "root_cause": "cpp_object_slicing",
+      "suggestion": "Use pointers or references for polymorphic behavior. Avoid copying derived objects to base objects.",
+      "category": "cpp",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["cpp", "inheritance", "slicing", "polymorphism"],
+      "examples": [
+        "object slicing detected",
+        "derived class sliced to base"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_dangling_reference",
+      "pattern": "dangling reference|reference to.*temporary|binding reference to.*destroyed",
+      "type": "DanglingReference",
+      "description": "Reference bound to temporary or destroyed object",
+      "root_cause": "cpp_dangling_reference",
+      "suggestion": "Ensure referenced objects outlive the reference. Avoid returning references to local variables.",
+      "category": "cpp",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["cpp", "reference", "lifetime", "dangling"],
+      "examples": [
+        "dangling reference detected",
+        "reference to destroyed temporary"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_move_after_move",
+      "pattern": "use.*after.*move|moved-from object|access.*moved.*object",
+      "type": "UseAfterMove",
+      "description": "Using object after it has been moved from",
+      "root_cause": "cpp_use_after_move",
+      "suggestion": "Don't use objects after std::move(). Moved-from objects are in valid but unspecified state.",
+      "category": "cpp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "cpp11", "move", "rvalue"],
+      "examples": [
+        "use of moved-from object",
+        "accessing moved object"
+      ],
+      "metadata": {"cpp_version": "11"},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_buffer_overflow",
+      "pattern": "buffer overflow|stack buffer overflow|heap buffer overflow|write beyond buffer",
+      "type": "BufferOverflow",
+      "description": "Writing beyond allocated buffer boundaries",
+      "root_cause": "cpp_buffer_overflow",
+      "suggestion": "Check buffer sizes before writing. Use safe string functions. Consider std::string or std::vector.",
+      "category": "cpp",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["cpp", "buffer", "overflow", "security"],
+      "examples": [
+        "stack buffer overflow",
+        "heap buffer overflow detected"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "name": "C++ STL Errors",
+  "description": "Rules for detecting C++ Standard Template Library errors",
+  "rules": [
+    {
+      "id": "cpp_vector_reserve_vs_resize",
+      "pattern": "vector.*accessing element.*size\\(\\)|attempting to access element beyond vector size",
+      "type": "VectorAccessError",
+      "description": "Accessing vector elements after reserve() instead of resize()",
+      "root_cause": "cpp_vector_size_confusion",
+      "suggestion": "Use resize() to create elements, reserve() only allocates capacity. Check size() before accessing elements.",
+      "category": "cpp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "stl", "vector", "container"],
+      "examples": [
+        "vector subscript out of range",
+        "accessing element beyond vector size"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_map_iterator_second",
+      "pattern": "cannot access member 'second' of|no member named 'second' in.*iterator",
+      "type": "MapIteratorError",
+      "description": "Incorrect access to map iterator members",
+      "root_cause": "cpp_map_iterator_usage",
+      "suggestion": "Use ->first and ->second to access key and value from map iterators. Dereference iterator first.",
+      "category": "cpp",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["cpp", "stl", "map", "iterator"],
+      "examples": [
+        "no member named 'second' in iterator",
+        "cannot access member 'second' of iterator"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_algorithm_predicate_error",
+      "pattern": "no matching function for call to.*algorithm|invalid predicate|predicate must be callable",
+      "type": "AlgorithmError",
+      "description": "STL algorithm called with invalid predicate or parameters",
+      "root_cause": "cpp_algorithm_misuse",
+      "suggestion": "Ensure predicate signature matches algorithm requirements. Check iterator types and ranges.",
+      "category": "cpp",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["cpp", "stl", "algorithm", "predicate"],
+      "examples": [
+        "no matching function for call to 'std::sort'",
+        "invalid predicate for algorithm"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_string_npos_comparison",
+      "pattern": "comparison.*string::npos|npos.*comparison.*failed|find\\(\\).*>= 0",
+      "type": "StringNposError",
+      "description": "Incorrect comparison with string::npos",
+      "root_cause": "cpp_string_npos_misuse",
+      "suggestion": "Compare find() result with string::npos using != or ==. Note that npos is typically (size_t)-1.",
+      "category": "cpp",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["cpp", "stl", "string", "find"],
+      "examples": [
+        "comparing find() >= 0",
+        "string::npos comparison error"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_unique_ptr_reset_delete",
+      "pattern": "unique_ptr.*delete|delete.*unique_ptr.*get\\(\\)|double delete.*unique_ptr",
+      "type": "UniquePtrError",
+      "description": "Manually deleting unique_ptr managed object",
+      "root_cause": "cpp_unique_ptr_misuse",
+      "suggestion": "Don't manually delete unique_ptr managed objects. Use reset() or let destructor handle it.",
+      "category": "cpp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "stl", "smart-pointer", "memory"],
+      "examples": [
+        "delete ptr.get() on unique_ptr",
+        "double delete of unique_ptr"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_shared_ptr_circular",
+      "pattern": "shared_ptr.*circular reference|reference cycle.*shared_ptr|memory leak.*circular.*shared_ptr",
+      "type": "SharedPtrCircularReference",
+      "description": "Circular reference with shared_ptr causing memory leak",
+      "root_cause": "cpp_shared_ptr_circular",
+      "suggestion": "Use weak_ptr to break circular references. Consider ownership hierarchy.",
+      "category": "cpp",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["cpp", "stl", "smart-pointer", "memory-leak"],
+      "examples": [
+        "circular reference detected with shared_ptr",
+        "shared_ptr reference cycle"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

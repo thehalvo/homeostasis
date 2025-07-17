@@ -1,0 +1,144 @@
+{
+  "name": "C Undefined Behavior Errors",
+  "description": "Rules for detecting C undefined behavior",
+  "rules": [
+    {
+      "id": "c_signed_overflow",
+      "pattern": "signed integer overflow|signed.*overflow|integer overflow",
+      "type": "SignedOverflow",
+      "description": "Signed integer overflow is undefined behavior",
+      "root_cause": "c_signed_overflow",
+      "suggestion": "Use unsigned types for wraparound behavior. Check for overflow before operations. Use compiler flags like -ftrapv.",
+      "category": "c",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["c", "undefined-behavior", "overflow", "integer"],
+      "examples": [
+        "signed integer overflow",
+        "integer overflow detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_shift_ub",
+      "pattern": "shift.*undefined|shift.*negative|shift.*width|shift.*too large",
+      "type": "ShiftUndefinedBehavior",
+      "description": "Bit shift undefined behavior",
+      "root_cause": "c_invalid_shift",
+      "suggestion": "Ensure shift amount is non-negative and less than bit width. Check shift values at runtime.",
+      "category": "c",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["c", "undefined-behavior", "shift", "bitwise"],
+      "examples": [
+        "left shift of negative value",
+        "shift amount too large"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_strict_aliasing",
+      "pattern": "strict aliasing|type punning|aliasing rules|dereferencing type-punned",
+      "type": "StrictAliasingViolation",
+      "description": "Violating strict aliasing rules",
+      "root_cause": "c_strict_aliasing",
+      "suggestion": "Use memcpy for type punning. Use unions for type reinterpretation. Compile with -fno-strict-aliasing if needed.",
+      "category": "c",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["c", "undefined-behavior", "aliasing", "optimization"],
+      "examples": [
+        "dereferencing type-punned pointer",
+        "strict aliasing violation"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_sequence_point",
+      "pattern": "sequence point|undefined.*order|unsequenced|multiple.*modifications",
+      "type": "SequencePointViolation",
+      "description": "Sequence point violation",
+      "root_cause": "c_sequence_point",
+      "suggestion": "Don't modify variables multiple times between sequence points. Simplify complex expressions.",
+      "category": "c",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["c", "undefined-behavior", "sequence-point", "order"],
+      "examples": [
+        "undefined order of evaluation",
+        "sequence point violation"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_data_race",
+      "pattern": "data race|race condition|concurrent.*access|thread.*unsafe",
+      "type": "DataRace",
+      "description": "Data race in concurrent access",
+      "root_cause": "c_data_race",
+      "suggestion": "Use proper synchronization (mutexes, atomics). Protect shared data. Consider thread-local storage.",
+      "category": "c",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["c", "undefined-behavior", "threading", "race"],
+      "examples": [
+        "data race detected",
+        "concurrent access without synchronization"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_vla_error",
+      "pattern": "variable.length array|VLA.*error|array.*size.*not constant|negative.*VLA",
+      "type": "VLAError",
+      "description": "Variable-length array error",
+      "root_cause": "c_vla_error",
+      "suggestion": "Check VLA size is positive and reasonable. Consider heap allocation for large or unknown sizes.",
+      "category": "c",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["c", "vla", "array", "c99"],
+      "examples": [
+        "negative size in variable-length array",
+        "VLA size too large"
+      ],
+      "metadata": {"c_version": "99"},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

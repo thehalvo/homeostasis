@@ -1,0 +1,121 @@
+{
+  "name": "C++ Template Errors",
+  "description": "Rules for detecting C++ template instantiation and compilation errors",
+  "rules": [
+    {
+      "id": "cpp_template_instantiation_error",
+      "pattern": "(?:error:|no matching function for call to|could not deduce template argument|template argument deduction failed)",
+      "type": "TemplateInstantiationError",
+      "description": "Template instantiation or deduction failed",
+      "root_cause": "cpp_template_instantiation_failure",
+      "suggestion": "Check template arguments match template parameters. Ensure types satisfy template requirements. Consider explicit template instantiation.",
+      "category": "cpp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "template", "instantiation", "compilation"],
+      "examples": [
+        "no matching function for call to 'std::vector<T>::push_back'",
+        "template argument deduction failed"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_template_recursive_instantiation",
+      "pattern": "template instantiation depth exceeds maximum|recursive template instantiation exceeded maximum depth",
+      "type": "TemplateRecursionError",
+      "description": "Template recursion depth limit exceeded",
+      "root_cause": "cpp_template_infinite_recursion",
+      "suggestion": "Check for infinite template recursion. Add proper base cases for recursive templates. Increase template depth limit if needed.",
+      "category": "cpp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "template", "recursion", "compilation"],
+      "examples": [
+        "template instantiation depth exceeds maximum of 900",
+        "recursive template instantiation exceeded maximum depth of 1024"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_sfinae_failure",
+      "pattern": "substitution failure|SFINAE|no type named 'type' in",
+      "type": "SFINAEError",
+      "description": "Substitution failure in template parameter substitution",
+      "root_cause": "cpp_sfinae_failure",
+      "suggestion": "This may be intentional SFINAE. If not, check template constraints and enable_if conditions.",
+      "category": "cpp",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["cpp", "template", "sfinae", "metaprogramming"],
+      "examples": [
+        "substitution failure",
+        "no type named 'type' in 'std::enable_if<false, void>'"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_concept_not_satisfied",
+      "pattern": "concept.*not satisfied|constraints not satisfied|requires.*not satisfied",
+      "type": "ConceptError",
+      "description": "C++20 concept requirements not satisfied",
+      "root_cause": "cpp_concept_constraint_failure",
+      "suggestion": "Ensure type satisfies all concept requirements. Check concept definition and type properties.",
+      "category": "cpp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "cpp20", "concepts", "constraints"],
+      "examples": [
+        "concept 'Comparable' was not satisfied",
+        "constraints not satisfied for template"
+      ],
+      "metadata": {"cpp_version": "20"},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_variadic_template_error",
+      "pattern": "parameter pack|pack expansion|sizeof\\.\\.\\.\\(|variadic template",
+      "type": "VariadicTemplateError",
+      "description": "Error in variadic template usage",
+      "root_cause": "cpp_variadic_template_error",
+      "suggestion": "Check parameter pack expansion syntax. Ensure proper use of ... operator. Verify pack sizes match.",
+      "category": "cpp",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["cpp", "template", "variadic", "parameter-pack"],
+      "examples": [
+        "parameter pack must be expanded",
+        "sizeof...(Args) in template"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

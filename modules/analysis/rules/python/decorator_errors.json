@@ -1,0 +1,144 @@
+{
+  "name": "Python Decorator Errors",
+  "description": "Rules for detecting Python decorator and metaclass errors",
+  "rules": [
+    {
+      "id": "python_decorator_no_return",
+      "pattern": "decorator .* did not return|decorator must return|NoneType.*not callable.*decorator",
+      "type": "DecoratorReturnError",
+      "description": "Decorator not returning a callable",
+      "root_cause": "python_decorator_no_return",
+      "suggestion": "Decorators must return a callable (function or class). Ensure your decorator returns the wrapper function.",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["python", "decorator", "function", "return"],
+      "examples": [
+        "decorator did not return a function",
+        "NoneType object is not callable after decoration"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_decorator_args_error",
+      "pattern": "decorator takes .* argument|TypeError:.*decorator\\(\\)|missing .* required positional argument.*wrapper",
+      "type": "DecoratorArgumentError",
+      "description": "Decorator called with wrong arguments",
+      "root_cause": "python_decorator_args_mismatch",
+      "suggestion": "Check if decorator expects arguments. Use @decorator for no args, @decorator() or @decorator(args) for args.",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["python", "decorator", "arguments", "syntax"],
+      "examples": [
+        "decorator takes 0 positional arguments but 1 was given",
+        "TypeError: decorator() missing required argument"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_property_setter_error",
+      "pattern": "@.*\\.setter.*before.*@property|property.*has no setter|can't set attribute",
+      "type": "PropertySetterError",
+      "description": "Property setter defined incorrectly",
+      "root_cause": "python_property_setter_order",
+      "suggestion": "@property must be defined before @prop.setter. Ensure setter has same name as property.",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["python", "property", "setter", "decorator"],
+      "examples": [
+        "@name.setter used before @property",
+        "property 'name' has no setter"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_classmethod_staticmethod_error",
+      "pattern": "classmethod.*must have.*cls|staticmethod.*should not have.*self|cannot have both @classmethod and @staticmethod",
+      "type": "MethodDecoratorError",
+      "description": "Incorrect use of @classmethod or @staticmethod",
+      "root_cause": "python_method_decorator_misuse",
+      "suggestion": "@classmethod methods should have 'cls' as first parameter. @staticmethod should have no self/cls parameter.",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["python", "classmethod", "staticmethod", "decorator"],
+      "examples": [
+        "classmethod must have cls as first parameter",
+        "staticmethod should not have self parameter"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_functools_wraps_missing",
+      "pattern": "wrapper function.*lost.*metadata|__name__.*wrapper|decorator.*functools\\.wraps",
+      "type": "FunctoolsWrapsMissing",
+      "description": "Decorator not preserving function metadata",
+      "root_cause": "python_decorator_metadata_loss",
+      "suggestion": "Use @functools.wraps(func) on wrapper function to preserve original function metadata.",
+      "category": "python",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": ["python", "decorator", "functools", "metadata"],
+      "examples": [
+        "wrapper function lost original metadata",
+        "__name__ is 'wrapper' instead of original function name"
+      ],
+      "metadata": {},
+      "criticality": "low",
+      "complexity": "low",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_decorator_class_error",
+      "pattern": "class.*used as decorator.*__call__|decorator class.*must implement|cannot decorate.*with class",
+      "type": "ClassDecoratorError",
+      "description": "Class-based decorator implementation error",
+      "root_cause": "python_class_decorator_error",
+      "suggestion": "Class decorators must implement __call__ method. Ensure proper initialization in __init__.",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["python", "decorator", "class", "callable"],
+      "examples": [
+        "class used as decorator must implement __call__",
+        "decorator class missing __call__ method"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

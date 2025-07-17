@@ -1,0 +1,144 @@
+{
+  "name": "C Memory Management Errors",
+  "description": "Rules for detecting C memory management errors",
+  "rules": [
+    {
+      "id": "c_malloc_fail",
+      "pattern": "malloc.*failed|malloc.*returned NULL|allocation failed|out of memory",
+      "type": "AllocationFailure",
+      "description": "Memory allocation failed",
+      "root_cause": "c_allocation_failure",
+      "suggestion": "Always check malloc/calloc return value for NULL. Handle allocation failures gracefully.",
+      "category": "c",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["c", "memory", "malloc", "allocation"],
+      "examples": [
+        "malloc failed",
+        "out of memory"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_realloc_error",
+      "pattern": "realloc.*failed|realloc.*NULL|realloc error",
+      "type": "ReallocError",
+      "description": "Memory reallocation failed",
+      "root_cause": "c_realloc_failure",
+      "suggestion": "Save original pointer before realloc. Check return value. Don't assign realloc result directly to original pointer.",
+      "category": "c",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["c", "memory", "realloc", "allocation"],
+      "examples": [
+        "realloc failed",
+        "realloc returned NULL"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_heap_corruption",
+      "pattern": "heap corruption|corrupted.*heap|malloc.*corruption|free.*corruption",
+      "type": "HeapCorruption",
+      "description": "Heap memory corruption detected",
+      "root_cause": "c_heap_corruption",
+      "suggestion": "Check for buffer overflows, double frees, use after free. Use memory debugging tools.",
+      "category": "c",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["c", "memory", "heap", "corruption"],
+      "examples": [
+        "heap corruption detected",
+        "malloc: corrupted top size"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_invalid_free",
+      "pattern": "invalid free|free.*invalid pointer|munmap_chunk.*invalid pointer",
+      "type": "InvalidFree",
+      "description": "Attempting to free invalid pointer",
+      "root_cause": "c_invalid_free",
+      "suggestion": "Only free pointers returned by malloc/calloc/realloc. Don't free stack variables or already freed memory.",
+      "category": "c",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["c", "memory", "free", "pointer"],
+      "examples": [
+        "free(): invalid pointer",
+        "munmap_chunk(): invalid pointer"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_memory_alignment",
+      "pattern": "alignment.*error|misaligned.*access|unaligned.*memory",
+      "type": "AlignmentError",
+      "description": "Memory alignment violation",
+      "root_cause": "c_alignment_error",
+      "suggestion": "Ensure proper alignment for data types. Use aligned allocation functions. Be careful with type punning.",
+      "category": "c",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["c", "memory", "alignment", "architecture"],
+      "examples": [
+        "misaligned memory access",
+        "alignment error"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_stack_corruption",
+      "pattern": "stack.*corrupt|corrupt.*stack|stack frame.*corrupt|return address.*corrupt",
+      "type": "StackCorruption",
+      "description": "Stack memory corruption detected",
+      "root_cause": "c_stack_corruption",
+      "suggestion": "Check for buffer overflows in local arrays. Verify function call conventions. Use stack canaries.",
+      "category": "c",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["c", "memory", "stack", "corruption"],
+      "examples": [
+        "stack corruption detected",
+        "corrupted stack frame"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

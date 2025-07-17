@@ -1,0 +1,144 @@
+{
+  "name": "C++ Undefined Behavior Errors",
+  "description": "Rules for detecting C++ undefined behavior",
+  "rules": [
+    {
+      "id": "cpp_signed_overflow",
+      "pattern": "signed integer overflow|runtime error: signed integer overflow|signed overflow",
+      "type": "SignedOverflow",
+      "description": "Signed integer overflow is undefined behavior",
+      "root_cause": "cpp_signed_integer_overflow",
+      "suggestion": "Use unsigned integers for wraparound behavior. Check for overflow before operations. Use compiler flags like -ftrapv.",
+      "category": "cpp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "undefined-behavior", "overflow", "integer"],
+      "examples": [
+        "runtime error: signed integer overflow",
+        "signed integer overflow: 2147483647 + 1"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_shift_overflow",
+      "pattern": "shift.*overflow|shift.*undefined|shift.*negative|shift.*too large",
+      "type": "ShiftOverflow",
+      "description": "Bit shift by negative or too large amount",
+      "root_cause": "cpp_invalid_shift",
+      "suggestion": "Ensure shift amount is non-negative and less than bit width of type. Check shift values at runtime.",
+      "category": "cpp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "undefined-behavior", "shift", "bitwise"],
+      "examples": [
+        "shift exponent too large",
+        "left shift of negative value"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_null_dereference_ub",
+      "pattern": "null pointer dereference|dereferencing null|access.*null pointer",
+      "type": "NullDereferenceUB",
+      "description": "Dereferencing null pointer is undefined behavior",
+      "root_cause": "cpp_null_dereference",
+      "suggestion": "Always check pointers before dereferencing. Use references where null is not valid. Consider std::optional.",
+      "category": "cpp",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["cpp", "undefined-behavior", "null", "pointer"],
+      "examples": [
+        "null pointer dereference",
+        "dereferencing null pointer"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_uninitialized_value",
+      "pattern": "uninitialized value|use of uninitialized|read.*uninitialized|uninitialised",
+      "type": "UninitializedValue",
+      "description": "Using uninitialized variable value",
+      "root_cause": "cpp_uninitialized_read",
+      "suggestion": "Initialize all variables at declaration. Use = default for class members. Enable compiler warnings.",
+      "category": "cpp",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "undefined-behavior", "initialization", "variable"],
+      "examples": [
+        "use of uninitialized value",
+        "reading uninitialized variable"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_strict_aliasing_violation",
+      "pattern": "strict aliasing|type punning|aliasing violation|dereferencing type-punned pointer",
+      "type": "StrictAliasingViolation",
+      "description": "Violating strict aliasing rules",
+      "root_cause": "cpp_strict_aliasing_violation",
+      "suggestion": "Use memcpy for type punning. Use union for type reinterpretation. Compile with -fno-strict-aliasing if needed.",
+      "category": "cpp",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["cpp", "undefined-behavior", "aliasing", "optimization"],
+      "examples": [
+        "dereferencing type-punned pointer will break strict-aliasing rules",
+        "strict aliasing violation"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_odr_violation",
+      "pattern": "ODR violation|One Definition Rule|multiple definition|inline function.*different definition",
+      "type": "ODRViolation",
+      "description": "One Definition Rule violation",
+      "root_cause": "cpp_odr_violation",
+      "suggestion": "Ensure consistent definitions across translation units. Use inline correctly. Check header guards.",
+      "category": "cpp",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["cpp", "undefined-behavior", "odr", "linking"],
+      "examples": [
+        "ODR violation detected",
+        "multiple definitions of symbol"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

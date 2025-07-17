@@ -1,0 +1,144 @@
+{
+  "name": "C Pointer Errors",
+  "description": "Rules for detecting C pointer-related errors",
+  "rules": [
+    {
+      "id": "c_wild_pointer",
+      "pattern": "wild pointer|uninitialized pointer|garbage pointer|random pointer",
+      "type": "WildPointer",
+      "description": "Using uninitialized pointer",
+      "root_cause": "c_wild_pointer",
+      "suggestion": "Initialize all pointers to NULL. Check pointers before use. Use static analysis tools.",
+      "category": "c",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["c", "pointer", "uninitialized", "wild"],
+      "examples": [
+        "wild pointer dereference",
+        "uninitialized pointer access"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_dangling_pointer",
+      "pattern": "dangling pointer|pointer.*freed memory|stale pointer|pointer.*deallocated",
+      "type": "DanglingPointer",
+      "description": "Pointer pointing to freed or out-of-scope memory",
+      "root_cause": "c_dangling_pointer",
+      "suggestion": "Set pointers to NULL after free. Be careful with pointers to local variables. Track object lifetimes.",
+      "category": "c",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["c", "pointer", "dangling", "lifetime"],
+      "examples": [
+        "dangling pointer detected",
+        "pointer to freed memory"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_pointer_arithmetic_error",
+      "pattern": "pointer arithmetic.*error|invalid pointer arithmetic|pointer.*out of bounds",
+      "type": "PointerArithmeticError",
+      "description": "Invalid pointer arithmetic operation",
+      "root_cause": "c_pointer_arithmetic",
+      "suggestion": "Ensure pointer arithmetic stays within allocated bounds. Be careful with void* arithmetic.",
+      "category": "c",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["c", "pointer", "arithmetic", "bounds"],
+      "examples": [
+        "pointer arithmetic out of bounds",
+        "invalid pointer arithmetic"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_function_pointer_error",
+      "pattern": "function pointer.*error|invalid function pointer|calling.*null function|incompatible function pointer",
+      "type": "FunctionPointerError",
+      "description": "Function pointer error",
+      "root_cause": "c_function_pointer_error",
+      "suggestion": "Check function pointers for NULL before calling. Ensure function signatures match. Use proper typedefs.",
+      "category": "c",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["c", "pointer", "function", "callback"],
+      "examples": [
+        "calling null function pointer",
+        "incompatible function pointer type"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_pointer_type_mismatch",
+      "pattern": "pointer type.*mismatch|incompatible pointer|assignment.*incompatible pointer type",
+      "type": "PointerTypeMismatch",
+      "description": "Pointer type mismatch in assignment or function call",
+      "root_cause": "c_pointer_type_mismatch",
+      "suggestion": "Ensure pointer types match. Use proper casts when necessary. Be careful with void* conversions.",
+      "category": "c",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["c", "pointer", "type", "cast"],
+      "examples": [
+        "incompatible pointer types",
+        "pointer type mismatch"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "c_const_pointer_violation",
+      "pattern": "discards.*const|const.*violation|modifying.*const|assignment.*const",
+      "type": "ConstViolation",
+      "description": "Attempting to modify const data through pointer",
+      "root_cause": "c_const_violation",
+      "suggestion": "Respect const qualifiers. Don't cast away const unless absolutely necessary. Use const correctly.",
+      "category": "c",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["c", "pointer", "const", "qualifier"],
+      "examples": [
+        "assignment discards const qualifier",
+        "modifying const data"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

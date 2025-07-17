@@ -1,0 +1,144 @@
+{
+  "name": "Python Metaclass Errors",
+  "description": "Rules for detecting Python metaclass and class creation errors",
+  "rules": [
+    {
+      "id": "python_metaclass_conflict",
+      "pattern": "metaclass conflict|Cannot create.*bases have incompatible metaclasses|multiple metaclasses",
+      "type": "MetaclassConflict",
+      "description": "Conflicting metaclasses in class hierarchy",
+      "root_cause": "python_metaclass_conflict",
+      "suggestion": "Create a common metaclass that inherits from all conflicting metaclasses, or redesign class hierarchy.",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["python", "metaclass", "inheritance", "conflict"],
+      "examples": [
+        "metaclass conflict: the metaclass of a derived class must be a subclass of the metaclasses of all its bases",
+        "Cannot create class with bases having incompatible metaclasses"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_metaclass_new_error",
+      "pattern": "__new__.*metaclass.*takes.*arguments|metaclass __new__.*signature",
+      "type": "MetaclassNewError",
+      "description": "Metaclass __new__ method signature error",
+      "root_cause": "python_metaclass_new_signature",
+      "suggestion": "Metaclass __new__ should have signature: __new__(mcs, name, bases, namespace, **kwargs)",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["python", "metaclass", "new", "signature"],
+      "examples": [
+        "__new__() metaclass takes 4 arguments",
+        "metaclass __new__ has incorrect signature"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_abstract_instantiation",
+      "pattern": "Can't instantiate abstract class.*with abstract method|TypeError:.*abstract",
+      "type": "AbstractInstantiationError",
+      "description": "Attempting to instantiate abstract class",
+      "root_cause": "python_abstract_class_instantiation",
+      "suggestion": "Implement all abstract methods before instantiating, or create a concrete subclass.",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["python", "abc", "abstract", "class"],
+      "examples": [
+        "Can't instantiate abstract class Animal with abstract method speak",
+        "TypeError: Can't instantiate abstract class"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_mro_error",
+      "pattern": "Cannot create a consistent method resolution order \\(MRO\\)|MRO conflict|inconsistent MRO",
+      "type": "MROError",
+      "description": "Method Resolution Order conflict in multiple inheritance",
+      "root_cause": "python_mro_conflict",
+      "suggestion": "Reorder base classes or redesign inheritance hierarchy to avoid MRO conflicts.",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["python", "mro", "inheritance", "multiple"],
+      "examples": [
+        "Cannot create a consistent method resolution order (MRO)",
+        "MRO conflict in class definition"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_slots_inheritance_error",
+      "pattern": "__slots__.*conflict|multiple bases have instance lay-out conflict|__slots__.*not compatible",
+      "type": "SlotsConflictError",
+      "description": "__slots__ conflict in inheritance",
+      "root_cause": "python_slots_conflict",
+      "suggestion": "Ensure all base classes use compatible __slots__ or none at all. Cannot mix slotted and non-slotted classes.",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["python", "slots", "inheritance", "memory"],
+      "examples": [
+        "__slots__ conflict in multiple inheritance",
+        "multiple bases have instance lay-out conflict"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_descriptor_protocol_error",
+      "pattern": "descriptor .* requires|__get__.*signature|descriptor protocol",
+      "type": "DescriptorProtocolError",
+      "description": "Descriptor protocol implementation error",
+      "root_cause": "python_descriptor_protocol",
+      "suggestion": "Implement __get__ and optionally __set__ and __delete__ with correct signatures for descriptors.",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["python", "descriptor", "protocol", "attribute"],
+      "examples": [
+        "descriptor __get__ requires owner argument",
+        "descriptor protocol not properly implemented"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

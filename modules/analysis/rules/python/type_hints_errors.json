@@ -1,0 +1,144 @@
+{
+  "name": "Python Type Hints Errors",
+  "description": "Rules for detecting Python type hints and mypy errors",
+  "rules": [
+    {
+      "id": "python_type_incompatible",
+      "pattern": "Incompatible (return value |assignment |default for argument |types in assignment)",
+      "type": "TypeIncompatible",
+      "description": "Type incompatibility detected by type checker",
+      "root_cause": "python_type_mismatch",
+      "suggestion": "Fix type annotations or change the value to match expected type. Use Union types if multiple types are valid.",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["python", "typing", "mypy", "type-hints"],
+      "examples": [
+        "Incompatible return value type",
+        "Incompatible types in assignment"
+      ],
+      "metadata": {"python_version": "3.5+"},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_type_arg_missing",
+      "pattern": "Missing type parameters for generic type|Type\\[\\] expects (\\d+) type argument",
+      "type": "MissingTypeParameter",
+      "description": "Generic type used without required type parameters",
+      "root_cause": "python_generic_type_incomplete",
+      "suggestion": "Provide type parameters for generic types. For example, use List[int] instead of List.",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["python", "typing", "generics", "type-hints"],
+      "examples": [
+        "Missing type parameters for generic type 'List'",
+        "Type[Dict] expects 2 type arguments"
+      ],
+      "metadata": {"python_version": "3.5+"},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_type_var_bound",
+      "pattern": "Type variable .* is unbound|Invalid type .* for TypeVar",
+      "type": "TypeVarError",
+      "description": "TypeVar usage error",
+      "root_cause": "python_typevar_misuse",
+      "suggestion": "Ensure TypeVar is properly bound and used consistently. Check TypeVar constraints and bounds.",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["python", "typing", "typevar", "generics"],
+      "examples": [
+        "Type variable 'T' is unbound",
+        "Invalid type 'str' for TypeVar with constraint"
+      ],
+      "metadata": {"python_version": "3.5+"},
+      "criticality": "medium",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_protocol_missing_method",
+      "pattern": "Protocol .* expected|Missing protocol member|Cannot instantiate protocol class",
+      "type": "ProtocolError",
+      "description": "Protocol implementation missing required methods",
+      "root_cause": "python_protocol_incomplete",
+      "suggestion": "Implement all required methods defined in the Protocol. Check method signatures match exactly.",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["python", "typing", "protocol", "structural"],
+      "examples": [
+        "Protocol 'Comparable' expected",
+        "Missing protocol member 'compare'"
+      ],
+      "metadata": {"python_version": "3.8+"},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_literal_type_error",
+      "pattern": "Invalid literal type|Literal\\[.*\\] cannot be",
+      "type": "LiteralTypeError",
+      "description": "Invalid literal type usage",
+      "root_cause": "python_literal_type_invalid",
+      "suggestion": "Literal types must be literal values (strings, numbers, booleans, None). Cannot use variables or expressions.",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["python", "typing", "literal", "type-hints"],
+      "examples": [
+        "Invalid literal type",
+        "Literal[...] cannot be parameterized with"
+      ],
+      "metadata": {"python_version": "3.8+"},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "python_overload_no_implementation",
+      "pattern": "Overloaded function has no implementation|@overload decorator without implementation",
+      "type": "OverloadError",
+      "description": "@overload used without actual implementation",
+      "root_cause": "python_overload_missing_impl",
+      "suggestion": "Provide an implementation function after all @overload decorated variants.",
+      "category": "python",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["python", "typing", "overload", "decorator"],
+      "examples": [
+        "Overloaded function has no implementation",
+        "@overload decorator without implementation"
+      ],
+      "metadata": {"python_version": "3.5+"},
+      "criticality": "high",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}
