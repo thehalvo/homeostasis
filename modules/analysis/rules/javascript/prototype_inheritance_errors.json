@@ -1,0 +1,276 @@
+{
+  "name": "JavaScript Prototype and Inheritance Errors",
+  "description": "Rules for detecting prototype chain, inheritance, and object-oriented programming errors in JavaScript",
+  "rules": [
+    {
+      "id": "js_prototype_undefined",
+      "pattern": "TypeError: Cannot (?:read|set) property.*prototype.*undefined|prototype.*undefined|undefined.*prototype",
+      "type": "PrototypeUndefinedError",
+      "description": "Attempting to access prototype on undefined or null",
+      "root_cause": "js_prototype_access_error",
+      "suggestion": "Check that the constructor function exists before accessing its prototype",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "prototype", "oop", "constructor"],
+      "examples": [
+        "TypeError: Cannot read property 'prototype' of undefined"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_prototype_chain_broken",
+      "pattern": "TypeError:.*not a constructor|\\w+ is not a constructor|prototype.*chain.*broken",
+      "type": "PrototypeChainError",
+      "description": "Prototype chain is broken or invalid constructor",
+      "root_cause": "js_invalid_constructor",
+      "suggestion": "Ensure you're calling 'new' with a constructor function, not a regular object",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "prototype", "constructor", "new"],
+      "examples": [
+        "TypeError: MyClass is not a constructor"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_instanceof_failure",
+      "pattern": "TypeError:.*instanceof.*not.*(?:function|callable)|Right-hand side of 'instanceof' is not callable",
+      "type": "InstanceofError",
+      "description": "Invalid use of instanceof operator",
+      "root_cause": "js_instanceof_invalid_operand",
+      "suggestion": "Right side of instanceof must be a constructor function",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "instanceof", "prototype", "type-checking"],
+      "examples": [
+        "TypeError: Right-hand side of 'instanceof' is not callable"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_prototype_pollution",
+      "pattern": "__proto__|prototype.*pollution|Object\\.prototype.*modified|constructor\\.prototype.*tampered",
+      "type": "PrototypePollution",
+      "description": "Prototype pollution vulnerability detected",
+      "root_cause": "js_prototype_pollution_attack",
+      "suggestion": "Avoid modifying Object.prototype, use Object.create(null) for dictionary objects",
+      "category": "javascript",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["javascript", "security", "prototype", "pollution"],
+      "examples": [
+        "Security Warning: Object.prototype pollution detected"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_object_create_error",
+      "pattern": "TypeError:.*Object\\.create.*not.*(?:object|null)|Object\\.create.*first argument",
+      "type": "ObjectCreateError",
+      "description": "Invalid argument to Object.create()",
+      "root_cause": "js_object_create_invalid_proto",
+      "suggestion": "Object.create() requires an object or null as the prototype argument",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "object", "prototype", "creation"],
+      "examples": [
+        "TypeError: Object prototype may only be an Object or null"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_constructor_return_error",
+      "pattern": "constructor.*return.*(?:value|object)|TypeError:.*constructor.*return",
+      "type": "ConstructorReturnError",
+      "description": "Constructor returning unexpected value",
+      "root_cause": "js_constructor_invalid_return",
+      "suggestion": "Constructors should not return primitives; only return objects or nothing",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "constructor", "return", "oop"],
+      "examples": [
+        "Warning: Constructor should not return a primitive value"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_super_before_this",
+      "pattern": "ReferenceError: Must call super constructor.*before.*this|this.*before.*super",
+      "type": "SuperBeforeThisError",
+      "description": "Accessing 'this' before calling super() in derived class",
+      "root_cause": "js_super_not_called",
+      "suggestion": "Call super() before accessing 'this' in derived class constructors",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "class", "inheritance", "super", "es6"],
+      "examples": [
+        "ReferenceError: Must call super constructor before accessing 'this'"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_method_borrowing_error",
+      "pattern": "TypeError:.*method.*called on.*(?:null|undefined|incompatible)",
+      "type": "MethodBorrowingError",
+      "description": "Method called with incorrect 'this' context",
+      "root_cause": "js_method_incorrect_context",
+      "suggestion": "Use .call(), .apply(), or .bind() to set correct context when borrowing methods",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "method", "borrowing", "context"],
+      "examples": [
+        "TypeError: Array method called on incompatible object"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_prototype_method_override",
+      "pattern": "(?:override|overwrite).*prototype.*method|prototype.*method.*(?:replaced|overridden)",
+      "type": "PrototypeMethodOverride",
+      "description": "Prototype method overridden unsafely",
+      "root_cause": "js_unsafe_method_override",
+      "suggestion": "Preserve original method when overriding, consider using composition instead",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "low",
+      "tags": ["javascript", "prototype", "override", "inheritance"],
+      "examples": [
+        "Warning: Native prototype method overridden"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_class_field_inheritance",
+      "pattern": "TypeError:.*class field.*inherited|private.*field.*not.*inherited",
+      "type": "ClassFieldInheritanceError",
+      "description": "Class field inheritance issue",
+      "root_cause": "js_class_field_inheritance",
+      "suggestion": "Class fields are not inherited like methods; initialize in derived class",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "class", "field", "inheritance", "es2022"],
+      "examples": [
+        "TypeError: Private field '#field' must be declared in an enclosing class"
+      ],
+      "metadata": {
+        "es_version": "ES2022+"
+      }
+    },
+    {
+      "id": "js_hasownproperty_error",
+      "pattern": "TypeError:.*hasOwnProperty.*not a function|Cannot.*hasOwnProperty.*null",
+      "type": "HasOwnPropertyError",
+      "description": "hasOwnProperty called on object without the method",
+      "root_cause": "js_hasownproperty_missing",
+      "suggestion": "Use Object.prototype.hasOwnProperty.call(obj, prop) for safety",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "object", "property", "prototype"],
+      "examples": [
+        "TypeError: obj.hasOwnProperty is not a function"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_prototype_constructor_missing",
+      "pattern": "constructor.*property.*missing|prototype.*lost.*constructor|constructor.*undefined",
+      "type": "ConstructorPropertyMissing",
+      "description": "Constructor property missing from prototype",
+      "root_cause": "js_constructor_property_lost",
+      "suggestion": "Restore constructor property after replacing prototype object",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": ["javascript", "prototype", "constructor", "property"],
+      "examples": [
+        "Warning: Constructor property missing from prototype"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_extends_null_error",
+      "pattern": "Class extends value.*null.*not.*constructor|extends null.*error",
+      "type": "ExtendsNullError",
+      "description": "Invalid extends clause with null",
+      "root_cause": "js_extends_invalid_value",
+      "suggestion": "Classes can only extend constructors or null with special handling",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "class", "extends", "inheritance"],
+      "examples": [
+        "TypeError: Class extends value null is not a constructor or null"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_mixin_collision",
+      "pattern": "(?:mixin|trait).*(?:collision|conflict)|multiple.*inheritance.*conflict",
+      "type": "MixinCollision",
+      "description": "Method name collision in mixin pattern",
+      "root_cause": "js_mixin_name_conflict",
+      "suggestion": "Resolve naming conflicts when combining mixins, use namespacing",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "low",
+      "tags": ["javascript", "mixin", "inheritance", "pattern"],
+      "examples": [
+        "Warning: Mixin method collision detected"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_getprototypeof_error",
+      "pattern": "TypeError:.*Object\\.getPrototypeOf.*not.*object|getPrototypeOf.*called on non-object",
+      "type": "GetPrototypeOfError",
+      "description": "Object.getPrototypeOf called on non-object",
+      "root_cause": "js_getprototypeof_invalid_arg",
+      "suggestion": "Object.getPrototypeOf only works with objects, not primitives",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "prototype", "object", "reflection"],
+      "examples": [
+        "TypeError: Object.getPrototypeOf called on non-object"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    }
+  ]
+}

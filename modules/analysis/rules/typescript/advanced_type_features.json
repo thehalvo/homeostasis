@@ -1,0 +1,284 @@
+{
+  "name": "TypeScript Advanced Type Features Errors",
+  "description": "Rules for detecting errors in advanced TypeScript type features including const assertions, branded types, variadic tuples, and more",
+  "rules": [
+    {
+      "id": "ts_const_assertion_error",
+      "pattern": "TS2588.*Cannot assign to.*because it is a constant|as const.*readonly",
+      "type": "ConstAssertionError",
+      "description": "Const assertion creates readonly type",
+      "root_cause": "ts_const_assertion_immutable",
+      "suggestion": "Values with 'as const' are deeply readonly and cannot be modified",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "const-assertion", "readonly", "literal"],
+      "examples": [
+        "TS2588: Cannot assign to 'x' because it is a constant or readonly"
+      ],
+      "metadata": {
+        "error_code": "TS2588",
+        "version": "3.4+"
+      }
+    },
+    {
+      "id": "ts_branded_type_error",
+      "pattern": "Type.*is not assignable to type.*&.*__brand|Branded type.*mismatch",
+      "type": "BrandedTypeError",
+      "description": "Branded/nominal type mismatch",
+      "root_cause": "ts_branded_type_violation",
+      "suggestion": "Use proper constructor or validation function for branded types",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["typescript", "branded-type", "nominal", "type-safety"],
+      "examples": [
+        "Type 'string' is not assignable to type 'UserId' (branded type)"
+      ],
+      "metadata": {
+        "pattern": "branded types"
+      }
+    },
+    {
+      "id": "ts_index_signature_error",
+      "pattern": "TS7017.*Index signature.*parameter type|TS7015.*for.*index signature",
+      "type": "IndexSignatureError",
+      "description": "Index signature type error",
+      "root_cause": "ts_invalid_index_signature",
+      "suggestion": "Index signatures must use string, number, or symbol as key type",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "index-signature", "object", "key"],
+      "examples": [
+        "TS7017: Index signature parameter type must be string or number"
+      ],
+      "metadata": {
+        "error_code": "TS7017,TS7015"
+      }
+    },
+    {
+      "id": "ts_variadic_tuple_error",
+      "pattern": "TS2574.*rest element.*tuple|TS5086.*spread.*tuple type",
+      "type": "VariadicTupleError",
+      "description": "Variadic tuple type error",
+      "root_cause": "ts_variadic_tuple_misuse",
+      "suggestion": "Ensure spread elements in tuples are used correctly",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "tuple", "variadic", "spread"],
+      "examples": [
+        "TS2574: A rest element must be last in a tuple type"
+      ],
+      "metadata": {
+        "error_code": "TS2574,TS5086",
+        "version": "4.0+"
+      }
+    },
+    {
+      "id": "ts_template_literal_pattern",
+      "pattern": "TS2345.*template literal type.*not assignable|TS2322.*template literal",
+      "type": "TemplateLiteralPatternError",
+      "description": "Template literal type pattern mismatch",
+      "root_cause": "ts_template_literal_pattern_fail",
+      "suggestion": "Ensure string matches the template literal type pattern",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "template-literal", "string-pattern", "literal"],
+      "examples": [
+        "TS2345: Argument does not match template literal type pattern"
+      ],
+      "metadata": {
+        "error_code": "TS2345,TS2322",
+        "version": "4.1+"
+      }
+    },
+    {
+      "id": "ts_conditional_type_distribution",
+      "pattern": "TS2322.*conditional type.*distributed.*union|distributive.*conditional",
+      "type": "ConditionalTypeDistribution",
+      "description": "Unexpected conditional type distribution",
+      "root_cause": "ts_conditional_distribution_behavior",
+      "suggestion": "Use [T] extends [U] to prevent distribution over union types",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["typescript", "conditional", "distribution", "union"],
+      "examples": [
+        "Conditional type distributed over union unexpectedly"
+      ],
+      "metadata": {
+        "version": "2.8+"
+      }
+    },
+    {
+      "id": "ts_module_augmentation_error",
+      "pattern": "TS2669.*Augmentations for the global scope|TS2665.*Invalid module name",
+      "type": "ModuleAugmentationError",
+      "description": "Module augmentation error",
+      "root_cause": "ts_module_augmentation_invalid",
+      "suggestion": "Module augmentations must be in a module context, not scripts",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "module", "augmentation", "declaration"],
+      "examples": [
+        "TS2669: Augmentations for the global scope can only be directly nested"
+      ],
+      "metadata": {
+        "error_code": "TS2669,TS2665"
+      }
+    },
+    {
+      "id": "ts_triple_slash_directive",
+      "pattern": "TS2688.*Cannot find type definition file|///\\s*<reference.*path.*not found",
+      "type": "TripleSlashDirectiveError",
+      "description": "Triple-slash directive reference error",
+      "root_cause": "ts_triple_slash_reference_invalid",
+      "suggestion": "Ensure referenced file exists and path is correct",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "triple-slash", "reference", "directive"],
+      "examples": [
+        "TS2688: Cannot find type definition file for 'types'"
+      ],
+      "metadata": {
+        "error_code": "TS2688"
+      }
+    },
+    {
+      "id": "ts_higher_kinded_type_error",
+      "pattern": "Generic type.*requires.*type argument|HKT.*higher.*kinded",
+      "type": "HigherKindedTypeError",
+      "description": "Higher-kinded type pattern error",
+      "root_cause": "ts_higher_kinded_type_misuse",
+      "suggestion": "TypeScript doesn't directly support HKT, use workarounds carefully",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "low",
+      "tags": ["typescript", "hkt", "generic", "advanced"],
+      "examples": [
+        "Generic type requires between 1 and 2 type arguments"
+      ],
+      "metadata": {
+        "pattern": "advanced"
+      }
+    },
+    {
+      "id": "ts_satisfies_operator_error",
+      "pattern": "TS1360.*'satisfies' expected|TS2322.*does not satisfy",
+      "type": "SatisfiesOperatorError",
+      "description": "Type does not satisfy constraint",
+      "root_cause": "ts_satisfies_constraint_fail",
+      "suggestion": "Ensure expression type satisfies the specified constraint",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "satisfies", "constraint", "operator"],
+      "examples": [
+        "TS1360: Type does not satisfy the expected constraint"
+      ],
+      "metadata": {
+        "error_code": "TS1360,TS2322",
+        "version": "4.9+"
+      }
+    },
+    {
+      "id": "ts_const_type_parameter",
+      "pattern": "TS1277.*const.*type parameter|const.*modifier.*generic",
+      "type": "ConstTypeParameterError",
+      "description": "Const type parameter usage error",
+      "root_cause": "ts_const_type_param_misuse",
+      "suggestion": "Const type parameters infer literal types more precisely",
+      "category": "typescript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": ["typescript", "const", "generic", "type-parameter"],
+      "examples": [
+        "TS1277: 'const' modifier can only appear on a type parameter"
+      ],
+      "metadata": {
+        "error_code": "TS1277",
+        "version": "5.0+"
+      }
+    },
+    {
+      "id": "ts_mapped_type_modifier_error",
+      "pattern": "TS1005.*'\\+'.*or.*'-'.*expected|readonly.*optional.*modifier",
+      "type": "MappedTypeModifierError",
+      "description": "Mapped type modifier syntax error",
+      "root_cause": "ts_mapped_type_modifier_syntax",
+      "suggestion": "Use +/- prefix for adding/removing readonly or optional modifiers",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "mapped-type", "modifier", "syntax"],
+      "examples": [
+        "TS1005: '+' or '-' expected for mapped type modifier"
+      ],
+      "metadata": {
+        "error_code": "TS1005",
+        "version": "2.8+"
+      }
+    },
+    {
+      "id": "ts_keyof_type_operator_error",
+      "pattern": "TS2322.*keyof.*not assignable|TS2536.*Type.*cannot be used to index",
+      "type": "KeyofTypeOperatorError",
+      "description": "keyof type operator usage error",
+      "root_cause": "ts_keyof_operator_misuse",
+      "suggestion": "keyof returns union of known public property names",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "keyof", "operator", "index"],
+      "examples": [
+        "TS2536: Type 'string' cannot be used to index type"
+      ],
+      "metadata": {
+        "error_code": "TS2322,TS2536"
+      }
+    },
+    {
+      "id": "ts_unique_symbol_error",
+      "pattern": "TS1332.*unique symbol.*type must be.*const|TS2322.*symbol.*not assignable",
+      "type": "UniqueSymbolError",
+      "description": "Unique symbol type error",
+      "root_cause": "ts_unique_symbol_misuse",
+      "suggestion": "unique symbol types must be const declarations",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "symbol", "unique", "const"],
+      "examples": [
+        "TS1332: A 'unique symbol' type may only be created from a 'const'"
+      ],
+      "metadata": {
+        "error_code": "TS1332,TS2322",
+        "version": "2.7+"
+      }
+    },
+    {
+      "id": "ts_assertion_function_error",
+      "pattern": "TS2775.*Assertions require.*assert|assertion.*function.*signature",
+      "type": "AssertionFunctionError",
+      "description": "Assertion function signature error",
+      "root_cause": "ts_assertion_function_invalid",
+      "suggestion": "Assertion functions must have 'asserts' in return type",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "assertion", "function", "asserts"],
+      "examples": [
+        "TS2775: Assertions require the 'asserts' keyword"
+      ],
+      "metadata": {
+        "error_code": "TS2775",
+        "version": "3.7+"
+      }
+    }
+  ]
+}

@@ -1,0 +1,276 @@
+{
+  "name": "JavaScript Closure and Scope Errors",
+  "description": "Rules for detecting closure, scope, and variable capture errors in JavaScript",
+  "rules": [
+    {
+      "id": "js_closure_loop_capture",
+      "pattern": "(?:var\\s+\\w+\\s*=\\s*\\d+;.*<.*\\+\\+\\).*(?:setTimeout|setInterval|addEventListener)|for.*var.*function|for.*var.*=>)",
+      "type": "ClosureLoopCapture",
+      "description": "Variable capture issue in loop with var declaration",
+      "root_cause": "js_closure_var_capture",
+      "suggestion": "Use 'let' instead of 'var' in loops, or use IIFE to create proper closure",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "closure", "scope", "loop"],
+      "examples": [
+        "for (var i = 0; i < 10; i++) { setTimeout(() => console.log(i), 100); }"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_stale_closure",
+      "pattern": "(?:stale|outdated|old).*(?:closure|value)|closure.*(?:stale|not.*updated)",
+      "type": "StaleClosureError",
+      "description": "Stale closure accessing outdated values",
+      "root_cause": "js_stale_closure_reference",
+      "suggestion": "Use useRef in React, or ensure closure captures current values",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "closure", "react", "state"],
+      "examples": [
+        "Warning: Event handler has stale closure"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_memory_leak_closure",
+      "pattern": "(?:memory leak|leaked).*closure|closure.*(?:retain|leak|hold)",
+      "type": "ClosureMemoryLeak",
+      "description": "Memory leak caused by closure retaining references",
+      "root_cause": "js_closure_memory_retention",
+      "suggestion": "Clear references in closures when no longer needed, remove event listeners",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["javascript", "closure", "memory", "leak"],
+      "examples": [
+        "Memory leak: Closure retaining large object"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_temporal_dead_zone",
+      "pattern": "ReferenceError: (?:Cannot access|can't access) '([^']+)' before initialization|ReferenceError:.*temporal dead zone",
+      "type": "TemporalDeadZone",
+      "description": "Accessing let/const variable before declaration",
+      "root_cause": "js_temporal_dead_zone_access",
+      "suggestion": "Move variable usage after its declaration, or check initialization order",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "scope", "let", "const", "tdz"],
+      "examples": [
+        "ReferenceError: Cannot access 'myVar' before initialization"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_hoisting_confusion",
+      "pattern": "undefined.*(?:function|var).*hoisted|TypeError:.*undefined.*function.*called before",
+      "type": "HoistingError",
+      "description": "Hoisting behavior causing unexpected undefined",
+      "root_cause": "js_hoisting_misunderstanding",
+      "suggestion": "Declare functions and variables before use, avoid relying on hoisting",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "hoisting", "scope", "undefined"],
+      "examples": [
+        "TypeError: myFunc is undefined (hoisted but not initialized)"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_block_scope_error",
+      "pattern": "ReferenceError:.*(?:let|const).*not defined.*}|block.*scope.*(?:let|const)",
+      "type": "BlockScopeError",
+      "description": "Block-scoped variable accessed outside its scope",
+      "root_cause": "js_block_scope_violation",
+      "suggestion": "Declare variable in appropriate scope or use var for function scope",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "scope", "let", "const", "block"],
+      "examples": [
+        "ReferenceError: blockVar is not defined (outside block scope)"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_iife_error",
+      "pattern": "SyntaxError:.*\\(function.*\\)\\s*(?!\\()|TypeError:.*IIFE.*not a function",
+      "type": "IIFEError",
+      "description": "Immediately Invoked Function Expression syntax error",
+      "root_cause": "js_iife_syntax_error",
+      "suggestion": "Add parentheses around function expression and ensure proper invocation",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "iife", "function", "syntax"],
+      "examples": [
+        "SyntaxError: Unexpected token (missing IIFE parentheses)"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_global_scope_pollution",
+      "pattern": "(?:global|window).*(?:polluted|contaminated)|accidentally.*global.*variable",
+      "type": "GlobalScopePollution",
+      "description": "Accidental global variable creation",
+      "root_cause": "js_implicit_global_creation",
+      "suggestion": "Use 'use strict' mode and always declare variables with let/const/var",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "scope", "global", "strict"],
+      "examples": [
+        "Warning: Implicit global variable 'myVar' created"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_nested_function_scope",
+      "pattern": "undefined.*nested.*function|inner.*function.*cannot.*access|scope.*chain.*broken",
+      "type": "NestedFunctionScopeError",
+      "description": "Nested function scope access issue",
+      "root_cause": "js_nested_scope_access",
+      "suggestion": "Check variable declarations in parent scopes and closure formation",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "scope", "nested", "function"],
+      "examples": [
+        "TypeError: Cannot access outer variable in nested function"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_with_statement_error",
+      "pattern": "with\\s*\\(|SyntaxError:.*strict mode.*with statement",
+      "type": "WithStatementError",
+      "description": "Using 'with' statement (deprecated)",
+      "root_cause": "js_with_statement_usage",
+      "suggestion": "Avoid 'with' statement, use explicit property access instead",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "scope", "with", "deprecated"],
+      "examples": [
+        "SyntaxError: Strict mode code may not include a with statement"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_eval_scope_error",
+      "pattern": "eval.*scope|ReferenceError.*eval.*variable|eval.*strict.*mode",
+      "type": "EvalScopeError",
+      "description": "Scope issues with eval() usage",
+      "root_cause": "js_eval_scope_problem",
+      "suggestion": "Avoid eval(), use Function constructor or other alternatives",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["javascript", "eval", "scope", "security"],
+      "examples": [
+        "ReferenceError: Variable not defined in eval scope"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_module_scope_error",
+      "pattern": "ReferenceError:.*module.*scope|import.*not.*top.*level|export.*not.*module.*scope",
+      "type": "ModuleScopeError",
+      "description": "Module scope violation",
+      "root_cause": "js_module_scope_violation",
+      "suggestion": "Ensure imports/exports are at top level of module",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "module", "scope", "import", "export"],
+      "examples": [
+        "SyntaxError: import declarations may only appear at top level of a module"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_closure_this_binding",
+      "pattern": "TypeError:.*this.*undefined.*closure|lost.*this.*closure|closure.*this.*not.*bound",
+      "type": "ClosureThisBinding",
+      "description": "'this' context lost in closure",
+      "root_cause": "js_closure_this_loss",
+      "suggestion": "Use arrow functions or bind() to preserve 'this' context",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "closure", "this", "context"],
+      "examples": [
+        "TypeError: Cannot read property of undefined (this lost in closure)"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_lexical_scope_shadow",
+      "pattern": "(?:shadow|hidden|masked).*variable|inner.*variable.*(?:shadows|hides).*outer",
+      "type": "VariableShadowing",
+      "description": "Variable shadowing causing confusion",
+      "root_cause": "js_variable_shadowing",
+      "suggestion": "Use unique variable names to avoid shadowing outer scope variables",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": ["javascript", "scope", "shadowing", "naming"],
+      "examples": [
+        "Warning: Inner variable 'x' shadows outer variable"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_arguments_scope_error",
+      "pattern": "ReferenceError:.*arguments.*not defined|arguments.*arrow.*function|arguments.*strict.*mode",
+      "type": "ArgumentsScopeError",
+      "description": "'arguments' object not available or misused",
+      "root_cause": "js_arguments_unavailable",
+      "suggestion": "Use rest parameters (...args) instead of arguments object",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "arguments", "scope", "function"],
+      "examples": [
+        "ReferenceError: 'arguments' is not defined in arrow function"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    }
+  ]
+}

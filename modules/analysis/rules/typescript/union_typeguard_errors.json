@@ -1,0 +1,277 @@
+{
+  "name": "TypeScript Union Types and Type Guards Errors",
+  "description": "Rules for detecting union type and type guard related errors in TypeScript",
+  "rules": [
+    {
+      "id": "ts_union_exhaustiveness_error",
+      "pattern": "TS2339.*Property.*does not exist on type.*\\|.*|TS7030.*Not all code paths return a value",
+      "type": "UnionExhaustivenessError",
+      "description": "Union type exhaustiveness check failed",
+      "root_cause": "ts_union_not_exhaustive",
+      "suggestion": "Ensure all union type cases are handled in switch/if statements",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "union", "exhaustiveness", "pattern-matching"],
+      "examples": [
+        "TS2339: Property 'value' does not exist on type 'Success | Error'",
+        "TS7030: Not all code paths return a value"
+      ],
+      "metadata": {
+        "error_code": "TS2339,TS7030"
+      }
+    },
+    {
+      "id": "ts_discriminated_union_error",
+      "pattern": "TS2339.*Property.*does not exist.*discriminated union|TS2367.*This condition will always return",
+      "type": "DiscriminatedUnionError",
+      "description": "Discriminated union type checking error",
+      "root_cause": "ts_discriminated_union_misuse",
+      "suggestion": "Check the discriminant property before accessing union-specific properties",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "union", "discriminated", "tagged"],
+      "examples": [
+        "TS2339: Property 'payload' does not exist on discriminated union type"
+      ],
+      "metadata": {
+        "error_code": "TS2339,TS2367"
+      }
+    },
+    {
+      "id": "ts_union_type_narrowing_error",
+      "pattern": "TS2531.*Object is possibly 'null'.*union|TS18047.*.*is possibly 'null' or 'undefined'",
+      "type": "UnionNarrowingError",
+      "description": "Failed to narrow union type properly",
+      "root_cause": "ts_union_narrowing_failure",
+      "suggestion": "Use type guards or null checks to narrow the union type",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "union", "narrowing", "null-check"],
+      "examples": [
+        "TS2531: Object is possibly 'null' in union type"
+      ],
+      "metadata": {
+        "error_code": "TS2531,TS18047"
+      }
+    },
+    {
+      "id": "ts_type_guard_signature_error",
+      "pattern": "TS2345.*Type predicate.*is not assignable|TS1228.*A type predicate is only allowed",
+      "type": "TypeGuardSignatureError",
+      "description": "Type guard function signature error",
+      "root_cause": "ts_invalid_type_predicate",
+      "suggestion": "Ensure type guard returns 'param is Type' predicate correctly",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "type-guard", "predicate", "function"],
+      "examples": [
+        "TS2345: Type predicate 'x is string' is not assignable to 'boolean'"
+      ],
+      "metadata": {
+        "error_code": "TS2345,TS1228"
+      }
+    },
+    {
+      "id": "ts_user_defined_type_guard_error",
+      "pattern": "A type predicate's type must be assignable to its parameter's type|TS2677.*type guard",
+      "type": "UserDefinedTypeGuardError",
+      "description": "User-defined type guard implementation error",
+      "root_cause": "ts_type_guard_implementation",
+      "suggestion": "Type guard's return type must be assignable to parameter type",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "type-guard", "user-defined", "predicate"],
+      "examples": [
+        "TS2677: A type predicate's type must be assignable to its parameter's type"
+      ],
+      "metadata": {
+        "error_code": "TS2677"
+      }
+    },
+    {
+      "id": "ts_control_flow_narrowing_error",
+      "pattern": "TS2339.*after.*typeof check|TS2532.*Object is possibly 'undefined'.*after check",
+      "type": "ControlFlowNarrowingError",
+      "description": "Control flow analysis failed to narrow type",
+      "root_cause": "ts_control_flow_analysis_failure",
+      "suggestion": "Ensure type checks are in the same scope as usage",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["typescript", "control-flow", "narrowing", "type-analysis"],
+      "examples": [
+        "TS2339: Property still not accessible after typeof check"
+      ],
+      "metadata": {
+        "error_code": "TS2339,TS2532"
+      }
+    },
+    {
+      "id": "ts_union_intersection_conflict",
+      "pattern": "TS2322.*Type.*\\|.*is not assignable to type.*&|never.*union.*intersection",
+      "type": "UnionIntersectionConflict",
+      "description": "Union and intersection types conflict",
+      "root_cause": "ts_union_intersection_incompatible",
+      "suggestion": "Review union and intersection type combinations for conflicts",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "union", "intersection", "conflict"],
+      "examples": [
+        "TS2322: Type 'A | B' is not assignable to type 'A & B'"
+      ],
+      "metadata": {
+        "error_code": "TS2322"
+      }
+    },
+    {
+      "id": "ts_excess_property_union",
+      "pattern": "TS2322.*Object literal may only specify known properties.*union",
+      "type": "ExcessPropertyUnion",
+      "description": "Excess property in union type assignment",
+      "root_cause": "ts_union_excess_property",
+      "suggestion": "Object must match exactly one union member without excess properties",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "union", "excess-property", "object-literal"],
+      "examples": [
+        "TS2322: Object literal may only specify known properties in union"
+      ],
+      "metadata": {
+        "error_code": "TS2322"
+      }
+    },
+    {
+      "id": "ts_type_assertion_guard_error",
+      "pattern": "TS2352.*Conversion of type.*to type.*may be a mistake|as.*type guard",
+      "type": "TypeAssertionGuardError",
+      "description": "Unsafe type assertion used instead of type guard",
+      "root_cause": "ts_unsafe_type_assertion",
+      "suggestion": "Use proper type guards instead of type assertions for safety",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["typescript", "assertion", "type-guard", "safety"],
+      "examples": [
+        "TS2352: Conversion may be a mistake, use type guard instead"
+      ],
+      "metadata": {
+        "error_code": "TS2352"
+      }
+    },
+    {
+      "id": "ts_in_operator_narrowing",
+      "pattern": "TS2339.*Property.*does not exist.*after 'in' check",
+      "type": "InOperatorNarrowingError",
+      "description": "'in' operator failed to narrow type",
+      "root_cause": "ts_in_operator_narrowing_failure",
+      "suggestion": "Use proper type guards or check property exists with 'in' operator",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "in-operator", "narrowing", "property-check"],
+      "examples": [
+        "TS2339: Property does not exist even after 'in' check"
+      ],
+      "metadata": {
+        "error_code": "TS2339"
+      }
+    },
+    {
+      "id": "ts_instanceof_union_error",
+      "pattern": "TS2359.*Right-hand side of 'instanceof'.*union type",
+      "type": "InstanceofUnionError",
+      "description": "instanceof check with union type constructor",
+      "root_cause": "ts_instanceof_union_constructor",
+      "suggestion": "instanceof right-hand side must be a single constructor, not union",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "instanceof", "union", "constructor"],
+      "examples": [
+        "TS2359: Right-hand side of 'instanceof' is not valid for union type"
+      ],
+      "metadata": {
+        "error_code": "TS2359"
+      }
+    },
+    {
+      "id": "ts_switch_exhaustiveness",
+      "pattern": "TS7030.*Not all code paths return|TS2339.*default.*never.*type",
+      "type": "SwitchExhaustivenessError",
+      "description": "Switch statement not exhaustive for union type",
+      "root_cause": "ts_switch_incomplete_cases",
+      "suggestion": "Add all union cases or use default with never type check",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "switch", "exhaustiveness", "union"],
+      "examples": [
+        "TS7030: Not all code paths return a value in switch"
+      ],
+      "metadata": {
+        "error_code": "TS7030,TS2339"
+      }
+    },
+    {
+      "id": "ts_union_distribution_error",
+      "pattern": "TS2322.*Distributive conditional type.*union",
+      "type": "UnionDistributionError",
+      "description": "Conditional type distribution over union error",
+      "root_cause": "ts_union_distribution_unexpected",
+      "suggestion": "Wrap union in brackets to prevent distribution: [T] extends [U]",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["typescript", "union", "conditional", "distribution"],
+      "examples": [
+        "TS2322: Unexpected distributive conditional type behavior with union"
+      ],
+      "metadata": {
+        "error_code": "TS2322"
+      }
+    },
+    {
+      "id": "ts_literal_union_error",
+      "pattern": "TS2322.*Type.*is not assignable to type.*\\|.*\\|.*literal",
+      "type": "LiteralUnionError",
+      "description": "String/number literal union type mismatch",
+      "root_cause": "ts_literal_union_mismatch",
+      "suggestion": "Ensure value matches one of the literal types in union",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "union", "literal", "string-literal"],
+      "examples": [
+        "TS2322: Type '\"foo\"' is not assignable to type '\"bar\" | \"baz\"'"
+      ],
+      "metadata": {
+        "error_code": "TS2322"
+      }
+    },
+    {
+      "id": "ts_never_type_guard",
+      "pattern": "TS2339.*Type 'never'.*unreachable|This condition will always return.*never",
+      "type": "NeverTypeGuard",
+      "description": "Code path results in never type",
+      "root_cause": "ts_unreachable_code_never",
+      "suggestion": "Review type guards and conditions, code may be unreachable",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "never", "type-guard", "unreachable"],
+      "examples": [
+        "TS2339: Type 'never' indicates unreachable code"
+      ],
+      "metadata": {
+        "error_code": "TS2339"
+      }
+    }
+  ]
+}

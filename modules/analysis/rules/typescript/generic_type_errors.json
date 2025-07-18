@@ -1,0 +1,276 @@
+{
+  "name": "TypeScript Generic Type Errors",
+  "description": "Advanced rules for detecting generic type errors, inference issues, and constraint violations",
+  "rules": [
+    {
+      "id": "ts_generic_inference_failure",
+      "pattern": "TS2345.*Could not infer.*type parameter|Type argument.*cannot be inferred",
+      "type": "GenericInferenceError",
+      "description": "TypeScript cannot infer generic type parameter",
+      "root_cause": "ts_generic_inference_ambiguous",
+      "suggestion": "Provide explicit type arguments or restructure code for better inference",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "inference", "type-parameter"],
+      "examples": [
+        "TS2345: Argument type cannot be inferred from usage"
+      ],
+      "metadata": {
+        "error_code": "TS2345"
+      }
+    },
+    {
+      "id": "ts_generic_default_conflict",
+      "pattern": "TS2344.*Generic type.*default.*not assignable|default type.*does not satisfy",
+      "type": "GenericDefaultError",
+      "description": "Generic default type conflicts with constraint",
+      "root_cause": "ts_generic_default_invalid",
+      "suggestion": "Ensure default type satisfies the generic constraint",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "default", "constraint"],
+      "examples": [
+        "TS2344: Default type 'string' does not satisfy constraint 'number'"
+      ],
+      "metadata": {
+        "error_code": "TS2344"
+      }
+    },
+    {
+      "id": "ts_generic_variance_error",
+      "pattern": "TS2322.*Type.*is not assignable.*variance|contravariant.*position",
+      "type": "GenericVarianceError",
+      "description": "Generic type variance violation",
+      "root_cause": "ts_generic_variance_mismatch",
+      "suggestion": "Check covariance/contravariance of generic types in function parameters",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["typescript", "generics", "variance", "covariance"],
+      "examples": [
+        "Type appears in contravariant position"
+      ],
+      "metadata": {
+        "error_code": "TS2322"
+      }
+    },
+    {
+      "id": "ts_excessive_generic_depth",
+      "pattern": "TS2589.*Type instantiation is excessively deep|Maximum instantiation depth exceeded",
+      "type": "ExcessiveGenericDepth",
+      "description": "Generic type instantiation too deep",
+      "root_cause": "ts_generic_recursion_limit",
+      "suggestion": "Simplify recursive generic types or increase instantiation depth limit",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "recursion", "depth"],
+      "examples": [
+        "TS2589: Type instantiation is excessively deep and possibly infinite"
+      ],
+      "metadata": {
+        "error_code": "TS2589"
+      }
+    },
+    {
+      "id": "ts_generic_extends_error",
+      "pattern": "TS2344.*does not satisfy.*extends|Generic constraint.*extends.*failed",
+      "type": "GenericExtendsError",
+      "description": "Generic extends clause not satisfied",
+      "root_cause": "ts_generic_extends_violation",
+      "suggestion": "Ensure type parameter satisfies the extends constraint",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "extends", "constraint"],
+      "examples": [
+        "TS2344: Type 'T' does not satisfy the constraint 'extends string'"
+      ],
+      "metadata": {
+        "error_code": "TS2344"
+      }
+    },
+    {
+      "id": "ts_generic_mapped_type_error",
+      "pattern": "TS2322.*Mapped type.*generic|TS2536.*cannot be used to index",
+      "type": "GenericMappedTypeError",
+      "description": "Error in generic mapped type usage",
+      "root_cause": "ts_generic_mapped_type_invalid",
+      "suggestion": "Check that generic type can be used as index in mapped types",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "mapped-type", "index"],
+      "examples": [
+        "TS2536: Type 'T' cannot be used to index type"
+      ],
+      "metadata": {
+        "error_code": "TS2322,TS2536"
+      }
+    },
+    {
+      "id": "ts_generic_circular_reference",
+      "pattern": "TS2456.*Type alias.*circularly references itself|TS2313.*Generic type.*requires.*itself",
+      "type": "GenericCircularReference",
+      "description": "Circular reference in generic type",
+      "root_cause": "ts_generic_circular_dependency",
+      "suggestion": "Break circular dependency by introducing intermediate type or interface",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "circular", "reference"],
+      "examples": [
+        "TS2456: Type alias 'T' circularly references itself"
+      ],
+      "metadata": {
+        "error_code": "TS2456,TS2313"
+      }
+    },
+    {
+      "id": "ts_generic_conditional_distribution",
+      "pattern": "TS2322.*conditional type.*distributed.*unexpectedly|Generic.*conditional.*union",
+      "type": "ConditionalDistributionError",
+      "description": "Unexpected distribution in conditional generic",
+      "root_cause": "ts_generic_conditional_distribution",
+      "suggestion": "Use [T] extends [U] pattern to prevent distribution",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["typescript", "generics", "conditional", "distribution"],
+      "examples": [
+        "Conditional type distributed over union unexpectedly"
+      ],
+      "metadata": {
+        "version": "2.8+"
+      }
+    },
+    {
+      "id": "ts_generic_rest_parameter",
+      "pattern": "TS2370.*rest parameter.*generic|Generic.*spread.*tuple",
+      "type": "GenericRestParameterError",
+      "description": "Generic rest parameter usage error",
+      "root_cause": "ts_generic_rest_parameter_invalid",
+      "suggestion": "Ensure generic rest parameters are used correctly in tuples",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "rest", "tuple"],
+      "examples": [
+        "TS2370: A rest parameter must be of an array type"
+      ],
+      "metadata": {
+        "error_code": "TS2370"
+      }
+    },
+    {
+      "id": "ts_generic_function_overload",
+      "pattern": "TS2394.*Overload signature.*not compatible.*generic|Generic overload.*mismatch",
+      "type": "GenericOverloadError",
+      "description": "Generic function overload incompatibility",
+      "root_cause": "ts_generic_overload_mismatch",
+      "suggestion": "Ensure generic overloads are compatible with implementation",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "overload", "function"],
+      "examples": [
+        "TS2394: Overload signature is not compatible with function implementation"
+      ],
+      "metadata": {
+        "error_code": "TS2394"
+      }
+    },
+    {
+      "id": "ts_generic_keyof_constraint",
+      "pattern": "TS2344.*Type.*does not satisfy.*keyof|Generic.*keyof.*constraint",
+      "type": "GenericKeyofConstraint",
+      "description": "Generic keyof constraint violation",
+      "root_cause": "ts_generic_keyof_invalid",
+      "suggestion": "Ensure type parameter is a valid key of the constrained type",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "keyof", "constraint"],
+      "examples": [
+        "TS2344: Type 'T' does not satisfy the constraint 'keyof U'"
+      ],
+      "metadata": {
+        "error_code": "TS2344"
+      }
+    },
+    {
+      "id": "ts_generic_partial_inference",
+      "pattern": "TS2345.*Supplied parameters.*match.*generic|Partial.*type arguments.*provided",
+      "type": "PartialGenericInference",
+      "description": "Partial generic type arguments not allowed",
+      "root_cause": "ts_generic_partial_args",
+      "suggestion": "Provide all generic type arguments or none for full inference",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "inference", "partial"],
+      "examples": [
+        "Expected 2 type arguments, but got 1"
+      ],
+      "metadata": {
+        "error_code": "TS2345"
+      }
+    },
+    {
+      "id": "ts_generic_constructor_constraint",
+      "pattern": "TS2344.*Type.*cannot be used.*new\\(\\)|Generic.*constructor.*constraint",
+      "type": "GenericConstructorConstraint",
+      "description": "Generic type lacks constructor constraint",
+      "root_cause": "ts_generic_no_constructor",
+      "suggestion": "Add 'new() => T' constraint for constructable generic types",
+      "category": "typescript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "constructor", "new"],
+      "examples": [
+        "TS2344: Type 'T' cannot be used with 'new'"
+      ],
+      "metadata": {
+        "error_code": "TS2344"
+      }
+    },
+    {
+      "id": "ts_generic_indexed_access",
+      "pattern": "TS2536.*Type.*cannot be used to index.*generic|Generic indexed access",
+      "type": "GenericIndexedAccess",
+      "description": "Generic type cannot be used as index",
+      "root_cause": "ts_generic_index_invalid",
+      "suggestion": "Constrain generic type to valid index types (string | number | symbol)",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "index", "access"],
+      "examples": [
+        "TS2536: Generic type 'K' cannot be used to index type 'T'"
+      ],
+      "metadata": {
+        "error_code": "TS2536"
+      }
+    },
+    {
+      "id": "ts_generic_type_predicate",
+      "pattern": "TS2677.*type predicate.*generic|Generic.*is.*type guard",
+      "type": "GenericTypePredicate",
+      "description": "Generic type predicate/guard error",
+      "root_cause": "ts_generic_type_guard_invalid",
+      "suggestion": "Ensure generic type predicates are properly constrained",
+      "category": "typescript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["typescript", "generics", "type-guard", "predicate"],
+      "examples": [
+        "TS2677: Type predicate must be assignable to its parameter"
+      ],
+      "metadata": {
+        "error_code": "TS2677"
+      }
+    }
+  ]
+}

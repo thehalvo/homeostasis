@@ -1,0 +1,276 @@
+{
+  "name": "JavaScript Performance and Memory Errors",
+  "description": "Rules for detecting performance bottlenecks, memory leaks, and resource management issues",
+  "rules": [
+    {
+      "id": "js_infinite_loop",
+      "pattern": "(?:infinite|endless) loop|Maximum call stack|loop.*(?:timeout|hung|frozen)",
+      "type": "InfiniteLoop",
+      "description": "Infinite loop detected",
+      "root_cause": "js_infinite_loop_condition",
+      "suggestion": "Check loop conditions and ensure termination condition is reachable",
+      "category": "javascript",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["javascript", "performance", "loop", "hang"],
+      "examples": [
+        "Error: Potential infinite loop detected"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_memory_leak_listeners",
+      "pattern": "(?:EventEmitter|EventTarget) memory leak.*listeners|MaxListenersExceededWarning",
+      "type": "EventListenerLeak",
+      "description": "Too many event listeners attached",
+      "root_cause": "js_event_listener_accumulation",
+      "suggestion": "Remove event listeners when no longer needed, check for duplicate registrations",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "memory", "events", "leak"],
+      "examples": [
+        "MaxListenersExceededWarning: Possible EventEmitter memory leak detected"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_dom_memory_leak",
+      "pattern": "Detached.*DOM.*node|DOM.*leak|retained.*DOM.*tree",
+      "type": "DOMMemoryLeak",
+      "description": "Detached DOM nodes causing memory leak",
+      "root_cause": "js_detached_dom_retention",
+      "suggestion": "Clear references to removed DOM elements, unbind event listeners",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["javascript", "dom", "memory", "leak"],
+      "examples": [
+        "Memory leak: Detached DOM tree retained in memory"
+      ],
+      "metadata": {
+        "environment": "browser"
+      }
+    },
+    {
+      "id": "js_circular_reference",
+      "pattern": "circular.*reference|Maximum.*depth.*exceeded|Converting circular structure",
+      "type": "CircularReference",
+      "description": "Circular reference detected",
+      "root_cause": "js_circular_object_reference",
+      "suggestion": "Break circular references or use WeakMap/WeakSet for circular structures",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "memory", "object", "circular"],
+      "examples": [
+        "TypeError: Converting circular structure to JSON"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_excessive_recursion",
+      "pattern": "Maximum call stack size exceeded|RangeError.*stack.*exceed|too much recursion",
+      "type": "StackOverflow",
+      "description": "Stack overflow from excessive recursion",
+      "root_cause": "js_unbounded_recursion",
+      "suggestion": "Add base case to recursion or convert to iterative approach",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "recursion", "stack", "performance"],
+      "examples": [
+        "RangeError: Maximum call stack size exceeded"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_large_array_operation",
+      "pattern": "(?:array|list).*too.*large|out of memory.*array|array.*performance.*degraded",
+      "type": "LargeArrayOperation",
+      "description": "Performance issue with large array operation",
+      "root_cause": "js_inefficient_array_processing",
+      "suggestion": "Use pagination, streaming, or chunked processing for large arrays",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "array", "performance", "memory"],
+      "examples": [
+        "Warning: Array operation on very large dataset"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_dom_thrashing",
+      "pattern": "(?:layout|reflow).*thrashing|forced.*(?:layout|reflow)|multiple.*DOM.*(?:read|write)",
+      "type": "DOMThrashing",
+      "description": "DOM thrashing causing performance issues",
+      "root_cause": "js_dom_read_write_interleaving",
+      "suggestion": "Batch DOM reads and writes separately to avoid forced reflows",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "dom", "performance", "browser"],
+      "examples": [
+        "Performance: Layout thrashing detected"
+      ],
+      "metadata": {
+        "environment": "browser"
+      }
+    },
+    {
+      "id": "js_timer_accumulation",
+      "pattern": "multiple.*(?:timers|intervals).*not.*cleared|timer.*leak|setInterval.*accumulation",
+      "type": "TimerLeak",
+      "description": "Timers not being cleared properly",
+      "root_cause": "js_unclearred_timers",
+      "suggestion": "Clear intervals and timeouts with clearInterval/clearTimeout when done",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "timer", "memory", "leak"],
+      "examples": [
+        "Warning: Multiple timers created without clearing"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_string_concatenation_loop",
+      "pattern": "string.*concatenation.*loop|\\+=.*string.*(?:for|while)|performance.*string.*concat",
+      "type": "InefficientStringConcatenation",
+      "description": "Inefficient string concatenation in loop",
+      "root_cause": "js_string_concat_performance",
+      "suggestion": "Use array.join() or template literals for multiple string concatenations",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": ["javascript", "string", "performance", "optimization"],
+      "examples": [
+        "Performance: String concatenation in loop is inefficient"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_blocking_operation",
+      "pattern": "blocking.*(?:operation|main thread)|synchronous.*(?:I/O|operation).*blocked",
+      "type": "BlockingOperation",
+      "description": "Blocking operation on main thread",
+      "root_cause": "js_sync_blocking_operation",
+      "suggestion": "Use asynchronous alternatives or Web Workers for heavy computations",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["javascript", "performance", "async", "blocking"],
+      "examples": [
+        "Warning: Blocking operation detected on main thread"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_weak_reference_misuse",
+      "pattern": "WeakMap.*key.*not.*object|WeakSet.*primitive|weak reference.*error",
+      "type": "WeakReferenceMisuse",
+      "description": "Incorrect usage of WeakMap or WeakSet",
+      "root_cause": "js_weak_collection_primitive_key",
+      "suggestion": "WeakMap/WeakSet keys must be objects, not primitives",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "weakmap", "weakset", "memory"],
+      "examples": [
+        "TypeError: Invalid value used as weak map key"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_array_hole_performance",
+      "pattern": "sparse.*array|array.*holes.*performance|holey.*array.*slow",
+      "type": "SparseArrayPerformance",
+      "description": "Sparse array causing performance degradation",
+      "root_cause": "js_sparse_array_inefficiency",
+      "suggestion": "Avoid creating arrays with holes; use dense arrays for better performance",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": ["javascript", "array", "performance", "optimization"],
+      "examples": [
+        "Performance: Sparse array detected"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_regex_catastrophic_backtrack",
+      "pattern": "catastrophic.*backtrack|regex.*(?:timeout|hang|slow)|regular expression.*too complex",
+      "type": "RegexCatastrophicBacktracking",
+      "description": "Regular expression causing catastrophic backtracking",
+      "root_cause": "js_regex_exponential_complexity",
+      "suggestion": "Simplify regex pattern, avoid nested quantifiers, use atomic groups",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["javascript", "regex", "performance", "dos"],
+      "examples": [
+        "Error: Regular expression timeout due to catastrophic backtracking"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_large_object_clone",
+      "pattern": "cloning.*large.*object|deep.*copy.*performance|structuredClone.*slow",
+      "type": "LargeObjectCloning",
+      "description": "Performance issue cloning large object",
+      "root_cause": "js_inefficient_object_cloning",
+      "suggestion": "Consider shallow cloning, selective cloning, or immutable data structures",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "low",
+      "tags": ["javascript", "object", "performance", "cloning"],
+      "examples": [
+        "Performance: Deep cloning large object structure"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_gc_pressure",
+      "pattern": "(?:GC|garbage collection).*pressure|frequent.*GC.*pause|allocation.*failure",
+      "type": "GarbageCollectionPressure",
+      "description": "High garbage collection pressure",
+      "root_cause": "js_excessive_object_allocation",
+      "suggestion": "Reduce object allocations, reuse objects, use object pools",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "gc", "memory", "performance"],
+      "examples": [
+        "Performance: Frequent GC pauses detected"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    }
+  ]
+}

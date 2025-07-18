@@ -1,0 +1,276 @@
+{
+  "name": "JavaScript 'this' Binding Errors",
+  "description": "Rules for detecting 'this' context binding errors and common mistakes",
+  "rules": [
+    {
+      "id": "js_this_undefined_strict",
+      "pattern": "TypeError: Cannot (?:read|set) property.*of undefined.*strict mode|'this' is undefined.*strict",
+      "type": "ThisUndefinedStrictMode",
+      "description": "'this' is undefined in strict mode",
+      "root_cause": "js_this_strict_mode",
+      "suggestion": "In strict mode, 'this' is undefined in functions. Use arrow functions or bind the context",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "this", "strict-mode", "context"],
+      "examples": [
+        "TypeError: Cannot read property 'x' of undefined (this is undefined in strict mode)"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_this_lost_callback",
+      "pattern": "TypeError:.*this\\.\\w+.*undefined.*callback|lost.*this.*(?:callback|handler)",
+      "type": "ThisLostInCallback",
+      "description": "'this' context lost when passing method as callback",
+      "root_cause": "js_this_callback_unbounded",
+      "suggestion": "Bind the method or use arrow function when passing as callback",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "this", "callback", "event-handler"],
+      "examples": [
+        "TypeError: Cannot read property 'state' of undefined in callback"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_this_nested_function",
+      "pattern": "TypeError:.*this.*undefined.*nested function|inner function.*this.*(?:lost|undefined)",
+      "type": "ThisInNestedFunction",
+      "description": "'this' lost in nested function",
+      "root_cause": "js_this_nested_scope",
+      "suggestion": "Store 'this' in a variable (const self = this) or use arrow functions",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "this", "nested", "function"],
+      "examples": [
+        "TypeError: 'this' is undefined in nested function"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_bind_incorrect_usage",
+      "pattern": "TypeError:.*\\.bind.*not a function|bind.*called.*non-function|bind.*incorrect.*arguments",
+      "type": "BindIncorrectUsage",
+      "description": "Incorrect usage of Function.prototype.bind",
+      "root_cause": "js_bind_misuse",
+      "suggestion": "bind() must be called on a function and returns a new function",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "bind", "this", "function"],
+      "examples": [
+        "TypeError: undefined.bind is not a function"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_call_apply_error",
+      "pattern": "TypeError:.*\\.(?:call|apply).*not a function|(?:call|apply).*first argument.*not.*object",
+      "type": "CallApplyError",
+      "description": "Incorrect usage of call() or apply()",
+      "root_cause": "js_call_apply_misuse",
+      "suggestion": "Ensure you're calling .call()/.apply() on a function with correct arguments",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "call", "apply", "this"],
+      "examples": [
+        "TypeError: Cannot call method 'apply' of undefined"
+      ],
+      "metadata": {
+        "es_version": "ES3+"
+      }
+    },
+    {
+      "id": "js_this_event_handler",
+      "pattern": "this.*event.*(?:target|handler).*unexpected|event handler.*this.*not.*element",
+      "type": "ThisEventHandlerConfusion",
+      "description": "'this' in event handler not pointing to expected object",
+      "root_cause": "js_this_event_context",
+      "suggestion": "In event handlers, 'this' refers to the element. Use event.currentTarget or bind context",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "this", "event", "dom"],
+      "examples": [
+        "Error: 'this' in event handler is not the expected object"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_this_timeout_interval",
+      "pattern": "TypeError:.*this.*undefined.*(?:setTimeout|setInterval)|(?:timer|timeout).*lost.*context",
+      "type": "ThisInTimerFunction",
+      "description": "'this' context lost in setTimeout/setInterval",
+      "root_cause": "js_this_timer_context",
+      "suggestion": "Use arrow functions or bind() with setTimeout/setInterval callbacks",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "this", "timer", "async"],
+      "examples": [
+        "TypeError: Cannot read property of undefined in setTimeout callback"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_this_promise_then",
+      "pattern": "TypeError:.*this.*undefined.*\\.then|promise.*then.*lost.*context",
+      "type": "ThisInPromiseThen",
+      "description": "'this' context lost in promise .then() handler",
+      "root_cause": "js_this_promise_handler",
+      "suggestion": "Use arrow functions in .then() or bind the handler function",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "this", "promise", "async"],
+      "examples": [
+        "TypeError: 'this' is undefined in promise .then() handler"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_this_array_method",
+      "pattern": "TypeError:.*this.*undefined.*(?:map|filter|forEach|reduce)|array method.*lost.*context",
+      "type": "ThisInArrayMethod",
+      "description": "'this' context issue in array method callback",
+      "root_cause": "js_this_array_callback",
+      "suggestion": "Pass 'this' as second argument to array methods or use arrow functions",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "this", "array", "functional"],
+      "examples": [
+        "TypeError: Cannot read property of undefined in array.map callback"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_new_target_error",
+      "pattern": "TypeError:.*new\\.target.*undefined|class.*called without.*new",
+      "type": "NewTargetError",
+      "description": "Class or constructor called without 'new'",
+      "root_cause": "js_missing_new_operator",
+      "suggestion": "Use 'new' keyword when instantiating classes or constructor functions",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "new", "class", "constructor"],
+      "examples": [
+        "TypeError: Class constructor cannot be invoked without 'new'"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_this_global_function",
+      "pattern": "this.*(?:window|global|globalThis).*unexpected|function.*this.*global.*object",
+      "type": "ThisGlobalContext",
+      "description": "'this' unexpectedly refers to global object",
+      "root_cause": "js_this_global_binding",
+      "suggestion": "Use strict mode to avoid implicit global 'this' binding",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "this", "global", "context"],
+      "examples": [
+        "Warning: 'this' refers to global object (window/global)"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_double_bind_error",
+      "pattern": "\\.bind\\(.*\\)\\.bind\\(|bound.*function.*bound.*again",
+      "type": "DoubleBind",
+      "description": "Function bound multiple times",
+      "root_cause": "js_multiple_bind",
+      "suggestion": "bind() creates a permanently bound function; subsequent binds have no effect",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "high",
+      "tags": ["javascript", "bind", "this", "antipattern"],
+      "examples": [
+        "Warning: Binding an already bound function has no effect"
+      ],
+      "metadata": {
+        "es_version": "ES5+"
+      }
+    },
+    {
+      "id": "js_this_destructured_method",
+      "pattern": "const.*{.*}.*=.*this|destructured.*method.*lost.*context",
+      "type": "ThisDestructuredMethod",
+      "description": "'this' context lost when destructuring methods",
+      "root_cause": "js_destructured_method_context",
+      "suggestion": "Bind methods when destructuring or use arrow functions in class",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "this", "destructuring", "es6"],
+      "examples": [
+        "const { method } = this; method(); // 'this' is undefined"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_arrow_new_error",
+      "pattern": "TypeError:.*arrow function.*not a constructor|new.*=>.*error",
+      "type": "ArrowFunctionNewError",
+      "description": "Arrow function used with 'new' operator",
+      "root_cause": "js_arrow_not_constructor",
+      "suggestion": "Arrow functions cannot be used as constructors. Use regular function or class",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "arrow-function", "new", "constructor"],
+      "examples": [
+        "TypeError: Arrow function is not a constructor"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_method_shorthand_this",
+      "pattern": "method.*shorthand.*this.*undefined|object.*method.*lost.*context",
+      "type": "MethodShorthandThisError",
+      "description": "'this' issue with ES6 method shorthand",
+      "root_cause": "js_method_shorthand_context",
+      "suggestion": "Even with method shorthand, 'this' can be lost when method is extracted",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "low",
+      "tags": ["javascript", "this", "method", "es6"],
+      "examples": [
+        "TypeError: 'this' undefined in extracted method"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    }
+  ]
+}

@@ -1,0 +1,277 @@
+{
+  "name": "JavaScript Advanced Async Errors",
+  "description": "Rules for detecting advanced asynchronous programming errors in JavaScript",
+  "rules": [
+    {
+      "id": "js_promise_chain_error",
+      "pattern": "TypeError: Cannot read property '([^']+)' of undefined[\\s\\S]*\\.then\\(",
+      "type": "PromiseChainError",
+      "description": "Promise chain breaks due to missing return value",
+      "root_cause": "js_promise_chain_break",
+      "suggestion": "Ensure all .then() callbacks return a value or another promise to maintain the chain",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "promise", "async", "chain"],
+      "examples": [
+        "TypeError: Cannot read property 'data' of undefined in promise chain"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_promise_all_rejection",
+      "pattern": "(?:Promise\\.all|Promise\\.allSettled).*rejected.*\\[(.*?)\\]",
+      "type": "PromiseAggregateError",
+      "description": "One or more promises in Promise.all/allSettled rejected",
+      "root_cause": "js_promise_aggregate_failure",
+      "suggestion": "Use Promise.allSettled for partial failures or add individual error handling to promises",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "promise", "async", "aggregate"],
+      "examples": [
+        "AggregateError: All promises were rejected"
+      ],
+      "metadata": {
+        "es_version": "ES2020+"
+      }
+    },
+    {
+      "id": "js_forgotten_await",
+      "pattern": "Promise\\s*{\\s*<pending>\\s*}|\\[object Promise\\]",
+      "type": "ForgottenAwaitError",
+      "description": "Promise object used without await",
+      "root_cause": "js_missing_await",
+      "suggestion": "Add 'await' keyword before the async function call or handle the promise with .then()",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "promise", "async", "await"],
+      "examples": [
+        "Promise { <pending> }",
+        "[object Promise]"
+      ],
+      "metadata": {
+        "es_version": "ES2017+"
+      }
+    },
+    {
+      "id": "js_async_in_foreach",
+      "pattern": "forEach.*async.*function|forEach.*=>.*await",
+      "type": "AsyncForEachError",
+      "description": "Using async/await inside forEach loop",
+      "root_cause": "js_async_foreach_antipattern",
+      "suggestion": "Use for...of loop or Promise.all with map() for async operations in loops",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "async", "array", "antipattern"],
+      "examples": [
+        "array.forEach(async (item) => { await doSomething(item); })"
+      ],
+      "metadata": {
+        "es_version": "ES2017+"
+      }
+    },
+    {
+      "id": "js_promise_constructor_antipattern",
+      "pattern": "new Promise\\(.*\\).*\\.then\\(.*resolve.*\\)|new Promise\\(.*resolve.*reject.*\\)[\\s\\S]*return.*Promise",
+      "type": "PromiseConstructorAntipattern",
+      "description": "Promise constructor anti-pattern detected",
+      "root_cause": "js_promise_constructor_misuse",
+      "suggestion": "Return the existing promise directly instead of wrapping it in a new Promise",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": ["javascript", "promise", "antipattern", "code-quality"],
+      "examples": [
+        "new Promise((resolve, reject) => { somePromise().then(resolve).catch(reject); })"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_async_iterator_error",
+      "pattern": "TypeError: ([^\\s]+) is not async iterable|for await.*of.*not.*async.*iterable",
+      "type": "AsyncIteratorError",
+      "description": "Attempting to use for await...of on non-async iterable",
+      "root_cause": "js_async_iterator_type_error",
+      "suggestion": "Ensure the object implements Symbol.asyncIterator or use regular for...of for sync iterables",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "async", "iterator", "es2018"],
+      "examples": [
+        "TypeError: array is not async iterable"
+      ],
+      "metadata": {
+        "es_version": "ES2018+"
+      }
+    },
+    {
+      "id": "js_unhandled_async_error",
+      "pattern": "Error: (?:Unhandled|Uncaught).*async.*function|async.*function.*threw.*(?:but|and).*not.*(?:caught|handled)",
+      "type": "UnhandledAsyncError",
+      "description": "Error thrown in async function without proper handling",
+      "root_cause": "js_unhandled_async_exception",
+      "suggestion": "Wrap async function calls in try-catch or add .catch() handler",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["javascript", "async", "error-handling", "exception"],
+      "examples": [
+        "Error: Unhandled error in async function"
+      ],
+      "metadata": {
+        "es_version": "ES2017+"
+      }
+    },
+    {
+      "id": "js_promise_race_condition",
+      "pattern": "(?:race condition|concurrent modification|state changed).*Promise|Promise.*(?:race|timing|concurrent)",
+      "type": "PromiseRaceCondition",
+      "description": "Race condition detected in promise-based code",
+      "root_cause": "js_promise_race_condition",
+      "suggestion": "Use proper synchronization, locks, or sequential processing to avoid race conditions",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["javascript", "promise", "concurrency", "race-condition"],
+      "examples": [
+        "Error: Race condition detected in Promise execution"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_async_generator_error",
+      "pattern": "TypeError: ([^\\s]+)\\.\\[Symbol\\.asyncIterator\\] is not a function|async\\s*function\\s*\\*.*Error",
+      "type": "AsyncGeneratorError",
+      "description": "Error in async generator function",
+      "root_cause": "js_async_generator_failure",
+      "suggestion": "Check async generator implementation and ensure proper yield usage",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "async", "generator", "es2018"],
+      "examples": [
+        "TypeError: object[Symbol.asyncIterator] is not a function"
+      ],
+      "metadata": {
+        "es_version": "ES2018+"
+      }
+    },
+    {
+      "id": "js_promise_timeout_error",
+      "pattern": "(?:Promise|Async operation).*(?:timed out|timeout|exceeded time limit)|TimeoutError",
+      "type": "PromiseTimeoutError",
+      "description": "Promise or async operation timed out",
+      "root_cause": "js_promise_timeout",
+      "suggestion": "Increase timeout duration, optimize the operation, or implement proper timeout handling",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "promise", "timeout", "performance"],
+      "examples": [
+        "TimeoutError: Promise timed out after 5000ms"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_multiple_await_inefficiency",
+      "pattern": "await.*await.*await|multiple.*sequential.*await",
+      "type": "MultipleAwaitInefficiency",
+      "description": "Multiple sequential awaits that could be parallelized",
+      "root_cause": "js_sequential_await_antipattern",
+      "suggestion": "Use Promise.all() to run independent async operations in parallel",
+      "category": "javascript",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": ["javascript", "async", "performance", "optimization"],
+      "examples": [
+        "const a = await fetchA(); const b = await fetchB(); const c = await fetchC();"
+      ],
+      "metadata": {
+        "es_version": "ES2017+"
+      }
+    },
+    {
+      "id": "js_promise_memory_leak",
+      "pattern": "(?:Promise|async).*(?:memory leak|leaked|retained)|(?:memory|heap).*Promise",
+      "type": "PromiseMemoryLeak",
+      "description": "Memory leak detected in promise-based code",
+      "root_cause": "js_promise_memory_leak",
+      "suggestion": "Ensure promises are properly resolved/rejected and references are cleared",
+      "category": "javascript",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["javascript", "promise", "memory", "leak"],
+      "examples": [
+        "Warning: Possible memory leak detected in Promise chain"
+      ],
+      "metadata": {
+        "es_version": "ES6+"
+      }
+    },
+    {
+      "id": "js_async_stack_trace_lost",
+      "pattern": "Error:.*\\n.*at async.*\\(\\?\\?\\?\\)|async.*stack.*trace.*lost",
+      "type": "AsyncStackTraceLost",
+      "description": "Stack trace lost in async function",
+      "root_cause": "js_async_stack_trace_loss",
+      "suggestion": "Use Error.captureStackTrace or async stack trace tools for better debugging",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "async", "debugging", "stack-trace"],
+      "examples": [
+        "Error: Something failed\n    at async (???)"
+      ],
+      "metadata": {
+        "es_version": "ES2017+"
+      }
+    },
+    {
+      "id": "js_promise_finally_error",
+      "pattern": "TypeError:.*\\.finally is not a function|finally.*not.*supported",
+      "type": "PromiseFinallyError",
+      "description": "Promise.finally() not supported or used incorrectly",
+      "root_cause": "js_promise_finally_unsupported",
+      "suggestion": "Ensure Promise.finally() is supported or use a polyfill for older environments",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["javascript", "promise", "compatibility", "es2018"],
+      "examples": [
+        "TypeError: promise.finally is not a function"
+      ],
+      "metadata": {
+        "es_version": "ES2018+"
+      }
+    },
+    {
+      "id": "js_async_context_loss",
+      "pattern": "(?:context|this).*(?:undefined|lost).*async|async.*(?:lost|undefined).*context",
+      "type": "AsyncContextLoss",
+      "description": "Context (this) lost in async function",
+      "root_cause": "js_async_context_binding",
+      "suggestion": "Use arrow functions or bind() to preserve context in async callbacks",
+      "category": "javascript",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": ["javascript", "async", "context", "this"],
+      "examples": [
+        "TypeError: Cannot read property 'state' of undefined in async method"
+      ],
+      "metadata": {
+        "es_version": "ES2017+"
+      }
+    }
+  ]
+}
