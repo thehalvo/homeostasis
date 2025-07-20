@@ -1,0 +1,72 @@
+{
+  "description": "Dart isolate and concurrency error patterns",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "dart_isolate_spawn_error",
+      "pattern": "IsolateSpawnException: Unable to spawn isolate",
+      "type": "runtime error",
+      "description": "Failed to spawn a new isolate",
+      "root_cause": "dart_isolate_spawn",
+      "suggestion": "Ensure the entry point is a top-level or static function. Check for resource constraints.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency"
+    },
+    {
+      "id": "dart_send_port_closed",
+      "pattern": "Invalid argument: SendPort is closed",
+      "type": "runtime error",
+      "description": "Attempting to send message through closed SendPort",
+      "root_cause": "dart_sendport_closed",
+      "suggestion": "Check if isolate is still alive before sending messages. Handle isolate lifecycle properly.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "concurrency"
+    },
+    {
+      "id": "dart_isolate_unhandled_exception",
+      "pattern": "Unhandled exception in isolate",
+      "type": "runtime error",
+      "description": "Exception in isolate not caught",
+      "root_cause": "dart_isolate_exception",
+      "suggestion": "Add try-catch blocks in isolate entry points and use SendPort to communicate errors.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency"
+    },
+    {
+      "id": "dart_isolate_message_error",
+      "pattern": "Invalid argument: is not a valid SendPort",
+      "type": "runtime error",
+      "description": "Invalid SendPort in isolate message",
+      "root_cause": "dart_invalid_sendport",
+      "suggestion": "Ensure SendPort is properly passed to isolate and not closed or corrupted.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "concurrency"
+    },
+    {
+      "id": "dart_compute_error",
+      "pattern": "(?:compute function must be a top-level function|Invalid argument in compute)",
+      "type": "runtime error",
+      "description": "Invalid function passed to compute()",
+      "root_cause": "dart_compute_function",
+      "suggestion": "Use top-level functions or static methods with compute(). Avoid closures that capture variables.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "concurrency"
+    },
+    {
+      "id": "dart_isolate_capability_error",
+      "pattern": "Invalid capability",
+      "type": "runtime error",
+      "description": "Invalid capability used with isolate",
+      "root_cause": "dart_isolate_capability",
+      "suggestion": "Ensure capability tokens are properly managed and not reused after isolate termination.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "concurrency"
+    }
+  ]
+}

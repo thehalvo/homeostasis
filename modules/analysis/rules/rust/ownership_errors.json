@@ -1,0 +1,139 @@
+{
+  "language": "rust",
+  "description": "Rust ownership, borrowing, and memory safety error patterns",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "rust_moved_value",
+      "pattern": "use of moved value|value moved here|value used here after move",
+      "type": "CompileError",
+      "description": "Value used after being moved",
+      "root_cause": "rust_ownership_move",
+      "suggestion": "Clone the value before moving, use references instead of moving, or restructure code to avoid the move.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "ownership"
+    },
+    {
+      "id": "rust_multiple_mutable_borrows",
+      "pattern": "cannot borrow.*as mutable more than once at a time|second mutable borrow occurs here",
+      "type": "CompileError",
+      "description": "Multiple mutable borrows of the same value",
+      "root_cause": "rust_multiple_mut_borrow",
+      "suggestion": "Ensure only one mutable borrow exists at a time. Use scopes to limit borrow lifetimes or RefCell for interior mutability.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "borrowing"
+    },
+    {
+      "id": "rust_mutable_immutable_borrow",
+      "pattern": "cannot borrow.*as mutable because it is also borrowed as immutable|immutable borrow occurs here",
+      "type": "CompileError",
+      "description": "Mutable borrow while immutable borrow exists",
+      "root_cause": "rust_mut_immut_borrow",
+      "suggestion": "End immutable borrows before creating mutable ones. Restructure code to separate read and write operations.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "borrowing"
+    },
+    {
+      "id": "rust_temporary_value_dropped",
+      "pattern": "temporary value dropped while borrowed|does not live long enough|temporary value dropped here",
+      "type": "CompileError",
+      "description": "Temporary value dropped while still borrowed",
+      "root_cause": "rust_temporary_lifetime",
+      "suggestion": "Store temporary values in variables to extend their lifetime. Avoid borrowing from temporary values.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "lifetime"
+    },
+    {
+      "id": "rust_static_lifetime_required",
+      "pattern": "explicit lifetime required|lifetime.*required|help: consider adding an explicit lifetime",
+      "type": "CompileError",
+      "description": "Explicit lifetime annotation required",
+      "root_cause": "rust_lifetime_annotation",
+      "suggestion": "Add lifetime parameters to structs and functions. Use 'static for values that live for entire program.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "lifetime"
+    },
+    {
+      "id": "rust_drop_order",
+      "pattern": "borrow might be used here, when.*is dropped|dropped here while still borrowed",
+      "type": "CompileError",
+      "description": "Value dropped while references still exist",
+      "root_cause": "rust_drop_order",
+      "suggestion": "Ensure references go out of scope before the borrowed value. Reorder variable declarations or use explicit scopes.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "lifetime"
+    },
+    {
+      "id": "rust_self_referential",
+      "pattern": "cannot return value referencing.*local variable|cannot return reference to temporary value",
+      "type": "CompileError",
+      "description": "Returning reference to local variable",
+      "root_cause": "rust_dangling_reference",
+      "suggestion": "Return owned values instead of references, or ensure referenced data outlives the function. Consider using Arc or Rc.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "lifetime"
+    },
+    {
+      "id": "rust_partial_move",
+      "pattern": "partial move occurs|cannot move out of.*which is behind a shared reference",
+      "type": "CompileError",
+      "description": "Partial move of a value",
+      "root_cause": "rust_partial_move",
+      "suggestion": "Use pattern matching with ref/ref mut, clone the needed parts, or restructure data to allow the move.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "ownership"
+    },
+    {
+      "id": "rust_iterator_invalidation",
+      "pattern": "cannot borrow.*as mutable.*in previous iteration of loop",
+      "type": "CompileError",
+      "description": "Borrowing conflicts in loop iterations",
+      "root_cause": "rust_loop_borrow",
+      "suggestion": "Collect modifications and apply after iteration, use indices instead of iterators, or use interior mutability.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "borrowing"
+    },
+    {
+      "id": "rust_closure_capture_conflict",
+      "pattern": "closure requires unique access|cannot borrow.*as.*because previous closure requires unique access",
+      "type": "CompileError",
+      "description": "Closure capture conflicts with other borrows",
+      "root_cause": "rust_closure_capture",
+      "suggestion": "Limit closure captures, use move closures, or restructure to avoid conflicting borrows.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "borrowing"
+    },
+    {
+      "id": "rust_aliasing_violation",
+      "pattern": "cannot assign to.*because it is borrowed|cannot use.*because it was mutably borrowed",
+      "type": "CompileError",
+      "description": "Aliasing rules violation",
+      "root_cause": "rust_aliasing",
+      "suggestion": "Ensure no aliases exist when mutating. Use Cell/RefCell for shared mutability or restructure data access.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "borrowing"
+    },
+    {
+      "id": "rust_mem_forget",
+      "pattern": "mem::forget.*unsafe|leaked memory|memory leak detected",
+      "type": "Warning",
+      "description": "Potential memory leak using mem::forget",
+      "root_cause": "rust_mem_leak",
+      "suggestion": "Avoid mem::forget unless necessary. Use drop() for normal cleanup. Consider ManuallyDrop for fine control.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "memory"
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "name": "Ruby Module and Mixin Error Rules",
+  "description": "Rules for detecting and fixing Ruby module composition and mixin errors",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "ruby_module_inclusion_order",
+      "pattern": "NoMethodError:.*overridden by module",
+      "type": "NoMethodError",
+      "description": "Method overridden by module inclusion order",
+      "root_cause": "ruby_module_order",
+      "suggestion": "Check module inclusion order. Later includes override earlier ones. Use prepend for reverse order.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_module_method_conflict",
+      "pattern": "warning: method .* is already defined in",
+      "type": "Warning",
+      "description": "Method name conflict between modules",
+      "root_cause": "ruby_method_conflict",
+      "suggestion": "Rename conflicting methods or use module namespacing. Consider composition over inheritance.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_circular_include",
+      "pattern": "SystemStackError:.*include.*recursive",
+      "type": "SystemStackError",
+      "description": "Circular module inclusion detected",
+      "root_cause": "ruby_circular_include",
+      "suggestion": "Remove circular dependencies between modules. Refactor shared code to a separate module.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_module_function_error",
+      "pattern": "NoMethodError:.*module_function",
+      "type": "NoMethodError",
+      "description": "module_function used incorrectly",
+      "root_cause": "ruby_module_function",
+      "suggestion": "module_function creates module methods and private instance methods. Use on instance methods only.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_ancestors_chain_error",
+      "pattern": "NoMethodError:.*ancestors",
+      "type": "NoMethodError",
+      "description": "Error in ancestor chain lookup",
+      "root_cause": "ruby_ancestors",
+      "suggestion": "Check class.ancestors to see method lookup order. Modules are inserted in reverse order of inclusion.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_module_eval_scope",
+      "pattern": "NameError:.*module_eval.*constant",
+      "type": "NameError",
+      "description": "Constant not found in module_eval scope",
+      "root_cause": "ruby_module_eval_scope",
+      "suggestion": "module_eval changes constant lookup scope. Use :: for absolute constant paths.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_included_modules_error",
+      "pattern": "NoMethodError:.*included_modules",
+      "type": "NoMethodError",
+      "description": "Error checking included modules",
+      "root_cause": "ruby_included_modules",
+      "suggestion": "Use included_modules to check what modules are mixed in. Only works on classes/modules.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_module_nesting_error",
+      "pattern": "NameError:.*Module.nesting",
+      "type": "NameError",
+      "description": "Module nesting lookup error",
+      "root_cause": "ruby_module_nesting",
+      "suggestion": "Module.nesting shows lexical nesting. Use for debugging constant resolution issues.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_extend_self_error",
+      "pattern": "NoMethodError:.*extend self",
+      "type": "NoMethodError",
+      "description": "extend self pattern used incorrectly",
+      "root_cause": "ruby_extend_self",
+      "suggestion": "extend self makes instance methods available as module methods. Place after method definitions.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_module_attr_accessor",
+      "pattern": "NoMethodError:.*attr_accessor.*module",
+      "type": "NoMethodError",
+      "description": "attr_accessor in module not working as expected",
+      "root_cause": "ruby_module_attr",
+      "suggestion": "attr_accessor in modules creates instance methods. They only work when module is included in a class.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_eigenclass_include",
+      "pattern": "TypeError:.*include.*singleton class",
+      "type": "TypeError",
+      "description": "Cannot include module in singleton class",
+      "root_cause": "ruby_eigenclass_include",
+      "suggestion": "Use extend instead of include for singleton classes. Include is for instance methods only.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_module_constants_error",
+      "pattern": "NameError:.*module.*constant",
+      "type": "NameError",
+      "description": "Module constant not accessible",
+      "root_cause": "ruby_module_constants",
+      "suggestion": "Access module constants with Module::CONSTANT syntax. Check constant visibility and nesting.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_mixin_super_error",
+      "pattern": "ArgumentError:.*super.*module",
+      "type": "ArgumentError",
+      "description": "super called with wrong arguments in mixin",
+      "root_cause": "ruby_mixin_super",
+      "suggestion": "When using super in modules, ensure method signatures match. Use super() for no args, super for all args.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_module_singleton_error",
+      "pattern": "NoMethodError:.*singleton.*module",
+      "type": "NoMethodError",
+      "description": "Module singleton method error",
+      "root_cause": "ruby_module_singleton",
+      "suggestion": "Define module singleton methods with def self.method or class << self block.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "mixins"
+    },
+    {
+      "id": "ruby_prepend_visibility",
+      "pattern": "NoMethodError:.*prepended module.*private",
+      "type": "NoMethodError",
+      "description": "Prepended module method visibility issue",
+      "root_cause": "ruby_prepend_visibility",
+      "suggestion": "Prepended modules can't change method visibility. Handle visibility in the prepended module itself.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "mixins"
+    }
+  ]
+}

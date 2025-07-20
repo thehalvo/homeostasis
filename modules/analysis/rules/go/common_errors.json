@@ -122,6 +122,116 @@
       "confidence": "high",
       "severity": "medium",
       "category": "io"
+    },
+    {
+      "id": "go_panic_recovered",
+      "pattern": "recovered from panic: (.*)",
+      "type": "panic",
+      "description": "Panic was caught and recovered",
+      "root_cause": "go_panic",
+      "suggestion": "Investigate the panic cause. Add proper error handling to prevent panics. Use recover() carefully.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "panic"
+    },
+    {
+      "id": "go_panic_goroutine",
+      "pattern": "panic: (.*) goroutine \\d+ \\[running\\]",
+      "type": "panic",
+      "description": "Unrecovered panic in goroutine",
+      "root_cause": "go_goroutine_panic",
+      "suggestion": "Add defer/recover in goroutines to handle panics. Ensure goroutines don't crash the program.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "panic"
+    },
+    {
+      "id": "go_string_index_out_of_range",
+      "pattern": "panic: runtime error: index out of range \\[(\\d+)\\] with length (\\d+).*string",
+      "type": "runtime error",
+      "description": "String index out of bounds",
+      "root_cause": "go_string_bounds",
+      "suggestion": "Check string length before indexing. Use len() to validate indices. Consider using rune iteration for Unicode.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "runtime"
+    },
+    {
+      "id": "go_make_negative_size",
+      "pattern": "panic: runtime error: makeslice: len out of range",
+      "type": "runtime error",
+      "description": "Attempting to make slice with negative or too large size",
+      "root_cause": "go_make_size",
+      "suggestion": "Validate size parameters before calling make(). Ensure sizes are non-negative and within memory limits.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "go_closed_network_connection",
+      "pattern": "use of closed network connection",
+      "type": "net.OpError",
+      "description": "Attempting to use a closed network connection",
+      "root_cause": "go_closed_connection",
+      "suggestion": "Check connection state before use. Handle connection lifecycle properly. Implement reconnection logic.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "network"
+    },
+    {
+      "id": "go_http_handler_panic",
+      "pattern": "http: panic serving.*runtime error",
+      "type": "http panic",
+      "description": "Panic in HTTP handler",
+      "root_cause": "go_http_panic",
+      "suggestion": "Add recover() in HTTP handlers. Validate inputs and handle errors gracefully in handlers.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "http"
+    },
+    {
+      "id": "go_json_unmarshal_error",
+      "pattern": "json: cannot unmarshal (.*) into Go (?:struct field|value) of type (.*)",
+      "type": "json.UnmarshalTypeError",
+      "description": "JSON type mismatch during unmarshaling",
+      "root_cause": "go_json_type_mismatch",
+      "suggestion": "Ensure JSON structure matches Go struct. Use appropriate types or json.RawMessage for flexible handling.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "serialization"
+    },
+    {
+      "id": "go_template_exec_error",
+      "pattern": "template: (.*): executing .* at <(.*)>: (.*)",
+      "type": "template error",
+      "description": "Error executing Go template",
+      "root_cause": "go_template_error",
+      "suggestion": "Check template syntax and data structure. Ensure all referenced fields exist in the data.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "template"
+    },
+    {
+      "id": "go_regexp_compile_error",
+      "pattern": "error parsing regexp: (.*)",
+      "type": "regexp error",
+      "description": "Invalid regular expression",
+      "root_cause": "go_regexp_invalid",
+      "suggestion": "Validate regex syntax. Use regexp.MustCompile() only with known-good patterns.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "regexp"
+    },
+    {
+      "id": "go_url_parse_error",
+      "pattern": "parse (.*): (.*)",
+      "type": "url.Error",
+      "description": "URL parsing error",
+      "root_cause": "go_url_invalid",
+      "suggestion": "Validate URL format before parsing. Handle special characters properly. Use url.QueryEscape() when needed.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "network"
     }
   ]
 }

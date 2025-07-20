@@ -1,0 +1,94 @@
+{
+  "description": "Dart async and Future error patterns",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "dart_unhandled_exception",
+      "pattern": "Unhandled exception:.*Future.*not completed",
+      "type": "runtime error",
+      "description": "Future not completed or handled properly",
+      "root_cause": "dart_future_uncompleted",
+      "suggestion": "Ensure all Futures are properly awaited or have error handlers. Use try-catch with async/await.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "async"
+    },
+    {
+      "id": "dart_async_without_await",
+      "pattern": "This async function does not use await",
+      "type": "warning",
+      "description": "Async function declared but not using await",
+      "root_cause": "dart_async_misuse",
+      "suggestion": "Remove async keyword if await is not needed, or ensure proper async operations.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "async"
+    },
+    {
+      "id": "dart_future_already_completed",
+      "pattern": "Bad state: Future already completed",
+      "type": "runtime error",
+      "description": "Attempting to complete a Future that's already completed",
+      "root_cause": "dart_future_state",
+      "suggestion": "Check if Completer.isCompleted before calling complete() or completeError().",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    },
+    {
+      "id": "dart_stream_already_listened",
+      "pattern": "Bad state: Stream has already been listened to",
+      "type": "runtime error",
+      "description": "Single-subscription stream listened to multiple times",
+      "root_cause": "dart_stream_subscription",
+      "suggestion": "Use broadcast streams for multiple listeners or ensure single subscription.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    },
+    {
+      "id": "dart_uncaught_async_error",
+      "pattern": "Uncaught Error in Zone",
+      "type": "runtime error",
+      "description": "Unhandled error in async zone",
+      "root_cause": "dart_zone_error",
+      "suggestion": "Add error handlers to Zones or use runZonedGuarded for error handling.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "async"
+    },
+    {
+      "id": "dart_future_timeout",
+      "pattern": "TimeoutException after (\\d+):(\\d+):(\\d+)",
+      "type": "runtime error",
+      "description": "Future operation timed out",
+      "root_cause": "dart_timeout",
+      "suggestion": "Increase timeout duration or optimize the async operation. Consider using Future.timeout() with onTimeout callback.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    },
+    {
+      "id": "dart_missing_await",
+      "pattern": "(?:Missing await for an async function call|unawaited_futures)",
+      "type": "warning",
+      "description": "Async function called without await",
+      "root_cause": "dart_missing_await",
+      "suggestion": "Add await keyword or use unawaited() if intentionally fire-and-forget.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    },
+    {
+      "id": "dart_stream_controller_closed",
+      "pattern": "Bad state: Cannot add event after closing",
+      "type": "runtime error",
+      "description": "Attempting to add to a closed StreamController",
+      "root_cause": "dart_stream_closed",
+      "suggestion": "Check StreamController.isClosed before adding events or ensure proper lifecycle management.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    }
+  ]
+}

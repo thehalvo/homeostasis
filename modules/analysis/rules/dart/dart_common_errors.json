@@ -1,0 +1,116 @@
+{
+  "description": "Common Dart error patterns and fixes",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "dart_null_check_operator",
+      "pattern": "Null check operator used on a null value",
+      "type": "runtime error",
+      "description": "Using null check operator (!) on a null value",
+      "root_cause": "dart_null_safety",
+      "suggestion": "Add null checks before using the ! operator or use nullable types with proper null handling.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "dart_null_safety_error",
+      "pattern": "(?:The argument type '.*\\?' can't be assigned to the parameter type|A value of type '.*\\?' can't be assigned)",
+      "type": "compile error",
+      "description": "Null safety violation - attempting to assign nullable to non-nullable",
+      "root_cause": "dart_null_safety",
+      "suggestion": "Either make the target nullable, provide a non-null value, or use null-aware operators (?, ??, !).",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "dart_late_init_error",
+      "pattern": "LateInitializationError: Field '(.*)' has not been initialized",
+      "type": "runtime error",
+      "description": "Late field accessed before initialization",
+      "root_cause": "dart_late_initialization",
+      "suggestion": "Initialize the late field before accessing it or make it nullable with a default value.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "dart_type_cast_error",
+      "pattern": "type '(.*)' is not a subtype of type '(.*)' in type cast",
+      "type": "runtime error",
+      "description": "Invalid type cast operation",
+      "root_cause": "dart_type_cast",
+      "suggestion": "Use 'is' to check type before casting or use 'as?' for safe casting that returns null on failure.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "runtime"
+    },
+    {
+      "id": "dart_index_range_error",
+      "pattern": "RangeError \\(index\\): Invalid value: (?:Valid value range is empty|Not in inclusive range)",
+      "type": "runtime error",
+      "description": "List or string index out of bounds",
+      "root_cause": "dart_index_range",
+      "suggestion": "Check list length before accessing elements. Use .isEmpty or .length properties.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "runtime"
+    },
+    {
+      "id": "dart_concurrent_modification",
+      "pattern": "Concurrent modification during iteration",
+      "type": "runtime error",
+      "description": "Collection modified while iterating over it",
+      "root_cause": "dart_concurrent_modification",
+      "suggestion": "Create a copy of the collection before iterating if modifications are needed, or collect changes and apply after iteration.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "runtime"
+    },
+    {
+      "id": "dart_stack_overflow",
+      "pattern": "Stack Overflow",
+      "type": "runtime error",
+      "description": "Stack overflow due to infinite recursion",
+      "root_cause": "dart_stack_overflow",
+      "suggestion": "Check for infinite recursion, add base cases to recursive functions, or convert to iterative approach.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "runtime"
+    },
+    {
+      "id": "dart_const_error",
+      "pattern": "(?:Invalid constant value|Const variables must be initialized with a constant value)",
+      "type": "compile error",
+      "description": "Invalid const declaration or usage",
+      "root_cause": "dart_const_usage",
+      "suggestion": "Ensure const values are compile-time constants. Use final for runtime constants.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "compile"
+    },
+    {
+      "id": "dart_abstract_instantiation",
+      "pattern": "Abstract classes can't be instantiated",
+      "type": "compile error",
+      "description": "Attempting to instantiate an abstract class",
+      "root_cause": "dart_abstract_class",
+      "suggestion": "Create a concrete implementation of the abstract class or use an existing implementation.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    },
+    {
+      "id": "dart_missing_required",
+      "pattern": "The named parameter '(.*)' is required",
+      "type": "compile error",
+      "description": "Required named parameter not provided",
+      "root_cause": "dart_required_parameter",
+      "suggestion": "Provide all required named parameters when calling the function or constructor.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile"
+    }
+  ]
+}

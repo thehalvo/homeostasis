@@ -1,0 +1,138 @@
+{
+  "description": "Go interface and reflection error patterns",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "go_interface_nil_value",
+      "pattern": "(?:panic: runtime error: invalid memory address|nil pointer dereference).*interface",
+      "type": "runtime error",
+      "description": "Calling method on nil interface value",
+      "root_cause": "go_nil_interface",
+      "suggestion": "Check if interface is nil before calling methods. An interface holding a nil concrete value is not itself nil.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "interface"
+    },
+    {
+      "id": "go_interface_type_assertion",
+      "pattern": "interface conversion: (.*) is nil, not (.*)",
+      "type": "runtime error",
+      "description": "Type assertion on nil interface",
+      "root_cause": "go_nil_interface_assertion",
+      "suggestion": "Check if interface is nil before type assertion or use comma-ok idiom: value, ok := i.(Type).",
+      "confidence": "high",
+      "severity": "high",
+      "category": "interface"
+    },
+    {
+      "id": "go_interface_method_missing",
+      "pattern": "(.*) does not implement (.*) \\(missing (.*) method\\)",
+      "type": "compile error",
+      "description": "Type does not implement interface - missing method",
+      "root_cause": "go_interface_implementation",
+      "suggestion": "Implement all required methods of the interface. Check method signatures match exactly.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "interface"
+    },
+    {
+      "id": "go_interface_wrong_signature",
+      "pattern": "(.*) does not implement (.*) \\(wrong type for (.*) method\\)",
+      "type": "compile error",
+      "description": "Interface method has wrong signature",
+      "root_cause": "go_interface_signature",
+      "suggestion": "Ensure method signature matches interface exactly, including parameter and return types.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "interface"
+    },
+    {
+      "id": "go_empty_interface_comparison",
+      "pattern": "comparing uncomparable type (.*)",
+      "type": "runtime error",
+      "description": "Comparing interfaces containing uncomparable types",
+      "root_cause": "go_interface_comparison",
+      "suggestion": "Avoid comparing interfaces that may contain slices, maps, or functions. Use reflect.DeepEqual for complex comparisons.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "interface"
+    },
+    {
+      "id": "go_reflect_nil_pointer",
+      "pattern": "reflect: call of (.*) on zero Value",
+      "type": "runtime error",
+      "description": "Calling reflect methods on zero reflect.Value",
+      "root_cause": "go_reflect_zero_value",
+      "suggestion": "Check reflect.Value.IsValid() before calling methods. Use reflect.ValueOf() properly.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "reflection"
+    },
+    {
+      "id": "go_reflect_wrong_kind",
+      "pattern": "reflect: call of (.*) on (.*) Value",
+      "type": "runtime error",
+      "description": "Calling reflect method on wrong kind of value",
+      "root_cause": "go_reflect_kind",
+      "suggestion": "Check reflect.Value.Kind() before calling type-specific methods. Use appropriate methods for the value kind.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "reflection"
+    },
+    {
+      "id": "go_reflect_unexported_field",
+      "pattern": "reflect: (.*) using value obtained using unexported field",
+      "type": "runtime error",
+      "description": "Attempting to modify unexported field via reflection",
+      "root_cause": "go_reflect_unexported",
+      "suggestion": "Only exported fields can be modified via reflection. Check field.CanSet() before modification.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "reflection"
+    },
+    {
+      "id": "go_reflect_unaddressable",
+      "pattern": "reflect: call of (.*) on unaddressable value",
+      "type": "runtime error",
+      "description": "Attempting to modify unaddressable value",
+      "root_cause": "go_reflect_unaddressable",
+      "suggestion": "Use reflect.Value.CanAddr() to check. Pass pointer to reflect.ValueOf() for addressable values.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "reflection"
+    },
+    {
+      "id": "go_type_switch_fallthrough",
+      "pattern": "cannot fallthrough in type switch",
+      "type": "compile error",
+      "description": "Using fallthrough in type switch",
+      "root_cause": "go_type_switch",
+      "suggestion": "Fallthrough is not allowed in type switches. Use comma-separated cases or restructure logic.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "interface"
+    },
+    {
+      "id": "go_interface_receiver_pointer",
+      "pattern": "(.*) does not implement (.*) \\((.*) method has pointer receiver\\)",
+      "type": "compile error",
+      "description": "Value type used where pointer receiver interface expected",
+      "root_cause": "go_interface_receiver",
+      "suggestion": "Use pointer to the type (&value) when interface methods have pointer receivers.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "interface"
+    },
+    {
+      "id": "go_reflect_set_immutable",
+      "pattern": "reflect.Value.Set using unaddressable value",
+      "type": "runtime error",
+      "description": "Attempting to set unaddressable reflect value",
+      "root_cause": "go_reflect_set",
+      "suggestion": "Ensure value is addressable before calling Set(). Pass pointer to struct to reflect.ValueOf().",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "reflection"
+    }
+  ]
+}

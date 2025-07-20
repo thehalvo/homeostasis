@@ -89,6 +89,149 @@
       "confidence": "high",
       "severity": "high",
       "category": "goroutine"
+    },
+    {
+      "id": "go_channel_nil_receive",
+      "pattern": "(?:blocking receive from nil channel|all goroutines are asleep.*nil channel)",
+      "type": "runtime error",
+      "description": "Attempting to receive from a nil channel",
+      "root_cause": "go_nil_channel",
+      "suggestion": "Initialize channels with make(chan Type) before use. Check for nil channels in select statements.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_channel_nil_send",
+      "pattern": "(?:blocking send to nil channel|all goroutines are asleep.*nil channel)",
+      "type": "runtime error",
+      "description": "Attempting to send to a nil channel",
+      "root_cause": "go_nil_channel",
+      "suggestion": "Initialize channels with make(chan Type) before use. Check for nil channels before sending.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_select_no_case",
+      "pattern": "select with no cases",
+      "type": "compile error",
+      "description": "Select statement with no case clauses",
+      "root_cause": "go_empty_select",
+      "suggestion": "Add at least one case to the select statement or use select {} for infinite blocking.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_goroutine_leak",
+      "pattern": "(?:goroutine \\d+ \\[chan receive.*minutes\\]|goroutine \\d+ \\[select.*minutes\\])",
+      "type": "performance issue",
+      "description": "Goroutine blocked for extended time - potential leak",
+      "root_cause": "go_goroutine_leak",
+      "suggestion": "Add timeouts to channel operations or use context for cancellation. Ensure goroutines can exit.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_panic_recover_nil",
+      "pattern": "panic: runtime error: invalid memory address or nil pointer dereference.*recovered",
+      "type": "runtime error",
+      "description": "Panic occurred but was recovered - nil pointer in recovered code",
+      "root_cause": "go_panic_recovery",
+      "suggestion": "Check recovered value type in defer/recover. Handle nil pointers before operations.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "panic"
+    },
+    {
+      "id": "go_panic_interface_conversion",
+      "pattern": "panic: interface conversion: (.*) is (.*), not (.*)",
+      "type": "runtime error",
+      "description": "Interface type assertion failed causing panic",
+      "root_cause": "go_interface_assertion",
+      "suggestion": "Use comma-ok idiom for type assertions: value, ok := x.(Type). Check ok before using value.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "panic"
+    },
+    {
+      "id": "go_panic_slice_bounds",
+      "pattern": "panic: runtime error: slice bounds out of range \\[(.*)\\] with (?:capacity|length) (.*)",
+      "type": "runtime error",
+      "description": "Slice operation with invalid bounds caused panic",
+      "root_cause": "go_slice_panic",
+      "suggestion": "Validate slice indices before operations. Use len() and cap() to check bounds.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "panic"
+    },
+    {
+      "id": "go_defer_panic_order",
+      "pattern": "panic: (.*) \\[recovered\\].*panic: (.*)",
+      "type": "runtime error",
+      "description": "Multiple panics in defer functions",
+      "root_cause": "go_defer_panic",
+      "suggestion": "Handle panics carefully in defer functions. Only the last panic will propagate.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "panic"
+    },
+    {
+      "id": "go_context_canceled",
+      "pattern": "context canceled",
+      "type": "runtime error",
+      "description": "Operation failed due to context cancellation",
+      "root_cause": "go_context_canceled",
+      "suggestion": "Check context.Err() and handle cancellation gracefully. Use context.WithCancel() appropriately.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_context_deadline",
+      "pattern": "context deadline exceeded",
+      "type": "runtime error",
+      "description": "Operation timed out due to context deadline",
+      "root_cause": "go_context_timeout",
+      "suggestion": "Increase timeout with context.WithTimeout() or optimize the operation to complete faster.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_buffered_channel_full",
+      "pattern": "(?:fatal error: all goroutines are asleep.*chan send)",
+      "type": "runtime error",
+      "description": "Buffered channel is full and no receivers",
+      "root_cause": "go_channel_buffer_full",
+      "suggestion": "Increase buffer size, add more consumers, or use select with default case for non-blocking sends.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_timer_channel_drain",
+      "pattern": "(?:timer.C already drained|time: Stop called on uninitialized Timer)",
+      "type": "runtime error",
+      "description": "Timer channel already drained or timer not initialized",
+      "root_cause": "go_timer_misuse",
+      "suggestion": "Check timer.Stop() return value. Create new timer instead of reusing drained ones.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "goroutine"
+    },
+    {
+      "id": "go_atomic_alignment",
+      "pattern": "panic: runtime error: invalid memory address or nil pointer dereference.*atomic",
+      "type": "runtime error",
+      "description": "Atomic operation on misaligned address",
+      "root_cause": "go_atomic_alignment",
+      "suggestion": "Ensure 64-bit atomic variables are 64-bit aligned. Place them at struct beginning or use padding.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "goroutine"
     }
   ]
 }

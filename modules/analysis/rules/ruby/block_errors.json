@@ -1,0 +1,161 @@
+{
+  "name": "Ruby Block and Proc Error Rules",
+  "description": "Rules for detecting and fixing Ruby block, proc, and lambda errors",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "ruby_block_given_error",
+      "pattern": "(?:ArgumentError|LocalJumpError): no block given",
+      "type": "LocalJumpError",
+      "description": "Method expected a block but none was provided",
+      "root_cause": "ruby_missing_block",
+      "suggestion": "Pass a block to the method using do...end or { }. Use block_given? to check if a block was provided.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_local_jump_error",
+      "pattern": "LocalJumpError: (break|next|redo|retry) from proc-closure",
+      "type": "LocalJumpError",
+      "description": "Invalid control flow statement in proc",
+      "root_cause": "ruby_proc_control_flow",
+      "suggestion": "Use return instead of break in procs, or use lambdas which support break. Avoid next/redo/retry in procs.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_proc_arity_error",
+      "pattern": "ArgumentError: wrong number of arguments.*Proc",
+      "type": "ArgumentError",
+      "description": "Proc called with wrong number of arguments",
+      "root_cause": "ruby_proc_arity",
+      "suggestion": "Procs are flexible with arguments. Use lambdas for strict arity checking, or adjust the proc to handle variable arguments.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_lambda_arity_error",
+      "pattern": "ArgumentError: wrong number of arguments.*lambda",
+      "type": "ArgumentError",
+      "description": "Lambda called with wrong number of arguments",
+      "root_cause": "ruby_lambda_arity",
+      "suggestion": "Lambdas enforce strict arity. Provide the exact number of arguments expected by the lambda.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_yield_outside_method",
+      "pattern": "LocalJumpError: no block given \\(yield\\)",
+      "type": "LocalJumpError",
+      "description": "yield called without a block",
+      "root_cause": "ruby_yield_no_block",
+      "suggestion": "Check for block presence with block_given? before yielding, or provide a default block.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_to_proc_error",
+      "pattern": "NoMethodError: undefined method `to_proc'",
+      "type": "NoMethodError",
+      "description": "Object doesn't respond to to_proc",
+      "root_cause": "ruby_to_proc_missing",
+      "suggestion": "Implement to_proc method or use a proper proc/lambda. The & operator calls to_proc on the object.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_block_return_error",
+      "pattern": "LocalJumpError: unexpected return",
+      "type": "LocalJumpError",
+      "description": "return statement in block context",
+      "root_cause": "ruby_block_return",
+      "suggestion": "Use next to return a value from a block, not return. return exits the enclosing method.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_closure_variable_error",
+      "pattern": "NameError: undefined local variable.*block",
+      "type": "NameError",
+      "description": "Variable not accessible in block closure",
+      "root_cause": "ruby_closure_scope",
+      "suggestion": "Ensure variables are defined before the block or passed as block parameters. Check variable scope.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_enumerator_error",
+      "pattern": "(?:LocalJumpError|StopIteration):",
+      "type": "StopIteration",
+      "description": "Enumerator exhausted or control flow error",
+      "root_cause": "ruby_enumerator",
+      "suggestion": "Handle StopIteration when manually iterating enumerators. Use rescue or loop constructs.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_fiber_error",
+      "pattern": "FiberError: (dead fiber called|fiber called across threads)",
+      "type": "FiberError",
+      "description": "Invalid fiber operation",
+      "root_cause": "ruby_fiber_error",
+      "suggestion": "Check fiber status before resuming. Fibers cannot be resumed across threads or after completion.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_binding_error",
+      "pattern": "(?:NameError|NoMethodError):.*binding",
+      "type": "NameError",
+      "description": "Error accessing binding context",
+      "root_cause": "ruby_binding_context",
+      "suggestion": "Ensure binding is captured in the correct scope. Use Kernel#binding to capture current context.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_method_to_proc",
+      "pattern": "TypeError: wrong argument type.*expected Proc",
+      "type": "TypeError",
+      "description": "Non-proc object where proc expected",
+      "root_cause": "ruby_proc_type",
+      "suggestion": "Convert method to proc using method(:name).to_proc or use & operator with symbols.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_curry_error",
+      "pattern": "ArgumentError:.*curry",
+      "type": "ArgumentError",
+      "description": "Error in proc currying",
+      "root_cause": "ruby_curry",
+      "suggestion": "Check arity when currying. Curry only works with procs/lambdas with fixed arity.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "blocks"
+    },
+    {
+      "id": "ruby_tap_error",
+      "pattern": "LocalJumpError:.*tap",
+      "type": "LocalJumpError",
+      "description": "Control flow error in tap block",
+      "root_cause": "ruby_tap_control",
+      "suggestion": "tap always returns the receiver. Don't use return/break in tap blocks.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "blocks"
+    }
+  ]
+}

@@ -200,6 +200,160 @@
       "confidence": "high",
       "severity": "medium",
       "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_method_added_error",
+      "pattern": "(?:SystemStackError|ArgumentError):.*method_added",
+      "type": "SystemStackError",
+      "description": "Infinite recursion in method_added hook",
+      "root_cause": "ruby_method_added_recursion",
+      "suggestion": "Avoid defining methods within method_added that trigger the hook again. Use a guard variable to prevent recursion.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_alias_method_error",
+      "pattern": "NameError: undefined method `([^']+)' for (class|module)",
+      "type": "NameError",
+      "description": "Attempting to alias a non-existent method",
+      "root_cause": "ruby_alias_undefined",
+      "suggestion": "Ensure the method exists before aliasing. Check method definition order in the class.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_remove_method_error",
+      "pattern": "NameError: method `([^']+)' not defined in",
+      "type": "NameError",
+      "description": "Attempting to remove undefined method",
+      "root_cause": "ruby_remove_undefined",
+      "suggestion": "Check if method exists before removing. Use method_defined? or respond_to? to verify.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_undef_method_error",
+      "pattern": "NameError: undefined method `([^']+)' for (class|module)",
+      "type": "NameError",
+      "description": "Attempting to undefine non-existent method",
+      "root_cause": "ruby_undef_undefined",
+      "suggestion": "Verify method exists before undefining. Note that undef is more aggressive than remove_method.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_refinement_error",
+      "pattern": "RuntimeError: can't activate refinement",
+      "type": "RuntimeError",
+      "description": "Refinement activation error",
+      "root_cause": "ruby_refinement",
+      "suggestion": "Refinements must be activated with 'using' at the top level of a file or module. Check scope.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_singleton_class_error",
+      "pattern": "TypeError: can't create instance of singleton class",
+      "type": "TypeError",
+      "description": "Attempted to instantiate singleton class",
+      "root_cause": "ruby_singleton_instantiation",
+      "suggestion": "Singleton classes cannot be instantiated directly. Access via object.singleton_class.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_method_visibility_error",
+      "pattern": "NoMethodError: (private|protected) method `([^']+)' called",
+      "type": "NoMethodError",
+      "description": "Calling private or protected method incorrectly",
+      "root_cause": "ruby_method_visibility",
+      "suggestion": "Use send to call private methods, or change visibility with public/private/protected declarations.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_define_singleton_method_error",
+      "pattern": "TypeError:.*define_singleton_method",
+      "type": "TypeError",
+      "description": "Error defining singleton method",
+      "root_cause": "ruby_define_singleton",
+      "suggestion": "Check object supports singleton methods. Immediate values (true, false, nil, symbols, numbers) don't.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_instance_variable_error",
+      "pattern": "`([^']+)' is not allowed as an instance variable name",
+      "type": "NameError",
+      "description": "Invalid instance variable name",
+      "root_cause": "ruby_invalid_ivar",
+      "suggestion": "Instance variables must start with @. Use valid Ruby identifier after @.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_autoload_error",
+      "pattern": "LoadError:.*autoload",
+      "type": "LoadError",
+      "description": "Autoload failed to find file",
+      "root_cause": "ruby_autoload",
+      "suggestion": "Check autoload path is correct. File must be in load path and match the constant name.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_method_source_error",
+      "pattern": "MethodSource::SourceNotFoundError",
+      "type": "SourceNotFoundError",
+      "description": "Cannot find method source",
+      "root_cause": "ruby_method_source",
+      "suggestion": "Method may be defined in C, dynamically, or in irb/pry. Not all methods have accessible source.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_eval_binding_error",
+      "pattern": "NameError:.*eval.*binding",
+      "type": "NameError",
+      "description": "Variable not accessible in eval binding",
+      "root_cause": "ruby_eval_binding",
+      "suggestion": "Pass correct binding to eval. Variables must exist in the binding context.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_super_error",
+      "pattern": "(?:NoMethodError|ArgumentError): super: no superclass method",
+      "type": "NoMethodError",
+      "description": "No superclass method to call",
+      "root_cause": "ruby_super_missing",
+      "suggestion": "Ensure parent class/module defines the method before calling super. Check inheritance chain.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "metaprogramming"
+    },
+    {
+      "id": "ruby_delegation_error",
+      "pattern": "NoMethodError:.*Delegator",
+      "type": "NoMethodError",
+      "description": "Delegation target missing method",
+      "root_cause": "ruby_delegation",
+      "suggestion": "Ensure delegated object responds to the method. Check delegation setup and target object.",
+      "confidence": "medium",
+      "severity": "medium",
+      "category": "metaprogramming"
     }
   ]
 }

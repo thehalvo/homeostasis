@@ -1,0 +1,139 @@
+{
+  "language": "rust",
+  "description": "Rust unsafe code and FFI error patterns",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "rust_unsafe_null_pointer",
+      "pattern": "null pointer|segmentation fault|SIGSEGV|access violation",
+      "type": "RuntimeError",
+      "description": "Null pointer dereference in unsafe code",
+      "root_cause": "rust_null_pointer",
+      "suggestion": "Check pointers for null before dereferencing. Use NonNull<T> for non-null pointers. Validate FFI pointers.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "unsafe"
+    },
+    {
+      "id": "rust_unsafe_uninitialized",
+      "pattern": "use of possibly uninitialized|reading uninitialized memory|undefined behavior",
+      "type": "RuntimeError",
+      "description": "Reading uninitialized memory",
+      "root_cause": "rust_uninitialized_memory",
+      "suggestion": "Use MaybeUninit<T> for uninitialized values. Initialize all memory before reading. Avoid mem::uninitialized().",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "unsafe"
+    },
+    {
+      "id": "rust_data_race",
+      "pattern": "data race|race condition detected|concurrent access",
+      "type": "RuntimeError",
+      "description": "Data race in unsafe code",
+      "root_cause": "rust_data_race",
+      "suggestion": "Use proper synchronization (Mutex, RwLock, atomic operations). Ensure Send/Sync implementations are correct.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_alignment_error",
+      "pattern": "misaligned pointer|invalid alignment|alignment.*required",
+      "type": "RuntimeError",
+      "description": "Misaligned pointer access",
+      "root_cause": "rust_alignment",
+      "suggestion": "Ensure proper alignment for types. Use align_offset() to check alignment. Be careful with packed structs.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "unsafe"
+    },
+    {
+      "id": "rust_ffi_abi_mismatch",
+      "pattern": "ABI mismatch|calling convention|incompatible function signature",
+      "type": "CompileError",
+      "description": "FFI ABI mismatch",
+      "root_cause": "rust_ffi_abi",
+      "suggestion": "Use correct extern declarations (extern \"C\"). Match calling conventions. Check function signatures carefully.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "ffi"
+    },
+    {
+      "id": "rust_unsafe_cast",
+      "pattern": "invalid cast|casting.*fat pointer|lossy cast",
+      "type": "CompileError",
+      "description": "Invalid or unsafe cast",
+      "root_cause": "rust_unsafe_cast",
+      "suggestion": "Avoid casting between incompatible types. Use safe conversions when possible. Be aware of fat pointer casts.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "unsafe"
+    },
+    {
+      "id": "rust_stack_overflow_unsafe",
+      "pattern": "stack overflow|recursion limit|stack exhausted",
+      "type": "RuntimeError",
+      "description": "Stack overflow in unsafe code",
+      "root_cause": "rust_stack_overflow",
+      "suggestion": "Limit recursion depth, use heap allocation for large data, or increase stack size. Check for infinite recursion.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "memory"
+    },
+    {
+      "id": "rust_invalid_utf8",
+      "pattern": "invalid UTF-8|not valid UTF-8|from_utf8_unchecked",
+      "type": "RuntimeError",
+      "description": "Invalid UTF-8 in string operations",
+      "root_cause": "rust_invalid_utf8",
+      "suggestion": "Validate UTF-8 before using from_utf8_unchecked(). Use from_utf8() for safe conversion with error handling.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "unsafe"
+    },
+    {
+      "id": "rust_unsafe_union_access",
+      "pattern": "access to union field is unsafe|union field",
+      "type": "CompileError",
+      "description": "Unsafe union field access",
+      "root_cause": "rust_union_access",
+      "suggestion": "Wrap union access in unsafe block. Ensure correct variant is accessed. Consider using enums instead.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "unsafe"
+    },
+    {
+      "id": "rust_global_allocator_error",
+      "pattern": "allocation error|out of memory|allocator.*failed",
+      "type": "RuntimeError",
+      "description": "Memory allocation failure",
+      "root_cause": "rust_allocation_failure",
+      "suggestion": "Handle allocation failures gracefully. Use try_reserve() for fallible allocation. Implement proper OOM handling.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "memory"
+    },
+    {
+      "id": "rust_miri_ub",
+      "pattern": "Miri.*undefined behavior|UB detected",
+      "type": "MiriError",
+      "description": "Undefined behavior detected by Miri",
+      "root_cause": "rust_undefined_behavior",
+      "suggestion": "Fix the specific UB reported by Miri. Run tests under Miri regularly. Avoid assumptions about memory layout.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "unsafe"
+    },
+    {
+      "id": "rust_invalid_transmute_lifetime",
+      "pattern": "transmuting.*lifetime|lifetime.*transmute",
+      "type": "CompileError",
+      "description": "Transmuting between types with different lifetimes",
+      "root_cause": "rust_transmute_lifetime",
+      "suggestion": "Never transmute lifetimes. This is always unsound. Use proper lifetime annotations instead.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "unsafe"
+    }
+  ]
+}

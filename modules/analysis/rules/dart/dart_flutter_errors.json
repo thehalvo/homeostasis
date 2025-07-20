@@ -1,0 +1,94 @@
+{
+  "description": "Flutter framework specific error patterns",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "flutter_render_overflow",
+      "pattern": "RenderFlex overflowed by (\\d+) pixels",
+      "type": "runtime error",
+      "description": "Widget overflow in Row/Column",
+      "root_cause": "flutter_overflow",
+      "suggestion": "Wrap widgets in Flexible/Expanded, use Wrap widget, or add scrolling with SingleChildScrollView.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "ui"
+    },
+    {
+      "id": "flutter_setState_error",
+      "pattern": "setState\\(\\) called after dispose\\(\\)",
+      "type": "runtime error",
+      "description": "setState called on disposed widget",
+      "root_cause": "flutter_lifecycle",
+      "suggestion": "Check mounted property before calling setState or cancel async operations in dispose().",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "lifecycle"
+    },
+    {
+      "id": "flutter_build_error",
+      "pattern": "(?:Build function must never return null|A build function returned null)",
+      "type": "runtime error",
+      "description": "Build method returned null",
+      "root_cause": "flutter_build_null",
+      "suggestion": "Ensure build methods always return a widget. Use Container() or SizedBox.shrink() for empty widgets.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "ui"
+    },
+    {
+      "id": "flutter_unbounded_height",
+      "pattern": "(?:Vertical viewport was given unbounded height|RenderBox was not laid out)",
+      "type": "runtime error",
+      "description": "Unbounded height constraint error",
+      "root_cause": "flutter_constraints",
+      "suggestion": "Wrap ListView/Column in Expanded or give it explicit height constraints.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "ui"
+    },
+    {
+      "id": "flutter_key_duplicate",
+      "pattern": "Multiple widgets used the same GlobalKey",
+      "type": "runtime error",
+      "description": "Duplicate GlobalKey usage",
+      "root_cause": "flutter_key_duplicate",
+      "suggestion": "Ensure each GlobalKey is unique. Create separate keys for each widget instance.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "ui"
+    },
+    {
+      "id": "flutter_inherited_widget",
+      "pattern": "Could not find the correct Provider<(.*)> above this",
+      "type": "runtime error",
+      "description": "Provider/InheritedWidget not found in widget tree",
+      "root_cause": "flutter_context",
+      "suggestion": "Ensure Provider is above the widget using it in the widget tree. Check context usage.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "state"
+    },
+    {
+      "id": "flutter_navigator_error",
+      "pattern": "(?:Navigator operation requested with a context|No Navigator found)",
+      "type": "runtime error",
+      "description": "Navigator not found in context",
+      "root_cause": "flutter_navigator",
+      "suggestion": "Ensure context has Navigator above it or use Navigator.of(context, rootNavigator: true).",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "navigation"
+    },
+    {
+      "id": "flutter_media_query",
+      "pattern": "No MediaQuery widget found",
+      "type": "runtime error",
+      "description": "MediaQuery.of() called without MediaQuery ancestor",
+      "root_cause": "flutter_media_query",
+      "suggestion": "Ensure MaterialApp/WidgetsApp is in the widget tree or wrap with MediaQuery widget.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "ui"
+    }
+  ]
+}

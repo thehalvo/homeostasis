@@ -165,6 +165,160 @@
       "confidence": "high",
       "severity": "medium",
       "category": "serialization"
+    },
+    {
+      "id": "rust_lifetime_mismatch",
+      "pattern": "lifetime mismatch|lifetime .* does not live long enough|expected lifetime parameter",
+      "type": "CompileError",
+      "description": "Lifetime parameters don't match or value doesn't live long enough",
+      "root_cause": "rust_lifetime_error",
+      "suggestion": "Ensure lifetimes are properly annotated. Use 'static for global lifetimes, or adjust function signatures to match actual lifetimes. Consider using owned values instead of references.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile_time"
+    },
+    {
+      "id": "rust_trait_not_implemented",
+      "pattern": "the trait .* is not implemented for|doesn't implement|trait bound .* is not satisfied",
+      "type": "CompileError",
+      "description": "Required trait is not implemented for type",
+      "root_cause": "rust_trait_missing",
+      "suggestion": "Implement the required trait for your type using 'impl Trait for Type'. Check trait bounds in function signatures. Consider deriving common traits with #[derive()].",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile_time"
+    },
+    {
+      "id": "rust_unsafe_dereference",
+      "pattern": "dereference of raw pointer is unsafe|requires unsafe function or block",
+      "type": "CompileError",
+      "description": "Unsafe operation requires unsafe block",
+      "root_cause": "rust_unsafe_operation",
+      "suggestion": "Wrap unsafe operations in unsafe {} blocks. Ensure safety invariants are maintained. Consider safe alternatives like references or smart pointers.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile_time"
+    },
+    {
+      "id": "rust_use_after_free",
+      "pattern": "use after free|dangling pointer|freed memory",
+      "type": "RuntimeError",
+      "description": "Attempted to use memory after it was freed",
+      "root_cause": "rust_use_after_free",
+      "suggestion": "This should be caught by the borrow checker. If in unsafe code, ensure pointers remain valid. Use RAII patterns and smart pointers.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "memory"
+    },
+    {
+      "id": "rust_double_free",
+      "pattern": "double free|freed twice",
+      "type": "RuntimeError",
+      "description": "Memory freed multiple times",
+      "root_cause": "rust_double_free",
+      "suggestion": "Let Rust's ownership system handle memory. Avoid manual memory management in unsafe code. Use Drop trait properly.",
+      "confidence": "high",
+      "severity": "critical",
+      "category": "memory"
+    },
+    {
+      "id": "rust_trait_object_safety",
+      "pattern": "the trait .* cannot be made into an object|object-safe trait is required",
+      "type": "CompileError",
+      "description": "Trait is not object-safe for dynamic dispatch",
+      "root_cause": "rust_trait_object_safety",
+      "suggestion": "Remove generic methods or methods with Self in non-receiver position. Use where Self: Sized for non-object-safe methods.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "compile_time"
+    },
+    {
+      "id": "rust_async_trait_lifetime",
+      "pattern": "lifetime may not live long enough.*async",
+      "type": "CompileError",
+      "description": "Lifetime issues in async trait methods",
+      "root_cause": "rust_async_lifetime",
+      "suggestion": "Use async-trait crate or manually box futures. Ensure lifetimes in async functions are properly bounded.",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "async"
+    },
+    {
+      "id": "rust_move_in_closure",
+      "pattern": "cannot move out of.*captured variable in an.*closure|move occurs because.*has type.*which does not implement.*Copy",
+      "type": "CompileError",
+      "description": "Value moved out of closure capture",
+      "root_cause": "rust_closure_move",
+      "suggestion": "Use 'move' keyword for closure to take ownership, clone values before capture, or use Rc/Arc for shared ownership.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile_time"
+    },
+    {
+      "id": "rust_recursive_type",
+      "pattern": "recursive type .* has infinite size|insert indirection",
+      "type": "CompileError",
+      "description": "Recursive type has infinite size",
+      "root_cause": "rust_infinite_type",
+      "suggestion": "Use Box<T>, Rc<T>, or Arc<T> to add indirection and break the recursion. Common with recursive data structures like trees.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "compile_time"
+    },
+    {
+      "id": "rust_pin_unpin_safety",
+      "pattern": "cannot move out of.*which is behind a.*Pin|the trait.*Unpin.*is not implemented",
+      "type": "CompileError",
+      "description": "Pin safety violation",
+      "root_cause": "rust_pin_safety",
+      "suggestion": "Respect Pin invariants. Use pin_utils or pin-project for safe pin projections. Implement Unpin if type is safe to move.",
+      "confidence": "medium",
+      "severity": "high",
+      "category": "compile_time"
+    },
+    {
+      "id": "rust_const_fn_limitation",
+      "pattern": "cannot call non-const fn.*in const fn|not yet stable as const",
+      "type": "CompileError",
+      "description": "Const function limitation",
+      "root_cause": "rust_const_limitation",
+      "suggestion": "Only use const-compatible operations in const functions. Check if feature is stabilized in newer Rust versions.",
+      "confidence": "high",
+      "severity": "low",
+      "category": "compile_time"
+    },
+    {
+      "id": "rust_unsafe_transmute",
+      "pattern": "transmute.*is unsafe|cannot transmute between types of different sizes",
+      "type": "CompileError",
+      "description": "Unsafe transmute operation",
+      "root_cause": "rust_unsafe_transmute",
+      "suggestion": "Avoid transmute when possible. Use safe conversions like From/Into traits. Ensure types have same size and alignment.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "unsafe"
+    },
+    {
+      "id": "rust_send_sync_bound",
+      "pattern": "the trait.*Send.*is not implemented|the trait.*Sync.*is not implemented|cannot be sent between threads safely",
+      "type": "CompileError",
+      "description": "Type doesn't implement Send or Sync for thread safety",
+      "root_cause": "rust_thread_safety",
+      "suggestion": "Ensure all fields implement Send/Sync, use Arc<Mutex<T>> for thread-safe sharing, or keep data thread-local.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "concurrency"
+    },
+    {
+      "id": "rust_phantom_data",
+      "pattern": "parameter.*is never used|consider using.*PhantomData",
+      "type": "CompileWarning",
+      "description": "Unused type parameter",
+      "root_cause": "rust_unused_type_param",
+      "suggestion": "Use PhantomData<T> to indicate ownership of T without storing it. Common in generic structs with lifetime or type parameters.",
+      "confidence": "medium",
+      "severity": "low",
+      "category": "compile_time"
     }
   ]
 }
