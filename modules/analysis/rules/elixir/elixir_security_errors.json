@@ -1,0 +1,92 @@
+{
+  "name": "Elixir Security Vulnerability Patterns",
+  "description": "Security vulnerability patterns for Elixir applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "elixir_security_atom_exhaustion",
+      "pattern": "String\\.to_atom.*user|binary_to_atom.*untrusted|atom.*table.*exhaustion",
+      "type": "SecurityError",
+      "description": "Atom exhaustion vulnerability",
+      "root_cause": "atom_exhaustion",
+      "suggestion": "Use String.to_existing_atom or avoid dynamic atom creation",
+      "category": "elixir",
+      "subcategory": "dos",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "atom",
+        "dos"
+      ]
+    },
+    {
+      "id": "elixir_security_code_injection",
+      "pattern": "Code\\.eval_string.*user|eval.*untrusted|compile.*dynamic",
+      "type": "SecurityError",
+      "description": "Code injection through eval",
+      "root_cause": "code_injection",
+      "suggestion": "Never evaluate untrusted code, use safe alternatives",
+      "category": "elixir",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "eval",
+        "injection"
+      ]
+    },
+    {
+      "id": "elixir_security_sql_injection",
+      "pattern": "Ecto\\.Query\\.API\\.fragment.*interpolation|raw.*sql.*string|query.*concatenation",
+      "type": "SecurityError",
+      "description": "SQL injection vulnerability",
+      "root_cause": "sql_injection",
+      "suggestion": "Use Ecto parameterized queries, avoid string interpolation in fragments",
+      "category": "elixir",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "sql",
+        "ecto"
+      ]
+    },
+    {
+      "id": "elixir_security_command_injection",
+      "pattern": "System\\.cmd.*interpolation|Port\\.open.*user.*input|os:cmd.*untrusted",
+      "type": "SecurityError",
+      "description": "Command injection vulnerability",
+      "root_cause": "command_injection",
+      "suggestion": "Validate inputs, use argument lists instead of string commands",
+      "category": "elixir",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "command",
+        "system"
+      ]
+    },
+    {
+      "id": "elixir_security_weak_random",
+      "pattern": ":rand.*password|Enum\\.random.*security|weak.*random.*crypto",
+      "type": "SecurityError",
+      "description": "Using weak random for security",
+      "root_cause": "weak_randomness",
+      "suggestion": "Use :crypto.strong_rand_bytes for cryptographic randomness",
+      "category": "elixir",
+      "subcategory": "cryptography",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "random",
+        "crypto"
+      ]
+    }
+  ]
+}

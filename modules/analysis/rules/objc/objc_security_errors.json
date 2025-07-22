@@ -1,0 +1,92 @@
+{
+  "name": "Objective-C Security Vulnerability Patterns",
+  "description": "Security vulnerability patterns for Objective-C applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "objc_security_format_string",
+      "pattern": "stringWithFormat:.*user|NSLog\\(@\"%@.*untrusted|format.*string.*vulnerability",
+      "type": "SecurityError",
+      "description": "Format string vulnerability",
+      "root_cause": "format_string",
+      "suggestion": "Use format specifiers correctly, never pass user input as format",
+      "category": "objc",
+      "subcategory": "string",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "format",
+        "injection"
+      ]
+    },
+    {
+      "id": "objc_security_buffer_overflow",
+      "pattern": "strcpy|strcat|sprintf[^n]|gets|C string.*unsafe",
+      "type": "SecurityError",
+      "description": "Buffer overflow using unsafe C functions",
+      "root_cause": "buffer_overflow",
+      "suggestion": "Use NSString methods or safe C functions with bounds checking",
+      "category": "objc",
+      "subcategory": "memory",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "buffer",
+        "overflow"
+      ]
+    },
+    {
+      "id": "objc_security_keychain_weak",
+      "pattern": "kSecAttrAccessible.*Always|SecItemAdd.*insecure|keychain.*weak.*protection",
+      "type": "SecurityError",
+      "description": "Weak keychain item protection",
+      "root_cause": "keychain_insecure",
+      "suggestion": "Use appropriate kSecAttrAccessible values with device lock requirement",
+      "category": "objc",
+      "subcategory": "keychain",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "keychain",
+        "storage"
+      ]
+    },
+    {
+      "id": "objc_security_url_scheme",
+      "pattern": "handleOpenURL:.*validation|openURL:.*scheme.*check|URL.*scheme.*hijacking",
+      "type": "SecurityError",
+      "description": "URL scheme validation missing",
+      "root_cause": "url_validation",
+      "suggestion": "Validate URL schemes and parameters before processing",
+      "category": "objc",
+      "subcategory": "url",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "url",
+        "validation"
+      ]
+    },
+    {
+      "id": "objc_security_weak_random",
+      "pattern": "arc4random\\(\\)|rand\\(\\)|random\\(\\).*security",
+      "type": "SecurityError",
+      "description": "Weak random number generation",
+      "root_cause": "weak_randomness",
+      "suggestion": "Use SecRandomCopyBytes for cryptographic randomness",
+      "category": "objc",
+      "subcategory": "cryptography",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "random",
+        "crypto"
+      ]
+    }
+  ]
+}

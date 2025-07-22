@@ -1,0 +1,92 @@
+{
+  "name": "Objective-C Performance Error Patterns",
+  "description": "Performance optimization patterns for Objective-C applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "objc_performance_autorelease_pool",
+      "pattern": "loop.*without.*autoreleasepool|memory.*spike.*loop|autorelease.*missing",
+      "type": "PerformanceError",
+      "description": "Missing autorelease pool in loop",
+      "root_cause": "memory_accumulation",
+      "suggestion": "Use @autoreleasepool block inside loops creating many objects",
+      "category": "objc",
+      "subcategory": "memory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "memory",
+        "autorelease"
+      ]
+    },
+    {
+      "id": "objc_performance_property_access",
+      "pattern": "self\\.(\\w+).*loop|property.*access.*performance|getter.*overhead",
+      "type": "PerformanceError",
+      "description": "Repeated property access in loop",
+      "root_cause": "property_overhead",
+      "suggestion": "Cache property values in local variables for loop access",
+      "category": "objc",
+      "subcategory": "properties",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "property",
+        "loop"
+      ]
+    },
+    {
+      "id": "objc_performance_nsstring_comparison",
+      "pattern": "isEqualToString:.*loop|compare:.*repeated|string.*comparison.*slow",
+      "type": "PerformanceError",
+      "description": "Inefficient string comparisons",
+      "root_cause": "string_comparison",
+      "suggestion": "Use isEqual: for equality, cache comparison results",
+      "category": "objc",
+      "subcategory": "string",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "string",
+        "comparison"
+      ]
+    },
+    {
+      "id": "objc_performance_kvo_overhead",
+      "pattern": "addObserver.*many|KVO.*performance|willChangeValueForKey.*frequent",
+      "type": "PerformanceError",
+      "description": "Excessive KVO usage causing overhead",
+      "root_cause": "kvo_overhead",
+      "suggestion": "Use delegates or blocks for high-frequency updates",
+      "category": "objc",
+      "subcategory": "kvo",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "kvo",
+        "observation"
+      ]
+    },
+    {
+      "id": "objc_performance_collection_enumeration",
+      "pattern": "objectAtIndex:.*for.*loop|count\\].*repeated|NSArray.*enumeration",
+      "type": "PerformanceError",
+      "description": "Inefficient collection enumeration",
+      "root_cause": "enumeration_overhead",
+      "suggestion": "Use fast enumeration (for-in) or enumerateObjectsUsingBlock:",
+      "category": "objc",
+      "subcategory": "collections",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "enumeration",
+        "collections"
+      ]
+    }
+  ]
+}

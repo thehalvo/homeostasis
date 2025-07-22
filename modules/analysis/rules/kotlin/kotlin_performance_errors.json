@@ -1,0 +1,92 @@
+{
+  "name": "Kotlin Performance Error Patterns",
+  "description": "Performance optimization patterns for Kotlin applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "kotlin_performance_unnecessary_boxing",
+      "pattern": "List<Int>.*large|boxing.*performance|primitive.*collection",
+      "type": "PerformanceError",
+      "description": "Boxing of primitives in collections",
+      "root_cause": "boxing_overhead",
+      "suggestion": "Use IntArray, LongArray for primitive collections",
+      "category": "kotlin",
+      "subcategory": "collections",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "boxing",
+        "primitives"
+      ]
+    },
+    {
+      "id": "kotlin_performance_sequence_misuse",
+      "pattern": "asSequence\\(\\)\\.toList\\(\\)|sequence.*small.*collection|unnecessary.*lazy",
+      "type": "PerformanceError",
+      "description": "Misuse of sequences for small collections",
+      "root_cause": "sequence_overhead",
+      "suggestion": "Use sequences for large data or multiple operations, regular collections for small data",
+      "category": "kotlin",
+      "subcategory": "collections",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "sequence",
+        "collections"
+      ]
+    },
+    {
+      "id": "kotlin_performance_coroutine_context_switch",
+      "pattern": "withContext.*frequent|Dispatchers.*switch.*performance|coroutine.*overhead",
+      "type": "PerformanceError",
+      "description": "Excessive coroutine context switching",
+      "root_cause": "context_switch_overhead",
+      "suggestion": "Minimize context switches, batch operations in same context",
+      "category": "kotlin",
+      "subcategory": "coroutines",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "coroutines",
+        "context"
+      ]
+    },
+    {
+      "id": "kotlin_performance_companion_object",
+      "pattern": "companion.*object.*constant|INSTANCE.*access.*hot.*path",
+      "type": "PerformanceError",
+      "description": "Companion object access overhead",
+      "root_cause": "companion_overhead",
+      "suggestion": "Use top-level constants or @JvmField for frequently accessed values",
+      "category": "kotlin",
+      "subcategory": "objects",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "companion",
+        "constants"
+      ]
+    },
+    {
+      "id": "kotlin_performance_string_template",
+      "pattern": "\\$.*loop.*string|template.*performance|StringBuilder.*better",
+      "type": "PerformanceError",
+      "description": "String templates in performance-critical loops",
+      "root_cause": "string_template_overhead",
+      "suggestion": "Use StringBuilder for complex string building in loops",
+      "category": "kotlin",
+      "subcategory": "string",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "string",
+        "template"
+      ]
+    }
+  ]
+}

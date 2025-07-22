@@ -1,0 +1,92 @@
+{
+  "name": "Elixir Performance Error Patterns",
+  "description": "Performance optimization patterns for Elixir applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "elixir_performance_list_concatenation",
+      "pattern": "\\+\\+.*loop|list.*concatenation.*slow|append.*lists.*repeatedly",
+      "type": "PerformanceError",
+      "description": "Inefficient list concatenation in loop",
+      "root_cause": "list_concatenation",
+      "suggestion": "Build lists in reverse with cons, then reverse once",
+      "category": "elixir",
+      "subcategory": "lists",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "list",
+        "concatenation"
+      ]
+    },
+    {
+      "id": "elixir_performance_large_message",
+      "pattern": "send.*large.*data|message.*too.*big|mailbox.*overflow",
+      "type": "PerformanceError",
+      "description": "Sending large messages between processes",
+      "root_cause": "message_size",
+      "suggestion": "Use ETS, persistent_term, or pass references instead of data",
+      "category": "elixir",
+      "subcategory": "processes",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "message",
+        "process"
+      ]
+    },
+    {
+      "id": "elixir_performance_ets_select",
+      "pattern": ":ets\\.select.*large|match.*entire.*table|ets.*full.*scan",
+      "type": "PerformanceError",
+      "description": "Inefficient ETS table scanning",
+      "root_cause": "ets_scan",
+      "suggestion": "Use proper indexes, limit with match specifications",
+      "category": "elixir",
+      "subcategory": "ets",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "ets",
+        "query"
+      ]
+    },
+    {
+      "id": "elixir_performance_binary_construction",
+      "pattern": "<>.*loop|binary.*concatenation.*inefficient|iolist.*better",
+      "type": "PerformanceError",
+      "description": "Inefficient binary construction",
+      "root_cause": "binary_construction",
+      "suggestion": "Use iolists and IO.iodata_to_binary at the end",
+      "category": "elixir",
+      "subcategory": "binary",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "binary",
+        "iolist"
+      ]
+    },
+    {
+      "id": "elixir_performance_genserver_bottleneck",
+      "pattern": "GenServer.*timeout|handle_call.*slow|process.*bottleneck",
+      "type": "PerformanceError",
+      "description": "GenServer becoming a bottleneck",
+      "root_cause": "genserver_bottleneck",
+      "suggestion": "Use pooling, split state, or consider ETS for shared state",
+      "category": "elixir",
+      "subcategory": "genserver",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "genserver",
+        "bottleneck"
+      ]
+    }
+  ]
+}

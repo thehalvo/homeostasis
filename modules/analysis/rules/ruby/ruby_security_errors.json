@@ -1,0 +1,92 @@
+{
+  "name": "Ruby Security Vulnerability Patterns",
+  "description": "Security vulnerability patterns for Ruby applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "ruby_security_sql_injection",
+      "pattern": "where\\(.*#\\{|find_by_sql.*interpolation|execute.*string.*concat",
+      "type": "SecurityError",
+      "description": "SQL injection vulnerability",
+      "root_cause": "sql_injection",
+      "suggestion": "Use parameterized queries with ? or named placeholders",
+      "category": "ruby",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "sql",
+        "injection"
+      ]
+    },
+    {
+      "id": "ruby_security_command_injection",
+      "pattern": "system.*#\\{|`.*#\\{|exec.*interpolation|%x.*user.*input",
+      "type": "SecurityError",
+      "description": "Command injection through string interpolation",
+      "root_cause": "command_injection",
+      "suggestion": "Use array form of system(), avoid backticks with user input",
+      "category": "ruby",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "command",
+        "injection"
+      ]
+    },
+    {
+      "id": "ruby_security_yaml_load",
+      "pattern": "YAML\\.load.*user|Psych\\.load.*untrusted|yaml.*unsafe.*load",
+      "type": "SecurityError",
+      "description": "Unsafe YAML deserialization",
+      "root_cause": "unsafe_deserialization",
+      "suggestion": "Use YAML.safe_load or Psych.safe_load for untrusted input",
+      "category": "ruby",
+      "subcategory": "deserialization",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "yaml",
+        "deserialization"
+      ]
+    },
+    {
+      "id": "ruby_security_mass_assignment",
+      "pattern": "params\\.permit\\(:|attr_accessible|strong.*parameters.*missing",
+      "type": "SecurityError",
+      "description": "Mass assignment vulnerability",
+      "root_cause": "mass_assignment",
+      "suggestion": "Use strong parameters, whitelist allowed attributes",
+      "category": "ruby",
+      "subcategory": "rails",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "mass_assignment",
+        "rails"
+      ]
+    },
+    {
+      "id": "ruby_security_regex_dos",
+      "pattern": "Regexp\\.new.*user|regex.*exponential|catastrophic.*backtracking",
+      "type": "SecurityError",
+      "description": "Regular expression DoS vulnerability",
+      "root_cause": "regex_dos",
+      "suggestion": "Validate regex patterns, set timeouts, avoid nested quantifiers",
+      "category": "ruby",
+      "subcategory": "dos",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "regex",
+        "dos"
+      ]
+    }
+  ]
+}

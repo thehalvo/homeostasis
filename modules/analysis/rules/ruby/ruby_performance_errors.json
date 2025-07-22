@@ -1,0 +1,92 @@
+{
+  "name": "Ruby Performance Error Patterns",
+  "description": "Performance optimization patterns for Ruby applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "ruby_performance_n_plus_1",
+      "pattern": "N\\+1 query|includes.*missing|each.*find|query.*loop",
+      "type": "PerformanceError",
+      "description": "N+1 query problem in ActiveRecord",
+      "root_cause": "database_inefficiency",
+      "suggestion": "Use includes(), preload(), or eager_load() to avoid N+1 queries",
+      "category": "ruby",
+      "subcategory": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "database",
+        "rails"
+      ]
+    },
+    {
+      "id": "ruby_performance_string_concatenation",
+      "pattern": "\\+.*string.*loop|<<.*performance.*string|concat.*inefficient",
+      "type": "PerformanceError",
+      "description": "Inefficient string concatenation",
+      "root_cause": "string_inefficiency",
+      "suggestion": "Use << for mutation, join() for arrays, or StringIO for large concatenations",
+      "category": "ruby",
+      "subcategory": "string",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "string",
+        "memory"
+      ]
+    },
+    {
+      "id": "ruby_performance_symbol_creation",
+      "pattern": "to_sym.*user.*input|intern.*dynamic|symbol.*table.*growth",
+      "type": "PerformanceError",
+      "description": "Dynamic symbol creation causing memory bloat",
+      "root_cause": "symbol_leak",
+      "suggestion": "Avoid creating symbols from user input, use strings for dynamic keys",
+      "category": "ruby",
+      "subcategory": "memory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "symbol",
+        "memory"
+      ]
+    },
+    {
+      "id": "ruby_performance_block_vs_proc",
+      "pattern": "&block.*performance|proc.*creation.*loop|lambda.*overhead",
+      "type": "PerformanceError",
+      "description": "Unnecessary Proc object creation",
+      "root_cause": "proc_overhead",
+      "suggestion": "Use yield instead of &block when possible, avoid creating Procs in loops",
+      "category": "ruby",
+      "subcategory": "blocks",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "proc",
+        "blocks"
+      ]
+    },
+    {
+      "id": "ruby_performance_method_missing",
+      "pattern": "method_missing.*performance|respond_to_missing|dynamic.*method.*slow",
+      "type": "PerformanceError",
+      "description": "Overuse of method_missing causing performance issues",
+      "root_cause": "metaprogramming_overhead",
+      "suggestion": "Define methods explicitly when possible, cache method_missing results",
+      "category": "ruby",
+      "subcategory": "metaprogramming",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "metaprogramming",
+        "methods"
+      ]
+    }
+  ]
+}

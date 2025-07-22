@@ -1,0 +1,92 @@
+{
+  "name": "PHP Performance Error Patterns",
+  "description": "Performance optimization patterns for PHP applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "php_performance_database_n_plus_1",
+      "pattern": "foreach.*query|while.*mysqli_query|loop.*SELECT|N\\+1",
+      "type": "PerformanceError",
+      "description": "N+1 query problem detected",
+      "root_cause": "database_inefficiency",
+      "suggestion": "Use JOIN queries or batch loading to reduce database calls",
+      "category": "php",
+      "subcategory": "database",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "database",
+        "query"
+      ]
+    },
+    {
+      "id": "php_performance_string_concatenation",
+      "pattern": "\\.=.*loop|string.*concatenation.*while|inefficient.*string.*building",
+      "type": "PerformanceError",
+      "description": "Inefficient string concatenation in loop",
+      "root_cause": "string_inefficiency",
+      "suggestion": "Use array and implode() or output buffering for large strings",
+      "category": "php",
+      "subcategory": "string",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "string",
+        "memory"
+      ]
+    },
+    {
+      "id": "php_performance_autoload_overhead",
+      "pattern": "require.*loop|include.*many.*files|autoload.*performance",
+      "type": "PerformanceError",
+      "description": "Excessive file includes or autoloading",
+      "root_cause": "autoload_overhead",
+      "suggestion": "Use composer autoloader, opcache, or preload files",
+      "category": "php",
+      "subcategory": "loading",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "autoload",
+        "files"
+      ]
+    },
+    {
+      "id": "php_performance_array_functions",
+      "pattern": "in_array.*large|array_search.*performance|array_key_exists.*slow",
+      "type": "PerformanceError",
+      "description": "Inefficient array operations on large datasets",
+      "root_cause": "array_inefficiency",
+      "suggestion": "Use isset() for key checks, array_flip() for value searches",
+      "category": "php",
+      "subcategory": "array",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "array",
+        "search"
+      ]
+    },
+    {
+      "id": "php_performance_regex_compilation",
+      "pattern": "preg_match.*loop|preg_replace.*repeated|regex.*compilation.*overhead",
+      "type": "PerformanceError",
+      "description": "Repeated regex compilation in loops",
+      "root_cause": "regex_overhead",
+      "suggestion": "Compile regex once outside loop, use simpler string functions when possible",
+      "category": "php",
+      "subcategory": "regex",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "regex",
+        "compilation"
+      ]
+    }
+  ]
+}

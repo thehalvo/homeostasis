@@ -1,0 +1,92 @@
+{
+  "name": "Scala Security Vulnerability Patterns",
+  "description": "Security vulnerability patterns for Scala applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "scala_security_sql_injection",
+      "pattern": "SQL.*\\$\\{|executeQuery.*string.*interpolation|anorm.*unsafe",
+      "type": "SecurityError",
+      "description": "SQL injection through string interpolation",
+      "root_cause": "sql_injection",
+      "suggestion": "Use parameterized queries with Slick, Doobie, or Anorm placeholders",
+      "category": "scala",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "sql",
+        "injection"
+      ]
+    },
+    {
+      "id": "scala_security_xml_external_entity",
+      "pattern": "XML\\.load|scala\\.xml.*external.*entity|XXE.*vulnerability",
+      "type": "SecurityError",
+      "description": "XML external entity vulnerability",
+      "root_cause": "xxe_vulnerability",
+      "suggestion": "Configure XML parser to disable external entities",
+      "category": "scala",
+      "subcategory": "xml",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "xxe",
+        "xml"
+      ]
+    },
+    {
+      "id": "scala_security_deserialization",
+      "pattern": "ObjectInputStream|Java.*serialization|readObject.*untrusted",
+      "type": "SecurityError",
+      "description": "Unsafe Java deserialization",
+      "root_cause": "unsafe_deserialization",
+      "suggestion": "Use JSON serialization with validation instead of Java serialization",
+      "category": "scala",
+      "subcategory": "deserialization",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "deserialization",
+        "rce"
+      ]
+    },
+    {
+      "id": "scala_security_weak_random",
+      "pattern": "scala\\.util\\.Random.*security|Random.*password|predictable.*random",
+      "type": "SecurityError",
+      "description": "Using weak random for security",
+      "root_cause": "weak_randomness",
+      "suggestion": "Use java.security.SecureRandom for security purposes",
+      "category": "scala",
+      "subcategory": "cryptography",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "random",
+        "crypto"
+      ]
+    },
+    {
+      "id": "scala_security_regex_dos",
+      "pattern": "\\.r\".*\\(\\+\\+|\\.r\".*catastrophic|Regex.*exponential|pattern.*dos",
+      "type": "SecurityError",
+      "description": "Regular expression vulnerable to DoS",
+      "root_cause": "regex_dos",
+      "suggestion": "Avoid nested quantifiers, validate regex patterns, set timeouts",
+      "category": "scala",
+      "subcategory": "dos",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "regex",
+        "dos"
+      ]
+    }
+  ]
+}

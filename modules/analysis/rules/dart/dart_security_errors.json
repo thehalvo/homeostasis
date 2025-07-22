@@ -1,0 +1,92 @@
+{
+  "name": "Dart Security Vulnerability Patterns",
+  "description": "Security vulnerability patterns for Dart applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "dart_security_code_injection",
+      "pattern": "dart:mirrors.*eval|Function\\.apply.*untrusted|dynamic.*code.*execution",
+      "type": "SecurityError",
+      "description": "Potential code injection",
+      "root_cause": "code_injection",
+      "suggestion": "Avoid mirrors and dynamic code execution with untrusted input",
+      "category": "dart",
+      "subcategory": "injection",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "injection",
+        "mirrors"
+      ]
+    },
+    {
+      "id": "dart_security_insecure_random",
+      "pattern": "Random\\(\\).*password|math\\.Random.*security|predictable.*random",
+      "type": "SecurityError",
+      "description": "Using insecure random for security",
+      "root_cause": "weak_randomness",
+      "suggestion": "Use Random.secure() for cryptographic randomness",
+      "category": "dart",
+      "subcategory": "cryptography",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "random",
+        "crypto"
+      ]
+    },
+    {
+      "id": "dart_security_path_traversal",
+      "pattern": "File\\(.*\\.\\.|\\.join.*user.*input|directory.*traversal",
+      "type": "SecurityError",
+      "description": "Path traversal vulnerability",
+      "root_cause": "path_traversal",
+      "suggestion": "Validate file paths, use path.normalize and check against base directory",
+      "category": "dart",
+      "subcategory": "file",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "path",
+        "file"
+      ]
+    },
+    {
+      "id": "dart_security_sql_injection",
+      "pattern": "rawQuery.*\\$|database.*string.*interpolation|SQL.*concatenation",
+      "type": "SecurityError",
+      "description": "SQL injection vulnerability",
+      "root_cause": "sql_injection",
+      "suggestion": "Use parameterized queries with ? placeholders",
+      "category": "dart",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "sql",
+        "database"
+      ]
+    },
+    {
+      "id": "dart_security_hardcoded_secrets",
+      "pattern": "const.*apiKey.*=|String.*password.*=.*['\"]|secret.*hardcoded",
+      "type": "SecurityError",
+      "description": "Hardcoded secrets in source code",
+      "root_cause": "hardcoded_secrets",
+      "suggestion": "Use environment variables or secure storage solutions",
+      "category": "dart",
+      "subcategory": "secrets",
+      "severity": "critical",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "secrets",
+        "hardcoded"
+      ]
+    }
+  ]
+}

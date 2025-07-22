@@ -1,0 +1,92 @@
+{
+  "name": "PHP Security Vulnerability Patterns",
+  "description": "Security vulnerability patterns for PHP applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "php_security_sql_injection",
+      "pattern": "mysql_query.*\\$_|mysqli_query.*\\.|query.*concatenation|\\$_GET.*SQL",
+      "type": "SecurityError",
+      "description": "SQL injection vulnerability",
+      "root_cause": "sql_injection",
+      "suggestion": "Use prepared statements with PDO or mysqli",
+      "category": "php",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "sql",
+        "injection"
+      ]
+    },
+    {
+      "id": "php_security_xss",
+      "pattern": "echo.*\\$_GET|print.*\\$_POST|<?=.*\\$_REQUEST|htmlspecialchars.*missing",
+      "type": "SecurityError",
+      "description": "Cross-site scripting (XSS) vulnerability",
+      "root_cause": "xss_vulnerability",
+      "suggestion": "Use htmlspecialchars() or htmlentities() for output escaping",
+      "category": "php",
+      "subcategory": "xss",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "xss",
+        "output"
+      ]
+    },
+    {
+      "id": "php_security_file_inclusion",
+      "pattern": "include.*\\$_|require.*GET|include_once.*user.*input|LFI|RFI",
+      "type": "SecurityError",
+      "description": "File inclusion vulnerability (LFI/RFI)",
+      "root_cause": "file_inclusion",
+      "suggestion": "Never use user input in include/require, use whitelist of allowed files",
+      "category": "php",
+      "subcategory": "inclusion",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "lfi",
+        "rfi"
+      ]
+    },
+    {
+      "id": "php_security_command_injection",
+      "pattern": "exec\\(.*\\$_|system\\(.*GET|shell_exec.*POST|passthru.*user",
+      "type": "SecurityError",
+      "description": "Command injection vulnerability",
+      "root_cause": "command_injection",
+      "suggestion": "Use escapeshellarg() and escapeshellcmd(), avoid shell commands",
+      "category": "php",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "command",
+        "shell"
+      ]
+    },
+    {
+      "id": "php_security_weak_random",
+      "pattern": "rand\\(\\).*password|mt_rand.*token|uniqid.*security",
+      "type": "SecurityError",
+      "description": "Weak random number generation for security",
+      "root_cause": "weak_randomness",
+      "suggestion": "Use random_bytes() or openssl_random_pseudo_bytes()",
+      "category": "php",
+      "subcategory": "cryptography",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "random",
+        "crypto"
+      ]
+    }
+  ]
+}

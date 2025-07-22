@@ -1,0 +1,92 @@
+{
+  "name": "Swift Performance Error Patterns",
+  "description": "Performance optimization patterns for Swift applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "swift_performance_arc_overhead",
+      "pattern": "retain.*cycle|strong.*reference.*cycle|memory.*leak.*closure",
+      "type": "PerformanceError",
+      "description": "Retain cycle causing memory leak",
+      "root_cause": "retain_cycle",
+      "suggestion": "Use weak or unowned references in closures and delegates",
+      "category": "swift",
+      "subcategory": "memory",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "arc",
+        "memory"
+      ]
+    },
+    {
+      "id": "swift_performance_value_type_copying",
+      "pattern": "struct.*large.*copy|Array.*COW.*performance|unnecessary.*copying",
+      "type": "PerformanceError",
+      "description": "Large value type causing excessive copying",
+      "root_cause": "value_type_overhead",
+      "suggestion": "Use class for large data, implement COW, or use inout parameters",
+      "category": "swift",
+      "subcategory": "types",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "struct",
+        "copy"
+      ]
+    },
+    {
+      "id": "swift_performance_string_interpolation",
+      "pattern": "String\\(describing:.*loop|interpolation.*performance|\\\\\\(.*heavy",
+      "type": "PerformanceError",
+      "description": "Heavy string interpolation in performance-critical code",
+      "root_cause": "string_overhead",
+      "suggestion": "Use String(format:) for complex formatting, minimize interpolations",
+      "category": "swift",
+      "subcategory": "string",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "string",
+        "interpolation"
+      ]
+    },
+    {
+      "id": "swift_performance_dynamic_dispatch",
+      "pattern": "@objc.*performance|dynamic.*dispatch.*overhead|protocol.*witness.*table",
+      "type": "PerformanceError",
+      "description": "Dynamic dispatch overhead in hot path",
+      "root_cause": "dynamic_dispatch",
+      "suggestion": "Use final, private, or @inlinable to enable static dispatch",
+      "category": "swift",
+      "subcategory": "dispatch",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "dispatch",
+        "optimization"
+      ]
+    },
+    {
+      "id": "swift_performance_lazy_evaluation",
+      "pattern": "filter.*map.*performance|unnecessary.*array.*creation|chain.*operations",
+      "type": "PerformanceError",
+      "description": "Creating intermediate collections unnecessarily",
+      "root_cause": "collection_overhead",
+      "suggestion": "Use lazy sequences for chained operations, compactMap instead of filter+map",
+      "category": "swift",
+      "subcategory": "collections",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "lazy",
+        "collections"
+      ]
+    }
+  ]
+}

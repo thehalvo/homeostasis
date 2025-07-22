@@ -1,0 +1,92 @@
+{
+  "name": "Scala Performance Error Patterns",
+  "description": "Performance optimization patterns for Scala applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "scala_performance_collection_conversion",
+      "pattern": "toList\\.toSet|toArray\\.toList|unnecessary.*conversion|collection.*transform",
+      "type": "PerformanceError",
+      "description": "Unnecessary collection conversions",
+      "root_cause": "conversion_overhead",
+      "suggestion": "Avoid redundant conversions, use appropriate collection type from start",
+      "category": "scala",
+      "subcategory": "collections",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "collections",
+        "conversion"
+      ]
+    },
+    {
+      "id": "scala_performance_pattern_match",
+      "pattern": "match.*hot.*path|pattern.*matching.*performance|exhaustive.*match.*slow",
+      "type": "PerformanceError",
+      "description": "Complex pattern matching in hot path",
+      "root_cause": "pattern_overhead",
+      "suggestion": "Use simple if-else for binary choices, optimize match order",
+      "category": "scala",
+      "subcategory": "patterns",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "pattern",
+        "matching"
+      ]
+    },
+    {
+      "id": "scala_performance_implicit_conversion",
+      "pattern": "implicit.*conversion.*loop|implicit.*resolution.*slow|too.*many.*implicits",
+      "type": "PerformanceError",
+      "description": "Heavy implicit resolution overhead",
+      "root_cause": "implicit_overhead",
+      "suggestion": "Make conversions explicit in hot paths, limit implicit scope",
+      "category": "scala",
+      "subcategory": "implicits",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "implicit",
+        "resolution"
+      ]
+    },
+    {
+      "id": "scala_performance_future_blocking",
+      "pattern": "Await\\.result|Future.*blocking|Thread.*blocked.*future",
+      "type": "PerformanceError",
+      "description": "Blocking on futures causing thread starvation",
+      "root_cause": "blocking_futures",
+      "suggestion": "Use map/flatMap, avoid Await.result, use separate thread pool for blocking",
+      "category": "scala",
+      "subcategory": "concurrency",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "futures",
+        "blocking"
+      ]
+    },
+    {
+      "id": "scala_performance_lazy_val_overhead",
+      "pattern": "lazy val.*synchronized|lazy.*initialization.*contention|lazy val.*hot.*path",
+      "type": "PerformanceError",
+      "description": "Lazy val synchronization overhead",
+      "root_cause": "lazy_overhead",
+      "suggestion": "Use regular val if always accessed, or @volatile for single assignment",
+      "category": "scala",
+      "subcategory": "initialization",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "lazy",
+        "synchronization"
+      ]
+    }
+  ]
+}

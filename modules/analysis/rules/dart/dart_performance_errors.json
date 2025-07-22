@@ -1,0 +1,92 @@
+{
+  "name": "Dart Performance Error Patterns",
+  "description": "Performance optimization patterns for Dart applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "dart_performance_list_growth",
+      "pattern": "List.*add.*loop|grow.*list.*repeatedly|resize.*performance",
+      "type": "PerformanceError",
+      "description": "List growing inefficiently in loop",
+      "root_cause": "list_reallocation",
+      "suggestion": "Pre-allocate list with List.filled or use fixed-length list",
+      "category": "dart",
+      "subcategory": "collections",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "list",
+        "allocation"
+      ]
+    },
+    {
+      "id": "dart_performance_string_buffer",
+      "pattern": "\\+.*string.*loop|concatenation.*performance|string.*building.*slow",
+      "type": "PerformanceError",
+      "description": "String concatenation in loop",
+      "root_cause": "string_concatenation",
+      "suggestion": "Use StringBuffer for multiple string concatenations",
+      "category": "dart",
+      "subcategory": "string",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "string",
+        "buffer"
+      ]
+    },
+    {
+      "id": "dart_performance_future_wait",
+      "pattern": "await.*loop.*sequential|Future.*wait.*one.*by.*one|async.*serialized",
+      "type": "PerformanceError",
+      "description": "Sequential awaits that could be parallel",
+      "root_cause": "sequential_async",
+      "suggestion": "Use Future.wait for parallel execution of independent futures",
+      "category": "dart",
+      "subcategory": "async",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "async",
+        "parallel"
+      ]
+    },
+    {
+      "id": "dart_performance_isolate_copying",
+      "pattern": "SendPort\\.send.*large|isolate.*copy.*overhead|message.*passing.*slow",
+      "type": "PerformanceError",
+      "description": "Large data copying between isolates",
+      "root_cause": "isolate_overhead",
+      "suggestion": "Use TransferableTypedData for large binary data",
+      "category": "dart",
+      "subcategory": "isolates",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "isolate",
+        "copying"
+      ]
+    },
+    {
+      "id": "dart_performance_widget_rebuild",
+      "pattern": "setState.*unnecessary|rebuild.*entire.*tree|widget.*performance",
+      "type": "PerformanceError",
+      "description": "Unnecessary widget rebuilds in Flutter",
+      "root_cause": "widget_rebuild",
+      "suggestion": "Use const widgets, keys, and state management solutions",
+      "category": "dart",
+      "subcategory": "flutter",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "flutter",
+        "widget"
+      ]
+    }
+  ]
+}

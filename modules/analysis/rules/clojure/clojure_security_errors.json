@@ -1,0 +1,92 @@
+{
+  "name": "Clojure Security Vulnerability Patterns",
+  "description": "Security vulnerability patterns for Clojure applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "clojure_security_eval",
+      "pattern": "eval.*read-string|load-string.*user|eval.*untrusted",
+      "type": "SecurityError",
+      "description": "Code injection through eval",
+      "root_cause": "code_injection",
+      "suggestion": "Never eval untrusted input, use edn/read-string for data",
+      "category": "clojure",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "eval",
+        "injection"
+      ]
+    },
+    {
+      "id": "clojure_security_read_eval",
+      "pattern": "read-string.*#=|\\*read-eval\\*.*true|reader.*eval.*enabled",
+      "type": "SecurityError",
+      "description": "Reader eval enabled allowing code execution",
+      "root_cause": "reader_eval",
+      "suggestion": "Use clojure.edn/read-string or bind *read-eval* to false",
+      "category": "clojure",
+      "subcategory": "reader",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "reader",
+        "eval"
+      ]
+    },
+    {
+      "id": "clojure_security_sql_injection",
+      "pattern": "jdbc.*str.*concat|honeysql.*raw|sql.*string.*build",
+      "type": "SecurityError",
+      "description": "SQL injection vulnerability",
+      "root_cause": "sql_injection",
+      "suggestion": "Use parameterized queries with clojure.java.jdbc or honeysql",
+      "category": "clojure",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "sql",
+        "injection"
+      ]
+    },
+    {
+      "id": "clojure_security_system_command",
+      "pattern": "sh.*str.*user|shell.*command.*concat|clojure\\.java\\.shell",
+      "type": "SecurityError",
+      "description": "Command injection through shell execution",
+      "root_cause": "command_injection",
+      "suggestion": "Validate inputs, use vector form of sh, avoid string concatenation",
+      "category": "clojure",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "command",
+        "shell"
+      ]
+    },
+    {
+      "id": "clojure_security_weak_random",
+      "pattern": "rand.*password|rand-int.*token|java\\.util\\.Random.*security",
+      "type": "SecurityError",
+      "description": "Using weak random for security",
+      "root_cause": "weak_randomness",
+      "suggestion": "Use crypto.random or java.security.SecureRandom",
+      "category": "clojure",
+      "subcategory": "cryptography",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "random",
+        "crypto"
+      ]
+    }
+  ]
+}

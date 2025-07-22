@@ -1,0 +1,92 @@
+{
+  "name": "C# Security Vulnerability Patterns",
+  "description": "Security vulnerability patterns for C# applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "csharp_security_sql_injection",
+      "pattern": "SqlCommand.*\\+|ExecuteNonQuery.*string\\.Format|raw SQL.*concatenation",
+      "type": "SecurityError",
+      "description": "SQL injection vulnerability",
+      "root_cause": "sql_injection",
+      "suggestion": "Use parameterized queries with SqlParameter",
+      "category": "csharp",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "sql",
+        "injection"
+      ]
+    },
+    {
+      "id": "csharp_security_path_traversal",
+      "pattern": "Path\\.Combine.*\\.\\.|File\\.Open.*user input|directory traversal",
+      "type": "SecurityError",
+      "description": "Path traversal vulnerability",
+      "root_cause": "path_traversal",
+      "suggestion": "Validate paths, use Path.GetFullPath() and check against allowed directories",
+      "category": "csharp",
+      "subcategory": "file",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "path",
+        "traversal"
+      ]
+    },
+    {
+      "id": "csharp_security_weak_crypto",
+      "pattern": "SHA1|MD5|DES|TripleDES|weak.*algorithm",
+      "type": "SecurityError",
+      "description": "Using weak cryptographic algorithms",
+      "root_cause": "weak_cryptography",
+      "suggestion": "Use SHA256 or higher, AES for encryption",
+      "category": "csharp",
+      "subcategory": "cryptography",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "crypto",
+        "weak"
+      ]
+    },
+    {
+      "id": "csharp_security_hardcoded_password",
+      "pattern": "Password\\s*=\\s*\"|ConnectionString.*password=|hardcoded.*credential",
+      "type": "SecurityError",
+      "description": "Hardcoded credentials in source code",
+      "root_cause": "hardcoded_secrets",
+      "suggestion": "Use Azure Key Vault, environment variables, or secure configuration",
+      "category": "csharp",
+      "subcategory": "secrets",
+      "severity": "critical",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "password",
+        "secrets"
+      ]
+    },
+    {
+      "id": "csharp_security_xxe",
+      "pattern": "XmlResolver|DtdProcessing\\.Parse|XmlDocument.*unsafe",
+      "type": "SecurityError",
+      "description": "XML External Entity (XXE) vulnerability",
+      "root_cause": "xxe_vulnerability",
+      "suggestion": "Set XmlResolver to null, use XmlReaderSettings with DtdProcessing.Prohibit",
+      "category": "csharp",
+      "subcategory": "xml",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "xxe",
+        "xml"
+      ]
+    }
+  ]
+}

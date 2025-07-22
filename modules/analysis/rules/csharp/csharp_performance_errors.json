@@ -1,0 +1,92 @@
+{
+  "name": "C# Performance Error Patterns",
+  "description": "Performance optimization patterns for C# applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "csharp_performance_boxing_unboxing",
+      "pattern": "boxing.*value type|unboxing.*performance|object.*cast.*struct",
+      "type": "PerformanceError",
+      "description": "Excessive boxing/unboxing of value types",
+      "root_cause": "boxing_overhead",
+      "suggestion": "Use generic collections, avoid casting value types to object",
+      "category": "csharp",
+      "subcategory": "types",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "boxing",
+        "generics"
+      ]
+    },
+    {
+      "id": "csharp_performance_linq_misuse",
+      "pattern": "Count\\(\\) > 0|First\\(\\).*exception|multiple.*enumeration|ToList.*unnecessary",
+      "type": "PerformanceError",
+      "description": "Inefficient LINQ usage",
+      "root_cause": "linq_inefficiency",
+      "suggestion": "Use Any() instead of Count() > 0, FirstOrDefault() to avoid exceptions",
+      "category": "csharp",
+      "subcategory": "linq",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "linq",
+        "enumeration"
+      ]
+    },
+    {
+      "id": "csharp_performance_string_concatenation",
+      "pattern": "\\+.*string.*loop|string.*\\+=|concatenation.*performance",
+      "type": "PerformanceError",
+      "description": "String concatenation in loops",
+      "root_cause": "string_inefficiency",
+      "suggestion": "Use StringBuilder for multiple concatenations",
+      "category": "csharp",
+      "subcategory": "string",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "string",
+        "memory"
+      ]
+    },
+    {
+      "id": "csharp_performance_async_void",
+      "pattern": "async void|fire.*forget.*async|unobserved.*task.*exception",
+      "type": "PerformanceError",
+      "description": "Using async void outside event handlers",
+      "root_cause": "async_misuse",
+      "suggestion": "Use async Task instead of async void, handle exceptions properly",
+      "category": "csharp",
+      "subcategory": "async",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "async",
+        "exceptions"
+      ]
+    },
+    {
+      "id": "csharp_performance_gc_pressure",
+      "pattern": "GC\\.Collect|Gen2.*collection|Large Object Heap|memory pressure",
+      "type": "PerformanceError",
+      "description": "High garbage collection pressure",
+      "root_cause": "gc_pressure",
+      "suggestion": "Reduce allocations, use object pooling, avoid large object heap",
+      "category": "csharp",
+      "subcategory": "memory",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "gc",
+        "memory"
+      ]
+    }
+  ]
+}

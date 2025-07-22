@@ -1,0 +1,92 @@
+{
+  "name": "Rust Performance Error Patterns",
+  "description": "Performance optimization patterns for Rust applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "rust_performance_unnecessary_clone",
+      "pattern": "clone\\(\\).*unnecessary|cloning.*performance|redundant.*clone",
+      "type": "PerformanceError",
+      "description": "Unnecessary cloning of data",
+      "root_cause": "unnecessary_cloning",
+      "suggestion": "Use references, borrowing, or Cow<T> to avoid cloning",
+      "category": "rust",
+      "subcategory": "memory",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "clone",
+        "memory"
+      ]
+    },
+    {
+      "id": "rust_performance_collect_reallocation",
+      "pattern": "collect.*without.*capacity|Vec::new.*push.*loop|reallocation.*vector",
+      "type": "PerformanceError",
+      "description": "Vector reallocation during collect",
+      "root_cause": "vector_reallocation",
+      "suggestion": "Use with_capacity() when size is known, or size_hint for iterators",
+      "category": "rust",
+      "subcategory": "collections",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "vec",
+        "allocation"
+      ]
+    },
+    {
+      "id": "rust_performance_string_allocation",
+      "pattern": "format!.*simple.*concat|String::from.*\\+.*&str|to_string.*unnecessary",
+      "type": "PerformanceError",
+      "description": "Unnecessary string allocations",
+      "root_cause": "string_allocation",
+      "suggestion": "Use &str when possible, concat strings efficiently with push_str",
+      "category": "rust",
+      "subcategory": "string",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "string",
+        "allocation"
+      ]
+    },
+    {
+      "id": "rust_performance_mutex_contention",
+      "pattern": "Mutex.*contention|lock.*performance|Arc<Mutex.*hot path",
+      "type": "PerformanceError",
+      "description": "Mutex contention in hot path",
+      "root_cause": "lock_contention",
+      "suggestion": "Use RwLock for read-heavy workloads, consider lock-free structures",
+      "category": "rust",
+      "subcategory": "concurrency",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "mutex",
+        "concurrency"
+      ]
+    },
+    {
+      "id": "rust_performance_box_unnecessary",
+      "pattern": "Box<.*small.*type|unnecessary.*heap.*allocation|Box.*stack.*sufficient",
+      "type": "PerformanceError",
+      "description": "Unnecessary heap allocation with Box",
+      "root_cause": "heap_allocation",
+      "suggestion": "Use stack allocation for small types, Box only when needed",
+      "category": "rust",
+      "subcategory": "memory",
+      "severity": "low",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "box",
+        "heap"
+      ]
+    }
+  ]
+}

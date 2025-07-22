@@ -1,0 +1,92 @@
+{
+  "name": "Clojure Performance Error Patterns",
+  "description": "Performance optimization patterns for Clojure applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "clojure_performance_reflection",
+      "pattern": "reflection.*warning|cannot.*resolve.*method|performance.*reflection",
+      "type": "PerformanceError",
+      "description": "Reflection warnings indicating performance issues",
+      "root_cause": "reflection_overhead",
+      "suggestion": "Add type hints to avoid reflection, enable *warn-on-reflection*",
+      "category": "clojure",
+      "subcategory": "reflection",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "performance",
+        "reflection",
+        "hints"
+      ]
+    },
+    {
+      "id": "clojure_performance_lazy_realize",
+      "pattern": "doall.*large|realize.*entire.*sequence|lazy.*seq.*memory",
+      "type": "PerformanceError",
+      "description": "Realizing large lazy sequences",
+      "root_cause": "lazy_realization",
+      "suggestion": "Process sequences incrementally, use reducers for parallel processing",
+      "category": "clojure",
+      "subcategory": "sequences",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "lazy",
+        "memory"
+      ]
+    },
+    {
+      "id": "clojure_performance_persistent_update",
+      "pattern": "assoc.*loop|update.*nested.*deep|persistent.*collection.*slow",
+      "type": "PerformanceError",
+      "description": "Inefficient persistent collection updates",
+      "root_cause": "collection_update",
+      "suggestion": "Use transients for bulk updates, consider different data structure",
+      "category": "clojure",
+      "subcategory": "collections",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "persistent",
+        "transient"
+      ]
+    },
+    {
+      "id": "clojure_performance_protocol_dispatch",
+      "pattern": "protocol.*dispatch.*slow|defprotocol.*performance|polymorphic.*overhead",
+      "type": "PerformanceError",
+      "description": "Protocol dispatch overhead in tight loop",
+      "root_cause": "protocol_overhead",
+      "suggestion": "Use direct function calls in hot paths, consider caching",
+      "category": "clojure",
+      "subcategory": "protocols",
+      "severity": "medium",
+      "confidence": "low",
+      "tags": [
+        "performance",
+        "protocol",
+        "dispatch"
+      ]
+    },
+    {
+      "id": "clojure_performance_atom_contention",
+      "pattern": "swap!.*contention|atom.*retry.*many|CAS.*failure|compare-and-set",
+      "type": "PerformanceError",
+      "description": "High contention on atom causing retries",
+      "root_cause": "atom_contention",
+      "suggestion": "Use refs for coordinated updates, agents for async, or redesign state",
+      "category": "clojure",
+      "subcategory": "concurrency",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "performance",
+        "atom",
+        "concurrency"
+      ]
+    }
+  ]
+}

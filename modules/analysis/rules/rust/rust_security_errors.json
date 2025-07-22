@@ -1,0 +1,92 @@
+{
+  "name": "Rust Security Vulnerability Patterns",
+  "description": "Security vulnerability patterns for Rust applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "rust_security_unsafe_misuse",
+      "pattern": "unsafe.*unchecked|transmute.*arbitrary|raw pointer.*dereference",
+      "type": "SecurityError",
+      "description": "Unsafe code potentially violating memory safety",
+      "root_cause": "unsafe_code",
+      "suggestion": "Minimize unsafe blocks, validate all invariants, use safe abstractions",
+      "category": "rust",
+      "subcategory": "unsafe",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "unsafe",
+        "memory"
+      ]
+    },
+    {
+      "id": "rust_security_integer_overflow",
+      "pattern": "overflow.*release|wrapping_add.*unchecked|arithmetic.*panic",
+      "type": "SecurityError",
+      "description": "Integer overflow in release mode",
+      "root_cause": "integer_overflow",
+      "suggestion": "Use checked_*, saturating_*, or wrapping_* methods explicitly",
+      "category": "rust",
+      "subcategory": "numeric",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "overflow",
+        "numeric"
+      ]
+    },
+    {
+      "id": "rust_security_timing_attack",
+      "pattern": "==.*password|constant.*time.*comparison|timing.*attack",
+      "type": "SecurityError",
+      "description": "Potential timing attack in comparison",
+      "root_cause": "timing_attack",
+      "suggestion": "Use constant-time comparison from subtle crate for secrets",
+      "category": "rust",
+      "subcategory": "crypto",
+      "severity": "medium",
+      "confidence": "low",
+      "tags": [
+        "security",
+        "timing",
+        "crypto"
+      ]
+    },
+    {
+      "id": "rust_security_panic_dos",
+      "pattern": "unwrap\\(\\).*input|expect\\(\\).*user|panic.*untrusted",
+      "type": "SecurityError",
+      "description": "Panic on untrusted input causing DoS",
+      "root_cause": "panic_dos",
+      "suggestion": "Handle errors properly with Result, avoid unwrap on user input",
+      "category": "rust",
+      "subcategory": "dos",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "panic",
+        "dos"
+      ]
+    },
+    {
+      "id": "rust_security_sql_injection",
+      "pattern": "format!.*sql|query.*string.*concat|raw.*sql.*user",
+      "type": "SecurityError",
+      "description": "Potential SQL injection",
+      "root_cause": "sql_injection",
+      "suggestion": "Use parameterized queries with sqlx or diesel",
+      "category": "rust",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "sql",
+        "injection"
+      ]
+    }
+  ]
+}

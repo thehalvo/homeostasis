@@ -1,0 +1,92 @@
+{
+  "name": "Kotlin Security Vulnerability Patterns",
+  "description": "Security vulnerability patterns for Kotlin applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "kotlin_security_sql_injection",
+      "pattern": "rawQuery.*\\$|execSQL.*string.*template|SQL.*concatenation",
+      "type": "SecurityError",
+      "description": "SQL injection vulnerability",
+      "root_cause": "sql_injection",
+      "suggestion": "Use parameterized queries with ? placeholders",
+      "category": "kotlin",
+      "subcategory": "injection",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "sql",
+        "injection"
+      ]
+    },
+    {
+      "id": "kotlin_security_unsafe_intent",
+      "pattern": "getSerializableExtra.*cast|getParcelableExtra.*as|intent.*unsafe.*cast",
+      "type": "SecurityError",
+      "description": "Unsafe intent data handling",
+      "root_cause": "unsafe_cast",
+      "suggestion": "Validate intent extras, use safe casting with as?",
+      "category": "kotlin",
+      "subcategory": "android",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "intent",
+        "android"
+      ]
+    },
+    {
+      "id": "kotlin_security_weak_random",
+      "pattern": "Random\\(\\)|kotlin\\.random.*security|predictable.*random",
+      "type": "SecurityError",
+      "description": "Using weak random for security purposes",
+      "root_cause": "weak_randomness",
+      "suggestion": "Use java.security.SecureRandom for security-sensitive randomness",
+      "category": "kotlin",
+      "subcategory": "cryptography",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "random",
+        "crypto"
+      ]
+    },
+    {
+      "id": "kotlin_security_hardcoded_credentials",
+      "pattern": "const.*password.*=|apiKey.*=.*\"|BuildConfig.*secret",
+      "type": "SecurityError",
+      "description": "Hardcoded credentials in code",
+      "root_cause": "hardcoded_secrets",
+      "suggestion": "Use Android Keystore, environment variables, or secure configuration",
+      "category": "kotlin",
+      "subcategory": "secrets",
+      "severity": "critical",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "credentials",
+        "hardcoded"
+      ]
+    },
+    {
+      "id": "kotlin_security_unsafe_deserialization",
+      "pattern": "ObjectInputStream|readObject.*untrusted|Serializable.*vulnerability",
+      "type": "SecurityError",
+      "description": "Unsafe deserialization of untrusted data",
+      "root_cause": "unsafe_deserialization",
+      "suggestion": "Avoid Java serialization, use JSON with validation",
+      "category": "kotlin",
+      "subcategory": "deserialization",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "deserialization",
+        "rce"
+      ]
+    }
+  ]
+}

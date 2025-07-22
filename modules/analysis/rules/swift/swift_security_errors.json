@@ -1,0 +1,92 @@
+{
+  "name": "Swift Security Vulnerability Patterns",
+  "description": "Security vulnerability patterns for Swift applications",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "swift_security_forced_unwrap",
+      "pattern": "force.*unwrap.*user.*input|!.*URLRequest|as!.*external.*data",
+      "type": "SecurityError",
+      "description": "Force unwrapping user input causing crashes",
+      "root_cause": "unsafe_unwrap",
+      "suggestion": "Use optional binding, guard statements, or nil-coalescing operator",
+      "category": "swift",
+      "subcategory": "optionals",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "crash",
+        "optionals"
+      ]
+    },
+    {
+      "id": "swift_security_keychain_misuse",
+      "pattern": "kSecAttrAccessible.*Always|Keychain.*insecure|biometry.*not.*required",
+      "type": "SecurityError",
+      "description": "Insecure keychain configuration",
+      "root_cause": "keychain_insecure",
+      "suggestion": "Use appropriate kSecAttrAccessible values, require biometry when needed",
+      "category": "swift",
+      "subcategory": "keychain",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "keychain",
+        "storage"
+      ]
+    },
+    {
+      "id": "swift_security_url_validation",
+      "pattern": "URL\\(string:.*user|openURL.*unvalidated|scheme.*not.*checked",
+      "type": "SecurityError",
+      "description": "Opening URLs without validation",
+      "root_cause": "url_validation",
+      "suggestion": "Validate URL schemes and domains before opening",
+      "category": "swift",
+      "subcategory": "url",
+      "severity": "medium",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "url",
+        "validation"
+      ]
+    },
+    {
+      "id": "swift_security_weak_crypto",
+      "pattern": "MD5|SHA1|CommonCrypto.*weak|insecure.*algorithm",
+      "type": "SecurityError",
+      "description": "Using weak cryptographic algorithms",
+      "root_cause": "weak_cryptography",
+      "suggestion": "Use SHA256 or higher, modern encryption algorithms",
+      "category": "swift",
+      "subcategory": "cryptography",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "security",
+        "crypto",
+        "weak"
+      ]
+    },
+    {
+      "id": "swift_security_hardcoded_secret",
+      "pattern": "apiKey.*=.*\"|password.*literal|secret.*hardcoded",
+      "type": "SecurityError",
+      "description": "Hardcoded secrets in source code",
+      "root_cause": "hardcoded_secrets",
+      "suggestion": "Use keychain, environment variables, or configuration files",
+      "category": "swift",
+      "subcategory": "secrets",
+      "severity": "critical",
+      "confidence": "medium",
+      "tags": [
+        "security",
+        "secrets",
+        "hardcoded"
+      ]
+    }
+  ]
+}
