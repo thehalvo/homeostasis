@@ -26,6 +26,7 @@ from .compliance_reporting import get_compliance_reporting, ComplianceReportingS
 from .policy_enforcement import get_policy_engine, PolicyEnforcementEngine, PolicyEvaluationContext
 from .identity_providers import get_identity_integration, IdentityProviderIntegration
 from .governance_manager import GovernanceManager
+from .regulated_industries import get_regulated_industries, RegulatedIndustriesSupport, RegulatedIndustry
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,7 @@ class GovernanceCapability(Enum):
     POLICY_ENFORCEMENT = "policy_enforcement"
     IDENTITY_FEDERATION = "identity_federation"
     AUDIT_LOGGING = "audit_logging"
+    REGULATED_INDUSTRIES = "regulated_industries"
 
 
 @dataclass
@@ -152,6 +154,21 @@ class EnterpriseGovernanceFramework:
             if compliance_result:
                 decision.compliance_issues = compliance_result
                 decision.approval_required = True
+        
+        # 3a. Check regulated industry requirements
+        if GovernanceCapability.REGULATED_INDUSTRIES in self.config.enabled_capabilities:
+            industry_result = self._check_industry_compliance(request)
+            if not industry_result['passed']:
+                decision.allowed = False
+                decision.reason = "Industry compliance validation failed"
+                decision.compliance_issues.extend(industry_result['issues'])
+                decision.metadata['industry_validation'] = industry_result
+                
+                # Check if approval can override
+                if industry_result.get('approval_allowed'):
+                    decision.approval_required = True
+                else:
+                    return decision
         
         # 4. Assess risk and determine if approval needed
         risk_level = self._assess_risk(request)
@@ -318,6 +335,37 @@ class EnterpriseGovernanceFramework:
         else:
             raise ValueError(f"Unknown user management action: {action}")
     
+    def configure_regulated_industry(self, industry: RegulatedIndustry,
+                                   requirements: List, config: Dict) -> bool:
+        """Configure a regulated industry with compliance requirements.
+        
+        Args:
+            industry: Industry type
+            requirements: List of compliance requirements
+            config: Industry configuration
+            
+        Returns:
+            True if successful
+        """
+        if GovernanceCapability.REGULATED_INDUSTRIES not in self.config.enabled_capabilities:
+            raise ValueError("Regulated industries capability not enabled")
+        
+        return self.regulated_industries.configure_industry(industry, requirements, config)
+    
+    def get_industry_dashboard(self, industry: RegulatedIndustry) -> Dict:
+        """Get compliance dashboard for a regulated industry.
+        
+        Args:
+            industry: Industry type
+            
+        Returns:
+            Dashboard data
+        """
+        if GovernanceCapability.REGULATED_INDUSTRIES not in self.config.enabled_capabilities:
+            raise ValueError("Regulated industries capability not enabled")
+        
+        return self.regulated_industries.get_industry_dashboard(industry)
+    
     def configure_policy(self, name: str, rules: List[Dict], **params) -> str:
         """Configure a governance policy.
         
@@ -407,6 +455,10 @@ class EnterpriseGovernanceFramework:
         
         # LLM governance manager (always needed)
         self.governance_manager = GovernanceManager(base_config)
+        
+        # Regulated industries support
+        if GovernanceCapability.REGULATED_INDUSTRIES in self.config.enabled_capabilities:
+            self.regulated_industries = get_regulated_industries(base_config)
     
     def _configure_framework(self):
         """Configure the framework based on settings."""
@@ -592,6 +644,102 @@ class EnterpriseGovernanceFramework:
             'approval_request_id': approval_request.request_id,
             'workflow_instance_id': workflow_instance_id
         }
+    
+    def _check_industry_compliance(self, request: HealingActionRequest) -> Dict:
+        """Check regulated industry compliance requirements."""
+        # Build context for industry validation
+        context = {
+            'user': request.requested_by or 'system',
+            'user_role': self._get_user_primary_role(request.requested_by) if request.requested_by else 'system',
+            'environment': request.environment,
+            'system': request.service_name,
+            'audit_enabled': True,
+            'data_types': self._infer_data_types(request)
+        }
+        
+        # Build action details
+        action = {
+            'id': request.request_id,
+            'type': request.action_type,
+            'patch': request.patch_content,
+            'target_system': request.service_name
+        }
+        
+        # Validate against industry requirements
+        validation = self.regulated_industries.validate_healing_action(action, context)
+        
+        # Build result
+        result = {
+            'passed': validation.passed,
+            'issues': [],
+            'approval_allowed': False
+        }
+        
+        # Add failures as issues
+        for failure in validation.failures:
+            result['issues'].append(
+                f"{failure['requirement']}: {failure['message']} - {failure['remediation']}"
+            )
+        
+        # Add critical warnings as issues
+        for warning in validation.warnings:
+            if warning.get('severity') == 'high':
+                result['issues'].append(
+                    f"{warning['requirement']}: {warning['message']}"
+                )
+        
+        # Determine if approval can override
+        critical_failures = [f for f in validation.failures if f.get('severity') == 'critical']
+        if not critical_failures and validation.failures:
+            result['approval_allowed'] = True
+        
+        return result
+    
+    def _get_user_primary_role(self, user_id: str) -> str:
+        """Get user's primary role."""
+        if not user_id:
+            return 'system'
+        
+        user = self.user_management.users.get(user_id)
+        if user and user.get('roles'):
+            return user['roles'][0]
+        
+        return 'user'
+    
+    def _infer_data_types(self, request: HealingActionRequest) -> List[str]:
+        """Infer data types from request context."""
+        data_types = []
+        
+        # Check service name
+        service_lower = request.service_name.lower()
+        if any(term in service_lower for term in ['patient', 'medical', 'health', 'ehr']):
+            data_types.append('phi')
+            data_types.append('medical')
+        
+        if any(term in service_lower for term in ['payment', 'billing', 'transaction', 'card']):
+            data_types.append('financial')
+            data_types.append('payment')
+        
+        if any(term in service_lower for term in ['classified', 'secret', 'government']):
+            data_types.append('government')
+        
+        if any(term in service_lower for term in ['pharma', 'clinical', 'trial', 'drug']):
+            data_types.append('pharmaceutical')
+        
+        if any(term in service_lower for term in ['telecom', 'utility', 'network', 'emergency']):
+            data_types.append('telecom')
+        
+        # Check patch content for indicators
+        patch_lower = request.patch_content.lower()
+        if any(term in patch_lower for term in ['patient', 'diagnosis', 'prescription']):
+            if 'phi' not in data_types:
+                data_types.append('phi')
+        
+        if any(term in patch_lower for term in ['card', 'payment', 'transaction']):
+            if 'payment' not in data_types:
+                data_types.append('payment')
+        
+        return data_types
     
     def _log_governance_evaluation(self, request: HealingActionRequest, 
                                   decision: GovernanceDecision):
