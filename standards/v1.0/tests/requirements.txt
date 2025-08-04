@@ -1,0 +1,9 @@
+aiohttp>=3.9.0
+websockets>=12.0
+PyYAML>=6.0
+jsonschema>=4.20.0
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+locust>=2.17.0  # For load testing
+requests>=2.31.0

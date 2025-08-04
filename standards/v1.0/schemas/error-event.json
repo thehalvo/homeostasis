@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "error-event.json",
+  "title": "USHS Error Event Schema",
+  "description": "Standard schema for error events in self-healing systems",
+  "type": "object",
+  "required": ["id", "timestamp", "severity", "source", "error"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this error event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the error occurred"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"],
+      "description": "Severity level of the error"
+    },
+    "source": {
+      "type": "object",
+      "description": "Information about where the error originated",
+      "required": ["service"],
+      "properties": {
+        "service": {
+          "type": "string",
+          "description": "Name of the service where error occurred"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the service"
+        },
+        "environment": {
+          "type": "string",
+          "description": "Deployment environment (e.g., production, staging)"
+        },
+        "location": {
+          "type": "string",
+          "description": "Specific location (file, function, line number)"
+        },
+        "hostname": {
+          "type": "string",
+          "description": "Hostname where error occurred"
+        },
+        "containerID": {
+          "type": "string",
+          "description": "Container ID if running in containerized environment"
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "description": "Details about the error itself",
+      "required": ["type", "message"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Error type or classification"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message"
+        },
+        "code": {
+          "type": "string",
+          "description": "Error code if applicable"
+        },
+        "stackTrace": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": { "type": "string" },
+              "function": { "type": "string" },
+              "line": { "type": "integer" },
+              "column": { "type": "integer" }
+            }
+          },
+          "description": "Stack trace information"
+        },
+        "context": {
+          "type": "object",
+          "description": "Additional context about the error",
+          "additionalProperties": true
+        }
+      }
+    },
+    "correlationId": {
+      "type": "string",
+      "description": "ID to correlate related errors"
+    },
+    "userImpact": {
+      "type": "object",
+      "description": "Information about user impact",
+      "properties": {
+        "affected": {
+          "type": "integer",
+          "description": "Number of affected users"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["none", "degraded", "unavailable"]
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata",
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,416 @@
+openapi: 3.0.3
+info:
+  title: Universal Self-Healing Standard REST API
+  description: REST API specification for USHS-compliant healing systems
+  version: 1.0.0
+  license:
+    name: CC BY 4.0
+    url: https://creativecommons.org/licenses/by/4.0/
+
+servers:
+  - url: https://api.example.com/ushs/v1
+    description: Production server
+  - url: https://staging-api.example.com/ushs/v1
+    description: Staging server
+
+security:
+  - bearerAuth: []
+  - mtls: []
+
+paths:
+  /errors:
+    post:
+      summary: Report a new error
+      operationId: reportError
+      tags:
+        - Detection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorEvent'
+      responses:
+        '201':
+          description: Error reported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorId:
+                    type: string
+                    format: uuid
+                  sessionId:
+                    type: string
+                    format: uuid
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /errors/{errorId}:
+    get:
+      summary: Get error details
+      operationId: getError
+      tags:
+        - Detection
+      parameters:
+        - name: errorId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Error details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEvent'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /sessions:
+    post:
+      summary: Start a new healing session
+      operationId: startSession
+      tags:
+        - Orchestration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - errorId
+              properties:
+                errorId:
+                  type: string
+                  format: uuid
+                policy:
+                  type: string
+                priority:
+                  type: string
+                  enum: [low, medium, high, critical]
+      responses:
+        '201':
+          description: Session started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealingSession'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+    get:
+      summary: List healing sessions
+      operationId: listSessions
+      tags:
+        - Orchestration
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, completed, failed, cancelled]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of sessions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/HealingSession'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+
+  /sessions/{sessionId}:
+    get:
+      summary: Get session details
+      operationId: getSession
+      tags:
+        - Orchestration
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Session details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealingSession'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Cancel a healing session
+      operationId: cancelSession
+      tags:
+        - Orchestration
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Session cancelled
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /sessions/{sessionId}/patches:
+    get:
+      summary: Get patches for a session
+      operationId: getSessionPatches
+      tags:
+        - Generation
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of patches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HealingPatch'
+
+    post:
+      summary: Submit a patch for a session
+      operationId: submitPatch
+      tags:
+        - Generation
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealingPatch'
+      responses:
+        '201':
+          description: Patch submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealingPatch'
+
+  /patches/{patchId}/validate:
+    post:
+      summary: Validate a patch
+      operationId: validatePatch
+      tags:
+        - Validation
+      parameters:
+        - name: patchId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tests:
+                  type: array
+                  items:
+                    type: string
+                environment:
+                  type: string
+      responses:
+        '200':
+          description: Validation results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        test:
+                          type: string
+                        passed:
+                          type: boolean
+                        duration:
+                          type: integer
+                        output:
+                          type: string
+
+  /patches/{patchId}/deploy:
+    post:
+      summary: Deploy a patch
+      operationId: deployPatch
+      tags:
+        - Deployment
+      parameters:
+        - name: patchId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                strategy:
+                  type: string
+                  enum: [immediate, canary, blue-green, rolling]
+                environment:
+                  type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      approver:
+                        type: string
+                      signature:
+                        type: string
+      responses:
+        '200':
+          description: Deployment initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deploymentId:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                  startTime:
+                    type: string
+                    format: date-time
+
+  /health:
+    get:
+      summary: Health check endpoint
+      operationId: healthCheck
+      tags:
+        - System
+      security: []
+      responses:
+        '200':
+          description: System healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, unhealthy]
+                  components:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                        message:
+                          type: string
+
+components:
+  schemas:
+    ErrorEvent:
+      $ref: '../schemas/error-event.json'
+    
+    HealingPatch:
+      $ref: '../schemas/healing-patch.json'
+    
+    HealingSession:
+      $ref: '../schemas/healing-session.json'
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              details:
+                type: object
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    
+    mtls:
+      type: mutualTLS

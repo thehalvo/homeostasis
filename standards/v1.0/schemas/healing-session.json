@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "healing-session.json",
+  "title": "USHS Healing Session Schema",
+  "description": "Standard schema for healing sessions in self-healing systems",
+  "type": "object",
+  "required": ["id", "startTime", "status", "phases"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this healing session"
+    },
+    "startTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the healing session started"
+    },
+    "endTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the healing session completed"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "completed", "failed", "cancelled", "timeout"],
+      "description": "Current status of the session"
+    },
+    "errorId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the error being healed"
+    },
+    "phases": {
+      "type": "object",
+      "description": "Status of each healing phase",
+      "properties": {
+        "detection": {
+          "$ref": "#/definitions/phase"
+        },
+        "analysis": {
+          "$ref": "#/definitions/phase"
+        },
+        "generation": {
+          "$ref": "#/definitions/phase"
+        },
+        "validation": {
+          "$ref": "#/definitions/phase"
+        },
+        "deployment": {
+          "$ref": "#/definitions/phase"
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "description": "Artifacts produced during healing",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["patch", "test", "report", "log"]
+          },
+          "id": { "type": "string" },
+          "location": { "type": "string" },
+          "checksum": { "type": "string" }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Performance metrics for the session",
+      "properties": {
+        "totalDuration": { "type": "integer", "description": "Total duration in milliseconds" },
+        "phaseDurations": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "resourceUsage": {
+          "type": "object",
+          "properties": {
+            "cpu": { "type": "number" },
+            "memory": { "type": "number" },
+            "network": { "type": "number" }
+          }
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "description": "Policy applied to this session",
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "constraints": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "description": "Final outcome of the healing session",
+      "properties": {
+        "success": { "type": "boolean" },
+        "healingApplied": { "type": "boolean" },
+        "rollbackRequired": { "type": "boolean" },
+        "summary": { "type": "string" },
+        "recommendations": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "phase": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pending", "running", "completed", "failed", "skipped"]
+        },
+        "startTime": { "type": "string", "format": "date-time" },
+        "endTime": { "type": "string", "format": "date-time" },
+        "duration": { "type": "integer" },
+        "result": { "type": "object", "additionalProperties": true },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string" },
+              "message": { "type": "string" },
+              "details": { "type": "object" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

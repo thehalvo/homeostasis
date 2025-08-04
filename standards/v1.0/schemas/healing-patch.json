@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "healing-patch.json",
+  "title": "USHS Healing Patch Schema",
+  "description": "Standard schema for healing patches in self-healing systems",
+  "type": "object",
+  "required": ["id", "sessionId", "errorId", "changes", "metadata"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this patch"
+    },
+    "sessionId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Healing session this patch belongs to"
+    },
+    "errorId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the error this patch addresses"
+    },
+    "changes": {
+      "type": "array",
+      "description": "List of changes to apply",
+      "items": {
+        "type": "object",
+        "required": ["type", "target"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["file", "configuration", "dependency", "infrastructure"],
+            "description": "Type of change"
+          },
+          "target": {
+            "type": "string",
+            "description": "Target of the change (file path, config key, etc.)"
+          },
+          "operation": {
+            "type": "string",
+            "enum": ["create", "update", "delete", "replace"],
+            "description": "Operation to perform"
+          },
+          "diff": {
+            "type": "string",
+            "description": "Unified diff format for file changes"
+          },
+          "content": {
+            "type": "string",
+            "description": "New content for create/replace operations"
+          },
+          "language": {
+            "type": "string",
+            "description": "Programming language of the change"
+          },
+          "framework": {
+            "type": "string",
+            "description": "Framework being used"
+          },
+          "validation": {
+            "type": "object",
+            "description": "Validation rules for this change",
+            "properties": {
+              "syntax": { "type": "boolean" },
+              "semantics": { "type": "boolean" },
+              "tests": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Metadata about the patch",
+      "required": ["confidence", "generator"],
+      "properties": {
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence score for this patch"
+        },
+        "generator": {
+          "type": "string",
+          "description": "Component that generated this patch"
+        },
+        "generatorVersion": {
+          "type": "string",
+          "description": "Version of the generator"
+        },
+        "strategy": {
+          "type": "string",
+          "description": "Strategy used to generate the patch"
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "Explanation of why this patch was generated"
+        },
+        "alternatives": {
+          "type": "array",
+          "description": "Alternative patches considered",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "confidence": { "type": "number" },
+              "reason": { "type": "string" }
+            }
+          }
+        },
+        "estimatedImpact": {
+          "type": "object",
+          "properties": {
+            "performance": {
+              "type": "string",
+              "enum": ["improved", "neutral", "degraded"]
+            },
+            "reliability": {
+              "type": "string",
+              "enum": ["improved", "neutral", "degraded"]
+            },
+            "security": {
+              "type": "string",
+              "enum": ["improved", "neutral", "degraded"]
+            }
+          }
+        }
+      }
+    },
+    "approvals": {
+      "type": "array",
+      "description": "Required approvals for this patch",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["automatic", "manual", "policy"]
+          },
+          "approver": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "approved", "rejected"]
+          },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "comment": { "type": "string" }
+        }
+      }
+    }
+  }
+}
