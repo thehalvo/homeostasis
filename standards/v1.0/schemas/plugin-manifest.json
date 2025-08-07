@@ -1,0 +1,364 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ushs.org/schemas/plugin-manifest-v1.json",
+  "title": "USHS Plugin Manifest",
+  "description": "Schema for Universal Self-Healing Standard plugin manifest files",
+  "type": "object",
+  "required": [
+    "name",
+    "version",
+    "type",
+    "displayName",
+    "description",
+    "author",
+    "license",
+    "engines",
+    "capabilities"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "minLength": 3,
+      "maxLength": 50,
+      "description": "Unique plugin identifier (lowercase letters, numbers, hyphens)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.-]+)?(\\+[a-zA-Z0-9.-]+)?$",
+      "description": "Semantic version (SemVer) of the plugin"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["language", "analysis", "integration", "deployment", "monitoring"],
+      "description": "Primary category of the plugin"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 50,
+      "description": "Human-readable plugin name"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 500,
+      "description": "Brief description of plugin functionality"
+    },
+    "author": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Author name as a string"
+        },
+        {
+          "type": "object",
+          "required": ["name"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Author's name"
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "Author's email address"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Author's website"
+            }
+          }
+        }
+      ]
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX license identifier"
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri",
+      "description": "Plugin homepage URL"
+    },
+    "repository": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["git", "svn", "mercurial"],
+          "description": "Version control system type"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Repository URL"
+        }
+      }
+    },
+    "bugs": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Issue tracker URL"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Bug report email"
+        }
+      }
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$"
+      },
+      "uniqueItems": true,
+      "maxItems": 10,
+      "description": "Search keywords for the plugin"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "Additional categories for classification"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Path to plugin icon file"
+    },
+    "screenshots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Screenshot image path or URL"
+          },
+          "caption": {
+            "type": "string",
+            "description": "Screenshot description"
+          }
+        }
+      },
+      "description": "Plugin screenshots for marketplace"
+    },
+    "engines": {
+      "type": "object",
+      "required": ["ushs"],
+      "properties": {
+        "ushs": {
+          "type": "string",
+          "description": "Compatible USHS version range"
+        },
+        "node": {
+          "type": "string",
+          "description": "Required Node.js version"
+        },
+        "python": {
+          "type": "string",
+          "description": "Required Python version"
+        }
+      },
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Runtime engine requirements"
+    },
+    "capabilities": {
+      "type": "object",
+      "required": ["required"],
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]+\\.[a-z]+$"
+          },
+          "uniqueItems": true,
+          "description": "Required plugin capabilities"
+        },
+        "optional": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]+\\.[a-z]+$"
+          },
+          "uniqueItems": true,
+          "description": "Optional plugin capabilities"
+        }
+      },
+      "description": "Plugin capability declarations"
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "filesystem": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["read", "write", "execute"]
+          },
+          "uniqueItems": true,
+          "description": "Filesystem access permissions"
+        },
+        "network": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Allowed network endpoints"
+        },
+        "environment": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Environment variables access"
+        },
+        "process": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["spawn", "exec", "fork"]
+          },
+          "uniqueItems": true,
+          "description": "Process execution permissions"
+        }
+      },
+      "description": "Security permissions required by the plugin"
+    },
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "format": "uri",
+          "description": "Configuration schema URL"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "default": {},
+              "secret": {
+                "type": "boolean",
+                "description": "Indicates if this is a secret value"
+              },
+              "required": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "description": "Plugin configuration schema"
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Runtime dependencies"
+    },
+    "peerDependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Peer dependencies that must be provided by the host"
+    },
+    "marketplace": {
+      "type": "object",
+      "properties": {
+        "pricing": {
+          "type": "string",
+          "enum": ["free", "paid", "freemium"],
+          "description": "Plugin pricing model"
+        },
+        "price": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "number",
+              "minimum": 0
+            },
+            "currency": {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            },
+            "period": {
+              "type": "string",
+              "enum": ["monthly", "yearly", "one-time"]
+            }
+          }
+        },
+        "trial": {
+          "type": "object",
+          "properties": {
+            "available": {
+              "type": "boolean"
+            },
+            "duration": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Trial duration in days"
+            }
+          }
+        },
+        "support": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "sla": {
+              "type": "string"
+            }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "downloads": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "rating": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "reviews": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      },
+      "description": "Marketplace-specific metadata"
+    }
+  },
+  "additionalProperties": false
+}

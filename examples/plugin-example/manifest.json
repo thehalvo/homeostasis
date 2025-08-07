@@ -1,0 +1,129 @@
+{
+  "$schema": "https://ushs.org/schemas/plugin-manifest-v1.json",
+  "name": "enhanced-python-analyzer",
+  "version": "1.0.0",
+  "type": "analysis",
+  "displayName": "Enhanced Python Analyzer",
+  "description": "Advanced Python error analysis with ML-powered insights and framework-specific optimizations",
+  "author": {
+    "name": "Homeostasis Community",
+    "email": "plugins@homeostasis.dev",
+    "url": "https://homeostasis.dev"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/homeostasis/enhanced-python-analyzer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/homeostasis/enhanced-python-analyzer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/homeostasis/enhanced-python-analyzer/issues"
+  },
+  "keywords": [
+    "python",
+    "analysis",
+    "machine-learning",
+    "django",
+    "flask",
+    "fastapi"
+  ],
+  "categories": [
+    "analysis",
+    "language-support"
+  ],
+  "icon": "assets/icon.png",
+  "screenshots": [
+    {
+      "url": "assets/screenshot-dashboard.png",
+      "caption": "Analysis dashboard showing error patterns"
+    },
+    {
+      "url": "assets/screenshot-insights.png",
+      "caption": "ML-powered insights and recommendations"
+    }
+  ],
+  "engines": {
+    "ushs": "^1.0.0",
+    "python": ">=3.8.0"
+  },
+  "capabilities": {
+    "required": [
+      "error.analyze",
+      "pattern.detect",
+      "ml.inference"
+    ],
+    "optional": [
+      "metrics.export",
+      "trace.correlate",
+      "framework.optimize"
+    ]
+  },
+  "permissions": {
+    "filesystem": ["read"],
+    "network": ["https://ml-api.homeostasis.dev"],
+    "environment": ["PYTHON_ENV", "DEBUG"],
+    "process": ["spawn"]
+  },
+  "configuration": {
+    "$schema": "./schemas/config.json",
+    "properties": {
+      "mlApiKey": {
+        "type": "string",
+        "description": "API key for ML inference service",
+        "secret": true,
+        "required": false
+      },
+      "analysisDepth": {
+        "type": "string",
+        "enum": ["shallow", "standard", "deep"],
+        "default": "standard",
+        "description": "Depth of code analysis"
+      },
+      "frameworkOptimizations": {
+        "type": "boolean",
+        "default": true,
+        "description": "Enable framework-specific optimizations"
+      },
+      "telemetryEnabled": {
+        "type": "boolean",
+        "default": true,
+        "description": "Send anonymous usage statistics"
+      },
+      "cacheTTL": {
+        "type": "integer",
+        "default": 3600,
+        "description": "Cache time-to-live in seconds"
+      }
+    }
+  },
+  "dependencies": {
+    "ast-analyzer": "^2.1.0",
+    "ml-client": "^1.5.0",
+    "framework-detector": "^3.0.0"
+  },
+  "peerDependencies": {
+    "ushs-core": "^1.0.0"
+  },
+  "marketplace": {
+    "pricing": "freemium",
+    "price": {
+      "amount": 0,
+      "currency": "USD",
+      "period": "monthly"
+    },
+    "trial": {
+      "available": true,
+      "duration": 30
+    },
+    "support": {
+      "email": "support@homeostasis.dev",
+      "url": "https://support.homeostasis.dev",
+      "sla": "24h response time for paid users"
+    },
+    "metrics": {
+      "downloads": 0,
+      "rating": 0,
+      "reviews": 0
+    }
+  }
+}
