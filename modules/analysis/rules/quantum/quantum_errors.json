@@ -1,0 +1,178 @@
+{
+    "rules": [
+        {
+            "id": "quantum_gate_error",
+            "pattern": ".*gate.*error|.*gate.*fidelity.*low|.*gate.*calibration",
+            "error_type": "QuantumGateError",
+            "framework": ["qiskit", "cirq", "pennylane"],
+            "severity": "high",
+            "description": "Quantum gate operation error detected",
+            "fix_strategy": "Apply gate error mitigation techniques",
+            "mitigation_options": [
+                "zero_noise_extrapolation",
+                "probabilistic_error_cancellation",
+                "gate_decomposition"
+            ]
+        },
+        {
+            "id": "quantum_measurement_error",
+            "pattern": ".*measurement.*error|.*readout.*error|.*POVM.*error",
+            "error_type": "QuantumMeasurementError",
+            "framework": ["qiskit", "cirq", "pennylane", "forest"],
+            "severity": "high",
+            "description": "Quantum measurement or readout error",
+            "fix_strategy": "Apply measurement error mitigation",
+            "mitigation_options": [
+                "measurement_calibration",
+                "readout_symmetrization",
+                "tensor_network_mitigation"
+            ]
+        },
+        {
+            "id": "quantum_decoherence",
+            "pattern": ".*decoher.*|.*T1.*exceeded|.*T2.*exceeded|.*dephasing",
+            "error_type": "QuantumDecoherence",
+            "framework": ["all"],
+            "severity": "high",
+            "description": "Quantum decoherence affecting circuit",
+            "fix_strategy": "Reduce circuit execution time or apply dynamical decoupling",
+            "mitigation_options": [
+                "dynamical_decoupling",
+                "circuit_optimization",
+                "error_correction_codes"
+            ]
+        },
+        {
+            "id": "quantum_crosstalk",
+            "pattern": ".*crosstalk|.*unwanted.*coupling|.*ZZ.*interaction",
+            "error_type": "QuantumCrosstalk",
+            "framework": ["qiskit", "cirq"],
+            "severity": "medium",
+            "description": "Quantum crosstalk between qubits",
+            "fix_strategy": "Apply crosstalk mitigation scheduling",
+            "mitigation_options": [
+                "crosstalk_adaptive_scheduling",
+                "virtual_z_gates",
+                "decoupling_sequences"
+            ]
+        },
+        {
+            "id": "circuit_depth_exceeded",
+            "pattern": ".*circuit.*depth.*exceed|.*too.*deep|.*max.*depth",
+            "error_type": "CircuitDepthError",
+            "framework": ["all"],
+            "severity": "high",
+            "description": "Circuit depth exceeds hardware limits",
+            "fix_strategy": "Optimize circuit or use circuit cutting",
+            "mitigation_options": [
+                "circuit_optimization",
+                "circuit_cutting",
+                "variational_compilation"
+            ]
+        },
+        {
+            "id": "qubit_connectivity_error",
+            "pattern": ".*connectivity|.*coupling.*map|.*qubit.*topology|.*SWAP.*required",
+            "error_type": "QubitConnectivityError",
+            "framework": ["qiskit", "cirq"],
+            "severity": "medium",
+            "description": "Required qubit connections not available",
+            "fix_strategy": "Use routing algorithm or different backend",
+            "mitigation_options": [
+                "swap_network_routing",
+                "circuit_mapping",
+                "backend_selection"
+            ]
+        },
+        {
+            "id": "backend_not_available",
+            "pattern": ".*backend.*not.*available|.*backend.*offline|.*queue.*full",
+            "error_type": "BackendError",
+            "framework": ["qiskit", "forest", "braket"],
+            "severity": "medium",
+            "description": "Quantum backend not available",
+            "fix_strategy": "Switch to available backend or simulator",
+            "mitigation_options": [
+                "backend_fallback",
+                "simulator_execution",
+                "queue_management"
+            ]
+        },
+        {
+            "id": "compilation_error",
+            "pattern": ".*cannot.*compile|.*transpil.*error|.*basis.*gate.*not.*supported",
+            "error_type": "CompilationError",
+            "framework": ["qiskit", "cirq", "qsharp"],
+            "severity": "high",
+            "description": "Cannot compile circuit to target architecture",
+            "fix_strategy": "Adjust compilation settings or decompose gates",
+            "mitigation_options": [
+                "gate_decomposition",
+                "basis_translation",
+                "optimization_level_adjustment"
+            ]
+        },
+        {
+            "id": "simulator_memory_error",
+            "pattern": ".*simulator.*memory|.*too.*many.*qubits|.*RAM.*exceeded",
+            "error_type": "SimulatorError",
+            "framework": ["all"],
+            "severity": "high",
+            "description": "Simulator memory requirements exceeded",
+            "fix_strategy": "Reduce qubit count or use approximate methods",
+            "mitigation_options": [
+                "circuit_cutting",
+                "tensor_network_simulation",
+                "gpu_acceleration"
+            ]
+        },
+        {
+            "id": "quantum_noise_threshold",
+            "pattern": ".*noise.*level.*high|.*error.*rate.*threshold|.*fidelity.*too.*low",
+            "error_type": "NoiseThresholdExceeded",
+            "framework": ["all"],
+            "severity": "high",
+            "description": "Noise level exceeds acceptable threshold",
+            "fix_strategy": "Apply comprehensive error mitigation",
+            "mitigation_options": [
+                "zero_noise_extrapolation",
+                "virtual_distillation",
+                "symmetry_verification"
+            ]
+        }
+    ],
+    "framework_specific": {
+        "qiskit": {
+            "error_modules": [
+                "qiskit.exceptions",
+                "qiskit.transpiler.exceptions",
+                "qiskit.providers.exceptions"
+            ],
+            "common_issues": [
+                "basis_gate_mismatch",
+                "coupling_map_violation",
+                "pulse_schedule_error"
+            ]
+        },
+        "cirq": {
+            "error_modules": [
+                "cirq.SimulatorError",
+                "cirq.QasmException"
+            ],
+            "common_issues": [
+                "moment_structure_error",
+                "device_validation_error"
+            ]
+        },
+        "qsharp": {
+            "error_modules": [
+                "Microsoft.Quantum.Simulation",
+                "Microsoft.Quantum.Canon"
+            ],
+            "common_issues": [
+                "resource_estimation_error",
+                "operation_not_supported"
+            ]
+        }
+    }
+}

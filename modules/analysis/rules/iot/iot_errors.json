@@ -1,0 +1,227 @@
+{
+    "rules": [
+        {
+            "id": "iot_connectivity_lost",
+            "pattern": ".*connection.*lost|.*network.*unreachable|.*timeout.*exceeded|.*disconnected",
+            "error_type": "IoTConnectivityError",
+            "platform": ["all"],
+            "severity": "high",
+            "description": "IoT device connectivity lost",
+            "fix_strategy": "Implement automatic reconnection with backoff",
+            "healing_options": [
+                "auto_reconnect",
+                "connection_pooling",
+                "offline_mode"
+            ]
+        },
+        {
+            "id": "sensor_reading_failure",
+            "pattern": ".*sensor.*fail|.*reading.*invalid|.*measurement.*error|.*NaN.*value",
+            "error_type": "SensorFailureError",
+            "platform": ["arduino", "esp32", "raspberry_pi"],
+            "severity": "high",
+            "description": "Sensor reading failure detected",
+            "fix_strategy": "Implement sensor redundancy or graceful degradation",
+            "healing_options": [
+                "sensor_redundancy",
+                "graceful_degradation",
+                "sensor_recalibration"
+            ]
+        },
+        {
+            "id": "memory_overflow",
+            "pattern": ".*out.*of.*memory|.*heap.*overflow|.*stack.*overflow|.*malloc.*fail",
+            "error_type": "MemoryOverflowError",
+            "platform": ["arduino", "esp32"],
+            "severity": "critical",
+            "description": "Device memory overflow",
+            "fix_strategy": "Optimize memory usage or implement data offloading",
+            "healing_options": [
+                "resource_optimization",
+                "edge_offloading",
+                "memory_cleanup"
+            ]
+        },
+        {
+            "id": "power_management_issue",
+            "pattern": ".*brownout|.*voltage.*low|.*battery.*critical|.*power.*fail",
+            "error_type": "PowerManagementError",
+            "platform": ["esp32", "arduino", "battery_powered"],
+            "severity": "critical",
+            "description": "Power supply or battery issue",
+            "fix_strategy": "Enable power saving modes or check power supply",
+            "healing_options": [
+                "power_saving_mode",
+                "dynamic_frequency_scaling",
+                "battery_monitoring"
+            ]
+        },
+        {
+            "id": "mqtt_connection_failure",
+            "pattern": ".*mqtt.*connection.*lost|.*broker.*unreachable|.*publish.*fail",
+            "error_type": "MQTTConnectionError",
+            "platform": ["mqtt"],
+            "severity": "high",
+            "description": "MQTT broker connection failure",
+            "fix_strategy": "Implement MQTT reconnection and offline queueing",
+            "healing_options": [
+                "auto_reconnect",
+                "offline_mode",
+                "broker_failover"
+            ]
+        },
+        {
+            "id": "watchdog_timer_reset",
+            "pattern": ".*watchdog.*triggered|.*WDT.*reset|.*task.*blocked",
+            "error_type": "WatchdogResetError",
+            "platform": ["esp32", "arduino"],
+            "severity": "high",
+            "description": "Watchdog timer reset occurred",
+            "fix_strategy": "Add task yields or increase watchdog timeout",
+            "healing_options": [
+                "task_optimization",
+                "watchdog_configuration",
+                "async_processing"
+            ]
+        },
+        {
+            "id": "edge_processing_failure",
+            "pattern": ".*inference.*timeout|.*model.*loading.*failed|.*computation.*error",
+            "error_type": "EdgeProcessingError",
+            "platform": ["edge_computing"],
+            "severity": "medium",
+            "description": "Edge computing processing failure",
+            "fix_strategy": "Optimize model or offload to cloud",
+            "healing_options": [
+                "edge_offloading",
+                "model_optimization",
+                "fallback_processing"
+            ]
+        },
+        {
+            "id": "firmware_update_error",
+            "pattern": ".*firmware.*corrupt|.*update.*fail|.*boot.*error|.*verification.*fail",
+            "error_type": "FirmwareError",
+            "platform": ["all"],
+            "severity": "critical",
+            "description": "Firmware update or boot error",
+            "fix_strategy": "Implement secure boot and firmware recovery",
+            "healing_options": [
+                "secure_boot",
+                "firmware_rollback",
+                "recovery_mode"
+            ]
+        },
+        {
+            "id": "synchronization_error",
+            "pattern": ".*sync.*fail|.*time.*drift|.*clock.*error|.*ntp.*fail",
+            "error_type": "SynchronizationError",
+            "platform": ["all"],
+            "severity": "medium",
+            "description": "Time synchronization failure",
+            "fix_strategy": "Implement NTP sync with fallback",
+            "healing_options": [
+                "ntp_sync",
+                "rtc_fallback",
+                "time_correction"
+            ]
+        },
+        {
+            "id": "security_breach_detected",
+            "pattern": ".*unauthorized.*access|.*certificate.*invalid|.*intrusion.*detected",
+            "error_type": "SecurityBreachError",
+            "platform": ["all"],
+            "severity": "critical",
+            "description": "Security breach or authentication failure",
+            "fix_strategy": "Enable encryption and intrusion detection",
+            "healing_options": [
+                "encrypted_communication",
+                "intrusion_detection",
+                "access_control"
+            ]
+        },
+        {
+            "id": "resource_constraint_critical",
+            "pattern": ".*resource.*exhausted|.*cpu.*overload|.*temperature.*critical",
+            "error_type": "ResourceConstraintError",
+            "platform": ["all"],
+            "severity": "high",
+            "description": "Critical resource constraint detected",
+            "fix_strategy": "Implement resource optimization and monitoring",
+            "healing_options": [
+                "resource_optimization",
+                "adaptive_sampling",
+                "load_balancing"
+            ]
+        },
+        {
+            "id": "data_corruption",
+            "pattern": ".*checksum.*fail|.*data.*corrupt|.*crc.*error|.*integrity.*fail",
+            "error_type": "DataCorruptionError",
+            "platform": ["all"],
+            "severity": "high",
+            "description": "Data corruption detected",
+            "fix_strategy": "Implement data validation and recovery",
+            "healing_options": [
+                "data_validation",
+                "error_correction",
+                "redundant_storage"
+            ]
+        }
+    ],
+    "platform_specific": {
+        "arduino": {
+            "memory_limits": {
+                "uno": {"ram": 2048, "flash": 32768},
+                "mega": {"ram": 8192, "flash": 262144},
+                "nano": {"ram": 2048, "flash": 32768}
+            },
+            "common_libraries": [
+                "Wire",
+                "SPI",
+                "Servo",
+                "WiFi",
+                "Ethernet"
+            ]
+        },
+        "esp32": {
+            "features": [
+                "wifi",
+                "bluetooth",
+                "deep_sleep",
+                "touch_sensors",
+                "hall_sensor"
+            ],
+            "power_modes": [
+                "active",
+                "modem_sleep",
+                "light_sleep",
+                "deep_sleep"
+            ]
+        },
+        "raspberry_pi": {
+            "gpio_pins": 40,
+            "interfaces": [
+                "i2c",
+                "spi",
+                "uart",
+                "pwm",
+                "1-wire"
+            ]
+        },
+        "mqtt": {
+            "qos_levels": {
+                "0": "at_most_once",
+                "1": "at_least_once",
+                "2": "exactly_once"
+            },
+            "common_brokers": [
+                "mosquitto",
+                "hivemq",
+                "emqx",
+                "aws_iot",
+                "azure_iot_hub"
+            ]
+        }
+    }
+}
