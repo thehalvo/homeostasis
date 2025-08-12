@@ -1,0 +1,102 @@
+[
+  {
+    "name": "rust_borrow_checker_error",
+    "language": "rust",
+    "description": "Test borrow checker violation",
+    "test_type": "single",
+    "source_code": {
+      "main.rs": "fn main() {\n    let mut s = String::from(\"hello\");\n    let r1 = &s;\n    let r2 = &s;\n    // This will cause borrow checker error\n    s.push_str(\", world\");\n    println!(\"{} and {}\", r1, r2);\n}\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "E0502",
+        "message": "cannot borrow.*as mutable because it is also borrowed as immutable"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "reorder_operations",
+        "description": "Move mutable operation before immutable borrows"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "ownership"]
+  },
+  {
+    "name": "rust_index_out_of_bounds",
+    "language": "rust",
+    "description": "Test vector index panic",
+    "test_type": "single",
+    "source_code": {
+      "main.rs": "fn main() {\n    let v = vec![1, 2, 3];\n    // This will panic at runtime\n    let fourth = v[3];\n    println!(\"Fourth element: {}\", fourth);\n}\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "panic",
+        "message": "index out of bounds"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "use_get_method",
+        "description": "Use .get() method for safe indexing"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "bounds_checking"]
+  },
+  {
+    "name": "rust_unwrap_none",
+    "language": "rust",
+    "description": "Test unwrap on None value",
+    "test_type": "single",
+    "source_code": {
+      "main.rs": "fn find_user(id: u32) -> Option<String> {\n    if id == 1 {\n        Some(String::from(\"Alice\"))\n    } else {\n        None\n    }\n}\n\nfn main() {\n    // This will panic when id is not found\n    let user = find_user(999).unwrap();\n    println!(\"User: {}\", user);\n}\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "panic",
+        "message": "called.*Option::unwrap.*on a.*None.*value"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "handle_option",
+        "description": "Use match or unwrap_or for safe handling"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "error_handling"]
+  },
+  {
+    "name": "rust_lifetime_error",
+    "language": "rust",
+    "description": "Test lifetime annotation error",
+    "test_type": "single",
+    "source_code": {
+      "main.rs": "fn longest(x: &str, y: &str) -> &str {\n    // This will cause lifetime error\n    if x.len() > y.len() {\n        x\n    } else {\n        y\n    }\n}\n\nfn main() {\n    let result = longest(\"abc\", \"xyz\");\n    println!(\"Longest: {}\", result);\n}\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "E0106",
+        "message": "missing lifetime specifier"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "add_lifetime_annotation",
+        "description": "Add lifetime parameter to function signature"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "lifetimes"]
+  }
+]

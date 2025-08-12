@@ -1,0 +1,127 @@
+[
+  {
+    "name": "js_undefined_property",
+    "language": "javascript",
+    "description": "Test handling of undefined property access",
+    "test_type": "single",
+    "source_code": {
+      "index.js": "function getUserEmail(user) {\n  // This will throw TypeError if user is undefined\n  return user.email.toLowerCase();\n}\n\nconst user = undefined;\nconsole.log(getUserEmail(user));\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "TypeError",
+        "message": "Cannot read property.*of undefined"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "optional_chaining",
+        "description": "Use optional chaining operator"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "null_safety"]
+  },
+  {
+    "name": "js_array_method_on_null",
+    "language": "javascript",
+    "description": "Test array method on null value",
+    "test_type": "single",
+    "source_code": {
+      "index.js": "function processItems(items) {\n  // This will throw TypeError if items is null\n  return items.map(item => item * 2);\n}\n\nconst result = processItems(null);\nconsole.log(result);\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "TypeError",
+        "message": "Cannot read property.*map.*of null"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "null_check",
+        "description": "Add null check with default empty array"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "null_safety", "array"]
+  },
+  {
+    "name": "js_async_unhandled_rejection",
+    "language": "javascript",
+    "description": "Test unhandled promise rejection",
+    "test_type": "single",
+    "source_code": {
+      "index.js": "async function fetchUserData(userId) {\n  const response = await fetch(`https://api.example.com/users/${userId}`);\n  // This will throw if response is not ok\n  const data = await response.json();\n  return data;\n}\n\n// Missing error handling\nfetchUserData('invalid-id').then(data => {\n  console.log(data);\n});\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "UnhandledPromiseRejection",
+        "message": "fetch.*failed"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "add_catch_handler",
+        "description": "Add .catch() handler or try-catch block"
+      }
+    ],
+    "environment": {},
+    "dependencies": ["node-fetch"],
+    "frameworks": [],
+    "tags": ["async", "error_handling"]
+  },
+  {
+    "name": "js_json_parse_error",
+    "language": "javascript",
+    "description": "Test JSON parsing error",
+    "test_type": "single",
+    "source_code": {
+      "index.js": "function parseUserData(jsonString) {\n  // This will throw SyntaxError for invalid JSON\n  return JSON.parse(jsonString);\n}\n\nconst invalidJson = '{name: \"John\", age: 30}';\nconst data = parseUserData(invalidJson);\nconsole.log(data);\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "SyntaxError",
+        "message": "Unexpected token.*JSON"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "wrap_in_try_catch",
+        "description": "Wrap JSON.parse in try-catch block"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "json", "error_handling"]
+  },
+  {
+    "name": "js_reference_error",
+    "language": "javascript",
+    "description": "Test ReferenceError for undefined variable",
+    "test_type": "single",
+    "source_code": {
+      "index.js": "function calculateTotal() {\n  const price = 100;\n  const tax = 0.1;\n  // Typo: totla instead of total\n  const total = price * (1 + tax);\n  return totla; // ReferenceError\n}\n\nconsole.log(calculateTotal());\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "ReferenceError",
+        "message": "totla is not defined"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "fix_typo",
+        "description": "Correct variable name typo"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "typo"]
+  }
+]

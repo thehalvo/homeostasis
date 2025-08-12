@@ -1,0 +1,103 @@
+[
+  {
+    "name": "django_missing_migration",
+    "language": "python",
+    "description": "Test Django model changes without migration",
+    "test_type": "framework",
+    "source_code": {
+      "models.py": "from django.db import models\n\nclass User(models.Model):\n    name = models.CharField(max_length=100)\n    email = models.EmailField()\n    # Added new field without migration\n    age = models.IntegerField()\n",
+      "test_app.py": "import django\nfrom django.conf import settings\n\nsettings.configure(\n    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},\n    INSTALLED_APPS=['__main__'],\n    USE_TZ=True\n)\ndjango.setup()\n\nfrom models import User\n\n# This will fail due to missing migration\nUser.objects.create(name='Test', email='test@example.com', age=25)\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "OperationalError",
+        "message": "no such column"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "create_migration",
+        "description": "Generate and apply Django migration"
+      }
+    ],
+    "environment": {},
+    "dependencies": ["django==4.2.0"],
+    "frameworks": ["django"],
+    "tags": ["framework", "database", "migration"]
+  },
+  {
+    "name": "flask_missing_route",
+    "language": "python",
+    "description": "Test Flask 404 error handling",
+    "test_type": "framework",
+    "source_code": {
+      "app.py": "from flask import Flask, jsonify\n\napp = Flask(__name__)\n\n@app.route('/users/<int:user_id>')\ndef get_user(user_id):\n    # Simulate database lookup\n    users = {1: 'Alice', 2: 'Bob'}\n    if user_id not in users:\n        # This should return 404, not KeyError\n        return jsonify({'name': users[user_id]})\n    return jsonify({'name': users[user_id]})\n\nif __name__ == '__main__':\n    # Test with non-existent user\n    with app.test_client() as client:\n        response = client.get('/users/999')\n        print(response.status_code)\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "KeyError",
+        "message": "999"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "proper_404_handling",
+        "description": "Return 404 response for missing resources"
+      }
+    ],
+    "environment": {},
+    "dependencies": ["flask==2.3.0"],
+    "frameworks": ["flask"],
+    "tags": ["framework", "web", "error_handling"]
+  },
+  {
+    "name": "fastapi_validation_error",
+    "language": "python",
+    "description": "Test FastAPI request validation",
+    "test_type": "framework",
+    "source_code": {
+      "main.py": "from fastapi import FastAPI\nfrom pydantic import BaseModel\nfrom typing import Optional\n\napp = FastAPI()\n\nclass User(BaseModel):\n    name: str\n    email: str\n    age: int\n\n@app.post('/users')\ndef create_user(user: User):\n    return {'id': 1, **user.dict()}\n\nif __name__ == '__main__':\n    from fastapi.testclient import TestClient\n    client = TestClient(app)\n    # This will cause validation error - missing required field\n    response = client.post('/users', json={'name': 'John', 'email': 'john@example.com'})\n    print(response.status_code)\n    print(response.json())\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "ValidationError",
+        "message": "field required"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "make_field_optional",
+        "description": "Make age field optional with default value"
+      }
+    ],
+    "environment": {},
+    "dependencies": ["fastapi==0.100.0", "pydantic==2.0.0"],
+    "frameworks": ["fastapi"],
+    "tags": ["framework", "validation", "api"]
+  },
+  {
+    "name": "sqlalchemy_relationship_error",
+    "language": "python",
+    "description": "Test SQLAlchemy relationship configuration error",
+    "test_type": "framework",
+    "source_code": {
+      "main.py": "from sqlalchemy import create_engine, Column, Integer, String, ForeignKey\nfrom sqlalchemy.ext.declarative import declarative_base\nfrom sqlalchemy.orm import relationship, sessionmaker\n\nBase = declarative_base()\n\nclass User(Base):\n    __tablename__ = 'users'\n    id = Column(Integer, primary_key=True)\n    name = Column(String)\n    # Missing back_populates\n    posts = relationship('Post')\n\nclass Post(Base):\n    __tablename__ = 'posts'\n    id = Column(Integer, primary_key=True)\n    title = Column(String)\n    user_id = Column(Integer, ForeignKey('users.id'))\n    # This will cause warning/error\n    user = relationship('User')\n\nengine = create_engine('sqlite:///:memory:')\nBase.metadata.create_all(engine)\n\nSession = sessionmaker(bind=engine)\nsession = Session()\n\n# Create test data\nuser = User(name='Test User')\npost = Post(title='Test Post', user=user)\nsession.add(post)\nsession.commit()\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "SAWarning",
+        "message": "relationship.*overlaps with relationship"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "add_back_populates",
+        "description": "Add back_populates to establish bidirectional relationship"
+      }
+    ],
+    "environment": {},
+    "dependencies": ["sqlalchemy==2.0.0"],
+    "frameworks": ["sqlalchemy"],
+    "tags": ["framework", "database", "orm"]
+  }
+]

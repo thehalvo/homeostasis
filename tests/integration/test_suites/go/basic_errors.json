@@ -1,0 +1,102 @@
+[
+  {
+    "name": "go_nil_pointer_dereference",
+    "language": "go",
+    "description": "Test nil pointer dereference",
+    "test_type": "single",
+    "source_code": {
+      "main.go": "package main\n\nimport \"fmt\"\n\ntype User struct {\n    Name string\n    Email string\n}\n\nfunc getUserEmail(user *User) string {\n    // This will panic if user is nil\n    return user.Email\n}\n\nfunc main() {\n    var user *User\n    email := getUserEmail(user)\n    fmt.Println(email)\n}\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "panic",
+        "message": "runtime error: invalid memory address or nil pointer dereference"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "nil_check",
+        "description": "Add nil check before dereferencing"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "nil_safety"]
+  },
+  {
+    "name": "go_index_out_of_bounds",
+    "language": "go",
+    "description": "Test slice index out of bounds",
+    "test_type": "single",
+    "source_code": {
+      "main.go": "package main\n\nimport \"fmt\"\n\nfunc getThirdElement(items []int) int {\n    // This will panic if slice has less than 3 elements\n    return items[2]\n}\n\nfunc main() {\n    items := []int{1, 2}\n    third := getThirdElement(items)\n    fmt.Println(third)\n}\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "panic",
+        "message": "runtime error: index out of range"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "bounds_check",
+        "description": "Add bounds checking before accessing slice"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "bounds_checking"]
+  },
+  {
+    "name": "go_type_assertion_panic",
+    "language": "go",
+    "description": "Test failed type assertion",
+    "test_type": "single",
+    "source_code": {
+      "main.go": "package main\n\nimport \"fmt\"\n\nfunc processValue(val interface{}) string {\n    // This will panic if val is not a string\n    return val.(string)\n}\n\nfunc main() {\n    result := processValue(123)\n    fmt.Println(result)\n}\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "panic",
+        "message": "interface conversion.*is int, not string"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "safe_type_assertion",
+        "description": "Use comma-ok idiom for safe type assertion"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "type_safety"]
+  },
+  {
+    "name": "go_concurrent_map_write",
+    "language": "go",
+    "description": "Test concurrent map access",
+    "test_type": "single",
+    "source_code": {
+      "main.go": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\nfunc main() {\n    m := make(map[int]int)\n    var wg sync.WaitGroup\n    \n    // This will cause fatal error: concurrent map writes\n    for i := 0; i < 10; i++ {\n        wg.Add(1)\n        go func(n int) {\n            defer wg.Done()\n            m[n] = n * n\n        }(i)\n    }\n    \n    wg.Wait()\n    fmt.Println(m)\n}\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "fatal",
+        "message": "concurrent map.*write"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "add_mutex",
+        "description": "Use sync.Mutex to protect map access"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["concurrency", "race_condition"]
+  }
+]

@@ -1,0 +1,127 @@
+[
+  {
+    "name": "python_null_pointer_exception",
+    "language": "python",
+    "description": "Test handling of AttributeError on None object",
+    "test_type": "single",
+    "source_code": {
+      "main.py": "class User:\n    def __init__(self, name):\n        self.name = name\n\ndef get_user_name(user):\n    return user.name.upper()\n\n# This will cause AttributeError\nuser = None\nprint(get_user_name(user))\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "AttributeError",
+        "message": "'NoneType' object has no attribute 'name'"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "null_check",
+        "description": "Add null check before accessing attribute"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "null_safety"]
+  },
+  {
+    "name": "python_list_index_error",
+    "language": "python",
+    "description": "Test handling of IndexError in list operations",
+    "test_type": "single",
+    "source_code": {
+      "main.py": "def process_items(items):\n    result = []\n    for i in range(10):\n        # This will cause IndexError if items has less than 10 elements\n        result.append(items[i] * 2)\n    return result\n\nitems = [1, 2, 3, 4, 5]\nprint(process_items(items))\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "IndexError",
+        "message": "list index out of range"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "bounds_check",
+        "description": "Add bounds checking before list access"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "bounds_checking"]
+  },
+  {
+    "name": "python_key_error",
+    "language": "python",
+    "description": "Test handling of KeyError in dictionary operations",
+    "test_type": "single",
+    "source_code": {
+      "main.py": "def get_user_info(user_data):\n    # This will cause KeyError if 'email' key doesn't exist\n    return {\n        'name': user_data['name'],\n        'email': user_data['email'],\n        'age': user_data['age']\n    }\n\nuser = {'name': 'John', 'age': 30}\nprint(get_user_info(user))\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "KeyError",
+        "message": "'email'"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "safe_dict_access",
+        "description": "Use dict.get() method with default value"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "dict_safety"]
+  },
+  {
+    "name": "python_type_error",
+    "language": "python",
+    "description": "Test handling of TypeError in operations",
+    "test_type": "single",
+    "source_code": {
+      "main.py": "def calculate_total(prices):\n    # This will cause TypeError if prices contains non-numeric values\n    return sum(prices) * 1.1  # Add 10% tax\n\nprices = [10.5, 20.0, '30', 40.0]\nprint(calculate_total(prices))\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "TypeError",
+        "message": "unsupported operand type(s)"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "type_conversion",
+        "description": "Convert string values to float before calculation"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "type_safety"]
+  },
+  {
+    "name": "python_zero_division",
+    "language": "python",
+    "description": "Test handling of ZeroDivisionError",
+    "test_type": "single",
+    "source_code": {
+      "main.py": "def calculate_average(numbers):\n    total = sum(numbers)\n    # This will cause ZeroDivisionError if numbers is empty\n    return total / len(numbers)\n\nempty_list = []\nprint(calculate_average(empty_list))\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "ZeroDivisionError",
+        "message": "division by zero"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "zero_check",
+        "description": "Check for empty list before division"
+      }
+    ],
+    "environment": {},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["basic", "arithmetic_safety"]
+  }
+]

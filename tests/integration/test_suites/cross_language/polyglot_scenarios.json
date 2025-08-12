@@ -1,0 +1,133 @@
+[
+  {
+    "name": "python_calling_rust_wasm",
+    "language": "cross_language",
+    "description": "Python calling Rust code compiled to WebAssembly",
+    "test_type": "cross_language",
+    "source_code": {
+      "lib.rs": "use wasm_bindgen::prelude::*;\n\n#[wasm_bindgen]\npub fn process_data(data: &[u8]) -> Vec<u8> {\n    // This will panic if data is empty\n    let first = data[0];\n    data.iter().map(|&x| x * first).collect()\n}\n",
+      "main.py": "import wasmtime\n\n# Load WASM module\nstore = wasmtime.Store()\nmodule = wasmtime.Module.from_file(store.engine, 'lib.wasm')\ninstance = wasmtime.Instance(store, module, [])\n\n# Call with empty data - will cause panic\nprocess_data = instance.exports(store)['process_data']\nresult = process_data(store, [])\nprint(result)\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "WasmtimeError",
+        "message": "wasm trap: wasm.*unreachable.*executed"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "cross_language_error_handling",
+        "description": "Add proper error handling in both Rust and Python"
+      }
+    ],
+    "environment": {},
+    "dependencies": ["wasmtime", "wasm-bindgen"],
+    "frameworks": [],
+    "tags": ["cross_language", "wasm", "python", "rust"]
+  },
+  {
+    "name": "nodejs_java_grpc_communication",
+    "language": "cross_language",
+    "description": "Node.js client calling Java gRPC service with type mismatch",
+    "test_type": "cross_language",
+    "source_code": {
+      "Service.java": "import io.grpc.stub.StreamObserver;\n\npublic class UserService extends UserServiceGrpc.UserServiceImplBase {\n    @Override\n    public void getUser(UserRequest request, StreamObserver<UserResponse> observer) {\n        // This will throw if userId is not a valid long\n        long userId = Long.parseLong(request.getUserId());\n        // ... fetch user ...\n        observer.onError(new IllegalArgumentException(\"Invalid user ID format\"));\n    }\n}\n",
+      "client.js": "const grpc = require('@grpc/grpc-js');\nconst protoLoader = require('@grpc/proto-loader');\n\nconst client = new UserServiceClient('localhost:50051', grpc.credentials.createInsecure());\n\n// Send invalid userId format\nclient.getUser({ userId: 'not-a-number' }, (err, response) => {\n    if (err) {\n        console.error('gRPC error:', err);\n    }\n});\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "gRPC_Error",
+        "message": "INVALID_ARGUMENT.*Invalid user ID format"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "input_validation",
+        "description": "Add input validation on both client and server"
+      }
+    ],
+    "environment": {},
+    "dependencies": ["@grpc/grpc-js", "@grpc/proto-loader", "grpc", "grpc-netty"],
+    "frameworks": ["grpc"],
+    "tags": ["cross_language", "grpc", "nodejs", "java", "validation"]
+  },
+  {
+    "name": "go_python_shared_memory",
+    "language": "cross_language",
+    "description": "Go and Python sharing memory with race condition",
+    "test_type": "cross_language",
+    "source_code": {
+      "writer.go": "package main\n\nimport (\n    \"syscall\"\n    \"unsafe\"\n)\n\nfunc main() {\n    // Create shared memory\n    fd, _ := syscall.Open(\"/dev/shm/shared_data\", syscall.O_RDWR|syscall.O_CREAT, 0666)\n    syscall.Ftruncate(fd, 1024)\n    \n    data, _ := syscall.Mmap(fd, 0, 1024, syscall.PROT_WRITE, syscall.MAP_SHARED)\n    \n    // Write without synchronization\n    for i := 0; i < 100; i++ {\n        *(*int)(unsafe.Pointer(&data[0])) = i\n    }\n}\n",
+      "reader.py": "import mmap\nimport struct\nimport time\n\n# Open shared memory\nwith open('/dev/shm/shared_data', 'r+b') as f:\n    mm = mmap.mmap(f.fileno(), 1024)\n    \n    # Read without synchronization - race condition\n    values = []\n    for _ in range(100):\n        value = struct.unpack('i', mm[:4])[0]\n        values.append(value)\n        time.sleep(0.001)\n        \n    print(f'Read values: {values}')\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "RaceCondition",
+        "message": "Inconsistent data read due to race condition"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "add_synchronization",
+        "description": "Add proper synchronization mechanism (semaphore/mutex)"
+      }
+    ],
+    "environment": {"ENABLE_RACE_DETECTION": "1"},
+    "dependencies": [],
+    "frameworks": [],
+    "tags": ["cross_language", "race_condition", "shared_memory", "go", "python"]
+  },
+  {
+    "name": "microservices_distributed_transaction",
+    "language": "cross_language",
+    "description": "Distributed transaction failure across microservices in different languages",
+    "test_type": "cross_language",
+    "source_code": {
+      "order_service.py": "# Python Order Service\nfrom flask import Flask, jsonify\nimport requests\n\napp = Flask(__name__)\n\n@app.route('/create_order', methods=['POST'])\ndef create_order():\n    # Start distributed transaction\n    order_id = create_order_record()\n    \n    # Call inventory service (Java)\n    inv_response = requests.post('http://inventory:8080/reserve', \n                                json={'order_id': order_id})\n    \n    if inv_response.status_code != 200:\n        # This should rollback but doesn't\n        return jsonify({'error': 'Inventory reservation failed'}), 500\n        \n    # Call payment service (Go) \n    pay_response = requests.post('http://payment:8081/charge',\n                                json={'order_id': order_id})\n                                \n    if pay_response.status_code != 200:\n        # Inventory already reserved but not rolled back!\n        return jsonify({'error': 'Payment failed'}), 500\n        \n    return jsonify({'order_id': order_id})\n",
+      "InventoryService.java": "// Java Inventory Service\n@RestController\npublic class InventoryController {\n    @PostMapping(\"/reserve\")\n    public ResponseEntity<String> reserveItems(@RequestBody ReserveRequest request) {\n        // Reserve items in database\n        if (!inventoryService.reserve(request.getOrderId())) {\n            return ResponseEntity.status(500).body(\"Insufficient inventory\");\n        }\n        return ResponseEntity.ok(\"Reserved\");\n    }\n}\n",
+      "payment_service.go": "// Go Payment Service\nfunc chargeHandler(w http.ResponseWriter, r *http.Request) {\n    var req ChargeRequest\n    json.NewDecoder(r.Body).Decode(&req)\n    \n    // Simulate payment failure\n    if rand.Float32() < 0.3 {\n        http.Error(w, \"Payment processing failed\", http.StatusInternalServerError)\n        return\n    }\n    \n    w.WriteHeader(http.StatusOK)\n    json.NewEncoder(w).Encode(map[string]string{\"status\": \"charged\"})\n}\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "DistributedTransactionFailure", 
+        "message": "Partial transaction commit - inconsistent state"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "implement_saga_pattern",
+        "description": "Implement Saga pattern for distributed transaction management"
+      }
+    ],
+    "environment": {},
+    "dependencies": ["flask", "requests", "spring-boot", "gin"],
+    "frameworks": ["flask", "spring", "gin"],
+    "tags": ["cross_language", "microservices", "distributed_transaction", "saga"]
+  },
+  {
+    "name": "react_django_graphql_n_plus_one",
+    "language": "cross_language",
+    "description": "React frontend causing N+1 query problem in Django GraphQL backend",
+    "test_type": "cross_language",
+    "source_code": {
+      "schema.py": "import graphene\nfrom graphene_django import DjangoObjectType\nfrom .models import Author, Book\n\nclass AuthorType(DjangoObjectType):\n    class Meta:\n        model = Author\n        \nclass BookType(DjangoObjectType):\n    class Meta:\n        model = Book\n        \nclass Query(graphene.ObjectType):\n    authors = graphene.List(AuthorType)\n    \n    def resolve_authors(self, info):\n        # This causes N+1 queries when accessing books\n        return Author.objects.all()\n",
+      "AuthorList.tsx": "import { useQuery, gql } from '@apollo/client';\n\nconst AUTHORS_WITH_BOOKS = gql`\n  query GetAuthorsWithBooks {\n    authors {\n      id\n      name\n      books {  // This triggers N+1 queries\n        id\n        title\n        publishedDate\n      }\n    }\n  }\n`;\n\nexport const AuthorList: React.FC = () => {\n  const { loading, error, data } = useQuery(AUTHORS_WITH_BOOKS);\n  \n  if (loading) return <p>Loading...</p>;\n  if (error) return <p>Error: {error.message}</p>;\n  \n  return (\n    <div>\n      {data.authors.map(author => (\n        <div key={author.id}>\n          <h2>{author.name}</h2>\n          <ul>\n            {author.books.map(book => (\n              <li key={book.id}>{book.title}</li>\n            ))}\n          </ul>\n        </div>\n      ))}\n    </div>\n  );\n};\n"
+    },
+    "expected_errors": [
+      {
+        "error_type": "PerformanceWarning",
+        "message": "N+1 query detected in GraphQL resolver"
+      }
+    ],
+    "expected_fixes": [
+      {
+        "fix_type": "add_select_related",
+        "description": "Use select_related() or DataLoader to prevent N+1 queries"
+      }
+    ],
+    "environment": {},
+    "dependencies": ["django", "graphene-django", "react", "@apollo/client"],
+    "frameworks": ["django", "graphql", "react"],
+    "tags": ["cross_language", "performance", "n_plus_one", "graphql"]
+  }
+]
