@@ -1,0 +1,118 @@
+# Chaos Engineering CI Configuration
+# This configuration is optimized for CI/CD environments
+
+safety:
+  max_error_rate: 0.2  # More strict for CI
+  min_success_rate: 0.9
+  max_latency_ms: 2000
+  auto_rollback: true
+  emergency_stop_threshold: 0.5  # Stop all experiments if error rate exceeds
+
+monitoring:
+  interval_seconds: 2  # More frequent monitoring in CI
+  metrics_window_minutes: 5
+  alert_on_threshold_breach: true
+
+experiments:
+  # Default categories - can be overridden by CLI
+  categories:
+    - network
+    - resource
+    - service
+  
+  # CI-appropriate intensity
+  intensity: low
+  
+  # Shorter duration for CI
+  duration_minutes: 5
+  
+  # Parallel execution
+  max_concurrent: 2
+  
+  # Experiment-specific overrides
+  overrides:
+    network:
+      max_latency_injection_ms: 500
+      max_packet_loss_percent: 5
+    
+    resource:
+      max_cpu_percent: 60
+      max_memory_mb: 512
+      max_disk_io_mbps: 50
+    
+    service:
+      max_failure_rate: 0.3
+      max_affected_services: 2
+
+reporting:
+  output_dir: chaos_reports
+  format: json
+  include_metrics: true
+  include_logs: true
+  
+  # CI-specific reporting
+  generate_junit_xml: true
+  post_to_pr: true
+  
+  # Thresholds for CI status
+  failure_thresholds:
+    hypothesis_validation_rate: 0.8
+    system_recovery_time_seconds: 30
+    max_impact_duration_seconds: 60
+
+# CI environment settings
+ci_environment:
+  # Resource limits for chaos experiments
+  container_limits:
+    cpu: "2"
+    memory: "4Gi"
+  
+  # Network namespacing
+  use_network_namespace: true
+  
+  # Cleanup settings
+  cleanup_on_failure: true
+  preserve_logs_on_failure: true
+  
+  # Timeout settings
+  global_timeout_minutes: 30
+  experiment_timeout_minutes: 10
+
+# Integration with monitoring systems
+integrations:
+  prometheus:
+    enabled: false  # Set to true if Prometheus is available
+    endpoint: "http://localhost:9090"
+    
+  grafana:
+    enabled: false
+    endpoint: "http://localhost:3000"
+    
+  slack:
+    enabled: false
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+    notify_on: ["failure", "recovery"]
+
+# Experiment templates for CI
+experiment_templates:
+  - name: "CI Network Latency Test"
+    fault_type: "NETWORK_LATENCY"
+    parameters:
+      latency_ms: 100
+      jitter_ms: 20
+      affected_percentage: 25
+    duration_minutes: 3
+    
+  - name: "CI Service Degradation Test"
+    fault_type: "SERVICE_FAILURE"
+    parameters:
+      failure_probability: 0.2
+      affected_dependencies: ["cache"]
+    duration_minutes: 5
+    
+  - name: "CI Resource Pressure Test"
+    fault_type: "RESOURCE_CPU"
+    parameters:
+      cpu_percentage: 50
+      core_count: 1
+    duration_minutes: 3
