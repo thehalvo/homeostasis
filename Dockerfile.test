@@ -1,0 +1,45 @@
+# Dockerfile for running E2E healing tests
+FROM python:3.9-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    git \
+    curl \
+    wget \
+    nodejs \
+    npm \
+    golang-go \
+    default-jdk \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements
+COPY requirements*.txt ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r requirements-dev.txt && \
+    pip install --no-cache-dir \
+        pytest \
+        pytest-asyncio \
+        pytest-timeout \
+        pytest-xdist \
+        pytest-json-report \
+        pytest-html \
+        pytest-cov
+
+# Copy application code
+COPY . .
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Create necessary directories
+RUN mkdir -p /app/logs /app/test_results /app/patches /app/backups
+
+# Default command
+CMD ["python", "tests/e2e/healing_scenarios/run_e2e_tests.py", "--suite", "all"]

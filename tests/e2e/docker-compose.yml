@@ -1,0 +1,171 @@
+version: '3.8'
+
+services:
+  # Test orchestrator service
+  orchestrator:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    volumes:
+      - ./test_config.yaml:/app/config.yaml
+      - test_logs:/app/logs
+      - test_patches:/app/patches
+      - test_backups:/app/backups
+    environment:
+      - ENVIRONMENT=test
+      - LOG_LEVEL=DEBUG
+      - PYTHONPATH=/app
+    networks:
+      - healing-network
+    depends_on:
+      - test-service-python
+      - test-service-node
+      - test-service-go
+
+  # Python test service
+  test-service-python:
+    image: python:3.9-slim
+    working_dir: /app
+    volumes:
+      - ../../services/example_service:/app
+      - test_logs:/logs
+    command: |
+      bash -c "
+        pip install fastapi uvicorn requests &&
+        python app.py
+      "
+    ports:
+      - "8000:8000"
+    networks:
+      - healing-network
+    environment:
+      - SERVICE_NAME=python-service
+      - PORT=8000
+
+  # Node.js test service
+  test-service-node:
+    image: node:16-alpine
+    working_dir: /app
+    volumes:
+      - ./node_service:/app
+      - test_logs:/logs
+    command: |
+      sh -c "
+        npm install express &&
+        node app.js
+      "
+    ports:
+      - "8001:8001"
+    networks:
+      - healing-network
+    environment:
+      - SERVICE_NAME=node-service
+      - PORT=8001
+
+  # Go test service
+  test-service-go:
+    image: golang:1.19-alpine
+    working_dir: /app
+    volumes:
+      - ./go_service:/app
+      - test_logs:/logs
+    command: |
+      sh -c "
+        go mod init testservice &&
+        go get github.com/gin-gonic/gin &&
+        go run main.go
+      "
+    ports:
+      - "8002:8002"
+    networks:
+      - healing-network
+    environment:
+      - SERVICE_NAME=go-service
+      - PORT=8002
+
+  # Test runner container
+  test-runner:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.test
+    volumes:
+      - ../..:/app
+      - test_results:/app/test_results
+      - test_logs:/app/logs
+    environment:
+      - PYTHONPATH=/app
+      - TEST_ENV=docker
+    networks:
+      - healing-network
+    depends_on:
+      - orchestrator
+      - test-service-python
+      - test-service-node
+      - test-service-go
+    command: |
+      bash -c "
+        cd /app/tests/e2e/healing_scenarios &&
+        python run_e2e_tests.py --suite all --output-dir /app/test_results
+      "
+
+  # Monitoring stack for observability
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - healing-network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - healing-network
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+
+  # Log aggregation
+  elasticsearch:
+    image: elasticsearch:7.17.9
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - healing-network
+
+  kibana:
+    image: kibana:7.17.9
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - healing-network
+    depends_on:
+      - elasticsearch
+
+networks:
+  healing-network:
+    driver: bridge
+
+volumes:
+  test_logs:
+  test_patches:
+  test_backups:
+  test_results:
+  prometheus_data:
+  grafana_data:
+  elasticsearch_data:

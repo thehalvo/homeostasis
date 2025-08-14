@@ -1,0 +1,200 @@
+name: E2E Healing Scenario Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'modules/**'
+      - 'orchestrator/**'
+      - 'tests/e2e/**'
+      - '.github/workflows/e2e-healing-tests.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'modules/**'
+      - 'orchestrator/**'
+      - 'tests/e2e/**'
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Test suite to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - basic
+          - advanced
+          - cross-language
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, '3.10', 3.11]
+      fail-fast: false
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          docker.io \
+          docker-compose \
+          nodejs \
+          npm \
+          golang-go \
+          default-jdk
+    
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install pytest-timeout pytest-json-report pytest-html pytest-xdist
+    
+    - name: Prepare test environment
+      run: |
+        # Create necessary directories
+        mkdir -p logs
+        mkdir -p test_results
+        
+        # Set up test configuration
+        cp config.example.yaml config.test.yaml
+        
+    - name: Run E2E healing scenario tests
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+      run: |
+        python tests/e2e/healing_scenarios/run_e2e_tests.py \
+          --suite ${{ github.event.inputs.test_suite || 'all' }} \
+          --output-dir test_results \
+          --verbose \
+          --ci \
+          --timeout 1800
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: e2e-test-results-py${{ matrix.python-version }}
+        path: |
+          test_results/
+          logs/
+    
+    - name: Upload test report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: e2e-test-report-py${{ matrix.python-version }}
+        path: test_results/report.html
+    
+    - name: Publish test results
+      if: always()
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      with:
+        files: test_results/report.json
+        check_name: E2E Healing Tests (Python ${{ matrix.python-version }})
+    
+    - name: Comment PR with results
+      if: github.event_name == 'pull_request' && always()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('test_results/e2e_report.json', 'utf8'));
+          
+          const summary = report.summary;
+          const passed = summary.passed || 0;
+          const failed = summary.failed || 0;
+          const total = summary.total_tests || 0;
+          const successRate = total > 0 ? (passed / total * 100).toFixed(1) : 0;
+          
+          const comment = `## E2E Healing Scenario Test Results (Python ${{ matrix.python-version }})
+          
+          - **Total Tests**: ${total}
+          - **Passed**: ${passed} ✅
+          - **Failed**: ${failed} ❌
+          - **Success Rate**: ${successRate}%
+          - **Duration**: ${summary.duration.toFixed(2)}s
+          
+          ${failed > 0 ? '### Failed Tests\n' + Object.entries(report.test_results)
+            .filter(([_, result]) => result.outcome === 'failed')
+            .map(([name, _]) => `- ${name}`)
+            .join('\n') : ''}
+          
+          ${report.recommendations.length > 0 ? '### Recommendations\n' + report.recommendations
+            .map(rec => `- ${rec}`)
+            .join('\n') : ''}
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+  
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs: e2e-tests
+    if: success()
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Build test images
+      run: |
+        docker build -t homeostasis-test:latest .
+        docker-compose -f tests/e2e/docker-compose.yml build
+    
+    - name: Run integration tests with Docker
+      run: |
+        docker-compose -f tests/e2e/docker-compose.yml up -d
+        
+        # Wait for services to be ready
+        sleep 30
+        
+        # Run tests against dockerized services
+        docker-compose -f tests/e2e/docker-compose.yml \
+          run --rm test-runner \
+          python run_e2e_tests.py --suite all --ci
+    
+    - name: Collect Docker logs
+      if: failure()
+      run: |
+        docker-compose -f tests/e2e/docker-compose.yml logs > docker-logs.txt
+    
+    - name: Upload Docker logs
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: docker-logs
+        path: docker-logs.txt
+    
+    - name: Clean up
+      if: always()
+      run: |
+        docker-compose -f tests/e2e/docker-compose.yml down -v
