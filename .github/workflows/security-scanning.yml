@@ -1,0 +1,289 @@
+name: Security Vulnerability Scanning
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run security scans daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Type of security scan to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - dependency
+          - static_code
+          - container
+          - iac
+
+jobs:
+  security-scan:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    
+    strategy:
+      matrix:
+        python-version: [3.9]
+        node-version: [18.x]
+        go-version: [1.21.x]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+      
+      - name: Install security scanning tools
+        run: |
+          # Python tools
+          pip install bandit safety detect-secrets
+          
+          # Node.js tools
+          npm install -g eslint eslint-plugin-security
+          
+          # Go tools
+          go install github.com/securego/gosec/v2/cmd/gosec@latest
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          
+          # Ruby tools
+          gem install bundle-audit
+          
+          # Container tools
+          wget -qO- https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 > hadolint
+          chmod +x hadolint
+          sudo mv hadolint /usr/local/bin/
+          
+          # IaC tools
+          pip install checkov
+          
+          # Trivy for container scanning
+          sudo apt-get update
+          sudo apt-get install wget apt-transport-https gnupg lsb-release
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy
+      
+      - name: Cache vulnerability databases
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/trivy
+            ~/.safety
+            ~/.checkov
+          key: vuln-db-${{ runner.os }}-${{ hashFiles('**/requirements.txt', '**/package-lock.json', '**/go.sum') }}
+          restore-keys: |
+            vuln-db-${{ runner.os }}-
+      
+      - name: Run Homeostasis Security Scanner
+        id: security_scan
+        run: |
+          python -m pytest tests/test_security_scanner.py -v --json-report --json-report-file=security-scan-results.json
+        env:
+          SCAN_TYPE: ${{ github.event.inputs.scan_type || 'all' }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload security scan results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-scan-results
+          path: |
+            security-scan-results.json
+            security-report.html
+          retention-days: 30
+      
+      - name: Dependency vulnerability scan
+        if: github.event.inputs.scan_type == 'dependency' || github.event.inputs.scan_type == 'all' || github.event.inputs.scan_type == ''
+        run: |
+          echo "Running dependency vulnerability scans..."
+          
+          # Python dependencies
+          if [ -f requirements.txt ]; then
+            safety check -r requirements.txt --json > python-vuln-report.json || true
+          fi
+          
+          # Node.js dependencies
+          if [ -f package.json ]; then
+            npm audit --json > npm-vuln-report.json || true
+          fi
+          
+          # Go dependencies
+          if [ -f go.mod ]; then
+            govulncheck -json ./... > go-vuln-report.json || true
+          fi
+          
+          # Ruby dependencies
+          if [ -f Gemfile ]; then
+            bundle-audit check --format json > ruby-vuln-report.json || true
+          fi
+      
+      - name: Static code security analysis
+        if: github.event.inputs.scan_type == 'static_code' || github.event.inputs.scan_type == 'all' || github.event.inputs.scan_type == ''
+        run: |
+          echo "Running static code security analysis..."
+          
+          # Python code
+          bandit -r modules/ tests/ -f json -o bandit-report.json || true
+          
+          # JavaScript/TypeScript code
+          find . -name "*.js" -o -name "*.ts" | xargs eslint --format json -o eslint-report.json || true
+          
+          # Go code
+          gosec -fmt json -out gosec-report.json ./... || true
+          
+          # Secret detection
+          detect-secrets scan --all-files --force-use-all-plugins > secrets-report.json || true
+      
+      - name: Container security scan
+        if: github.event.inputs.scan_type == 'container' || github.event.inputs.scan_type == 'all' || github.event.inputs.scan_type == ''
+        run: |
+          echo "Running container security scans..."
+          
+          # Scan Dockerfiles
+          find . -name "Dockerfile*" -exec hadolint --format json {} \; > hadolint-report.json || true
+          
+          # Scan container images if they exist
+          if [ -f docker-compose.yml ]; then
+            # Extract image names and scan with Trivy
+            docker-compose config | grep "image:" | awk '{print $2}' | while read image; do
+              trivy image --format json --output "trivy-${image//\//-}.json" "$image" || true
+            done
+          fi
+      
+      - name: IaC security scan
+        if: github.event.inputs.scan_type == 'iac' || github.event.inputs.scan_type == 'all' || github.event.inputs.scan_type == ''
+        run: |
+          echo "Running Infrastructure as Code security scans..."
+          
+          # Scan with Checkov
+          checkov -d . --framework all -o json > checkov-report.json || true
+      
+      - name: Generate consolidated security report
+        if: always()
+        run: |
+          python scripts/consolidate_security_reports.py \
+            --output security-report.html \
+            --format html \
+            --severity-threshold medium
+      
+      - name: Comment PR with security summary
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'security-scan-results.json';
+            
+            if (fs.existsSync(reportPath)) {
+              const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+              
+              let comment = '## 🔒 Security Scan Results\n\n';
+              
+              if (report.summary) {
+                comment += `**Total Vulnerabilities Found:** ${report.summary.total_vulnerabilities}\n\n`;
+                comment += '| Severity | Count |\n|----------|-------|\n';
+                comment += `| Critical | ${report.summary.by_severity.critical || 0} |\n`;
+                comment += `| High | ${report.summary.by_severity.high || 0} |\n`;
+                comment += `| Medium | ${report.summary.by_severity.medium || 0} |\n`;
+                comment += `| Low | ${report.summary.by_severity.low || 0} |\n`;
+                comment += `| Info | ${report.summary.by_severity.info || 0} |\n\n`;
+                
+                if (report.summary.by_severity.critical > 0 || report.summary.by_severity.high > 0) {
+                  comment += '⚠️ **Action Required:** Critical or high severity vulnerabilities detected!\n\n';
+                }
+                
+                comment += 'View the full security report in the workflow artifacts.';
+              } else {
+                comment += '✅ No security issues found!';
+              }
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+      
+      - name: Fail if critical vulnerabilities found
+        if: always()
+        run: |
+          if [ -f security-scan-results.json ]; then
+            critical_count=$(jq -r '.summary.by_severity.critical // 0' security-scan-results.json)
+            if [ "$critical_count" -gt 0 ]; then
+              echo "❌ Critical vulnerabilities found: $critical_count"
+              exit 1
+            fi
+          fi
+      
+      - name: Upload SARIF results
+        if: always() && github.event_name != 'pull_request'
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: security-results.sarif
+        continue-on-error: true
+
+  security-baseline:
+    name: Update Security Baselines
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: security-scan
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Download scan results
+        uses: actions/download-artifact@v3
+        with:
+          name: security-scan-results
+      
+      - name: Update security baselines
+        run: |
+          python scripts/update_security_baselines.py \
+            --results security-scan-results.json \
+            --baseline-file security-baselines.json
+      
+      - name: Commit baseline updates
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add security-baselines.json
+          git diff --staged --quiet || git commit -m "Update security baselines [skip ci]"
+          git push

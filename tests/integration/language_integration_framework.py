@@ -9,6 +9,7 @@ import asyncio
 import json
 import logging
 import os
+import sys
 import subprocess
 import tempfile
 import shutil
@@ -26,6 +27,7 @@ from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrat
 from modules.patch_generation.patcher import PatchGenerator
 from modules.testing.container_manager import ContainerManager
 from modules.monitoring.metrics_collector import MetricsCollector
+from modules.testing.security_scanner import SecurityTestOrchestrator, SecurityScanResult
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +63,8 @@ class IntegrationTestResult:
     error_messages: List[str] = field(default_factory=list)
     metrics: Dict[str, Any] = field(default_factory=dict)
     container_logs: Optional[str] = None
+    security_scan_results: Optional[Dict[str, SecurityScanResult]] = None
+    security_report: Optional[Dict[str, Any]] = None
 
 
 class LanguageIntegrationTestRunner(ABC):
@@ -71,6 +75,8 @@ class LanguageIntegrationTestRunner(ABC):
         self.plugin = plugin
         self.container_manager = ContainerManager()
         self.metrics_collector = MetricsCollector()
+        self.security_orchestrator = SecurityTestOrchestrator()
+        self.enable_security_scanning = True
         
     @abstractmethod
     async def setup_environment(self, test_case: IntegrationTestCase) -> Path:
@@ -137,6 +143,23 @@ class LanguageIntegrationTestRunner(ABC):
                                 
             # Collect metrics
             result.metrics = await self._collect_metrics(test_dir)
+            
+            # Run security scan if enabled
+            if self.enable_security_scanning and test_dir:
+                try:
+                    logger.info(f"Running security scan for test {test_case.name}")
+                    scan_results = await self.security_orchestrator.run_security_scan(test_dir)
+                    result.security_scan_results = scan_results
+                    result.security_report = self.security_orchestrator.generate_security_report(scan_results)
+                    
+                    # Check for critical vulnerabilities
+                    if result.security_report and result.security_report["summary"]["by_severity"]["critical"] > 0:
+                        result.error_messages.append(
+                            f"Critical security vulnerabilities found: {result.security_report['summary']['by_severity']['critical']}"
+                        )
+                except Exception as e:
+                    logger.error(f"Security scan failed: {e}")
+                    result.error_messages.append(f"Security scan error: {str(e)}")
             
         except Exception as e:
             logger.error(f"Error running test {test_case.name}: {e}")
@@ -464,6 +487,17 @@ class IntegrationTestOrchestrator:
                     "applied_fix_count": len(result.applied_fixes),
                     "errors": result.error_messages
                 }
+                
+                # Add security scan summary if available
+                if result.security_report:
+                    test_detail["security_summary"] = {
+                        "total_vulnerabilities": result.security_report["summary"]["total_vulnerabilities"],
+                        "critical": result.security_report["summary"]["by_severity"]["critical"],
+                        "high": result.security_report["summary"]["by_severity"]["high"],
+                        "medium": result.security_report["summary"]["by_severity"]["medium"],
+                        "low": result.security_report["summary"]["by_severity"]["low"]
+                    }
+                    
                 language_summary["test_details"].append(test_detail)
                 
             report["languages"][language] = language_summary
