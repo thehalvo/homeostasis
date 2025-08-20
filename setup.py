@@ -14,6 +14,8 @@ setup(
         "pyyaml>=6.0.0",
         "requests>=2.31.0",
         "cryptography>=41.0.0",
+        "numpy>=1.21.0",
+        "scikit-learn>=1.0.0",
     ],
     extras_require={
         "dev": [
