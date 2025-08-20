@@ -104,6 +104,41 @@ def create_main_parser() -> argparse.ArgumentParser:
     orchestrator_parser.add_argument("--log-level", "-l", type=str, choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], default="INFO", help="Logging level")
     orchestrator_parser.add_argument("--demo", "-d", action="store_true", help="Run in demonstration mode")
     
+    # Developer tools commands
+    dev_parser = subparsers.add_parser(
+        "dev",
+        help="Developer tools for testing and integration"
+    )
+    
+    dev_subparsers = dev_parser.add_subparsers(dest="dev_command", help="Developer tool commands")
+    
+    # Simulate command
+    simulate_parser = dev_subparsers.add_parser("simulate", help="Run healing simulation")
+    simulate_parser.add_argument("--name", "-n", required=True, help="Simulation name")
+    simulate_parser.add_argument("--language", "-l", required=True, help="Programming language")
+    simulate_parser.add_argument("--error-type", "-e", default="generic", help="Error type to simulate")
+    simulate_parser.add_argument("--code", "-c", help="Code snippet to test")
+    simulate_parser.add_argument("--file", "-f", type=Path, help="File containing code to test")
+    simulate_parser.add_argument("--docker", action="store_true", help="Use Docker for isolation")
+    simulate_parser.add_argument("--output", "-o", type=Path, help="Output path for results")
+    
+    # Calculate effectiveness command
+    effectiveness_parser = dev_subparsers.add_parser("effectiveness", help="Calculate healing effectiveness")
+    effectiveness_parser.add_argument("--start-date", help="Start date (YYYY-MM-DD)")
+    effectiveness_parser.add_argument("--end-date", help="End date (YYYY-MM-DD)")
+    effectiveness_parser.add_argument("--language", "-l", help="Filter by language")
+    effectiveness_parser.add_argument("--error-type", "-e", help="Filter by error type")
+    effectiveness_parser.add_argument("--format", "-f", choices=["json", "html", "markdown"], default="json", help="Output format")
+    effectiveness_parser.add_argument("--output", "-o", type=Path, help="Output file")
+    
+    # Validate templates command
+    validate_parser = dev_subparsers.add_parser("validate", help="Validate healing templates")
+    validate_parser.add_argument("path", type=Path, help="Path to template file or directory")
+    validate_parser.add_argument("-r", "--recursive", action="store_true", help="Recursively validate templates")
+    validate_parser.add_argument("-f", "--format", choices=["text", "json", "markdown"], default="text", help="Output format")
+    validate_parser.add_argument("-o", "--output", type=Path, help="Output file")
+    validate_parser.add_argument("--fail-on-warning", action="store_true", help="Exit with error if warnings found")
+    
     return parser
 
 
@@ -170,6 +205,112 @@ def handle_orchestrator_commands(args: argparse.Namespace) -> None:
     orchestrator_main()
 
 
+def handle_dev_commands(args: argparse.Namespace) -> None:
+    """Handle developer tool commands."""
+    from datetime import datetime
+    
+    if args.dev_command == "simulate":
+        from modules.developer_tools.sandbox import HealingSimulator, SimulationConfig
+        
+        # Prepare simulation config
+        config = SimulationConfig(
+            name=args.name,
+            language=args.language,
+            error_type=args.error_type
+        )
+        
+        # Load code from file or argument
+        if args.file:
+            config.code_snippet = args.file.read_text()
+        elif args.code:
+            config.code_snippet = args.code
+        else:
+            print("Error: Either --code or --file must be provided")
+            sys.exit(1)
+        
+        # Run simulation
+        simulator = HealingSimulator()
+        with simulator.simulation_context(use_docker=args.docker) as sim:
+            result = sim.simulate(config)
+            
+            # Output results
+            if args.output:
+                sim.export_results(args.output, format="json")
+                print(f"Results saved to {args.output}")
+            else:
+                print(f"Simulation ID: {result.simulation_id}")
+                print(f"Success: {result.success}")
+                print(f"Duration: {(result.end_time - result.start_time).total_seconds():.2f}s")
+                if result.logs:
+                    print("\nLogs:")
+                    for log in result.logs:
+                        print(f"  {log}")
+    
+    elif args.dev_command == "effectiveness":
+        from modules.developer_tools.effectiveness_calculator import EffectivenessCalculator
+        
+        calculator = EffectivenessCalculator()
+        
+        # Parse dates if provided
+        start_date = datetime.fromisoformat(args.start_date) if args.start_date else None
+        end_date = datetime.fromisoformat(args.end_date) if args.end_date else None
+        
+        # Calculate effectiveness
+        report = calculator.calculate_effectiveness(
+            start_date=start_date,
+            end_date=end_date,
+            language=args.language,
+            error_type=args.error_type
+        )
+        
+        # Generate report
+        output = calculator.export_report(report, format=args.format)
+        
+        # Output results
+        if args.output:
+            args.output.write_text(output)
+            print(f"Report saved to {args.output}")
+        else:
+            print(output)
+    
+    elif args.dev_command == "validate":
+        from modules.developer_tools.template_validator import TemplateValidator
+        
+        validator = TemplateValidator()
+        
+        # Validate templates
+        if args.path.is_file():
+            results = [validator.validate_template(args.path)]
+        elif args.path.is_dir():
+            results = validator.validate_directory(args.path, recursive=args.recursive)
+        else:
+            print(f"Error: {args.path} is not a valid file or directory")
+            sys.exit(1)
+        
+        # Generate report
+        report = validator.generate_report(results, format=args.format)
+        
+        # Output report
+        if args.output:
+            args.output.write_text(report)
+            print(f"Report saved to {args.output}")
+        else:
+            print(report)
+        
+        # Exit with appropriate code
+        invalid_count = sum(1 for r in results if not r.is_valid)
+        warning_count = sum(len(r.warnings) for r in results)
+        
+        if invalid_count > 0:
+            sys.exit(1)
+        elif args.fail_on_warning and warning_count > 0:
+            sys.exit(1)
+    
+    else:
+        print("Invalid developer command. Use 'homeostasis dev --help' for available commands.")
+        sys.exit(1)
+
+
 def main() -> None:
     """Main entry point for the unified CLI."""
     parser = create_main_parser()
@@ -188,6 +329,8 @@ def main() -> None:
             handle_rule_commands(args)
         elif args.module == "orchestrator":
             handle_orchestrator_commands(args)
+        elif args.module == "dev":
+            handle_dev_commands(args)
         else:
             parser.print_help()
             sys.exit(1)
