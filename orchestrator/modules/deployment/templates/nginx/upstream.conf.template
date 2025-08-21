@@ -1,0 +1,4 @@
+
+upstream {service_name} {{
+{upstream_servers}
+}}

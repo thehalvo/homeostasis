@@ -20,7 +20,7 @@ from .language_adapters import (
     ErrorSchemaValidator
 )
 from .rule_based import RuleBasedAnalyzer
-from .language_plugin_system import get_plugin, list_plugins
+from .language_plugin_system import get_plugin, get_supported_languages
 
 logger = logging.getLogger(__name__)
 

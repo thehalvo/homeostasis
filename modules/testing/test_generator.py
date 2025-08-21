@@ -21,7 +21,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from modules.monitoring.logger import MonitoringLogger
-from modules.analysis.rule_based import RuleAnalyzer
+from modules.analysis.rule_based import RuleBasedAnalyzer
 
 
 class TestGenerator:
@@ -53,7 +53,7 @@ class TestGenerator:
             self._create_default_templates()
         
         # Initialize rule analyzer for pattern matching
-        self.rule_analyzer = RuleAnalyzer()
+        self.rule_analyzer = RuleBasedAnalyzer()
         
         self.logger.info(f"Initialized test generator using {test_framework}")
     
@@ -66,7 +66,7 @@ import pytest
 from {{ module_path }} import {{ function_name }}
 
 def test_{{ test_name }}():
-    """Test for {{ error_description }}"""
+    '''Test for {{ error_description }}'''
     # Setup
     {{ setup_code }}
     
@@ -88,7 +88,7 @@ from {{ module_path }} import {{ function_name }}
 
 class Test{{ test_class_name }}(unittest.TestCase):
     def test_{{ test_name }}(self):
-        """Test for {{ error_description }}"""
+        '''Test for {{ error_description }}'''
         # Setup
         {{ setup_code }}
         

@@ -16,6 +16,10 @@ setup(
         "cryptography>=41.0.0",
         "numpy>=1.21.0",
         "scikit-learn>=1.0.0",
+        "jsonschema>=4.0.0",
+        "semver>=3.0.0",
+        "PyJWT>=2.8.0",
+        "psutil>=5.9.0",
     ],
     extras_require={
         "dev": [

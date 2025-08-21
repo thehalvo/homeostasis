@@ -116,8 +116,8 @@ class LLMContext:
     provider_preferences: Optional[Dict[str, Any]] = None
     
     # Failure tracking
-    llm_failures: Optional[List[LLMFailureLog]] = None
-    validation_failures: Optional[List[ValidationFailureLog]] = None
+    llm_failures: Optional[List[FailureLog]] = None
+    validation_failures: Optional[List[FailureLog]] = None
     retry_history: Optional[List[Dict[str, Any]]] = None
     common_failure_patterns: Optional[List[Dict[str, Any]]] = None
     
@@ -774,7 +774,7 @@ Return the patch in unified diff format.
         """
         failure_id = str(uuid.uuid4())
         
-        failure_log = LLMFailureLog(
+        failure_log = FailureLog(
             failure_id=failure_id,
             context_id=context_id,
             timestamp=datetime.now().isoformat(),
@@ -826,7 +826,7 @@ Return the patch in unified diff format.
         """
         failure_id = str(uuid.uuid4())
         
-        validation_failure = ValidationFailureLog(
+        validation_failure = FailureLog(
             failure_id=failure_id,
             context_id=context_id,
             patch_id=patch_id,

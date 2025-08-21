@@ -1,0 +1,157 @@
+# Homeostasis Orchestrator Configuration - Demo Mode
+
+# General settings
+general:
+  project_root: "."
+  log_level: "INFO"
+  environment: "development"
+
+# Security settings  
+security:
+  enabled: true
+  auth:
+    enabled: false  # Disabled for demo
+  rate_limits:
+    global: [100, 60]
+    user: [20, 60]
+    ip: [50, 60]
+  healing_rate_limits:
+    enabled: true
+    min_healing_cycle_interval: 10  # Faster for demo
+    limits:
+      healing_cycle: [20, 3600]
+      patch_application: [30, 3600]
+      deployment: [10, 3600]
+      file: [5, 3600]
+      critical_file: [3, 3600]
+  approval:
+    enabled: false  # Disabled for demo
+  audit:
+    enabled: true
+    log_file: "logs/audit.log"
+    rotation: "daily"
+    retention: 7
+  canary:
+    enabled: false  # Disabled for demo
+
+# Service settings
+service:
+  name: "example_service"
+  path: "services/example_service"
+  start_command: "uvicorn app:app --reload --port 8000"
+  stop_command: "kill -9 $(lsof -ti:8000)"
+  health_check_url: "http://localhost:8000/health"
+  health_check_timeout: 5
+  log_file: "logs/homeostasis.log"
+
+# Monitoring settings
+monitoring:
+  enabled: true
+  log_level: "INFO"
+  watch_patterns:
+    - "*.log"
+    - "logs/*.log"
+  check_interval: 5
+  post_deployment:
+    enabled: true
+    check_interval: 30
+
+# Audit monitoring
+audit_monitor:
+  enabled: false  # Simplified for demo
+
+# Healing audit
+healing_audit:
+  enabled: true
+  detailed_logging: true
+  track_execution_time: true
+  cleanup_completed_sessions: true
+
+# Analysis settings
+analysis:
+  rule_based:
+    enabled: true
+  ai_based:
+    enabled: false
+
+# Suggestion interface settings
+suggestion:
+  enabled: true
+  storage_dir: "logs/suggestions"
+  require_human_review: false  # Auto-apply in demo
+  ranking:
+    metrics:
+      - "confidence"
+      - "fix_type"
+    weights:
+      confidence: 0.8
+      fix_type: 0.2
+
+# Patch generation settings
+patch_generation:
+  templates_dir: "modules/patch_generation/templates"
+  generated_patches_dir: "logs/patches"
+  backup_original_files: true
+
+# Testing settings
+testing:
+  enabled: true
+  test_command: "pytest tests/"
+  test_timeout: 30
+  parallel:
+    enabled: false  # Simplified for demo
+    max_workers: 4
+  containers:
+    enabled: false  # Simplified for demo
+  graduated_testing:
+    enabled: false  # Simplified for demo
+  regression:
+    enabled: true
+    generate_test_cases: true
+    save_path: "tests/generated"
+
+# Deployment settings
+deployment:
+  enabled: true
+  restart_service: true
+  backup_before_deployment: true
+  backup_dir: "logs/backups"
+  # Use local nginx config path instead of system path
+  nginx_config_path: "logs/nginx_conf"
+  production:
+    require_approval: false
+    canary_deployment: false
+    blue_green: false
+  kubernetes:
+    enabled: false  # Disabled for demo
+  cloud:
+    provider: "none"
+
+# Rollback settings
+rollback:
+  enabled: true
+  auto_rollback_on_failure: true
+  max_sessions_to_keep: 5
+
+# Known bugs (for demonstration)
+known_bugs:
+  - id: "bug_1"
+    description: "Missing error handling for non-existent IDs"
+    file: "services/example_service/app.py"
+    confidence: "high"
+  - id: "bug_2"
+    description: "Missing field initialization"
+    file: "services/example_service/app.py"
+    confidence: "high"
+  - id: "bug_3"
+    description: "Incorrect dict parameter"
+    file: "services/example_service/app.py"
+    confidence: "high"
+  - id: "bug_4"
+    description: "Unsafe list slicing"
+    file: "services/example_service/app.py"
+    confidence: "high"
+  - id: "bug_5"
+    description: "Unsafe environment variable conversion"
+    file: "services/example_service/app.py"
+    confidence: "high"

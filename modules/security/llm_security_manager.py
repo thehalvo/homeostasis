@@ -10,7 +10,7 @@ import logging
 import re
 import hashlib
 import uuid
-from typing import Dict, List, Optional, Any, Tuple, Set, Union
+from typing import Dict, List, Optional, Any, Tuple, Set, Union, TYPE_CHECKING
 from dataclasses import dataclass, field
 from enum import Enum
 from datetime import datetime, timedelta
@@ -19,7 +19,9 @@ import secrets
 import base64
 
 from ..security.security_config import SecurityConfig, get_security_config
-from ..analysis.llm_context_manager import LLMContext
+
+if TYPE_CHECKING:
+    from ..analysis.llm_context_manager import LLMContext
 
 
 logger = logging.getLogger(__name__)
@@ -237,7 +239,7 @@ class LLMSecurityManager:
         return detections
     
     def check_compliance_violations(self, 
-                                  llm_context: LLMContext,
+                                  llm_context: "LLMContext",
                                   proposed_patch: str) -> List[SecurityViolation]:
         """
         Check for compliance framework violations.
@@ -268,7 +270,7 @@ class LLMSecurityManager:
         
         return violations
     
-    def sanitize_llm_context(self, llm_context: LLMContext) -> LLMContext:
+    def sanitize_llm_context(self, llm_context: "LLMContext") -> "LLMContext":
         """
         Sanitize LLM context before processing.
         
@@ -278,6 +280,9 @@ class LLMSecurityManager:
         Returns:
             Sanitized LLM context
         """
+        # Import here to avoid circular import
+        from ..analysis.llm_context_manager import LLMContext
+        
         # Create a copy to avoid modifying the original
         sanitized_context = LLMContext(
             context_id=llm_context.context_id,
@@ -614,7 +619,7 @@ class LLMSecurityManager:
             suggested_action="none"
         )
     
-    def _check_hipaa_compliance(self, llm_context: LLMContext, proposed_patch: str) -> List[SecurityViolation]:
+    def _check_hipaa_compliance(self, llm_context: "LLMContext", proposed_patch: str) -> List[SecurityViolation]:
         """Check HIPAA compliance violations."""
         violations = []
         
@@ -643,7 +648,7 @@ class LLMSecurityManager:
         
         return violations
     
-    def _check_pci_compliance(self, llm_context: LLMContext, proposed_patch: str) -> List[SecurityViolation]:
+    def _check_pci_compliance(self, llm_context: "LLMContext", proposed_patch: str) -> List[SecurityViolation]:
         """Check PCI DSS compliance violations."""
         violations = []
         
@@ -672,7 +677,7 @@ class LLMSecurityManager:
         
         return violations
     
-    def _check_gdpr_compliance(self, llm_context: LLMContext, proposed_patch: str) -> List[SecurityViolation]:
+    def _check_gdpr_compliance(self, llm_context: "LLMContext", proposed_patch: str) -> List[SecurityViolation]:
         """Check GDPR compliance violations."""
         violations = []
         
@@ -700,7 +705,7 @@ class LLMSecurityManager:
         
         return violations
     
-    def _check_sox_compliance(self, llm_context: LLMContext, proposed_patch: str) -> List[SecurityViolation]:
+    def _check_sox_compliance(self, llm_context: "LLMContext", proposed_patch: str) -> List[SecurityViolation]:
         """Check SOX compliance violations."""
         violations = []
         

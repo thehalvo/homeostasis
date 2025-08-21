@@ -14,4 +14,4 @@ echo "Dependencies installed successfully."
 
 # Run the orchestrator in demo mode
 echo "Starting Homeostasis orchestrator in demo mode..."
-python3 orchestrator/orchestrator.py --demo
+cd orchestrator && python3 orchestrator.py --demo --config demo_config.yaml

@@ -9,7 +9,7 @@ import time
 import math
 import random
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any, Union, Callable
+from typing import Dict, List, Optional, Any, Union, Callable, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 import requests
