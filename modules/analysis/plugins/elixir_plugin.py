@@ -396,7 +396,7 @@ class ElixirExceptionHandler:
             },
             {
                 "id": "elixir_undefined_function_error",
-                "pattern": "\\*\\* \\(UndefinedFunctionError\\) function ([^.]+)\\.([^/]+)/(\d+) is undefined.*",
+                "pattern": "\\*\\* \\(UndefinedFunctionError\\) function ([^.]+)\\.([^/]+)/(\\d+) is undefined.*",
                 "type": "UndefinedFunctionError",
                 "description": "Called a function that doesn't exist",
                 "root_cause": "elixir_undefined_function_error",

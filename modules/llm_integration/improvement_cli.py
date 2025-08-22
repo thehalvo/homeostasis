@@ -227,7 +227,7 @@ def feedback(patch_id: str, outcome: str, feedback_type: str, source: str,
 
 @improvement_cli.command()
 @click.option("--json", "output_json", is_flag=True, help="Output as JSON")
-def stats():
+def stats(output_json):
     """Show improvement engine statistics."""
     engine = get_improvement_engine()
     statistics = engine.get_statistics()

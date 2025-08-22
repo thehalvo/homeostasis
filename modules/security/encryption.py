@@ -8,6 +8,7 @@ in production environments.
 import base64
 import binascii
 import hashlib
+import hmac
 import json
 import logging
 import os

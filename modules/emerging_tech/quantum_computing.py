@@ -7,6 +7,7 @@ including Qiskit, Cirq, Q#, and other quantum frameworks.
 
 import json
 import logging
+import numpy as np
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
 from enum import Enum

@@ -528,6 +528,7 @@ class TestChaosEngineering:
         
         async def monitor_degradation():
             """Monitor for performance degradation"""
+            nonlocal degradation_detected, detection_time
             baseline_latency = 50
             detection_threshold = baseline_latency * 3  # 3x baseline
             

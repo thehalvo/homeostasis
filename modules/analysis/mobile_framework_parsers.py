@@ -9,11 +9,14 @@ import logging
 from typing import Dict, List, Optional, Any, Tuple, Union
 from pathlib import Path
 
-from .comprehensive_error_detector import ErrorContext, LanguageType
+from .comprehensive_error_detector import ErrorContext, LanguageType, ErrorCategory
 from .language_parsers import (
     LanguageSpecificParser, create_language_parser,
     DartParser, ReactNativeParser, XamarinParser, UnityParser
 )
+
+# Set up logger
+logger = logging.getLogger(__name__)
 
 # Import web framework parsers
 try:
@@ -53,8 +56,6 @@ try:
 except ImportError as e:
     logger.warning(f"Core language framework plugins not available: {e}")
     CORE_LANGUAGE_FRAMEWORKS_AVAILABLE = False
-
-logger = logging.getLogger(__name__)
 
 
 class FrameworkType:

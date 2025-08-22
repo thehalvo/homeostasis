@@ -10,6 +10,7 @@ import logging
 import pickle
 import uuid
 import time
+import shutil
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple

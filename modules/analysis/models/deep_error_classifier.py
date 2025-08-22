@@ -721,7 +721,7 @@ def create_synthetic_training_data(num_samples: int = 1000) -> Tuple[List[Dict[s
                 'message': message.split(':', 1)[1].strip() if ':' in message else message,
                 'detailed_frames': [
                     {
-                        'file': f'/app/{traceback.split("'")[1]}',
+                        'file': f'/app/{traceback.split("\'")[1]}',
                         'line': int(traceback.split('line ')[1].split(',')[0]),
                         'function': traceback.split('in ')[1].split('\n')[0],
                         'code': traceback.split('\n')[1].strip() if '\n' in traceback else ''

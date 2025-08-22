@@ -644,7 +644,7 @@ class EmberPatchGenerator:
             "type": "suggestion",
             "description": f"Register the '{helper_name}' helper",
             "fix_code": f"""// app/helpers/{helper_name}.js
-import { helper } from '@ember/component/helper';
+import {{ helper }} from '@ember/component/helper';
 
 export function {helper_name}(params, hash) {{
   // Helper implementation

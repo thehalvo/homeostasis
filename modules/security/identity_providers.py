@@ -16,6 +16,7 @@ import json
 import logging
 import ldap
 import jwt
+import re
 import requests
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field

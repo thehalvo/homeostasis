@@ -55,22 +55,28 @@ class TodoCreate(BaseModel):
 class TodoUpdate(BaseModel):
     title: Optional[str] = Field(None, description="Title of the todo item")
     description: Optional[str] = Field(None, description="Detailed description")
-    if not todos:
-        return []
-    end = min(skip + limit, len(todos))
-    start = min(skip, end)
-    return todos[start:end]
+    completed: Optional[bool] = Field(None, description="Completion status")
+
+
+@app.get("/")
 async def root():
     """Root endpoint returning API information."""
     return {
-        todo_dict["id"] = todo_id
-        todo_dict["completed"] = False
+        "message": "Welcome to Homeostasis Example Service",
+        "version": "0.1.0",
+        "docs": "/docs",
+    }
+
+
 @app.get("/health")
 async def health_check():
-    if todo_id in todo_db:
-        return todo_db[todo_id]
-    else:
-        raise HTTPException(status_code=404, detail="todo_id not found")
+    """Health check endpoint."""
+    return {"status": "healthy"}
+
+
+@app.get("/todos", response_model=List[TodoItem])
+async def get_todos(
+    skip: int = Query(0, ge=0, description="Number of items to skip"),
     limit: int = Query(10, ge=1, le=100, description="Number of items to return"),
 ):
     """Get a list of todo items with pagination."""
@@ -88,7 +94,9 @@ async def create_todo(todo: TodoCreate):
     todo_dict["id"] = todo_id
     # BUG #2: Missing initialization of 'completed' field
     # This will cause issues when clients expect the completed field to exist
-    todo.dict(exclude_unset=True)
+    todo_db[todo_id] = todo_dict
+    return todo_dict
+
 
 @app.get("/todos/{todo_id}", response_model=TodoItem)
 async def get_todo(todo_id: str):
@@ -113,13 +121,7 @@ async def update_todo(todo_id: str, todo: TodoUpdate):
     for field, value in update_data.items():
         stored_todo[field] = value
     
-try:
-    
-    port = int(os.environ.get("PORT", 8000))
-    
-except ValueError:
-    
-    port = 8000
+    return stored_todo
 
 
 @app.delete("/todos/{todo_id}", status_code=204)
@@ -136,5 +138,9 @@ if __name__ == "__main__":
     # For local development
     # BUG #5: Potential error in port value conversion 
     # Should handle ValueError if PORT env var contains non-integer value
-    port = int(os.environ.get("PORT", 8000))
+    try:
+        port = int(os.environ.get("PORT", 8000))
+    except ValueError:
+        port = 8000
+    
     uvicorn.run("app:app", host="0.0.0.0", port=port, reload=True)

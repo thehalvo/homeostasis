@@ -7,6 +7,7 @@ and protection against common API attacks.
 
 import collections
 import hashlib
+import hmac
 import logging
 import re
 import time

@@ -8,6 +8,7 @@ import asyncio
 import json
 import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import Dict, Any, List, Tuple, Optional
@@ -252,6 +253,98 @@ class JavaIntegrationTestRunner(LanguageIntegrationTestRunner):
         {"".join(dependencies)}
     </dependencies>
 </project>"""
+
+
+class PythonIntegrationTestRunner(LanguageIntegrationTestRunner):
+    """Python language integration test runner."""
+    
+    async def setup_environment(self, test_case: IntegrationTestCase) -> Path:
+        test_dir = Path(tempfile.mkdtemp(prefix="homeostasis_python_test_"))
+        
+        # Write source files
+        for filename, content in test_case.source_code.items():
+            file_path = test_dir / filename
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_text(content)
+            
+        # Create virtual environment if needed
+        if test_case.dependencies:
+            venv_path = test_dir / "venv"
+            subprocess.run([sys.executable, "-m", "venv", str(venv_path)], check=True)
+            pip_path = venv_path / "bin" / "pip" if os.name != "nt" else venv_path / "Scripts" / "pip.exe"
+            
+            # Install dependencies
+            for dep in test_case.dependencies:
+                subprocess.run([str(pip_path), "install", dep], check=True)
+                
+        return test_dir
+        
+    async def execute_code(self, test_dir: Path, test_case: IntegrationTestCase) -> Tuple[int, str, str]:
+        # Run the Python code
+        main_file = test_case.metadata.get("main_file", "main.py")
+        python_path = sys.executable
+        
+        if (test_dir / "venv").exists():
+            python_path = test_dir / "venv" / "bin" / "python" if os.name != "nt" else test_dir / "venv" / "Scripts" / "python.exe"
+            
+        result = subprocess.run(
+            [str(python_path), main_file],
+            cwd=test_dir,
+            capture_output=True,
+            text=True
+        )
+        
+        return result.returncode, result.stdout, result.stderr
+
+
+class JavaScriptIntegrationTestRunner(LanguageIntegrationTestRunner):
+    """JavaScript/Node.js integration test runner."""
+    
+    async def setup_environment(self, test_case: IntegrationTestCase) -> Path:
+        test_dir = Path(tempfile.mkdtemp(prefix="homeostasis_js_test_"))
+        
+        # Write source files
+        for filename, content in test_case.source_code.items():
+            file_path = test_dir / filename
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_text(content)
+            
+        # Create package.json if needed
+        if not (test_dir / "package.json").exists():
+            package_json = {
+                "name": f"homeostasis-test-{test_case.name}".replace(" ", "-"),
+                "version": "1.0.0",
+                "dependencies": {}
+            }
+            
+            if test_case.dependencies:
+                for dep in test_case.dependencies:
+                    if ":" in dep:
+                        name, version = dep.split(":", 1)
+                        package_json["dependencies"][name] = version
+                    else:
+                        package_json["dependencies"][dep] = "latest"
+                        
+            (test_dir / "package.json").write_text(json.dumps(package_json, indent=2))
+            
+        # Install dependencies
+        if test_case.dependencies:
+            subprocess.run(["npm", "install"], cwd=test_dir, check=True)
+            
+        return test_dir
+        
+    async def execute_code(self, test_dir: Path, test_case: IntegrationTestCase) -> Tuple[int, str, str]:
+        # Run the JavaScript code
+        main_file = test_case.metadata.get("main_file", "index.js")
+        
+        result = subprocess.run(
+            ["node", main_file],
+            cwd=test_dir,
+            capture_output=True,
+            text=True
+        )
+        
+        return result.returncode, result.stdout, result.stderr
 
 
 class TypeScriptIntegrationTestRunner(JavaScriptIntegrationTestRunner):

@@ -347,13 +347,6 @@ class LLMPatchGenerator:
         root_cause = analysis_result.get('root_cause', '')
         confidence = analysis_result.get('confidence', 0.0)
         
-        # Use comprehensive language and framework detection
-        language_info = self.language_detector.detect_language_and_frameworks(
-            file_path=file_path,
-            source_code=source_code
-        )
-        language = language_info.language.value
-        
         # Read source code if file path is provided
         source_code = None
         if file_path and Path(file_path).exists():
@@ -362,6 +355,13 @@ class LLMPatchGenerator:
                     source_code = f.read()
             except Exception as e:
                 logger.warning(f"Could not read source file {file_path}: {e}")
+        
+        # Use comprehensive language and framework detection
+        language_info = self.language_detector.detect_language_and_frameworks(
+            file_path=file_path,
+            source_code=source_code
+        )
+        language = language_info.language.value
         
         # Create error context with comprehensive language information
         error_context = {

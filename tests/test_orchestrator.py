@@ -4,6 +4,7 @@ Tests for the orchestrator module.
 import os
 import sys
 import pytest
+import subprocess
 import tempfile
 import yaml
 from pathlib import Path

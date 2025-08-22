@@ -217,7 +217,238 @@ class TestJavaScriptPatchGenerator:
             "confidence": "high"
         }
         
-        source_code = \"\"\"function getUser() {
+        source_code = """function getUser() {
     const user = getDataFromAPI();
     return user.id;  // Error line
-}\"\"\"\n        \n        patch = generator.generate_patch(error_data, analysis, source_code)\n        \n        assert patch is not None\n        assert patch[\"type\"] == \"line_replacement\"\n        assert \"?.\" in patch[\"replacement\"] or \"&&\" in patch[\"replacement\"]\n    \n    def test_fix_not_a_function(self, generator):\n        \"\"\"Test fix generation for 'not a function' errors.\"\"\"\n        error_data = {\n            \"error_type\": \"TypeError\",\n            \"message\": \"someFunction is not a function\",\n            \"stack_trace\": [{\"function\": \"main\", \"file\": \"app.js\", \"line\": 15, \"column\": 3}]\n        }\n        \n        analysis = {\n            \"root_cause\": \"js_not_a_function\",\n            \"confidence\": \"high\"\n        }\n        \n        source_code = \"\"\"function main() {\n    const result = someFunction();\n    return result;\n}\"\"\"\n        \n        patch = generator.generate_patch(error_data, analysis, source_code)\n        \n        assert patch is not None\n        assert patch[\"type\"] == \"line_replacement\"\n        assert \"typeof\" in patch[\"replacement\"]\n    \n    def test_fix_undefined_reference(self, generator):\n        \"\"\"Test fix generation for undefined reference errors.\"\"\"\n        error_data = {\n            \"error_type\": \"ReferenceError\",\n            \"message\": \"require is not defined\",\n            \"stack_trace\": []\n        }\n        \n        analysis = {\n            \"root_cause\": \"js_undefined_reference\",\n            \"confidence\": \"high\"\n        }\n        \n        source_code = \"\"\n        \n        patch = generator.generate_patch(error_data, analysis, source_code)\n        \n        assert patch is not None\n        assert patch[\"type\"] == \"suggestion\"\n        assert \"Node.js environment\" in patch[\"description\"]\n    \n    def test_fix_promise_rejection(self, generator):\n        \"\"\"Test fix generation for Promise rejection errors.\"\"\"\n        error_data = {\n            \"error_type\": \"UnhandledPromiseRejection\",\n            \"message\": \"Uncaught (in promise) Error: API failed\",\n            \"stack_trace\": [{\"function\": \"fetchData\", \"file\": \"app.js\", \"line\": 20, \"column\": 8}]\n        }\n        \n        analysis = {\n            \"root_cause\": \"js_unhandled_promise_rejection\",\n            \"confidence\": \"high\"\n        }\n        \n        source_code = \"\"\"async function fetchData() {\n    const response = fetch('/api/data').then(r => r.json());\n    return response;\n}\"\"\"\n        \n        patch = generator.generate_patch(error_data, analysis, source_code)\n        \n        assert patch is not None\n        assert \".catch\" in patch[\"replacement\"] or patch[\"type\"] == \"suggestion\"\n\n\nclass TestJavaScriptDependencyAnalyzer:\n    \"\"\"Test cases for JavaScript dependency analysis.\"\"\"\n    \n    @pytest.fixture\n    def analyzer(self):\n        \"\"\"Create a dependency analyzer for testing.\"\"\"\n        return JavaScriptDependencyAnalyzer()\n    \n    def test_analyze_module_not_found(self, analyzer):\n        \"\"\"Test analysis of module not found errors.\"\"\"\n        error_data = {\n            \"error_type\": \"Error\",\n            \"message\": \"Cannot find module 'express'\"\n        }\n        \n        analysis = analyzer.analyze_dependency_error(error_data, \"/fake/project\")\n        \n        assert analysis[\"category\"] == \"dependency\"\n        assert analysis[\"subcategory\"] == \"missing_package\"\n        assert analysis[\"package\"] == \"express\"\n        assert \"npm install express\" in analysis[\"fix_commands\"]\n    \n    def test_analyze_relative_import_error(self, analyzer):\n        \"\"\"Test analysis of relative import errors.\"\"\"\n        error_data = {\n            \"error_type\": \"Error\",\n            \"message\": \"Cannot find module './utils/helper'\"\n        }\n        \n        analysis = analyzer.analyze_dependency_error(error_data, \"/fake/project\")\n        \n        assert analysis[\"category\"] == \"dependency\"\n        assert analysis[\"subcategory\"] == \"relative_import\"\n        assert analysis[\"module\"] == \"./utils/helper\"\n    \n    def test_analyze_project_dependencies(self, analyzer):\n        \"\"\"Test project dependency analysis.\"\"\"\n        # Create a temporary package.json\n        with tempfile.TemporaryDirectory() as temp_dir:\n            temp_path = Path(temp_dir)\n            package_json = {\n                \"name\": \"test-project\",\n                \"version\": \"1.0.0\",\n                \"dependencies\": {\n                    \"express\": \"^4.18.0\",\n                    \"react\": \"*\"  # Wildcard version\n                },\n                \"devDependencies\": {\n                    \"webpack\": \"5.0.0-beta.1\"  # Pre-release version\n                }\n            }\n            \n            with open(temp_path / \"package.json\", \"w\") as f:\n                json.dump(package_json, f)\n            \n            analysis = analyzer.analyze_project_dependencies(str(temp_path))\n            \n            assert analysis[\"project_name\"] == \"test-project\"\n            assert analysis[\"dependencies\"][\"count\"] == 2\n            assert analysis[\"dev_dependencies\"][\"count\"] == 1\n            \n            # Check for issues\n            dep_issues = analysis[\"dependencies\"][\"issues\"]\n            assert any(issue[\"type\"] == \"wildcard_version\" for issue in dep_issues)\n            \n            dev_issues = analysis[\"dev_dependencies\"][\"issues\"]\n            assert any(issue[\"type\"] == \"prerelease_version\" for issue in dev_issues)\n\n\nclass TestIntegration:\n    \"\"\"Integration tests for the JavaScript plugin.\"\"\"\n    \n    @pytest.fixture\n    def plugin(self):\n        \"\"\"Create a JavaScript plugin instance for testing.\"\"\"\n        return JavaScriptLanguagePlugin()\n    \n    def test_full_error_analysis_flow(self, plugin):\n        \"\"\"Test the complete error analysis flow.\"\"\"\n        # Test a complex JavaScript error\n        error_data = {\n            \"name\": \"TypeError\",\n            \"message\": \"Cannot read property 'map' of undefined\",\n            \"stack\": \"\"\"TypeError: Cannot read property 'map' of undefined\n    at processData (app.js:25:8)\n    at fetch.then (app.js:15:12)\n    at process._tickCallback (internal/process/next_tick.js:68:7)\"\"\"\n        }\n        \n        # Analyze the error\n        analysis = plugin.analyze_error(error_data)\n        \n        assert analysis[\"plugin\"] == \"javascript\"\n        assert analysis[\"language\"] == \"javascript\"\n        assert analysis[\"category\"] == \"javascript\"\n        assert \"confidence\" in analysis\n        assert \"suggested_fix\" in analysis\n    \n    def test_dependency_error_flow(self, plugin):\n        \"\"\"Test dependency error analysis flow.\"\"\"\n        error_data = {\n            \"language\": \"javascript\",\n            \"error_type\": \"Error\",\n            \"message\": \"Cannot find module 'lodash'\",\n            \"context\": {\n                \"project_path\": \"/fake/project\"\n            }\n        }\n        \n        analysis = plugin.analyze_error(error_data)\n        \n        assert analysis[\"category\"] == \"dependency\"\n        assert analysis[\"subcategory\"] == \"missing_package\"\n        assert \"lodash\" in str(analysis)\n    \n    def test_transpilation_error_flow(self, plugin):\n        \"\"\"Test transpilation error analysis flow.\"\"\"\n        error_data = {\n            \"language\": \"javascript\",\n            \"error_type\": \"TS2304\",\n            \"message\": \"TS2304: Cannot find name 'React'\",\n            \"stack_trace\": [\"at typescript compiler\"]\n        }\n        \n        analysis = plugin.analyze_error(error_data)\n        \n        assert analysis[\"category\"] == \"transpilation\"\n        assert analysis[\"subcategory\"] == \"typescript_type\"\n        assert \"typescript\" in analysis[\"tags\"]\n    \n    def test_fix_generation_flow(self, plugin):\n        \"\"\"Test fix generation flow.\"\"\"\n        analysis = {\n            \"root_cause\": \"js_property_access_on_undefined\",\n            \"suggested_fix\": \"Use optional chaining\",\n            \"confidence\": \"high\"\n        }\n        \n        context = {\n            \"error_data\": {\n                \"error_type\": \"TypeError\",\n                \"message\": \"Cannot read property 'id' of undefined\"\n            },\n            \"source_code\": \"const id = user.id;\"\n        }\n        \n        fix = plugin.generate_fix(analysis, context)\n        \n        assert fix is not None\n        assert \"type\" in fix\n        assert \"description\" in fix or \"replacement\" in fix\n\n\nif __name__ == \"__main__\":\n    pytest.main([__file__])
+}"""
+        
+        patch = generator.generate_patch(error_data, analysis, source_code)
+        
+        assert patch is not None
+        assert patch["type"] == "line_replacement"
+        assert "?." in patch["replacement"] or "&&" in patch["replacement"]
+    
+    def test_fix_not_a_function(self, generator):
+        """Test fix generation for 'not a function' errors."""
+        error_data = {
+            "error_type": "TypeError",
+            "message": "someFunction is not a function",
+            "stack_trace": [{"function": "main", "file": "app.js", "line": 15, "column": 3}]
+        }
+        
+        analysis = {
+            "root_cause": "js_not_a_function",
+            "confidence": "high"
+        }
+        
+        source_code = """function main() {
+    const result = someFunction();
+    return result;
+}"""
+        
+        patch = generator.generate_patch(error_data, analysis, source_code)
+        
+        assert patch is not None
+        assert patch["type"] == "line_replacement"
+        assert "typeof" in patch["replacement"]
+    
+    def test_fix_undefined_reference(self, generator):
+        """Test fix generation for undefined reference errors."""
+        error_data = {
+            "error_type": "ReferenceError",
+            "message": "require is not defined",
+            "stack_trace": []
+        }
+        
+        analysis = {
+            "root_cause": "js_undefined_reference",
+            "confidence": "high"
+        }
+        
+        source_code = ""
+        
+        patch = generator.generate_patch(error_data, analysis, source_code)
+        
+        assert patch is not None
+        assert patch["type"] == "suggestion"
+        assert "Node.js environment" in patch["description"]
+    
+    def test_fix_promise_rejection(self, generator):
+        """Test fix generation for Promise rejection errors."""
+        error_data = {
+            "error_type": "UnhandledPromiseRejection",
+            "message": "Uncaught (in promise) Error: API failed",
+            "stack_trace": [{"function": "fetchData", "file": "app.js", "line": 20, "column": 8}]
+        }
+        
+        analysis = {
+            "root_cause": "js_unhandled_promise_rejection",
+            "confidence": "high"
+        }
+        
+        source_code = """async function fetchData() {
+    const response = fetch('/api/data').then(r => r.json());
+    return response;
+}"""
+        
+        patch = generator.generate_patch(error_data, analysis, source_code)
+        
+        assert patch is not None
+        assert ".catch" in patch["replacement"] or patch["type"] == "suggestion"
+
+
+class TestJavaScriptDependencyAnalyzer:
+    """Test cases for JavaScript dependency analysis."""
+    
+    @pytest.fixture
+    def analyzer(self):
+        """Create a dependency analyzer for testing."""
+        return JavaScriptDependencyAnalyzer()
+    
+    def test_analyze_module_not_found(self, analyzer):
+        """Test analysis of module not found errors."""
+        error_data = {
+            "error_type": "Error",
+            "message": "Cannot find module 'express'"
+        }
+        
+        analysis = analyzer.analyze_dependency_error(error_data, "/fake/project")
+        
+        assert analysis["category"] == "dependency"
+        assert analysis["subcategory"] == "missing_package"
+        assert analysis["package"] == "express"
+        assert "npm install express" in analysis["fix_commands"]
+    
+    def test_analyze_relative_import_error(self, analyzer):
+        """Test analysis of relative import errors."""
+        error_data = {
+            "error_type": "Error",
+            "message": "Cannot find module './utils/helper'"
+        }
+        
+        analysis = analyzer.analyze_dependency_error(error_data, "/fake/project")
+        
+        assert analysis["category"] == "dependency"
+        assert analysis["subcategory"] == "relative_import"
+        assert analysis["module"] == "./utils/helper"
+    
+    def test_analyze_project_dependencies(self, analyzer):
+        """Test project dependency analysis."""
+        # Create a temporary package.json
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            package_json = {
+                "name": "test-project",
+                "version": "1.0.0",
+                "dependencies": {
+                    "express": "^4.18.0",
+                    "react": "*"  # Wildcard version
+                },
+                "devDependencies": {
+                    "webpack": "5.0.0-beta.1"  # Pre-release version
+                }
+            }
+            
+            with open(temp_path / "package.json", "w") as f:
+                json.dump(package_json, f)
+            
+            analysis = analyzer.analyze_project_dependencies(str(temp_path))
+            
+            assert analysis["project_name"] == "test-project"
+            assert analysis["dependencies"]["count"] == 2
+            assert analysis["dev_dependencies"]["count"] == 1
+            
+            # Check for issues
+            dep_issues = analysis["dependencies"]["issues"]
+            assert any(issue["type"] == "wildcard_version" for issue in dep_issues)
+            
+            dev_issues = analysis["dev_dependencies"]["issues"]
+            assert any(issue["type"] == "prerelease_version" for issue in dev_issues)
+
+
+class TestIntegration:
+    """Integration tests for the JavaScript plugin."""
+    
+    @pytest.fixture
+    def plugin(self):
+        """Create a JavaScript plugin instance for testing."""
+        return JavaScriptLanguagePlugin()
+    
+    def test_full_error_analysis_flow(self, plugin):
+        """Test the complete error analysis flow."""
+        # Test a complex JavaScript error
+        error_data = {
+            "name": "TypeError",
+            "message": "Cannot read property 'map' of undefined",
+            "stack": """TypeError: Cannot read property 'map' of undefined
+    at processData (app.js:25:8)
+    at fetch.then (app.js:15:12)
+    at process._tickCallback (internal/process/next_tick.js:68:7)"""
+        }
+        
+        # Analyze the error
+        analysis = plugin.analyze_error(error_data)
+        
+        assert analysis["plugin"] == "javascript"
+        assert analysis["language"] == "javascript"
+        assert analysis["category"] == "javascript"
+        assert "confidence" in analysis
+        assert "suggested_fix" in analysis
+    
+    def test_dependency_error_flow(self, plugin):
+        """Test dependency error analysis flow."""
+        error_data = {
+            "language": "javascript",
+            "error_type": "Error",
+            "message": "Cannot find module 'lodash'",
+            "context": {
+                "project_path": "/fake/project"
+            }
+        }
+        
+        analysis = plugin.analyze_error(error_data)
+        
+        assert analysis["category"] == "dependency"
+        assert analysis["subcategory"] == "missing_package"
+        assert "lodash" in str(analysis)
+    
+    def test_transpilation_error_flow(self, plugin):
+        """Test transpilation error analysis flow."""
+        error_data = {
+            "language": "javascript",
+            "error_type": "TS2304",
+            "message": "TS2304: Cannot find name 'React'",
+            "stack_trace": ["at typescript compiler"]
+        }
+        
+        analysis = plugin.analyze_error(error_data)
+        
+        assert analysis["category"] == "transpilation"
+        assert analysis["subcategory"] == "typescript_type"
+        assert "typescript" in analysis["tags"]
+    
+    def test_fix_generation_flow(self, plugin):
+        """Test fix generation flow."""
+        analysis = {
+            "root_cause": "js_property_access_on_undefined",
+            "suggested_fix": "Use optional chaining",
+            "confidence": "high"
+        }
+        
+        context = {
+            "error_data": {
+                "error_type": "TypeError",
+                "message": "Cannot read property 'id' of undefined"
+            },
+            "source_code": "const id = user.id;"
+        }
+        
+        fix = plugin.generate_fix(analysis, context)
+        
+        assert fix is not None
+        assert "type" in fix
+        assert "description" in fix or "replacement" in fix
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

@@ -777,7 +777,7 @@ class DistributedTransactionHealer:
                 recommendations.append({
                     'type': 'architecture',
                     'description': 'Consider event sourcing for large transactions',
-                    'reason': '2PC doesn't scale well with many participants'
+                    'reason': '2PC doesn\'t scale well with many participants'
                 })
                 
         return recommendations

@@ -5,6 +5,7 @@ Provides authentication mechanisms for securing access to Homeostasis components
 and functionality in production environments.
 """
 
+import base64
 import datetime
 import hashlib
 import hmac

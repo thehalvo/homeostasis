@@ -181,7 +181,7 @@ except Exception as e:
     
     - name: Upload chaos test results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: chaos-test-results-${{ matrix.python-version }}
         path: |
@@ -192,7 +192,7 @@ except Exception as e:
     
     - name: Upload test report
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: chaos-engineering-report
         path: chaos_reports/
@@ -250,7 +250,7 @@ except Exception as e:
     - uses: actions/checkout@v4
     
     - name: Download all artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
     
     - name: Analyze chaos test trends
       run: |
