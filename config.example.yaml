@@ -1,0 +1,133 @@
+# Example configuration file for Homeostasis self-healing system
+
+general:
+  project_name: "example_project"
+  environment: "development"
+
+service:
+  name: "example_service"
+  path: "./services/example_service"
+  start_command: "python app.py"
+  stop_command: "pkill -f 'python app.py'"
+  health_check_url: "http://localhost:8000/health"
+  health_check_timeout: 5
+
+monitoring:
+  enabled: true
+  check_interval: 10  # seconds
+  log_file: "logs/app.log"
+  post_deployment:
+    enabled: true
+    monitoring_duration: 300  # 5 minutes
+    metrics_interval: 10
+    alert_thresholds:
+      error_rate: 0.05
+      response_time: 1000  # milliseconds
+      memory_usage: 80  # percentage
+
+analysis:
+  rule_based:
+    enabled: true
+    rules_path: "rules/"
+  ai_based:
+    enabled: false
+    model: "gpt-4"
+    api_key: "your-api-key"
+
+patch_generation:
+  generated_patches_dir: "patches/"
+  backup_original_files: true
+  max_patch_attempts: 3
+
+testing:
+  enabled: true
+  test_command: "pytest tests/"
+  test_timeout: 300
+  containers:
+    enabled: false
+    base_image: "python:3.9"
+  parallel:
+    enabled: true
+    max_workers: 4
+  regression:
+    enabled: true
+    save_path: "tests/regression"
+  graduated_testing:
+    enabled: true
+    levels: ["unit", "integration", "e2e"]
+    commands:
+      unit: "pytest tests/unit/"
+      integration: "pytest tests/integration/"
+      e2e: "pytest tests/e2e/"
+    timeouts:
+      unit: 60
+      integration: 180
+      e2e: 300
+    resource_limits:
+      unit:
+        cpu: "1"
+        memory: "512M"
+      integration:
+        cpu: "2"
+        memory: "1G"
+      e2e:
+        cpu: "4"
+        memory: "2G"
+
+deployment:
+  enabled: true
+  restart_service: true
+  backup_dir: "backups/"
+  production:
+    require_approval: true
+    canary_deployment: true
+    blue_green: false
+    rollout_percentage: 10
+    monitoring_period: 600  # 10 minutes
+
+security:
+  enabled: true
+  approval:
+    enabled: true
+    required_approvers: 2
+    timeout: 3600  # 1 hour
+  canary:
+    enabled: true
+    initial_traffic: 5  # percentage
+    increment: 10
+    interval: 300  # 5 minutes
+  healing_rate_limits:
+    enabled: true
+    max_healings_per_hour: 10
+    cooldown_period: 300  # 5 minutes
+
+rollback:
+  enabled: true
+  auto_rollback_on_failure: true
+  max_sessions_to_keep: 10
+  rollback_triggers:
+    - "test_failure"
+    - "deployment_failure"
+    - "health_check_failure"
+    - "performance_regression"
+
+suggestion:
+  enabled: true
+  slack_webhook: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+  email:
+    enabled: false
+    smtp_server: "smtp.example.com"
+    smtp_port: 587
+    from_address: "homeostasis@example.com"
+    to_addresses: ["devops@example.com"]
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  handlers:
+    - type: "file"
+      filename: "logs/homeostasis.log"
+      max_bytes: 10485760  # 10MB
+      backup_count: 5
+    - type: "console"
+      stream: "stdout"

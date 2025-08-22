@@ -1,0 +1,93 @@
+# Test configuration for E2E healing scenarios
+
+general:
+  project_name: "e2e_test_project"
+  environment: "test"
+
+service:
+  name: "test_service"
+  path: "/app/services/example_service"
+  start_command: "python app.py"
+  stop_command: "pkill -f 'python app.py'"
+  health_check_url: "http://test-service-python:8000/health"
+  health_check_timeout: 5
+
+monitoring:
+  enabled: true
+  check_interval: 5  # seconds
+  log_file: "/logs/app.log"
+  post_deployment:
+    enabled: true
+    monitoring_duration: 60  # 1 minute for tests
+    metrics_interval: 5
+    alert_thresholds:
+      error_rate: 0.05
+      response_time: 1000  # milliseconds
+      memory_usage: 80  # percentage
+
+analysis:
+  rule_based:
+    enabled: true
+    rules_path: "/app/rules/"
+  ai_based:
+    enabled: false
+
+patch_generation:
+  generated_patches_dir: "/patches/"
+  backup_original_files: true
+  max_patch_attempts: 3
+
+testing:
+  enabled: true
+  test_command: "pytest tests/"
+  test_timeout: 60
+  containers:
+    enabled: false
+  parallel:
+    enabled: false
+  regression:
+    enabled: false
+  graduated_testing:
+    enabled: true
+    levels: ["unit"]
+    commands:
+      unit: "pytest tests/unit/"
+    timeouts:
+      unit: 30
+
+deployment:
+  enabled: true
+  restart_service: true
+  backup_dir: "/backups/"
+  production:
+    require_approval: false
+    canary_deployment: false
+    blue_green: false
+
+security:
+  enabled: false  # Disabled for E2E tests
+  approval:
+    enabled: false
+  canary:
+    enabled: false
+  healing_rate_limits:
+    enabled: false
+
+rollback:
+  enabled: true
+  auto_rollback_on_failure: true
+  max_sessions_to_keep: 5
+
+suggestion:
+  enabled: false
+
+logging:
+  level: "DEBUG"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  handlers:
+    - type: "file"
+      filename: "/logs/homeostasis.log"
+      max_bytes: 10485760  # 10MB
+      backup_count: 5
+    - type: "console"
+      stream: "stdout"
