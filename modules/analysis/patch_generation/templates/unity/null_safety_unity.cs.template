@@ -1,0 +1,44 @@
+
+// Unity-specific null safety patterns
+using UnityEngine;
+
+public class SafeUnityPatterns : MonoBehaviour
+{
+    [SerializeField] private GameObject targetObject;
+    [SerializeField] private Transform targetTransform;
+    
+    void Start()
+    {
+        // Safe GameObject access
+        if (targetObject != null)
+        {
+            targetObject.SetActive(true);
+        }
+        
+        // Safe component access
+        var rigidbody = GetComponent<Rigidbody>();
+        if (rigidbody != null)
+        {
+            rigidbody.velocity = Vector3.zero;
+        }
+        
+        // Using TryGetComponent (Unity 2019.2+)
+        if (TryGetComponent<Collider>(out var collider))
+        {
+            collider.enabled = true;
+        }
+        
+        // Safe FindObjectOfType usage
+        var gameManager = FindObjectOfType<GameManager>();
+        if (gameManager != null)
+        {
+            gameManager.Initialize();
+        }
+    }
+    
+    void Update()
+    {
+        // Null conditional operator with Unity objects
+        targetTransform?.Rotate(Vector3.up * Time.deltaTime * 90);
+    }
+}

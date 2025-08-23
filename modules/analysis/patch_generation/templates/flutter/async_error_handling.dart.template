@@ -1,0 +1,43 @@
+
+// Fix for async error handling
+import 'dart:async';
+
+// Proper async error handling
+Future<void> handleAsyncOperation() async {
+  try {
+    await riskyAsyncOperation();
+  } catch (error) {
+    print('Error occurred: $error');
+    // Handle error appropriately
+  }
+}
+
+// Using catchError with Futures
+Future<String> fetchData() {
+  return httpRequest()
+    .then((response) => response.body)
+    .catchError((error) {
+      print('Network error: $error');
+      return 'Default data';
+    });
+}
+
+// Stream error handling
+StreamSubscription? subscription;
+
+void listenToStream() {
+  subscription = dataStream.listen(
+    (data) {
+      // Handle data
+    },
+    onError: (error) {
+      print('Stream error: $error');
+    },
+  );
+}
+
+@override
+void dispose() {
+  subscription?.cancel();
+  super.dispose();
+}

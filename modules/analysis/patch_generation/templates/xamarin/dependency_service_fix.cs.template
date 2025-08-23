@@ -1,0 +1,32 @@
+
+// Fix for DependencyService registration
+using Xamarin.Forms;
+
+// In shared project - interface definition
+public interface IMyService
+{
+    void DoSomething();
+}
+
+// In platform project (iOS/Android) - implementation
+[assembly: Dependency(typeof(MyServiceImplementation))]
+namespace MyApp.iOS
+{
+    public class MyServiceImplementation : IMyService
+    {
+        public void DoSomething()
+        {
+            // Platform-specific implementation
+        }
+    }
+}
+
+// Usage in shared code
+public class MyViewModel
+{
+    public void CallService()
+    {
+        var service = DependencyService.Get<IMyService>();
+        service?.DoSomething();
+    }
+}

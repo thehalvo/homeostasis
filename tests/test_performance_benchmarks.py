@@ -17,11 +17,11 @@ from unittest.mock import Mock, patch
 import concurrent.futures
 
 # Add the modules directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules', 'analysis'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from language_plugin_system import LanguagePluginSystem
-from comprehensive_error_detector import ComprehensiveErrorDetector
-from cross_language_orchestrator import CrossLanguageOrchestrator
+from modules.analysis.language_plugin_system import LanguagePluginSystem
+from modules.analysis.comprehensive_error_detector import ComprehensiveErrorDetector
+from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
 
 
 class PerformanceBenchmark:

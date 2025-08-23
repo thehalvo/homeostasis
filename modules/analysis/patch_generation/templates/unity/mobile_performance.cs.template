@@ -1,0 +1,61 @@
+
+// Unity mobile performance patterns
+using UnityEngine;
+using System.Collections;
+
+public class MobilePerformancePatterns : MonoBehaviour
+{
+    [Header("Performance Settings")]
+    [SerializeField] private bool enableVSync = true;
+    [SerializeField] private int targetFrameRate = 60;
+    
+    void Awake()
+    {
+        // Mobile-specific settings
+        SetupMobilePerformance();
+    }
+    
+    void SetupMobilePerformance()
+    {
+        // Set target frame rate for mobile
+        Application.targetFrameRate = targetFrameRate;
+        
+        // VSync setting
+        QualitySettings.vSyncCount = enableVSync ? 1 : 0;
+        
+        // Mobile-specific quality settings
+        if (IsMobilePlatform())
+        {
+            // Reduce quality for mobile
+            QualitySettings.antiAliasing = 0;
+            QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
+        }
+    }
+    
+    bool IsMobilePlatform()
+    {
+        return Application.platform == RuntimePlatform.Android ||
+               Application.platform == RuntimePlatform.IPhonePlayer;
+    }
+    
+    void OnApplicationPause(bool pauseStatus)
+    {
+        // Handle mobile app lifecycle
+        if (pauseStatus)
+        {
+            // App is being paused (going to background)
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            // App is being resumed
+            Time.timeScale = 1f;
+        }
+    }
+    
+    void OnApplicationFocus(bool hasFocus)
+    {
+        // Handle focus changes on mobile
+        AudioListener.pause = !hasFocus;
+    }
+}

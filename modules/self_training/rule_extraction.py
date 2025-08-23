@@ -16,8 +16,19 @@ import difflib
 import hashlib
 
 from ..llm_integration.patch_generator import PatchData
-from ..monitoring.healing_metrics import HealingMetrics
-from ..primary_languages.rule_engine import Rule, RuleEngine
+from ..analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
+from ..analysis.rule_config import Rule
+
+
+class RuleEngine:
+    """Simple rule engine for managing rules."""
+    
+    def __init__(self):
+        self.rules = []
+    
+    def add_rule(self, rule: Rule) -> None:
+        """Add a rule to the engine."""
+        self.rules.append(rule)
 
 logger = logging.getLogger(__name__)
 

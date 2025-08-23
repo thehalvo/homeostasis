@@ -1,0 +1,55 @@
+
+// Safe coroutine patterns in Unity
+using System.Collections;
+using UnityEngine;
+
+public class SafeCoroutinePatterns : MonoBehaviour
+{
+    private Coroutine currentCoroutine;
+    
+    void Start()
+    {
+        // Start coroutine safely
+        if (gameObject.activeInHierarchy && enabled)
+        {
+            currentCoroutine = StartCoroutine(SafeCoroutineExample());
+        }
+    }
+    
+    IEnumerator SafeCoroutineExample()
+    {
+        // Check if object is still valid during coroutine
+        while (this != null && gameObject.activeInHierarchy)
+        {
+            // Do work
+            yield return new WaitForSeconds(1f);
+            
+            // Check again before continuing
+            if (this == null) yield break;
+            
+            Debug.Log("Coroutine running safely");
+        }
+    }
+    
+    void StopSafely()
+    {
+        // Stop coroutine safely
+        if (currentCoroutine != null)
+        {
+            StopCoroutine(currentCoroutine);
+            currentCoroutine = null;
+        }
+    }
+    
+    void OnDisable()
+    {
+        // Always stop coroutines when disabled
+        StopSafely();
+    }
+    
+    void OnDestroy()
+    {
+        // Stop coroutines before destruction
+        StopSafely();
+    }
+}

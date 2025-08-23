@@ -15,18 +15,18 @@ from unittest.mock import Mock, patch
 import tempfile
 
 # Add the modules directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from testing.performance_regression import (
+from modules.testing.performance_regression import (
     PerformanceRegressionTester,
     PerformanceRegressionDetector,
     performance_test
 )
-from analysis.language_plugin_system import LanguagePluginSystem
-from analysis.comprehensive_error_detector import ComprehensiveErrorDetector
-from analysis.healing_metrics import HealingMetrics
-from patch_generation.advanced_code_generator import AdvancedCodeGenerator
-from deployment.canary import CanaryDeployer
+from modules.analysis.language_plugin_system import LanguagePluginSystem
+from modules.analysis.comprehensive_error_detector import ComprehensiveErrorDetector
+from modules.analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
+from modules.patch_generation.advanced_code_generator import AdvancedCodeGenerator
+from modules.deployment.canary import CanaryDeployment as CanaryDeployer
 
 
 class TestCoreComponentPerformance:

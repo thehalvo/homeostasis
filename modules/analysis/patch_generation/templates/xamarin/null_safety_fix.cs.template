@@ -1,0 +1,25 @@
+
+// Fix for null reference exceptions in Xamarin
+using System;
+
+// Safe null checking patterns
+public class SafeNullHandling
+{
+    public void SafePropertyAccess(MyObject obj)
+    {
+        // Null conditional operator (C# 6.0+)
+        var result = obj?.Property?.SubProperty;
+        
+        // Null coalescing
+        var value = obj?.Property ?? "default";
+        
+        // Traditional null check
+        if (obj != null && obj.Property != null)
+        {
+            // Safe to use obj.Property
+        }
+        
+        // Null conditional with method calls
+        obj?.Method()?.SubMethod();
+    }
+}

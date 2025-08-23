@@ -13,6 +13,7 @@ from .feedback_loops import (
 )
 from .annotation_system import (
     AnnotationInterface,
+    AnnotationType,
     HumanFeedbackCollector,
     AnnotationQualityScorer
 )
@@ -29,7 +30,10 @@ from .continuous_learning import (
 from .adaptive_confidence import (
     ConfidenceCalculator,
     ContextualThresholds,
-    ReviewTrigger
+    ReviewTrigger,
+    ConfidenceContext,
+    SystemCriticality,
+    FixComplexity
 )
 
 __all__ = [
@@ -38,6 +42,7 @@ __all__ = [
     'ModelPerformanceTracker',
     'AutomatedRetrainer',
     'AnnotationInterface',
+    'AnnotationType',
     'HumanFeedbackCollector',
     'AnnotationQualityScorer',
     'RuleExtractor',
@@ -48,5 +53,8 @@ __all__ = [
     'LearningPipeline',
     'ConfidenceCalculator',
     'ContextualThresholds',
-    'ReviewTrigger'
+    'ReviewTrigger',
+    'ConfidenceContext',
+    'SystemCriticality',
+    'FixComplexity'
 ]

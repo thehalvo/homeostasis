@@ -1,0 +1,20 @@
+
+import { StyleSheet, Platform } from 'react-native';
+
+// Fix for React Native styling issues
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // Use specific values instead of undefined or invalid CSS properties
+    backgroundColor: '#ffffff',
+    // Platform-specific styling
+    ...Platform.select({
+      ios: {
+        paddingTop: 20, // iOS status bar
+      },
+      android: {
+        paddingTop: 0,
+      },
+    }),
+  },
+});

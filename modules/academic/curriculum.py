@@ -1412,3 +1412,93 @@ def create_research_project_ideas() -> List[Dict[str, Any]]:
             ]
         }
     ]
+
+
+def create_workshop_materials(topic: str, duration_hours: int = 8) -> Dict[str, Any]:
+    """
+    Create materials for a workshop on self-healing systems.
+    
+    Args:
+        topic: Workshop topic/focus area
+        duration_hours: Workshop duration in hours
+        
+    Returns:
+        Workshop materials package
+    """
+    materials = {
+        "topic": topic,
+        "duration_hours": duration_hours,
+        "agenda": [],
+        "slides": [],
+        "hands_on_labs": [],
+        "resources": []
+    }
+    
+    # Create agenda based on duration
+    if duration_hours <= 4:
+        # Half-day workshop
+        materials["agenda"] = [
+            {"time": "0:00-0:30", "activity": "Introduction and Overview"},
+            {"time": "0:30-1:30", "activity": "Core Concepts"},
+            {"time": "1:30-2:30", "activity": "Hands-on Lab"},
+            {"time": "2:30-3:30", "activity": "Case Studies"},
+            {"time": "3:30-4:00", "activity": "Q&A and Wrap-up"}
+        ]
+    else:
+        # Full-day workshop
+        materials["agenda"] = [
+            {"time": "0:00-0:30", "activity": "Introduction and Ice Breaker"},
+            {"time": "0:30-1:30", "activity": "Theoretical Foundations"},
+            {"time": "1:30-2:30", "activity": "Architecture Deep Dive"},
+            {"time": "2:30-3:30", "activity": "Hands-on Lab 1: Basic Healing"},
+            {"time": "3:30-4:30", "activity": "Lunch Break"},
+            {"time": "4:30-5:30", "activity": "Advanced Techniques"},
+            {"time": "5:30-6:30", "activity": "Hands-on Lab 2: ML-Based Healing"},
+            {"time": "6:30-7:00", "activity": "Industry Case Studies"},
+            {"time": "7:00-8:00", "activity": "Group Project and Presentations"}
+        ]
+    
+    # Add topic-specific content
+    if "ml" in topic.lower() or "machine learning" in topic.lower():
+        materials["hands_on_labs"].append({
+            "title": "Building an ML-Based Error Predictor",
+            "duration": 90,
+            "objectives": [
+                "Train a model to predict system failures",
+                "Implement proactive healing based on predictions",
+                "Evaluate model performance"
+            ]
+        })
+    
+    if "cloud" in topic.lower() or "distributed" in topic.lower():
+        materials["hands_on_labs"].append({
+            "title": "Distributed Self-Healing in the Cloud",
+            "duration": 90,
+            "objectives": [
+                "Deploy healing agents across multiple nodes",
+                "Implement consensus-based healing decisions",
+                "Handle network partitions"
+            ]
+        })
+    
+    # Add generic labs if none added
+    if not materials["hands_on_labs"]:
+        materials["hands_on_labs"].append({
+            "title": "Basic Self-Healing Implementation",
+            "duration": 60,
+            "objectives": [
+                "Implement error detection",
+                "Create healing strategies",
+                "Test healing effectiveness"
+            ]
+        })
+    
+    # Add resources
+    materials["resources"] = [
+        {"type": "github", "url": "https://github.com/example/self-healing-workshop"},
+        {"type": "slides", "url": "workshop-slides.pdf"},
+        {"type": "video", "url": "recorded-sessions"},
+        {"type": "reading", "title": "Self-Healing Systems: A Survey"}
+    ]
+    
+    return materials

@@ -27,7 +27,7 @@ from ..llm_integration.provider_abstraction import (
     LLMManager, LLMRequest, LLMMessage, LLMError
 )
 from ..analysis.llm_context_manager import LLMContextManager
-from ..analysis.models.transformer_code_understanding import TransformerCodeUnderstanding
+from ..analysis.models.transformer_code_understanding import TransformerCodeAnalyzer as TransformerCodeUnderstanding
 from .multi_language_framework_detector import MultiLanguageFrameworkDetector
 from .code_style_analyzer import CodeStyleAnalyzer
 

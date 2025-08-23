@@ -142,14 +142,9 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             "query_params": dict(request.query_params),
         }
         
-        # Get request body if available (don't consume it for processing)
-        request_body = None
-        if request.method not in ["GET", "HEAD"]:
-            # Clone the request to avoid consuming it
-            request_clone = Request(request.scope, receive=request._receive)
-            request_body = await self._get_request_body(request_clone)
-            if request_body:
-                request_info["body"] = request_body
+        # Skip body logging for now to avoid consuming the stream
+        # This prevents the timeout issue with FastAPI/Starlette
+        # TODO: Implement proper body logging with stream wrapper if needed
         
         # Log request start
         self.logger.info(

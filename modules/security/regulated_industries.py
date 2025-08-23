@@ -23,7 +23,6 @@ from typing import Dict, List, Optional, Set, Tuple, Union, Any
 from pathlib import Path
 
 from .compliance_reporting import ComplianceFramework, get_compliance_reporting
-from .governance_framework import get_governance_framework
 from .policy_enforcement import get_policy_engine
 from .rbac import get_rbac_manager
 from .audit import get_audit_logger
@@ -149,6 +148,8 @@ class RegulatedIndustriesSupport:
         
         # Get managers
         self.compliance_reporting = get_compliance_reporting(config)
+        # Lazy import to avoid circular dependency
+        from .governance_framework import get_governance_framework
         self.governance_framework = get_governance_framework(config)
         self.policy_engine = get_policy_engine(config)
         self.rbac_manager = get_rbac_manager(config)

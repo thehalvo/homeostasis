@@ -6,9 +6,9 @@ import json
 from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.matlab_plugin import (
-    MatlabLanguagePlugin, 
-    MatlabExceptionHandler, 
-    MatlabPatchGenerator
+    MATLABLanguagePlugin as MatlabLanguagePlugin, 
+    MATLABExceptionHandler as MatlabExceptionHandler, 
+    MATLABPatchGenerator as MatlabPatchGenerator
 )
 
 

@@ -1409,6 +1409,30 @@ class UnityLanguagePlugin(LanguagePlugin):
             logger.error(f"Error generating Unity fix: {e}")
             return None
     
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Normalize Unity error data to standard format.
+        
+        Args:
+            error_data: Unity-specific error data
+            
+        Returns:
+            Normalized error data
+        """
+        return self.adapter.to_standard_format(error_data)
+    
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard error format back to Unity format.
+        
+        Args:
+            standard_error: Standard error data
+            
+        Returns:
+            Unity-specific error data
+        """
+        return self.adapter.from_standard_format(standard_error)
+    
     def get_language_info(self) -> Dict[str, Any]:
         """
         Get information about this language plugin.

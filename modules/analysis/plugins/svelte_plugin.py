@@ -1111,6 +1111,49 @@ class SvelteLanguagePlugin(LanguagePlugin):
             "environments": ["browser", "node", "sveltekit", "electron"]
         }
 
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Normalize error data to the standard Homeostasis format.
+        
+        Args:
+            error_data: Language-specific error data
+            
+        Returns:
+            Standardized error format
+        """
+        return {
+            "language": self.get_language_id(),
+            "type": error_data.get("type", "unknown"),
+            "message": error_data.get("message", ""),
+            "file": error_data.get("file", ""),
+            "line": error_data.get("line", 0),
+            "column": error_data.get("column", 0),
+            "severity": error_data.get("severity", "error"),
+            "context": error_data.get("context", {}),
+            "raw_data": error_data
+        }
+
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data back to the language-specific format.
+        
+        Args:
+            standard_error: Standardized error data
+            
+        Returns:
+            Language-specific error format
+        """
+        return {
+            "type": standard_error.get("type", "unknown"),
+            "message": standard_error.get("message", ""),
+            "file": standard_error.get("file", ""),
+            "line": standard_error.get("line", 0),
+            "column": standard_error.get("column", 0),
+            "severity": standard_error.get("severity", "error"),
+            "context": standard_error.get("context", {}),
+            "language_specific": standard_error.get("raw_data", {})
+        }
+
 
 # Register the plugin
 register_plugin(SvelteLanguagePlugin())

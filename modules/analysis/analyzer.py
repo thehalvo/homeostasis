@@ -45,7 +45,8 @@ class Analyzer:
                 ai_model_type: str = "stub",
                 api_key: Optional[str] = None,
                 ml_mode: str = "parallel",
-                use_llm: bool = False):
+                use_llm: bool = False,
+                use_ai: Optional[bool] = None):
         """
         Initialize the analyzer with enhanced options.
 
@@ -55,13 +56,27 @@ class Analyzer:
             api_key: API key for external AI services (if needed)
             ml_mode: ML analysis mode when ML-based or hybrid strategy is used
             use_llm: Whether to use LLM in hybrid strategy
+            use_ai: Legacy parameter for backward compatibility. If True, uses AI_FALLBACK strategy
         """
+        # Handle legacy use_ai parameter for backward compatibility
+        if use_ai is not None:
+            self.use_ai = use_ai
+            if use_ai:
+                strategy = AnalysisStrategy.AI_FALLBACK
+            else:
+                strategy = AnalysisStrategy.RULE_BASED_ONLY
+        else:
+            # Set use_ai based on strategy for backward compatibility
+            self.use_ai = strategy != AnalysisStrategy.RULE_BASED_ONLY
+            
         self.strategy = strategy
         
         # Initialize appropriate analyzer based on strategy
         if strategy == AnalysisStrategy.ML_BASED:
             # Use the ML analyzer 
             self.analyzer = MLAnalyzer(mode=ml_mode)
+            # Add rule_based_analyzer for backward compatibility
+            self.rule_based_analyzer = RuleBasedAnalyzer(additional_patterns=FASTAPI_ERROR_PATTERNS)
             logger.info(f"Initialized ML analyzer with mode: {ml_mode}")
         elif strategy == AnalysisStrategy.HYBRID:
             # Use the hybrid analyzer
@@ -70,11 +85,15 @@ class Analyzer:
                 use_llm=use_llm,
                 llm_api_key=api_key
             )
+            # Add rule_based_analyzer for backward compatibility
+            self.rule_based_analyzer = RuleBasedAnalyzer(additional_patterns=FASTAPI_ERROR_PATTERNS)
             logger.info(f"Initialized hybrid analyzer (ML mode: {ml_mode}, LLM: {use_llm})")
         else:
             # Use the traditional analyzer
             # Initialize rule-based analyzer
             self.rule_analyzer = RuleBasedAnalyzer(additional_patterns=FASTAPI_ERROR_PATTERNS)
+            # Also set as rule_based_analyzer for backward compatibility
+            self.rule_based_analyzer = self.rule_analyzer
             
             # Store strategy and parameters
             self.ai_model_type = ai_model_type

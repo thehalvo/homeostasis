@@ -1,0 +1,60 @@
+
+// Safe async patterns in Xamarin
+using System;
+using System.Threading.Tasks;
+using Xamarin.Forms;
+
+public class AsyncSafePatterns : ContentPage
+{
+    private bool _isLoading = false;
+    
+    // Safe async event handler
+    private async void OnButtonClicked(object sender, EventArgs e)
+    {
+        if (_isLoading) return;
+        
+        try
+        {
+            _isLoading = true;
+            await PerformAsyncOperation();
+        }
+        catch (Exception ex)
+        {
+            // Handle error
+            await DisplayAlert("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+    
+    // Safe async operation with cancellation
+    private async Task PerformAsyncOperation()
+    {
+        using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30)))
+        {
+            try
+            {
+                await SomeAsyncMethod(cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                // Handle cancellation
+            }
+        }
+    }
+    
+    // ConfigureAwait usage
+    private async Task BackgroundOperation()
+    {
+        await Task.Run(() => {
+            // Background work
+        }).ConfigureAwait(false);
+        
+        // Switch back to UI thread for UI updates
+        Device.BeginInvokeOnMainThread(() => {
+            // UI updates
+        });
+    }
+}

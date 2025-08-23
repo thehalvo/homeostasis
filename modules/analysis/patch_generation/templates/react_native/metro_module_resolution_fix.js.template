@@ -1,0 +1,16 @@
+
+// Fix for Metro module resolution error
+// Check the import path and ensure the module exists
+
+// Instead of:
+// import SomeModule from './path/that/doesnt/exist';
+
+// Use correct path:
+// import SomeModule from './correct/path/to/module';
+
+// Or install missing dependency:
+// npm install missing-package
+// yarn add missing-package
+
+// Then import:
+// import SomeModule from 'missing-package';

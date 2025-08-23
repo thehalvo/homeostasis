@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 from transformers import (
     AutoTokenizer, AutoModel, AutoModelForSequenceClassification,
-    RobertaTokenizer, RobertaModel, CodeBertModel,
+    RobertaTokenizer, RobertaModel,
     T5ForConditionalGeneration, T5Tokenizer
 )
 from dataclasses import dataclass

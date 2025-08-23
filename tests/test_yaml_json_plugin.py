@@ -6,9 +6,9 @@ import json
 from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.yaml_json_plugin import (
-    YamlJsonLanguagePlugin, 
-    YamlJsonExceptionHandler, 
-    YamlJsonPatchGenerator
+    YAMLJSONLanguagePlugin as YamlJsonLanguagePlugin, 
+    YAMLJSONExceptionHandler as YamlJsonExceptionHandler, 
+    YAMLJSONPatchGenerator as YamlJsonPatchGenerator
 )
 
 

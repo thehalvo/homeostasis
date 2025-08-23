@@ -12,11 +12,11 @@ from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
 # Add the modules directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules', 'analysis'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from cross_language_orchestrator import CrossLanguageOrchestrator
-from language_plugin_system import LanguagePluginSystem
-from comprehensive_error_detector import ComprehensiveErrorDetector, ErrorCategory
+from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
+from modules.analysis.language_plugin_system import LanguagePluginSystem
+from modules.analysis.comprehensive_error_detector import ComprehensiveErrorDetector, ErrorCategory
 
 
 class TestCrossLanguageOrchestration:

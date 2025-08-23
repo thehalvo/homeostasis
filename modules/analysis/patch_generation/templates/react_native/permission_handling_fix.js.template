@@ -1,0 +1,25 @@
+
+import { Platform, PermissionsAndroid } from 'react-native';
+
+// Safe permission handling for React Native
+const requestPermission = async () => {
+  if (Platform.OS === 'android') {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.{{PERMISSION_NAME}},
+        {
+          title: '{{PERMISSION_TITLE}}',
+          message: '{{PERMISSION_MESSAGE}}',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        }
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn('Permission request error:', err);
+      return false;
+    }
+  }
+  return true; // iOS permissions handled differently
+};

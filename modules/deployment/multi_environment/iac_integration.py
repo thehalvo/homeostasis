@@ -23,7 +23,7 @@ from pathlib import Path
 from modules.deployment.multi_environment.hybrid_orchestrator import (
     Environment, EnvironmentType, HealingContext, HealingPlan, HealingStep
 )
-from modules.security.audit import SecurityAuditor
+from modules.security.audit import AuditLogger
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 
 
@@ -562,7 +562,7 @@ class InfrastructureAsCodeIntegration:
             IaCTool.HELM: HelmProvider()
         }
         self.active_executions: Dict[str, IaCExecution] = {}
-        self.auditor = SecurityAuditor()
+        self.auditor = AuditLogger()
         self.monitor = DistributedMonitor()
         self.logger = logging.getLogger(__name__)
         

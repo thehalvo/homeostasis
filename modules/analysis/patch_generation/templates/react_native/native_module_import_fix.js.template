@@ -1,0 +1,16 @@
+
+// Fix for missing native module import
+import { NativeModules } from 'react-native';
+
+// Check if the native module exists before using it
+const { {{MODULE_NAME}} } = NativeModules;
+
+if (!{{MODULE_NAME}}) {
+  console.warn('{{MODULE_NAME}} native module not found. Make sure it is properly linked.');
+  // Provide fallback or graceful degradation
+}
+
+// Safe usage of native module
+if ({{MODULE_NAME}}) {
+  {{MODULE_NAME}}.{{METHOD_NAME}}({{PARAMS}});
+}

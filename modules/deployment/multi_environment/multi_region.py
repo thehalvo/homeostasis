@@ -19,7 +19,7 @@ from modules.deployment.multi_environment.hybrid_orchestrator import (
     Environment, EnvironmentType, HealingContext, HealingPlan, HealingStep
 )
 from modules.monitoring.distributed_monitoring import DistributedMonitor
-from modules.security.audit import SecurityAuditor
+from modules.security.audit import AuditLogger
 
 
 class RegionStatus(Enum):
@@ -260,7 +260,7 @@ class FailoverOrchestrator:
         self.primary_region: Optional[str] = None
         self.active_regions: Set[str] = set()
         self.failover_history: List[FailoverEvent] = []
-        self.auditor = SecurityAuditor()
+        self.auditor = AuditLogger()
         self.logger = logging.getLogger(__name__)
     
     async def execute_failover(self, from_region_id: str, to_region_id: str,

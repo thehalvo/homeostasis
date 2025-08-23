@@ -1,0 +1,43 @@
+
+// Fix for missing component errors
+using UnityEngine;
+
+// Use RequireComponent to ensure dependencies
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Collider))]
+public class ComponentSafetyExample : MonoBehaviour
+{
+    private Rigidbody rb;
+    private Collider col;
+    
+    void Awake()
+    {
+        // Get required components (guaranteed to exist)
+        rb = GetComponent<Rigidbody>();
+        col = GetComponent<Collider>();
+    }
+    
+    void Start()
+    {
+        // Safe to use without null checks
+        rb.velocity = Vector3.forward * 10f;
+        col.enabled = true;
+    }
+    
+    // Alternative: Safe component access
+    void SafeComponentAccess()
+    {
+        // For optional components, use TryGetComponent
+        if (TryGetComponent<AudioSource>(out var audioSource))
+        {
+            audioSource.Play();
+        }
+        
+        // Or traditional null check
+        var animator = GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.SetTrigger("Start");
+        }
+    }
+}

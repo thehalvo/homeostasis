@@ -13,10 +13,10 @@ from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
 # Add the modules directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules', 'analysis'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from plugins.go_plugin import GoLanguagePlugin, GoExceptionHandler, GoPatchGenerator
-from language_adapters import GoErrorAdapter
+from modules.analysis.plugins.go_plugin import GoLanguagePlugin, GoErrorHandler as GoExceptionHandler, GoPatchGenerator
+from modules.analysis.language_adapters import GoErrorAdapter
 
 
 class TestGoErrorAdapter:

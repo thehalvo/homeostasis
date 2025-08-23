@@ -433,35 +433,58 @@ target_include_directories({target_name} PRIVATE {include_dirs})
             }
         }
     
-    def generate_patch(self, error_analysis: Dict[str, Any], source_code: Optional[str] = None) -> Dict[str, Any]:
+    def generate_patch(self, error_analysis: Dict[str, Any], source_code: Optional[Union[str, Dict[str, Any]]] = None) -> Dict[str, Any]:
         """
         Generate a patch for the identified C/C++ error.
         
         Args:
             error_analysis: Analysis results from CPPExceptionHandler
+            source_code: Either a string of source code or a context dict (for backward compatibility)
             source_code: Optional source code context
             
         Returns:
             Generated patch information
         """
+        # Handle backward compatibility - if source_code is a dict, it's the old context parameter
+        context = None
+        if isinstance(source_code, dict):
+            context = source_code
+            source_code = context.get("code_snippet", None)
+        
         patch_info = {
             "patch_type": "unknown",
             "confidence": 0.0,
             "patch_content": "",
             "explanation": "",
             "additional_steps": [],
-            "risks": []
+            "risks": [],
+            # Include expected fields for backward compatibility
+            "language": "cpp",
+            "root_cause": error_analysis.get("root_cause", "unknown"),
+            "suggestion_code": ""
         }
         
-        if not error_analysis.get("matches"):
-            return patch_info
-        
-        primary_match = error_analysis["matches"][0]
-        category = primary_match["category"]
+        # Handle both new format (with matches) and old format (direct fields)
+        if error_analysis.get("matches"):
+            primary_match = error_analysis["matches"][0]
+            category = primary_match["category"]
+        else:
+            # Handle legacy format
+            if "rule_id" in error_analysis:
+                # Map rule_id to category
+                rule_id = error_analysis["rule_id"]
+                if "null" in rule_id or "segmentation" in rule_id:
+                    category = "memory"
+                elif "compilation" in rule_id:
+                    category = "compilation"
+                else:
+                    category = "unknown"
+            else:
+                category = "unknown"
         
         # Generate patch based on error category
         if category == "memory":
-            patch_info = self._generate_memory_patch(error_analysis, source_code)
+            patch_info = self._generate_memory_patch(error_analysis, context if context else source_code)
         elif category == "compilation":
             patch_info = self._generate_compilation_patch(error_analysis, source_code)
         elif category == "linking":
@@ -473,16 +496,53 @@ target_include_directories({target_name} PRIVATE {include_dirs})
         else:
             patch_info = self._generate_generic_patch(error_analysis, source_code)
         
+        # Ensure backward compatibility fields are populated
+        if patch_info.get("patch_content"):
+            patch_info["suggestion_code"] = patch_info["patch_content"]
+        
+        # Copy root_cause from error_analysis if available
+        if "root_cause" in error_analysis:
+            patch_info["root_cause"] = error_analysis["root_cause"]
+        
         return patch_info
     
-    def _generate_memory_patch(self, error_analysis: Dict[str, Any], source_code: Optional[str]) -> Dict[str, Any]:
+    def _generate_memory_patch(self, error_analysis: Dict[str, Any], source_code: Optional[Union[str, Dict[str, Any]]]) -> Dict[str, Any]:
         """Generate patch for memory-related errors."""
         template = self.patch_templates["memory_leak"]
+        
+        # Handle context if passed as source_code
+        context = None
+        code_snippet = source_code
+        if isinstance(source_code, dict):
+            context = source_code
+            code_snippet = context.get("code_snippet", "")
+            
+        # Generate specific patch based on the error
+        patch_content = template["template"]
+        
+        # Handle null pointer dereference specifically
+        if "null" in error_analysis.get("rule_id", "") or "segmentation" in error_analysis.get("root_cause", ""):
+            if context and context.get("variable_name"):
+                var_name = context["variable_name"]
+                patch_content = f"""// Add null pointer check before using {var_name}
+if ({var_name} != nullptr) {{
+    {code_snippet}
+}} else {{
+    // Handle null pointer case
+    // Log error or return early
+}}"""
+            else:
+                patch_content = """// Add null pointer check
+if (ptr != nullptr) {
+    // Safe to use ptr
+} else {
+    // Handle null pointer case
+}"""
         
         return {
             "patch_type": "memory_management",
             "confidence": 0.8,
-            "patch_content": template["template"],
+            "patch_content": patch_content,
             "explanation": template["description"],
             "additional_steps": [
                 "Compile with AddressSanitizer: -fsanitize=address",
@@ -493,7 +553,11 @@ target_include_directories({target_name} PRIVATE {include_dirs})
             "risks": [
                 "Changing memory management may affect performance",
                 "Ensure all code paths are properly updated"
-            ]
+            ],
+            # Include base fields expected by tests
+            "language": "cpp",
+            "root_cause": error_analysis.get("root_cause", "memory_error"),
+            "suggestion_code": patch_content
         }
     
     def _generate_compilation_patch(self, error_analysis: Dict[str, Any], source_code: Optional[str]) -> Dict[str, Any]:
@@ -612,7 +676,33 @@ class CPPLanguagePlugin(LanguagePlugin):
         self.exception_handler = CPPExceptionHandler()
         self.patch_generator = CPPPatchGenerator()
         
-        logger.info(f"Initialized {self.name} v{self.version}")
+        # Import adapter lazily to avoid circular imports
+        from ..cpp_adapter import CPPErrorAdapter
+        self.adapter = CPPErrorAdapter()
+    
+    def get_language_id(self) -> str:
+        """Get the unique identifier for this language."""
+        return "cpp"
+    
+    def get_language_name(self) -> str:
+        """Get the human-readable name of the language."""
+        return "C/C++"
+    
+    def get_language_version(self) -> str:
+        """Get the version of the language supported by this plugin."""
+        return "C++11/14/17/20"
+    
+    def get_supported_frameworks(self) -> List[str]:
+        """Get the list of frameworks supported by this language plugin."""
+        return ["stl", "boost", "qt", "gtk", "opengl", "vulkan", "mpi", "cuda"]
+    
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize error data to the standard Homeostasis format."""
+        return self.adapter.to_standard_format(error_data)
+    
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert standard format error data back to the language-specific format."""
+        return self.adapter.from_standard_format(standard_error)
     
     def can_handle(self, language: str, file_path: Optional[str] = None) -> bool:
         """
@@ -664,26 +754,29 @@ class CPPLanguagePlugin(LanguagePlugin):
         
         return analysis
     
-    def generate_fix(self, error_analysis: Dict[str, Any], source_code: Optional[str] = None) -> Dict[str, Any]:
+    def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generate a fix for the analyzed C/C++ error.
+        Generate a fix for an error based on the analysis.
         
         Args:
-            error_analysis: Results from analyze_error
-            source_code: Optional source code context
+            analysis: Error analysis
+            context: Additional context for fix generation
             
         Returns:
-            Generated fix information
+            Generated fix data
         """
+        # Extract source code from context if available
+        source_code = context.get("source_code") if context else None
+        
         # Use the patch generator to create a fix
-        patch_info = self.patch_generator.generate_patch(error_analysis, source_code)
+        patch_info = self.patch_generator.generate_patch(analysis, source_code)
         
         # Add plugin metadata
         patch_info.update({
             "plugin_name": self.name,
             "plugin_version": self.version,
             "generation_timestamp": self._get_timestamp(),
-            "error_analysis": error_analysis
+            "error_analysis": analysis
         })
         
         return patch_info
@@ -813,10 +906,7 @@ class CPPLanguagePlugin(LanguagePlugin):
 
 
 # Register the plugin
-@register_plugin
-def create_cpp_plugin():
-    """Factory function to create CPP plugin instance."""
-    return CPPLanguagePlugin()
+register_plugin(CPPLanguagePlugin())
 
 
 # Export the plugin class for direct usage

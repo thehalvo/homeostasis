@@ -86,8 +86,8 @@ class PolicyRule:
     name: str
     description: str
     conditions: List[PolicyCondition]
-    condition_logic: str = "AND"  # AND, OR
     action: PolicyAction
+    condition_logic: str = "AND"  # AND, OR
     action_params: Dict = field(default_factory=dict)
     priority: PolicyPriority = PolicyPriority.MEDIUM
     metadata: Dict = field(default_factory=dict)

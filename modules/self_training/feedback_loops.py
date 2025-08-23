@@ -22,7 +22,7 @@ from ..analysis.models.trainer import ModelTrainer, TrainingConfig
 from ..analysis.models.data_collector import ErrorDataCollector
 from ..analysis.models.serving import ModelServer
 from ..monitoring.feedback_loop import FeedbackLoop
-from ..monitoring.healing_metrics import HealingMetrics
+from ..analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
 
 logger = logging.getLogger(__name__)
 

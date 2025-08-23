@@ -1,0 +1,32 @@
+
+// Fix for widget overflow issues
+import 'package:flutter/material.dart';
+
+// Instead of:
+// Row(children: [Widget1(), Widget2(), Widget3()]) // Can overflow
+
+// Use Expanded or Flexible:
+Row(
+  children: [
+    Expanded(child: Widget1()),
+    Flexible(child: Widget2()),
+    Widget3(),
+  ],
+)
+
+// Or use SingleChildScrollView:
+SingleChildScrollView(
+  scrollDirection: Axis.horizontal,
+  child: Row(
+    children: [Widget1(), Widget2(), Widget3()],
+  ),
+)
+
+// For Column overflow:
+Expanded(
+  child: SingleChildScrollView(
+    child: Column(
+      children: [...widgets],
+    ),
+  ),
+)

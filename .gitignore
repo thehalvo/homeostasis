@@ -1,5 +1,6 @@
 # Project-specific files
 STATE.md
+ERRORS.md
 
 # Python
 __pycache__/
@@ -118,3 +119,4 @@ temp/
 # Deployment
 .netlify
 **/.claude/settings.local.json
+

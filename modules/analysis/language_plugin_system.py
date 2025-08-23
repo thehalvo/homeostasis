@@ -367,6 +367,9 @@ class LanguagePluginRegistry:
 # Create a global plugin registry
 plugin_registry = LanguagePluginRegistry()
 
+# Alias for backward compatibility
+LanguagePluginSystem = LanguagePluginRegistry
+
 
 def register_plugin(plugin: LanguagePlugin):
     """
@@ -572,8 +575,9 @@ def register_builtin_plugins():
         python_plugin = PythonLanguagePlugin()
         plugin_registry.register_plugin(python_plugin)
         
-        js_plugin = JavaScriptLanguagePlugin()
-        plugin_registry.register_plugin(js_plugin)
+        # JavaScript plugin is registered in javascript_plugin.py
+        # js_plugin = JavaScriptLanguagePlugin()
+        # plugin_registry.register_plugin(js_plugin)
         
         logger.info("Registered built-in language plugins")
     except Exception as e:

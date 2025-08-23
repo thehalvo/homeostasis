@@ -71,7 +71,7 @@ async def root():
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
-    return {"status": "healthy"}
+    return {"status": "healthy", "service": "example_service"}
 
 
 @app.get("/todos", response_model=List[TodoItem])
@@ -92,8 +92,8 @@ async def create_todo(todo: TodoCreate):
     todo_id = str(uuid.uuid4())
     todo_dict = todo.dict()
     todo_dict["id"] = todo_id
-    # BUG #2: Missing initialization of 'completed' field
-    # This will cause issues when clients expect the completed field to exist
+    # Fixed BUG #2: Initialize the 'completed' field
+    todo_dict["completed"] = False
     todo_db[todo_id] = todo_dict
     return todo_dict
 
@@ -101,9 +101,9 @@ async def create_todo(todo: TodoCreate):
 @app.get("/todos/{todo_id}", response_model=TodoItem)
 async def get_todo(todo_id: str):
     """Get a specific todo item by ID."""
-    # BUG #1: Missing error handling for non-existent IDs
-    # The correct code would check if todo_id exists in todo_db
-    # This will cause a KeyError when accessing a non-existent todo_id
+    # Fixed BUG #1: Added error handling for non-existent IDs
+    if todo_id not in todo_db:
+        raise HTTPException(status_code=404, detail="Todo item not found")
     return todo_db[todo_id]
 
 
@@ -114,9 +114,8 @@ async def update_todo(todo_id: str, todo: TodoUpdate):
         raise HTTPException(status_code=404, detail="Todo item not found")
     
     stored_todo = todo_db[todo_id]
-    # BUG #3: Incorrect parameter in dict() method causing all fields to be included
-    # even if not provided in the request, potentially overwriting with None values
-    update_data = todo.dict()  # Should use exclude_unset=True
+    # Fixed BUG #3: Use exclude_unset=True to only update provided fields
+    update_data = todo.dict(exclude_unset=True)
     
     for field, value in update_data.items():
         stored_todo[field] = value

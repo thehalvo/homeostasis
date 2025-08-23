@@ -1012,6 +1012,28 @@ class FlutterLanguagePlugin(LanguagePlugin):
         
         logger.info("Flutter framework plugin initialized")
     
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize error data to the standard Homeostasis format."""
+        return self.adapter.to_standard_format(error_data)
+    
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert standard format error data back to the language-specific format."""
+        # Convert back to Dart/Flutter format
+        return {
+            "type": standard_error.get("error_type", "Error"),
+            "message": standard_error.get("message", ""),
+            "stackTrace": standard_error.get("stack_trace", []),
+            "widget": {
+                "type": standard_error.get("widget_type"),
+                "properties": standard_error.get("widget_properties", {})
+            } if standard_error.get("widget_type") else None,
+            "flutterVersion": standard_error.get("context", {}).get("flutter_version"),
+            "dartVersion": standard_error.get("context", {}).get("dart_version"),
+            "platform": standard_error.get("context", {}).get("platform"),
+            "debugMode": standard_error.get("context", {}).get("debug_mode", True),
+            "projectPath": standard_error.get("context", {}).get("project_path")
+        }
+    
     def get_language_id(self) -> str:
         """Get the unique identifier for this language."""
         return "flutter"
@@ -1196,24 +1218,33 @@ class FlutterLanguagePlugin(LanguagePlugin):
         
         return any(pattern in message or pattern in error_type for pattern in dart_patterns)
     
-    def generate_fix(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                    source_code: str) -> Optional[Dict[str, Any]]:
+    def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generate a fix for the Flutter/Dart error.
+        Generate a fix for an error based on the analysis.
         
         Args:
-            error_data: The Flutter/Dart error data
-            analysis: Analysis results
-            source_code: Source code where the error occurred
+            analysis: Error analysis
+            context: Additional context for fix generation
             
         Returns:
-            Fix information or None if no fix can be generated
+            Generated fix data
         """
         try:
-            return self.patch_generator.generate_patch(error_data, analysis, source_code)
+            # Extract error data and source code from context if available
+            error_data = analysis.get("error_data", {})
+            source_code = context.get("source_code", "")
+            
+            # Generate patch
+            patch_result = self.patch_generator.generate_patch(error_data, analysis, source_code)
+            
+            if patch_result:
+                return patch_result
+            
+            # Return empty dict if no patch generated (as per abstract method)
+            return {}
         except Exception as e:
             logger.error(f"Error generating Flutter fix: {e}")
-            return None
+            return {}
     
     def get_language_info(self) -> Dict[str, Any]:
         """

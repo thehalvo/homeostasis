@@ -18,6 +18,13 @@ from .formal_frameworks import (
     generate_course_syllabus
 )
 
+# Import from reliability module
+from ..reliability.formal_verification import (
+    SystemModel,
+    VerificationProperty,
+    PropertyType
+)
+
 from .curriculum import (
     SelfHealingCurriculum,
     CourseModule,
@@ -25,6 +32,7 @@ from .curriculum import (
     AcademicAssessment,
     EducationLevel,
     AssessmentType,
+    LearningObjective,
     generate_interactive_exercise,
     create_workshop_materials,
     create_course_website_template,
@@ -41,6 +49,9 @@ __all__ = [
     "ResearchProblem",
     "ProofStructure",
     "AcademicVerificationResult",
+    "SystemModel",
+    "VerificationProperty",
+    "PropertyType",
     # Curriculum
     "SelfHealingCurriculum",
     "CourseModule",
@@ -48,6 +59,7 @@ __all__ = [
     "AcademicAssessment",
     "EducationLevel",
     "AssessmentType",
+    "LearningObjective",
     # Helper functions
     "generate_interactive_exercise",
     "create_workshop_materials",

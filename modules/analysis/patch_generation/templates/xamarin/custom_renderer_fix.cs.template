@@ -1,0 +1,41 @@
+
+// Fix for custom renderer registration
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.iOS; // or .Android
+
+// Custom control in shared project
+public class MyCustomControl : View
+{
+    // Custom properties and behavior
+}
+
+// Custom renderer in platform project
+[assembly: ExportRenderer(typeof(MyCustomControl), typeof(MyCustomControlRenderer))]
+namespace MyApp.iOS.Renderers
+{
+    public class MyCustomControlRenderer : ViewRenderer<MyCustomControl, UIView>
+    {
+        protected override void OnElementChanged(ElementChangedEventArgs<MyCustomControl> e)
+        {
+            base.OnElementChanged(e);
+            
+            if (e.NewElement != null)
+            {
+                // Create and configure native control
+                var nativeControl = new UIView();
+                SetNativeControl(nativeControl);
+            }
+        }
+        
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(sender, e);
+            
+            // Handle property changes
+            if (e.PropertyName == MyCustomControl.SomeProperty.PropertyName)
+            {
+                // Update native control
+            }
+        }
+    }
+}

@@ -13,10 +13,10 @@ from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
 # Add the modules directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules', 'analysis'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from plugins.cpp_plugin import CPPLanguagePlugin, CPPExceptionHandler, CPPPatchGenerator
-from language_adapters import CPPErrorAdapter
+from modules.analysis.plugins.cpp_plugin import CPPLanguagePlugin, CPPExceptionHandler, CPPPatchGenerator
+from modules.analysis.cpp_adapter import CPPErrorAdapter
 
 
 class TestCPPErrorAdapter:

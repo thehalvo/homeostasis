@@ -14,7 +14,7 @@ from enum import Enum
 from datetime import datetime
 
 from modules.enterprise.orchestration import EnterpriseOrchestrator
-from modules.security.audit import SecurityAuditor
+from modules.security.audit import AuditLogger
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 
 
@@ -208,7 +208,7 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
         self.connectors: Dict[str, EnvironmentConnector] = {}
         self.active_plans: Dict[str, HealingPlan] = {}
         self.monitor = DistributedMonitor()
-        self.auditor = SecurityAuditor()
+        self.auditor = AuditLogger()
         self.logger = logging.getLogger(__name__)
         
         # Load environment configurations

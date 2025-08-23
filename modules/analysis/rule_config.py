@@ -473,6 +473,40 @@ def get_rules_for_category(category: Union[str, RuleCategory]) -> List[Rule]:
     return all_rules
 
 
+def load_rule_configs() -> List[Dict[str, Any]]:
+    """
+    Load rule configurations from JSON files.
+    
+    Returns:
+        List of rule configurations
+    """
+    import glob
+    rules = []
+    
+    # Look for rule files in the default rules directory
+    rule_files = glob.glob(str(DEFAULT_RULES_DIR / "**" / "*.json"), recursive=True)
+    
+    for rule_file in rule_files:
+        try:
+            with open(rule_file, "r") as f:
+                file_data = json.load(f)
+                
+                # If the file contains a list of rules, add them all
+                if isinstance(file_data, list):
+                    rules.extend(file_data)
+                # If it's a rule set, extract the rules
+                elif isinstance(file_data, dict) and "rules" in file_data:
+                    rules.extend(file_data["rules"])
+                # If it's a single rule, add it
+                elif isinstance(file_data, dict) and "id" in file_data:
+                    rules.append(file_data)
+                    
+        except Exception as e:
+            logger.warning(f"Failed to load rule file {rule_file}: {e}")
+            
+    return rules
+
+
 # Convert predefined error patterns to the new format
 def convert_legacy_patterns(patterns: List[Dict[str, str]], 
                            category: RuleCategory = RuleCategory.PYTHON) -> List[Rule]:

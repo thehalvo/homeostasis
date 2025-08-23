@@ -8,8 +8,10 @@ from modules.deployment.kubernetes.kubernetes_deployment import (
     KubernetesDeployment,
     get_kubernetes_deployment
 )
+from modules.deployment.kubernetes.k8s_manager import KubernetesManager
 
 __all__ = [
     "KubernetesDeployment",
-    "get_kubernetes_deployment"
+    "get_kubernetes_deployment",
+    "KubernetesManager"
 ]

@@ -20,3 +20,4 @@ from modules.monitoring.post_deployment import PostDeploymentMonitor, SuccessRat
 from modules.monitoring.metrics_collector import MetricsCollector
 from modules.monitoring.feedback_loop import FeedbackLoop, FixImprovement
 from modules.monitoring.alert_system import AlertManager, AnomalyDetector
+from modules.monitoring.distributed_monitoring import DistributedMonitor

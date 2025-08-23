@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional, Tuple, Deque
 import numpy as np
 from scipy import stats
 
-from ..monitoring.healing_metrics import HealingMetrics
+from ..analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
 from .continuous_learning import OutcomeTracker, FixOutcome
 
 logger = logging.getLogger(__name__)

@@ -1,0 +1,58 @@
+
+// Safe Unity UI patterns
+using UnityEngine;
+using UnityEngine.UI;
+
+public class SafeUIPatterns : MonoBehaviour
+{
+    [SerializeField] private Button myButton;
+    [SerializeField] private Text myText;
+    [SerializeField] private Image myImage;
+    
+    void Start()
+    {
+        // Safe UI component access
+        if (myButton != null)
+        {
+            myButton.onClick.AddListener(OnButtonClick);
+        }
+        
+        // Safe text update
+        UpdateText("Hello World");
+        
+        // Safe image update
+        UpdateImage(null); // This should handle null gracefully
+    }
+    
+    void UpdateText(string newText)
+    {
+        if (myText != null)
+        {
+            myText.text = newText ?? string.Empty;
+        }
+    }
+    
+    void UpdateImage(Sprite newSprite)
+    {
+        if (myImage != null)
+        {
+            myImage.sprite = newSprite;
+            // Handle null sprite gracefully
+            myImage.enabled = newSprite != null;
+        }
+    }
+    
+    void OnButtonClick()
+    {
+        Debug.Log("Button clicked safely");
+    }
+    
+    void OnDestroy()
+    {
+        // Unsubscribe from UI events
+        if (myButton != null)
+        {
+            myButton.onClick.RemoveListener(OnButtonClick);
+        }
+    }
+}

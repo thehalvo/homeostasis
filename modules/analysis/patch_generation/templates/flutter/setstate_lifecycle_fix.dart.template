@@ -1,0 +1,38 @@
+
+// Fix for setState after dispose errors
+import 'package:flutter/material.dart';
+
+class SafeStatefulWidget extends StatefulWidget {
+  @override
+  _SafeStatefulWidgetState createState() => _SafeStatefulWidgetState();
+}
+
+class _SafeStatefulWidgetState extends State<SafeStatefulWidget> {
+  
+  void safeSetState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
+  
+  void performAsyncOperation() async {
+    // Do async work
+    await Future.delayed(Duration(seconds: 1));
+    
+    // Safe setState call
+    safeSetState(() {
+      // Update state here
+    });
+  }
+  
+  @override
+  void dispose() {
+    // Cancel any ongoing operations
+    super.dispose();
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}

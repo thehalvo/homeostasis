@@ -1301,6 +1301,30 @@ class CapacitorCordovaLanguagePlugin(LanguagePlugin):
             logger.error(f"Error generating Capacitor/Cordova fix: {e}")
             return None
     
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Normalize Capacitor/Cordova error data to standard format.
+        
+        Args:
+            error_data: Capacitor/Cordova-specific error data
+            
+        Returns:
+            Normalized error data
+        """
+        return self.adapter.to_standard_format(error_data)
+    
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard error format back to Capacitor/Cordova format.
+        
+        Args:
+            standard_error: Standard error data
+            
+        Returns:
+            Capacitor/Cordova-specific error data
+        """
+        return self.adapter.from_standard_format(standard_error)
+    
     def get_language_info(self) -> Dict[str, Any]:
         """
         Get information about this language plugin.

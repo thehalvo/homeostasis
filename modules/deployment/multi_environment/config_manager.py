@@ -24,7 +24,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import base64
 
 from modules.deployment.multi_environment.hybrid_orchestrator import Environment, EnvironmentType
-from modules.security.audit import SecurityAuditor
+from modules.security.audit import AuditLogger
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 
 
@@ -487,7 +487,7 @@ class MultiEnvironmentConfigManager:
         self.validator = ConfigValidator()
         self.templates: Dict[str, ConfigTemplate] = {}
         self.pending_changes: List[ConfigChange] = []
-        self.auditor = SecurityAuditor()
+        self.auditor = AuditLogger()
         self.monitor = DistributedMonitor()
         self.logger = logging.getLogger(__name__)
         

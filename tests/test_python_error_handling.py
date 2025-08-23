@@ -15,11 +15,11 @@ import sys
 import os
 
 # Add the modules directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules', 'analysis'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from comprehensive_error_detector import PythonParser, ComprehensiveErrorDetector
-from language_parsers import CompilerIntegration
-from cross_language_orchestrator import CrossLanguageOrchestrator
+from modules.analysis.comprehensive_error_detector import PythonParser, ComprehensiveErrorDetector
+from modules.analysis.language_parsers import CompilerIntegration
+from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
 
 
 class TestPythonParser:

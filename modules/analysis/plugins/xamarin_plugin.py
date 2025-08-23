@@ -1027,6 +1027,27 @@ class XamarinLanguagePlugin(LanguagePlugin):
         """Get the list of frameworks supported by this language plugin."""
         return self.supported_frameworks
     
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize error data to the standard Homeostasis format."""
+        return self.adapter.to_standard_format(error_data)
+    
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert standard format error data back to the language-specific format."""
+        # Convert back to Xamarin/C# format
+        return {
+            "Type": standard_error.get("error_type", "Exception"),
+            "Message": standard_error.get("message", ""),
+            "StackTrace": standard_error.get("stack_trace", []),
+            "Source": standard_error.get("source", ""),
+            "TargetSite": standard_error.get("target_site", ""),
+            "InnerException": standard_error.get("inner_exception"),
+            "HResult": standard_error.get("hresult", 0),
+            "Data": standard_error.get("additional_data", {}),
+            "HelpLink": standard_error.get("help_link", ""),
+            "Platform": standard_error.get("platform", ""),
+            "DeviceInfo": standard_error.get("device_info", {})
+        }
+    
     def can_handle(self, error_data: Dict[str, Any]) -> bool:
         """
         Check if this plugin can handle the given error.
@@ -1182,24 +1203,33 @@ class XamarinLanguagePlugin(LanguagePlugin):
         
         return any(pattern in message or pattern in stack_trace for pattern in dependency_patterns)
     
-    def generate_fix(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                    source_code: str) -> Optional[Dict[str, Any]]:
+    def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generate a fix for the Xamarin error.
+        Generate a fix for an error based on the analysis.
         
         Args:
-            error_data: The Xamarin error data
-            analysis: Analysis results
-            source_code: Source code where the error occurred
+            analysis: Error analysis
+            context: Additional context for fix generation
             
         Returns:
-            Fix information or None if no fix can be generated
+            Generated fix data
         """
         try:
-            return self.patch_generator.generate_patch(error_data, analysis, source_code)
+            # Extract error data and source code from context if available
+            error_data = analysis.get("error_data", {})
+            source_code = context.get("source_code", "")
+            
+            # Generate patch
+            patch_result = self.patch_generator.generate_patch(error_data, analysis, source_code)
+            
+            if patch_result:
+                return patch_result
+            
+            # Return empty dict if no patch generated (as per abstract method)
+            return {}
         except Exception as e:
             logger.error(f"Error generating Xamarin fix: {e}")
-            return None
+            return {}
     
     def get_language_info(self) -> Dict[str, Any]:
         """

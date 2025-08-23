@@ -37,7 +37,7 @@ from modules.security.auth import get_auth_manager, authenticate
 from modules.security.rbac import get_rbac_manager, has_permission
 from modules.deployment.canary import get_canary_deployment, CanaryStatus
 from modules.suggestion.suggestion_manager import get_suggestion_manager, SuggestionStatus
-from modules.suggestion.diff_viewer import generate_diff
+from modules.suggestion.diff_viewer import create_diff as generate_diff
 
 # Initialize Flask app
 app = Flask(__name__,

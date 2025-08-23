@@ -503,6 +503,38 @@ class ClojureLanguagePlugin(LanguagePlugin):
         self.patch_generator = ClojurePatchGenerator()
         self.adapter = ClojureErrorAdapter()
     
+    def get_language_id(self) -> str:
+        """Get the unique identifier for this language."""
+        return "clojure"
+    
+    def get_language_name(self) -> str:
+        """Get the human-readable name of the language."""
+        return "Clojure"
+    
+    def get_language_version(self) -> str:
+        """Get the version of the language supported by this plugin."""
+        return "1.8+"
+    
+    def get_supported_frameworks(self) -> List[str]:
+        """Get the list of frameworks supported by this language plugin."""
+        return [
+            "ring",
+            "compojure",
+            "luminus", 
+            "pedestal",
+            "core.async",
+            "spec",
+            "datomic"
+        ]
+    
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize error data to the standard Homeostasis format."""
+        return self.adapter.to_standard_format(error_data)
+    
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert standard format error data back to the language-specific format."""
+        return self.adapter.from_standard_format(standard_error)
+    
     def get_language_info(self) -> Dict[str, Any]:
         """
         Get information about this language plugin.
@@ -599,28 +631,36 @@ class ClojureLanguagePlugin(LanguagePlugin):
                 "success": False
             }
     
-    def generate_fix(self, analysis_result: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generate a fix for the analyzed error.
+        Generate a fix for an error based on the analysis.
         
         Args:
-            analysis_result: Result from analyze_error
+            analysis: Error analysis
+            context: Additional context for fix generation
             
         Returns:
-            Fix/patch information or None
+            Generated fix data
         """
         try:
+            # Combine analysis with context for patch generation
+            analysis_result = {**analysis}
+            if context:
+                analysis_result["context"] = context
+                
             patch_result = self.patch_generator.generate_patch(analysis_result)
             
             if patch_result:
                 patch_result["plugin"] = "clojure"
                 patch_result["generation_timestamp"] = self._get_timestamp()
+                return patch_result
             
-            return patch_result
+            # Return empty dict if no patch generated (as per abstract method)
+            return {}
         
         except Exception as e:
             logger.error(f"Error generating Clojure fix: {e}")
-            return None
+            return {}
     
     def _get_timestamp(self) -> str:
         """Get current timestamp."""
@@ -629,4 +669,4 @@ class ClojureLanguagePlugin(LanguagePlugin):
 
 
 # Register the plugin
-register_plugin("clojure", ClojureLanguagePlugin)
+register_plugin(ClojureLanguagePlugin())
