@@ -34,7 +34,7 @@
     {
       "id": "ansible_playbook_undefined_variable",
       "pattern": "undefined variable|no variable found|variable is not defined|not defined in|unknown variable|undefined var|variable not found|no such variable|variable '.*' is not defined|unknown variable name|could not find variable|undefined name|variable undefined",
-      "type": "PlaybookStructureError",
+      "type": "variable",
       "description": "Using undefined variables in Ansible playbook",
       "root_cause": "ansible_playbook_structure_error",
       "suggestion": "Define variables in vars, vars_files, or use default values with | default",

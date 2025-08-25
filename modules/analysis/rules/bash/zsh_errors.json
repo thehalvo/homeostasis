@@ -5,7 +5,7 @@
     {
       "id": "zsh_command_not_found",
       "pattern": "zsh: command not found:",
-      "type": "CommandError",
+      "type": "command",
       "description": "Command not found in Zsh",
       "root_cause": "bash_command_not_found",
       "suggestion": "Check if the command is installed and in PATH",
@@ -92,7 +92,7 @@
     {
       "id": "zsh_parse_error",
       "pattern": "zsh: parse error",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Parse error in Zsh script",
       "root_cause": "bash_syntax_error",
       "suggestion": "Check for syntax errors in the script",
@@ -120,7 +120,7 @@
     {
       "id": "zsh_parameter_not_set",
       "pattern": "zsh: parameter not set:",
-      "type": "VariableError",
+      "type": "variable",
       "description": "Parameter or variable not set",
       "root_cause": "bash_variable_error",
       "suggestion": "Initialize the variable before use or handle unset variables",
@@ -148,7 +148,7 @@
     {
       "id": "zsh_bad_subscript",
       "pattern": "zsh: bad subscript",
-      "type": "VariableError",
+      "type": "variable",
       "description": "Bad array or string subscript",
       "root_cause": "bash_variable_error",
       "suggestion": "Check array or string index and ensure it's within bounds",
@@ -177,7 +177,7 @@
     {
       "id": "zsh_permission_denied",
       "pattern": "zsh: permission denied:",
-      "type": "PermissionError",
+      "type": "permission",
       "description": "Permission denied when executing file",
       "root_cause": "bash_permission_error",
       "suggestion": "Add execute permission (chmod +x) or run with proper privileges",
@@ -291,7 +291,7 @@
     {
       "id": "zsh_read_only_variable",
       "pattern": "zsh: read-only variable:",
-      "type": "VariableError",
+      "type": "variable",
       "description": "Attempted to modify a read-only variable",
       "root_cause": "bash_variable_error",
       "suggestion": "Avoid modifying read-only variables",

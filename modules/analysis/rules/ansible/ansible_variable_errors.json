@@ -5,7 +5,7 @@
     {
       "id": "ansible_undefined_variable",
       "pattern": "'.*' is undefined|variable .* is not defined|undefined variable|AnsibleUndefinedVariable|object has no attribute|referenced before assignment|Unable to look up a name|is not a valid variable name",
-      "type": "VariableError",
+      "type": "variable",
       "description": "Undefined variable in playbook or template",
       "root_cause": "ansible_variable_error",
       "suggestion": "Define the variable or use default filter",

@@ -1,0 +1,120 @@
+{
+  "name": "cpp_preprocessor_errors",
+  "rules": [
+    {
+      "id": "cpp_macro_redefinition",
+      "pattern": "macro redefined|redefinition of.*macro|PreprocessorError.*redefin",
+      "type": "MacroRedefinition",
+      "description": "Macro has been redefined",
+      "root_cause": "cpp_macro_redefinition",
+      "suggestion": "Use #undef before redefining macros, or use #ifndef guards. Consider using const variables or inline functions instead of macros.",
+      "category": "preprocessor",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["cpp", "c", "preprocessor", "macro", "redefinition"],
+      "examples": [
+        "'MAX_SIZE' macro redefined",
+        "warning: 'DEBUG' macro redefined"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_missing_include_guard",
+      "pattern": "included multiple times without guard|missing include guard|header.*guard|PreprocessorWarning.*guard",
+      "type": "MissingIncludeGuard",
+      "description": "Header file missing include guard",
+      "root_cause": "cpp_missing_include_guard",
+      "suggestion": "Add include guards: #ifndef FILENAME_H\\n#define FILENAME_H\\n...\\n#endif. Consider using #pragma once for modern compilers.",
+      "category": "preprocessor",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["cpp", "c", "preprocessor", "header", "include_guard"],
+      "examples": [
+        "header file included multiple times without guard",
+        "missing include guard"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_circular_include",
+      "pattern": "circular.*include|circular dependency|include.*cycle|PreprocessorError.*circular",
+      "type": "CircularInclude",
+      "description": "Circular include dependency detected",
+      "root_cause": "cpp_circular_include",
+      "suggestion": "Break circular dependencies using forward declarations, move definitions to source files, or refactor header structure. Use include guards to prevent infinite recursion.",
+      "category": "preprocessor",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "c", "preprocessor", "circular", "include"],
+      "examples": [
+        "circular dependency detected",
+        "circular include detected"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "high",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_undefined_macro",
+      "pattern": "undefined macro|macro.*not defined|#error.*undefined",
+      "type": "UndefinedMacro",
+      "description": "Macro used but not defined",
+      "root_cause": "cpp_undefined_macro",
+      "suggestion": "Define the macro before use or include the appropriate header file. Check for typos in macro names.",
+      "category": "preprocessor",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "c", "preprocessor", "macro", "undefined"],
+      "examples": [
+        "undefined macro 'VERSION'",
+        "error: macro 'DEBUG' not defined"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_include_not_found",
+      "pattern": "No such file or directory.*include|cannot open.*include|fatal error.*include",
+      "type": "IncludeNotFound",
+      "description": "Include file not found",
+      "root_cause": "cpp_include_not_found",
+      "suggestion": "Check include paths (-I flag), verify file exists, check for case sensitivity issues on different platforms.",
+      "category": "preprocessor",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["cpp", "c", "preprocessor", "include", "file"],
+      "examples": [
+        "fatal error: config.h: No such file or directory",
+        "cannot open include file"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

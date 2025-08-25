@@ -72,6 +72,28 @@
       "dependencies": []
     },
     {
+      "id": "c_void_pointer_arithmetic",
+      "pattern": "void\\s*\\*.*used in arithmetic|arithmetic.*void\\s*(pointer|\\*)|pointer of type.*void.*used in arithmetic",
+      "type": "VoidPointerArithmetic",
+      "description": "Arithmetic on void pointers is not allowed in standard C",
+      "root_cause": "c_void_pointer_arithmetic",
+      "suggestion": "Cast the void pointer to the appropriate type before performing arithmetic. For example: (char*)ptr + 1",
+      "category": "c",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["c", "pointer", "void", "arithmetic"],
+      "examples": [
+        "error: pointer of type 'void *' used in arithmetic",
+        "arithmetic on a pointer to void"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
       "id": "c_function_pointer_error",
       "pattern": "function pointer.*error|invalid function pointer|calling.*null function|incompatible function pointer",
       "type": "FunctionPointerError",

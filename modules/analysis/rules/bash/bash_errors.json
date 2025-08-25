@@ -5,7 +5,7 @@
     {
       "id": "bash_process_substitution_error",
       "pattern": "syntax error near unexpected token `\\('",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Process substitution syntax error",
       "root_cause": "bash_syntax_error",
       "suggestion": "Check process substitution syntax <(...) or >(...)",
@@ -33,7 +33,7 @@
     {
       "id": "bash_here_document_error",
       "pattern": "syntax error: unexpected end of file.*expecting.*EOF",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Here document (heredoc) syntax error",
       "root_cause": "bash_syntax_error",
       "suggestion": "Check heredoc syntax and ensure matching EOF delimiter",
@@ -61,7 +61,7 @@
     {
       "id": "bash_array_error",
       "pattern": "bad array subscript",
-      "type": "VariableError",
+      "type": "variable",
       "description": "Bad array subscript or index",
       "root_cause": "bash_variable_error",
       "suggestion": "Check array index and access syntax",
@@ -117,7 +117,7 @@
     {
       "id": "bash_conditional_expression_error",
       "pattern": "syntax error in conditional expression",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Syntax error in conditional expression",
       "root_cause": "bash_conditional_error",
       "suggestion": "Check conditional expression syntax in if or while statements",
@@ -146,7 +146,7 @@
     {
       "id": "bash_command_substitution_error",
       "pattern": "command substitution: line \\d+: syntax error",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Syntax error in command substitution",
       "root_cause": "bash_syntax_error",
       "suggestion": "Check command substitution syntax $(command) or `command`",
@@ -231,7 +231,7 @@
     {
       "id": "bash_readonly_variable",
       "pattern": "read-only variable",
-      "type": "VariableError",
+      "type": "variable",
       "description": "Attempt to modify read-only variable",
       "root_cause": "bash_variable_error",
       "suggestion": "Avoid modifying read-only variables declared with readonly or declare -r",
@@ -287,7 +287,7 @@
     {
       "id": "bash_function_error",
       "pattern": "function declaration syntax error|syntax error .* function",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Function declaration syntax error",
       "root_cause": "bash_function_error",
       "suggestion": "Check function declaration syntax: function_name() { commands; }",

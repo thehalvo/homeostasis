@@ -5,7 +5,7 @@
     {
       "id": "ansible_module_not_found",
       "pattern": "No module named|ERROR! couldn't resolve module|module .* not found|unable to find module|could not find|The module .* was not found|plugin loader for ",
-      "type": "ModuleError",
+      "type": "module",
       "description": "Module not found or not installed",
       "root_cause": "ansible_module_error",
       "suggestion": "Install missing module with ansible-galaxy or check module name spelling",

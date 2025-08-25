@@ -5,7 +5,7 @@
     {
       "id": "sh_command_not_found",
       "pattern": "sh: \\d+: .*: not found",
-      "type": "CommandError",
+      "type": "command",
       "description": "Command not found in sh shell",
       "root_cause": "bash_command_not_found",
       "suggestion": "Check if the command is installed and in PATH",
@@ -34,7 +34,7 @@
     {
       "id": "sh_syntax_error",
       "pattern": "sh: \\d+: Syntax error:",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Syntax error in sh script",
       "root_cause": "bash_syntax_error",
       "suggestion": "Check shell script syntax and ensure POSIX compatibility",
@@ -90,7 +90,7 @@
     {
       "id": "sh_permission_denied",
       "pattern": "sh: \\d+: .*: Permission denied",
-      "type": "PermissionError",
+      "type": "permission",
       "description": "Permission denied when executing command",
       "root_cause": "bash_permission_error",
       "suggestion": "Check file permissions or run with appropriate privileges",
@@ -119,7 +119,7 @@
     {
       "id": "sh_cannot_open",
       "pattern": "sh: \\d+: cannot open",
-      "type": "FileError",
+      "type": "file",
       "description": "Cannot open file",
       "root_cause": "bash_file_error",
       "suggestion": "Check if the file exists and the path is correct",
@@ -175,7 +175,7 @@
     {
       "id": "sh_not_found_in_path",
       "pattern": "sh: \\d+: .*: not found in PATH",
-      "type": "CommandError",
+      "type": "command",
       "description": "Command not found in PATH",
       "root_cause": "bash_command_not_found",
       "suggestion": "Install the command or add its location to PATH",
@@ -261,7 +261,7 @@
     {
       "id": "sh_bad_substitution",
       "pattern": "sh: \\d+: .*: Bad substitution",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Bad variable substitution syntax",
       "root_cause": "bash_variable_error",
       "suggestion": "Use POSIX-compatible variable expansion syntax (avoid ${var:x:y} etc.)",
@@ -290,7 +290,7 @@
     {
       "id": "sh_read_only_variable",
       "pattern": "sh: \\d+: .*: read-only variable",
-      "type": "VariableError",
+      "type": "variable",
       "description": "Attempt to modify read-only variable",
       "root_cause": "bash_variable_error",
       "suggestion": "Avoid modifying read-only variables",

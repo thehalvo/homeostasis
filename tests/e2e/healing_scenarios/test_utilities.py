@@ -81,13 +81,8 @@ class TestEnvironment:
         # Create directory structure
         self.logs_path.mkdir(parents=True, exist_ok=True)
         
-        # Copy service template
-        template_path = project_root / "services" / service_template
-        if template_path.exists():
-            shutil.copytree(template_path, self.service_path)
-        else:
-            # Create minimal service for testing
-            self._create_minimal_service()
+        # Always create minimal service for testing to avoid dependency issues
+        self._create_minimal_service()
             
         # Create test configuration
         self._create_test_config()
@@ -183,7 +178,9 @@ if __name__ == "__main__":
                     "require_approval": False,
                     "canary_deployment": False,
                     "blue_green": False
-                }
+                },
+                "nginx_config_path": str(self.base_path / "nginx"),
+                "template_path": str(self.base_path / "templates")
             },
             "security": {
                 "enabled": True,
@@ -264,6 +261,11 @@ async def trigger_error():
     def start_service(self):
         """Start the test service."""
         if self.orchestrator:
+            # Set PYTHONPATH to include project root
+            import os
+            pythonpath = os.environ.get('PYTHONPATH', '')
+            if str(project_root) not in pythonpath:
+                os.environ['PYTHONPATH'] = f"{project_root}:{pythonpath}".rstrip(':')
             self.orchestrator.start_service()
             time.sleep(2)  # Wait for service to start
             

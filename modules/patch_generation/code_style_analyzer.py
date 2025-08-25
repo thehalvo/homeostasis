@@ -222,6 +222,166 @@ class CodeStyleAnalyzer:
             confidence=confidence
         )
 
+    def _analyze_typescript_style(self, source_code: str, file_path: str) -> StyleConventions:
+        """
+        Analyze TypeScript code style conventions.
+        
+        TypeScript analysis includes all JavaScript patterns plus:
+        - Type annotation style (inline vs separate)
+        - Interface vs type alias preferences
+        - Enum style conventions
+        - Decorator usage patterns
+        - Module/namespace conventions
+        """
+        # First perform JavaScript analysis as baseline
+        js_conventions = self._analyze_javascript_style(source_code, file_path)
+        
+        lines = source_code.split('\n')
+        
+        # TypeScript-specific analysis
+        type_annotation_style = self._analyze_typescript_type_annotations(source_code)
+        interface_style = self._analyze_typescript_interfaces(source_code)
+        enum_style = self._analyze_typescript_enums(source_code)
+        decorator_style = self._analyze_typescript_decorators(source_code)
+        module_style = self._analyze_typescript_modules(source_code)
+        
+        # Merge with JavaScript conventions
+        architectural_patterns = js_conventions.architectural_patterns + [
+            pattern for pattern in [
+                f"type_annotations:{type_annotation_style}" if type_annotation_style else None,
+                f"interface_style:{interface_style}" if interface_style else None,
+                f"enum_style:{enum_style}" if enum_style else None,
+                f"decorator_usage:{decorator_style}" if decorator_style else None,
+                f"module_style:{module_style}" if module_style else None
+            ] if pattern
+        ]
+        
+        return StyleConventions(
+            indent_style=js_conventions.indent_style,
+            indent_size=js_conventions.indent_size,
+            quote_style=js_conventions.quote_style,
+            line_length=js_conventions.line_length,
+            naming_conventions=self._merge_naming_conventions(
+                js_conventions.naming_conventions,
+                self._analyze_typescript_naming(source_code)
+            ),
+            spacing_patterns=js_conventions.spacing_patterns,
+            import_style=js_conventions.import_style,
+            comment_style=js_conventions.comment_style,
+            architectural_patterns=architectural_patterns,
+            confidence=min(js_conventions.confidence + 0.1, 1.0)  # Slightly higher confidence for TS
+        )
+
+    def _analyze_typescript_type_annotations(self, source_code: str) -> str:
+        """Analyze TypeScript type annotation style."""
+        inline_count = len(re.findall(r':\s*\w+(?:<[^>]+>)?(?:\[\])?', source_code))
+        separate_type_count = len(re.findall(r'^type\s+\w+\s*=', source_code, re.MULTILINE))
+        
+        if inline_count > separate_type_count * 2:
+            return "inline"
+        elif separate_type_count > inline_count:
+            return "separate_types"
+        return "mixed"
+
+    def _analyze_typescript_interfaces(self, source_code: str) -> str:
+        """Analyze TypeScript interface vs type alias preferences."""
+        interface_count = len(re.findall(r'^interface\s+\w+', source_code, re.MULTILINE))
+        type_alias_count = len(re.findall(r'^type\s+\w+\s*=\s*\{', source_code, re.MULTILINE))
+        
+        if interface_count > type_alias_count * 2:
+            return "interface_preferred"
+        elif type_alias_count > interface_count * 2:
+            return "type_alias_preferred"
+        return "mixed"
+
+    def _analyze_typescript_enums(self, source_code: str) -> str:
+        """Analyze TypeScript enum style conventions."""
+        const_enum_count = len(re.findall(r'const\s+enum\s+\w+', source_code))
+        regular_enum_count = len(re.findall(r'(?<!const\s)enum\s+\w+', source_code))
+        union_type_count = len(re.findall(r'type\s+\w+\s*=\s*[\'"][^\'"]+"?\s*\|', source_code))
+        
+        if const_enum_count > regular_enum_count:
+            return "const_enum"
+        elif regular_enum_count > 0:
+            return "regular_enum"
+        elif union_type_count > 0:
+            return "string_literal_union"
+        return None
+
+    def _analyze_typescript_decorators(self, source_code: str) -> str:
+        """Analyze TypeScript decorator usage patterns."""
+        decorator_count = len(re.findall(r'@\w+(?:\([^)]*\))?', source_code))
+        if decorator_count > 10:
+            return "heavy"
+        elif decorator_count > 0:
+            return "moderate"
+        return "none"
+
+    def _analyze_typescript_modules(self, source_code: str) -> str:
+        """Analyze TypeScript module/namespace conventions."""
+        namespace_count = len(re.findall(r'namespace\s+\w+', source_code))
+        module_count = len(re.findall(r'module\s+\w+', source_code))
+        
+        if namespace_count > 0:
+            return "namespace"
+        elif module_count > 0:
+            return "module"
+        return "es6_modules"
+
+    def _analyze_typescript_naming(self, source_code: str) -> Dict[str, str]:
+        """Analyze TypeScript-specific naming conventions."""
+        conventions = {}
+        
+        # Interface naming (I prefix or not)
+        interfaces = re.findall(r'interface\s+(\w+)', source_code)
+        if interfaces:
+            i_prefixed = sum(1 for name in interfaces if name.startswith('I') and len(name) > 1 and name[1].isupper())
+            conventions['interfaces'] = 'i_prefix' if i_prefixed > len(interfaces) / 2 else 'pascal_case'
+        
+        # Type alias naming
+        type_aliases = re.findall(r'type\s+(\w+)\s*=', source_code)
+        if type_aliases:
+            pascal_count = sum(1 for name in type_aliases if name[0].isupper())
+            conventions['type_aliases'] = 'pascal_case' if pascal_count > len(type_aliases) / 2 else 'camel_case'
+        
+        # Enum naming
+        enums = re.findall(r'enum\s+(\w+)', source_code)
+        if enums:
+            pascal_count = sum(1 for name in enums if name[0].isupper())
+            conventions['enums'] = 'pascal_case' if pascal_count > len(enums) / 2 else 'camel_case'
+        
+        return conventions
+
+    def _merge_naming_conventions(self, base: Dict[str, str], additional: Dict[str, str]) -> Dict[str, str]:
+        """Merge two naming convention dictionaries."""
+        merged = base.copy()
+        merged.update(additional)
+        return merged
+
+    def _analyze_java_style(self, source_code: str, file_path: str) -> StyleConventions:
+        """Analyze Java code style conventions."""
+        # For now, return generic style
+        # TODO: Implement full Java style analysis
+        return self._analyze_generic_style(source_code, file_path)
+
+    def _analyze_go_style(self, source_code: str, file_path: str) -> StyleConventions:
+        """Analyze Go code style conventions."""
+        # For now, return generic style  
+        # TODO: Implement full Go style analysis
+        return self._analyze_generic_style(source_code, file_path)
+
+    def _analyze_rust_style(self, source_code: str, file_path: str) -> StyleConventions:
+        """Analyze Rust code style conventions."""
+        # For now, return generic style
+        # TODO: Implement full Rust style analysis
+        return self._analyze_generic_style(source_code, file_path)
+
+    def _analyze_swift_style(self, source_code: str, file_path: str) -> StyleConventions:
+        """Analyze Swift code style conventions."""
+        # For now, return generic style
+        # TODO: Implement full Swift style analysis
+        return self._analyze_generic_style(source_code, file_path)
+
     def _analyze_generic_style(self, source_code: str, file_path: str) -> StyleConventions:
         """Generic style analysis for unsupported languages."""
         lines = source_code.split('\n')

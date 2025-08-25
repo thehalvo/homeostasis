@@ -7,6 +7,7 @@ by understanding code structure, variable scopes, and function signatures.
 import os
 import re
 import ast
+import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple, Union, Set
 
@@ -17,6 +18,8 @@ from modules.patch_generation.indent_utils import (
     normalize_indentation, apply_indentation, preserve_relative_indentation,
     adjust_indentation_for_context
 )
+
+logger = logging.getLogger(__name__)
 
 
 class ASTPatcher:
@@ -124,16 +127,19 @@ class ASTPatcher:
             Patch details if generation is successful, None otherwise
         """
         if not self.analyzer.visitor:
+            logger.debug(f"No visitor - analyzer not initialized")
             return None
             
         # Find the containing function to get context
         containing_function = self.analyzer.find_containing_function(line_number)
         if not containing_function:
+            logger.debug(f"No containing function found for line {line_number}")
             return None
             
         # Identify the statement to wrap in a try-except block
         nodes_at_line = self.analyzer.find_nodes_at_line(line_number)
         if not nodes_at_line:
+            logger.debug(f"No nodes found at line {line_number}")
             return None
             
         # Get statement node and its context

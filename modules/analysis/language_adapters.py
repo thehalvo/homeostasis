@@ -2032,6 +2032,9 @@ class ErrorAdapterFactory:
             return CSharpErrorAdapter()
         elif language == "php":
             return PHPErrorAdapter()
+        elif language in ["c", "cpp", "c++"]:
+            from modules.analysis.cpp_adapter import CPPErrorAdapter
+            return CPPErrorAdapter()
         elif language == "kotlin":
             return KotlinErrorAdapter()
         else:
@@ -3413,6 +3416,10 @@ class ClojureErrorAdapter(LanguageAdapter):
         # 3. Anonymous function: at namespace$function$fn__123.invoke (file.clj:line)
         # 4. Java method: at java.lang.Class.method (Source.java:line)
         
+        # Pattern for anonymous functions (namespace$function$fn__XXX.invoke)
+        anon_frame_pattern = r'\s*at\s+([a-zA-Z0-9_.-]+)\$([a-zA-Z0-9_$-]+)\$fn__(\d+)\.([a-zA-Z0-9_$-]+)\s*\(([^:)]+):(\d+)\)'
+        # Pattern for regular Clojure functions (namespace$function.invoke)
+        clojure_fn_pattern = r'\s*at\s+([a-zA-Z0-9_.-]+)\$([a-zA-Z0-9_$-]+)\.([a-zA-Z0-9_$-]+)\s*\(([^:)]+):(\d+)\)'
         clojure_frame_pattern = r'\s*at\s+([a-zA-Z0-9_.$-]+)\.([a-zA-Z0-9_$-]+)\s*\(([^:)]+):(\d+)\)'
         java_frame_pattern = r'\s*at\s+([a-zA-Z0-9_.]+)\.([a-zA-Z0-9_$]+)\.([a-zA-Z0-9_$]+)\(([^:)]+):(\d+)\)'
         
@@ -3421,7 +3428,57 @@ class ClojureErrorAdapter(LanguageAdapter):
             if not line or line.startswith("Caused by"):
                 continue
             
-            # Try Clojure frame pattern first
+            # Try anonymous function pattern first
+            match = re.match(anon_frame_pattern, line)
+            if match:
+                namespace = match.group(1)
+                function = match.group(2)
+                fn_num = match.group(3)
+                method = match.group(4)
+                file = match.group(5)
+                line_num = int(match.group(6))
+                
+                function_desc = f"{function} (anonymous function)"
+                
+                frames.append({
+                    "namespace": namespace,
+                    "function": function_desc,
+                    "file": file,
+                    "line": line_num,
+                    "type": "clojure"
+                })
+                continue
+            
+            # Try regular Clojure function pattern (namespace$function.invoke)
+            match = re.match(clojure_fn_pattern, line)
+            if match:
+                namespace = match.group(1)
+                function = match.group(2)
+                method = match.group(3)
+                file = match.group(4)
+                line_num = int(match.group(5))
+                
+                # Check if this is actually a Java frame (has .java file)
+                frame_type = "java" if file.endswith(".java") else "clojure"
+                
+                frame_dict = {
+                    "namespace": namespace,
+                    "function": function,
+                    "file": file,
+                    "line": line_num,
+                    "type": frame_type
+                }
+                
+                # For Java frames, extract the class name
+                if frame_type == "java" and "." in namespace:
+                    parts = namespace.rsplit(".", 1)
+                    frame_dict["namespace"] = parts[0]
+                    frame_dict["class"] = parts[1]
+                
+                frames.append(frame_dict)
+                continue
+                
+            # Try regular Clojure frame pattern
             match = re.match(clojure_frame_pattern, line)
             if match:
                 namespace = match.group(1)
@@ -3435,13 +3492,24 @@ class ClojureErrorAdapter(LanguageAdapter):
                     base_function = function.split("$fn__")[0]
                     function = f"{base_function} (anonymous function)"
                 
-                frames.append({
+                # Check if this is actually a Java frame (has .java file)
+                frame_type = "java" if file.endswith(".java") else "clojure"
+                
+                frame_dict = {
                     "namespace": namespace,
                     "function": function,
                     "file": file,
                     "line": line_num,
-                    "type": "clojure"
-                })
+                    "type": frame_type
+                }
+                
+                # For Java frames, extract the class name
+                if frame_type == "java" and "." in namespace:
+                    parts = namespace.rsplit(".", 1)
+                    frame_dict["namespace"] = parts[0]
+                    frame_dict["class"] = parts[1]
+                
+                frames.append(frame_dict)
                 continue
             
             # Try Java frame pattern

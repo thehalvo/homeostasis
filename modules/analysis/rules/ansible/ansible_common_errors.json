@@ -88,8 +88,8 @@
     },
     {
       "id": "ansible_failed_to_import_role",
-      "pattern": "failed to import role|couldn't resolve module|ERROR! the role .* was not found|unable to find role",
-      "type": "RoleError",
+      "pattern": "failed to import role|ERROR! the role .* was not found|unable to find role",
+      "type": "role",
       "description": "Failed to import or find Ansible role",
       "root_cause": "ansible_role_error",
       "suggestion": "Check role path or install missing role with ansible-galaxy",

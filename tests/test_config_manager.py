@@ -73,7 +73,7 @@ logging:
 @pytest.fixture
 def config_manager(mock_config):
     """Create config manager instance for testing"""
-    with patch('modules.deployment.multi_environment.config_manager.SecurityAuditor'):
+    with patch('modules.deployment.multi_environment.config_manager.AuditLogger'):
         with patch('modules.deployment.multi_environment.config_manager.DistributedMonitor'):
             return MultiEnvironmentConfigManager(mock_config)
 

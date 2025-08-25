@@ -1040,6 +1040,9 @@ class DockerfileLanguagePlugin(LanguagePlugin):
             analysis["language"] = "dockerfile"
             analysis["plugin_version"] = self.VERSION
             
+            # Ensure category is always "dockerfile" for consistency
+            analysis["category"] = "dockerfile"
+            
             return analysis
             
         except Exception as e:

@@ -148,9 +148,8 @@ class RegulatedIndustriesSupport:
         
         # Get managers
         self.compliance_reporting = get_compliance_reporting(config)
-        # Lazy import to avoid circular dependency
-        from .governance_framework import get_governance_framework
-        self.governance_framework = get_governance_framework(config)
+        # Avoid circular dependency - governance framework will be set later if needed
+        self.governance_framework = None
         self.policy_engine = get_policy_engine(config)
         self.rbac_manager = get_rbac_manager(config)
         self.audit_logger = get_audit_logger(config)
@@ -169,6 +168,14 @@ class RegulatedIndustriesSupport:
         
         # Load existing configurations
         self._load_configurations()
+    
+    def set_governance_framework(self, governance_framework):
+        """Set the governance framework after initialization to avoid circular dependency.
+        
+        Args:
+            governance_framework: The governance framework instance
+        """
+        self.governance_framework = governance_framework
     
     def configure_industry(self, industry: RegulatedIndustry,
                          requirements: List[ComplianceRequirement],

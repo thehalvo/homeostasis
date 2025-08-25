@@ -95,6 +95,8 @@ logs/patches/
 sessions/
 logs/backups/
 logs/patches/
+data/
+governance/
 
 # Sensitive information
 .env

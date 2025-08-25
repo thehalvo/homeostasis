@@ -26,7 +26,8 @@ from .compliance_reporting import get_compliance_reporting, ComplianceReportingS
 from .policy_enforcement import get_policy_engine, PolicyEnforcementEngine, PolicyEvaluationContext
 from .identity_providers import get_identity_integration, IdentityProviderIntegration
 from .governance_manager import GovernanceManager
-from .regulated_industries import get_regulated_industries, RegulatedIndustriesSupport, RegulatedIndustry
+# Avoid circular import - these will be imported when needed
+# from .regulated_industries import get_regulated_industries, RegulatedIndustriesSupport, RegulatedIndustry
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +104,19 @@ class EnterpriseGovernanceFramework:
             config: Configuration dictionary or GovernanceConfig object
         """
         if isinstance(config, dict):
-            self.config = GovernanceConfig(**config)
+            # Extract only the fields that GovernanceConfig accepts
+            governance_config_fields = {
+                'enabled_capabilities', 'compliance_frameworks', 'require_approval_for_production',
+                'enforce_policies', 'enable_sso', 'audit_retention_days', 'session_timeout_minutes',
+                'mfa_required_roles', 'metadata'
+            }
+            # Filter config to only include valid fields
+            filtered_config = {k: v for k, v in config.items() if k in governance_config_fields}
+            # Store extra fields in metadata for backward compatibility
+            extra_fields = {k: v for k, v in config.items() if k not in governance_config_fields}
+            if extra_fields:
+                filtered_config['metadata'] = {**filtered_config.get('metadata', {}), **extra_fields}
+            self.config = GovernanceConfig(**filtered_config)
         else:
             self.config = config or GovernanceConfig()
         
@@ -335,7 +348,7 @@ class EnterpriseGovernanceFramework:
         else:
             raise ValueError(f"Unknown user management action: {action}")
     
-    def configure_regulated_industry(self, industry: RegulatedIndustry,
+    def configure_regulated_industry(self, industry: 'RegulatedIndustry',
                                    requirements: List, config: Dict) -> bool:
         """Configure a regulated industry with compliance requirements.
         
@@ -352,7 +365,7 @@ class EnterpriseGovernanceFramework:
         
         return self.regulated_industries.configure_industry(industry, requirements, config)
     
-    def get_industry_dashboard(self, industry: RegulatedIndustry) -> Dict:
+    def get_industry_dashboard(self, industry: 'RegulatedIndustry') -> Dict:
         """Get compliance dashboard for a regulated industry.
         
         Args:
@@ -458,7 +471,11 @@ class EnterpriseGovernanceFramework:
         
         # Regulated industries support
         if GovernanceCapability.REGULATED_INDUSTRIES in self.config.enabled_capabilities:
+            from .regulated_industries import get_regulated_industries
             self.regulated_industries = get_regulated_industries(base_config)
+            # Set the governance framework reference to avoid circular dependency
+            if hasattr(self.regulated_industries, 'set_governance_framework'):
+                self.regulated_industries.set_governance_framework(self)
     
     def _configure_framework(self):
         """Configure the framework based on settings."""

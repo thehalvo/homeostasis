@@ -207,7 +207,7 @@
     },
     {
       "id": "ansible_kubernetes_error",
-      "pattern": "kubernetes\.client.+ required|failed to import kubernetes|Error from server|Authentication failed|Unauthorized|Forbidden|Error loading kubeconfig|Not found|resources of type .+ not found|Could not find .+ resource|invalid resource name|Unable to connect to the server|Error communicating with Kubernetes API",
+      "pattern": "kubernetes\\.client.+ required|failed to import kubernetes|Error from server|Authentication failed|Unauthorized|Forbidden|Error loading kubeconfig|Not found|resources of type .+ not found|Could not find .+ resource|invalid resource name|Unable to connect to the server|Error communicating with Kubernetes API",
       "type": "KubernetesError",
       "description": "Kubernetes connection or resource error",
       "root_cause": "ansible_kubernetes_error",

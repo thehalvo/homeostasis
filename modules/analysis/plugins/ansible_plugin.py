@@ -59,20 +59,28 @@ class AnsibleExceptionHandler:
                 r"required together:",
                 r"mutually exclusive:",
                 r"one of the following is required:",
-                r"module .* not found"
+                r"module .* not found",
+                r"couldn't resolve module/action"
             ],
             "variable_error": [
                 r"'.*' is undefined",
-                r"template error while templating string",
                 r"AnsibleUndefinedVariable:",
                 r"'dict object' has no attribute",
-                r"variable .* is not defined"
+                r"variable .* is not defined",
+                r"undefined variable"
+            ],
+            "template_error": [
+                r"template error while templating string",
+                r"jinja2.*error",
+                r"template syntax error",
+                r"expected token.*got"
             ],
             "inventory_error": [
                 r"Could not match supplied host pattern",
                 r"provided hosts list is empty",
                 r"Unable to retrieve inventory",
-                r"parsing .*/inventory/ as an inventory source failed"
+                r"parsing .*/inventory/ as an inventory source failed",
+                r"inventory file but it was empty"
             ],
             "task_error": [
                 r"The task includes an option with an undefined variable",
@@ -309,6 +317,19 @@ class AnsibleExceptionHandler:
                     "tags": ["ansible", "variable", "template"]
                 }
         
+        # Check template errors
+        for pattern in self.ansible_error_patterns["template_error"]:
+            if re.search(pattern, message, re.IGNORECASE):
+                return {
+                    "category": "ansible",
+                    "subcategory": "template",
+                    "confidence": "high",
+                    "suggested_fix": "Fix Jinja2 template syntax or variable references",
+                    "root_cause": "ansible_template_error",
+                    "severity": "medium",
+                    "tags": ["ansible", "template", "jinja2"]
+                }
+        
         # Check inventory errors
         for pattern in self.ansible_error_patterns["inventory_error"]:
             if re.search(pattern, message, re.IGNORECASE):
@@ -465,8 +486,8 @@ class AnsibleExceptionHandler:
             else:
                 return {
                     "category": "ansible",
-                    "subcategory": "general",
-                    "confidence": "medium",
+                    "subcategory": "unknown",
+                    "confidence": "low",
                     "suggested_fix": f"Ansible failed with exit code {exit_code}: {description}",
                     "root_cause": f"ansible_exit_code_{exit_code}",
                     "severity": "medium",
@@ -593,13 +614,15 @@ class AnsiblePatchGenerator:
         # Map root causes to patch strategies
         patch_strategies = {
             "ansible_yaml_syntax_error": self._fix_yaml_syntax_error,
+            "ansible_syntax_error": self._fix_yaml_syntax_error,  # Alias for compatibility
             "ansible_module_error": self._fix_module_error,
             "ansible_variable_error": self._fix_variable_error,
             "ansible_inventory_error": self._fix_inventory_error,
             "ansible_task_error": self._fix_task_error,
             "ansible_connection_error": self._fix_connection_error,
             "ansible_privilege_error": self._fix_privilege_error,
-            "ansible_template_error": self._fix_template_error
+            "ansible_template_error": self._fix_template_error,
+            "ansible_role_error": self._fix_role_error
         }
         
         # Try module-specific patches first
@@ -960,6 +983,39 @@ class AnsiblePatchGenerator:
             ]
         }
     
+    def _fix_role_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                       playbook_content: str) -> Optional[Dict[str, Any]]:
+        """Fix role-related errors."""
+        message = error_data.get("message", "")
+        
+        if "was not found" in message:
+            # Extract role name
+            import re
+            match = re.search(r"role '([^']+)'", message)
+            role_name = match.group(1) if match else "unknown"
+            
+            return {
+                "type": "suggestion",
+                "description": f"Role '{role_name}' not found",
+                "fixes": [
+                    f"Install the role with: ansible-galaxy install {role_name}",
+                    "Check the roles_path configuration in ansible.cfg",
+                    "Verify the role exists in the roles/ directory",
+                    "Check for typos in the role name"
+                ]
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Role-related error",
+            "fixes": [
+                "Verify role exists in roles/ directory or Galaxy",
+                "Check role dependencies in meta/main.yml",
+                "Use ansible-galaxy to install missing roles",
+                "Verify role path configuration"
+            ]
+        }
+    
     def _template_based_patch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                             playbook_content: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
@@ -1003,7 +1059,7 @@ class AnsibleLanguagePlugin(LanguagePlugin):
         self.language = "ansible"
         self.supported_extensions = {".yml", ".yaml", ".ini"}
         self.supported_frameworks = [
-            "ansible-core", "ansible", "molecule", "ansible-lint",
+            "ansible-core", "ansible", "ansible-playbook", "molecule", "ansible-lint",
             "ansible-galaxy", "ansible-vault", "ansible-runner"
         ]
         
@@ -1045,11 +1101,13 @@ class AnsibleLanguagePlugin(LanguagePlugin):
             "message": error_data.get("message", error_data.get("msg", "")),
             "language": "ansible",
             "command": error_data.get("command", ""),
+            "file_path": error_data.get("file_path", error_data.get("file", "")),
             "task_name": error_data.get("task_name", error_data.get("task", "")),
             "module_name": error_data.get("module_name", error_data.get("module", "")),
             "playbook_path": error_data.get("playbook_path", error_data.get("playbook", "")),
             "role_name": error_data.get("role_name", error_data.get("role", "")),
             "line_number": error_data.get("line_number", error_data.get("line", 0)),
+            "column_number": error_data.get("column_number", error_data.get("column", 0)),
             "exit_code": error_data.get("exit_code", error_data.get("rc", 0)),
             "host": error_data.get("host", ""),
             "inventory_path": error_data.get("inventory_path", ""),
@@ -1086,6 +1144,8 @@ class AnsibleLanguagePlugin(LanguagePlugin):
             "playbook_path": standard_error.get("playbook_path", ""),
             "role_name": standard_error.get("role_name", ""),
             "line_number": standard_error.get("line_number", 0),
+            "column_number": standard_error.get("column_number", 0),
+            "file_path": standard_error.get("file_path", ""),
             "exit_code": standard_error.get("exit_code", 0),
             "host": standard_error.get("host", ""),
             "inventory_path": standard_error.get("inventory_path", ""),
@@ -1094,7 +1154,9 @@ class AnsibleLanguagePlugin(LanguagePlugin):
             "module": standard_error.get("module_name", ""),
             "playbook": standard_error.get("playbook_path", ""),
             "role": standard_error.get("role_name", ""),
+            "file": standard_error.get("file_path", ""),
             "line": standard_error.get("line_number", 0),
+            "column": standard_error.get("column_number", 0),
             "rc": standard_error.get("exit_code", 0),
             "stack_trace": standard_error.get("stack_trace", []),
             "context": standard_error.get("context", {}),

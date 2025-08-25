@@ -5,7 +5,7 @@
     {
       "id": "fish_command_not_found",
       "pattern": "fish: Unknown command",
-      "type": "CommandError",
+      "type": "command",
       "description": "Command not found in Fish shell",
       "root_cause": "bash_command_not_found",
       "suggestion": "Check if the command is installed and in PATH",
@@ -34,7 +34,7 @@
     {
       "id": "fish_unexpected_token",
       "pattern": "fish: Unexpected token",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Unexpected token in Fish syntax",
       "root_cause": "bash_syntax_error",
       "suggestion": "Check Fish syntax and fix unexpected tokens",
@@ -62,7 +62,7 @@
     {
       "id": "fish_syntax_error",
       "pattern": "fish: syntax error",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Syntax error in Fish script",
       "root_cause": "bash_syntax_error",
       "suggestion": "Check for syntax errors in Fish commands",
@@ -90,7 +90,7 @@
     {
       "id": "fish_missing_end",
       "pattern": "fish: Missing end",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Missing 'end' for block in Fish",
       "root_cause": "bash_syntax_error",
       "suggestion": "Add missing 'end' to close block (if, while, for, function)",
@@ -174,7 +174,7 @@
     {
       "id": "fish_permission_denied",
       "pattern": "fish: Permission denied",
-      "type": "PermissionError",
+      "type": "permission",
       "description": "Permission denied when executing command",
       "root_cause": "bash_permission_error",
       "suggestion": "Check file permissions or run with appropriate privileges",
@@ -259,7 +259,7 @@
     {
       "id": "fish_variable_not_set",
       "pattern": "fish: Variable '(.+?)' is not set",
-      "type": "VariableError",
+      "type": "variable",
       "description": "Variable not set in Fish shell",
       "root_cause": "bash_variable_error",
       "suggestion": "Set the variable before use or provide a default value",

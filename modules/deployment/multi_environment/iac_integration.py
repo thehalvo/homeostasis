@@ -17,13 +17,14 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Any, Tuple, Set
 from dataclasses import dataclass
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from modules.deployment.multi_environment.hybrid_orchestrator import (
     Environment, EnvironmentType, HealingContext, HealingPlan, HealingStep
 )
 from modules.security.audit import AuditLogger
+from modules.security.audit import AuditLogger as SecurityAuditor
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 
 
@@ -352,20 +353,21 @@ class TerraformProvider(IaCProvider):
     
     def _map_terraform_type(self, tf_type: str) -> ResourceType:
         """Map Terraform resource type to ResourceType"""
-        if any(t in tf_type for t in ["instance", "vm", "compute"]):
-            return ResourceType.COMPUTE
+        # Check more specific patterns first to avoid false matches
+        if any(t in tf_type for t in ["database", "rds", "sql"]):
+            return ResourceType.DATABASE
         elif any(t in tf_type for t in ["vpc", "subnet", "network", "firewall"]):
             return ResourceType.NETWORK
         elif any(t in tf_type for t in ["bucket", "disk", "volume", "storage"]):
             return ResourceType.STORAGE
-        elif any(t in tf_type for t in ["database", "rds", "sql"]):
-            return ResourceType.DATABASE
         elif any(t in tf_type for t in ["security", "iam", "key", "secret"]):
             return ResourceType.SECURITY
         elif any(t in tf_type for t in ["container", "kubernetes", "ecs", "aks"]):
             return ResourceType.CONTAINER
         elif any(t in tf_type for t in ["lambda", "function", "serverless"]):
             return ResourceType.SERVERLESS
+        elif any(t in tf_type for t in ["instance", "vm", "compute"]):
+            return ResourceType.COMPUTE
         else:
             return ResourceType.MONITORING
     
@@ -602,6 +604,8 @@ class InfrastructureAsCodeIntegration:
                 await self._clone_git_repo(repo, work_dir)
             else:
                 # Local repository
+                # Remove the work_dir first since copytree requires destination not to exist
+                shutil.rmtree(work_dir)
                 shutil.copytree(repo.repository_url, work_dir)
             
             return True, str(work_dir)
@@ -674,7 +678,8 @@ class InfrastructureAsCodeIntegration:
             
         finally:
             # Cleanup
-            shutil.rmtree(work_dir)
+            if work_dir.exists():
+                shutil.rmtree(work_dir)
     
     async def plan_infrastructure_changes(self, repo_id: str,
                                         environment: Environment,
@@ -772,11 +777,11 @@ class InfrastructureAsCodeIntegration:
         
         # Create execution context
         execution = IaCExecution(
-            execution_id=f"exec_{datetime.utcnow().timestamp()}",
+            execution_id=f"exec_{datetime.now(timezone.utc).timestamp()}",
             repository=repo,
             environment=environment,
             changes=[],  # Would populate from execution_plan
-            started_at=datetime.utcnow(),
+            started_at=datetime.now(timezone.utc),
             completed_at=None,
             status="running",
             output={},
@@ -822,7 +827,7 @@ class InfrastructureAsCodeIntegration:
             self.logger.error(f"Execution {execution.execution_id} failed: {e}")
             
         finally:
-            execution.completed_at = datetime.utcnow()
+            execution.completed_at = datetime.now(timezone.utc)
             
             # Log execution completion
             await self.auditor.log_event("iac_execution_completed", {
@@ -833,7 +838,7 @@ class InfrastructureAsCodeIntegration:
             })
             
             # Cleanup
-            if 'work_dir' in locals():
+            if 'work_dir' in locals() and work_dir.exists():
                 shutil.rmtree(work_dir)
         
         return execution
@@ -986,7 +991,8 @@ class InfrastructureAsCodeIntegration:
             }
             
         finally:
-            shutil.rmtree(work_dir)
+            if work_dir.exists():
+                shutil.rmtree(work_dir)
     
     async def import_existing_infrastructure(self, repo_id: str,
                                            environment: Environment,
@@ -1029,7 +1035,8 @@ class InfrastructureAsCodeIntegration:
             }
             
         finally:
-            shutil.rmtree(work_dir)
+            if work_dir.exists():
+                shutil.rmtree(work_dir)
     
     async def get_execution_status(self, execution_id: str) -> Optional[IaCExecution]:
         """Get status of an IaC execution"""

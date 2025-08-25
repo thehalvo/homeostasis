@@ -17,6 +17,11 @@ from orchestrator.orchestrator import Orchestrator
 
 # Sample configuration for testing
 SAMPLE_CONFIG = {
+    "general": {
+        "environment": "test",
+        "debug": True,
+        "log_level": "INFO"
+    },
     "service": {
         "path": "services/example_service",
         "start_command": "python app.py",
@@ -26,7 +31,17 @@ SAMPLE_CONFIG = {
     },
     "monitoring": {
         "check_interval": 5,
-        "log_level": "INFO"
+        "log_level": "INFO",
+        "post_deployment": {
+            "enabled": False,
+            "monitoring_duration": 300,
+            "metrics_interval": 10,
+            "alert_thresholds": {
+                "error_rate": 0.05,
+                "response_time": 1000,
+                "memory_usage": 80
+            }
+        }
     },
     "analysis": {
         "rule_based": {
@@ -43,12 +58,46 @@ SAMPLE_CONFIG = {
     "testing": {
         "enabled": True,
         "test_command": "pytest tests/test_app.py -v",
-        "test_timeout": 30
+        "test_timeout": 30,
+        "containers": {
+            "enabled": False
+        },
+        "parallel": {
+            "max_workers": 4
+        },
+        "regression": {
+            "enabled": False,
+            "save_path": "tests/regression"
+        },
+        "graduated_testing": {
+            "enabled": False,
+            "levels": ["unit", "integration", "system"],
+            "commands": {
+                "unit": "pytest tests/unit -v",
+                "integration": "pytest tests/integration -v",
+                "system": "pytest tests/system -v"
+            },
+            "timeouts": {
+                "unit": 60,
+                "integration": 300,
+                "system": 600
+            },
+            "resource_limits": {
+                "unit": {"cpu": "1", "memory": "512Mi"},
+                "integration": {"cpu": "2", "memory": "1Gi"},
+                "system": {"cpu": "4", "memory": "2Gi"}
+            }
+        }
     },
     "deployment": {
         "enabled": True,
         "restart_service": True,
-        "backup_dir": "backups"
+        "backup_dir": "backups",
+        "nginx_config_path": "/tmp/nginx_test",
+        "nginx_template_path": "/tmp/nginx_templates"
+    },
+    "security": {
+        "enabled": False
     }
 }
 
@@ -184,7 +233,8 @@ def test_check_service_health_request_exception(orchestrator):
     mock_process.poll.return_value = None  # Process is running
     orchestrator.service_process = mock_process
     
-    with patch("requests.get", side_effect=Exception("Connection error")):
+    import requests
+    with patch("requests.get", side_effect=requests.RequestException("Connection error")):
         assert orchestrator.check_service_health() is False
 
 
@@ -248,7 +298,9 @@ def test_apply_patches(orchestrator):
         with patch("shutil.copy2"):
             applied = orchestrator.apply_patches(mock_patches)
             assert len(applied) == 1
-            assert applied[0] == "patch1"
+            assert applied[0]["patch_id"] == "patch1"
+            assert applied[0]["file_path"] == "test.py"
+            assert "timestamp" in applied[0]
             # Should only try to apply the specific patch
             orchestrator.patch_generator.apply_patch.assert_called_once()
 
@@ -288,10 +340,11 @@ def test_deploy_changes_success(orchestrator):
 
 def test_deploy_changes_health_check_failure(orchestrator):
     """Test deployment with health check failure."""
+    mock_patches = [{"patch_id": "test-patch"}]
     with patch.object(orchestrator, "stop_service"):
         with patch.object(orchestrator, "start_service"):
             with patch.object(orchestrator, "check_service_health", return_value=False):
-                assert orchestrator.deploy_changes() is False
+                assert orchestrator.deploy_changes(patches=mock_patches) is False
 
 
 def test_deploy_changes_disabled(orchestrator):
@@ -308,16 +361,18 @@ def test_run_self_healing_cycle_no_errors(orchestrator):
 
 def test_run_self_healing_cycle_no_analysis(orchestrator):
     """Test self-healing cycle with errors but no analysis results."""
-    with patch.object(orchestrator, "monitor_for_errors", return_value=["error"]):
+    with patch.object(orchestrator, "monitor_for_errors", return_value=[{"error": "test"}]):
         with patch.object(orchestrator, "analyze_errors", return_value=[]):
+            # Should return True - no analysis results means nothing to fix
             assert orchestrator.run_self_healing_cycle() is True
 
 
 def test_run_self_healing_cycle_no_patches(orchestrator):
     """Test self-healing cycle with analysis but no patches."""
-    with patch.object(orchestrator, "monitor_for_errors", return_value=["error"]):
-        with patch.object(orchestrator, "analyze_errors", return_value=["analysis"]):
+    with patch.object(orchestrator, "monitor_for_errors", return_value=[{"error": "test"}]):
+        with patch.object(orchestrator, "analyze_errors", return_value=[{"analysis": "test"}]):
             with patch.object(orchestrator, "generate_patches", return_value=[]):
+                # Should return True - no patches means nothing to fix
                 assert orchestrator.run_self_healing_cycle() is True
 
 
@@ -353,10 +408,11 @@ def test_run_self_healing_cycle_deployment_failure(orchestrator):
 
 def test_run_self_healing_cycle_success(orchestrator):
     """Test successful self-healing cycle."""
-    with patch.object(orchestrator, "monitor_for_errors", return_value=["error"]):
-        with patch.object(orchestrator, "analyze_errors", return_value=["analysis"]):
-            with patch.object(orchestrator, "generate_patches", return_value=["patch"]):
-                with patch.object(orchestrator, "apply_patches", return_value=["patch1"]):
+    mock_patches = [{"patch_id": "patch1", "patch_type": "specific"}]
+    with patch.object(orchestrator, "monitor_for_errors", return_value=[{"error": "test"}]):
+        with patch.object(orchestrator, "analyze_errors", return_value=[{"analysis": "test"}]):
+            with patch.object(orchestrator, "generate_patches", return_value=mock_patches):
+                with patch.object(orchestrator, "apply_patches", return_value=mock_patches):
                     with patch.object(orchestrator, "run_tests", return_value=True):
                         with patch.object(orchestrator, "deploy_changes", return_value=True):
                             assert orchestrator.run_self_healing_cycle() is True

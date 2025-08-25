@@ -15,6 +15,7 @@ from datetime import datetime
 
 from modules.enterprise.orchestration import EnterpriseOrchestrator
 from modules.security.audit import AuditLogger
+from modules.security.audit import AuditLogger as SecurityAuditor
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 
 
@@ -274,7 +275,10 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
         affected_envs = await self._analyze_error_impact(error_data)
         
         # Determine healing scope
-        if len(affected_envs) > 1:
+        # If affected environments don't include source but has other environments, it's cross-environment
+        if affected_envs and source_env not in affected_envs:
+            scope = HealingScope.CROSS_ENVIRONMENT
+        elif len(affected_envs) > 1:
             scope = HealingScope.CROSS_ENVIRONMENT
         elif affected_envs:
             scope = HealingScope.ENVIRONMENT
@@ -669,6 +673,14 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
             
             duration = (datetime.utcnow() - start_time).total_seconds()
             
+            # Check if the connector result indicates failure
+            if isinstance(result, dict) and result.get('status') == 'failed':
+                return {
+                    "status": "failed",
+                    "error": result.get('error', 'Action failed'),
+                    "duration": duration
+                }
+            
             return {
                 "status": "success",
                 "result": result,
@@ -782,3 +794,88 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
             })
         
         return view
+    
+    async def validate_plan(self, plan) -> Tuple[bool, List[str]]:
+        """Validate a deployment plan"""
+        errors = []
+        
+        # Check if plan has required attributes
+        if not hasattr(plan, 'plan_id'):
+            errors.append("Plan missing plan_id")
+        
+        # Check if environments are available
+        if hasattr(plan, 'context') and hasattr(plan.context, 'affected_environments'):
+            for env in plan.context.affected_environments:
+                if env.id not in self.environments:
+                    errors.append(f"Environment {env.id} not configured")
+        
+        # Check if steps are valid
+        if hasattr(plan, 'steps'):
+            for step in plan.steps:
+                if step.environment.id not in self.connectors:
+                    errors.append(f"No connector for environment {step.environment.id}")
+        
+        is_valid = len(errors) == 0
+        return is_valid, errors
+    
+    async def execute_plan(self, plan) -> Dict[str, Any]:
+        """Execute a deployment plan"""
+        # Use existing execute_healing_plan method
+        return await self.execute_healing_plan(plan)
+    
+    async def get_deployment_status(self, deployment_id: str) -> Optional[Dict[str, Any]]:
+        """Get status of a deployment"""
+        plan = self.active_plans.get(deployment_id)
+        if not plan:
+            return None
+        
+        return {
+            "deployment_id": deployment_id,
+            "status": "active",
+            "plan": plan,
+            "affected_environments": [env.name for env in plan.context.affected_environments]
+        }
+    
+    async def cancel_deployment(self, deployment_id: str) -> bool:
+        """Cancel an active deployment"""
+        if deployment_id in self.active_plans:
+            # In practice, would need to cancel ongoing operations
+            del self.active_plans[deployment_id]
+            self.logger.info(f"Cancelled deployment {deployment_id}")
+            return True
+        return False
+    
+    async def rollback_deployment(self, deployment_id: str) -> bool:
+        """Rollback a deployment"""
+        plan = self.active_plans.get(deployment_id)
+        if not plan:
+            return False
+        
+        # Get executed steps (simplified - in practice would track execution state)
+        executed_steps = plan.steps[:len(plan.steps)//2]  # Assume half executed
+        
+        rollback_results = await self._execute_rollback(plan, executed_steps)
+        success = all(r.get('status') == 'success' for r in rollback_results.values())
+        
+        if success:
+            del self.active_plans[deployment_id]
+        
+        return success
+    
+    async def get_resource_status(self, resource_id: str) -> Dict[str, Any]:
+        """Get status of a deployed resource"""
+        # Check each environment for the resource
+        for env_id, connector in self.connectors.items():
+            try:
+                # Assume connectors have a method to check resource status
+                status = await connector.get_health_status()
+                if status:  # Simplified check
+                    return {
+                        "resource_id": resource_id,
+                        "environment": env_id,
+                        "status": status
+                    }
+            except Exception:
+                continue
+        
+        return {"resource_id": resource_id, "status": "not_found"}

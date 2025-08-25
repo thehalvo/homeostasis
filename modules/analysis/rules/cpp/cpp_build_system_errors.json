@@ -1,0 +1,128 @@
+{
+  "name": "cpp_build_system_errors",
+  "version": "1.0",
+  "description": "C++ build system error detection rules",
+  "rules": [
+    {
+      "id": "cpp_cmake_package_not_found",
+      "pattern": "Could not find a package configuration file provided by|find_package.*not found|CMake.*package.*not.*found",
+      "type": "CMakeError",
+      "description": "CMake package configuration not found",
+      "root_cause": "cpp_cmake_configuration_error",
+      "suggestion": "Install the missing package or set CMAKE_PREFIX_PATH. Check find_package requirements and paths.",
+      "category": "cmake",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "cmake", "build", "configuration"],
+      "examples": [
+        "CMake Error: Could not find a package configuration file provided by \"Qt5\"",
+        "CMake Error at CMakeLists.txt:10 (find_package): Could not find a package"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "medium",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "fix_suggestions": [
+        "Install the missing package using your package manager",
+        "Set CMAKE_PREFIX_PATH to include the package location",
+        "Check find_package() call for correct package name and version",
+        "Verify package is installed in standard locations"
+      ]
+    },
+    {
+      "id": "cpp_cmake_compiler_not_found",
+      "pattern": "The C\\+\\+ compiler.*is not able to compile|No CMAKE_CXX_COMPILER could be found|compiler.*not found",
+      "type": "CMakeError",
+      "description": "CMake C++ compiler not found or not working",
+      "root_cause": "cpp_cmake_compiler_error",
+      "suggestion": "Install a C++ compiler or set CMAKE_CXX_COMPILER to the compiler path",
+      "category": "cmake",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["cpp", "cmake", "compiler", "configuration"],
+      "examples": [
+        "The C++ compiler identification is unknown",
+        "No CMAKE_CXX_COMPILER could be found"
+      ],
+      "metadata": {},
+      "criticality": "critical",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_makefile_no_rule",
+      "pattern": "No rule to make target.*needed by|\\*\\*\\* No rule to make target",
+      "type": "MakefileError",
+      "description": "Make target or dependency not found",
+      "root_cause": "cpp_makefile_missing_rule",
+      "suggestion": "Add the missing target rule to Makefile or check file paths and dependencies",
+      "category": "makefile",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "make", "build", "dependency"],
+      "examples": [
+        "make: *** No rule to make target 'main.o', needed by 'app'",
+        "No rule to make target 'lib.a'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "medium",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_makefile_missing_separator",
+      "pattern": "missing separator|\\*\\*\\* missing separator",
+      "type": "MakefileError",
+      "description": "Makefile syntax error - missing separator",
+      "root_cause": "cpp_makefile_syntax_error",
+      "suggestion": "Use tabs instead of spaces for recipe lines in Makefile",
+      "category": "makefile",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "make", "syntax", "whitespace"],
+      "examples": [
+        "Makefile:10: *** missing separator.  Stop.",
+        "*** missing separator (did you mean TAB instead of 8 spaces?)"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "cpp_ninja_build_error",
+      "pattern": "ninja:.*error:|FAILED:.*ninja",
+      "type": "NinjaBuildError",
+      "description": "Ninja build system error",
+      "root_cause": "cpp_ninja_build_error",
+      "suggestion": "Check ninja build file and compilation commands",
+      "category": "ninja",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "ninja", "build"],
+      "examples": [
+        "ninja: error: 'src/main.cpp', needed by 'main.o', missing and no known rule to make it",
+        "FAILED: CMakeFiles/app.dir/main.cpp.o"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "medium",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

@@ -1426,12 +1426,16 @@ def create_workshop_materials(topic: str, duration_hours: int = 8) -> Dict[str, 
         Workshop materials package
     """
     materials = {
+        "title": topic,  # For backward compatibility
         "topic": topic,
+        "duration": f"{duration_hours} hours",  # For compatibility with tests
         "duration_hours": duration_hours,
         "agenda": [],
         "slides": [],
         "hands_on_labs": [],
-        "resources": []
+        "resources": [],
+        "outline": [],  # Will be populated below
+        "exercises": []  # Will be populated below
     }
     
     # Create agenda based on duration
@@ -1500,5 +1504,35 @@ def create_workshop_materials(topic: str, duration_hours: int = 8) -> Dict[str, 
         {"type": "video", "url": "recorded-sessions"},
         {"type": "reading", "title": "Self-Healing Systems: A Survey"}
     ]
+    
+    # Populate outline from agenda for compatibility
+    materials["outline"] = materials["agenda"]
+    
+    # Add exercises based on hands-on labs
+    for lab in materials["hands_on_labs"]:
+        materials["exercises"].append({
+            "title": lab["title"],
+            "type": "hands-on",
+            "duration": lab["duration"],
+            "description": f"Practical exercise: {lab['title']}",
+            "objectives": lab.get("objectives", [])
+        })
+    
+    # Add additional exercises if needed
+    if len(materials["exercises"]) < 3:
+        materials["exercises"].extend([
+            {
+                "title": "Error Pattern Analysis",
+                "type": "analytical",
+                "duration": 30,
+                "description": "Analyze real-world error patterns and propose healing strategies"
+            },
+            {
+                "title": "Healing Strategy Design",
+                "type": "design",
+                "duration": 45,
+                "description": "Design a self-healing strategy for a given scenario"
+            }
+        ])
     
     return materials

@@ -50,12 +50,19 @@ def test_analyze_errors_rule_based():
         "suggested_fix": "Check if 'id' key exists before accessing"
     }
     
+    # Expected result includes additional fields added by Analyzer
+    expected_result = {
+        **mock_result,
+        "analysis_method": "rule_based",
+        "confidence_score": 0.3  # Default for rule-based analysis
+    }
+    
     with patch("modules.analysis.rule_based.RuleBasedAnalyzer.analyze_error", return_value=mock_result):
         analyzer = Analyzer()
         results = analyzer.analyze_errors([mock_error])
         
         assert len(results) == 1
-        assert results[0] == mock_result
+        assert results[0] == expected_result
 
 
 def test_analyze_errors_ai_based():
@@ -72,7 +79,7 @@ def test_analyze_errors_ai_based():
     # Create mock results for both analyzers
     mock_rule_result = {
         "root_cause": "type_error",
-        "confidence": 0.6,
+        "confidence": "low",
         "rule_id": "type_error_rule",
         "error_message": "TypeError: cannot convert 'str' to 'int'",
         "suggested_fix": "Try converting with error handling"
@@ -86,13 +93,18 @@ def test_analyze_errors_ai_based():
     }
     
     with patch("modules.analysis.rule_based.RuleBasedAnalyzer.analyze_error", return_value=mock_rule_result):
-        with patch("modules.analysis.ai_stub.analyze_error", return_value=mock_ai_result):
+        with patch("modules.analysis.ai_stub.AIAnalyzer.analyze_error", return_value=mock_ai_result):
             analyzer = Analyzer(use_ai=True)
             results = analyzer.analyze_errors([mock_error])
             
             assert len(results) == 1
             # AI result should be chosen due to higher confidence
-            assert results[0] == mock_ai_result
+            # Check that the main AI result fields are present
+            assert results[0]['root_cause'] == mock_ai_result['root_cause']
+            assert results[0]['confidence'] == mock_ai_result['confidence']
+            assert results[0]['analysis'] == mock_ai_result['analysis']
+            assert results[0]['suggested_fix'] == mock_ai_result['suggested_fix']
+            assert results[0]['analysis_method'] == 'ai_fallback'
 
 
 def test_analyze_errors_mixed_results():
@@ -145,13 +157,21 @@ def test_analyze_errors_mixed_results():
     
     # Mock the analyze_error method for both analyzers to return the corresponding results
     with patch("modules.analysis.rule_based.RuleBasedAnalyzer.analyze_error", side_effect=mock_rule_results):
-        with patch("modules.analysis.ai_stub.analyze_error", side_effect=mock_ai_results):
+        with patch("modules.analysis.ai_stub.AIAnalyzer.analyze_error", side_effect=mock_ai_results):
             analyzer = Analyzer(use_ai=True)
             results = analyzer.analyze_errors(mock_errors)
             
             assert len(results) == 2
-            assert results[0] == mock_rule_results[0]  # Rule-based result for first error
-            assert results[1] == mock_ai_results[1]  # AI result for second error
+            # First error: rule-based result with additional fields
+            expected_first = {
+                **mock_rule_results[0],
+                "analysis_method": "rule_based",
+                "confidence_score": 0.3
+            }
+            assert results[0] == expected_first
+            
+            # Second error: AI result chosen over rule-based
+            assert results[1] == mock_ai_results[1]
 
 
 def test_rule_based_analyzer_initialization():

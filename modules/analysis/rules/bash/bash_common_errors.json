@@ -5,7 +5,7 @@
     {
       "id": "shell_syntax_error_unexpected_token",
       "pattern": "syntax error near unexpected token",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Syntax error due to unexpected token",
       "root_cause": "bash_syntax_error",
       "suggestion": "Check for mismatched quotes, missing semicolons, or incorrect syntax",
@@ -32,7 +32,7 @@
     {
       "id": "shell_syntax_error_eof",
       "pattern": "(syntax error: unexpected end of file|unexpected EOF)",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Syntax error due to unexpected end of file",
       "root_cause": "bash_syntax_error",
       "suggestion": "Check for unclosed quotes, parentheses, or code blocks",
@@ -59,7 +59,7 @@
     {
       "id": "shell_unterminated_quoted_string",
       "pattern": "unterminated quoted string",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Unterminated quoted string in script",
       "root_cause": "bash_syntax_error",
       "suggestion": "Add the missing closing quote to the string",
@@ -86,8 +86,8 @@
     },
     {
       "id": "shell_command_not_found",
-      "pattern": "(command not found|not found|no such file or directory)",
-      "type": "CommandError",
+      "pattern": "(command not found|^[^:]+: not found$)",
+      "type": "command",
       "description": "Command not found in PATH",
       "root_cause": "bash_command_not_found",
       "suggestion": "Check if the command is installed and in PATH",
@@ -114,7 +114,7 @@
     {
       "id": "shell_permission_denied",
       "pattern": "permission denied",
-      "type": "PermissionError",
+      "type": "permission",
       "description": "Permission denied when executing command or accessing file",
       "root_cause": "bash_permission_error",
       "suggestion": "Check file permissions or run with appropriate privileges",
@@ -141,7 +141,7 @@
     {
       "id": "shell_file_not_found",
       "pattern": "No such file or directory",
-      "type": "FileError",
+      "type": "file",
       "description": "File or directory not found",
       "root_cause": "bash_file_error",
       "suggestion": "Check if the file exists and the path is correct",
@@ -168,7 +168,7 @@
     {
       "id": "shell_variable_unbound",
       "pattern": "(unbound variable|parameter not set|parameter null or not set)",
-      "type": "VariableError",
+      "type": "variable",
       "description": "Unbound or unset variable reference",
       "root_cause": "bash_variable_error",
       "suggestion": "Initialize the variable before use or provide a default value",
@@ -195,16 +195,16 @@
     {
       "id": "shell_bad_substitution",
       "pattern": "bad substitution",
-      "type": "VariableError",
+      "type": "expansion",
       "description": "Bad variable substitution syntax",
-      "root_cause": "bash_variable_error",
+      "root_cause": "bash_expansion_error",
       "suggestion": "Check parameter expansion syntax and variable names",
       "category": "bash",
       "severity": "medium",
       "confidence": "high",
       "tags": [
         "shell",
-        "variable",
+        "expansion",
         "substitution"
       ],
       "examples": [
@@ -349,6 +349,33 @@
       "metadata": {},
       "criticality": "medium",
       "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "shell_broken_pipe",
+      "pattern": "(Broken pipe|SIGPIPE)",
+      "type": "pipe",
+      "description": "Broken pipe error when reading end is closed",
+      "root_cause": "bash_pipe_error",
+      "suggestion": "Check if the receiving process is still running",
+      "category": "bash",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "shell",
+        "pipe",
+        "io"
+      ],
+      "examples": [
+        "bash: echo: write error: Broken pipe",
+        "Broken pipe"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
       "reliability": "high",
       "source": "built_in",
       "rule_type": "error_detection",

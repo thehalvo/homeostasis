@@ -475,11 +475,14 @@ class BashPatchGenerator:
         patch_strategies = {
             "bash_syntax_error": self._fix_syntax_error,
             "bash_command_not_found": self._fix_command_not_found,
+            "bash_command_error": self._fix_command_not_found,  # Handle both variants
             "bash_variable_error": self._fix_variable_error,
+            "bash_expansion_error": self._fix_expansion_error,
             "bash_file_error": self._fix_file_error,
             "bash_permission_error": self._fix_permission_error,
             "bash_redirection_error": self._fix_redirection_error,
-            "bash_builtin_misuse": self._fix_builtin_error
+            "bash_builtin_misuse": self._fix_builtin_error,
+            "bash_pipe_error": self._fix_pipe_error
         }
         
         strategy = patch_strategies.get(root_cause)
@@ -755,6 +758,58 @@ class BashPatchGenerator:
             ]
         }
     
+    def _fix_expansion_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                            script_content: str) -> Optional[Dict[str, Any]]:
+        """Fix shell expansion errors."""
+        message = error_data.get("message", "")
+        
+        fixes = []
+        
+        if "bad substitution" in message.lower():
+            fixes.extend([
+                "Check parameter expansion syntax: ${var} instead of $var",
+                "Verify variable names don't contain special characters",
+                "Use proper array expansion: ${array[@]} or ${array[*]}",
+                "Check for correct brace expansion syntax",
+                "Ensure using compatible shell (bash vs sh)"
+            ])
+        
+        return {
+            "type": "suggestion",
+            "description": "Shell expansion error",
+            "fixes": fixes if fixes else [
+                "Check variable expansion syntax",
+                "Verify parameter expansion patterns",
+                "Review bash manual section on expansions"
+            ]
+        }
+    
+    def _fix_pipe_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                        script_content: str) -> Optional[Dict[str, Any]]:
+        """Fix pipe-related errors."""
+        message = error_data.get("message", "")
+        
+        fixes = []
+        
+        if "broken pipe" in message.lower():
+            fixes.extend([
+                "Check if the receiving process is terminating early",
+                "Use 'set +o pipefail' to ignore pipe errors if acceptable",
+                "Add error handling for pipe failures",
+                "Consider using process substitution instead of pipes",
+                "Check for SIGPIPE signal handling"
+            ])
+        
+        return {
+            "type": "suggestion",
+            "description": "Pipe error detected",
+            "fixes": fixes if fixes else [
+                "Check pipe command chain",
+                "Verify all commands in pipeline exist",
+                "Add error handling for pipe failures"
+            ]
+        }
+    
     def _template_based_patch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                             script_content: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
@@ -817,7 +872,7 @@ class BashLanguagePlugin(LanguagePlugin):
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return "POSIX+"
+        return "5.0+"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""
@@ -841,8 +896,10 @@ class BashLanguagePlugin(LanguagePlugin):
             "shell_type": error_data.get("shell_type", error_data.get("shell", "bash")),
             "exit_code": error_data.get("exit_code", error_data.get("returncode", 0)),
             "command": error_data.get("command", ""),
+            "file_path": error_data.get("file_path", error_data.get("file", "")),
             "script_path": error_data.get("script_path", error_data.get("file", "")),
             "line_number": error_data.get("line_number", error_data.get("line", 0)),
+            "column_number": error_data.get("column_number", error_data.get("column", 0)),
             "stack_trace": error_data.get("stack_trace", []),
             "context": error_data.get("context", {}),
             "timestamp": error_data.get("timestamp"),
@@ -873,13 +930,16 @@ class BashLanguagePlugin(LanguagePlugin):
             "shell_type": standard_error.get("shell_type", "bash"),
             "exit_code": standard_error.get("exit_code", 0),
             "command": standard_error.get("command", ""),
+            "file_path": standard_error.get("file_path", ""),
             "script_path": standard_error.get("script_path", ""),
             "line_number": standard_error.get("line_number", 0),
+            "column_number": standard_error.get("column_number", 0),
             "stderr": standard_error.get("message", ""),
             "shell": standard_error.get("shell_type", "bash"),
             "returncode": standard_error.get("exit_code", 0),
-            "file": standard_error.get("script_path", ""),
+            "file": standard_error.get("file_path", ""),
             "line": standard_error.get("line_number", 0),
+            "column": standard_error.get("column_number", 0),
             "stack_trace": standard_error.get("stack_trace", []),
             "context": standard_error.get("context", {}),
             "timestamp": standard_error.get("timestamp"),

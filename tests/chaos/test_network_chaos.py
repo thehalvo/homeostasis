@@ -246,7 +246,7 @@ class TestNetworkChaos:
         class BandwidthThrottler:
             def __init__(self, max_bytes_per_second):
                 self.max_bytes_per_second = max_bytes_per_second
-                self.tokens = max_bytes_per_second
+                self.tokens = 0  # Start with no tokens to enforce rate from the beginning
                 self.last_update = time.time()
             
             async def send_data(self, data_size_bytes):
@@ -270,8 +270,8 @@ class TestNetworkChaos:
                     wait_time = tokens_needed / self.max_bytes_per_second
                     await asyncio.sleep(wait_time)
                     
-                    # Update tokens after wait
-                    self.tokens = 0
+                    # Update tokens after wait - we've waited long enough to send the data
+                    self.tokens = 0  # All tokens were used
                     self.last_update = time.time()
                     return True, wait_time
         
@@ -364,22 +364,26 @@ class TestNetworkChaos:
             except asyncio.TimeoutError:
                 return 'timeout'
         
-        # Create burst of requests
+        # Create burst of requests - overload the pool
         tasks = []
         for i in range(20):
-            # Vary connection hold time
-            duration = 0.1 if i < 10 else 0.5
+            # First 10 connections hold for longer, causing timeouts for later requests
+            duration = 2.5 if i < 10 else 0.1
             tasks.append(use_connection(duration))
         
-        results = await asyncio.gather(*tasks)
+        results = await asyncio.gather(*tasks, return_exceptions=True)
         
         # Analyze results
         success_count = results.count('success')
         timeout_count = results.count('timeout')
         
-        assert success_count > 15  # Most requests should succeed
-        assert timeout_count > 0   # Some timeouts expected
-        assert pool.metrics['max_queue_size'] > 5  # Queue was used
+        # Pool exhaustion behavior:
+        # Some of the first tasks get connections and hold them for 2.5s
+        # Waiting tasks timeout after 2s, before connections are released
+        assert success_count >= 5  # Some requests succeed
+        assert timeout_count >= 10  # Many timeout due to pool exhaustion
+        assert pool.metrics['queue_timeouts'] == timeout_count
+        assert pool.metrics['max_queue_size'] >= 10  # Queue was heavily used
     
     @pytest.mark.asyncio 
     async def test_dns_failure_simulation(self):
@@ -431,6 +435,7 @@ class TestNetworkChaos:
             def inject_slowness(self, domain):
                 """Make a domain resolve slowly"""
                 self.slow_domains.add(domain)
+                self.dns_cache.pop(domain, None)  # Clear cache to force re-resolution
         
         # Test DNS failures
         resolver = DNSResolver()

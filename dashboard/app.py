@@ -78,6 +78,10 @@ class DashboardServer:
         self.config_path = config_path or Path(__file__).parent / 'config.yaml'
         self.config = self._load_config()
         
+        # Store Flask app reference
+        self.app = app
+        self.socketio = socketio
+        
         # Apply configuration to Flask app
         app.secret_key = self.config.get('secret_key', os.urandom(24))
         app.config['SESSION_TYPE'] = 'filesystem'

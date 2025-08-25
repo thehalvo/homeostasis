@@ -666,6 +666,49 @@ def create_ensemble_analyzer() -> AIAnalyzer:
     return analyzer
 
 
+# Module-level functions for backward compatibility
+_default_analyzer = None
+
+def analyze_error(error_data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Module-level function for analyzing a single error.
+    
+    This function maintains backward compatibility with code that expects
+    a module-level analyze_error function.
+    
+    Args:
+        error_data: Error data to analyze
+        
+    Returns:
+        Analysis results
+    """
+    global _default_analyzer
+    if _default_analyzer is None:
+        _default_analyzer = AIAnalyzer()
+    
+    return _default_analyzer.analyze_error(error_data)
+
+
+def analyze_errors(error_data_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Module-level function for analyzing multiple errors.
+    
+    This function maintains backward compatibility with code that expects
+    a module-level analyze_errors function.
+    
+    Args:
+        error_data_list: List of error data to analyze
+        
+    Returns:
+        List of analysis results
+    """
+    global _default_analyzer
+    if _default_analyzer is None:
+        _default_analyzer = AIAnalyzer()
+    
+    return _default_analyzer.analyze_errors(error_data_list)
+
+
 if __name__ == "__main__":
     # Enhanced example usage
     analyzer = AIAnalyzer(model_type="stub")

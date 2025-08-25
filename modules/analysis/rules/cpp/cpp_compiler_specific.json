@@ -1,0 +1,126 @@
+{
+  "name": "cpp_compiler_specific_errors",
+  "rules": [
+    {
+      "id": "gcc_signed_overflow_warning",
+      "pattern": "assuming signed overflow does not occur|signed overflow|Wstrict-overflow",
+      "type": "SignedOverflowWarning",
+      "description": "GCC warning about signed integer overflow assumptions",
+      "root_cause": "gcc_signed_overflow",
+      "suggestion": "Use unsigned types for wraparound behavior or add explicit overflow checks. Consider using -fwrapv flag if wraparound is intended.",
+      "category": "compilation",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": ["gcc", "overflow", "optimization", "warning"],
+      "examples": [
+        "warning: assuming signed overflow does not occur"
+      ],
+      "metadata": {
+        "compiler": "gcc"
+      },
+      "criticality": "medium",
+      "complexity": "medium",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "clang_dead_code",
+      "pattern": "Value stored.*never read|deadcode.DeadStores|unused variable|dead assignment",
+      "type": "DeadCodeWarning",
+      "description": "Clang analyzer detected dead code or unused variables",
+      "root_cause": "clang_dead_code",
+      "suggestion": "Remove unused variables and dead code. If the variable is needed for debugging, mark it with __attribute__((unused)) or use it in an assertion.",
+      "category": "static_analysis",
+      "severity": "low",
+      "confidence": "high",
+      "tags": ["clang", "dead_code", "unused", "static_analysis"],
+      "examples": [
+        "Value stored to 'result' is never read",
+        "warning: unused variable 'x'"
+      ],
+      "metadata": {
+        "compiler": "clang"
+      },
+      "criticality": "low",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "msvc_undeclared_identifier",
+      "pattern": "C2065.*undeclared identifier|undeclared identifier.*ssize_t|error C2065",
+      "type": "UndeclaredIdentifier",
+      "description": "MSVC undeclared identifier error",
+      "root_cause": "msvc_undeclared_identifier",
+      "suggestion": "For ssize_t on Windows, use SSIZE_T or ptrdiff_t. Include appropriate headers: <BaseTsd.h> for SSIZE_T or <stddef.h> for ptrdiff_t.",
+      "category": "compilation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["msvc", "windows", "portability", "types"],
+      "examples": [
+        "error C2065: 'ssize_t': undeclared identifier"
+      ],
+      "metadata": {
+        "compiler": "msvc"
+      },
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "gcc_uninitialized_warning",
+      "pattern": "may be used uninitialized|Wuninitialized|-Wmaybe-uninitialized",
+      "type": "UninitializedVariable",
+      "description": "GCC warning about potentially uninitialized variable",
+      "root_cause": "gcc_uninitialized_variable",
+      "suggestion": "Initialize all variables at declaration. Use defensive initialization even if you believe all code paths set the value.",
+      "category": "compilation",
+      "severity": "high",
+      "confidence": "medium",
+      "tags": ["gcc", "initialization", "warning"],
+      "examples": [
+        "warning: 'x' may be used uninitialized"
+      ],
+      "metadata": {
+        "compiler": "gcc"
+      },
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "medium",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
+      "id": "clang_null_dereference",
+      "pattern": "null pointer dereference|Null pointer.*dereferenced|clang-analyzer.*null",
+      "type": "NullDereference",
+      "description": "Clang analyzer detected null pointer dereference",
+      "root_cause": "clang_null_dereference",
+      "suggestion": "Add null checks before pointer dereference. Use assert() for pointers that should never be null.",
+      "category": "static_analysis",
+      "severity": "critical",
+      "confidence": "high",
+      "tags": ["clang", "null", "pointer", "static_analysis"],
+      "examples": [
+        "warning: Null pointer dereference"
+      ],
+      "metadata": {
+        "compiler": "clang"
+      },
+      "criticality": "critical",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    }
+  ]
+}

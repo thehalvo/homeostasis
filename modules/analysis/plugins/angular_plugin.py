@@ -336,7 +336,7 @@ class AngularExceptionHandler:
         ngrx_patterns = {
             "action must have a type": {
                 "cause": "ngrx_action_no_type",
-                "fix": "Ensure all NgRx actions have a 'type' property",
+                "fix": "Ensure all NgRx actions have a 'type' property. Use createAction() from @ngrx/store to define actions with type safety",
                 "severity": "error"
             },
             "store has not been provided": {

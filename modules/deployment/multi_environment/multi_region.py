@@ -20,6 +20,7 @@ from modules.deployment.multi_environment.hybrid_orchestrator import (
 )
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 from modules.security.audit import AuditLogger
+from modules.security.audit import AuditLogger as SecurityAuditor
 
 
 class RegionStatus(Enum):

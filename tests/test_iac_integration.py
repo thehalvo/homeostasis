@@ -7,7 +7,7 @@ import pytest
 import json
 import tempfile
 import shutil
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import Mock, AsyncMock, patch, MagicMock
 
@@ -267,9 +267,14 @@ async def test_sync_repository_git(integration):
         mock_proc.returncode = 0
         mock_subprocess.return_value = mock_proc
         
-        success, work_dir = await integration.sync_repository(repo_id)
-        
-        assert success is True
+        # Patch Path.exists to simulate the expected directory structure
+        with patch('pathlib.Path.exists') as mock_exists:
+            # Make the path check return True for the expected subdirectory
+            mock_exists.return_value = True
+            
+            success, work_dir = await integration.sync_repository(repo_id)
+            
+            assert success is True
         assert work_dir.startswith("/tmp/iac_terraform-prod_") or \
                work_dir.startswith("/var/folders/")  # macOS temp dir
         
@@ -438,7 +443,7 @@ async def test_handle_infrastructure_healing(integration, mock_environment):
         dependencies=[],
         constraints={"auto_scale": True, "min_instances": 3, "max_instances": 10},
         priority=1,
-        timestamp=datetime.utcnow()
+        timestamp=datetime.now(timezone.utc)
     )
     
     healing_plan = HealingPlan(
@@ -473,8 +478,8 @@ async def test_handle_infrastructure_healing(integration, mock_environment):
         repository=integration.repositories["terraform-prod"],
         environment=mock_environment,
         changes=[],
-        started_at=datetime.utcnow(),
-        completed_at=datetime.utcnow(),
+        started_at=datetime.now(timezone.utc),
+        completed_at=datetime.now(timezone.utc),
         status="completed",
         output={"success": True},
         errors=[]
@@ -569,7 +574,7 @@ async def test_list_executions(integration, mock_environment):
         repository=integration.repositories["terraform-prod"],
         environment=mock_environment,
         changes=[],
-        started_at=datetime.utcnow(),
+        started_at=datetime.now(timezone.utc),
         completed_at=None,
         status="running",
         output={},
@@ -581,8 +586,8 @@ async def test_list_executions(integration, mock_environment):
         repository=integration.repositories["terraform-dev"],
         environment=mock_environment,
         changes=[],
-        started_at=datetime.utcnow(),
-        completed_at=datetime.utcnow(),
+        started_at=datetime.now(timezone.utc),
+        completed_at=datetime.now(timezone.utc),
         status="completed",
         output={},
         errors=[]

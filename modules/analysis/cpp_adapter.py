@@ -39,7 +39,7 @@ class CPPErrorAdapter:
         # Determine error category
         category = self._categorize_error(error_type, message)
         
-        return {
+        standard_format = {
             "error_type": error_type or "UnknownError",
             "message": message,
             "stack_trace": stack_trace,
@@ -52,13 +52,37 @@ class CPPErrorAdapter:
             "category": category,
             "compiler": cpp_error.get("compiler"),
             "compilation_flags": cpp_error.get("flags", []),
+            "standard": cpp_error.get("standard"),  # Preserve standard field
             "additional_data": {
                 "error_code": cpp_error.get("error_code"),
                 "severity": cpp_error.get("severity", "error"),
                 "phase": cpp_error.get("phase"),  # compile-time, link-time, runtime
-                "notes": cpp_error.get("notes", [])
+                "notes": cpp_error.get("notes", []),
+                "signal": cpp_error.get("signal"),
+                "address": cpp_error.get("address"),
+                "tool": cpp_error.get("tool"),
+                "bytes_lost": cpp_error.get("bytes_lost"),
+                "blocks_lost": cpp_error.get("blocks_lost")
             }
         }
+        
+        # Add template-specific fields if present
+        if "instantiation_stack" in cpp_error:
+            standard_format["instantiation_stack"] = cpp_error["instantiation_stack"]
+        
+        # Handle multiple errors (e.g., multiple compilation errors)
+        if "errors" in cpp_error:
+            standard_format["errors"] = cpp_error["errors"]
+        
+        # Handle warning as error flag
+        if "warning_as_error" in cpp_error:
+            standard_format["warning_as_error"] = cpp_error["warning_as_error"]
+        
+        # Handle linker error references
+        if "references" in cpp_error:
+            standard_format["references"] = cpp_error["references"]
+            
+        return standard_format
     
     def from_standard_format(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -103,29 +127,104 @@ class CPPErrorAdapter:
         
         return cpp_error
     
-    def _extract_stack_trace(self, cpp_error: Dict[str, Any]) -> List[str]:
-        """Extract stack trace from C/C++ error."""
+    def _extract_stack_trace(self, cpp_error: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Extract and parse stack trace from C/C++ error."""
+        # Check for stacktrace field (commonly used)
+        if "stacktrace" in cpp_error:
+            trace = cpp_error["stacktrace"]
+            if isinstance(trace, list) and trace and isinstance(trace[0], str):
+                # Parse GDB-style stack trace
+                return self._parse_gdb_stack_trace(trace)
+            elif isinstance(trace, list):
+                return trace  # Already structured
+            
         # Check for backtrace field
         if "backtrace" in cpp_error:
-            return cpp_error["backtrace"]
+            trace = cpp_error["backtrace"]
+            if isinstance(trace, list) and trace and isinstance(trace[0], str):
+                return self._parse_gdb_stack_trace(trace)
+            elif isinstance(trace, list):
+                return trace
         
         # Check for stack_trace field
         if "stack_trace" in cpp_error:
-            return cpp_error["stack_trace"]
+            trace = cpp_error["stack_trace"]
+            if isinstance(trace, list) and trace and isinstance(trace[0], str):
+                return self._parse_gdb_stack_trace(trace)
+            elif isinstance(trace, list):
+                return trace
         
         # Check for frames field (some debuggers use this)
         if "frames" in cpp_error:
             frames = cpp_error["frames"]
             if isinstance(frames, list):
-                return [self._format_frame(frame) for frame in frames]
+                return frames
         
         # Try to extract from message (for segfaults and such)
         message = cpp_error.get("message", "")
         if "Segmentation fault" in message or "core dumped" in message:
             # Return a minimal stack trace indicator
-            return ["Signal: SIGSEGV (Segmentation fault)"]
+            return [{"frame": 0, "signal": "SIGSEGV", "description": "Segmentation fault"}]
         
         return []
+    
+    def _parse_gdb_stack_trace(self, stack_trace: Union[str, List[str]]) -> List[Dict[str, Any]]:
+        """
+        Parse GDB-style stack trace into structured format.
+        
+        Args:
+            stack_trace: GDB stack trace as string or list of lines
+            
+        Returns:
+            List of parsed stack frames
+        """
+        import re
+        
+        if isinstance(stack_trace, str):
+            lines = stack_trace.strip().split('\n')
+        else:
+            lines = stack_trace
+            
+        frames = []
+        
+        # GDB frame patterns
+        # #0  0x0000000000400546 in function (args) at file.cpp:line
+        # #0  function (args) at file.cpp:line
+        # #0  0x0000000000400546 in function () from library.so
+        gdb_pattern = re.compile(
+            r'^#(\d+)\s+'                      # Frame number
+            r'(?:0x[0-9a-fA-F]+\s+in\s+)?'    # Optional address
+            r'([^\s(]+)'                       # Function name
+            r'\s*\([^)]*\)'                    # Arguments in parentheses
+            r'(?:\s+at\s+([^:]+):(\d+))?'     # Optional file:line
+            r'(?:\s+from\s+(.+))?'            # Optional library
+        )
+        
+        for line in lines:
+            line = line.strip()
+            match = gdb_pattern.match(line)
+            if match:
+                frame_num = int(match.group(1))
+                function = match.group(2)
+                file_path = match.group(3)
+                line_num = match.group(4)
+                library = match.group(5)
+                
+                frame = {
+                    "frame": frame_num,
+                    "function": function
+                }
+                
+                if file_path:
+                    frame["file"] = file_path
+                if line_num:
+                    frame["line"] = int(line_num)
+                if library:
+                    frame["library"] = library
+                    
+                frames.append(frame)
+                
+        return frames
     
     def _format_frame(self, frame: Union[str, Dict[str, Any]]) -> str:
         """Format a single stack frame."""
@@ -187,7 +286,7 @@ class CPPErrorAdapter:
     def _categorize_error(self, error_type: str, message: str) -> str:
         """Categorize the error based on type and message."""
         # Compilation errors
-        if any(x in error_type.lower() for x in ["compilererror", "syntaxerror", "parseerror"]):
+        if any(x in error_type.lower() for x in ["compilererror", "syntaxerror", "parseerror", "compilationwarning", "warning"]):
             return "compilation"
         
         # Linker errors

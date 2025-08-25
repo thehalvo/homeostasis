@@ -11,16 +11,16 @@ from typing import Dict, Any, List, Optional, Tuple, Union
 from pathlib import Path
 from datetime import datetime
 
-from .analyzer import Analyzer, AnalysisStrategy
-from .javascript_analyzer import JavaScriptAnalyzer
-from .language_adapters import (
+from modules.analysis.analyzer import Analyzer, AnalysisStrategy
+from modules.analysis.javascript_analyzer import JavaScriptAnalyzer
+from modules.analysis.language_adapters import (
     ErrorAdapterFactory, 
     convert_to_standard_format, 
     convert_from_standard_format,
     ErrorSchemaValidator
 )
-from .rule_based import RuleBasedAnalyzer
-from .language_plugin_system import get_plugin, get_supported_languages
+from modules.analysis.rule_based import RuleBasedAnalyzer
+from modules.analysis.language_plugin_system import get_plugin, get_supported_languages
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +77,25 @@ class LanguageRegistry:
                 self.register_analyzer("php", php_plugin)
         except Exception as e:
             logger.warning(f"Failed to load PHP plugin: {e}")
+            
+        # Register Ruby plugin if available
+        try:
+            # Get Ruby plugin through the plugin system
+            ruby_plugin = get_plugin("ruby")
+            if ruby_plugin:
+                self.register_analyzer("ruby", ruby_plugin)
+        except Exception as e:
+            logger.warning(f"Failed to load Ruby plugin: {e}")
+            
+        # Register C/C++ plugin if available
+        try:
+            # Get C/C++ plugin through the plugin system
+            cpp_plugin = get_plugin("cpp")
+            if cpp_plugin:
+                self.register_analyzer("cpp", cpp_plugin)
+                self.register_analyzer("c", cpp_plugin)  # C uses the same analyzer
+        except Exception as e:
+            logger.warning(f"Failed to load C/C++ plugin: {e}")
     
     def register_analyzer(self, language: str, analyzer: Any):
         """
@@ -302,6 +321,314 @@ class CrossLanguageOrchestrator:
                 })
         
         return suggested_fixes
+    
+    def analyze_cross_language_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze an error that occurs at the boundary between two languages.
+        
+        This is specifically designed for errors that occur when one language calls into
+        another (e.g., Python calling C extensions, JavaScript calling Rust WASM, etc.)
+        
+        Args:
+            error_data: Error data containing information about both languages involved
+            
+        Returns:
+            Analysis results with cross-language specific insights
+        """
+        # Extract the languages involved
+        primary_language = error_data.get("primary_language", 
+                                         error_data.get("language", "unknown"))
+        secondary_language = error_data.get("secondary_language", "unknown")
+        
+        # If secondary language not specified, try to detect from context
+        if secondary_language == "unknown":
+            # Check error chain for secondary language
+            error_chain = error_data.get("error_chain", [])
+            for error in error_chain:
+                lang = error.get("language", "unknown")
+                if lang != "unknown" and lang != primary_language:
+                    secondary_language = lang
+                    break
+            
+            # If still unknown, check for specific patterns
+            if secondary_language == "unknown":
+                # Check for C extension patterns
+                if primary_language == "python":
+                    if any(key in error_data for key in ["c_function", "native_function", "segfault"]):
+                        secondary_language = "c"
+                # Check for WASM patterns
+                elif primary_language == "javascript":
+                    if any(key in error_data for key in ["wasm_module", "rust_panic", "memory_access"]):
+                        secondary_language = "rust"
+                # Check for JNI patterns
+                elif primary_language == "java":
+                    if any(key in error_data for key in ["jni_method", "native_method", "cpp_exception"]):
+                        secondary_language = "cpp"
+        
+        # Analyze the error in the primary language context
+        primary_analysis = {}
+        if primary_language != "unknown" and self.registry.is_language_supported(primary_language):
+            try:
+                primary_analysis = self.analyze_error(error_data, primary_language)
+            except Exception as e:
+                logger.warning(f"Failed to analyze in primary language {primary_language}: {e}")
+        
+        # If we have a secondary language, analyze from that perspective too
+        secondary_analysis = {}
+        if secondary_language != "unknown" and self.registry.is_language_supported(secondary_language):
+            try:
+                # Convert error data to secondary language format if needed
+                converted_data = error_data
+                if primary_language != "unknown":
+                    try:
+                        converted_data = self.convert_error(error_data, primary_language, secondary_language)
+                    except:
+                        # If conversion fails, use original data
+                        pass
+                
+                secondary_analysis = self.analyze_error(converted_data, secondary_language)
+            except Exception as e:
+                logger.warning(f"Failed to analyze in secondary language {secondary_language}: {e}")
+        
+        # Combine analyses and add cross-language specific insights
+        result = {
+            "primary_language": primary_language,
+            "secondary_language": secondary_language,
+            "primary_analysis": primary_analysis,
+            "secondary_analysis": secondary_analysis,
+            "cross_language_boundary": f"{primary_language}-{secondary_language}",
+            "is_cross_language_error": True
+        }
+        
+        # Analyze error chain to determine root cause language and propagation path
+        error_chain = error_data.get("error_chain", [])
+        propagation_path = []
+        root_cause_language = secondary_language  # Default to secondary language
+        
+        if error_chain:
+            # Build propagation path from error chain
+            for error in error_chain:
+                lang = error.get("language", "unknown")
+                if lang != "unknown" and lang not in propagation_path:
+                    propagation_path.append(lang)
+            
+            # Root cause is typically in the last/deepest error in chain
+            if propagation_path:
+                root_cause_language = propagation_path[-1]  # Last in chain is root
+                # Reverse path so root cause is first
+                propagation_path = list(reversed(propagation_path))
+                
+            # Check for specific error indicators
+            for error in error_chain:
+                if error.get("error_type") == "SegmentationFault":
+                    root_cause_language = error.get("language", root_cause_language)
+                    if error.get("address") == "0x0":
+                        result["root_cause"] = "null pointer dereference"
+                    break
+                elif error.get("signal") == "SIGSEGV":
+                    root_cause_language = error.get("language", root_cause_language)
+                    result["root_cause"] = "segmentation fault - likely null pointer access"
+                    break
+                elif error.get("error_type") == "std::bad_alloc":
+                    root_cause_language = error.get("language", root_cause_language)
+                    result["root_cause"] = "memory allocation failure"
+                    break
+                elif "memory allocation failed" in error.get("message", "").lower():
+                    root_cause_language = error.get("language", root_cause_language)
+                    result["root_cause"] = "memory allocation error"
+                    break
+                elif error.get("error_type") == "BufferOverflow":
+                    root_cause_language = error.get("language", root_cause_language)
+                    result["root_cause"] = "buffer overflow"
+                    break
+                elif "buffer overflow" in error.get("message", "").lower():
+                    root_cause_language = error.get("language", root_cause_language)
+                    result["root_cause"] = "buffer overflow detected"
+                    break
+        
+        result["root_cause_language"] = root_cause_language
+        result["propagation_path"] = propagation_path if propagation_path else [secondary_language, primary_language]
+        
+        # Add specific suggestions for common cross-language scenarios
+        suggestions = []
+        
+        if primary_language == "python" and secondary_language == "c":
+            suggestions.extend([
+                "Check for proper reference counting in C extension",
+                "Verify argument types match between Python and C",
+                "Ensure GIL is properly acquired/released",
+                "Check for memory leaks in C code"
+            ])
+            result["common_causes"] = [
+                "Incorrect reference counting",
+                "Type mismatches between Python and C",
+                "Memory management issues",
+                "GIL (Global Interpreter Lock) violations"
+            ]
+        
+        elif primary_language == "javascript" and secondary_language == "rust":
+            suggestions.extend([
+                "Check WASM memory boundaries",
+                "Verify proper data serialization between JS and Rust",
+                "Ensure proper error handling in Rust code",
+                "Check for panic conditions in Rust"
+            ])
+            result["common_causes"] = [
+                "Memory access violations",
+                "Data serialization errors",
+                "Unhandled Rust panics",
+                "Type mismatches"
+            ]
+        
+        elif primary_language == "java" and secondary_language == "cpp":
+            suggestions.extend([
+                "Verify JNI method signatures match",
+                "Check for proper exception handling in JNI code",
+                "Ensure proper memory management in C++",
+                "Verify thread safety in native code"
+            ])
+            result["common_causes"] = [
+                "JNI signature mismatches",
+                "Unhandled C++ exceptions",
+                "Memory management issues",
+                "Thread safety violations"
+            ]
+        
+        # Combine suggestions
+        all_suggestions = []
+        if "suggestion" in primary_analysis:
+            all_suggestions.append(primary_analysis["suggestion"])
+        if "suggestion" in secondary_analysis:
+            all_suggestions.append(secondary_analysis["suggestion"])
+        all_suggestions.extend(suggestions)
+        
+        result["suggestions"] = all_suggestions
+        result["suggestion"] = " ".join(all_suggestions[:2])  # Primary suggestion
+        
+        # Generate fixes for each language involved as a dictionary
+        fixes = {}
+        
+        # Add fix for primary language
+        if primary_language != "unknown":
+            primary_suggestions = []
+            if "suggestion" in primary_analysis:
+                primary_suggestions.append(primary_analysis["suggestion"])
+            
+            # Add language-specific suggestions
+            if primary_language == "python" and secondary_language == "c":
+                primary_suggestions.extend([
+                    "Add error handling for native function calls",
+                    "Validate arguments before passing to C extension"
+                ])
+            elif primary_language == "javascript" and secondary_language == "rust":
+                primary_suggestions.extend([
+                    "Add proper error handling for WASM calls",
+                    "Validate data before passing to WASM module"
+                ])
+            elif primary_language == "java" and secondary_language == "cpp":
+                primary_suggestions.extend([
+                    "Wrap JNI calls in try-catch blocks",
+                    "Check JNI return values for errors",
+                    "Handle native exceptions properly"
+                ])
+            elif primary_language == "go" and secondary_language in ["c", "cpp"]:
+                primary_suggestions.extend([
+                    "Check CGO return values for errors",
+                    "Use defer for cleanup in Go code",
+                    "Handle C errors properly in Go"
+                ])
+            
+            fixes[primary_language] = {
+                "language": primary_language,
+                "description": f"Fix in {primary_language} code",
+                "suggestion": " ".join(primary_suggestions[:2]) if primary_suggestions else "Check error handling in calling code",
+                "suggestions": primary_suggestions
+            }
+        
+        # Add fix for secondary language
+        if secondary_language != "unknown":
+            secondary_suggestions = []
+            if "suggestion" in secondary_analysis:
+                secondary_suggestions.append(secondary_analysis["suggestion"])
+            
+            # Add language-specific suggestions
+            if secondary_language == "c" and "null pointer" in result.get("root_cause", "").lower():
+                secondary_suggestions.extend([
+                    "Add null pointer checks before dereferencing",
+                    "Initialize all pointers properly",
+                    "Validate input parameters"
+                ])
+            elif secondary_language == "rust":
+                # Check for specific Rust error patterns
+                for error in error_chain:
+                    if error.get("language") == "rust":
+                        if "index out of bounds" in error.get("message", "").lower():
+                            secondary_suggestions.extend([
+                                "Add bounds checking before array access",
+                                "Use safe indexing methods like get() instead of direct indexing"
+                            ])
+                        elif "panic" in error.get("message", "").lower():
+                            secondary_suggestions.extend([
+                                "Handle potential panic conditions explicitly",
+                                "Use Result<T, E> for fallible operations"
+                            ])
+            elif secondary_language == "cpp" or secondary_language == "c":
+                # Check for memory-related errors
+                for error in error_chain:
+                    if error.get("language") in ["cpp", "c"]:
+                        if error.get("error_type") == "std::bad_alloc":
+                            secondary_suggestions.extend([
+                                "Handle memory allocation failures with proper exception handling",
+                                "Consider using nothrow allocations and checking for null",
+                                "Reduce memory usage or increase available memory"
+                            ])
+                            break
+                        elif error.get("error_type") == "BufferOverflow" or "buffer overflow" in error.get("message", "").lower():
+                            secondary_suggestions.extend([
+                                "Add bounds checking before array/buffer access",
+                                "Use safe string functions (strncpy instead of strcpy)",
+                                "Validate input sizes before processing"
+                            ])
+                            break
+                
+                # Add general C/C++ cross-language suggestions
+                if primary_language == "java":
+                    secondary_suggestions.extend([
+                        "Ensure proper exception handling in JNI code",
+                        "Check for null pointers before use"
+                    ])
+                elif primary_language == "go":
+                    secondary_suggestions.extend([
+                        "Use proper CGO memory management",
+                        "Add bounds checks in C code"
+                    ])
+            
+            fixes[secondary_language] = {
+                "language": secondary_language,
+                "description": f"Fix in {secondary_language} code",
+                "suggestion": " ".join(secondary_suggestions[:2]) if secondary_suggestions else "Validate inputs and handle errors properly",
+                "suggestions": secondary_suggestions
+            }
+        
+        result["fixes"] = fixes
+        
+        # Try to determine root cause if not already set
+        if "root_cause" not in result:
+            if "root_cause" in primary_analysis:
+                result["root_cause"] = primary_analysis["root_cause"]
+            elif "root_cause" in secondary_analysis:
+                result["root_cause"] = secondary_analysis["root_cause"]
+            else:
+                result["root_cause"] = f"cross_language_{primary_language}_{secondary_language}_error"
+        
+        # Category
+        result["category"] = "cross_language"
+        
+        # Severity - cross-language errors are often critical
+        result["severity"] = primary_analysis.get("severity", 
+                                                 secondary_analysis.get("severity", "high"))
+        
+        return result
     
     def register_language_analyzer(self, language: str, analyzer: Any):
         """

@@ -39,6 +39,7 @@ class ErrorCategory(Enum):
     DATABASE = "database"
     FILESYSTEM = "filesystem"
     MEMORY = "memory"
+    RESOURCES = "resources"
     UNKNOWN = "unknown"
 
 
@@ -216,6 +217,158 @@ class PythonParser(LanguageSpecificParser):
             (r"ModuleNotFoundError: No module named '([^']+)'", "missing_module"),
         ]
     
+    def parse(self, error_string: str, context: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+        """Parse Python error strings into structured format with production-quality error detection."""
+        lines = error_string.strip().split('\n')
+        
+        # Look for the error type and message
+        error_type = None
+        error_message = None
+        file_path = None
+        line_num = None
+        category = ErrorCategory.UNKNOWN
+        suggestion = ""
+        
+        # Additional patterns for comprehensive error detection
+        recursion_pattern = r"RecursionError: maximum recursion depth exceeded"
+        memory_pattern = r"MemoryError"
+        overflow_pattern = r"OverflowError: (.+)"
+        
+        # Parse traceback format
+        for i, line in enumerate(lines):
+            # Check for file and line info
+            if line.strip().startswith('File "'):
+                match = re.match(r'\s*File "([^"]+)", line (\d+)', line)
+                if match:
+                    file_path = match.group(1)
+                    line_num = int(match.group(2))
+            
+            # Check for error type and message
+            error_match = re.match(r'(\w+Error): (.+)', line)
+            if error_match:
+                error_type = error_match.group(1)
+                error_message = error_match.group(2)
+                
+                # Categorize errors properly
+                if error_type in ["SyntaxError", "IndentationError", "TabError"]:
+                    category = ErrorCategory.SYNTAX
+                    
+                    # Generate specific suggestions
+                    if "invalid syntax" in error_message:
+                        if "=" in error_string and "if" in error_string:
+                            suggestion = "Use '==' for comparison, not '=' for assignment in conditions"
+                        else:
+                            suggestion = "Check syntax - common issues: missing colons, parentheses, or quotes"
+                    elif "IndentationError" in error_type:
+                        suggestion = "Use proper indentation - Python uses 4 spaces by convention. Check that all blocks are properly indented."
+                    elif "TabError" in error_type:
+                        suggestion = "Convert all indentation to either tabs or spaces (spaces recommended). Do not mix tabs and spaces."
+                    elif "unmatched" in error_message or "unexpected EOF" in error_message:
+                        suggestion = "Check for unmatched parentheses, brackets, or braces. Every opening symbol needs a closing match."
+                        
+                elif error_type in ["ImportError", "ModuleNotFoundError"]:
+                    category = ErrorCategory.DEPENDENCY
+                    module_match = re.search(r"'([^']+)'", error_message)
+                    module_name = module_match.group(1) if module_match else "module"
+                    suggestion = f"Install the module with 'pip install {module_name}' or verify import path"
+                    
+                elif error_type == "FileNotFoundError":
+                    category = ErrorCategory.FILESYSTEM
+                    file_match = re.search(r"'([^']+)'", error_message)
+                    filename = file_match.group(1) if file_match else "file"
+                    suggestion = f"Check if file exists before opening. Use os.path.exists('{filename}') or try/except"
+                    
+                elif error_type in ["RecursionError"]:
+                    category = ErrorCategory.LOGIC
+                    suggestion = "Add proper base case to recursive function or increase recursion limit"
+                    
+                elif error_type == "MemoryError":
+                    category = ErrorCategory.MEMORY
+                    suggestion = "Reduce memory usage - process data in chunks, use generators, or increase available memory"
+                    
+                elif error_type == "OverflowError":
+                    category = ErrorCategory.LOGIC
+                    suggestion = "Use decimal or fractions module for precise arithmetic, or check for integer overflow"
+                    
+                elif error_type in ["NameError", "AttributeError", "KeyError", "IndexError", "TypeError", "ValueError", "ZeroDivisionError"]:
+                    category = ErrorCategory.LOGIC  # These are typically logic errors
+                    
+                    # Generate specific suggestions for logic errors
+                    if "NameError" in error_type:
+                        var_match = re.search(r"'([^']+)'", error_message)
+                        var_name = var_match.group(1) if var_match else "variable"
+                        suggestion = f"Define '{var_name}' before use or check for typos in variable name"
+                    elif "AttributeError" in error_type:
+                        suggestion = "Check available attributes with dir(object) or review class documentation"
+                    elif "KeyError" in error_type:
+                        key_match = re.search(r"'([^']+)'", error_message)
+                        key_name = key_match.group(1) if key_match else "key"
+                        suggestion = f"Check if key exists before accessing. Use dict.get('{key_name}', default) or 'if key in dict'"
+                    elif "IndexError" in error_type:
+                        suggestion = "List index out of range. Check list length before accessing or use try/except."
+                    elif "TypeError" in error_type:
+                        if "not callable" in error_message:
+                            suggestion = "Object is not a function. Remove parentheses or check variable assignment."
+                        elif "not subscriptable" in error_message:
+                            suggestion = "Object doesn't support indexing. Check type or use appropriate access method."
+                        else:
+                            suggestion = "Type mismatch. Check argument types and function signatures."
+                    elif "ValueError" in error_type:
+                        suggestion = "Invalid value for operation. Validate input before processing."
+                    elif "ZeroDivisionError" in error_type:
+                        suggestion = "Check for zero before division. Use if denominator != 0 guard"
+                    
+                break
+            
+            # Check for recursion error pattern
+            if re.search(recursion_pattern, line):
+                error_type = "RecursionError"
+                error_message = "maximum recursion depth exceeded"
+                category = ErrorCategory.LOGIC
+                suggestion = "Add proper base case to recursive function or increase recursion limit"
+                break
+                
+            # Check for memory error
+            if re.search(memory_pattern, line):
+                error_type = "MemoryError"
+                error_message = "Memory allocation failed"
+                category = ErrorCategory.RESOURCES
+                suggestion = "Reduce memory usage - process data in chunks, use generators, or increase available memory"
+                break
+                
+            # Check for overflow error
+            overflow_match = re.search(overflow_pattern, line)
+            if overflow_match:
+                error_type = "OverflowError"
+                error_message = overflow_match.group(1)
+                category = ErrorCategory.LOGIC
+                suggestion = "Use decimal or fractions module for precise arithmetic, or check for integer overflow"
+                break
+        
+        if error_type and error_message:
+            result = {
+                "error_type": error_type,
+                "error_message": error_message,
+                "file": file_path,
+                "line": line_num,
+                "category": category.value.upper(),
+                "suggestion": suggestion,
+                "traceback": error_string
+            }
+            
+            # Check if AST validation should be performed
+            if context and "source_code" in context and error_type == "SyntaxError":
+                try:
+                    import ast
+                    ast.parse(context["source_code"])
+                    result["ast_validation_performed"] = False
+                except SyntaxError:
+                    result["ast_validation_performed"] = True
+            
+            return result
+        
+        return None
+    
     def parse_syntax_error(self, error_message: str, source_code: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """Parse Python syntax errors."""
         for pattern, error_type in self.syntax_patterns:
@@ -377,6 +530,230 @@ class JavaScriptParser(LanguageSpecificParser):
         return category_map.get(error_type, ErrorCategory.RUNTIME)
 
 
+class GoParser(LanguageSpecificParser):
+    """Go-specific error parser with production-quality error detection."""
+    
+    def __init__(self):
+        super().__init__(LanguageType.GO)
+        
+        # Go compilation error patterns
+        self.compilation_patterns = [
+            (r"(\w+\.go):(\d+):(\d+): ([^:]+): (.+)", "general_compilation"),
+            (r"undefined: ([^\s]+)", "undefined_symbol"),
+            (r"cannot use ([^(]+) \(type ([^)]+)\) as type ([^\s]+)", "type_mismatch"),
+            (r"imported and not used: \"([^\"]+)\"", "unused_import"),
+            (r"declared (?:and|but) not used", "unused_declaration"),
+            (r"no new variables on left side of :=", "no_new_vars"),
+            (r"missing return at end of function", "missing_return"),
+            (r"too many arguments to return", "too_many_returns"),
+            (r"not enough arguments in call to", "not_enough_args"),
+            (r"too many arguments in call to", "too_many_args"),
+        ]
+        
+        # Go runtime error patterns (panic messages)
+        self.runtime_patterns = [
+            (r"panic: runtime error: invalid memory address or nil pointer dereference", "nil_pointer"),
+            (r"panic: runtime error: index out of range \[(\d+)\] with length (\d+)", "index_out_of_range"),
+            (r"panic: runtime error: slice bounds out of range", "slice_bounds"),
+            (r"panic: interface conversion: ([^:]+) is nil", "nil_interface"),
+            (r"panic: runtime error: integer divide by zero", "divide_by_zero"),
+            (r"panic: concurrent map (?:read|write|iteration)", "concurrent_map_access"),
+            (r"panic: send on closed channel", "send_closed_channel"),
+            (r"panic: close of closed channel", "close_closed_channel"),
+            (r"deadlock", "deadlock"),
+            (r"panic: (.+)", "generic_panic"),
+        ]
+        
+        # Go-specific error patterns
+        self.go_error_patterns = [
+            (r"cannot find package \"([^\"]+)\"", "package_not_found"),
+            (r"cannot find module for path ([^\s]+)", "module_not_found"),
+            (r"go: ([^:]+): missing go.sum entry", "missing_checksum"),
+            (r"build constraints exclude all Go files", "build_constraints"),
+        ]
+    
+    def parse(self, error_string: str, context: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+        """Parse Go error strings into structured format."""
+        if not error_string:
+            return None
+        
+        # First check for panic/runtime errors
+        for pattern, error_type in self.runtime_patterns:
+            match = re.search(pattern, error_string)
+            if match:
+                return {
+                    "error_type": f"panic_{error_type}",
+                    "error_message": match.group(0),
+                    "file": context.get("file", "") if context else "",
+                    "line": 0,
+                    "category": self._categorize_go_error(error_type).value.upper(),
+                    "suggestion": self._get_go_suggestion(error_type, match),
+                    "traceback": error_string
+                }
+        
+        # Check compilation errors
+        for pattern, error_type in self.compilation_patterns:
+            match = re.search(pattern, error_string)
+            if match:
+                groups = match.groups()
+                file_path = groups[0] if len(groups) > 0 else ""
+                line_num = int(groups[1]) if len(groups) > 1 and groups[1].isdigit() else 0
+                
+                return {
+                    "error_type": error_type,
+                    "error_message": match.group(0),
+                    "file": file_path,
+                    "line": line_num,
+                    "category": "COMPILATION",
+                    "suggestion": self._get_compilation_suggestion(error_type, match),
+                    "traceback": error_string
+                }
+        
+        # Check Go-specific errors
+        for pattern, error_type in self.go_error_patterns:
+            match = re.search(pattern, error_string)
+            if match:
+                return {
+                    "error_type": error_type,
+                    "error_message": match.group(0),
+                    "file": "",
+                    "line": 0,
+                    "category": "DEPENDENCY" if "package" in error_type or "module" in error_type else "CONFIGURATION",
+                    "suggestion": self._get_go_specific_suggestion(error_type, match),
+                    "traceback": error_string
+                }
+        
+        # If no specific pattern matches, try generic parsing
+        return {
+            "error_type": "unknown_go_error",
+            "error_message": error_string.split('\n')[0] if error_string else "",
+            "file": "",
+            "line": 0,
+            "category": "UNKNOWN",
+            "suggestion": "Check Go documentation or run 'go vet' for more detailed analysis",
+            "traceback": error_string
+        }
+    
+    def parse_syntax_error(self, error_message: str, source_code: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """Parse Go syntax errors."""
+        syntax_patterns = [
+            (r"syntax error: unexpected ([^,]+), expecting (.+)", "unexpected_token"),
+            (r"syntax error: (.+)", "generic_syntax"),
+            (r"expected '([^']+)', found '([^']+)'", "expected_token"),
+        ]
+        
+        for pattern, error_type in syntax_patterns:
+            match = re.search(pattern, error_message)
+            if match:
+                return {
+                    "error_type": error_type,
+                    "pattern": pattern,
+                    "match_groups": match.groups(),
+                    "category": ErrorCategory.SYNTAX,
+                    "language": self.language
+                }
+        return None
+    
+    def parse_compilation_error(self, error_message: str, source_code: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """Parse Go compilation errors."""
+        for pattern, error_type in self.compilation_patterns:
+            match = re.search(pattern, error_message)
+            if match:
+                return {
+                    "error_type": error_type,
+                    "pattern": pattern,
+                    "match_groups": match.groups(),
+                    "category": ErrorCategory.COMPILATION,
+                    "language": self.language
+                }
+        return None
+    
+    def detect_runtime_issues(self, error_context: ErrorContext) -> List[Dict[str, Any]]:
+        """Detect Go runtime issues (panics)."""
+        issues = []
+        
+        for pattern, error_type in self.runtime_patterns:
+            match = re.search(pattern, error_context.error_message)
+            if match:
+                issues.append({
+                    "error_type": error_type,
+                    "pattern": pattern,
+                    "match_groups": match.groups(),
+                    "category": self._categorize_runtime_error(error_type),
+                    "language": self.language
+                })
+        
+        return issues
+    
+    def _categorize_runtime_error(self, error_type: str) -> ErrorCategory:
+        """Categorize Go runtime errors."""
+        category_map = {
+            "nil_pointer": ErrorCategory.MEMORY,
+            "index_out_of_range": ErrorCategory.LOGIC,
+            "slice_bounds": ErrorCategory.LOGIC,
+            "nil_interface": ErrorCategory.LOGIC,
+            "divide_by_zero": ErrorCategory.LOGIC,
+            "concurrent_map_access": ErrorCategory.CONCURRENCY,
+            "send_closed_channel": ErrorCategory.CONCURRENCY,
+            "close_closed_channel": ErrorCategory.CONCURRENCY,
+            "deadlock": ErrorCategory.CONCURRENCY,
+            "generic_panic": ErrorCategory.RUNTIME,
+        }
+        return category_map.get(error_type, ErrorCategory.RUNTIME)
+    
+    def _categorize_go_error(self, error_type: str) -> ErrorCategory:
+        """Categorize Go-specific errors."""
+        if error_type in ["nil_pointer", "index_out_of_range", "slice_bounds"]:
+            return ErrorCategory.MEMORY
+        elif error_type in ["concurrent_map_access", "send_closed_channel", "close_closed_channel", "deadlock"]:
+            return ErrorCategory.CONCURRENCY
+        elif error_type in ["nil_interface", "divide_by_zero"]:
+            return ErrorCategory.LOGIC
+        else:
+            return ErrorCategory.RUNTIME
+    
+    def _get_go_suggestion(self, error_type: str, match: re.Match) -> str:
+        """Get Go-specific suggestions for runtime errors."""
+        suggestions = {
+            "nil_pointer": "Check for nil pointers before dereferencing. Use if ptr != nil guard.",
+            "index_out_of_range": f"Check array/slice bounds before access. Index {match.group(1)} is out of range for length {match.group(2)}." if match.lastindex >= 2 else "Check array/slice bounds before access.",
+            "slice_bounds": "Verify slice indices are within valid range [0:len(slice)].",
+            "nil_interface": f"Check if {match.group(1)} is nil before type assertion." if match.lastindex >= 1 else "Check interface is not nil before type assertion.",
+            "divide_by_zero": "Add zero check before division: if divisor != 0",
+            "concurrent_map_access": "Use sync.Map or protect map access with sync.Mutex/sync.RWMutex.",
+            "send_closed_channel": "Check if channel is closed before sending. Use select with default case.",
+            "close_closed_channel": "Ensure channel is only closed once. Use sync.Once if needed.",
+            "deadlock": "Review goroutine synchronization. Check for circular channel dependencies.",
+            "generic_panic": f"Panic: {match.group(1)}. Add error handling or recover() in defer." if match.lastindex >= 1 else "Add proper error handling.",
+        }
+        return suggestions.get(error_type, "Review Go error handling patterns.")
+    
+    def _get_compilation_suggestion(self, error_type: str, match: re.Match) -> str:
+        """Get suggestions for compilation errors."""
+        suggestions = {
+            "undefined_symbol": f"Define or import '{match.group(1)}' before use." if match.lastindex >= 1 else "Define or import symbol before use.",
+            "type_mismatch": "Check type compatibility. Use type assertion or conversion if needed.",
+            "unused_import": f"Remove unused import or use the imported package '{match.group(1)}'." if match.lastindex >= 1 else "Remove unused import.",
+            "unused_declaration": "Remove unused variable or use blank identifier '_' if needed.",
+            "no_new_vars": "Use '=' instead of ':=' when reassigning existing variables.",
+            "missing_return": "Add return statement at the end of function.",
+            "too_many_returns": "Match return values with function signature.",
+            "not_enough_args": "Provide all required arguments to function call.",
+            "too_many_args": "Remove extra arguments from function call.",
+        }
+        return suggestions.get(error_type, "Check Go compilation error details.")
+    
+    def _get_go_specific_suggestion(self, error_type: str, match: re.Match) -> str:
+        """Get suggestions for Go-specific errors."""
+        suggestions = {
+            "package_not_found": f"Run 'go get {match.group(1)}' to install package." if match.lastindex >= 1 else "Install missing package with go get.",
+            "module_not_found": "Update go.mod or run 'go mod tidy' to resolve dependencies.",
+            "missing_checksum": "Run 'go mod download' to update go.sum file.",
+            "build_constraints": "Check build tags and ensure at least one .go file matches constraints.",
+        }
+        return suggestions.get(error_type, "Check Go module and dependency configuration.")
+
+
 class ComprehensiveErrorDetector:
     """
     Comprehensive error detection and classification system.
@@ -399,8 +776,11 @@ class ComprehensiveErrorDetector:
         self.parsers = {
             LanguageType.PYTHON: PythonParser(),
             LanguageType.JAVASCRIPT: JavaScriptParser(),
-            # TODO: Add more language parsers
+            LanguageType.GO: GoParser(),
         }
+        
+        # Load error detection rules
+        self.rules = self._load_rules()
         
         # Configuration error patterns
         self.config_patterns = [
@@ -440,6 +820,35 @@ class ComprehensiveErrorDetector:
             (r"(?i)certificate.*error", "certificate_error"),
             (r"(?i)insecure.*connection", "insecure_connection"),
         ]
+    
+    def _load_rules(self) -> Dict[str, Any]:
+        """Load error detection rules from configuration."""
+        # Placeholder for rule loading logic
+        return {}
+    
+    def detect_error(self, error_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Detect and classify an error based on provided data."""
+        error_string = error_data.get("error", "")
+        language = error_data.get("language", "python")
+        
+        # Determine language type
+        lang_type = LanguageType.PYTHON
+        if language.lower() == "javascript":
+            lang_type = LanguageType.JAVASCRIPT
+        elif language.lower() == "go":
+            lang_type = LanguageType.GO
+        
+        # Get appropriate parser
+        parser = self.parsers.get(lang_type)
+        if not parser:
+            return None
+        
+        # Parse the error
+        result = parser.parse(error_string)
+        if result:
+            result["language"] = language
+        
+        return result
     
     def detect_language(self, error_context: ErrorContext) -> LanguageType:
         """

@@ -344,7 +344,7 @@ class TestPythonErrorDetection:
         """Set up test fixtures."""
         self.detector = ComprehensiveErrorDetector()
     
-    @patch('comprehensive_error_detector.ComprehensiveErrorDetector._load_rules')
+    @patch('modules.analysis.comprehensive_error_detector.ComprehensiveErrorDetector._load_rules')
     def test_detect_python_syntax_error(self, mock_load_rules):
         """Test detection of Python syntax errors."""
         mock_load_rules.return_value = {}
@@ -366,7 +366,7 @@ SyntaxError: invalid syntax
         assert result["error_type"] == "SyntaxError"
         assert result["category"] == "SYNTAX"
     
-    @patch('comprehensive_error_detector.ComprehensiveErrorDetector._load_rules')
+    @patch('modules.analysis.comprehensive_error_detector.ComprehensiveErrorDetector._load_rules')
     def test_detect_python_runtime_error(self, mock_load_rules):
         """Test detection of Python runtime errors."""
         mock_load_rules.return_value = {}
@@ -535,12 +535,8 @@ def hello(:  # Missing parameter name
 class TestCrossLanguageOrchestratorPython:
     """Test cases for Python handling in cross-language orchestrator."""
     
-    @patch('cross_language_orchestrator.CrossLanguageOrchestrator._initialize_plugins')
-    @patch('cross_language_orchestrator.CrossLanguageOrchestrator._initialize_analyzers')
-    def setup_method(self, method, mock_init_analyzers, mock_init_plugins):
+    def setup_method(self, method):
         """Set up test fixtures."""
-        mock_init_plugins.return_value = None
-        mock_init_analyzers.return_value = None
         self.orchestrator = CrossLanguageOrchestrator()
     
     def test_python_language_detection(self):

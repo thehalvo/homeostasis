@@ -337,10 +337,18 @@ class LanguagePluginRegistry:
                 sys.path.insert(0, str(directory.parent))
                 
                 try:
-                    # Import module and pass the registry
-                    spec = importlib.util.spec_from_file_location(module_name, module_path)
-                    module = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(module)
+                    # Add the project root to sys.path if not already there
+                    project_root = str(directory.parent.parent.parent)
+                    if project_root not in sys.path:
+                        sys.path.insert(0, project_root)
+                    
+                    # Import module with proper package context
+                    # Use importlib.import_module for proper relative import support
+                    package_name = "modules.analysis.plugins"
+                    import_name = f"{package_name}.{module_name}"
+                    
+                    # Import the module
+                    module = importlib.import_module(import_name)
                     
                     # Look for LanguagePlugin subclasses in the module
                     for name, obj in inspect.getmembers(module):
@@ -421,7 +429,18 @@ def load_all_plugins() -> int:
     Returns:
         Number of plugins loaded
     """
-    return plugin_registry.load_plugins_from_directory()
+    count = plugin_registry.load_plugins_from_directory()
+    
+    # Register built-in plugins if not already loaded
+    if "python" not in plugin_registry.plugins:
+        try:
+            python_plugin = PythonLanguagePlugin()
+            plugin_registry.register_plugin(python_plugin)
+            count += 1
+        except Exception as e:
+            logger.error(f"Failed to register built-in Python plugin: {e}")
+    
+    return count
 
 
 # Base implementation classes for common languages

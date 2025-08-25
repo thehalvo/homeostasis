@@ -299,19 +299,64 @@ class ElixirExceptionHandler:
                 "match_groups": tuple(),
                 "framework": ""
             }
-        elif "ForbiddenError" in exception_type and "Phoenix" in exception_type:
+        elif "Phoenix" in exception_type:
+            # Handle all Phoenix-specific errors
+            if "NoRouteError" in exception_type:
+                return {
+                    "error_data": error_data,
+                    "rule_id": "phoenix_no_route_error",
+                    "error_type": exception_type,
+                    "root_cause": "phoenix_no_route_error",
+                    "description": "No route found for the given request",
+                    "suggestion": "Check your router configuration. Ensure the route is defined for the given method and path. Use `mix phx.routes` to list all available routes.",
+                    "confidence": "high",
+                    "severity": "medium",
+                    "category": "phoenix",
+                    "match_groups": tuple(),
+                    "framework": "phoenix"
+                }
+            elif "ForbiddenError" in exception_type:
+                return {
+                    "error_data": error_data,
+                    "rule_id": "phoenix_forbidden_error",
+                    "error_type": exception_type,
+                    "root_cause": "phoenix_forbidden_error",
+                    "description": "User tried to access a forbidden resource in Phoenix",
+                    "suggestion": "Check your authorization logic. Ensure users have the necessary permissions before allowing access to resources. Consider implementing role-based access control.",
+                    "confidence": "high",
+                    "severity": "medium",
+                    "category": "phoenix",
+                    "match_groups": tuple(),
+                    "framework": "phoenix"
+                }
+            else:
+                # Generic Phoenix error
+                return {
+                    "error_data": error_data,
+                    "rule_id": "phoenix_generic_error",
+                    "error_type": exception_type,
+                    "root_cause": "phoenix_generic_error",
+                    "description": f"Phoenix framework error: {exception_type}",
+                    "suggestion": "Check Phoenix documentation for this specific error type. Review your Phoenix application configuration and ensure all dependencies are properly configured.",
+                    "confidence": "medium",
+                    "severity": "medium",
+                    "category": "phoenix",
+                    "match_groups": tuple(),
+                    "framework": "phoenix"
+                }
+        elif "ChangesetError" in exception_type and "Ecto" in exception_type:
             return {
                 "error_data": error_data,
-                "rule_id": "phoenix_forbidden_error",
+                "rule_id": "ecto_changeset_error",
                 "error_type": exception_type,
-                "root_cause": "phoenix_forbidden_error",
-                "description": "User tried to access a forbidden resource in Phoenix",
-                "suggestion": "Check your authorization logic. Ensure users have the necessary permissions before allowing access to resources. Consider implementing role-based access control.",
+                "root_cause": "ecto_changeset_error",
+                "description": "Error with Ecto changeset operation",
+                "suggestion": "Check the changeset for validation errors using `changeset.errors` before performing the operation. Ensure all required fields have values and all validations pass.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "phoenix",
+                "category": "ecto",
                 "match_groups": tuple(),
-                "framework": "phoenix"
+                "framework": "ecto"
             }
         elif "InvalidChangesetError" in exception_type and "Ecto" in exception_type:
             return {

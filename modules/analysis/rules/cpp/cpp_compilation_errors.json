@@ -1,0 +1,35 @@
+{
+  "name": "cpp_compilation_errors",
+  "version": "1.0",
+  "description": "C++ compilation error detection rules",
+  "rules": [
+    {
+      "id": "cpp_undeclared_identifier",
+      "pattern": "was not declared|undeclared identifier|not declared in this scope",
+      "type": "UndeclaredIdentifier",
+      "description": "Identifier not declared in current scope",
+      "root_cause": "cpp_undeclared_identifier",
+      "suggestion": "Include appropriate headers or declare the identifier before use",
+      "category": "compilation",
+      "severity": "high",
+      "confidence": "high",
+      "tags": ["cpp", "compilation", "identifier", "scope"],
+      "examples": [
+        "error: 'vector' was not declared in this scope",
+        "error: use of undeclared identifier 'cout'"
+      ],
+      "metadata": {},
+      "criticality": "high",
+      "complexity": "low",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": [],
+      "fix_suggestions": [
+        "Include appropriate headers for the identifier",
+        "Check spelling of the identifier",
+        "Ensure proper namespace usage"
+      ]
+    }
+  ]
+}

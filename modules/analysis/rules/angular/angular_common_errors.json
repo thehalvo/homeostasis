@@ -78,7 +78,7 @@
       "id": "angular_component_constructor_error",
       "category": "angular",
       "subcategory": "components",
-      "pattern": "Cannot resolve all parameters for (\w+Component)",
+      "pattern": "Cannot resolve all parameters for (\\w+Component)",
       "severity": "error",
       "confidence": "high",
       "reliability": "high",

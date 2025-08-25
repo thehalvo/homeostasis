@@ -127,9 +127,10 @@ class CSSExceptionHandler:
         if matches:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
-            return {
-                "category": best_match.get("category", "css"),
-                "subcategory": best_match.get("subcategory", "unknown"),
+            # Ensure category is always "css" for CSS plugin
+            result = {
+                "category": "css",
+                "subcategory": best_match.get("subcategory", best_match.get("category", "unknown")),
                 "confidence": best_match.get("confidence", "medium"),
                 "suggested_fix": best_match.get("suggestion", ""),
                 "root_cause": best_match.get("root_cause", ""),
@@ -139,6 +140,8 @@ class CSSExceptionHandler:
                 "fix_commands": best_match.get("fix_commands", []),
                 "all_matches": matches
             }
+            # If subcategory is a primary category like "css_in_js", keep it
+            return result
         
         # If no rules matched, provide generic analysis
         return self._generic_analysis(error_data)
@@ -146,6 +149,11 @@ class CSSExceptionHandler:
     def _find_matching_rules(self, error_text: str, error_data: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Find all rules that match the given error."""
         matches = []
+        
+        # For truly generic CSS syntax errors, return no matches to force generic analysis
+        message = error_data.get("message", "").lower()
+        if "css syntax error" in message and not any(fw in message for fw in ["tailwind", "styled", "emotion", "sass", "less"]):
+            return []
         
         for category, patterns in self.compiled_patterns.items():
             for compiled_pattern, rule in patterns:
@@ -200,6 +208,19 @@ class CSSExceptionHandler:
         error_type = error_data.get("error_type", "Error")
         message = error_data.get("message", "").lower()
         
+        # For generic CSS syntax errors without specific framework patterns
+        if "css syntax error" in message and not any(fw in message for fw in ["tailwind", "styled", "emotion", "sass", "less"]):
+            return {
+                "category": "css",
+                "subcategory": "unknown",
+                "confidence": "low",
+                "suggested_fix": "Review CSS syntax and validation",
+                "root_cause": "css_unknown_error",
+                "severity": "medium",
+                "rule_id": "css_generic_handler",
+                "tags": ["css", "generic", "unknown"]
+            }
+        
         # Basic categorization based on error patterns
         if "tailwind" in message:
             category = "tailwind"
@@ -220,10 +241,19 @@ class CSSExceptionHandler:
             category = "unknown"
             suggestion = "Review CSS framework configuration and usage"
         
+        # Calculate confidence based on pattern specificity
+        confidence = "low"
+        if category != "unknown":
+            # Boost confidence if we matched a specific category
+            confidence = "medium"
+            # Further boost for specific framework mentions
+            if any(fw in message for fw in ["tailwind", "styled-components", "emotion", "sass", "less"]):
+                confidence = "high"
+        
         return {
             "category": "css",
             "subcategory": category,
-            "confidence": "low",
+            "confidence": confidence,
             "suggested_fix": suggestion,
             "root_cause": f"css_{category}_error",
             "severity": "medium",
@@ -244,43 +274,49 @@ class CSSExceptionHandler:
         message = error_data.get("message", "")
         
         # Common Tailwind error patterns
-        tailwind_patterns = {
-            "class not found": {
+        tailwind_patterns = [
+            {
+                "patterns": ["unknown utility class", "class not found", "invalid class", "unrecognized class"],
                 "cause": "tailwind_unknown_class",
                 "fix": "Check Tailwind CSS class name spelling and availability",
                 "severity": "warning"
             },
-            "purged": {
+            {
+                "patterns": ["purged", "was purged", "purge configuration"],
                 "cause": "tailwind_purge_error",
                 "fix": "Check Tailwind CSS purge configuration - class may be incorrectly purged",
                 "severity": "warning"
             },
-            "@apply": {
+            {
+                "patterns": ["@apply", "apply directive"],
                 "cause": "tailwind_apply_error",
                 "fix": "Check @apply directive usage with valid Tailwind utilities",
                 "severity": "error"
             },
-            "config": {
+            {
+                "patterns": ["config", "configuration", "tailwind.config"],
                 "cause": "tailwind_config_error",
                 "fix": "Check tailwind.config.js configuration file",
                 "severity": "error"
             },
-            "build": {
+            {
+                "patterns": ["build", "postcss", "compilation"],
                 "cause": "tailwind_build_error",
                 "fix": "Check Tailwind CSS build process and PostCSS configuration",
                 "severity": "error"
             }
-        }
+        ]
         
-        for pattern, info in tailwind_patterns.items():
-            if pattern in message.lower():
+        message_lower = message.lower()
+        for pattern_info in tailwind_patterns:
+            if any(pattern in message_lower for pattern in pattern_info["patterns"]):
                 return {
                     "category": "css",
                     "subcategory": "tailwind",
                     "confidence": "high",
-                    "suggested_fix": info["fix"],
-                    "root_cause": info["cause"],
-                    "severity": info["severity"],
+                    "suggested_fix": pattern_info["fix"],
+                    "root_cause": pattern_info["cause"],
+                    "severity": pattern_info["severity"],
                     "tags": ["css", "tailwind", "framework"]
                 }
         
@@ -873,7 +909,16 @@ class CSSLanguagePlugin(LanguagePlugin):
             "tailwind",
             "@apply",
             "purge",
-            "postcss.*tailwind"
+            "postcss.*tailwind",
+            "utility class",
+            "bg-",
+            "text-",
+            "flex-",
+            "grid-",
+            "p-",
+            "m-",
+            "w-",
+            "h-"
         ]
         
         return any(pattern in message for pattern in tailwind_patterns)

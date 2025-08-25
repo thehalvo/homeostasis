@@ -5,7 +5,7 @@
     {
       "id": "dockerfile_syntax_unknown_instruction",
       "pattern": "Unknown instruction:|invalid instruction|unknown instruction:|unrecognized directive|Dockerfile parse error line [0-9]+: Unknown directive",
-      "type": "SyntaxError",
+      "type": "syntax",
       "description": "Unknown instruction in Dockerfile",
       "root_cause": "dockerfile_syntax_error",
       "suggestion": "Check instruction spelling and capitalization",

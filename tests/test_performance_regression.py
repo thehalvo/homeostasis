@@ -26,6 +26,8 @@ from modules.analysis.language_plugin_system import LanguagePluginSystem
 from modules.analysis.comprehensive_error_detector import ComprehensiveErrorDetector
 from modules.analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
 from modules.patch_generation.advanced_code_generator import AdvancedCodeGenerator
+from modules.llm_integration.provider_abstraction import LLMManager
+from modules.analysis.llm_context_manager import LLMContextManager
 from modules.deployment.canary import CanaryDeployment as CanaryDeployer
 
 
@@ -198,7 +200,13 @@ class TestPatchGenerationPerformance:
     def setup_method(self):
         """Set up test fixtures."""
         self.tester = PerformanceRegressionTester()
-        self.generator = AdvancedCodeGenerator()
+        # Create mock LLM components for testing
+        mock_llm_manager = Mock(spec=LLMManager)
+        mock_context_manager = Mock(spec=LLMContextManager)
+        self.generator = AdvancedCodeGenerator(
+            llm_manager=mock_llm_manager,
+            context_manager=mock_context_manager
+        )
     
     def test_simple_patch_generation_performance(self):
         """Test simple patch generation performance."""
@@ -227,11 +235,21 @@ class TestPatchGenerationPerformance:
             patches = []
             for case in test_cases:
                 # Simulate patch generation
+                # Extract variable name from error message
+                error_parts = case["error"].split("'")
+                if len(error_parts) >= 2:
+                    var_to_replace = error_parts[1]
+                else:
+                    # Fallback: try to extract from error message
+                    import re
+                    match = re.search(r"name '(\w+)'", case["error"])
+                    var_to_replace = match.group(1) if match else "unknown"
+                
                 patch = {
                     "language": case["language"],
                     "original": case["context"]["code"],
                     "fixed": case["context"]["code"].replace(
-                        case["error"].split("'")[1],
+                        var_to_replace,
                         case["context"]["variables"][0]
                     ),
                     "confidence": 0.8

@@ -76,6 +76,7 @@ class TestServiceChaos:
         service_mesh.inject_failure('cache', failure_rate=1.0)
         service_mesh.set_fallback('auth', 'cache', 'direct-db-query')
         service_mesh.set_fallback('catalog', 'cache', 'direct-db-query')
+        service_mesh.set_fallback('cart', 'cache', 'direct-db-query')
         
         fallback_results = []
         for _ in range(50):
@@ -90,6 +91,7 @@ class TestServiceChaos:
         fallback_metrics = service_mesh.get_fallback_metrics()
         assert fallback_metrics['auth']['cache'] > 0
         assert fallback_metrics['catalog']['cache'] > 0
+        assert fallback_metrics['cart']['cache'] > 0
     
     @pytest.mark.asyncio
     async def test_circuit_breaker_behavior(self, circuit_breaker_system):
@@ -315,10 +317,9 @@ class TestServiceChaos:
             call_count = 0
             
             try:
+                start_total_time = time.time()
                 result, attempts = await retry.execute_with_retry(flaky_service)
-                
-                # Calculate total time including retries
-                total_time = sum(a['duration'] for a in attempts)
+                total_time = time.time() - start_total_time
                 
                 # Calculate delays between attempts
                 delays = []
@@ -384,7 +385,11 @@ class TestServiceChaos:
                     raise ValueError(f"Bulkhead {bulkhead_name} not found")
                 
                 # Try to acquire semaphore immediately
-                acquired = bulkhead['semaphore'].acquire_nowait()
+                try:
+                    bulkhead['semaphore'].acquire_nowait()
+                    acquired = True
+                except:
+                    acquired = False
                 
                 if not acquired:
                     # Try to queue
@@ -673,8 +678,12 @@ class ServiceMesh:
                 # Check for fallback
                 if service in self.fallbacks and dep in self.fallbacks[service]:
                     self.fallback_metrics[service][dep] += 1
-                    # Execute fallback
-                    continue
+                    # Execute fallback - simulate successful fallback action
+                    # For cache failures, we simulate direct DB query as fallback
+                    fallback_action = self.fallbacks[service][dep]
+                    if fallback_action == 'direct-db-query':
+                        # Simulate successful direct DB query
+                        continue  # Skip this failed dependency, use fallback
                 else:
                     # Propagate failure
                     self.metrics[service]['errors'] += 1
@@ -708,6 +717,7 @@ class ServiceMesh:
         self.failure_rates.clear()
         self.metrics.clear()
         self.fallback_metrics.clear()
+        self.fallbacks.clear()
 
 
 class CircuitBreakerSystem:

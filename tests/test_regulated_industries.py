@@ -36,11 +36,10 @@ class TestRegulatedIndustriesSupport:
     def regulated_support(self, config):
         """Create regulated industries support instance."""
         with patch('modules.security.regulated_industries.get_compliance_reporting'):
-            with patch('modules.security.regulated_industries.get_governance_framework'):
-                with patch('modules.security.regulated_industries.get_policy_engine'):
-                    with patch('modules.security.regulated_industries.get_rbac_manager'):
-                        with patch('modules.security.regulated_industries.get_audit_logger'):
-                            return RegulatedIndustriesSupport(config)
+            with patch('modules.security.regulated_industries.get_policy_engine'):
+                with patch('modules.security.regulated_industries.get_rbac_manager'):
+                    with patch('modules.security.regulated_industries.get_audit_logger'):
+                        return RegulatedIndustriesSupport(config)
     
     def test_healthcare_configuration(self, regulated_support):
         """Test healthcare industry configuration."""
