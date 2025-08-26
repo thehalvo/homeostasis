@@ -1,0 +1,86 @@
+
+// Safe background threading patterns for Android
+public class BackgroundTaskHelper {
+    
+    // Modern approach using ExecutorService
+    public static class ExecutorHelper {
+        private static final ExecutorService backgroundExecutor = Executors.newFixedThreadPool(4);
+        private static final Handler mainHandler = new Handler(Looper.getMainLooper());
+        
+        public static void executeInBackground(Runnable task) {
+            backgroundExecutor.execute(task);
+        }
+        
+        public static void executeOnMainThread(Runnable task) {
+            if (Looper.myLooper() == Looper.getMainLooper()) {
+                task.run();
+            } else {
+                mainHandler.post(task);
+            }
+        }
+        
+        public static <T> void executeAsync(Callable<T> backgroundTask, Consumer<T> onResult) {
+            backgroundExecutor.execute(() -> {
+                try {
+                    T result = backgroundTask.call();
+                    executeOnMainThread(() -> onResult.accept(result));
+                } catch (Exception e) {
+                    Log.e("BackgroundTask", "Error in background task", e);
+                }
+            });
+        }
+    }
+    
+    // SafeAsyncTask with weak reference to prevent memory leaks
+    public static abstract class SafeAsyncTask<T> {
+        private WeakReference<Activity> activityRef;
+        
+        public SafeAsyncTask(Activity activity) {
+            this.activityRef = new WeakReference<>(activity);
+        }
+        
+        public void execute() {
+            ExecutorHelper.executeAsync(
+                this::doInBackground,
+                this::onPostExecute
+            );
+        }
+        
+        protected abstract T doInBackground();
+        
+        protected abstract void onPostExecute(T result);
+        
+        protected Activity getActivity() {
+            return activityRef != null ? activityRef.get() : null;
+        }
+        
+        protected boolean isActivityValid() {
+            Activity activity = getActivity();
+            return activity != null && !activity.isFinishing() && !activity.isDestroyed();
+        }
+    }
+    
+    // Network request helper
+    public static void performNetworkRequest(String url, NetworkCallback callback) {
+        ExecutorHelper.executeInBackground(() -> {
+            try {
+                // Perform network request
+                String result = performHttpRequest(url);
+                ExecutorHelper.executeOnMainThread(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                ExecutorHelper.executeOnMainThread(() -> callback.onError(e));
+            }
+        });
+    }
+    
+    private static String performHttpRequest(String url) throws Exception {
+        // Implementation of HTTP request
+        // This is a placeholder - use your preferred HTTP library
+        return "Response from " + url;
+    }
+    
+    public interface NetworkCallback {
+        void onSuccess(String result);
+        void onError(Exception error);
+    }
+}

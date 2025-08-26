@@ -7,6 +7,7 @@ import sys
 import tempfile
 import shutil
 from pathlib import Path
+from unittest import mock
 
 # Add project root to sys.path
 project_root = Path(__file__).parent
@@ -18,15 +19,16 @@ def test_api_key_manager():
     
     print("Testing API Key Manager...")
     
-    # Use a temporary directory for testing
-    with tempfile.TemporaryDirectory() as temp_dir:
+    # Use a temporary directory for testing and mock the password
+    with tempfile.TemporaryDirectory() as temp_dir, \
+         mock.patch('getpass.getpass', return_value='test_password'):
         temp_path = Path(temp_dir)
         manager = APIKeyManager(config_dir=temp_path)
         
         # Test listing keys (should be empty)
         keys = manager.list_keys()
         print(f"Initial keys: {keys}")
-        assert all(not has_key for has_key in keys.values()), "Should have no keys initially"
+        assert all(not any(sources.values()) for sources in keys.values()), "Should have no keys initially"
         
         # Test setting a key (without validation)
         test_key = "sk-test123456789"

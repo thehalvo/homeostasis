@@ -266,7 +266,7 @@ class TestHaskellPatchGenerator:
         }
         
         analysis = {
-            "root_cause": "haskell_laziness_error",
+            "root_cause": "haskell_lazy_error",
             "subcategory": "laziness",
             "confidence": "high"
         }
@@ -285,7 +285,7 @@ class TestHaskellPatchGenerator:
         }
         
         analysis = {
-            "root_cause": "haskell_typeclass_error",
+            "root_cause": "haskell_type_class_error",
             "subcategory": "typeclass",
             "confidence": "high"
         }

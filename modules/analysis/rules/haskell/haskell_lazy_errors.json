@@ -224,8 +224,7 @@
       "source": "built_in",
       "rule_type": "error_detection",
       "dependencies": []
-    }
-  ],
+    },
     {
       "id": "haskell_stack_overflow",
       "pattern": "stack overflow",
@@ -312,7 +311,7 @@
     },
     {
       "id": "haskell_bottom_value",
-      "pattern": "Exception: (.*)undefined",
+      "pattern": "(\\*\\*\\* )?Exception: (.*)undefined",
       "type": "RuntimeError",
       "description": "Lazy evaluation of undefined/bottom value",
       "root_cause": "haskell_lazy_error",

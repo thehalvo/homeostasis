@@ -1,0 +1,48 @@
+
+// Safe permission handling for Android
+public class PermissionHelper {
+    private static final int PERMISSION_REQUEST_CODE = 1001;
+    
+    // Check if permission is granted
+    public static boolean hasPermission(Context context, String permission) {
+        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+    
+    // Request permission with rationale
+    public static void requestPermission(Activity activity, String permission, String rationale) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+            // Show rationale dialog
+            showPermissionRationale(activity, permission, rationale);
+        } else {
+            // Request permission directly
+            ActivityCompat.requestPermissions(activity, new String[]{permission}, PERMISSION_REQUEST_CODE);
+        }
+    }
+    
+    private static void showPermissionRationale(Activity activity, String permission, String rationale) {
+        new AlertDialog.Builder(activity)
+            .setTitle("Permission Required")
+            .setMessage(rationale)
+            .setPositiveButton("Grant", (dialog, which) -> {
+                ActivityCompat.requestPermissions(activity, new String[]{permission}, PERMISSION_REQUEST_CODE);
+            })
+            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+            .show();
+    }
+    
+    // Handle permission request result
+    public static boolean handlePermissionResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            return grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+        }
+        return false;
+    }
+    
+    // Example usage for camera permission
+    public static void requestCameraPermission(Activity activity) {
+        if (!hasPermission(activity, Manifest.permission.CAMERA)) {
+            requestPermission(activity, Manifest.permission.CAMERA, 
+                "Camera permission is required to take photos.");
+        }
+    }
+}

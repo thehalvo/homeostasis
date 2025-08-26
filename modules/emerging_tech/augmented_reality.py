@@ -284,10 +284,10 @@ class ARResilienceManager:
                 "keywords": ["ARKit", "ARWorldMap", "ARFaceTracking"]
             },
             ARPlatform.UNITY_AR: {
-                "imports": ["UnityEngine.XR.ARFoundation", "Unity.XR.ARSubsystems"],
-                "classes": ["ARSession", "ARSessionOrigin", "ARRaycastManager"],
+                "imports": ["UnityEngine.XR.ARFoundation", "Unity.XR.ARSubsystems", "UnityEngine"],
+                "classes": ["ARSession", "ARSessionOrigin", "ARRaycastManager", "ARRaycastHit"],
                 "file_extensions": [".cs"],
-                "keywords": ["ARFoundation", "XROrigin", "ARPlaneManager"]
+                "keywords": ["ARFoundation", "XROrigin", "ARPlaneManager", "raycastManager", "planeManager", "trackables", "MonoBehaviour"]
             },
             ARPlatform.WEBXR: {
                 "imports": ["webxr", "three.js", "aframe"],
@@ -349,17 +349,19 @@ class ARResilienceManager:
     
     def detect_platform(self, code_content: str, file_path: str) -> ARPlatform:
         """Detect which AR platform is being used"""
+        platform_scores = {}
+        
         for platform, detector in self.platform_detectors.items():
             score = 0
             
-            # Check imports
+            # Check imports (highest weight)
             for import_pattern in detector.get("imports", []):
                 if import_pattern in code_content:
-                    score += 3
+                    score += 5
             
             # Check class names
             for class_name in detector.get("classes", []):
-                if class_name in code_content:
+                if re.search(r'\b' + re.escape(class_name) + r'\b', code_content):
                     score += 2
             
             # Check keywords
@@ -371,8 +373,12 @@ class ARResilienceManager:
             if file_path and any(file_path.endswith(ext) for ext in detector.get("file_extensions", [])):
                 score += 2
             
-            if score >= 4:
-                return platform
+            platform_scores[platform] = score
+        
+        # Return the platform with highest score if it's above threshold
+        best_platform = max(platform_scores, key=platform_scores.get)
+        if platform_scores[best_platform] >= 4:
+            return best_platform
         
         return ARPlatform.UNKNOWN
     
@@ -380,6 +386,12 @@ class ARResilienceManager:
                         file_path: str, performance_metrics: Optional[ARPerformanceMetrics] = None) -> Optional[ARError]:
         """Analyze error and determine AR-specific issues"""
         platform = self.detect_platform(code_content, file_path)
+        
+        # Check performance metrics first if provided
+        if performance_metrics:
+            perf_error = self._check_performance_issues(platform if platform != ARPlatform.UNKNOWN else ARPlatform.ARCORE, performance_metrics)
+            if perf_error:
+                return perf_error
         
         if platform == ARPlatform.UNKNOWN:
             return self._check_generic_ar_errors(error_message, performance_metrics)
@@ -398,12 +410,6 @@ class ARResilienceManager:
                     timestamp=datetime.now()
                 )
         
-        # Check performance metrics if provided
-        if performance_metrics:
-            perf_error = self._check_performance_issues(platform, performance_metrics)
-            if perf_error:
-                return perf_error
-        
         return self._check_generic_ar_errors(error_message, performance_metrics)
     
     def _check_generic_ar_errors(self, error_message: str,
@@ -414,7 +420,7 @@ class ARResilienceManager:
             r"render.*error|draw.*call.*failed|shader.*error": ARErrorType.RENDERING_ERROR,
             r"calibrat.*fail|camera.*calibrat": ARErrorType.CALIBRATION_ERROR,
             r"anchor.*drift|anchor.*moved|position.*drift": ARErrorType.ANCHOR_DRIFT,
-            r"plane.*not.*found|surface.*detection.*fail": ARErrorType.PLANE_DETECTION_FAILURE,
+            r"plane.*not.*found|surface.*detection.*fail|no.*planes.*detected": ARErrorType.PLANE_DETECTION_FAILURE,
             r"lighting.*estimat|illumination.*fail": ARErrorType.LIGHTING_ESTIMATION_ERROR,
             r"occlusion.*error|depth.*fail": ARErrorType.OCCLUSION_ERROR,
             r"motion.*sick|nausea|dizzy|comfort": ARErrorType.MOTION_SICKNESS_RISK,

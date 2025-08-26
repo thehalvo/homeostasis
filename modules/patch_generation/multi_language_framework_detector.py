@@ -247,6 +247,30 @@ class MultiLanguageFrameworkDetector:
                 'comment_style': '//',
                 'indent_style': 'spaces',
                 'typical_indent': 4
+            },
+            LanguageType.ZIG: {
+                'imports': [
+                    r'const\s+\w+\s*=\s*@import\(',
+                    r'pub\s+const\s+\w+',
+                    r'const\s+std\s*=\s*@import\("std"\)',
+                ],
+                'syntax': [
+                    r'pub\s+fn\s+\w+\s*\(',
+                    r'fn\s+\w+\s*\(',
+                    r'const\s+\w+\s*=',
+                    r'var\s+\w+\s*:',
+                    r'defer\s+',
+                    r'try\s+',
+                    r'catch\s+',
+                    r'comptime\s+',
+                ],
+                'keywords': [
+                    'pub', 'fn', 'const', 'var', 'defer', 'try', 'catch',
+                    'comptime', 'struct', 'enum', 'union', 'if', 'else', 'while', 'for'
+                ],
+                'comment_style': '//',
+                'indent_style': 'spaces',
+                'typical_indent': 4
             }
         }
 
@@ -4552,6 +4576,7 @@ class MultiLanguageFrameworkDetector:
             '.yaml': LanguageType.YAML,
             '.json': LanguageType.JSON,
             '.jsonc': LanguageType.JSON,
+            '.dockerfile': LanguageType.DOCKERFILE,
         }
 
     def detect_language_and_frameworks(self, 
@@ -4574,8 +4599,15 @@ class MultiLanguageFrameworkDetector:
         confidence = 0.0
         
         if file_path:
-            file_ext = Path(file_path).suffix.lower()
-            if file_ext in self.file_extension_map:
+            file_path_obj = Path(file_path)
+            file_ext = file_path_obj.suffix.lower()
+            file_name = file_path_obj.name
+            
+            # Special handling for files without extensions like Dockerfile
+            if file_name == 'Dockerfile' or file_name.startswith('Dockerfile.'):
+                detected_language = LanguageType.DOCKERFILE
+                confidence = 0.9  # Very high confidence for Dockerfile
+            elif file_ext in self.file_extension_map:
                 detected_language = self.file_extension_map[file_ext]
                 confidence = 0.8  # High confidence from file extension
         
@@ -4583,7 +4615,11 @@ class MultiLanguageFrameworkDetector:
         if source_code and detected_language != LanguageType.UNKNOWN:
             # Validate and refine language detection using content analysis
             content_confidence = self._analyze_language_content(source_code, detected_language)
-            confidence = max(confidence, content_confidence)
+            # For Zig and other new languages with good pattern matches, boost confidence
+            if detected_language == LanguageType.ZIG and content_confidence > 0.3:
+                confidence = 0.95
+            else:
+                confidence = max(confidence, content_confidence)
         elif source_code:
             # Try to detect language from content alone
             detected_language, confidence = self._detect_language_from_content(source_code)

@@ -37,6 +37,19 @@
       "framework": "spring"
     },
     {
+      "id": "spring_bean_creation_error",
+      "pattern": "org\\.springframework\\.beans\\.factory\\.BeanCreationException(?:.*?Error creating bean with name '([^']+)'.*?)?",
+      "type": "BeanCreationException",
+      "description": "Spring could not create a bean instance",
+      "root_cause": "spring_bean_creation_error",
+      "suggestion": "Check the bean configuration and initialization. Ensure all dependencies are available, constructor arguments are correct, and initialization methods are properly implemented. Check for circular dependencies or missing required beans.",
+      "confidence": "high",
+      "severity": "high",
+      "category": "spring",
+      "framework": "spring",
+      "tags": ["bean", "configuration", "initialization"]
+    },
+    {
       "id": "spring_property_not_found",
       "pattern": "org\\.springframework\\.beans\\.factory\\.BeanCreationException.*?Could not resolve placeholder '([^']+)' in value.*?",
       "type": "BeanCreationException",

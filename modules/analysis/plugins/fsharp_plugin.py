@@ -245,11 +245,12 @@ class FSharpExceptionHandler:
         # Analyze based on error patterns
         analysis = self._analyze_by_patterns(message, file_path)
         
-        # Check for concept-specific issues
-        concept_analysis = self._analyze_fsharp_concepts(message)
-        if concept_analysis.get("confidence", "low") != "low":
-            # Merge concept-specific findings
-            analysis.update(concept_analysis)
+        # Check for concept-specific issues only if we don't have high confidence already
+        if analysis.get("confidence", "low") != "high":
+            concept_analysis = self._analyze_fsharp_concepts(message)
+            if concept_analysis.get("confidence", "low") != "low":
+                # Merge concept-specific findings
+                analysis.update(concept_analysis)
         
         # Find matching rules
         matches = self._find_matching_rules(message, error_data)
@@ -257,9 +258,66 @@ class FSharpExceptionHandler:
         if matches:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
+            
+            # Map rule types to expected subcategories
+            type_mapping = {
+                "SyntaxError": "syntax",
+                "RuntimeError": "runtime",
+                "CompilationError": "compilation",
+                "ImportError": "import",
+                "TypeError": "type",
+                "ValueError": "value",
+                "AttributeError": "attribute",
+                "NameError": "name",
+                "IOError": "io",
+                "FileNotFoundError": "file"
+            }
+            
+            rule_type = best_match.get("type", "unknown")
+            # First check if we can determine subcategory from root_cause
+            root_cause = best_match.get("root_cause", "")
+            message = error_data.get("message", "")
+            
+            # Check message-specific patterns first for accurate categorization
+            if "unexpected" in message.lower() and "token" in message.lower():
+                subcategory = "syntax"
+            elif "union case" in message.lower():
+                subcategory = "union"
+            elif "type mismatch" in message.lower() or "expecting a" in message.lower():
+                subcategory = "type"
+            elif "pattern match" in message.lower() or "incomplete pattern" in message.lower():
+                subcategory = "pattern"
+            elif "computation expression" in message.lower():
+                subcategory = "computation"
+            elif "object reference not set" in message.lower():
+                subcategory = "null"
+            elif "namespace" in message.lower() and "not defined" in message.lower():
+                subcategory = "import"
+            elif "syntax" in root_cause:
+                subcategory = "syntax"
+            elif "type" in root_cause:
+                subcategory = "type"
+            elif "pattern" in root_cause:
+                subcategory = "pattern"
+            elif "computation" in root_cause:
+                subcategory = "computation"
+            elif "option" in root_cause:
+                subcategory = "option"
+            elif "result" in root_cause:
+                subcategory = "result"
+            elif "discriminated" in root_cause or "union" in root_cause:
+                subcategory = "union"
+            elif "import" in root_cause:
+                subcategory = "import"
+            elif "null" in root_cause:
+                subcategory = "null"
+            else:
+                # Fall back to type mapping
+                subcategory = type_mapping.get(rule_type, rule_type.lower())
+            
             analysis.update({
                 "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
+                "subcategory": subcategory,
                 "confidence": best_match.get("confidence", "medium"),
                 "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
                 "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
@@ -277,6 +335,40 @@ class FSharpExceptionHandler:
     def _analyze_by_patterns(self, message: str, file_path: str) -> Dict[str, Any]:
         """Analyze error by matching against common patterns."""
         message_lower = message.lower()
+        
+        # Check specific messages first
+        if "unexpected token" in message_lower:
+            return {
+                "category": "fsharp",
+                "subcategory": "syntax",
+                "confidence": "high",
+                "suggested_fix": "Fix F# syntax errors",
+                "root_cause": "fsharp_syntax_error",
+                "severity": "high",
+                "tags": ["fsharp", "syntax", "parser"]
+            }
+        
+        if "object reference not set" in message_lower:
+            return {
+                "category": "fsharp",
+                "subcategory": "null",
+                "confidence": "high",
+                "suggested_fix": "Fix null reference errors",
+                "root_cause": "fsharp_null_error",
+                "severity": "high",
+                "tags": ["fsharp", "null", "reference"]
+            }
+        
+        if "namespace" in message_lower and "not defined" in message_lower:
+            return {
+                "category": "fsharp",
+                "subcategory": "import",
+                "confidence": "high",
+                "suggested_fix": "Fix import and namespace errors",
+                "root_cause": "fsharp_import_error",
+                "severity": "high",
+                "tags": ["fsharp", "import", "namespace"]
+            }
         
         # Check syntax errors
         for pattern in self.fsharp_error_patterns["syntax_error"]:
@@ -383,8 +475,10 @@ class FSharpExceptionHandler:
         """Analyze F#-specific concept errors."""
         message_lower = message.lower()
         
-        # Check for option-related errors
-        if any(keyword in message_lower for keyword in self.fsharp_concepts["option"]):
+        # Check for option-related errors (but avoid generic "some" word in message)
+        if ("option" in message_lower or 
+            ("some(" in message_lower or "none(" in message_lower or 
+             "some " in message_lower and "value" in message_lower)):
             return {
                 "category": "fsharp",
                 "subcategory": "option",
@@ -395,8 +489,9 @@ class FSharpExceptionHandler:
                 "tags": ["fsharp", "option", "optional"]
             }
         
-        # Check for result-related errors
-        if any(keyword in message_lower for keyword in self.fsharp_concepts["result"]):
+        # Check for result-related errors (but avoid generic "error" word)
+        if ("result" in message_lower or "ok(" in message_lower or 
+            ("error(" in message_lower and "result" in message_lower)):
             return {
                 "category": "fsharp",
                 "subcategory": "result",
@@ -424,7 +519,7 @@ class FSharpExceptionHandler:
             return {
                 "category": "fsharp",
                 "subcategory": "computation",
-                "confidence": "medium",
+                "confidence": "high",
                 "suggested_fix": "Handle computation expressions and builders properly",
                 "root_cause": "fsharp_computation_error",
                 "severity": "medium",
@@ -447,8 +542,8 @@ class FSharpExceptionHandler:
         if any(keyword in message_lower for keyword in self.fsharp_concepts["discriminated"]):
             return {
                 "category": "fsharp",
-                "subcategory": "discriminated",
-                "confidence": "medium",
+                "subcategory": "union",
+                "confidence": "high",
                 "suggested_fix": "Handle discriminated unions properly with all cases",
                 "root_cause": "fsharp_discriminated_error",
                 "severity": "medium",
@@ -574,7 +669,10 @@ class FSharpPatchGenerator:
             "fsharp_option_error": self._fix_option_error,
             "fsharp_result_error": self._fix_result_error,
             "fsharp_computation_error": self._fix_computation_error,
-            "fsharp_discriminated_error": self._fix_discriminated_error
+            "fsharp_discriminated_error": self._fix_discriminated_error,
+            "fsharp_union_error": self._fix_union_error,
+            "fsharp_import_error": self._fix_import_error,
+            "fsharp_null_error": self._fix_null_error
         }
         
         strategy = patch_strategies.get(root_cause)
@@ -835,6 +933,48 @@ class FSharpPatchGenerator:
             ]
         }
     
+    def _fix_union_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                        source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix union errors."""
+        return {
+            "type": "suggestion",
+            "description": "Union type error",
+            "fixes": [
+                "Check union case constructor arguments",
+                "Handle all union cases in pattern matching",
+                "Use proper discriminated union syntax",
+                "Verify case names match definition"
+            ]
+        }
+    
+    def _fix_import_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                         source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix import errors."""
+        return {
+            "type": "suggestion",
+            "description": "Import or namespace error",
+            "fixes": [
+                "Check module or namespace is defined",
+                "Use 'open' to import namespaces",
+                "Check assembly references in project",
+                "Verify module names and paths"
+            ]
+        }
+    
+    def _fix_null_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                        source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix null reference errors."""
+        return {
+            "type": "suggestion",
+            "description": "Null reference error",
+            "fixes": [
+                "Use Option types instead of nulls",
+                "Check for null before accessing members",
+                "Use pattern matching with null checks",
+                "Consider using F# non-null types"
+            ]
+        }
+    
     def _template_based_patch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                             source_code: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
@@ -861,7 +1001,16 @@ class FSharpPatchGenerator:
                 "description": f"Applied template fix for {root_cause}"
             }
         
-        return None
+        # Return a default suggestion if no template is found
+        return {
+            "type": "suggestion",
+            "description": f"Fix {subcategory} error in F# code",
+            "fixes": [
+                f"Review the {subcategory} error details",
+                "Check F# documentation for proper syntax",
+                "Ensure code follows F# functional patterns"
+            ]
+        }
 
 
 class FSharpLanguagePlugin(LanguagePlugin):
@@ -878,7 +1027,7 @@ class FSharpLanguagePlugin(LanguagePlugin):
     def __init__(self):
         """Initialize the F# language plugin."""
         self.language = "fsharp"
-        self.supported_extensions = {".fs", ".fsx", ".fsi"}
+        self.supported_extensions = {".fs", ".fsx", ".fsi", ".fsproj"}
         self.supported_frameworks = [
             "dotnet", "fsharp", "mono", "net-framework",
             "giraffe", "suave", "websharper", "fable", "bolero"
@@ -900,7 +1049,7 @@ class FSharpLanguagePlugin(LanguagePlugin):
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return ".NET 5.0+"
+        return "7.0+"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""

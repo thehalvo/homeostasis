@@ -33,6 +33,10 @@ class TestHealingRateLimiter(unittest.TestCase):
 
     def test_healing_cycle_limit(self):
         """Test healing cycle rate limiting."""
+        # Temporarily disable minimum interval to test rate limiting only
+        original_interval = self.config.get('min_healing_cycle_interval', 10)
+        self.rate_limiter.config['min_healing_cycle_interval'] = 0
+        
         # First cycle should be allowed
         self.assertTrue(self.rate_limiter.check_healing_cycle_limit())
         
@@ -44,6 +48,9 @@ class TestHealingRateLimiter(unittest.TestCase):
         
         # Fourth cycle should be blocked (exceeds limit of 3)
         self.assertFalse(self.rate_limiter.check_healing_cycle_limit())
+        
+        # Restore original interval
+        self.rate_limiter.config['min_healing_cycle_interval'] = original_interval
 
     def test_healing_cycle_minimum_interval(self):
         """Test minimum interval between healing cycles."""

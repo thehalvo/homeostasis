@@ -1,10 +1,11 @@
 {
+  "name": "kotlin_compose_errors",
   "description": "Jetpack Compose-specific errors and UI issues",
   "version": "1.0.0",
   "rules": [
     {
       "id": "kotlin_compose_recomposition_loop",
-      "pattern": ".*recomposition.*infinite.*loop.*|.*composition.*loop.*detected.*",
+      "pattern": ".*recomposition.*infinite.*loop.*|.*composition.*loop.*detected.*|.*many recompositions detected.*",
       "error_type": "InfiniteRecomposition",
       "description": "Infinite recomposition loop detected in Compose UI",
       "root_cause": "kotlin_compose_infinite_recomposition",

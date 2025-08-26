@@ -1,22 +1,11 @@
 {
+  "name": "kotlin_coroutines_errors",
   "description": "Kotlin Coroutines-specific errors and concurrency issues",
   "version": "1.0.0",
   "rules": [
     {
-      "id": "kotlin_cancellation_exception",
-      "pattern": "kotlinx\\.coroutines\\.CancellationException.*",
-      "error_type": "CancellationException",
-      "description": "Coroutine was cancelled during execution",
-      "root_cause": "kotlin_coroutine_cancelled",
-      "suggestion": "Handle CancellationException properly by cleaning up resources and re-throwing, or check Job.isActive before operations",
-      "confidence": "high",
-      "severity": "medium",
-      "category": "coroutines",
-      "framework": "coroutines"
-    },
-    {
       "id": "kotlin_timeout_cancellation",
-      "pattern": "kotlinx\\.coroutines\\.TimeoutCancellationException.*",
+      "pattern": "TimeoutCancellationException",
       "error_type": "TimeoutCancellationException",
       "description": "Coroutine operation timed out",
       "root_cause": "kotlin_coroutine_timeout",
@@ -27,12 +16,24 @@
       "framework": "coroutines"
     },
     {
+      "id": "kotlin_cancellation_exception",
+      "pattern": "CancellationException",
+      "error_type": "CancellationException",
+      "description": "Coroutine was cancelled during execution",
+      "root_cause": "kotlin_coroutine_cancelled",
+      "suggestion": "Handle CancellationException properly by cleaning up resources and re-throwing, or check Job.isActive before operations",
+      "confidence": "high",
+      "severity": "medium",
+      "category": "coroutines",
+      "framework": "coroutines"
+    },
+    {
       "id": "kotlin_job_cancellation",
       "pattern": ".*Job was cancelled.*|.*parent.*job.*cancelled.*",
       "error_type": "CancellationException",
       "description": "Parent job was cancelled, affecting child coroutines",
-      "root_cause": "kotlin_job_cancelled",
-      "suggestion": "Handle job cancellation gracefully, avoid starting new work from cancelled scope, use SupervisorJob for independent child failures",
+      "root_cause": "kotlin_coroutine_cancelled",
+      "suggestion": "Handle CancellationException gracefully, avoid starting new work from cancelled scope, use SupervisorJob for independent child failures",
       "confidence": "medium",
       "severity": "medium",
       "category": "coroutines",

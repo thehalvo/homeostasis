@@ -229,8 +229,8 @@ class TestKotlinPatchGenerator:
         
         assert patch["language"] == "kotlin"
         assert patch["root_cause"] == "kotlin_null_pointer"
-        assert "suggestion_code" in patch
-        assert "safe call operator" in patch["suggestion_code"]
+        assert "patch_code" in patch
+        assert "safe call operator" in patch["patch_code"].lower()
     
     def test_generate_coroutine_patch(self):
         """Test patch generation for coroutine cancellation."""

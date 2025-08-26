@@ -568,13 +568,43 @@ class JavaErrorAdapter(LanguageAdapter):
         Returns:
             Error data in the standard format
         """
+        # Parse exception field if present
+        error_type = ""
+        message = ""
+        
+        if "exception" in error_data:
+            # Parse combined exception string (e.g., "java.lang.NullPointerException: message")
+            exception_str = error_data["exception"]
+            if ": " in exception_str:
+                error_type, message = exception_str.split(": ", 1)
+            else:
+                error_type = exception_str
+        else:
+            # Use separate fields
+            error_type = error_data.get("error_type", error_data.get("exception_class", error_data.get("type", "")))
+            message = error_data.get("message", "")
+            
+            # Check if message contains a raw Java stack trace
+            if not error_type and message and "Exception in thread" in message:
+                # Parse error type from raw stack trace
+                # Format: Exception in thread "main" java.lang.NullPointerException
+                match = re.search(r'Exception in thread[^"]*"[^"]*"\s+(\S+)', message)
+                if match:
+                    error_type = match.group(1)
+                    # Extract the actual message (if any) after the exception type
+                    remaining = message[match.end():]
+                    if remaining.startswith(": "):
+                        actual_message = remaining[2:].split('\n')[0].strip()
+                        if actual_message:
+                            message = actual_message
+        
         # Create a standard error object
         standard_error = {
             "error_id": str(uuid.uuid4()),
             "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
             "language": "java",
-            "error_type": error_data.get("exception_class", ""),
-            "message": error_data.get("message", "")
+            "error_type": error_type,
+            "message": message
         }
         
         # Add Java version if available
@@ -582,11 +612,24 @@ class JavaErrorAdapter(LanguageAdapter):
             standard_error["language_version"] = error_data["java_version"]
         
         # Handle stack trace
-        if "stack_trace" in error_data:
+        stack_data = error_data.get("stack_trace") or error_data.get("stacktrace")
+        
+        # If no stack_data but message contains stack trace, extract it
+        if not stack_data and message and "\tat " in error_data.get("message", ""):
+            # Extract stack trace from message
+            full_message = error_data.get("message", "")
+            stack_lines = []
+            for line in full_message.split("\n"):
+                if "\tat " in line:
+                    stack_lines.append(line.strip())
+            if stack_lines:
+                stack_data = stack_lines
+        
+        if stack_data:
             # Java stack traces can be a string or a list
-            if isinstance(error_data["stack_trace"], str):
+            if isinstance(stack_data, str):
                 # Split into lines
-                stack_lines = error_data["stack_trace"].split("\n")
+                stack_lines = stack_data.split("\n")
                 
                 # Try to parse structured data from the stack trace
                 parsed_frames = self._parse_java_stack_trace(stack_lines)
@@ -595,13 +638,28 @@ class JavaErrorAdapter(LanguageAdapter):
                     standard_error["stack_trace"] = parsed_frames
                 else:
                     standard_error["stack_trace"] = stack_lines
-            elif isinstance(error_data["stack_trace"], list):
-                if all(isinstance(frame, dict) for frame in error_data["stack_trace"]):
+            elif isinstance(stack_data, list):
+                if all(isinstance(frame, dict) for frame in stack_data):
                     # Already in structured format
-                    standard_error["stack_trace"] = error_data["stack_trace"]
+                    standard_error["stack_trace"] = stack_data
                 else:
-                    # List of strings
-                    standard_error["stack_trace"] = error_data["stack_trace"]
+                    # List of strings - parse them
+                    parsed_frames = self._parse_java_stack_trace(stack_data)
+                    if parsed_frames:
+                        standard_error["stack_trace"] = parsed_frames
+                    else:
+                        standard_error["stack_trace"] = stack_data
+        else:
+            # No stack trace provided - set empty list
+            standard_error["stack_trace"] = []
+        
+        # Add file, line, column information if available
+        if "file" in error_data:
+            standard_error["file"] = error_data["file"]
+        if "line" in error_data:
+            standard_error["line"] = error_data["line"]
+        if "column" in error_data:
+            standard_error["column"] = error_data["column"]
         
         # Add framework information if available
         if "framework" in error_data:
@@ -609,6 +667,31 @@ class JavaErrorAdapter(LanguageAdapter):
             
             if "framework_version" in error_data:
                 standard_error["framework_version"] = error_data["framework_version"]
+        else:
+            # Try to detect framework from error type and stack trace
+            if error_type:
+                if "springframework" in error_type:
+                    standard_error["framework"] = "spring"
+                elif "hibernate" in error_type.lower():
+                    standard_error["framework"] = "hibernate"
+                elif "play" in error_type.lower():
+                    standard_error["framework"] = "play"
+                elif "struts" in error_type.lower():
+                    standard_error["framework"] = "struts"
+            
+            if "framework" not in standard_error and stack_data:
+                # Check stack trace for framework indicators
+                stack_str = str(stack_data)
+                if "org.springframework" in stack_str:
+                    standard_error["framework"] = "spring"
+                elif "javax.servlet" in stack_str or "jakarta.servlet" in stack_str:
+                    standard_error["framework"] = "servlet"
+                elif "org.hibernate" in stack_str:
+                    standard_error["framework"] = "hibernate"
+                elif "play.api" in stack_str or "play.mvc" in stack_str:
+                    standard_error["framework"] = "play"
+                elif "org.apache.struts" in stack_str:
+                    standard_error["framework"] = "struts"
         
         # Add request information if available
         if "request" in error_data:
@@ -641,6 +724,22 @@ class JavaErrorAdapter(LanguageAdapter):
         if "handled" in error_data:
             standard_error["handled"] = error_data["handled"]
         
+        # Add caused_by information if available
+        if "caused_by" in error_data:
+            # Recursively convert caused_by to standard format
+            standard_error["caused_by"] = self.to_standard_format(error_data["caused_by"])
+        
+        # Add suppressed exceptions if available (from try-with-resources)
+        if "suppressed" in error_data:
+            standard_error["suppressed"] = []
+            for suppressed in error_data["suppressed"]:
+                # Recursively convert each suppressed exception to standard format
+                standard_error["suppressed"].append(self.to_standard_format(suppressed))
+        
+        # Add compilation errors if available
+        if "errors" in error_data and error_type == "CompilationError":
+            standard_error["errors"] = error_data["errors"]
+        
         # Add additional Java-specific data
         java_specific = {}
         for key, value in error_data.items():
@@ -665,7 +764,7 @@ class JavaErrorAdapter(LanguageAdapter):
         # Create a Java error object
         java_error = {
             "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
-            "exception_class": standard_error.get("error_type", "java.lang.Exception"),
+            "exception": standard_error.get("error_type", "java.lang.Exception"),
             "message": standard_error.get("message", "")
         }
         
@@ -688,16 +787,20 @@ class JavaErrorAdapter(LanguageAdapter):
             if isinstance(stack_trace, list):
                 if all(isinstance(frame, str) for frame in stack_trace):
                     # Already in Java stack trace string format
-                    java_error["stack_trace"] = "\n".join(stack_trace)
+                    java_error["stacktrace"] = stack_trace
                 elif all(isinstance(frame, dict) for frame in stack_trace):
                     # Convert structured frames to Java stack trace format
-                    java_error["stack_trace"] = self._convert_frames_to_java_stack(
-                        standard_error["error_type"], 
-                        standard_error["message"], 
-                        stack_trace
-                    )
-                    # Also keep the structured version
-                    java_error["stack_frames"] = stack_trace
+                    stacktrace_lines = []
+                    for frame in stack_trace:
+                        class_name = frame.get("class", "Unknown")
+                        method = frame.get("function", "unknown")
+                        file = frame.get("file", "Unknown.java")
+                        line_num = frame.get("line", "?")
+                        
+                        # Format like a Java stack trace
+                        stacktrace_lines.append(f"at {class_name}.{method}({file}:{line_num})")
+                    
+                    java_error["stacktrace"] = stacktrace_lines
         
         # Add request information if available
         if "request" in standard_error:
@@ -733,33 +836,39 @@ class JavaErrorAdapter(LanguageAdapter):
         
         return java_error
     
-    def _parse_java_stack_trace(self, stack_lines: List[str]) -> List[Dict[str, Any]]:
+    def _parse_java_stack_trace(self, stack_data: Union[str, List[str]]) -> List[Dict[str, Any]]:
         """
         Parse a Java stack trace into structured frames.
         
         Args:
-            stack_lines: Java stack trace lines
+            stack_data: Java stack trace as string or list of lines
             
         Returns:
             Structured frames or None if parsing fails
         """
+        # Convert to list if string
+        if isinstance(stack_data, str):
+            stack_lines = stack_data.split('\n')
+        else:
+            stack_lines = stack_data
         frames = []
         
         # Java stack trace pattern: at package.Class.method(File.java:line)
-        frame_pattern = r'\s*at\s+([a-zA-Z0-9_.]+)\.([a-zA-Z0-9_$]+)\.([a-zA-Z0-9_$]+)\(([^:]+):(\d+)\)'
+        # Extended to handle com.example.StringProcessor.processString(StringProcessor.java:42)
+        frame_pattern = r'\s*at\s+((?:[a-zA-Z0-9_]+\.)*?)([a-zA-Z0-9_$]+)\.([a-zA-Z0-9_$]+)\(([^:]+):(\d+)\)'
         
         try:
             for line in stack_lines:
                 match = re.search(frame_pattern, line)
                 if match:
-                    package = match.group(1)
+                    package_prefix = match.group(1).rstrip('.') if match.group(1) else ""
                     class_name = match.group(2)
                     method = match.group(3)
                     file = match.group(4)
                     line_num = int(match.group(5))
                     
                     frames.append({
-                        "package": package,
+                        "package": package_prefix,
                         "class": class_name,
                         "function": method,
                         "file": file,
@@ -820,7 +929,7 @@ class GoErrorAdapter(LanguageAdapter):
             "error_id": str(uuid.uuid4()),
             "timestamp": error_data.get("timestamp", datetime.now().isoformat()),
             "language": "go",
-            "error_type": error_data.get("error_type", ""),
+            "error_type": error_data.get("type", error_data.get("error_type", "")),
             "message": error_data.get("message", "")
         }
         
@@ -828,12 +937,21 @@ class GoErrorAdapter(LanguageAdapter):
         if "go_version" in error_data:
             standard_error["language_version"] = error_data["go_version"]
         
-        # Handle stack trace
-        if "stack_trace" in error_data:
+        # Add file location information
+        if "file" in error_data:
+            standard_error["file"] = error_data["file"]
+        if "line" in error_data:
+            standard_error["line"] = error_data["line"]
+        if "column" in error_data:
+            standard_error["column"] = error_data["column"]
+        
+        # Handle stack trace (check both stack_trace and stacktrace)
+        if "stack_trace" in error_data or "stacktrace" in error_data:
+            stack_trace_data = error_data.get("stack_trace", error_data.get("stacktrace"))
             # Go stack traces can be a string or a list
-            if isinstance(error_data["stack_trace"], str):
+            if isinstance(stack_trace_data, str):
                 # Split into lines
-                stack_lines = error_data["stack_trace"].split("\n")
+                stack_lines = stack_trace_data.split("\n")
                 
                 # Try to parse structured data from the stack trace
                 parsed_frames = self._parse_go_stack_trace(stack_lines)
@@ -842,13 +960,17 @@ class GoErrorAdapter(LanguageAdapter):
                     standard_error["stack_trace"] = parsed_frames
                 else:
                     standard_error["stack_trace"] = stack_lines
-            elif isinstance(error_data["stack_trace"], list):
-                if all(isinstance(frame, dict) for frame in error_data["stack_trace"]):
+            elif isinstance(stack_trace_data, list):
+                if all(isinstance(frame, dict) for frame in stack_trace_data):
                     # Already in structured format
-                    standard_error["stack_trace"] = error_data["stack_trace"]
+                    standard_error["stack_trace"] = stack_trace_data
                 else:
-                    # List of strings
-                    standard_error["stack_trace"] = error_data["stack_trace"]
+                    # List of strings - try to parse them
+                    parsed_frames = self._parse_go_stack_trace(stack_trace_data)
+                    if parsed_frames:
+                        standard_error["stack_trace"] = parsed_frames
+                    else:
+                        standard_error["stack_trace"] = stack_trace_data
         
         # Add framework information if available
         if "framework" in error_data:
@@ -892,6 +1014,14 @@ class GoErrorAdapter(LanguageAdapter):
                 standard_error["additional_data"] = {}
             standard_error["additional_data"]["goroutine_id"] = error_data["goroutine_id"]
         
+        # Add goroutines list for deadlock errors
+        if "goroutines" in error_data:
+            standard_error["goroutines"] = error_data["goroutines"]
+        
+        # Add signal information if available
+        if "signal" in error_data:
+            standard_error["signal"] = error_data["signal"]
+        
         # Add handled flag if available
         if "handled" in error_data:
             standard_error["handled"] = error_data["handled"]
@@ -923,9 +1053,17 @@ class GoErrorAdapter(LanguageAdapter):
         # Create a Go error object
         go_error = {
             "timestamp": standard_error.get("timestamp", datetime.now().isoformat()),
-            "error_type": standard_error.get("error_type", "error"),
+            "type": standard_error.get("error_type", "error"),
             "message": standard_error.get("message", "")
         }
+        
+        # Add file location information
+        if "file" in standard_error:
+            go_error["file"] = standard_error["file"]
+        if "line" in standard_error:
+            go_error["line"] = standard_error["line"]
+        if "column" in standard_error:
+            go_error["column"] = standard_error["column"]
         
         # Convert severity to Go logging level
         if "severity" in standard_error:
@@ -1046,14 +1184,13 @@ class GoErrorAdapter(LanguageAdapter):
                             file_path = file_match.group(1)
                             line_num = int(file_match.group(2))
                             
-                            # Extract package and function names
+                            # Extract package and function names but keep full name for function field
                             func_parts = current_function.split('.')
                             package = ".".join(func_parts[:-1]) if len(func_parts) > 1 else ""
-                            func_name = func_parts[-1] if func_parts else current_function
                             
                             frames.append({
                                 "package": package,
-                                "function": func_name,
+                                "function": current_function,  # Keep full function name including package
                                 "file": file_path,
                                 "line": line_num,
                                 "goroutine_id": goroutine_id

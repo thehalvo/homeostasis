@@ -588,6 +588,13 @@ class DockerfilePatchGenerator:
             })
         
         if fixes:
+            # Return single suggestion if only one fix
+            if len(fixes) == 1:
+                return {
+                    "type": "suggestion",
+                    "description": fixes[0]["description"],
+                    "fix": fixes[0]["fix"]
+                }
             return {
                 "type": "multiple_suggestions",
                 "fixes": fixes,

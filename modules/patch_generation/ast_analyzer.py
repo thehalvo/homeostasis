@@ -339,6 +339,24 @@ class CodeVisitor(ast.NodeVisitor):
                 self.variables[var_name].usages.append(node)
         
         self.generic_visit(node)
+    
+    def visit_Attribute(self, node):
+        """Visit an Attribute node to track attribute access."""
+        # Check if the base value is a Name node (e.g., 'pd' in 'pd.DataFrame')
+        if isinstance(node.value, ast.Name) and isinstance(node.value.ctx, ast.Load):
+            var_name = node.value.id
+            # Create variable info if it doesn't exist
+            if var_name not in self.variables:
+                self.variables[var_name] = VariableInfo(
+                    name=var_name,
+                    assignments=[],
+                    usages=[],
+                    defined_in_scope=self.scope_stack[-1] if self.scope_stack else None
+                )
+            # Add this as a usage
+            self.variables[var_name].usages.append(node.value)
+        
+        self.generic_visit(node)
         
     def visit_Call(self, node):
         """Visit a Call node."""

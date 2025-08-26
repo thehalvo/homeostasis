@@ -1,8 +1,6 @@
-// Check array/slice bounds before accessing
-if index >= 0 && index < len(slice) {
-    // Safe to access slice[index]
-    value := slice[index]
+// Add bounds check before array access
+if ${index} < len(${array}) {
+    ${code_snippet}
 } else {
-    // Handle invalid index
-    return fmt.Errorf("index %d out of bounds (length %d)", index, len(slice))
+    return fmt.Errorf("index %d out of bounds for array of length %d", ${index}, len(${array}))
 }

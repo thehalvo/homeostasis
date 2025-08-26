@@ -633,6 +633,9 @@ class CPPExceptionHandler:
             elif error_data.get("error_type") == "HeapUseAfterFree":
                 suggestion = "Set pointers to NULL after freeing memory. Track object lifetimes to prevent use of freed memory"
         
+        # Include error_data in analysis for _map_to_root_cause
+        analysis["error_data"] = error_data
+        
         return {
             "root_cause": self._map_to_root_cause(analysis),
             "category": category,
@@ -1192,12 +1195,23 @@ class CPPLanguagePlugin(LanguagePlugin):
         
         # Handle dict input for backward compatibility
         if isinstance(error_message, dict):
-            # If a dict is passed, extract the message and merge with context
-            error_dict = error_message
-            error_message = error_dict.get("message", str(error_dict))
-            # Merge error_dict into context
-            context = {**error_dict, **context}
+            # When a dict is passed, use analyze_exception which handles the standard format
+            analysis = self.exception_handler.analyze_exception(error_message)
+            
+            # The analyze_exception method returns a different format, so we need to adapt it
+            # It already has root_cause, category, severity, and suggestion fields
+            analysis.update({
+                "plugin_name": self.name,
+                "plugin_version": self.version,
+                "analysis_timestamp": self._get_timestamp(),
+                "confidence_score": 0.8,  # Default confidence for exception analysis
+                "primary_category": analysis.get("category", "unknown"),
+                "fix_suggestions": [analysis.get("suggestion", "")] if analysis.get("suggestion") else []
+            })
+            
+            return analysis
         
+        # For string input, use the regular analyze_error flow
         # Use the exception handler to analyze the error
         analysis = self.exception_handler.analyze_error(error_message, context)
         

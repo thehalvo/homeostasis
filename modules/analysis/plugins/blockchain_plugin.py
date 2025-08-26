@@ -35,6 +35,106 @@ class BlockchainPlugin(LanguagePlugin):
         self.healer = BlockchainHealer()
         self._load_rules()
     
+    def get_language_id(self) -> str:
+        """Get the unique identifier for this language."""
+        return "blockchain"
+    
+    def get_language_name(self) -> str:
+        """Get the human-readable name of the language."""
+        return "Blockchain"
+    
+    def get_language_version(self) -> str:
+        """Get the version of the language supported by this plugin."""
+        return "1.0"
+    
+    def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze a blockchain-specific error."""
+        error_message = error_data.get("message", "")
+        code = error_data.get("code", "")
+        file_path = error_data.get("file_path", "")
+        
+        blockchain_error = self.healer.analyze_blockchain_error(
+            error_message, code, file_path
+        )
+        
+        if blockchain_error:
+            return {
+                "error_type": blockchain_error.error_type.value,
+                "platform": blockchain_error.platform.value,
+                "description": blockchain_error.description,
+                "suggested_fix": blockchain_error.suggested_fix,
+                "severity": blockchain_error.severity,
+                "gas_cost_impact": blockchain_error.gas_cost_impact,
+                "security_impact": blockchain_error.security_impact
+            }
+        
+        return {"error_type": "unknown", "description": "Could not analyze blockchain error"}
+    
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize error data to the standard Homeostasis format."""
+        return {
+            "type": error_data.get("type", "error"),
+            "message": error_data.get("message", ""),
+            "severity": error_data.get("severity", "medium"),
+            "platform": error_data.get("platform", "unknown"),
+            "transaction_hash": error_data.get("tx_hash"),
+            "block_number": error_data.get("block_number")
+        }
+    
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert standard format error data back to blockchain-specific format."""
+        return {
+            "type": standard_error.get("type", "error"),
+            "message": standard_error.get("message", ""),
+            "severity": standard_error.get("severity", "medium"),
+            "platform": standard_error.get("platform", "unknown"),
+            "tx_hash": standard_error.get("transaction_hash"),
+            "block_number": standard_error.get("block_number")
+        }
+    
+    def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate a fix for a blockchain error based on the analysis."""
+        error_type = analysis.get("error_type")
+        platform = analysis.get("platform")
+        
+        # Generate platform-specific fixes
+        if error_type == "gas_optimization":
+            return {
+                "type": "optimization",
+                "description": "Optimize gas usage",
+                "suggestions": [
+                    "Use storage variables efficiently",
+                    "Batch operations when possible",
+                    "Avoid loops over dynamic arrays",
+                    "Use events instead of storage for logs"
+                ]
+            }
+        elif error_type == "reentrancy_vulnerability":
+            return {
+                "type": "security_fix",
+                "description": "Add reentrancy protection",
+                "code": self._get_reentrancy_guard(platform)
+            }
+        elif error_type == "revert_error":
+            return {
+                "type": "error_handling",
+                "description": "Add proper error handling and revert messages",
+                "suggestions": [
+                    "Use require() with descriptive error messages",
+                    "Check all external call results",
+                    "Validate inputs before processing"
+                ]
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Review blockchain security best practices"
+        }
+    
+    def get_supported_frameworks(self) -> List[str]:
+        """Get the list of frameworks supported by this language plugin."""
+        return self.supported_platforms
+    
     def _load_rules(self):
         """Load blockchain-specific error rules"""
         rules_path = os.path.join(
@@ -337,6 +437,31 @@ class BlockchainPlugin(LanguagePlugin):
                 break
         
         return config if config else None
+    
+    def _get_reentrancy_guard(self, platform: str) -> str:
+        """Get platform-specific reentrancy guard code"""
+        guards = {
+            "ethereum": """// Add this modifier to your contract
+modifier nonReentrant() {
+    require(!_locked, "Reentrant call");
+    _locked = true;
+    _;
+    _locked = false;
+}
+
+// Add this state variable
+bool private _locked;
+
+// Or use OpenZeppelin's ReentrancyGuard
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";""",
+            "solana": """// In Solana, use account constraints
+#[account(
+    mut,
+    constraint = !ctx.accounts.state.locked @ ErrorCode::Reentrancy
+)]
+pub state: Account<'info, State>,"""
+        }
+        return guards.get(platform, "// Add reentrancy protection for your platform")
     
     def get_capabilities(self) -> Dict[str, Any]:
         """Return plugin capabilities"""

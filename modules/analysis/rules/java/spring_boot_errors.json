@@ -20,7 +20,7 @@
       "error_type": "BeanCreationException",
       "description": "Spring failed to create or initialize a bean",
       "root_cause": "spring_boot_bean_creation_failure",
-      "suggestion": "Check bean dependencies and constructor parameters. Verify all required dependencies are available. Review @Autowired annotations and circular dependencies.",
+      "suggestion": "Check bean configuration, dependencies and constructor parameters. Verify all required dependencies are available. Review @Autowired annotations and circular dependencies.",
       "confidence": "high",
       "severity": "high",
       "category": "spring-boot",

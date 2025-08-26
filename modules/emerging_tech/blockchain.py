@@ -74,7 +74,7 @@ class BlockchainHealer:
         return {
             "ethereum": [
                 {
-                    "pattern": r"Error:.*reverted.*require\((.*)\)",
+                    "pattern": r"revert|reverted|VM Exception.*revert",
                     "type": BlockchainErrorType.REVERT_ERROR,
                     "description": "Smart contract requirement not met",
                     "fix": "Check contract requirements and ensure conditions are met"
@@ -259,7 +259,7 @@ class BlockchainHealer:
                     "example": "uint256 cached = storageVar; // Use cached instead"
                 },
                 {
-                    "pattern": r"\.length.*in.*for.*loop",
+                    "pattern": r"for\s*\([^;]+;[^;]+<[^;]*\.length",
                     "suggestion": "Cache array length before loop",
                     "example": "uint256 len = array.length; for(uint i; i < len; i++)"
                 }
@@ -331,22 +331,23 @@ class BlockchainHealer:
                                        platform: BlockchainPlatform) -> Optional[BlockchainError]:
         """Check for generic blockchain errors"""
         generic_patterns = {
-            r"timeout|timed out": BlockchainErrorType.NETWORK_CONGESTION,
-            r"connection.*refused|connection.*error": BlockchainErrorType.NODE_SYNC_ERROR,
-            r"invalid.*signature|signature.*fail": BlockchainErrorType.CRYPTOGRAPHIC_ERROR,
-            r"permission.*denied|unauthorized": BlockchainErrorType.PERMISSION_ERROR,
-            r"invalid.*transaction|transaction.*invalid": BlockchainErrorType.VALIDATION_ERROR,
-            r"mempool|pending.*transaction": BlockchainErrorType.MEMPOOL_ERROR,
-            r"fork|reorg|reorganization": BlockchainErrorType.FORK_DETECTION
+            r"timeout|timed out": (BlockchainErrorType.NETWORK_CONGESTION, "medium"),
+            r"connection.*refused|connection.*error": (BlockchainErrorType.NODE_SYNC_ERROR, "high"),
+            r"invalid.*signature|signature.*fail": (BlockchainErrorType.CRYPTOGRAPHIC_ERROR, "critical"),
+            r"permission.*denied|unauthorized": (BlockchainErrorType.PERMISSION_ERROR, "high"),
+            r"invalid.*transaction|transaction.*invalid": (BlockchainErrorType.VALIDATION_ERROR, "medium"),
+            r"mempool|pending.*transaction": (BlockchainErrorType.MEMPOOL_ERROR, "low"),
+            r"fork|reorg|reorganization": (BlockchainErrorType.FORK_DETECTION, "critical")
         }
         
-        for pattern, error_type in generic_patterns.items():
+        for pattern, (error_type, severity) in generic_patterns.items():
             if re.search(pattern, error_message, re.IGNORECASE):
                 return BlockchainError(
                     error_type=error_type,
                     platform=platform,
                     description=f"Generic {error_type.value} detected",
-                    confidence=0.7
+                    confidence=0.7,
+                    severity=severity
                 )
         
         return None

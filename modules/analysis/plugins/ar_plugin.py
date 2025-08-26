@@ -40,6 +40,97 @@ class ARPlugin(LanguagePlugin):
         self.resilience_manager = ARResilienceManager()
         self._load_rules()
     
+    def get_language_id(self) -> str:
+        """Get the unique identifier for this language."""
+        return "ar"
+    
+    def get_language_name(self) -> str:
+        """Get the human-readable name of the language."""
+        return "Augmented Reality"
+    
+    def get_language_version(self) -> str:
+        """Get the version of the language supported by this plugin."""
+        return "1.0"
+    
+    def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze an AR-specific error."""
+        error_message = error_data.get("message", "")
+        code = error_data.get("code", "")
+        file_path = error_data.get("file_path", "")
+        
+        ar_error = self.resilience_manager.analyze_ar_error(
+            error_message, code, file_path
+        )
+        
+        if ar_error:
+            return {
+                "error_type": ar_error.error_type.value,
+                "platform": ar_error.platform.value,
+                "description": ar_error.description,
+                "suggested_fix": ar_error.suggested_fix,
+                "severity": ar_error.severity,
+                "confidence": ar_error.confidence
+            }
+        
+        return {"error_type": "unknown", "description": "Could not analyze AR error"}
+    
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize error data to the standard Homeostasis format."""
+        return {
+            "type": error_data.get("type", "error"),
+            "message": error_data.get("message", ""),
+            "severity": error_data.get("severity", "medium"),
+            "platform": error_data.get("platform", "unknown"),
+            "timestamp": error_data.get("timestamp", None)
+        }
+    
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert standard format error data back to AR-specific format."""
+        return {
+            "type": standard_error.get("type", "error"),
+            "message": standard_error.get("message", ""),
+            "severity": standard_error.get("severity", "medium"),
+            "platform": standard_error.get("platform", "unknown")
+        }
+    
+    def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate a fix for an AR error based on the analysis."""
+        error_type = analysis.get("error_type")
+        platform = analysis.get("platform")
+        
+        # Generate platform-specific fixes
+        if error_type == "tracking_lost":
+            return {
+                "type": "code_change",
+                "description": "Handle tracking loss gracefully",
+                "changes": [
+                    {
+                        "action": "add_error_handling",
+                        "code": self._get_tracking_loss_handler(platform)
+                    }
+                ]
+            }
+        elif error_type == "performance_degradation":
+            return {
+                "type": "optimization",
+                "description": "Optimize AR rendering performance",
+                "suggestions": [
+                    "Reduce polygon count in AR models",
+                    "Implement level-of-detail (LOD) system",
+                    "Optimize shader complexity",
+                    "Use occlusion culling"
+                ]
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Review AR best practices for your platform"
+        }
+    
+    def get_supported_frameworks(self) -> List[str]:
+        """Get the list of frameworks supported by this language plugin."""
+        return self.supported_platforms
+    
     def _load_rules(self):
         """Load AR-specific error rules"""
         rules_path = os.path.join(
@@ -126,7 +217,8 @@ class ARPlugin(LanguagePlugin):
             })
         
         # Check for performance issues
-        if re.search(r"Update\s*\(\s*\).*ARRaycast|FixedUpdate.*plane.*detection", code):
+        if (re.search(r"Update\s*\(\s*\)", code) and 
+            ("ARRaycast" in code or "Raycast" in code or "planeManager.trackables" in code)):
             issues.append({
                 "type": "PerformanceIssue",
                 "description": "Heavy AR operations in Update loop",
@@ -225,8 +317,12 @@ class ARPlugin(LanguagePlugin):
             })
         
         # Check for missing comfort settings
-        if re.search(r"smooth.*locomotion|continuous.*movement", code, re.IGNORECASE) and \
-           not re.search(r"comfort|vignette|tunnel.*vision", code, re.IGNORECASE):
+        # Remove single-line comments from code for better checking
+        code_without_comments = re.sub(r'//.*$', '', code, flags=re.MULTILINE)
+        
+        if (re.search(r"smooth.*locomotion|continuous.*movement|UpdateMovement.*position.*\+=", code, re.IGNORECASE) or
+            ("transform.position +=" in code and "moveDirection" in code)) and \
+           not re.search(r"comfort|vignette|tunnel.*vision", code_without_comments, re.IGNORECASE):
             practices.append({
                 "type": "ComfortSettings",
                 "description": "Smooth locomotion without comfort options",
@@ -442,6 +538,27 @@ class ARPlugin(LanguagePlugin):
             )
         except ValueError:
             return {"error": f"Unknown platform: {platform}"}
+    
+    def _get_tracking_loss_handler(self, platform: str) -> str:
+        """Get platform-specific tracking loss handler code"""
+        handlers = {
+            "arcore": """if (frame.getCamera().getTrackingState() != TrackingState.TRACKING) {
+    // Show tracking lost UI
+    showTrackingLostMessage();
+    return;
+}""",
+            "arkit": """if session.currentFrame?.camera.trackingState != .normal {
+    // Handle tracking issues
+    handleTrackingLoss()
+    return
+}""",
+            "unity_ar": """if (ARSession.state != ARSessionState.SessionTracking) {
+    // Display tracking lost overlay
+    trackingLostOverlay.SetActive(true);
+    return;
+}"""
+        }
+        return handlers.get(platform, "// Add tracking loss handling for your platform")
     
     def get_capabilities(self) -> Dict[str, Any]:
         """Return plugin capabilities"""

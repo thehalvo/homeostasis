@@ -8,7 +8,7 @@
       "error_type": "StreamAlreadyOperatedException",
       "description": "Stream has already been consumed or closed",
       "root_cause": "java_stream_reuse",
-      "suggestion": "Streams can only be used once. Create a new stream for each terminal operation. Use Supplier<Stream> for reusable stream creation.",
+      "suggestion": "Streams can only be used once and cannot be reused. Create a new stream for each terminal operation. Use Supplier<Stream> for reusable stream creation.",
       "confidence": "high",
       "severity": "high",
       "category": "streams",

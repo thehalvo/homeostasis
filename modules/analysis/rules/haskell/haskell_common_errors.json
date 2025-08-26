@@ -222,7 +222,7 @@
     {
       "id": "haskell_non_exhaustive_patterns",
       "pattern": "Non-exhaustive patterns in (function|case|pattern match)",
-      "type": "RuntimeError",
+      "type": "PatternError",
       "description": "Pattern matching is not exhaustive",
       "root_cause": "haskell_pattern_error",
       "suggestion": "Add missing patterns or use a catch-all pattern",

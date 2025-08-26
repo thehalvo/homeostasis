@@ -1,0 +1,40 @@
+
+// Safe activity lifecycle management
+public class SafeActivity extends AppCompatActivity {
+    private boolean isActivityDestroyed = false;
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        isActivityDestroyed = false;
+    }
+    
+    @Override
+    protected void onDestroy() {
+        isActivityDestroyed = true;
+        super.onDestroy();
+    }
+    
+    // Safe method to check if activity can perform UI operations
+    private boolean canPerformUIOperations() {
+        return !isActivityDestroyed && !isFinishing() && !isDestroyed();
+    }
+    
+    // Safe fragment transaction
+    private void safeFragmentTransaction(Fragment fragment, String tag) {
+        if (canPerformUIOperations()) {
+            getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment, tag)
+                .commitAllowingStateLoss(); // Use commitAllowingStateLoss to avoid IllegalStateException
+        }
+    }
+    
+    // Safe UI update from background thread
+    private void safeUIUpdate(Runnable updateTask) {
+        if (canPerformUIOperations()) {
+            runOnUiThread(updateTask);
+        }
+    }
+}

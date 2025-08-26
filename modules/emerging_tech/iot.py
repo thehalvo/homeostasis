@@ -387,7 +387,7 @@ class IoTDeviceMonitor:
         if file_path:
             if file_path.endswith(".ino"):
                 # Could be Arduino or ESP32
-                if any(esp_keyword in code_content for esp_keyword in ["ESP32", "WiFi.h", "esp_"]):
+                if any(esp_keyword in code_content for esp_keyword in ["ESP32", "WiFi.h", "<WiFi.h>", "esp_"]):
                     return IoTPlatform.ESP32
                 return IoTPlatform.ARDUINO
         
@@ -428,8 +428,13 @@ class IoTDeviceMonitor:
         platform = self.detect_platform(code_content, file_path)
         
         if platform == IoTPlatform.UNKNOWN:
+            # Check resource constraints first if metrics provided
+            if device_metrics:
+                resource_error = self._check_resource_constraints(platform, device_metrics)
+                if resource_error:
+                    return resource_error
             # Try generic IoT error detection
-            return self._check_generic_iot_errors(error_message, device_metrics)
+            return self._check_generic_iot_errors(error_message, device_metrics, platform)
         
         # Check platform-specific patterns
         platform_patterns = self.error_patterns.get(platform.value, [])
@@ -451,28 +456,44 @@ class IoTDeviceMonitor:
             if resource_error:
                 return resource_error
         
-        return self._check_generic_iot_errors(error_message, device_metrics)
+        return self._check_generic_iot_errors(error_message, device_metrics, platform)
     
     def _check_generic_iot_errors(self, error_message: str,
-                                 device_metrics: Optional[DeviceMetrics] = None) -> Optional[IoTError]:
+                                 device_metrics: Optional[DeviceMetrics] = None,
+                                 platform: IoTPlatform = IoTPlatform.UNKNOWN) -> Optional[IoTError]:
         """Check for generic IoT errors"""
         generic_patterns = {
-            r"connection.*lost|network.*unreachable|timeout": IoTErrorType.CONNECTIVITY_ERROR,
+            r"connection.*lost|network.*unreachable|WiFi.*timeout": IoTErrorType.CONNECTIVITY_ERROR,
             r"sensor.*fail|reading.*invalid|measurement.*error": IoTErrorType.SENSOR_FAILURE,
             r"actuator.*fail|control.*error|output.*fail": IoTErrorType.ACTUATOR_FAILURE,
-            r"memory.*full|heap.*exhausted|stack.*overflow": IoTErrorType.MEMORY_OVERFLOW,
+            r"memory.*full|heap.*exhausted|stack.*overflow|out.*of.*memory": IoTErrorType.MEMORY_OVERFLOW,
             r"power.*fail|battery.*low|voltage.*drop": IoTErrorType.POWER_MANAGEMENT,
             r"sync.*fail|time.*drift|clock.*error": IoTErrorType.SYNCHRONIZATION_ERROR,
             r"security.*breach|unauthorized|certificate.*invalid": IoTErrorType.SECURITY_BREACH,
-            r"firmware.*corrupt|update.*fail|boot.*error": IoTErrorType.FIRMWARE_ERROR
+            r"firmware.*corrupt|update.*fail|boot.*error|firmware.*verification.*fail": IoTErrorType.FIRMWARE_ERROR,
+            r"model.*inference|edge.*processing|ml.*timeout": IoTErrorType.EDGE_PROCESSING_ERROR
+        }
+        
+        # Define severity levels for different error types
+        severity_map = {
+            IoTErrorType.SECURITY_BREACH: "critical",
+            IoTErrorType.FIRMWARE_ERROR: "critical",
+            IoTErrorType.MEMORY_OVERFLOW: "high",
+            IoTErrorType.POWER_MANAGEMENT: "high",
+            IoTErrorType.EDGE_PROCESSING_ERROR: "medium",
+            IoTErrorType.CONNECTIVITY_ERROR: "medium",
+            IoTErrorType.SENSOR_FAILURE: "medium",
+            IoTErrorType.ACTUATOR_FAILURE: "medium",
+            IoTErrorType.SYNCHRONIZATION_ERROR: "low"
         }
         
         for pattern, error_type in generic_patterns.items():
             if re.search(pattern, error_message, re.IGNORECASE):
                 return IoTError(
                     error_type=error_type,
-                    platform=IoTPlatform.UNKNOWN,
+                    platform=platform,
                     description=f"Generic {error_type.value} detected",
+                    severity=severity_map.get(error_type, "medium"),
                     confidence=0.7,
                     timestamp=datetime.now()
                 )
@@ -506,7 +527,7 @@ class IoTDeviceMonitor:
                 description="Critical CPU usage detected",
                 resource_usage={"cpu": metrics.cpu_usage},
                 suggested_fix="Optimize processing or scale resources",
-                severity="high",
+                severity="critical",
                 confidence=0.9,
                 timestamp=datetime.now()
             )

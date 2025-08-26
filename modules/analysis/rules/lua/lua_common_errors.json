@@ -1,11 +1,12 @@
 {
+  "name": "lua_common_errors",
   "version": "1.0.0",
   "description": "Common Lua error patterns and fixes",
   "rules": [
     {
       "id": "lua_nil_access",
-      "category": "runtime",
-      "type": "nil_access",
+      "category": "lua",
+      "type": "runtime",
       "pattern": "attempt to (.*) nil",
       "severity": "high",
       "confidence": "high",
@@ -17,8 +18,8 @@
     },
     {
       "id": "lua_table_index_nil",
-      "category": "runtime",
-      "type": "table_access",
+      "category": "lua",
+      "type": "table",
       "pattern": "attempt to index.*nil",
       "severity": "high",
       "confidence": "high",
@@ -30,8 +31,8 @@
     },
     {
       "id": "lua_function_call_nil",
-      "category": "runtime",
-      "type": "function_call",
+      "category": "lua",
+      "type": "function",
       "pattern": "attempt to call.*nil",
       "severity": "high",
       "confidence": "high",
@@ -43,8 +44,8 @@
     },
     {
       "id": "lua_syntax_unexpected",
-      "category": "syntax",
-      "type": "syntax_error",
+      "category": "lua",
+      "type": "syntax",
       "pattern": "unexpected.*near",
       "severity": "high",
       "confidence": "high",
@@ -56,8 +57,8 @@
     },
     {
       "id": "lua_end_expected",
-      "category": "syntax",
-      "type": "syntax_error",
+      "category": "lua",
+      "type": "syntax",
       "pattern": "'end' expected",
       "severity": "high",
       "confidence": "high",
@@ -69,7 +70,7 @@
     },
     {
       "id": "lua_stack_overflow",
-      "category": "runtime",
+      "category": "lua",
       "type": "stack_overflow",
       "pattern": "stack overflow",
       "severity": "critical",
@@ -95,7 +96,7 @@
     },
     {
       "id": "lua_bad_argument",
-      "category": "runtime",
+      "category": "lua",
       "type": "argument_error",
       "pattern": "bad argument.*expected",
       "severity": "medium",
@@ -108,8 +109,8 @@
     },
     {
       "id": "lua_malformed_number",
-      "category": "syntax",
-      "type": "syntax_error",
+      "category": "lua",
+      "type": "syntax",
       "pattern": "malformed number",
       "severity": "medium",
       "confidence": "high",
@@ -121,8 +122,8 @@
     },
     {
       "id": "lua_unfinished_string",
-      "category": "syntax",
-      "type": "syntax_error",
+      "category": "lua",
+      "type": "syntax",
       "pattern": "unfinished string",
       "severity": "medium",
       "confidence": "high",

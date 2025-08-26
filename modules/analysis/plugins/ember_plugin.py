@@ -270,7 +270,7 @@ class EmberExceptionHandler:
         Returns:
             Analysis results with template-specific fixes
         """
-        message = error_data.get("message", "")
+        message = error_data.get("message", "").lower()
         
         # Common template error patterns
         template_patterns = {
@@ -280,6 +280,11 @@ class EmberExceptionHandler:
                 "severity": "error"
             },
             "helper not found": {
+                "cause": "ember_template_helper_not_found",
+                "fix": "Register the helper or check for typos in helper name",
+                "severity": "error"
+            },
+            "helper '": {
                 "cause": "ember_template_helper_not_found",
                 "fix": "Register the helper or check for typos in helper name",
                 "severity": "error"
@@ -344,12 +349,17 @@ class EmberExceptionHandler:
         
         # Ember Data specific error patterns
         data_patterns = {
-            "record is not found": {
+            "record not found": {
                 "cause": "ember_data_record_not_found",
                 "fix": "Check that the record exists before attempting to access it",
                 "severity": "error"
             },
-            "relationship is not loaded": {
+            "cannot find record": {
+                "cause": "ember_data_record_not_found",
+                "fix": "Check that the record exists before attempting to access it",
+                "severity": "error"
+            },
+            "is not loaded": {
                 "cause": "ember_data_relationship_not_loaded",
                 "fix": "Ensure relationships are properly defined and included in API responses",
                 "severity": "error"
@@ -409,7 +419,7 @@ class EmberExceptionHandler:
         Returns:
             Analysis results with Router-specific fixes
         """
-        message = error_data.get("message", "")
+        message = error_data.get("message", "").lower()
         stack_trace = str(error_data.get("stack_trace", "")).lower()
         
         # Ember Router specific error patterns
@@ -420,6 +430,11 @@ class EmberExceptionHandler:
                 "severity": "error"
             },
             "transition aborted": {
+                "cause": "ember_router_transition_aborted",
+                "fix": "Check transition hooks and ensure they don't abort unexpectedly",
+                "severity": "warning"
+            },
+            "transition was aborted": {
                 "cause": "ember_router_transition_aborted",
                 "fix": "Check transition hooks and ensure they don't abort unexpectedly",
                 "severity": "warning"
@@ -480,6 +495,11 @@ class EmberExceptionHandler:
         # Ember Octane specific error patterns
         octane_patterns = {
             "tracked properties": {
+                "cause": "ember_octane_tracked_properties_error",
+                "fix": "Ensure properties are properly marked as @tracked",
+                "severity": "error"
+            },
+            "@tracked": {
                 "cause": "ember_octane_tracked_properties_error",
                 "fix": "Ensure properties are properly marked as @tracked",
                 "severity": "error"
@@ -694,7 +714,7 @@ export default class {component_name.replace('-', '_').title()}Component extends
         """Fix Ember Data record not found errors."""
         return {
             "type": "suggestion",
-            "description": "Handle missing records gracefully",
+            "description": "Handle missing records gracefully when record not found",
             "fix_commands": [
                 "Add error handling when fetching records",
                 "Use findRecord with options { reload: true } to refresh from backend",
@@ -767,8 +787,10 @@ export default class YourComponent extends Component {
         """Fix route not found errors."""
         message = error_data.get("message", "")
         
-        # Try to extract route name
-        route_match = re.search(r"route ['\"]?([^'\"\s]+)['\"]? not found", message, re.IGNORECASE)
+        # Try to extract route name from various patterns
+        route_match = re.search(r"[Rr]oute not found:?\s*['\"]?([^'\"\s]+)['\"]?", message)
+        if not route_match:
+            route_match = re.search(r"['\"]([^'\"]+)['\"]\s*(?:route)?\s*not found", message, re.IGNORECASE)
         route_name = route_match.group(1) if route_match else "route-name"
         
         return {
@@ -865,7 +887,7 @@ export default class YourComponent extends Component {
 }""",
             "fix_commands": [
                 "Access component arguments via this.args.paramName",
-                "Don't destructure args in class body (use getters instead)",
+                "Don't destructure args in class body (use getters instead) - args are read-only",
                 "For default values, use getters with nullish coalescing",
                 "Remember args are read-only, don't modify them directly"
             ]

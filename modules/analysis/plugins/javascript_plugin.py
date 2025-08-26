@@ -763,7 +763,17 @@ class JavaScriptPatchGenerator:
         if not stack_trace:
             return None
         
-        # Look for line number in first frame
+        # Handle structured stack trace (dict format)
+        if isinstance(stack_trace[0], dict):
+            frame = stack_trace[0]
+            if "line" in frame:
+                return {
+                    "file": frame.get("file", "unknown"),
+                    "line": frame.get("line", 0),
+                    "column": frame.get("column", 0)
+                }
+        
+        # Look for line number in first frame (string format)
         first_frame = stack_trace[0] if isinstance(stack_trace[0], str) else str(stack_trace[0])
         
         # Common patterns for extracting line info
@@ -901,30 +911,29 @@ class JavaScriptLanguagePlugin(LanguagePlugin):
         }
         
         if error_type in js_error_types:
-            # Additional checks for JavaScript-specific patterns
-            message = error_data.get("message", "")
-            stack_trace = str(error_data.get("stack_trace", ""))
-            
-            js_patterns = [
-                r"at\s+\w+\s+\([^)]+\.js:\d+:\d+\)",  # Node.js stack trace
-                r"\w+@[^:]+\.js:\d+:\d+",             # Firefox stack trace
-                r"Cannot read property .* of undefined",  # Common JS error
-                r"is not a function",                 # Common JS error
-                r"is not defined"                     # Common JS error
-            ]
-            
-            for pattern in js_patterns:
-                if re.search(pattern, message + stack_trace):
-                    return True
+            return True
+        
+        # Check JavaScript-specific patterns in message or stack trace
+        message = error_data.get("message", "")
+        stack_trace = str(error_data.get("stack_trace", ""))
+        combined = message + stack_trace
+        
+        js_patterns = [
+            r"at\s+\w+\s+\([^)]+\.js:\d+:\d+\)",  # Node.js stack trace
+            r"\w+@[^:]+\.js:\d+:\d+",             # Firefox stack trace
+            r"Cannot read property .* of undefined",  # Common JS error
+            r"is not a function",                 # Common JS error
+            r"is not defined",                    # Common JS error
+            r"\.(js|mjs|cjs|jsx):"              # File extensions
+        ]
+        
+        for pattern in js_patterns:
+            if re.search(pattern, combined):
+                return True
         
         # Check runtime environment
         runtime = error_data.get("runtime", "").lower()
         if "node" in runtime or "javascript" in runtime or "v8" in runtime:
-            return True
-        
-        # Check file extensions in stack trace
-        stack_str = str(error_data.get("stack_trace", ""))
-        if re.search(r'\.(js|mjs|cjs|jsx):', stack_str):
             return True
         
         return False

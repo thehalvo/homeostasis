@@ -69,13 +69,13 @@ class QuantumErrorMitigator:
         return {
             "qiskit": [
                 {
-                    "pattern": r"CircuitError.*'Cannot unroll.*to.*basis.*gates'",
+                    "pattern": r"CircuitError.*Cannot unroll.*basis.*gates|Cannot.*unroll.*circuit",
                     "type": QuantumErrorType.COMPILATION_ERROR,
                     "description": "Circuit cannot be compiled to target backend basis gates",
                     "mitigation": "Use transpiler with appropriate optimization level or change basis gates"
                 },
                 {
-                    "pattern": r"QiskitError.*'No operational backend.*'",
+                    "pattern": r"QiskitError.*No operational backend|backend.*not.*available|Backend.*ibmq.*not found",
                     "type": QuantumErrorType.BACKEND_ERROR,
                     "description": "Selected quantum backend is not available",
                     "mitigation": "Switch to available backend or use simulator"
@@ -259,7 +259,7 @@ class QuantumErrorMitigator:
                                     framework: QuantumFramework) -> Optional[QuantumError]:
         """Check for generic quantum computing errors"""
         generic_patterns = {
-            r".*decoher.*|T1|T2": QuantumErrorType.DECOHERENCE,
+            r".*decoher.*|T1|T2|exceed.*coherence.*time": QuantumErrorType.DECOHERENCE,
             r".*measurement.*error|readout.*error": QuantumErrorType.MEASUREMENT_ERROR,
             r".*gate.*error|.*fidelity": QuantumErrorType.GATE_ERROR,
             r".*crosstalk|.*coupling": QuantumErrorType.CROSSTALK,

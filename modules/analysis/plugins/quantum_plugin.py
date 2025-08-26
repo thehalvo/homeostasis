@@ -29,6 +29,82 @@ class QuantumPlugin(LanguagePlugin):
         self.error_mitigator = QuantumErrorMitigator()
         self._load_rules()
     
+    def get_language_id(self) -> str:
+        """Get the unique identifier for this language."""
+        return "quantum"
+    
+    def get_language_name(self) -> str:
+        """Get the human-readable name of the language."""
+        return "Quantum Computing"
+    
+    def get_language_version(self) -> str:
+        """Get the version of the language supported by this plugin."""
+        return "1.0"
+    
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize error data to the standard Homeostasis format."""
+        return {
+            "type": error_data.get("type", "error"),
+            "message": error_data.get("message", ""),
+            "severity": error_data.get("severity", "medium"),
+            "framework": error_data.get("framework", "unknown"),
+            "qubit_count": error_data.get("qubit_count")
+        }
+    
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert standard format error data back to quantum-specific format."""
+        return {
+            "type": standard_error.get("type", "error"),
+            "message": standard_error.get("message", ""),
+            "severity": standard_error.get("severity", "medium"),
+            "framework": standard_error.get("framework", "unknown"),
+            "qubit_count": standard_error.get("qubit_count")
+        }
+    
+    def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate a fix for a quantum error based on the analysis."""
+        error_type = analysis.get("error_type")
+        framework = analysis.get("framework")
+        
+        # Generate framework-specific fixes
+        if error_type == "measurement_error":
+            return {
+                "type": "error_mitigation",
+                "description": "Apply error mitigation techniques",
+                "suggestions": [
+                    "Use readout error mitigation",
+                    "Apply zero-noise extrapolation",
+                    "Implement symmetry verification",
+                    "Use error correction codes"
+                ]
+            }
+        elif error_type == "decoherence":
+            return {
+                "type": "circuit_optimization",
+                "description": "Optimize circuit to reduce decoherence",
+                "suggestions": [
+                    "Reduce circuit depth",
+                    "Use noise-aware transpilation",
+                    "Apply dynamical decoupling",
+                    "Optimize gate sequences"
+                ]
+            }
+        elif error_type == "gate_error":
+            return {
+                "type": "gate_optimization",
+                "description": "Optimize gate implementation",
+                "code": self._get_optimized_gate(framework, context.get("gate_type"))
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Review quantum circuit design and error mitigation strategies"
+        }
+    
+    def get_supported_frameworks(self) -> List[str]:
+        """Get the list of frameworks supported by this language plugin."""
+        return self.supported_frameworks
+    
     def _load_rules(self):
         """Load quantum-specific error rules"""
         rules_path = os.path.join(
@@ -80,9 +156,35 @@ class QuantumPlugin(LanguagePlugin):
         
         return False
     
-    def analyze_error(self, error_message: str, code_context: str,
+    def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze a quantum-specific error."""
+        error_message = error_data.get("message", "")
+        code = error_data.get("code", "")
+        file_path = error_data.get("file_path", "")
+        
+        quantum_error = self.error_mitigator.analyze_quantum_error(
+            error_message, code, file_path
+        )
+        
+        if quantum_error:
+            mitigation_strategies = self.error_mitigator.suggest_mitigation(quantum_error)
+            return {
+                "error_type": quantum_error.error_type.value,
+                "framework": quantum_error.framework.value,
+                "description": quantum_error.description,
+                "suggested_mitigation": quantum_error.suggested_mitigation,
+                "confidence": quantum_error.confidence,
+                "mitigation_strategies": [
+                    {"name": s.name, "effectiveness": s.effectiveness}
+                    for s in mitigation_strategies
+                ]
+            }
+        
+        return {"error_type": "unknown", "description": "Could not analyze quantum error"}
+    
+    def _analyze_quantum_error(self, error_message: str, code_context: str,
                      file_path: str = None) -> Optional[Dict[str, Any]]:
-        """Analyze quantum error and suggest fixes"""
+        """Legacy method for backward compatibility"""
         quantum_error = self.error_mitigator.analyze_quantum_error(
             error_message, code_context, file_path or ""
         )
@@ -299,6 +401,29 @@ class QuantumPlugin(LanguagePlugin):
         }
         
         return snippets.get(framework, {}).get(optimization_type, "")
+    
+    def _get_optimized_gate(self, framework: str, gate_type: str) -> str:
+        """Get optimized gate implementation for framework"""
+        gate_optimizations = {
+            "qiskit": {
+                "cnot": """# Use native two-qubit gates
+from qiskit.transpiler.passes import Optimize1qGatesDecomposition
+optimized = Optimize1qGatesDecomposition().run(circuit)""",
+                "swap": """# Decompose SWAP into CNOTs
+circuit.cx(q0, q1)
+circuit.cx(q1, q0)
+circuit.cx(q0, q1)"""
+            },
+            "cirq": {
+                "cnot": """# Use native CZ gates
+circuit.append(cirq.H(q1))
+circuit.append(cirq.CZ(q0, q1))
+circuit.append(cirq.H(q1))""",
+                "swap": """# Use ISWAP decomposition
+circuit.append(cirq.ISWAP(q0, q1) ** 0.5)"""
+            }
+        }
+        return gate_optimizations.get(framework, {}).get(gate_type, "// Add optimized gate implementation")
     
     def get_capabilities(self) -> Dict[str, Any]:
         """Return plugin capabilities"""

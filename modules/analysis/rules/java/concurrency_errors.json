@@ -1,4 +1,7 @@
 {
+  "name": "Java Concurrency Errors",
+  "description": "Rules for detecting Java concurrency and threading errors",
+  "version": "1.0.0",
   "rules": [
     {
       "id": "deadlock_detected",
@@ -32,7 +35,7 @@
       "root_cause": "java_monitor_state_error",
       "suggestion": "Ensure wait(), notify(), and notifyAll() are called from within a synchronized block or method on the same object. Check that the monitor object is consistent across all synchronized sections.",
       "confidence": "high",
-      "severity": "high",
+      "severity": "critical",
       "category": "concurrency",
       "framework": "java"
     },

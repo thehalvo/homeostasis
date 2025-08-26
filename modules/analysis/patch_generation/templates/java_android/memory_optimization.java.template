@@ -1,0 +1,113 @@
+
+// Memory optimization patterns for Android
+public class MemoryOptimizer {
+    
+    // Bitmap handling with proper recycling and caching
+    public static class BitmapHelper {
+        private static LruCache<String, Bitmap> bitmapCache;
+        
+        static {
+            // Get max available VM memory
+            final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+            // Use 1/8th of the available memory for this cache
+            final int cacheSize = maxMemory / 8;
+            
+            bitmapCache = new LruCache<String, Bitmap>(cacheSize) {
+                @Override
+                protected int sizeOf(String key, Bitmap bitmap) {
+                    return bitmap.getByteCount() / 1024;
+                }
+                
+                @Override
+                protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
+                    if (oldValue != null && !oldValue.isRecycled()) {
+                        oldValue.recycle();
+                    }
+                }
+            };
+        }
+        
+        // Load bitmap with proper scaling
+        public static Bitmap loadScaledBitmap(String path, int reqWidth, int reqHeight) {
+            String cacheKey = path + "_" + reqWidth + "_" + reqHeight;
+            Bitmap cached = bitmapCache.get(cacheKey);
+            if (cached != null) {
+                return cached;
+            }
+            
+            // First decode with inJustDecodeBounds=true to check dimensions
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(path, options);
+            
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+            
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+            
+            if (bitmap != null) {
+                bitmapCache.put(cacheKey, bitmap);
+            }
+            
+            return bitmap;
+        }
+        
+        private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+            final int height = options.outHeight;
+            final int width = options.outWidth;
+            int inSampleSize = 1;
+            
+            if (height > reqHeight || width > reqWidth) {
+                final int halfHeight = height / 2;
+                final int halfWidth = width / 2;
+                
+                while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                    inSampleSize *= 2;
+                }
+            }
+            
+            return inSampleSize;
+        }
+        
+        public static void clearCache() {
+            if (bitmapCache != null) {
+                bitmapCache.evictAll();
+            }
+        }
+    }
+    
+    // Weak reference pattern to avoid memory leaks
+    public static class WeakReferenceHelper {
+        private WeakReference<Activity> activityRef;
+        
+        public WeakReferenceHelper(Activity activity) {
+            this.activityRef = new WeakReference<>(activity);
+        }
+        
+        public Activity getActivity() {
+            return activityRef != null ? activityRef.get() : null;
+        }
+        
+        public boolean isActivityValid() {
+            Activity activity = getActivity();
+            return activity != null && !activity.isFinishing() && !activity.isDestroyed();
+        }
+    }
+    
+    // Memory-efficient list operations
+    public static void optimizeListView(ListView listView) {
+        // Enable view recycling
+        listView.setRecyclerListener(new AbsListView.RecyclerListener() {
+            @Override
+            public void onMovedToScrapHeap(View view) {
+                // Clean up any resources when view is recycled
+                ImageView imageView = view.findViewById(R.id.image);
+                if (imageView != null) {
+                    imageView.setImageDrawable(null);
+                }
+            }
+        });
+    }
+}

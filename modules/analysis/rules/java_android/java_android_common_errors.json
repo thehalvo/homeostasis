@@ -1,0 +1,228 @@
+{
+  "name": "Java Android Common Errors",
+  "description": "Rules for detecting common Android Java errors and exceptions",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "activity_not_found",
+      "pattern": "Unable to find explicit activity class|ActivityNotFoundException",
+      "category": "java_android",
+      "subcategory": "activity",
+      "root_cause": "activity_not_found",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Declare the activity in AndroidManifest.xml or check the intent action",
+      "tags": [
+        "android",
+        "activity",
+        "manifest",
+        "intent"
+      ],
+      "reliability": "high"
+    },
+    {
+      "id": "permission_denied",
+      "pattern": "Permission denied|SecurityException.*permission|java.lang.SecurityException",
+      "category": "java_android",
+      "subcategory": "permissions",
+      "root_cause": "android_permission_denied",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Add required permission to AndroidManifest.xml and request runtime permissions",
+      "tags": [
+        "android",
+        "permissions",
+        "security",
+        "manifest"
+      ],
+      "reliability": "high"
+    },
+    {
+      "id": "out_of_memory",
+      "pattern": "OutOfMemoryError|GC.*overhead.*limit.*exceeded|java.lang.OutOfMemoryError",
+      "category": "java_android",
+      "subcategory": "memory",
+      "root_cause": "android_out_of_memory",
+      "confidence": "high",
+      "severity": "critical",
+      "suggestion": "Optimize memory usage, reduce bitmap sizes, implement proper lifecycle management",
+      "tags": [
+        "android",
+        "memory",
+        "performance",
+        "lifecycle"
+      ],
+      "reliability": "high"
+    },
+    {
+      "id": "illegal_state_activity",
+      "pattern": "IllegalStateException.*Activity.*destroyed|IllegalStateException.*Can not perform.*after onSaveInstanceState",
+      "category": "java_android",
+      "subcategory": "lifecycle",
+      "root_cause": "activity_illegal_state",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check activity lifecycle state before performing UI operations",
+      "tags": [
+        "android",
+        "activity",
+        "lifecycle",
+        "state"
+      ],
+      "reliability": "high"
+    },
+    {
+      "id": "fragment_not_attached",
+      "pattern": "Fragment.*not attached to activity|IllegalStateException.*Fragment.*not attached",
+      "category": "java_android",
+      "subcategory": "fragment",
+      "root_cause": "java_android_fragment_not_attached",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check if fragment is attached before accessing activity or context",
+      "tags": [
+        "android",
+        "fragment",
+        "lifecycle",
+        "activity"
+      ],
+      "reliability": "high"
+    },
+    {
+      "id": "view_not_found",
+      "pattern": "findViewById.*returned null|NullPointerException.*findViewById",
+      "category": "java_android",
+      "subcategory": "view",
+      "root_cause": "view_not_found",
+      "confidence": "medium",
+      "severity": "error",
+      "suggestion": "Check view ID exists in layout and setContentView is called",
+      "tags": [
+        "android",
+        "view",
+        "layout",
+        "ui"
+      ],
+      "reliability": "medium"
+    },
+    {
+      "id": "network_on_main_thread",
+      "pattern": "NetworkOnMainThreadException|StrictMode policy violation.*network",
+      "category": "java_android",
+      "subcategory": "threading",
+      "root_cause": "network_on_main_thread",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Move network operations to background thread using AsyncTask or other mechanisms",
+      "tags": [
+        "android",
+        "networking",
+        "threading",
+        "main-thread"
+      ],
+      "reliability": "high"
+    },
+    {
+      "id": "resource_not_found",
+      "pattern": "Resources\\\\$NotFoundException|android.content.res.Resources\\\\$NotFoundException",
+      "category": "java_android",
+      "subcategory": "resources",
+      "root_cause": "android_resource_not_found",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check resource exists in appropriate density/configuration folder",
+      "tags": [
+        "android",
+        "resources",
+        "configuration",
+        "assets"
+      ],
+      "reliability": "high"
+    },
+    {
+      "id": "api_compatibility_issue",
+      "pattern": "NoSuchMethodError.*android|java.lang.NoSuchMethodError.*Landroid",
+      "category": "java_android",
+      "subcategory": "sdk",
+      "root_cause": "java_android_api_compatibility",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check minimum SDK version and use Build.VERSION.SDK_INT for API compatibility",
+      "tags": [
+        "android",
+        "api",
+        "compatibility",
+        "sdk"
+      ],
+      "reliability": "high"
+    },
+    {
+      "id": "background_limit_violation",
+      "pattern": "Background start not allowed|IllegalStateException.*startService.*background|Not allowed to start service Intent.*app is in background",
+      "category": "java_android",
+      "subcategory": "service",
+      "root_cause": "java_android_background_limit_violation",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Use foreground service or WorkManager for background operations on Android O+",
+      "tags": [
+        "android",
+        "service",
+        "background",
+        "api26"
+      ],
+      "reliability": "high"
+    },
+    {
+      "id": "activity_lifecycle_violation",
+      "pattern": "IllegalStateException.*Activity.*destroyed|Can not perform this action after onSaveInstanceState",
+      "category": "java_android",
+      "subcategory": "lifecycle",
+      "root_cause": "java_android_lifecycle_violation",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check if (!isDestroyed() && !isFinishing()) before UI operations",
+      "tags": [
+        "android",
+        "activity",
+        "lifecycle",
+        "state"
+      ],
+      "reliability": "high"
+    },
+    {
+      "id": "view_not_found_npe",
+      "pattern": "NullPointerException.*findViewById|attempt to invoke virtual method.*on a null object reference.*findViewById",
+      "category": "java_android",
+      "subcategory": "view",
+      "root_cause": "java_android_view_not_found",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check view ID exists in layout and setContentView is called before findViewById",
+      "tags": [
+        "android",
+        "view",
+        "layout",
+        "null"
+      ],
+      "reliability": "high"
+    },
+    {
+      "id": "bad_token_exception",
+      "pattern": "BadTokenException.*token.*null|Unable to add window.*token null|WindowManager\\$BadTokenException",
+      "category": "java_android",
+      "subcategory": "window",
+      "root_cause": "java_android_bad_token",
+      "confidence": "high",
+      "severity": "error",
+      "suggestion": "Check activity context is valid and not null when showing dialogs or windows. Use valid context/token for window operations",
+      "tags": [
+        "android",
+        "window",
+        "dialog",
+        "token"
+      ],
+      "reliability": "high"
+    }
+  ]
+}

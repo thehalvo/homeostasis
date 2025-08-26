@@ -1,0 +1,88 @@
+
+// Safe view operations to prevent common Android UI errors
+public class SafeViewHelper {
+    
+    // Safe findViewById with null checking
+    public static <T extends View> T safeFindViewById(Activity activity, @IdRes int id, Class<T> clazz) {
+        if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
+            return null;
+        }
+        
+        View view = activity.findViewById(id);
+        if (view != null && clazz.isInstance(view)) {
+            return clazz.cast(view);
+        }
+        
+        Log.w("SafeViewHelper", "View with id " + id + " not found or wrong type");
+        return null;
+    }
+    
+    // Safe findViewById for fragments
+    public static <T extends View> T safeFindViewById(View parentView, @IdRes int id, Class<T> clazz) {
+        if (parentView == null) {
+            return null;
+        }
+        
+        View view = parentView.findViewById(id);
+        if (view != null && clazz.isInstance(view)) {
+            return clazz.cast(view);
+        }
+        
+        Log.w("SafeViewHelper", "View with id " + id + " not found or wrong type");
+        return null;
+    }
+    
+    // Safe text setting with null checks
+    public static void safeSetText(TextView textView, String text) {
+        if (textView != null) {
+            textView.setText(text != null ? text : "");
+        }
+    }
+    
+    // Safe image setting with null checks
+    public static void safeSetImageResource(ImageView imageView, @DrawableRes int resId) {
+        if (imageView != null && resId != 0) {
+            try {
+                imageView.setImageResource(resId);
+            } catch (Resources.NotFoundException e) {
+                Log.e("SafeViewHelper", "Resource not found: " + resId, e);
+            }
+        }
+    }
+    
+    // Safe visibility setting
+    public static void safeSetVisibility(View view, int visibility) {
+        if (view != null) {
+            view.setVisibility(visibility);
+        }
+    }
+    
+    // Safe click listener setting
+    public static void safeSetOnClickListener(View view, View.OnClickListener listener) {
+        if (view != null) {
+            view.setOnClickListener(listener);
+        }
+    }
+    
+    // Safe layout parameter modification
+    public static void safeUpdateLayoutParams(View view, Function<ViewGroup.LayoutParams, ViewGroup.LayoutParams> updater) {
+        if (view != null && view.getLayoutParams() != null) {
+            ViewGroup.LayoutParams params = view.getLayoutParams();
+            ViewGroup.LayoutParams updatedParams = updater.apply(params);
+            if (updatedParams != null) {
+                view.setLayoutParams(updatedParams);
+            }
+        }
+    }
+    
+    // Safe view animation
+    public static void safeAnimateView(View view, Animator animator) {
+        if (view != null && animator != null) {
+            // Check if view is attached to window
+            if (view.isAttachedToWindow()) {
+                animator.setTarget(view);
+                animator.start();
+            }
+        }
+    }
+}

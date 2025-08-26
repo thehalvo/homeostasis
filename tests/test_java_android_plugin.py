@@ -16,7 +16,7 @@ import os
 # Add the modules directory to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules'))
 
-from analysis.plugins.java_plugin import JavaLanguagePlugin, JavaExceptionHandler
+from analysis.plugins.java_android_plugin import AndroidJavaLanguagePlugin, AndroidJavaExceptionHandler
 
 
 class TestJavaAndroidPlugin(unittest.TestCase):
@@ -24,8 +24,8 @@ class TestJavaAndroidPlugin(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        self.plugin = JavaLanguagePlugin()
-        self.exception_handler = JavaExceptionHandler()
+        self.plugin = AndroidJavaLanguagePlugin()
+        self.exception_handler = AndroidJavaExceptionHandler()
     
     def test_android_activity_not_found_detection(self):
         """Test detection of ActivityNotFoundException."""
@@ -294,7 +294,7 @@ class TestJavaAndroidIntegration(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        self.plugin = JavaLanguagePlugin()
+        self.plugin = AndroidJavaLanguagePlugin()
     
     def test_error_normalization_android(self):
         """Test error normalization for Android errors."""
@@ -328,7 +328,7 @@ class TestJavaAndroidIntegration(unittest.TestCase):
         analysis = self.plugin.analyze_error(error_data)
         
         # Generate a fix
-        context = {"framework": "android"}
+        context = {"framework": "android", "code_snippet": "dialog.show();"}
         patch = self.plugin.generate_fix(analysis, context)
         
         # Verify the complete flow

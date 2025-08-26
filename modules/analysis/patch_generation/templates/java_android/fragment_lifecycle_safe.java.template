@@ -1,0 +1,54 @@
+
+// Safe fragment lifecycle management
+public class SafeFragment extends Fragment {
+    
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
+    
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_layout, container, false);
+    }
+    
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Safe to access views here
+        initViews(view);
+    }
+    
+    // Safe method to check if fragment is properly attached
+    private boolean isFragmentSafe() {
+        return isAdded() && !isDetached() && !isRemoving() && getActivity() != null;
+    }
+    
+    // Safe context access
+    private Context getSafeContext() {
+        if (isFragmentSafe()) {
+            return requireContext();
+        }
+        return null;
+    }
+    
+    // Safe activity access
+    private Activity getSafeActivity() {
+        if (isFragmentSafe()) {
+            return requireActivity();
+        }
+        return null;
+    }
+    
+    // Safe method call that requires context
+    private void performActionSafely() {
+        Context context = getSafeContext();
+        if (context != null) {
+            // Perform action with context
+        }
+    }
+    
+    private void initViews(View view) {
+        // Initialize views safely
+    }
+}

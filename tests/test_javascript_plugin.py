@@ -209,7 +209,7 @@ class TestJavaScriptPatchGenerator:
         error_data = {
             "error_type": "TypeError",
             "message": "Cannot read property 'id' of undefined",
-            "stack_trace": [{"function": "main", "file": "app.js", "line": 10, "column": 5}]
+            "stack_trace": [{"function": "getUser", "file": "app.js", "line": 3, "column": 12}]
         }
         
         analysis = {
@@ -233,7 +233,7 @@ class TestJavaScriptPatchGenerator:
         error_data = {
             "error_type": "TypeError",
             "message": "someFunction is not a function",
-            "stack_trace": [{"function": "main", "file": "app.js", "line": 15, "column": 3}]
+            "stack_trace": [{"function": "main", "file": "app.js", "line": 2, "column": 19}]
         }
         
         analysis = {
@@ -278,7 +278,7 @@ class TestJavaScriptPatchGenerator:
         error_data = {
             "error_type": "UnhandledPromiseRejection",
             "message": "Uncaught (in promise) Error: API failed",
-            "stack_trace": [{"function": "fetchData", "file": "app.js", "line": 20, "column": 8}]
+            "stack_trace": [{"function": "fetchData", "file": "app.js", "line": 2, "column": 20}]
         }
         
         analysis = {

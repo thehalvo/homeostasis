@@ -69,20 +69,13 @@ class HaskellExceptionHandler:
             ],
             "compilation_error": [
                 r"Not in scope",
-                r"Module.*?not found",
-                r"Could not find module",
-                r"Ambiguous module name",
-                r"hidden.*?module",
                 r"duplicate.*?definition",
                 r"orphan.*?instance",
-                r"overlapping.*?instance",
-                r"Missing.*?module"
+                r"overlapping.*?instance"
             ],
             "runtime_error": [
                 r"Exception",
-                r"*** Exception",
-                r"Non-exhaustive patterns",
-                r"Prelude.*?undefined",
+                r"\*\*\* Exception",
                 r"divide by zero",
                 r"arithmetic.*?overflow",
                 r"arithmetic.*?underflow",
@@ -149,7 +142,7 @@ class HaskellExceptionHandler:
             "higher_order": ["higher order", "function", "lambda", "closure"],
             "list": ["list", "[]", "head", "tail", "cons"],
             "maybe": ["maybe", "just", "nothing", "optional"],
-            "either": ["either", "left", "right", "error"],
+            "either": ["either", "left", "right"],
             "io": ["io", "monad", "print", "read", "file"],
             "recursive": ["recursive", "recursion", "fix", "loop"]
         }
@@ -232,12 +225,41 @@ class HaskellExceptionHandler:
         # Find matching rules
         matches = self._find_matching_rules(message, error_data)
         
-        if matches:
+        # Only update from rules if we don't have a high-confidence concept match
+        if matches and not (concept_analysis.get("confidence", "low") == "high"):
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
+            
+            # Map rule types to expected subcategories
+            type_mapping = {
+                "SyntaxError": "syntax",
+                "RuntimeError": "runtime",
+                "CompilationError": "compilation",
+                "ImportError": "import",
+                "TypeError": "type",
+                "ValueError": "value",
+                "AttributeError": "attribute",
+                "NameError": "name",
+                "IOError": "io",
+                "FileNotFoundError": "file",
+                "PatternError": "pattern"
+            }
+            
+            rule_type = best_match.get("type", "unknown")
+            subcategory = type_mapping.get(rule_type, rule_type.lower())
+            
+            # Override subcategory based on root_cause for specific error types
+            root_cause = best_match.get("root_cause", "")
+            if "monad_error" in root_cause:
+                subcategory = "monad"
+            elif "typeclass_error" in root_cause:
+                subcategory = "typeclass"
+            elif "lazy_error" in root_cause:
+                subcategory = "lazy"
+            
             analysis.update({
                 "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
+                "subcategory": subcategory,
                 "confidence": best_match.get("confidence", "medium"),
                 "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
                 "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
@@ -246,6 +268,12 @@ class HaskellExceptionHandler:
                 "tags": best_match.get("tags", []),
                 "all_matches": matches
             })
+        
+        # Special handling for lazy evaluation indicators (overrides rules)
+        if "undefined" in message.lower() and ("exception" in message.lower() or "bottom" in message.lower()):
+            analysis["subcategory"] = "laziness"
+            analysis["tags"] = analysis.get("tags", []) + ["laziness", "bottom"]
+            analysis["root_cause"] = "haskell_lazy_error"
         
         analysis["file_path"] = file_path
         analysis["line_number"] = line_number
@@ -390,7 +418,7 @@ class HaskellExceptionHandler:
         if any(keyword in message_lower for keyword in self.haskell_concepts["type_class"]):
             return {
                 "category": "haskell",
-                "subcategory": "type_class",
+                "subcategory": "typeclass",
                 "confidence": "high",
                 "suggested_fix": "Fix type class instances and constraints",
                 "root_cause": "haskell_type_class_error",
@@ -588,7 +616,7 @@ class HaskellPatchGenerator:
         if "parse error" in message.lower():
             return {
                 "type": "suggestion",
-                "description": "Haskell parse error",
+                "description": "Haskell syntax parse error",
                 "fixes": [
                     "Check for missing parentheses or brackets",
                     "Verify proper indentation in do-blocks and let/where clauses",
@@ -775,7 +803,7 @@ class HaskellPatchGenerator:
         """Fix lazy evaluation errors."""
         return {
             "type": "suggestion",
-            "description": "Lazy evaluation error",
+            "description": "Laziness evaluation error",
             "fixes": [
                 "Use strict evaluation with seq or deepseq",
                 "Add bang patterns for strictness",
@@ -803,7 +831,7 @@ class HaskellPatchGenerator:
         """Fix type class errors."""
         return {
             "type": "suggestion",
-            "description": "Type class error",
+            "description": "Type class instance error",
             "fixes": [
                 "Add required type class constraints",
                 "Derive or implement missing instances",
@@ -897,9 +925,9 @@ class HaskellLanguagePlugin(LanguagePlugin):
     def __init__(self):
         """Initialize the Haskell language plugin."""
         self.language = "haskell"
-        self.supported_extensions = {".hs", ".lhs"}
+        self.supported_extensions = {".hs", ".lhs", ".cabal"}
         self.supported_frameworks = [
-            "ghc", "cabal", "stack", "haskell-platform",
+            "haskell", "ghc", "cabal", "stack", "haskell-platform",
             "yesod", "snap", "servant", "hakyll", "xmonad"
         ]
         
@@ -919,7 +947,7 @@ class HaskellLanguagePlugin(LanguagePlugin):
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return "GHC 8.0+"
+        return "GHC 9.0+"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""

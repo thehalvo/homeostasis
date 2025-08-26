@@ -45,6 +45,7 @@ class JuliaExceptionHandler:
         # Common Julia error patterns
         self.julia_error_patterns = {
             "syntax_error": [
+                r"syntax:.*unexpected.*end.*input",
                 r"syntax:.*unexpected.*token",
                 r"syntax:.*incomplete.*expression",
                 r"syntax:.*invalid.*syntax",
@@ -55,10 +56,8 @@ class JuliaExceptionHandler:
                 r"syntax:.*unmatched.*delimiter"
             ],
             "runtime_error": [
-                r"UndefVarError:.*not defined",
-                r"MethodError:.*no method matching",
+                r"UndefVarError:(?!.*@\w+).*not defined",
                 r"ArgumentError:.*invalid.*argument",
-                r"DomainError:.*not.*domain",
                 r"ErrorException:.*error.*occurred",
                 r"InterruptException:.*interrupted",
                 r"StackOverflowError:.*stack overflow",
@@ -94,7 +93,7 @@ class JuliaExceptionHandler:
                 r"ArgumentError:.*Package.*not found",
                 r"PkgError:.*package.*not.*available",
                 r"LoadError:.*failed.*to.*load",
-                r"UndefVarError:.*module.*not.*defined",
+                r"UndefVarError:.*Module.*not.*defined",
                 r"SystemError:.*could.*not.*load.*library",
                 r"InitError:.*failed.*to.*initialize"
             ],
@@ -130,8 +129,9 @@ class JuliaExceptionHandler:
                 r"SystemError:.*file.*not.*found"
             ],
             "macro_error": [
+                r"LoadError:.*@\w+.*not.*defined",
                 r"LoadError:.*macro.*error",
-                r"UndefVarError:.*macro.*not.*defined",
+                r"UndefVarError:.*@\w+.*not.*defined",
                 r"MethodError:.*macro.*not.*applicable",
                 r"ArgumentError:.*invalid.*macro",
                 r"ParseError:.*macro.*syntax"
@@ -225,14 +225,13 @@ class JuliaExceptionHandler:
         file_path = error_data.get("file_path", "")
         line_number = error_data.get("line_number", 0)
         
-        # Analyze based on error patterns
-        analysis = self._analyze_by_patterns(message, file_path)
-        
-        # Check for concept-specific issues
+        # Check for concept-specific issues first (higher priority)
         concept_analysis = self._analyze_julia_concepts(message)
         if concept_analysis.get("confidence", "low") != "low":
-            # Merge concept-specific findings
-            analysis.update(concept_analysis)
+            analysis = concept_analysis
+        else:
+            # Analyze based on error patterns
+            analysis = self._analyze_by_patterns(message, file_path)
         
         # Find matching rules
         matches = self._find_matching_rules(message, error_data)
@@ -240,15 +239,28 @@ class JuliaExceptionHandler:
         if matches:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
+            # Map confidence strings to numeric values for comparison
+            confidence_values = {"high": 3, "medium": 2, "low": 1}
+            original_confidence_val = confidence_values.get(analysis.get("confidence", "low"), 1)
+            rule_confidence_val = confidence_values.get(best_match.get("confidence", "low"), 1)
+            
+            # Use the higher confidence
+            final_confidence = analysis.get("confidence") if original_confidence_val >= rule_confidence_val else best_match.get("confidence")
+            
+            # Merge tags from both sources
+            original_tags = set(analysis.get("tags", []))
+            rule_tags = set(best_match.get("tags", []))
+            merged_tags = list(original_tags | rule_tags)
+            
             analysis.update({
-                "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
-                "confidence": best_match.get("confidence", "medium"),
+                "category": analysis.get("category", "unknown"),  # Keep original category
+                "subcategory": analysis.get("subcategory", best_match.get("category", "unknown")),  # Keep original subcategory or use rule category
+                "confidence": final_confidence,
                 "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
                 "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
-                "severity": best_match.get("severity", "medium"),
+                "severity": best_match.get("severity", analysis.get("severity", "medium")),
                 "rule_id": best_match.get("id", ""),
-                "tags": best_match.get("tags", []),
+                "tags": merged_tags,
                 "all_matches": matches
             })
         
@@ -430,8 +442,44 @@ class JuliaExceptionHandler:
         """Analyze Julia-specific concept errors."""
         message_lower = message.lower()
         
+        # Check for macro errors first (before UndefVarError)
+        if "@" in message and any(keyword in message_lower for keyword in ["macro", "not defined"]):
+            return {
+                "category": "julia",
+                "subcategory": "macro",
+                "confidence": "high",
+                "suggested_fix": "Check macro definition and usage",
+                "root_cause": "julia_macro_error",
+                "severity": "medium",
+                "tags": ["julia", "macro", "metaprogramming"]
+            }
+        
+        # Check for type-related MethodError (e.g., operations between incompatible types)
+        if "methoderror" in message_lower and any(op in message for op in ['+', '-', '*', '/', '^', '%']):
+            return {
+                "category": "julia",
+                "subcategory": "type",
+                "confidence": "high",
+                "suggested_fix": "Check type compatibility for the operation",
+                "root_cause": "julia_type_error",
+                "severity": "high",
+                "tags": ["julia", "type", "operation"]
+            }
+        
+        # Check for MethodError with dispatch
+        if "methoderror" in message_lower and "no method matching" in message_lower:
+            return {
+                "category": "julia",
+                "subcategory": "dispatch",
+                "confidence": "high",
+                "suggested_fix": "Check method signatures and type annotations",
+                "root_cause": "julia_dispatch_error",
+                "severity": "high",
+                "tags": ["julia", "method", "dispatch"]
+            }
+        
         # Check for UndefVarError
-        if any(keyword in message_lower for keyword in ["undefvarerror", "not defined"]):
+        if any(keyword in message_lower for keyword in ["undefvarerror", "not defined"]) and "@" not in message:
             return {
                 "category": "julia",
                 "subcategory": "undefined",
@@ -482,10 +530,10 @@ class JuliaExceptionHandler:
         if any(keyword in message_lower for keyword in ["package", "module", "using", "import"]):
             return {
                 "category": "julia",
-                "subcategory": "package",
+                "subcategory": "import",
                 "confidence": "medium",
                 "suggested_fix": "Check package installation and imports",
-                "root_cause": "julia_package_error",
+                "root_cause": "julia_import_error",
                 "severity": "medium",
                 "tags": ["julia", "package", "import"]
             }
@@ -605,13 +653,15 @@ class JuliaPatchGenerator:
             "julia_bounds_error": self._fix_bounds_error,
             "julia_method_error": self._fix_method_error,
             "julia_package_error": self._fix_package_error,
+            "julia_import_error": self._fix_package_error,  # Same as package error
             "julia_performance_error": self._fix_performance_error,
             "julia_memory_error": self._fix_memory_error,
             "julia_parallel_error": self._fix_parallel_error,
             "julia_io_error": self._fix_io_error,
             "julia_macro_error": self._fix_macro_error,
             "julia_interop_error": self._fix_interop_error,
-            "julia_undefined_error": self._fix_undefined_error
+            "julia_undefined_error": self._fix_undefined_error,
+            "julia_dispatch_error": self._fix_method_error  # Same as method error
         }
         
         strategy = patch_strategies.get(root_cause)
@@ -653,6 +703,13 @@ class JuliaPatchGenerator:
             })
         
         if fixes:
+            # Return single suggestion if only one fix
+            if len(fixes) == 1:
+                return {
+                    "type": "suggestion",
+                    "description": fixes[0]["description"],
+                    "fix": fixes[0]["fix"]
+                }
             return {
                 "type": "multiple_suggestions",
                 "fixes": fixes,
@@ -1146,7 +1203,7 @@ class JuliaLanguagePlugin(LanguagePlugin):
         self.supported_extensions = {".jl", ".jlmeta"}
         self.supported_frameworks = [
             "julia", "plots", "dataframes", "flux", "jumps", "differentialequations",
-            "mlj", "pluto", "genie", "distributed", "cuda"
+            "mlj", "pluto", "genie", "distributed", "cuda", "pkg"
         ]
         
         # Initialize components
@@ -1165,7 +1222,7 @@ class JuliaLanguagePlugin(LanguagePlugin):
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return "1.6+"
+        return "1.8+"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""

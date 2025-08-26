@@ -222,8 +222,7 @@
       "source": "built_in",
       "rule_type": "error_detection",
       "dependencies": []
-    }
-  ],
+    },
     {
       "id": "haskell_monad_fail_no_instance",
       "pattern": "No instance for \\(MonadFail ([^)]+)\\)",

@@ -50,6 +50,20 @@ class GoErrorHandler:
         self.pattern_cache = {}  # Compiled regex patterns
         self.rule_match_cache = {}  # Previous rule matches
     
+    def analyze_exception(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze a Go exception to determine its root cause and potential fixes.
+        
+        This is an alias for analyze_error to match the expected interface.
+        
+        Args:
+            error_data: Go error data in standard format
+            
+        Returns:
+            Analysis results with categorization and fix suggestions
+        """
+        return self.analyze_error(error_data)
+    
     def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze a Go error to determine its root cause and suggest potential fixes.
@@ -93,17 +107,21 @@ class GoErrorHandler:
                 if match:
                     # Create analysis result based on the matched rule
                     result = {
-                        "error_data": error_data,
-                        "rule_id": rule.get("id", "unknown"),
-                        "error_type": rule.get("type", error_type),
                         "root_cause": rule.get("root_cause", "go_unknown_error"),
+                        "category": rule.get("category", "go"),
+                        "subcategory": rule.get("subcategory", error_type.lower() if error_type else "unknown"),
+                        "error_type": rule.get("type", error_type),
                         "description": rule.get("description", "Unknown Go error"),
                         "suggestion": rule.get("suggestion", "No suggestion available"),
                         "confidence": rule.get("confidence", "medium"),
                         "severity": rule.get("severity", "medium"),
-                        "category": rule.get("category", "go"),
+                        "rule_id": rule.get("id", "unknown"),
                         "match_groups": match.groups() if match.groups() else tuple(),
-                        "framework": rule.get("framework", "")
+                        "framework": error_data.get("framework", rule.get("framework", "")),
+                        "tags": rule.get("tags", []),
+                        "file_path": error_data.get("file", ""),
+                        "line_number": error_data.get("line", 0),
+                        "column_number": error_data.get("column", 0)
                     }
                     
                     # Cache the result for this error signature
@@ -113,6 +131,24 @@ class GoErrorHandler:
                     return result
             except Exception as e:
                 logger.warning(f"Error applying rule {rule.get('id', 'unknown')}: {e}")
+        
+        # Check for framework-specific errors before general fallback
+        if error_type == "BindingError" or "validation" in message.lower():
+            return {
+                "error_data": error_data,
+                "rule_id": "go_validation_error",
+                "error_type": error_type or "validation error",
+                "root_cause": "go_validation_error",
+                "description": "Field validation failed",
+                "suggestion": "Check the validation rules for the failing field. Ensure the input data meets all validation constraints.",
+                "confidence": "high",
+                "severity": "medium",
+                "category": "validation",
+                "subcategory": "binding",
+                "match_groups": tuple(),
+                "framework": error_data.get("framework", ""),
+                "tags": ["validation", "binding"]
+            }
         
         # If no rule matched, try the fallback handlers
         return self._handle_fallback(error_data)
@@ -168,20 +204,68 @@ class GoErrorHandler:
         error_type = error_data.get("error_type", "")
         message = error_data.get("message", "")
         
+        # Handle special error types first
+        if error_type == "MemoryLeak":
+            return {
+                "error_data": error_data,
+                "rule_id": "go_memory_leak",
+                "error_type": error_type,
+                "root_cause": "go_memory_leak",
+                "description": "Memory leak detected in Go application",
+                "suggestion": "Use Go's built-in profiling tools (pprof) to analyze memory allocation patterns. Check for unbounded growth of slices, maps, or goroutines.",
+                "confidence": "high",
+                "severity": "high",
+                "category": "performance",
+                "match_groups": tuple(),
+                "framework": error_data.get("framework", "")
+            }
+        elif error_type == "SecurityVulnerability" and ("SQL" in message or "injection" in message):
+            return {
+                "error_data": error_data,
+                "rule_id": "go_sql_injection",
+                "error_type": error_type,
+                "root_cause": "go_sql_injection_vulnerability",
+                "description": "Potential SQL injection vulnerability",
+                "suggestion": "Use prepared statements or parameterized queries to prevent SQL injection. Never concatenate user input directly into SQL queries.",
+                "confidence": "high",
+                "severity": "critical",
+                "category": "security",
+                "match_groups": tuple(),
+                "framework": error_data.get("framework", "")
+            }
+        elif error_type == "InfiniteLoop":
+            return {
+                "error_data": error_data,
+                "rule_id": "go_infinite_loop",
+                "error_type": error_type,
+                "root_cause": "go_infinite_loop",
+                "description": "Potential infinite loop detected",
+                "suggestion": "Add proper loop termination conditions. Consider using context for cancellation. Add timeout mechanisms to prevent infinite execution.",
+                "confidence": "high",
+                "severity": "high",
+                "category": "performance",
+                "match_groups": tuple(),
+                "framework": error_data.get("framework", "")
+            }
+        
         # Handle common Go error scenarios based on message patterns
         if "nil pointer dereference" in message or "invalid memory address" in message:
             return {
-                "error_data": error_data,
-                "rule_id": "go_nil_pointer",
+                "root_cause": "go_nil_pointer_dereference",
+                "category": "runtime",
+                "subcategory": "panic",
                 "error_type": error_type or "runtime error",
-                "root_cause": "go_nil_pointer",
                 "description": "Attempted to dereference a nil pointer",
                 "suggestion": "Add nil checks before accessing pointers. Use safe accessor patterns.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "runtime",
+                "rule_id": "go_nil_pointer",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": error_data.get("framework", ""),
+                "tags": ["go", "runtime", "panic", "nil"],
+                "file_path": error_data.get("file", ""),
+                "line_number": error_data.get("line", 0),
+                "column_number": error_data.get("column", 0)
             }
         elif "index out of range" in message:
             return {
@@ -195,7 +279,7 @@ class GoErrorHandler:
                 "severity": "medium",
                 "category": "runtime",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": error_data.get("framework", "")
             }
         elif "assignment to entry in nil map" in message:
             return {
@@ -209,7 +293,7 @@ class GoErrorHandler:
                 "severity": "medium",
                 "category": "runtime",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": error_data.get("framework", "")
             }
         elif "concurrent map" in message and ("read" in message or "write" in message):
             return {
@@ -221,9 +305,9 @@ class GoErrorHandler:
                 "suggestion": "Use sync.RWMutex to protect map access in concurrent code or use sync.Map for concurrent access.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "goroutine",
+                "category": "concurrency",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": error_data.get("framework", "")
             }
         elif "deadlock" in message.lower():
             return {
@@ -235,9 +319,9 @@ class GoErrorHandler:
                 "suggestion": "Review mutex acquisition order, check for missing unlock calls, or ensure channels have enough buffer space.",
                 "confidence": "high",
                 "severity": "critical",
-                "category": "goroutine",
+                "category": "concurrency",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": error_data.get("framework", "")
             }
         elif "json" in error_type.lower() or ("unmarshal" in message.lower() and "json" in message.lower()):
             return {
@@ -251,7 +335,7 @@ class GoErrorHandler:
                 "severity": "medium",
                 "category": "json",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": error_data.get("framework", "")
             }
         
         # Generic fallback for unknown errors
@@ -266,7 +350,7 @@ class GoErrorHandler:
             "severity": "medium",
             "category": "go",
             "match_groups": tuple(),
-            "framework": ""
+            "framework": error_data.get("framework", "")
         }
     
     def _load_all_rules(self) -> List[Dict[str, Any]]:
@@ -302,7 +386,7 @@ class GoErrorHandler:
                 "pattern": "(?:nil pointer dereference|invalid memory address)",
                 "type": "runtime error",
                 "description": "Attempted to dereference a nil pointer",
-                "root_cause": "go_nil_pointer",
+                "root_cause": "go_nil_pointer_dereference",
                 "suggestion": "Add nil checks before accessing pointers. Use safe accessor patterns.",
                 "confidence": "high",
                 "severity": "high",
@@ -339,29 +423,29 @@ class GoErrorHandler:
                 "suggestion": "Use sync.Mutex to protect map access in concurrent code or use sync.Map for concurrent access.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "goroutine"
+                "category": "concurrency"
             },
             {
                 "id": "go_concurrent_map_read_write",
                 "pattern": "concurrent map read and map write",
                 "type": "runtime error",
                 "description": "Goroutines reading and writing a map concurrently",
-                "root_cause": "go_concurrent_map_read_write",
+                "root_cause": "go_concurrent_map_access",
                 "suggestion": "Use sync.RWMutex to protect map access in concurrent code or use sync.Map for concurrent access.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "goroutine"
+                "category": "concurrency"
             },
             {
                 "id": "go_all_goroutines_asleep",
                 "pattern": "all goroutines are asleep - deadlock",
                 "type": "fatal error",
                 "description": "All goroutines are blocked waiting - deadlock detected",
-                "root_cause": "go_deadlock",
+                "root_cause": "go_channel_deadlock",
                 "suggestion": "Check for channel operations that are blocking without a sender/receiver, or missing unlock operations.",
                 "confidence": "high",
                 "severity": "critical",
-                "category": "goroutine"
+                "category": "concurrency"
             },
             {
                 "id": "go_slice_bounds",
@@ -381,6 +465,17 @@ class GoErrorHandler:
                 "description": "Division by zero error",
                 "root_cause": "go_divide_by_zero",
                 "suggestion": "Add checks to prevent division by zero. Validate denominators before division operations.",
+                "confidence": "high",
+                "severity": "medium",
+                "category": "runtime"
+            },
+            {
+                "id": "go_type_assertion",
+                "pattern": "interface conversion: interface \\{.*\\} is (\\w+), not (\\w+)",
+                "type": "runtime error",
+                "description": "Type assertion failed",
+                "root_cause": "go_type_assertion_failure",
+                "suggestion": "Use type assertion with ok idiom (v, ok := x.(Type)) or type switch to safely handle interface conversions.",
                 "confidence": "high",
                 "severity": "medium",
                 "category": "runtime"
@@ -441,6 +536,54 @@ class GoErrorHandler:
                 "category": "network"
             },
             {
+                "id": "go_data_race",
+                "pattern": "WARNING: DATA RACE",
+                "type": "DataRace",
+                "description": "Data race detected",
+                "root_cause": "go_data_race",
+                "suggestion": "Use sync.Mutex or atomic operations to protect shared data. Run with -race flag to detect races.",
+                "confidence": "high",
+                "severity": "high",
+                "category": "concurrency",
+                "tags": ["go", "concurrency", "race"]
+            },
+            {
+                "id": "go_concurrent_map_access",
+                "pattern": "fatal error: concurrent map read and map write",
+                "type": "runtime error",
+                "description": "Concurrent map access detected",
+                "root_cause": "go_concurrent_map_access",
+                "suggestion": "Use sync.Map for concurrent access or protect map with sync.RWMutex.",
+                "confidence": "high",
+                "severity": "high",
+                "category": "concurrency",
+                "tags": ["go", "concurrency", "map"]
+            },
+            {
+                "id": "go_type_mismatch",
+                "pattern": "cannot use .* \\(type .*\\) as type .* in",
+                "type": "CompilationError",
+                "description": "Type mismatch in compilation",
+                "root_cause": "go_type_mismatch",
+                "suggestion": "Check type compatibility. Use type conversion if necessary.",
+                "confidence": "high",
+                "severity": "high",
+                "category": "compilation",
+                "tags": ["go", "compilation", "type"]
+            },
+            {
+                "id": "go_import_cycle",
+                "pattern": "import cycle not allowed",
+                "type": "CompilationError",
+                "description": "Import cycle detected",
+                "root_cause": "go_import_cycle",
+                "suggestion": "Refactor package dependencies to remove circular imports. Consider using interfaces to break dependencies.",
+                "confidence": "high",
+                "severity": "high",
+                "category": "compilation",
+                "tags": ["go", "compilation", "import"]
+            },
+            {
                 "id": "go_context_canceled",
                 "pattern": "context canceled",
                 "type": "context.Canceled",
@@ -461,6 +604,50 @@ class GoErrorHandler:
                 "confidence": "high",
                 "severity": "medium",
                 "category": "core"
+            },
+            {
+                "id": "go_goroutine_leak",
+                "pattern": "goroutine.*leak|possible.*goroutine.*leak",
+                "type": "runtime warning",
+                "description": "Potential goroutine leak detected",
+                "root_cause": "go_goroutine_leak",
+                "suggestion": "Review goroutine lifecycle management. Ensure all goroutines have proper termination conditions. Use context for cancellation.",
+                "confidence": "medium",
+                "severity": "high",
+                "category": "performance"
+            },
+            {
+                "id": "go_memory_leak",
+                "pattern": "MemoryLeak|memory leak detected|excessive memory usage|possible memory leak",
+                "type": "performance issue",
+                "description": "Memory leak detected in Go application",
+                "root_cause": "go_memory_leak",
+                "suggestion": "Use Go's built-in profiling tools (pprof) to analyze memory allocation patterns. Check for unbounded growth of slices, maps, or goroutines.",
+                "confidence": "high",
+                "severity": "high",
+                "category": "performance"
+            },
+            {
+                "id": "go_sql_injection",
+                "pattern": "SQL injection|SecurityVulnerability.*SQL|potential SQL injection",
+                "type": "security vulnerability",
+                "description": "Potential SQL injection vulnerability",
+                "root_cause": "go_sql_injection_vulnerability",
+                "suggestion": "Use prepared statements or parameterized queries to prevent SQL injection. Never concatenate user input directly into SQL queries.",
+                "confidence": "high",
+                "severity": "critical",
+                "category": "security"
+            },
+            {
+                "id": "go_infinite_loop",
+                "pattern": "InfiniteLoop|infinite loop detected|CPU.*100%.*loop|possible infinite loop",
+                "type": "performance issue",
+                "description": "Potential infinite loop detected",
+                "root_cause": "go_infinite_loop",
+                "suggestion": "Add proper loop termination conditions. Consider using context for cancellation. Add timeout mechanisms to prevent infinite execution.",
+                "confidence": "high",
+                "severity": "high",
+                "category": "performance"
             }
         ]
 
@@ -481,7 +668,7 @@ class GoPatchGenerator:
         # Cache for loaded templates
         self.template_cache = {}
     
-    def generate_patch(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+    def generate_patch(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Generate a patch for a Go error based on analysis.
         
@@ -536,26 +723,93 @@ class GoPatchGenerator:
                 # Increase confidence for code patches
                 if patch_result["confidence"] == "low":
                     patch_result["confidence"] = "medium"
+                
+                # Return the template-based patch with the expected format
+                return {
+                    "type": "code_modification",
+                    "content": patch_code,
+                    "description": patch_result.get("instructions", f"Apply patch for {root_cause}")
+                }
             except Exception as e:
                 logger.warning(f"Error generating patch for {root_cause}: {e}")
         
-        # If we don't have a specific template, return a suggestion-based patch
+        # If we don't have a specific template, generate code based on root cause
         if "patch_code" not in patch_result:
             # Generate code suggestions based on the root cause
-            if root_cause == "go_nil_pointer":
-                patch_result["suggestion_code"] = self._generate_nil_check_suggestion(analysis, context)
+            if root_cause == "go_nil_pointer_dereference":
+                content = self._generate_nil_check_suggestion(analysis, context)
+                if content:
+                    return {
+                        "type": "code_modification",
+                        "content": content,
+                        "description": "Add nil check before dereferencing pointer"
+                    }
             elif root_cause == "go_index_out_of_range":
-                patch_result["suggestion_code"] = self._generate_bounds_check_suggestion(analysis, context)
+                content = self._generate_bounds_check_suggestion(analysis, context)
+                if content:
+                    return {
+                        "type": "code_modification",
+                        "content": content,
+                        "description": "Add bounds check before array access"
+                    }
             elif root_cause == "go_nil_map":
-                patch_result["suggestion_code"] = self._generate_nil_map_suggestion(analysis, context)
-            elif root_cause in ["go_concurrent_map_write", "go_concurrent_map_read_write"]:
-                patch_result["suggestion_code"] = self._generate_concurrent_map_suggestion(analysis, context)
-            elif root_cause == "go_deadlock":
-                patch_result["suggestion_code"] = self._generate_deadlock_suggestion(analysis, context)
+                content = self._generate_nil_map_suggestion(analysis, context)
+                if content:
+                    return {
+                        "type": "code_modification",
+                        "content": content,
+                        "description": "Initialize map before use"
+                    }
+            elif root_cause in ["go_concurrent_map_write", "go_concurrent_map_read_write", "go_concurrent_map_access"]:
+                content = self._generate_concurrent_map_suggestion(analysis, context)
+                if content:
+                    return {
+                        "type": "code_modification",
+                        "content": content,
+                        "description": "Add synchronization for concurrent map access",
+                        "imports": ["sync"]
+                    }
+            elif root_cause in ["go_deadlock", "go_channel_deadlock"]:
+                content = self._generate_deadlock_suggestion(analysis, context)
+                if content:
+                    return {
+                        "type": "suggestion",
+                        "content": content,
+                        "description": "Fix deadlock in goroutine communication"
+                    }
             elif root_cause == "go_json_type_mismatch":
-                patch_result["suggestion_code"] = self._generate_json_type_suggestion(analysis, context)
+                content = self._generate_json_type_suggestion(analysis, context)
+                if content:
+                    return {
+                        "type": "code_modification",
+                        "content": content,
+                        "description": "Fix JSON type mismatch"
+                    }
+            elif root_cause == "go_type_assertion_failure":
+                content = self._generate_type_assertion_suggestion(analysis, context)
+                if content:
+                    return {
+                        "type": "code_modification",
+                        "content": content,  
+                        "description": "Use safe type assertion with ok check"
+                    }
+            elif root_cause in ["go_race_condition", "go_data_race"]:
+                content = self._generate_race_condition_suggestion(analysis, context)
+                if content:
+                    return {
+                        "type": "code_modification",
+                        "content": content,
+                        "description": "Add mutex protection for shared variable",
+                        "imports": ["sync.Mutex", "sync.RWMutex"]
+                    }
         
-        return patch_result
+        # Return suggestion if no specific patch can be generated
+        result = {
+            "type": "suggestion",  
+            "content": analysis.get("suggestion", "No specific fix available"),
+            "description": f"Fix for {root_cause}"
+        }
+        return result
     
     def _load_template(self, template_path: Path) -> str:
         """Load a template from the filesystem or cache."""
@@ -593,6 +847,11 @@ class GoPatchGenerator:
         # Extract variables from context
         variables["CODE_SNIPPET"] = context.get("code_snippet", "")
         variables["IMPORTS"] = context.get("imports", "")
+        
+        # Add all context variables directly (for custom fields like array, index, etc.)
+        for key, value in context.items():
+            if key not in variables:  # Don't override existing variables
+                variables[key] = str(value)
         
         # Extract match groups from the rule match
         match_groups = analysis.get("match_groups", ())
@@ -652,6 +911,20 @@ class GoPatchGenerator:
     
     def _generate_nil_check_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
         """Generate a code snippet for nil checking in Go."""
+        variable = context.get("variable", "pointer")
+        code_snippet = context.get("code_snippet", "")
+        
+        # Generate specific suggestion based on context
+        if variable:
+            return f"""// Add nil check before accessing the pointer
+if {variable} != nil {{
+    // Safe to access {variable}
+    {code_snippet}
+}} else {{
+    // Handle nil case - either return early with an error, or provide a default
+    return fmt.Errorf("{variable} is nil")
+}}"""
+        
         return """// Add nil check before accessing the pointer
 if pointer == nil {
     // Handle nil case - either return early with an error, or provide a default
@@ -663,15 +936,18 @@ if pointer == nil {
     
     def _generate_bounds_check_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
         """Generate a code snippet for bounds checking in Go."""
-        return """// Add bounds check before accessing slice/array elements
-if index >= 0 && index < len(slice) {
-    // Safe to access slice[index]
-    value := slice[index]
-} else {
+        array = context.get("array", "slice")
+        index = context.get("index", "index")
+        code_snippet = context.get("code_snippet", f"value := {array}[{index}]")
+        
+        return f"""// Add bounds check before accessing slice/array elements
+if {index} >= 0 && {index} < len({array}) {{
+    // Safe to access {array}[{index}]
+    {code_snippet}
+}} else {{
     // Handle invalid index - either skip, log, or return error
-    return fmt.Errorf("index %d out of bounds (length %d)", index, len(slice))
-}
-"""
+    return fmt.Errorf("index %d out of bounds (length %d)", {index}, len({array}))
+}}"""
     
     def _generate_nil_map_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
         """Generate a code snippet for nil map checking in Go."""
@@ -730,6 +1006,54 @@ default:
 }
 """
     
+    def _generate_type_assertion_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+        """Generate a code snippet for safe type assertion in Go."""
+        # Check both interface and interface_var for backwards compatibility
+        interface_var = context.get("interface_var", context.get("interface", "v"))
+        target_type = context.get("target_type", "string")
+        code_snippet = context.get("code_snippet", "")
+        
+        return f"""// Use safe type assertion with ok idiom
+val, ok := {interface_var}.({target_type})
+if ok {{
+    // Type assertion succeeded
+    {code_snippet if code_snippet else f"// Use val as {target_type}"}
+}} else {{
+    // Type assertion failed - handle gracefully
+    return fmt.Errorf("type assertion failed: expected {target_type}")
+}}"""
+    
+    def _generate_race_condition_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+        """Generate a code snippet for fixing race conditions in Go."""
+        shared_var = context.get("shared_var", "sharedData")
+        code_snippet = context.get("code_snippet", f"{shared_var}++")
+        
+        return f"""// Add mutex protection for shared variable
+var mu sync.Mutex
+
+// Protect access to shared variable
+mu.Lock()
+{code_snippet}
+mu.Unlock()
+
+// Alternative: Use defer to ensure unlock
+mu.Lock()
+defer mu.Unlock()
+{code_snippet}
+
+// For read-heavy workloads, consider sync.RWMutex
+var rwmu sync.RWMutex
+
+// For reads:
+rwmu.RLock()
+value := {shared_var}
+rwmu.RUnlock()
+
+// For writes:
+rwmu.Lock()
+{code_snippet}
+rwmu.Unlock()"""
+    
     def _generate_json_type_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
         """Generate a code snippet for handling JSON type mismatches in Go."""
         return """// Ensure struct field types match expected JSON types
@@ -759,7 +1083,7 @@ class GoLanguagePlugin(LanguagePlugin):
     including support for goroutine management, Go modules, and popular Go frameworks.
     """
     
-    VERSION = "0.1.0"
+    VERSION = "1.0.0"
     AUTHOR = "Homeostasis Contributors"
     
     def __init__(self):
@@ -767,6 +1091,7 @@ class GoLanguagePlugin(LanguagePlugin):
         self.adapter = GoErrorAdapter()
         self.error_handler = GoErrorHandler()
         self.patch_generator = GoPatchGenerator()
+        self.supported_frameworks = ["gin", "echo", "beego", "fiber", "gorm", "buffalo"]
     
     def get_language_id(self) -> str:
         """Get the language identifier."""
@@ -779,6 +1104,22 @@ class GoLanguagePlugin(LanguagePlugin):
     def get_language_version(self) -> str:
         """Get the language version."""
         return "1.13+"
+    
+    def get_metadata(self) -> Dict[str, Any]:
+        """Get plugin metadata."""
+        return {
+            "name": "Go Language Support",
+            "language": "go",
+            "version": self.VERSION,
+            "author": self.AUTHOR,
+            "supported_frameworks": self.supported_frameworks,
+            "description": "Comprehensive error analysis and fix generation for Go applications"
+        }
+    
+    def can_handle(self, error_data: Dict[str, Any]) -> bool:
+        """Check if this plugin can handle the given error."""
+        language = error_data.get("language", "").lower()
+        return language == "go" or language == "golang"
     
     def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -797,7 +1138,14 @@ class GoLanguagePlugin(LanguagePlugin):
             standard_error = error_data
         
         # Use the error handler to analyze the error
-        return self.error_handler.analyze_error(standard_error)
+        analysis = self.error_handler.analyze_error(standard_error)
+        
+        # Detect framework from stack trace
+        framework = self._detect_framework(standard_error)
+        if framework:
+            analysis["framework"] = framework
+            
+        return analysis
     
     def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -822,6 +1170,53 @@ class GoLanguagePlugin(LanguagePlugin):
             Error data in the Go format
         """
         return self.adapter.from_standard_format(standard_error)
+    
+    def _detect_framework(self, error_data: Dict[str, Any]) -> Optional[str]:
+        """
+        Detect the Go framework from error data.
+        
+        Args:
+            error_data: Error data containing stack trace
+            
+        Returns:
+            Detected framework name or None
+        """
+        # Check if framework is already specified
+        if "framework" in error_data and error_data["framework"]:
+            return error_data["framework"]
+            
+        # Framework detection patterns
+        framework_patterns = {
+            "gin": ["github.com/gin-gonic/gin"],
+            "echo": ["github.com/labstack/echo"],
+            "fiber": ["github.com/gofiber/fiber"],
+            "beego": ["github.com/astaxie/beego", "github.com/beego/beego"],
+            "gorm": ["gorm.io/gorm", "github.com/jinzhu/gorm"],
+            "buffalo": ["github.com/gobuffalo/buffalo"]
+        }
+        
+        # Check stack trace for framework signatures
+        stack_trace = error_data.get("stack_trace", [])
+        if isinstance(stack_trace, list):
+            for frame in stack_trace:
+                if isinstance(frame, dict):
+                    function = frame.get("function", "")
+                    file = frame.get("file", "")
+                    
+                    # Check against framework patterns
+                    for framework, patterns in framework_patterns.items():
+                        for pattern in patterns:
+                            if pattern in function or pattern in file:
+                                return framework
+        
+        # Check error message for framework mentions
+        message = error_data.get("message", "")
+        for framework, patterns in framework_patterns.items():
+            for pattern in patterns:
+                if pattern in message:
+                    return framework
+                    
+        return None
     
     def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
         """

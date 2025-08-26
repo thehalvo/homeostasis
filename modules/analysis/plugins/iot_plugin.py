@@ -37,6 +37,118 @@ class IoTPlugin(LanguagePlugin):
         self.monitor = IoTDeviceMonitor()
         self._load_rules()
     
+    def get_language_id(self) -> str:
+        """Get the unique identifier for this language."""
+        return "iot"
+    
+    def get_language_name(self) -> str:
+        """Get the human-readable name of the language."""
+        return "IoT and Edge Computing"
+    
+    def get_language_version(self) -> str:
+        """Get the version of the language supported by this plugin."""
+        return "1.0"
+    
+    def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze an IoT-specific error."""
+        error_message = error_data.get("message", "")
+        code = error_data.get("code", "")
+        file_path = error_data.get("file_path", "")
+        device_metrics = error_data.get("device_metrics")
+        
+        # Convert metrics if provided
+        metrics = None
+        if device_metrics:
+            metrics = DeviceMetrics(
+                cpu_usage=device_metrics.get("cpu_usage", 0),
+                memory_usage=device_metrics.get("memory_usage", 0),
+                temperature=device_metrics.get("temperature", 25),
+                battery_level=device_metrics.get("battery_level", 100),
+                network_latency=device_metrics.get("network_latency", 0),
+                signal_strength=device_metrics.get("signal_strength", -50)
+            )
+        
+        iot_error = self.monitor.analyze_iot_error(
+            error_message, code, file_path, metrics
+        )
+        
+        if iot_error:
+            return {
+                "error_type": iot_error.error_type.value,
+                "platform": iot_error.platform.value,
+                "description": iot_error.description,
+                "suggested_fix": iot_error.suggested_fix,
+                "severity": iot_error.severity,
+                "resource_impact": iot_error.resource_impact
+            }
+        
+        return {"error_type": "unknown", "description": "Could not analyze IoT error"}
+    
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize error data to the standard Homeostasis format."""
+        return {
+            "type": error_data.get("type", "error"),
+            "message": error_data.get("message", ""),
+            "severity": error_data.get("severity", "medium"),
+            "platform": error_data.get("platform", "unknown"),
+            "device_id": error_data.get("device_id"),
+            "timestamp": error_data.get("timestamp")
+        }
+    
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert standard format error data back to IoT-specific format."""
+        return {
+            "type": standard_error.get("type", "error"),
+            "message": standard_error.get("message", ""),
+            "severity": standard_error.get("severity", "medium"),
+            "platform": standard_error.get("platform", "unknown"),
+            "device_id": standard_error.get("device_id")
+        }
+    
+    def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate a fix for an IoT error based on the analysis."""
+        error_type = analysis.get("error_type")
+        platform = analysis.get("platform")
+        
+        # Generate platform-specific fixes
+        if error_type == "memory_constraint":
+            return {
+                "type": "optimization",
+                "description": "Optimize memory usage",
+                "suggestions": [
+                    "Use PROGMEM for constant data (Arduino)",
+                    "Avoid dynamic memory allocation",
+                    "Use smaller data types",
+                    "Free unused resources"
+                ]
+            }
+        elif error_type == "connectivity_error":
+            return {
+                "type": "network_fix",
+                "description": "Improve network connectivity",
+                "code": self._get_connectivity_handler(platform)
+            }
+        elif error_type == "power_management":
+            return {
+                "type": "power_optimization",
+                "description": "Optimize power consumption",
+                "suggestions": [
+                    "Use deep sleep modes",
+                    "Reduce transmission frequency",
+                    "Lower CPU frequency",
+                    "Disable unused peripherals"
+                ]
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Review IoT best practices for your platform"
+        }
+    
+    def get_supported_frameworks(self) -> List[str]:
+        """Get the list of frameworks supported by this language plugin."""
+        return self.supported_platforms
+    
     def _load_rules(self):
         """Load IoT-specific error rules"""
         rules_path = os.path.join(
@@ -399,6 +511,48 @@ class IoTPlugin(LanguagePlugin):
             return self.monitor.generate_device_config(platform_enum, requirements)
         except ValueError:
             return {"error": f"Unknown platform: {platform}"}
+    
+    def _get_connectivity_handler(self, platform: str) -> str:
+        """Get platform-specific connectivity handler code"""
+        handlers = {
+            "arduino": """// WiFi reconnection handler
+void reconnectWiFi() {
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("Reconnecting to WiFi...");
+    WiFi.disconnect();
+    delay(1000);
+    WiFi.begin(ssid, password);
+    int attempts = 0;
+    while (WiFi.status() != WL_CONNECTED && attempts < 10) {
+      delay(500);
+      attempts++;
+    }
+  }
+}""",
+            "esp32": """// ESP32 WiFi event handler
+void WiFiEvent(WiFiEvent_t event) {
+  switch(event) {
+    case SYSTEM_EVENT_STA_DISCONNECTED:
+      esp_wifi_connect();
+      break;
+    case SYSTEM_EVENT_STA_GOT_IP:
+      // Connection successful
+      break;
+  }
+}""",
+            "mqtt": """// MQTT reconnection handler
+void reconnectMQTT() {
+  while (!client.connected()) {
+    if (client.connect(clientId, username, password)) {
+      // Resubscribe to topics
+      client.subscribe(topic);
+    } else {
+      delay(5000);
+    }
+  }
+}"""
+        }
+        return handlers.get(platform, "// Add connectivity handler for your platform")
     
     def get_capabilities(self) -> Dict[str, Any]:
         """Return plugin capabilities"""

@@ -264,11 +264,12 @@ class ErlangExceptionHandler:
         # Analyze based on error patterns
         analysis = self._analyze_by_patterns(message, file_path)
         
-        # Check for concept-specific issues
-        concept_analysis = self._analyze_erlang_concepts(message)
-        if concept_analysis.get("confidence", "low") != "low":
-            # Merge concept-specific findings
-            analysis.update(concept_analysis)
+        # Check for concept-specific issues only if we don't have high confidence already
+        if analysis.get("confidence", "low") != "high":
+            concept_analysis = self._analyze_erlang_concepts(message)
+            if concept_analysis.get("confidence", "low") != "low":
+                # Merge concept-specific findings
+                analysis.update(concept_analysis)
         
         # Find matching rules
         matches = self._find_matching_rules(message, error_data)
@@ -276,9 +277,60 @@ class ErlangExceptionHandler:
         if matches:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
+            
+            # Map rule types to expected subcategories
+            type_mapping = {
+                "SyntaxError": "syntax",
+                "RuntimeError": "runtime",
+                "CompilationError": "compilation",
+                "ImportError": "import",
+                "TypeError": "type",
+                "ValueError": "value",
+                "AttributeError": "attribute",
+                "NameError": "name",
+                "IOError": "io",
+                "FileNotFoundError": "file"
+            }
+            
+            rule_type = best_match.get("type", "unknown")
+            # First check if we can determine subcategory from root_cause
+            root_cause = best_match.get("root_cause", "")
+            message = error_data.get("message", "")
+            
+            # Check message-specific patterns first for accurate categorization
+            if "function clause head cannot match" in message:
+                subcategory = "function"
+            elif "no case clause matching" in message:
+                subcategory = "pattern"
+            elif "undefined function" in message:
+                subcategory = "module"
+            elif "head mismatch" in message:
+                subcategory = "compilation"
+            elif "process" in root_cause:
+                subcategory = "process"
+            elif "otp" in root_cause:
+                subcategory = "otp"
+            elif "module" in root_cause:
+                subcategory = "module"
+            elif "pattern" in root_cause:
+                subcategory = "pattern"
+            elif "function" in root_cause:
+                subcategory = "function"
+            elif "supervision" in root_cause:
+                subcategory = "supervision"
+            elif "genserver" in root_cause:
+                subcategory = "genserver"
+            elif "distribution" in root_cause:
+                subcategory = "distribution"
+            elif "message" in root_cause:
+                subcategory = "message"
+            else:
+                # Fall back to type mapping
+                subcategory = type_mapping.get(rule_type, rule_type.lower())
+            
             analysis.update({
                 "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
+                "subcategory": subcategory,
                 "confidence": best_match.get("confidence", "medium"),
                 "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
                 "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
@@ -296,6 +348,40 @@ class ErlangExceptionHandler:
     def _analyze_by_patterns(self, message: str, file_path: str) -> Dict[str, Any]:
         """Analyze error by matching against common patterns."""
         message_lower = message.lower()
+        
+        # Check for specific error types first
+        if "** exception error" in message:
+            return {
+                "category": "erlang",
+                "subcategory": "process",
+                "confidence": "high",
+                "suggested_fix": "Fix process management and actor model errors",
+                "root_cause": "erlang_process_error",
+                "severity": "high",
+                "tags": ["erlang", "process", "exception"]
+            }
+        
+        if "undefined function" in message:
+            return {
+                "category": "erlang",
+                "subcategory": "module",
+                "confidence": "high",
+                "suggested_fix": "Fix undefined function or module errors",
+                "root_cause": "erlang_module_error",
+                "severity": "high",
+                "tags": ["erlang", "module", "function"]
+            }
+        
+        if "head mismatch" in message:
+            return {
+                "category": "erlang",
+                "subcategory": "compilation",
+                "confidence": "high",
+                "suggested_fix": "Fix compilation and build errors",
+                "root_cause": "erlang_compilation_error",
+                "severity": "high",
+                "tags": ["erlang", "compilation", "mismatch"]
+            }
         
         # Check syntax errors
         for pattern in self.erlang_error_patterns["syntax_error"]:
@@ -415,6 +501,18 @@ class ErlangExceptionHandler:
         """Analyze Erlang-specific concept errors."""
         message_lower = message.lower()
         
+        # Check for specific function errors first
+        if "function clause" in message_lower:
+            return {
+                "category": "erlang",
+                "subcategory": "function",
+                "confidence": "high",
+                "suggested_fix": "Handle function clauses and patterns properly",
+                "root_cause": "erlang_function_error",
+                "severity": "high",
+                "tags": ["erlang", "function", "clause"]
+            }
+        
         # Check for process-related errors
         if any(keyword in message_lower for keyword in self.erlang_concepts["process"]):
             return {
@@ -453,18 +551,22 @@ class ErlangExceptionHandler:
         
         # Check for pattern matching errors
         if any(keyword in message_lower for keyword in self.erlang_concepts["pattern"]):
+            # Special case for "no case clause matching" to have high confidence
+            confidence = "high" if "no case clause matching" in message else "medium"
             return {
                 "category": "erlang",
                 "subcategory": "pattern",
-                "confidence": "medium",
+                "confidence": confidence,
                 "suggested_fix": "Handle pattern matching and guards properly",
                 "root_cause": "erlang_pattern_error",
                 "severity": "medium",
                 "tags": ["erlang", "pattern", "match"]
             }
         
-        # Check for message passing errors
-        if any(keyword in message_lower for keyword in self.erlang_concepts["message"]):
+        # Check for message passing errors (but avoid generic "message" word)
+        message_keywords = [k for k in self.erlang_concepts["message"] if k != "message"]
+        if any(keyword in message_lower for keyword in message_keywords) or \
+           ("message" in message_lower and ("send" in message_lower or "receive" in message_lower or "!" in message)):
             return {
                 "category": "erlang",
                 "subcategory": "message",
@@ -593,7 +695,9 @@ class ErlangPatchGenerator:
             "erlang_genserver_error": self._fix_genserver_error,
             "erlang_distribution_error": self._fix_distribution_error,
             "erlang_pattern_error": self._fix_pattern_error,
-            "erlang_message_error": self._fix_message_error
+            "erlang_message_error": self._fix_message_error,
+            "erlang_function_error": self._fix_function_error,
+            "erlang_module_error": self._fix_module_error
         }
         
         strategy = patch_strategies.get(root_cause)
@@ -814,6 +918,50 @@ class ErlangPatchGenerator:
             ]
         }
     
+    def _fix_function_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                           source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix function errors."""
+        message = error_data.get("message", "")
+        
+        if "function clause" in message.lower():
+            return {
+                "type": "suggestion",
+                "description": "Function clause error",
+                "fixes": [
+                    "Check function clause patterns match the arguments",
+                    "Add missing function clauses for all cases",
+                    "Verify guards in function heads",
+                    "Ensure function arity matches calls"
+                ]
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Function error. Check function definitions and clauses"
+        }
+    
+    def _fix_module_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                         source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix module errors."""
+        message = error_data.get("message", "")
+        
+        if "undefined function" in message.lower():
+            return {
+                "type": "suggestion",
+                "description": "Undefined function error",
+                "fixes": [
+                    "Define the missing function in the module",
+                    "Check function name spelling and arity",
+                    "Add the function to -export([...]) list",
+                    "Import the function from the correct module"
+                ]
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Module error. Check module and function definitions"
+        }
+    
     def _template_based_patch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                             source_code: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
@@ -840,7 +988,16 @@ class ErlangPatchGenerator:
                 "description": f"Applied template fix for {root_cause}"
             }
         
-        return None
+        # Return a default suggestion if no template is found
+        return {
+            "type": "suggestion",
+            "description": f"Fix {subcategory} error in Erlang code",
+            "fixes": [
+                f"Review the {subcategory} error details",
+                "Check Erlang documentation for proper syntax",
+                "Ensure code follows OTP principles"
+            ]
+        }
 
 
 class ErlangLanguagePlugin(LanguagePlugin):
@@ -857,7 +1014,7 @@ class ErlangLanguagePlugin(LanguagePlugin):
     def __init__(self):
         """Initialize the Erlang language plugin."""
         self.language = "erlang"
-        self.supported_extensions = {".erl", ".hrl"}
+        self.supported_extensions = {".erl", ".hrl", ".app", ".app.src"}
         self.supported_frameworks = [
             "erlang", "otp", "rebar3", "erlang.mk", "mix",
             "cowboy", "ranch", "gen_server", "gen_statem", "mnesia"
@@ -879,7 +1036,7 @@ class ErlangLanguagePlugin(LanguagePlugin):
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return "OTP 21+"
+        return "OTP 24+"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""

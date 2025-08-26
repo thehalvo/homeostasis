@@ -364,8 +364,7 @@
       "source": "built_in",
       "rule_type": "error_detection",
       "dependencies": []
-    }
-  ],
+    },
     {
       "id": "erlang_behaviour_callback_missing",
       "pattern": "undefined (callback|behaviour) function ([\\w:]+/\\d+)",

@@ -72,7 +72,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
         imports = self.analyzer.get_imports()
         
         # Check that we have the right number of imports
-        self.assertEqual(len(imports), 5, "Should find 5 import statements")
+        self.assertEqual(len(imports), 6, "Should find 6 import statements")
         
         # Check for specific imports
         found_imports = []

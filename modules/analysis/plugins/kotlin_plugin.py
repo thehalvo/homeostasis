@@ -159,6 +159,10 @@ class KotlinExceptionHandler:
         # Combine error info for analysis
         full_error_text = f"{error_type}: {message}\n{stack_str}"
         
+        # Debug logging
+        logger.debug(f"Analyzing error_type: {error_type}")
+        logger.debug(f"Full error text for pattern matching: {full_error_text[:200]}...")
+        
         # Find matching rules
         matches = self._find_matching_rules(full_error_text, error_data)
         
@@ -183,7 +187,9 @@ class KotlinExceptionHandler:
                         rule_copy = rule.copy()
                         rule_copy["confidence_score"] = confidence_score
                         rule_copy["match_groups"] = match.groups()
-                        rule_copy["category"] = category
+                        # Keep the rule's category if it has one, otherwise use the rule set category
+                        if "category" not in rule_copy:
+                            rule_copy["category"] = category
                         matches.append(rule_copy)
                 except Exception as e:
                     logger.warning(f"Error applying rule {rule.get('id', 'unknown')}: {e}")
@@ -192,7 +198,15 @@ class KotlinExceptionHandler:
     
     def _calculate_confidence(self, rule: Dict[str, Any], error_data: Dict[str, Any], match: Any) -> float:
         """Calculate confidence score for a rule match."""
-        base_confidence = rule.get("confidence", 0.5)
+        confidence_str = rule.get("confidence", "medium")
+        
+        # Map confidence strings to numeric values
+        confidence_map = {
+            "low": 0.3,
+            "medium": 0.5,
+            "high": 0.7
+        }
+        base_confidence = confidence_map.get(confidence_str, 0.5)
         
         # Boost confidence if error type matches exactly
         error_type = error_data.get("error_type", "")
@@ -274,7 +288,7 @@ class KotlinExceptionHandler:
                 "confidence": "medium",
                 "severity": "medium",
                 "category": "coroutines",
-                "framework": "",
+                "framework": "coroutines",
                 "match_groups": tuple(),
                 "confidence_score": 0.6
             }
@@ -302,6 +316,17 @@ class KotlinExceptionHandler:
                 "id": "kotlin_null_pointer_exception",
                 "pattern": r"(kotlin\.)?KotlinNullPointerException(?::\s*(.*))?",
                 "error_type": "KotlinNullPointerException",
+                "description": "Attempted to access a null reference",
+                "root_cause": "kotlin_null_pointer",
+                "suggestion": "Use safe call operator (?.) or add null checks before accessing properties/methods",
+                "confidence": "high",
+                "severity": "high",
+                "category": "null_safety"
+            },
+            {
+                "id": "kotlin_null_pointer_exception",
+                "pattern": r"Attempt to invoke virtual method.*on a null object reference",
+                "error_type": "NullPointerException",
                 "description": "Attempted to access a null reference",
                 "root_cause": "kotlin_null_pointer",
                 "suggestion": "Use safe call operator (?.) or add null checks before accessing properties/methods",
@@ -349,7 +374,7 @@ class KotlinExceptionHandler:
         return [
             {
                 "id": "kotlin_activity_not_found",
-                "pattern": r"android\.content\.ActivityNotFoundException",
+                "pattern": r"ActivityNotFoundException",
                 "error_type": "ActivityNotFoundException",
                 "description": "No activity found to handle the given intent",
                 "root_cause": "kotlin_activity_not_found",
@@ -429,8 +454,8 @@ class KotlinExceptionHandler:
                 "pattern": r".*Job was cancelled.*",
                 "error_type": "CancellationException",
                 "description": "Parent job was cancelled, cancelling child coroutines",
-                "root_cause": "kotlin_job_cancelled",
-                "suggestion": "Handle job cancellation gracefully and avoid starting new coroutines from cancelled job",
+                "root_cause": "kotlin_coroutine_cancelled",
+                "suggestion": "Handle CancellationException gracefully and avoid starting new coroutines from cancelled job",
                 "confidence": "medium",
                 "severity": "medium",
                 "category": "coroutines",
@@ -930,7 +955,12 @@ class KotlinLanguagePlugin(LanguagePlugin):
             standard_error = error_data
         
         # Use the exception handler to analyze the error
-        return self.exception_handler.analyze_exception(standard_error)
+        analysis = self.exception_handler.analyze_exception(standard_error)
+        
+        # Ensure language is included in the analysis result
+        analysis["language"] = "kotlin"
+        
+        return analysis
     
     def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """

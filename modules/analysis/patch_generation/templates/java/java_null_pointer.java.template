@@ -5,22 +5,37 @@
  * Original error: ${ERROR_TYPE}: ${ERROR_MESSAGE}
  */
 
-// Add null check before accessing ${NULL_CHECK_VAR}
+// Option 1: Early return pattern - check if null and handle immediately
 if (${NULL_CHECK_VAR} == null) {
-    // Choose the appropriate handling strategy:
-    
-    // Option 1: Return early (if in a method that can return)
+    // Handle null case early - choose appropriate strategy:
     // return null; // or appropriate default value
+    // throw new IllegalArgumentException("${NULL_CHECK_VAR} must not be null");
+    // ${NULL_CHECK_VAR} = getDefaultValue(); // provide default
+}
+// If we reach here, ${NULL_CHECK_VAR} is not null and safe to use
+
+// Option 2: Safe usage pattern - check for null before accessing ${NULL_CHECK_VAR}
+if (${NULL_CHECK_VAR} != null) {
+    // Safe to use ${NULL_CHECK_VAR} here
+    // Example: int length = ${NULL_CHECK_VAR}.length();
+    // Your original code goes here
+} else {
+    // Handle null case - choose appropriate strategy:
     
-    // Option 2: Throw a more descriptive exception
-    throw new IllegalArgumentException("${NULL_CHECK_VAR} must not be null");
+    // Option 1: Provide a default value
+    // ${NULL_CHECK_VAR} = getDefaultValue(); // Then proceed with normal flow
     
-    // Option 3: Use a default/fallback value
-    // ${NULL_CHECK_VAR} = getDefaultValue(); // Define a method to provide a default
+    // Option 2: Return early or a default result
+    // return 0; // or other appropriate default return value
     
-    // Option 4: Log the issue but continue with a safe default
-    // logger.warn("${NULL_CHECK_VAR} was null, using empty default");
-    // ${NULL_CHECK_VAR} = new ${CLASS_NAME}(); // Or other appropriate default
+    // Option 3: Throw a more descriptive exception
+    // throw new IllegalArgumentException("${NULL_CHECK_VAR} must not be null");
+    
+    // Option 4: Log and skip the operation
+    // logger.warn("${NULL_CHECK_VAR} was null, skipping operation");
 }
 
-// Original code can safely proceed after this point
+// Alternative approach using Optional (Java 8+):
+// Optional.ofNullable(${NULL_CHECK_VAR})
+//     .map(value -> value.length()) // Safe operation
+//     .orElse(0); // Default value if null

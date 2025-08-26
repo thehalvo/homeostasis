@@ -114,11 +114,20 @@ class HealingRateLimiter:
                 current_env = self.config.get('environment', 'development')
                 if current_env in env_limits:
                     for key, value in env_limits[current_env].items():
-                        self.default_rate_limits[key] = value
+                        # Ensure values are tuples for consistency
+                        if isinstance(value, (list, tuple)) and len(value) == 2:
+                            self.default_rate_limits[key] = tuple(value)
+                        else:
+                            logger.warning(f"Invalid environment rate limit format for {key}: {value}. Expected [count, seconds].")
         
         # Override defaults with config values if provided
         if 'limits' in self.config:
-            self.default_rate_limits.update(self.config['limits'])
+            for key, value in self.config['limits'].items():
+                # Ensure values are tuples for consistency
+                if isinstance(value, (list, tuple)) and len(value) == 2:
+                    self.default_rate_limits[key] = tuple(value)
+                else:
+                    logger.warning(f"Invalid rate limit format for {key}: {value}. Expected [count, seconds].")
         
         # Initialize storage for action counts and timestamps
         self.action_counts = {
