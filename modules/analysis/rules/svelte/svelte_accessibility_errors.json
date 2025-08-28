@@ -1,4 +1,5 @@
 {
+  "name": "Svelte Accessibility Errors",
   "version": "1.0.0",
   "description": "Svelte accessibility (a11y) error detection rules",
   "rules": [

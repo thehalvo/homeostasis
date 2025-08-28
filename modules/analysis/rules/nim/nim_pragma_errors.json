@@ -30,6 +30,33 @@
       "dependencies": []
     },
     {
+      "id": "nim_pragma_invalid",
+      "pattern": "Error: invalid pragma: (.+)",
+      "type": "PragmaError",
+      "description": "Invalid pragma usage",
+      "root_cause": "nim_pragma_error",
+      "suggestion": "Check pragma syntax and ensure it's valid",
+      "category": "nim",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "nim",
+        "pragma",
+        "invalid"
+      ],
+      "examples": [
+        "Error: invalid pragma: nosuchpragma",
+        "Error: invalid pragma: wrongname"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
+    },
+    {
       "id": "nim_pragma_invalid_context",
       "pattern": "Error: invalid context for pragma '(.+)'",
       "type": "PragmaError",

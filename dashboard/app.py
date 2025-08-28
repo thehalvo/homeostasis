@@ -206,6 +206,10 @@ class DashboardServer:
             
     def _register_routes(self) -> None:
         """Register Flask routes for the dashboard."""
+        # Check if routes are already registered
+        if hasattr(app, '_routes_registered') and app._routes_registered:
+            return
+        
         # Main dashboard route
         @app.route('/')
         def index():
@@ -1790,9 +1794,16 @@ class DashboardServer:
                     'success': False,
                     'message': f'Failed to export cost report: {str(e)}'
                 }), 500
+        
+        # Mark routes as registered to prevent duplicate registration
+        app._routes_registered = True
             
     def _register_error_handlers(self) -> None:
         """Register error handlers for the dashboard."""
+        # Check if error handlers are already registered
+        if hasattr(app, '_error_handlers_registered') and app._error_handlers_registered:
+            return
+        
         @app.errorhandler(404)
         def page_not_found(e):
             return render_template('error.html', error=e), 404
@@ -1800,9 +1811,16 @@ class DashboardServer:
         @app.errorhandler(500)
         def server_error(e):
             return render_template('error.html', error=e), 500
+        
+        # Mark error handlers as registered to prevent duplicate registration
+        app._error_handlers_registered = True
             
     def _register_socketio_handlers(self) -> None:
         """Register SocketIO event handlers for real-time updates."""
+        # Check if socketio handlers are already registered
+        if hasattr(socketio, '_handlers_registered') and socketio._handlers_registered:
+            return
+        
         @socketio.on('connect')
         def handle_connect():
             logger.info(f"Client connected: {request.sid}")
@@ -1898,6 +1916,9 @@ class DashboardServer:
                 }
                 
                 emit('metrics_update', {'metrics': metrics})
+        
+        # Mark socketio handlers as registered to prevent duplicate registration
+        socketio._handlers_registered = True
                 
     def run(self) -> None:
         """Run the dashboard server."""

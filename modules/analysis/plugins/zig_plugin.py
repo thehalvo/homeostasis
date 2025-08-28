@@ -99,6 +99,7 @@ class ZigExceptionHandler:
             ],
             "async_error": [
                 r"error: async function cannot be called directly",
+                r"error: async function called without await",
                 r"error: suspend point not reachable",
                 r"error: async frame too large",
                 r"error: await in non-async function"
@@ -221,6 +222,19 @@ class ZigExceptionHandler:
         """Analyze error by matching against common patterns."""
         message_lower = message.lower()
         
+        # Check type errors first (more specific)
+        for pattern in self.zig_error_patterns["type_error"]:
+            if re.search(pattern, message, re.IGNORECASE):
+                return {
+                    "category": "zig",
+                    "subcategory": "type",
+                    "confidence": "high",
+                    "suggested_fix": "Fix type system errors and type mismatches",
+                    "root_cause": "zig_type_error",
+                    "severity": "high",
+                    "tags": ["zig", "type", "casting"]
+                }
+        
         # Check syntax errors
         for pattern in self.zig_error_patterns["syntax_error"]:
             if re.search(pattern, message, re.IGNORECASE):
@@ -232,19 +246,6 @@ class ZigExceptionHandler:
                     "root_cause": "zig_syntax_error",
                     "severity": "high",
                     "tags": ["zig", "syntax", "parser"]
-                }
-        
-        # Check type errors
-        for pattern in self.zig_error_patterns["type_error"]:
-            if re.search(pattern, message, re.IGNORECASE):
-                return {
-                    "category": "zig",
-                    "subcategory": "type",
-                    "confidence": "high",
-                    "suggested_fix": "Fix type system errors and type mismatches",
-                    "root_cause": "zig_type_error",
-                    "severity": "high",
-                    "tags": ["zig", "type", "casting"]
                 }
         
         # Check undefined errors
@@ -547,6 +548,15 @@ class ZigPatchGenerator:
             if expected_match and found_match:
                 expected = expected_match.group(1)
                 found = found_match.group(1)
+                
+                # Special handling for semicolon
+                if expected == "';'":
+                    return {
+                        "type": "suggestion",
+                        "description": "Missing semicolon at end of statement",
+                        "fix": "Add semicolon after the statement"
+                    }
+                
                 fixes.append({
                     "type": "suggestion",
                     "description": f"Expected {expected}, but found {found}",
@@ -718,7 +728,7 @@ class ZigPatchGenerator:
             
             return {
                 "type": "suggestion",
-                "description": f"Module '{module_name}' not found",
+                "description": f"Import error - module '{module_name}' not found",
                 "fixes": [
                     f"Check path to '{module_name}' is correct",
                     f"Ensure '{module_name}' file exists",
@@ -742,7 +752,7 @@ class ZigPatchGenerator:
         
         return {
             "type": "suggestion",
-            "description": "Import/module error",
+            "description": "Import/module error - check import paths",
             "fixes": [
                 "Check import paths and module structure",
                 "Verify file exists and is accessible",
@@ -755,7 +765,7 @@ class ZigPatchGenerator:
         """Fix compile-time evaluation errors."""
         return {
             "type": "suggestion",
-            "description": "Compile-time evaluation error",
+            "description": "Comptime evaluation error - unable to evaluate constant expression",
             "fixes": [
                 "Ensure comptime expressions use only compile-time known values",
                 "Use comptime keyword for compile-time variables",
@@ -888,7 +898,7 @@ class ZigLanguagePlugin(LanguagePlugin):
         self.language = "zig"
         self.supported_extensions = {".zig"}
         self.supported_frameworks = [
-            "zig", "zig-build", "zigmod", "gyro"
+            "zig", "build.zig", "zig-build", "zigmod", "gyro"
         ]
         
         # Initialize components

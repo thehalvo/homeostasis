@@ -311,15 +311,15 @@ class RubyExceptionHandler:
         """Load rules for core Ruby exceptions."""
         return [
             {
-                "id": "ruby_no_method_error",
-                "pattern": "NoMethodError:.*undefined method `([^']+)' for (.*)",
+                "id": "ruby_method_missing_error",
+                "pattern": "NoMethodError:.*undefined method `([^']+)'.*\\(method_missing\\)",
                 "type": "NoMethodError",
-                "description": "Attempted to call a method that doesn't exist",
-                "root_cause": "ruby_no_method",
-                "suggestion": "Check for nil values before method calls. Use the safe navigation operator (&.) or respond_to? to prevent this error.",
-                "confidence": "high",
+                "description": "method_missing handler failed or threw an error",
+                "root_cause": "ruby_method_missing",
+                "suggestion": "Check your method_missing implementation. Ensure it correctly handles or delegates the method call.",
+                "confidence": "medium",
                 "severity": "medium",
-                "category": "core"
+                "category": "metaprogramming"
             },
             {
                 "id": "ruby_nil_reference",
@@ -328,6 +328,17 @@ class RubyExceptionHandler:
                 "description": "Attempted to call a method on nil",
                 "root_cause": "ruby_nil_reference",
                 "suggestion": "Add nil check before calling the method. Consider using the safe navigation operator (&.) or try() in Rails.",
+                "confidence": "high",
+                "severity": "medium",
+                "category": "core"
+            },
+            {
+                "id": "ruby_no_method_error",
+                "pattern": "NoMethodError:.*undefined method `([^']+)' for (.*)",
+                "type": "NoMethodError",
+                "description": "Attempted to call a method that doesn't exist",
+                "root_cause": "ruby_no_method_error",
+                "suggestion": "Check for nil values before method calls. Use the safe navigation operator (&.) or respond_to? to prevent this error.",
                 "confidence": "high",
                 "severity": "medium",
                 "category": "core"
@@ -377,19 +388,8 @@ class RubyExceptionHandler:
                 "category": "core"
             },
             {
-                "id": "ruby_load_error",
-                "pattern": "LoadError: cannot load such file -- ([^\\s]+)",
-                "type": "LoadError",
-                "description": "Failed to load a required file",
-                "root_cause": "ruby_missing_file",
-                "suggestion": "Ensure the file path is correct and the file exists. Check your load path settings.",
-                "confidence": "high",
-                "severity": "high",
-                "category": "core"
-            },
-            {
                 "id": "ruby_gem_load_error",
-                "pattern": "LoadError: cannot load such file -- ([^\\s/]+)(?:/|$)",
+                "pattern": "LoadError: cannot load such file -- ([^\\s/]+)(?:\\s|$)",
                 "type": "LoadError",
                 "description": "Failed to load a gem",
                 "root_cause": "ruby_missing_gem",
@@ -397,6 +397,17 @@ class RubyExceptionHandler:
                 "confidence": "high",
                 "severity": "high",
                 "category": "gems"
+            },
+            {
+                "id": "ruby_load_error",
+                "pattern": "LoadError: cannot load such file -- ([^\\s]+)",
+                "type": "LoadError",
+                "description": "Failed to load a required file",
+                "root_cause": "ruby_load_error",
+                "suggestion": "Ensure the file path is correct and the file exists. Check your load path settings.",
+                "confidence": "high",
+                "severity": "high",
+                "category": "core"
             },
             {
                 "id": "ruby_syntax_error",
@@ -596,7 +607,7 @@ class RubyExceptionHandler:
                 "framework": "sinatra"
             },
             {
-                "id": "metaprogramming_method_missing",
+                "id": "ruby_method_missing_error",
                 "pattern": "NoMethodError:.*undefined method `([^']+)'.*\\(method_missing\\)",
                 "type": "NoMethodError",
                 "description": "method_missing handler failed or threw an error",

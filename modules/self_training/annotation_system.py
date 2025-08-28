@@ -373,8 +373,24 @@ class AnnotationInterface:
         annotation_file = self.storage_dir / "annotations" / f"{date_str}.jsonl"
         annotation_file.parent.mkdir(exist_ok=True)
         
+        # Convert dataclass to dict and handle enum values
+        annotation_dict = asdict(annotation)
+        
+        # Custom JSON encoder for enums
+        def convert_enums(obj):
+            if isinstance(obj, dict):
+                return {k: convert_enums(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [convert_enums(v) for v in obj]
+            elif isinstance(obj, Enum):
+                return obj.value
+            else:
+                return obj
+        
+        annotation_dict = convert_enums(annotation_dict)
+        
         with open(annotation_file, 'a') as f:
-            f.write(json.dumps(asdict(annotation)) + '\n')
+            f.write(json.dumps(annotation_dict) + '\n')
     
     def _load_data(self) -> None:
         """Load existing tasks and annotations from disk."""

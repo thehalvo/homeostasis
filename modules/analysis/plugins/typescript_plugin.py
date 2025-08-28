@@ -129,11 +129,22 @@ class TypeScriptExceptionHandler:
         if matches:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
+            
+            # Enhance suggestion with captured groups for specific error codes
+            suggestion = best_match.get("suggestion", "")
+            if best_match.get("error_code") == "TS2304" and best_match.get("match_groups"):
+                identifier = best_match["match_groups"][0]
+                suggestion = f"Cannot find name '{identifier}' - check if the identifier is declared, imported correctly, or install missing type definitions"
+            elif best_match.get("error_code") == "TS2322" and len(best_match.get("match_groups", [])) >= 2:
+                source_type = best_match["match_groups"][0]
+                target_type = best_match["match_groups"][1]
+                suggestion = f"Type '{source_type}' is not assignable to type '{target_type}' - fix type compatibility"
+            
             return {
                 "category": best_match.get("category", "typescript"),
                 "subcategory": best_match.get("subcategory", "unknown"),
                 "confidence": best_match.get("confidence", "medium"),
-                "suggested_fix": best_match.get("suggestion", ""),
+                "suggested_fix": suggestion,
                 "root_cause": best_match.get("root_cause", ""),
                 "severity": best_match.get("severity", "medium"),
                 "rule_id": best_match.get("id", ""),
@@ -201,15 +212,21 @@ class TypeScriptExceptionHandler:
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
         error_type = error_data.get("error_type", "TSError")
+        error_code = error_data.get("error_code", error_type)
         message = error_data.get("message", "")
         
         # Basic categorization based on error type
-        if error_type.startswith("TS"):
+        if error_type.startswith("TS") or error_code.startswith("TS"):
             # TypeScript compiler error
-            error_code = error_type
             if error_code.startswith("TS2"):
                 category = "type_error"
                 suggestion = "Fix type-related issues in your TypeScript code"
+                # Special handling for TS2304 - extract identifier
+                if error_code == "TS2304":
+                    name_match = re.search(r"Cannot find name '([^']+)'", message)
+                    if name_match:
+                        identifier = name_match.group(1)
+                        suggestion = f"Cannot find name '{identifier}' - check if the identifier is declared, imported correctly, or install missing type definitions"
             elif error_code.startswith("TS1"):
                 category = "syntax_error"
                 suggestion = "Fix syntax errors in your TypeScript code"
@@ -238,6 +255,7 @@ class TypeScriptExceptionHandler:
             "root_cause": f"typescript_{category}",
             "severity": "medium",
             "rule_id": "ts_generic_handler",
+            "error_code": error_code,
             "tags": ["typescript", "generic"]
         }
     
@@ -341,6 +359,18 @@ class TypeScriptExceptionHandler:
         }
         
         fix_suggestion = type_patterns.get(error_code, "Fix TypeScript type error")
+        
+        # For TS2304, extract identifier and provide more specific suggestion
+        if error_code == "TS2304":
+            name_match = re.search(r"Cannot find name '([^']+)'", message)
+            if name_match:
+                identifier = name_match.group(1)
+                fix_suggestion = f"Cannot find name '{identifier}' - check if the identifier is declared, imported correctly, or install missing type definitions"
+        # For TS2322, include types in suggestion
+        elif error_code == "TS2322":
+            type_match = re.search(r"Type '([^']+)' is not assignable to type '([^']+)'", message)
+            if type_match:
+                fix_suggestion = f"Type '{type_match.group(1)}' is not assignable to type '{type_match.group(2)}' - fix type compatibility"
         
         return {
             "category": "typescript",
@@ -482,11 +512,11 @@ class TypeScriptPatchGenerator:
         
         # Common type conversion suggestions
         conversions = {
-            ("string", "number"): "Convert string to number using parseInt() or parseFloat()",
-            ("number", "string"): "Convert number to string using .toString() or String()",
-            ("null", "string"): "Add null check or use nullish coalescing (??) operator",
-            ("undefined", "string"): "Add undefined check or provide default value",
-            ("any", "specific_type"): "Use type assertion or improve type definitions"
+            ("string", "number"): "Fix type compatibility: Convert string to number using parseInt() or parseFloat()",
+            ("number", "string"): "Fix type compatibility: Convert number to string using .toString() or String()",
+            ("null", "string"): "Fix type compatibility: Add null check or use nullish coalescing (??) operator",
+            ("undefined", "string"): "Fix type compatibility: Add undefined check or provide default value",
+            ("any", "specific_type"): "Fix type compatibility: Use type assertion or improve type definitions"
         }
         
         conversion_key = (source_type, target_type)
@@ -752,13 +782,13 @@ class TypeScriptLanguagePlugin(LanguagePlugin):
             else:
                 standard_error = error_data
             
-            # Check if it's a compilation error
-            if self._is_compilation_error(standard_error):
-                analysis = self.exception_handler.analyze_compilation_error(standard_error)
-            
-            # Check if it's a type error
-            elif self._is_type_error(standard_error):
+            # Check if it's a type error first (more specific)
+            if self._is_type_error(standard_error):
                 analysis = self.exception_handler.analyze_type_error(standard_error)
+            
+            # Check if it's a compilation error
+            elif self._is_compilation_error(standard_error):
+                analysis = self.exception_handler.analyze_compilation_error(standard_error)
             
             # Default error analysis
             else:

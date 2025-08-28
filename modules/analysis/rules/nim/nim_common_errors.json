@@ -113,16 +113,16 @@
     {
       "id": "nim_undeclared_identifier",
       "pattern": "Error: undeclared identifier: '(.+)'",
-      "type": "CompilationError",
+      "type": "undefined",
       "description": "Using an undeclared identifier in Nim",
-      "root_cause": "nim_compilation_error",
+      "root_cause": "nim_undefined_identifier",
       "suggestion": "Ensure the variable or procedure is declared before use",
       "category": "nim",
       "severity": "high",
       "confidence": "high",
       "tags": [
         "nim",
-        "compilation",
+        "undefined",
         "identifier"
       ],
       "examples": [

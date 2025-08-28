@@ -146,7 +146,7 @@ class TestSwiftPatchGenerator(unittest.TestCase):
         """Test patch generation for force unwrapping errors."""
         error_data = {
             "message": "unexpectedly found nil while unwrapping an Optional value",
-            "stack_trace": [{"file": "test.swift", "line": 42}]
+            "stack_trace": [{"file": "test.swift", "line": 3}]
         }
         
         analysis = {
@@ -169,7 +169,7 @@ class TestSwiftPatchGenerator(unittest.TestCase):
         """Test patch generation for array bounds errors."""
         error_data = {
             "message": "Index out of range",
-            "stack_trace": [{"file": "test.swift", "line": 15}]
+            "stack_trace": [{"file": "test.swift", "line": 3}]
         }
         
         analysis = {
@@ -405,7 +405,7 @@ class TestSwiftLanguagePlugin(unittest.TestCase):
         if result:
             self.assertIn("type", result)
     
-    @patch('modules.analysis.plugins.swift_dependency_analyzer.SwiftDependencyAnalyzer')
+    @patch('modules.analysis.plugins.swift_plugin.SwiftDependencyAnalyzer')
     def test_dependency_analysis(self, mock_analyzer_class):
         """Test dependency analysis."""
         mock_analyzer = Mock()

@@ -413,7 +413,7 @@ class ReactNativeExceptionHandler:
                 "category": "react_native",
                 "subcategory": "bundler", 
                 "confidence": "high",
-                "suggested_fix": "Check module path and ensure dependency is installed",
+                "suggested_fix": "Check Metro bundler module resolution and ensure dependency is installed",
                 "root_cause": "react_native_module_not_found",
                 "severity": "error",
                 "tags": ["react-native", "metro", "modules"],

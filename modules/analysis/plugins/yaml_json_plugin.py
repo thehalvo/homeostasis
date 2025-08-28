@@ -82,6 +82,7 @@ class YAMLJSONExceptionHandler:
                 r"expected <block end>, but found"
             ],
             "syntax": [
+                r"while parsing a block mapping",
                 r"could not find expected ':'",
                 r"found unexpected end of stream",
                 r"expected ',' or '}' in flow mapping",
@@ -179,6 +180,50 @@ class YAMLJSONExceptionHandler:
         file_path = error_data.get("file_path", "")
         content = error_data.get("content", "")
         
+        # Handle specific error types
+        if error_type == "SchemaError":
+            return {
+                "category": "yaml_json",
+                "subcategory": "schema",
+                "confidence": "high",
+                "suggested_fix": "Fix schema validation error - ensure all required properties are present and correctly typed",
+                "root_cause": "schema_error",
+                "severity": "high",
+                "tags": ["schema", "validation"]
+            }
+        elif error_type == "TypeError" and ("expected" in message.lower() or "got" in message.lower()):
+            return {
+                "category": "yaml_json",
+                "subcategory": "type",
+                "confidence": "high",
+                "suggested_fix": "Fix type mismatch - ensure values match the expected types",
+                "root_cause": "type_error",
+                "severity": "medium",
+                "tags": ["type", "validation"]
+            }
+        elif error_type == "YAMLError":
+            # Check for specific YAML error patterns
+            if "inconsistent indentation" in message.lower():
+                return {
+                    "category": "yaml_json",
+                    "subcategory": "indentation",
+                    "confidence": "high",
+                    "suggested_fix": "Fix YAML indentation - use consistent spacing (2 or 4 spaces)",
+                    "root_cause": "indentation_error",
+                    "severity": "high",
+                    "tags": ["indentation", "yaml"]
+                }
+            elif "found duplicate key" in message.lower():
+                return {
+                    "category": "yaml_json",
+                    "subcategory": "duplicate_key",
+                    "confidence": "high",
+                    "suggested_fix": "Remove or rename duplicate keys in YAML document",
+                    "root_cause": "duplicate_key_error",
+                    "severity": "high",
+                    "tags": ["duplicate", "yaml", "structure"]
+                }
+        
         # Detect file type if not provided
         if not file_type:
             file_type = self._detect_file_type(file_path, content)
@@ -273,7 +318,7 @@ class YAMLJSONExceptionHandler:
         for pattern in self.yaml_error_patterns["indentation"]:
             if re.search(pattern, message, re.IGNORECASE):
                 return {
-                    "category": "yaml",
+                    "category": "yaml_json",
                     "subcategory": "indentation",
                     "confidence": "high",
                     "suggested_fix": "Fix YAML indentation - use spaces instead of tabs and ensure consistent indentation",
@@ -286,8 +331,8 @@ class YAMLJSONExceptionHandler:
         for pattern in self.yaml_error_patterns["syntax"]:
             if re.search(pattern, message, re.IGNORECASE):
                 return {
-                    "category": "yaml",
-                    "subcategory": "syntax",
+                    "category": "yaml_json",
+                    "subcategory": "yaml_syntax",
                     "confidence": "high",
                     "suggested_fix": "Fix YAML syntax errors - check for missing colons, quotes, or invalid characters",
                     "root_cause": "yaml_syntax_error",
@@ -299,7 +344,7 @@ class YAMLJSONExceptionHandler:
         for pattern in self.yaml_error_patterns["structure"]:
             if re.search(pattern, message, re.IGNORECASE):
                 return {
-                    "category": "yaml",
+                    "category": "yaml_json",
                     "subcategory": "structure",
                     "confidence": "high",
                     "suggested_fix": "Fix YAML structure issues - check for duplicate keys or undefined references",
@@ -313,7 +358,7 @@ class YAMLJSONExceptionHandler:
             return self._analyze_framework_specific_error(message, content, framework, "yaml")
         
         return {
-            "category": "yaml",
+            "category": "yaml_json",
             "subcategory": "unknown",
             "confidence": "low",
             "suggested_fix": "Review YAML syntax and structure",
@@ -331,8 +376,8 @@ class YAMLJSONExceptionHandler:
             if re.search(pattern, message, re.IGNORECASE):
                 if "expecting ',' delimiter" in message_lower:
                     return {
-                        "category": "json",
-                        "subcategory": "syntax",
+                        "category": "yaml_json",
+                        "subcategory": "json_syntax",
                         "confidence": "high",
                         "suggested_fix": "Add missing comma between JSON object properties or array elements",
                         "root_cause": "json_missing_comma",
@@ -341,8 +386,8 @@ class YAMLJSONExceptionHandler:
                     }
                 elif "expecting ':' delimiter" in message_lower:
                     return {
-                        "category": "json",
-                        "subcategory": "syntax",
+                        "category": "yaml_json",
+                        "subcategory": "json_syntax",
                         "confidence": "high",
                         "suggested_fix": "Add missing colon between JSON property name and value",
                         "root_cause": "json_missing_colon",
@@ -351,8 +396,8 @@ class YAMLJSONExceptionHandler:
                     }
                 elif "expecting property name" in message_lower:
                     return {
-                        "category": "json",
-                        "subcategory": "syntax",
+                        "category": "yaml_json",
+                        "subcategory": "json_syntax",
                         "confidence": "high",
                         "suggested_fix": "Property names in JSON must be enclosed in double quotes",
                         "root_cause": "json_unquoted_property",
@@ -361,8 +406,8 @@ class YAMLJSONExceptionHandler:
                     }
                 elif "unterminated string" in message_lower:
                     return {
-                        "category": "json",
-                        "subcategory": "syntax",
+                        "category": "yaml_json",
+                        "subcategory": "json_syntax",
                         "confidence": "high",
                         "suggested_fix": "Add missing closing quote for JSON string value",
                         "root_cause": "json_unterminated_string",
@@ -371,8 +416,8 @@ class YAMLJSONExceptionHandler:
                     }
                 else:
                     return {
-                        "category": "json",
-                        "subcategory": "syntax",
+                        "category": "yaml_json",
+                        "subcategory": "json_syntax",
                         "confidence": "high",
                         "suggested_fix": "Fix JSON syntax errors - check for proper quotes, commas, and brackets",
                         "root_cause": "json_syntax_error",
@@ -384,7 +429,7 @@ class YAMLJSONExceptionHandler:
         for pattern in self.json_error_patterns["structure"]:
             if re.search(pattern, message, re.IGNORECASE):
                 return {
-                    "category": "json",
+                    "category": "yaml_json",
                     "subcategory": "structure",
                     "confidence": "high",
                     "suggested_fix": "Fix JSON structure issues - check for duplicate keys or invalid object types",
@@ -398,7 +443,7 @@ class YAMLJSONExceptionHandler:
             return self._analyze_framework_specific_error(message, content, framework, "json")
         
         return {
-            "category": "json",
+            "category": "yaml_json",
             "subcategory": "unknown",
             "confidence": "low",
             "suggested_fix": "Review JSON syntax and structure",
@@ -418,7 +463,7 @@ class YAMLJSONExceptionHandler:
         for error_pattern in common_errors:
             if error_pattern.lower() in message_lower:
                 return {
-                    "category": file_type,
+                    "category": "yaml_json",
                     "subcategory": framework,
                     "confidence": "high",
                     "suggested_fix": f"Fix {framework} configuration: {error_pattern}",
@@ -439,7 +484,7 @@ class YAMLJSONExceptionHandler:
         }
         
         return {
-            "category": file_type,
+            "category": "yaml_json",
             "subcategory": framework,
             "confidence": "medium",
             "suggested_fix": framework_fixes.get(framework, f"Check {framework} configuration syntax and structure"),
@@ -451,7 +496,7 @@ class YAMLJSONExceptionHandler:
     def _analyze_generic_config_error(self, message: str, content: str, framework: str) -> Dict[str, Any]:
         """Analyze generic configuration errors."""
         return {
-            "category": "config",
+            "category": "yaml_json",
             "subcategory": "unknown",
             "confidence": "low",
             "suggested_fix": "Review configuration file syntax and structure",
@@ -568,7 +613,10 @@ class YAMLJSONPatchGenerator:
             "json_missing_colon": self._fix_json_missing_colon,
             "json_unquoted_property": self._fix_json_unquoted_property,
             "json_unterminated_string": self._fix_json_unterminated_string,
-            "json_structure_error": self._fix_json_structure
+            "json_structure_error": self._fix_json_structure,
+            "schema_error": self._fix_schema_error,
+            "indentation_error": self._fix_yaml_indentation,
+            "type_error": self._fix_type_error
         }
         
         strategy = patch_strategies.get(root_cause)
@@ -757,6 +805,34 @@ class YAMLJSONPatchGenerator:
             ]
         }
     
+    def _fix_schema_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any],
+                          content: str) -> Optional[Dict[str, Any]]:
+        """Fix schema validation errors."""
+        return {
+            "type": "suggestion",
+            "description": "Schema validation error - ensure required properties are present",
+            "fixes": [
+                "Add missing required properties to the configuration",
+                "Ensure property types match schema requirements",
+                "Validate against the schema documentation",
+                "Check for additional required nested properties"
+            ]
+        }
+    
+    def _fix_type_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any],
+                        content: str) -> Optional[Dict[str, Any]]:
+        """Fix type mismatch errors."""
+        return {
+            "type": "suggestion",
+            "description": "Type mismatch error - ensure values have correct types",
+            "fixes": [
+                "Convert values to the expected type",
+                "Check if strings should be numbers or booleans",
+                "Verify array vs object type requirements",
+                "Ensure proper quoting for string values"
+            ]
+        }
+    
     def _fix_framework_specific(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                                content: str) -> Optional[Dict[str, Any]]:
         """Fix framework-specific configuration errors."""
@@ -860,6 +936,7 @@ class YAMLJSONLanguagePlugin(LanguagePlugin):
         self.language = "yaml_json"
         self.supported_extensions = {".yaml", ".yml", ".json"}
         self.supported_frameworks = [
+            "yaml", "json", "jsonschema",
             "kubernetes", "docker", "ansible", "github_actions", "gitlab_ci",
             "terraform", "eslint", "prettier", "babel", "webpack", "rollup",
             "vite", "package", "composer", "npm", "yarn"
@@ -877,11 +954,11 @@ class YAMLJSONLanguagePlugin(LanguagePlugin):
     
     def get_language_name(self) -> str:
         """Get the human-readable name of the language."""
-        return "YAML/JSON Configuration"
+        return "YAML/JSON"
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return "YAML 1.2 / JSON RFC 7159"
+        return "1.2+"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""
@@ -903,7 +980,7 @@ class YAMLJSONLanguagePlugin(LanguagePlugin):
             "message": error_data.get("message", error_data.get("description", "")),
             "language": "yaml_json",
             "file_type": error_data.get("file_type", error_data.get("format", "")),
-            "file_path": error_data.get("file_path", error_data.get("filename", "")),
+            "file_path": error_data.get("file_path", error_data.get("filename", error_data.get("file", ""))),
             "line_number": error_data.get("line_number", error_data.get("line", 0)),
             "column_number": error_data.get("column_number", error_data.get("column", 0)),
             "content": error_data.get("content", error_data.get("source", "")),
@@ -944,6 +1021,7 @@ class YAMLJSONLanguagePlugin(LanguagePlugin):
             "description": standard_error.get("message", ""),
             "format": standard_error.get("file_type", ""),
             "filename": standard_error.get("file_path", ""),
+            "file": standard_error.get("file_path", ""),
             "line": standard_error.get("line_number", 0),
             "column": standard_error.get("column_number", 0),
             "source": standard_error.get("content", ""),

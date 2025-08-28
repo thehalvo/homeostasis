@@ -344,8 +344,8 @@ class UnityExceptionHandler:
         base_confidence = 0.5
         
         # Boost confidence for Unity-specific patterns
-        message = error_data.get("message", "").lower()
-        framework = error_data.get("framework", "").lower()
+        message = (error_data.get("message") or "").lower()
+        framework = (error_data.get("framework") or "").lower()
         
         if "unity" in message or "unity" in framework or "unityengine" in message:
             base_confidence += 0.3
@@ -361,8 +361,8 @@ class UnityExceptionHandler:
         
         # Infer context from error data
         context = error_data.get("context", {})
-        platform = context.get("platform", "").lower()
-        build_target = context.get("build_target", "").lower()
+        platform = (context.get("platform") or "").lower()
+        build_target = (context.get("build_target") or "").lower()
         
         if "android" in platform or "android" in build_target:
             context_tags.add("android")
@@ -390,7 +390,7 @@ class UnityExceptionHandler:
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
         error_type = error_data.get("error_type", "Exception")
-        message = error_data.get("message", "").lower()
+        message = (error_data.get("message") or "").lower()
         
         # Basic categorization based on error patterns
         if "nullreferenceexception" in error_type.lower():
@@ -442,9 +442,9 @@ class UnityExceptionHandler:
         Returns:
             Analysis results with mobile build specific fixes
         """
-        message = error_data.get("message", "").lower()
+        message = (error_data.get("message") or "").lower()
         context = error_data.get("context", {})
-        platform = context.get("platform", "").lower()
+        platform = (context.get("platform") or "").lower()
         
         # Android-specific build errors
         if "android" in platform or "android" in message:
@@ -511,7 +511,7 @@ class UnityExceptionHandler:
             "category": "unity",
             "subcategory": "mobile_build",
             "confidence": "medium",
-            "suggested_fix": "Check platform-specific build settings and dependencies",
+            "suggested_fix": "Check Android/iOS platform-specific build settings and dependencies",
             "root_cause": "unity_mobile_build_error",
             "severity": "error",
             "tags": ["unity", "mobile", "build"]
@@ -527,27 +527,26 @@ class UnityExceptionHandler:
         Returns:
             Analysis results with scripting specific fixes
         """
-        message = error_data.get("message", "").lower()
+        message = (error_data.get("message") or "").lower()
         error_type = error_data.get("error_type", "")
         
         # Null reference errors specific to Unity
         if "nullreferenceexception" in error_type.lower():
-            if "gameobject" in message or "component" in message:
-                return {
-                    "category": "unity",
-                    "subcategory": "null_reference",
-                    "confidence": "high",
-                    "suggested_fix": "Add null checks before accessing GameObjects or Components",
-                    "root_cause": "unity_null_reference_error",
-                    "severity": "error",
-                    "tags": ["unity", "scripting", "null-reference"],
-                    "fix_commands": [
-                        "Use null conditional operator: gameObject?.GetComponent<T>()",
-                        "Add null checks: if (gameObject != null)",
-                        "Initialize references in Awake() or Start()",
-                        "Use FindObjectOfType with null checks"
-                    ]
-                }
+            return {
+                "category": "unity",
+                "subcategory": "null_reference",
+                "confidence": "high",
+                "suggested_fix": "Add null checks before accessing GameObjects or Components",
+                "root_cause": "unity_null_reference_error",
+                "severity": "error",
+                "tags": ["unity", "scripting", "null-reference"],
+                "fix_commands": [
+                    "Use null conditional operator: gameObject?.GetComponent<T>()",
+                    "Add null checks: if (gameObject != null)",
+                    "Initialize references in Awake() or Start()",
+                    "Use FindObjectOfType with null checks"
+                ]
+            }
         
         # Component access errors
         if "missing" in message and "component" in message:
@@ -1056,7 +1055,7 @@ if (gameObject.activeInHierarchy && enabled)
                          source_code: str) -> Optional[Dict[str, Any]]:
         """Fix Unity mobile build errors."""
         context = error_data.get("context", {})
-        platform = context.get("platform", "").lower()
+        platform = (context.get("platform") or "").lower()
         
         if "android" in platform:
             return {
@@ -1214,18 +1213,18 @@ class UnityLanguagePlugin(LanguagePlugin):
             True if this plugin can handle the error, False otherwise
         """
         # Check if framework is explicitly set
-        framework = error_data.get("framework", "").lower()
+        framework = (error_data.get("framework") or "").lower()
         if "unity" in framework:
             return True
         
         # Check runtime environment
-        runtime = error_data.get("runtime", "").lower()
+        runtime = (error_data.get("runtime") or "").lower()
         if "unity" in runtime or "unityengine" in runtime:
             return True
         
         # Check error message for Unity-specific patterns
-        message = error_data.get("message", "").lower()
-        stack_trace = str(error_data.get("stack_trace", "")).lower()
+        message = (error_data.get("message") or "").lower()
+        stack_trace = str(error_data.get("stack_trace") or "").lower()
         
         unity_patterns = [
             r"unityengine",
@@ -1316,7 +1315,7 @@ class UnityLanguagePlugin(LanguagePlugin):
             else:
                 standard_error = error_data
             
-            message = standard_error.get("message", "").lower()
+            message = (standard_error.get("message") or "").lower()
             context = standard_error.get("context", {})
             
             # Check if it's a mobile build error
@@ -1351,10 +1350,10 @@ class UnityLanguagePlugin(LanguagePlugin):
     
     def _is_mobile_build_error(self, error_data: Dict[str, Any]) -> bool:
         """Check if this is a Unity mobile build related error."""
-        message = error_data.get("message", "").lower()
+        message = (error_data.get("message") or "").lower()
         context = error_data.get("context", {})
-        platform = context.get("platform", "").lower()
-        build_target = context.get("build_target", "").lower()
+        platform = (context.get("platform") or "").lower()
+        build_target = (context.get("build_target") or "").lower()
         
         mobile_patterns = [
             "build",
@@ -1373,8 +1372,8 @@ class UnityLanguagePlugin(LanguagePlugin):
     
     def _is_scripting_error(self, error_data: Dict[str, Any]) -> bool:
         """Check if this is a Unity C# scripting related error."""
-        message = error_data.get("message", "").lower()
-        stack_trace = str(error_data.get("stack_trace", "")).lower()
+        message = (error_data.get("message") or "").lower()
+        stack_trace = str(error_data.get("stack_trace") or "").lower()
         error_type = error_data.get("error_type", "")
         
         scripting_patterns = [

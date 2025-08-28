@@ -2010,6 +2010,9 @@ class CSharpErrorAdapter(LanguageAdapter):
             for key, value in standard_error["additional_data"].items():
                 if key == "inner_exception":
                     csharp_error["inner_exception"] = value
+                elif key == "level":
+                    # Skip level from additional_data - we already set it from severity
+                    pass
                 else:
                     csharp_error[key] = value
         
@@ -2060,26 +2063,60 @@ class CSharpErrorAdapter(LanguageAdapter):
                 # Parse the full method name into namespace, class, and method
                 parts = full_method.split('.')
                 
-                if len(parts) >= 3:
-                    # Standard case: Namespace.Class.Method
-                    namespace = '.'.join(parts[:-2])
-                    class_name = parts[-2]
-                    method = parts[-1]
-                elif len(parts) == 2:
-                    # Case: Class.Method
-                    namespace = ""
-                    class_name = parts[0]
-                    method = parts[1]
+                # Handle lambda/anonymous method cases (compiler-generated classes)
+                # e.g., MyCompany.MyApp.Services.DataService.<>c__DisplayClass5_0.<ProcessItems>b__0
+                if '<>' in full_method:
+                    # Find the real class name (before the <>c__ part)
+                    lambda_parts = []
+                    real_class_idx = -1
+                    for i, part in enumerate(parts):
+                        if part.startswith('<>'):
+                            # This is a compiler-generated class
+                            real_class_idx = i - 1
+                            break
+                        lambda_parts.append(part)
+                    
+                    if real_class_idx >= 0:
+                        # Extract namespace, real class, and full method including lambda parts
+                        if real_class_idx > 0:
+                            namespace = '.'.join(lambda_parts[:-1])
+                            class_name = lambda_parts[-1]
+                        else:
+                            namespace = ""
+                            class_name = lambda_parts[0]
+                        # Include everything after the class as the method
+                        method = '.'.join(parts[real_class_idx + 1:])
+                    else:
+                        # Fall back to standard parsing
+                        if len(parts) >= 3:
+                            namespace = '.'.join(parts[:-2])
+                            class_name = parts[-2]
+                            method = parts[-1]
+                        elif len(parts) == 2:
+                            namespace = ""
+                            class_name = parts[0]
+                            method = parts[1]
+                        else:
+                            namespace = ""
+                            class_name = ""
+                            method = full_method
                 else:
-                    # Case: Method (rare)
-                    namespace = ""
-                    class_name = ""
-                    method = full_method
-                
-                # Handle special cases like lambda expressions
-                if '<' in method and '>' in method:
-                    # This is likely a lambda or anonymous method
-                    pass  # We'll keep the method name with the angle brackets
+                    # Standard case (no lambda)
+                    if len(parts) >= 3:
+                        # Standard case: Namespace.Class.Method
+                        namespace = '.'.join(parts[:-2])
+                        class_name = parts[-2]
+                        method = parts[-1]
+                    elif len(parts) == 2:
+                        # Case: Class.Method
+                        namespace = ""
+                        class_name = parts[0]
+                        method = parts[1]
+                    else:
+                        # Case: Method (rare)
+                        namespace = ""
+                        class_name = ""
+                        method = full_method
                 
                 frames.append({
                     "namespace": namespace,

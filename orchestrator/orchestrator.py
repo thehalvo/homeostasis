@@ -85,29 +85,31 @@ class Orchestrator:
         
         # Initialize components
         # Convert boolean to strategy string
-        strategy = AnalysisStrategy.AI_FALLBACK if self.config["analysis"]["ai_based"]["enabled"] else AnalysisStrategy.RULE_BASED_ONLY
+        strategy = AnalysisStrategy.AI_FALLBACK if self.config.get("analysis", {}).get("ai_based", {}).get("enabled", False) else AnalysisStrategy.RULE_BASED_ONLY
         self.analyzer = Analyzer(strategy=strategy)
         self.patch_generator = PatchGenerator()
         
         # Initialize testing components
-        if self.config["testing"]["containers"]["enabled"]:
+        containers_enabled = self.config.get("testing", {}).get("containers", {}).get("enabled", False)
+        if containers_enabled:
             self.container_manager = ContainerManager(log_level=log_level)
             self.test_runner = ParallelTestRunner(
                 log_level=log_level,
-                max_workers=self.config["testing"]["parallel"]["max_workers"],
+                max_workers=self.config.get("testing", {}).get("parallel", {}).get("max_workers", 4),
                 use_containers=True
             )
         else:
             self.test_runner = ParallelTestRunner(
                 log_level=log_level,
-                max_workers=self.config["testing"]["parallel"]["max_workers"],
+                max_workers=self.config.get("testing", {}).get("parallel", {}).get("max_workers", 4),
                 use_containers=False
             )
             
         # Initialize regression test generator
-        if self.config["testing"]["regression"]["enabled"]:
+        regression_enabled = self.config.get("testing", {}).get("regression", {}).get("enabled", False)
+        if regression_enabled:
             self.regression_generator = RegressionTestGenerator(
-                output_dir=project_root / self.config["testing"]["regression"]["save_path"],
+                output_dir=project_root / self.config.get("testing", {}).get("regression", {}).get("save_path", "tests/regression"),
                 log_level=log_level
             )
         
@@ -118,8 +120,9 @@ class Orchestrator:
         self.alert_manager = AlertManager(log_level=log_level)
         
         # Initialize post-deployment monitor
+        post_deployment_config = self.config.get("monitoring", {}).get("post_deployment", {})
         self.post_deployment_monitor = PostDeploymentMonitor(
-            config=self.config["monitoring"]["post_deployment"],
+            config=post_deployment_config,
             log_level=log_level
         )
         

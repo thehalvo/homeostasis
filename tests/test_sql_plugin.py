@@ -108,7 +108,7 @@ class TestSQLExceptionHandler:
         """Test analysis of index errors."""
         error_data = {
             "error_type": "SQLError",
-            "message": "duplicate key value violates unique constraint",
+            "message": "cannot create index on column with duplicate values",
             "file_path": "test.sql",
             "line_number": 35,
             "column_number": 1
@@ -190,7 +190,7 @@ class TestSQLPatchGenerator:
         }
         
         analysis = {
-            "root_cause": "sql_constraint_error",
+            "root_cause": "sql_unique_constraint_violation",
             "subcategory": "constraint",
             "confidence": "high"
         }
@@ -209,7 +209,7 @@ class TestSQLPatchGenerator:
         }
         
         analysis = {
-            "root_cause": "sql_join_error",
+            "root_cause": "sql_ambiguous_column",
             "subcategory": "join",
             "confidence": "high"
         }
@@ -228,7 +228,7 @@ class TestSQLPatchGenerator:
         }
         
         analysis = {
-            "root_cause": "sql_type_error",
+            "root_cause": "sql_type_mismatch",
             "subcategory": "type",
             "confidence": "high"
         }
@@ -247,7 +247,7 @@ class TestSQLPatchGenerator:
         }
         
         analysis = {
-            "root_cause": "sql_permission_error",
+            "root_cause": "sql_permission_denied",
             "subcategory": "permission",
             "confidence": "high"
         }
@@ -266,7 +266,7 @@ class TestSQLPatchGenerator:
         }
         
         analysis = {
-            "root_cause": "sql_index_error",
+            "root_cause": "sql_index_constraint_violation",
             "subcategory": "index",
             "confidence": "high"
         }
@@ -285,7 +285,7 @@ class TestSQLPatchGenerator:
         }
         
         analysis = {
-            "root_cause": "sql_connection_error",
+            "root_cause": "sql_connection_failed",
             "subcategory": "connection",
             "confidence": "high"
         }

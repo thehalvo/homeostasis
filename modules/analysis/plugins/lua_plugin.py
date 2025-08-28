@@ -56,10 +56,6 @@ class LuaExceptionHandler:
                 r"missing.*?near"
             ],
             "runtime_error": [
-                r"attempt to.*?nil",
-                r"attempt to call.*?nil",
-                r"attempt to index.*?nil",
-                r"attempt to perform.*?on.*?nil",
                 r"stack overflow",
                 r"memory allocation error",
                 r"C stack overflow",
@@ -208,29 +204,31 @@ class LuaExceptionHandler:
         # Analyze based on error patterns
         analysis = self._analyze_by_patterns(message, file_path)
         
-        # Check for concept-specific issues
-        concept_analysis = self._analyze_lua_concepts(message)
-        if concept_analysis.get("confidence", "low") != "low":
-            # Merge concept-specific findings
-            analysis.update(concept_analysis)
+        # Only check for concept-specific issues if no specific pattern matched
+        if analysis.get("subcategory") == "unknown":
+            concept_analysis = self._analyze_lua_concepts(message)
+            if concept_analysis.get("confidence", "low") != "low":
+                # Merge concept-specific findings
+                analysis.update(concept_analysis)
         
-        # Find matching rules
-        matches = self._find_matching_rules(message, error_data)
-        
-        if matches:
-            # Use the best match (highest confidence)
-            best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
-            analysis.update({
-                "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
-                "confidence": best_match.get("confidence", "medium"),
-                "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
-                "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
-                "severity": best_match.get("severity", "medium"),
-                "rule_id": best_match.get("id", ""),
-                "tags": best_match.get("tags", []),
-                "all_matches": matches
-            })
+        # Find matching rules only if we haven't already categorized well
+        if analysis.get("confidence") == "low" or analysis.get("subcategory") == "unknown":
+            matches = self._find_matching_rules(message, error_data)
+            
+            if matches:
+                # Use the best match (highest confidence)
+                best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
+                analysis.update({
+                    "category": best_match.get("category", analysis.get("category", "unknown")),
+                    "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
+                    "confidence": best_match.get("confidence", "medium"),
+                    "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
+                    "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
+                    "severity": best_match.get("severity", "medium"),
+                    "rule_id": best_match.get("id", ""),
+                    "tags": best_match.get("tags", []),
+                    "all_matches": matches
+                })
         
         analysis["file_path"] = file_path
         analysis["line_number"] = line_number
@@ -253,18 +251,90 @@ class LuaExceptionHandler:
                     "tags": ["lua", "syntax", "parser"]
                 }
         
-        # Check runtime errors
+        # Check for more specific nil errors first
+        if "attempt to index" in message_lower and "nil" in message_lower:
+            return {
+                "category": "lua",
+                "subcategory": "nil",
+                "confidence": "high",
+                "suggested_fix": "Fix nil value access",
+                "root_cause": "lua_nil_error",
+                "severity": "high",
+                "tags": ["lua", "nil"]
+            }
+        
+        # Check for type errors (concatenation)
+        if "attempt to concatenate" in message_lower and "nil" in message_lower:
+            return {
+                "category": "lua",
+                "subcategory": "type",
+                "confidence": "high",
+                "suggested_fix": "Fix type conversion errors",
+                "root_cause": "lua_type_error",
+                "severity": "high",
+                "tags": ["lua", "type"]
+            }
+        
+        # Check for function errors
+        if "attempt to call" in message_lower and "nil" in message_lower:
+            return {
+                "category": "lua",
+                "subcategory": "function",
+                "confidence": "high",
+                "suggested_fix": "Fix function call errors",
+                "root_cause": "lua_function_error",
+                "severity": "high",
+                "tags": ["lua", "function"]
+            }
+        
+        # Check for arithmetic errors
+        if "attempt to perform arithmetic" in message_lower:
+            return {
+                "category": "lua",
+                "subcategory": "arithmetic",
+                "confidence": "high",
+                "suggested_fix": "Fix arithmetic operation errors",
+                "root_cause": "lua_arithmetic_error",
+                "severity": "high",
+                "tags": ["lua", "arithmetic"]
+            }
+        
+        # Check runtime errors (more general)
         for pattern in self.lua_error_patterns["runtime_error"]:
             if re.search(pattern, message, re.IGNORECASE):
                 return {
                     "category": "lua",
                     "subcategory": "runtime",
                     "confidence": "high",
-                    "suggested_fix": "Fix runtime errors and nil access",
+                    "suggested_fix": "Fix runtime errors",
                     "root_cause": "lua_runtime_error",
                     "severity": "high",
-                    "tags": ["lua", "runtime", "nil"]
+                    "tags": ["lua", "runtime"]
                 }
+        
+        # Check for table index errors
+        if "table index is nil" in message_lower:
+            return {
+                "category": "lua",
+                "subcategory": "table",
+                "confidence": "high",
+                "suggested_fix": "Fix table indexing errors",
+                "root_cause": "lua_table_error",
+                "severity": "high",
+                "tags": ["lua", "table"]
+            }
+        
+        # Check for module errors
+        if "module" in message_lower and "not found" in message_lower:
+            return {
+                "category": "lua",
+                "subcategory": "module",
+                "confidence": "high",
+                "suggested_fix": "Fix module loading errors",
+                "root_cause": "lua_module_error",
+                "severity": "high",
+                "tags": ["lua", "module"]
+            }
         
         # Check table errors
         for pattern in self.lua_error_patterns["table_error"]:
@@ -398,19 +468,19 @@ class LuaExceptionHandler:
         message_lower = message.lower()
         
         # Check for nil access errors
-        if any(keyword in message_lower for keyword in ["nil", "attempt to", "index"]):
+        if "attempt to index" in message_lower and "nil" in message_lower:
             return {
                 "category": "lua",
-                "subcategory": "nil_access",
+                "subcategory": "nil",
                 "confidence": "high",
                 "suggested_fix": "Add nil check before accessing values",
-                "root_cause": "lua_nil_access",
+                "root_cause": "lua_nil_error",
                 "severity": "high",
                 "tags": ["lua", "nil", "safety"]
             }
         
         # Check for table-related errors
-        if any(keyword in message_lower for keyword in ["table", "index", "key"]):
+        if "table index" in message_lower:
             return {
                 "category": "lua",
                 "subcategory": "table",
@@ -422,39 +492,51 @@ class LuaExceptionHandler:
             }
         
         # Check for function-related errors
-        if any(keyword in message_lower for keyword in ["function", "call", "argument"]):
+        if "attempt to call" in message_lower:
             return {
                 "category": "lua",
                 "subcategory": "function",
-                "confidence": "medium",
+                "confidence": "high",
                 "suggested_fix": "Check function definitions and calls",
                 "root_cause": "lua_function_error",
-                "severity": "medium",
+                "severity": "high",
                 "tags": ["lua", "function", "call"]
             }
         
-        # Check for coroutine errors
-        if any(keyword in message_lower for keyword in ["coroutine", "yield", "resume"]):
+        # Check for type errors (concatenation on nil)
+        if "concatenate" in message_lower and "nil" in message_lower:
             return {
                 "category": "lua",
-                "subcategory": "coroutine",
-                "confidence": "medium",
-                "suggested_fix": "Handle coroutine operations properly",
-                "root_cause": "lua_coroutine_error",
-                "severity": "medium",
-                "tags": ["lua", "coroutine", "async"]
+                "subcategory": "type",
+                "confidence": "high",
+                "suggested_fix": "Check types before operations",
+                "root_cause": "lua_type_error",
+                "severity": "high",
+                "tags": ["lua", "type", "conversion"]
             }
         
         # Check for module errors
-        if any(keyword in message_lower for keyword in ["module", "require", "package"]):
+        if "module" in message_lower and "not found" in message_lower:
             return {
                 "category": "lua",
                 "subcategory": "module",
-                "confidence": "medium",
+                "confidence": "high",
                 "suggested_fix": "Check module loading and require paths",
                 "root_cause": "lua_module_error",
-                "severity": "medium",
+                "severity": "high",
                 "tags": ["lua", "module", "require"]
+            }
+        
+        # Check for arithmetic errors
+        if "arithmetic" in message_lower:
+            return {
+                "category": "lua",
+                "subcategory": "arithmetic",
+                "confidence": "high",
+                "suggested_fix": "Check arithmetic operations and type conversions",
+                "root_cause": "lua_arithmetic_error",
+                "severity": "high",
+                "tags": ["lua", "arithmetic", "type"]
             }
         
         return {"confidence": "low"}
@@ -577,7 +659,10 @@ class LuaPatchGenerator:
             "lua_io_error": self._fix_io_error,
             "lua_string_error": self._fix_string_error,
             "lua_math_error": self._fix_math_error,
-            "lua_nil_access": self._fix_nil_access_error
+            "lua_nil_access": self._fix_nil_access_error,
+            "lua_nil_error": self._fix_nil_access_error,  # Map nil_error to nil_access handler
+            "lua_type_error": self._fix_type_error,
+            "lua_arithmetic_error": self._fix_arithmetic_error
         }
         
         strategy = patch_strategies.get(root_cause)
@@ -626,10 +711,11 @@ class LuaPatchGenerator:
             })
         
         if fixes:
+            # Return the first fix as a suggestion for simpler interface
             return {
-                "type": "multiple_suggestions",
-                "fixes": fixes,
-                "description": "Lua syntax error fixes"
+                "type": "suggestion",
+                "description": f"Lua syntax error: {fixes[0]['description']}",
+                "fix": fixes[0]["fix"]
             }
         
         return {
@@ -1040,6 +1126,64 @@ class LuaPatchGenerator:
             ]
         }
     
+    def _fix_type_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                       source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix type errors."""
+        message = error_data.get("message", "")
+        
+        if "concatenate" in message.lower():
+            return {
+                "type": "suggestion",
+                "description": "Type conversion error in concatenation",
+                "fixes": [
+                    "Convert to string before concatenation: tostring(value)",
+                    "Check type before concatenation: if type(value) == 'string' then",
+                    "Use string.format for complex formatting: string.format('%s', value)",
+                    "Handle nil values: local str = value or ''",
+                    "Use table.concat for multiple values"
+                ]
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Type error - check value types",
+            "fixes": [
+                "Check type before operations: type(value)",
+                "Convert types appropriately: tonumber(), tostring()",
+                "Validate input types",
+                "Use proper type coercion"
+            ]
+        }
+    
+    def _fix_arithmetic_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                             source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix arithmetic errors."""
+        message = error_data.get("message", "")
+        
+        if "string" in message.lower():
+            return {
+                "type": "suggestion",
+                "description": "Arithmetic operation on non-numeric value",
+                "fixes": [
+                    "Convert to number: tonumber(value)",
+                    "Check if numeric: if tonumber(value) then",
+                    "Validate numeric input: assert(tonumber(value), 'numeric value required')",
+                    "Handle conversion failures: local num = tonumber(value) or 0",
+                    "Use type checking: if type(value) == 'number' then"
+                ]
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Arithmetic operation error",
+            "fixes": [
+                "Ensure numeric operands: tonumber(value)",
+                "Check for nil values before arithmetic",
+                "Validate numeric types",
+                "Handle edge cases (division by zero, overflow)"
+            ]
+        }
+    
     def _template_based_patch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                             source_code: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
@@ -1104,7 +1248,7 @@ class LuaLanguagePlugin(LanguagePlugin):
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return "5.1+"
+        return "5.4+"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""

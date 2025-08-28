@@ -32,8 +32,7 @@ class TestDashboardLLMIntegration(unittest.TestCase):
         self.dashboard = DashboardServer(debug=True)
         
         # Create test client
-        with self.dashboard.app.test_client() as client:
-            self.client = client
+        self.client = self.dashboard.app.test_client()
     
     def test_llm_keys_api_endpoint(self):
         """Test LLM keys status API endpoint."""
@@ -50,11 +49,14 @@ class TestDashboardLLMIntegration(unittest.TestCase):
         for provider in expected_providers:
             self.assertIn(provider, data['providers'])
     
-    @patch('modules.llm_integration.api_key_manager.requests.get')
-    def test_set_openai_key(self, mock_get):
+    @patch('dashboard.app.APIKeyManager')
+    def test_set_openai_key(self, mock_api_key_manager):
         """Test setting OpenAI API key."""
-        # Mock successful validation
-        mock_get.return_value.status_code = 200
+        # Mock the APIKeyManager instance
+        mock_manager = MagicMock()
+        mock_manager.validate_key.return_value = True
+        mock_manager.set_key.return_value = True
+        mock_api_key_manager.return_value = mock_manager
         
         response = self.client.post('/api/llm-keys/openai', 
                                    json={'api_key': 'sk-test1234567890123456789012345678901234567890'})
@@ -62,7 +64,7 @@ class TestDashboardLLMIntegration(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.get_json()
         self.assertTrue(data['success'])
-        self.assertIn('OpenAI API key set successfully', data['message'])
+        self.assertIn('Openai API key set successfully', data['message'])
     
     def test_set_invalid_key_format(self):
         """Test setting API key with invalid format."""
@@ -106,7 +108,7 @@ class TestDashboardLLMIntegration(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.get_json()
         self.assertTrue(data['success'])
-        self.assertIn('OpenAI API key is valid', data['message'])
+        self.assertIn('Openai API key is valid', data['message'])
     
     def test_test_key_not_found(self):
         """Test testing key when no key is configured."""

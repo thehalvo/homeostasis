@@ -528,12 +528,61 @@ USER root
 COPY . /app
 ''')
             
-            # Run security scan
-            orchestrator = SecurityTestOrchestrator()
-            results = await orchestrator.run_security_scan(project_path)
-            
-            # Generate report
-            report = orchestrator.generate_security_report(results)
+            # Mock security scanner subprocess calls
+            with patch('asyncio.create_subprocess_exec') as mock_subprocess:
+                # Mock safety check for Python dependencies
+                safety_output = [{
+                    "vulnerability_id": "12345",
+                    "package": "django",
+                    "installed_version": "2.2.0",
+                    "safe_versions": ["3.2.0", "4.0.0"],
+                    "advisory": "Django 2.2.0 has SQL injection vulnerability allowing remote code execution",
+                    "cve": "CVE-2020-1234"
+                }]
+                
+                # Mock bandit check for Python code
+                bandit_output = {
+                    "results": [{
+                        "test_id": "B105",
+                        "issue_severity": "high",
+                        "issue_text": "Hardcoded password string detected",
+                        "filename": str(project_path / "app.py"),
+                        "line_number": 2,
+                        "issue_confidence": "high"
+                    }]
+                }
+                
+                # Mock hadolint check for Dockerfile
+                hadolint_output = [{
+                    "rule": "DL3002",
+                    "level": "error",
+                    "message": "Last USER should not be root",
+                    "file": str(project_path / "Dockerfile"),
+                    "line": 2
+                }]
+                
+                async def mock_communicate(*args, **kwargs):
+                    cmd = args[0] if args else mock_subprocess.call_args[0][0]
+                    if "safety" in cmd:
+                        return (json.dumps(safety_output).encode(), b"")
+                    elif "bandit" in cmd:
+                        return (json.dumps(bandit_output).encode(), b"")
+                    elif "hadolint" in cmd:
+                        return (json.dumps(hadolint_output).encode(), b"")
+                    else:
+                        return (b"", b"")
+                
+                mock_process = AsyncMock()
+                mock_process.communicate = mock_communicate
+                mock_process.returncode = 1  # Non-zero for safety when vulnerabilities found
+                mock_subprocess.return_value = mock_process
+                
+                # Run security scan
+                orchestrator = SecurityTestOrchestrator()
+                results = await orchestrator.run_security_scan(project_path)
+                
+                # Generate report
+                report = orchestrator.generate_security_report(results)
             
             # Verify results
             assert report["summary"]["total_vulnerabilities"] > 0

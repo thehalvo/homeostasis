@@ -59,10 +59,16 @@ class RExceptionHandler:
                 r"could not find function",
                 r"subscript out of bounds",
                 r"index.*out of bounds",
-                r"non-numeric argument",
                 r"invalid type.*argument",
                 r"cannot open connection",
                 r"argument.*missing"
+            ],
+            "type_error": [
+                r"non-numeric argument",
+                r"invalid type",
+                r"cannot coerce",
+                r"is not subsettable",
+                r"attempt to apply non-function"
             ],
             "data_error": [
                 r"replacement has.*rows",
@@ -72,7 +78,9 @@ class RExceptionHandler:
                 r"more columns than column names",
                 r"missing values in object",
                 r"NA/NaN/Inf in.*call",
-                r"non-finite values"
+                r"non-finite values",
+                r"incorrect number of dimensions",
+                r"missing values are not allowed"
             ],
             "function_error": [
                 r"could not find function",
@@ -228,14 +236,77 @@ class RExceptionHandler:
         file_path = error_data.get("file_path", "")
         line_number = error_data.get("line_number", 0)
         
-        # Analyze based on error patterns
-        analysis = self._analyze_by_patterns(message, file_path)
-        
-        # Check for concept-specific issues
-        concept_analysis = self._analyze_r_concepts(message)
-        if concept_analysis.get("confidence", "low") != "low":
-            # Merge concept-specific findings
-            analysis.update(concept_analysis)
+        # Handle specific error types first
+        message_lower = message.lower()
+        if "object" in message_lower and "not found" in message_lower:
+            analysis = {
+                "category": "r",
+                "subcategory": "object",
+                "confidence": "high",
+                "suggested_fix": "Check object name and ensure it's defined",
+                "root_cause": "r_object_not_found",
+                "severity": "high",
+                "tags": ["r", "object", "variable"]
+            }
+        elif "could not find function" in message_lower:
+            analysis = {
+                "category": "r",
+                "subcategory": "function",
+                "confidence": "high",
+                "suggested_fix": "Check function name and ensure package is loaded",
+                "root_cause": "r_function_not_found",
+                "severity": "high",
+                "tags": ["r", "function"]
+            }
+        elif "non-numeric argument" in message_lower:
+            analysis = {
+                "category": "r",
+                "subcategory": "type",
+                "confidence": "high",
+                "suggested_fix": "Ensure arguments are of correct numeric type",
+                "root_cause": "r_type_error",
+                "severity": "high",
+                "tags": ["r", "type", "numeric"]
+            }
+        elif "there is no package called" in message_lower:
+            analysis = {
+                "category": "r",
+                "subcategory": "package",
+                "confidence": "high",
+                "suggested_fix": "Install missing package with install.packages()",
+                "root_cause": "r_package_not_found",
+                "severity": "high",
+                "tags": ["r", "package", "library"]
+            }
+        elif "incorrect number of dimensions" in message_lower:
+            analysis = {
+                "category": "r",
+                "subcategory": "dimension",
+                "confidence": "high",
+                "suggested_fix": "Check data structure dimensions",
+                "root_cause": "r_dimension_error",
+                "severity": "high",
+                "tags": ["r", "dimension", "data"]
+            }
+        elif "missing values are not allowed" in message_lower:
+            analysis = {
+                "category": "r",
+                "subcategory": "na",
+                "confidence": "high",
+                "suggested_fix": "Handle missing values with na.rm=TRUE or na.omit()",
+                "root_cause": "r_na_error",
+                "severity": "high",
+                "tags": ["r", "na", "missing"]
+            }
+        else:
+            # Check for concept-specific issues first (more specific)
+            concept_analysis = self._analyze_r_concepts(message)
+            if concept_analysis.get("confidence", "low") != "low":
+                # Use concept-specific analysis as base
+                analysis = concept_analysis
+            else:
+                # Fall back to pattern analysis
+                analysis = self._analyze_by_patterns(message, file_path)
         
         # Find matching rules
         matches = self._find_matching_rules(message, error_data)
@@ -243,17 +314,23 @@ class RExceptionHandler:
         if matches:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
-            analysis.update({
-                "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
-                "confidence": best_match.get("confidence", "medium"),
-                "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
-                "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
-                "severity": best_match.get("severity", "medium"),
-                "rule_id": best_match.get("id", ""),
-                "tags": best_match.get("tags", []),
-                "all_matches": matches
-            })
+            # Only update if we don't already have a high confidence result
+            if analysis.get("confidence", "low") != "high":
+                analysis.update({
+                    "category": "r",  # Always keep category as "r" for R plugin
+                    "subcategory": best_match.get("category", analysis.get("subcategory", "unknown")),  # Use rule category as subcategory
+                    "confidence": best_match.get("confidence", "medium"),
+                    "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
+                    "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
+                    "severity": best_match.get("severity", "medium"),
+                    "rule_id": best_match.get("id", ""),
+                    "tags": best_match.get("tags", []),
+                    "all_matches": matches
+                })
+            else:
+                # Just add rule information without overriding the main analysis
+                analysis["rule_id"] = best_match.get("id", "")
+                analysis["all_matches"] = matches
         
         analysis["file_path"] = file_path
         analysis["line_number"] = line_number
@@ -276,30 +353,65 @@ class RExceptionHandler:
                     "tags": ["r", "syntax", "parser"]
                 }
         
-        # Check runtime errors
-        for pattern in self.r_error_patterns["runtime_error"]:
+        # Check type errors first (more specific)
+        for pattern in self.r_error_patterns["type_error"]:
             if re.search(pattern, message, re.IGNORECASE):
                 return {
                     "category": "r",
-                    "subcategory": "runtime",
+                    "subcategory": "type",
+                    "confidence": "high",
+                    "suggested_fix": "Fix type mismatch or conversion errors",
+                    "root_cause": "r_type_error",
+                    "severity": "high",
+                    "tags": ["r", "type", "conversion"]
+                }
+        
+        # Check runtime errors
+        for pattern in self.r_error_patterns["runtime_error"]:
+            if re.search(pattern, message, re.IGNORECASE):
+                # Determine specific subcategory based on the error
+                subcategory = "runtime"
+                tags = ["r", "runtime"]
+                
+                if re.search(r"object.*not found", message, re.IGNORECASE):
+                    subcategory = "object"
+                    tags.append("object")
+                elif "could not find function" in message:
+                    subcategory = "function"
+                    tags.append("function")
+                
+                return {
+                    "category": "r",
+                    "subcategory": subcategory,
                     "confidence": "high",
                     "suggested_fix": "Fix runtime errors and object access",
                     "root_cause": "r_runtime_error",
                     "severity": "high",
-                    "tags": ["r", "runtime", "object"]
+                    "tags": tags
                 }
         
         # Check data errors
         for pattern in self.r_error_patterns["data_error"]:
             if re.search(pattern, message, re.IGNORECASE):
+                # Determine specific subcategory based on the error
+                subcategory = "data"
+                tags = ["r", "data"]
+                
+                if "dimension" in message.lower():
+                    subcategory = "dimension"
+                    tags.append("dimension")
+                elif "missing values" in message.lower() or "na" in message.lower() or "nan" in message.lower():
+                    subcategory = "na"
+                    tags.append("na")
+                
                 return {
                     "category": "r",
-                    "subcategory": "data",
+                    "subcategory": subcategory,
                     "confidence": "high",
                     "suggested_fix": "Fix data manipulation and dimension errors",
                     "root_cause": "r_data_error",
                     "severity": "high",
-                    "tags": ["r", "data", "dimension"]
+                    "tags": tags
                 }
         
         # Check function errors
@@ -434,10 +546,10 @@ class RExceptionHandler:
         message_lower = message.lower()
         
         # Check for object not found errors
-        if any(keyword in message_lower for keyword in ["object", "not found"]):
+        if "object" in message_lower and "not found" in message_lower:
             return {
                 "category": "r",
-                "subcategory": "object_not_found",
+                "subcategory": "object",
                 "confidence": "high",
                 "suggested_fix": "Check object name and ensure it's defined",
                 "root_cause": "r_object_not_found",
@@ -615,7 +727,11 @@ class RPatchGenerator:
             "r_memory_error": self._fix_memory_error,
             "r_type_error": self._fix_type_error,
             "r_object_not_found": self._fix_object_not_found_error,
-            "r_bounds_error": self._fix_bounds_error
+            "r_bounds_error": self._fix_bounds_error,
+            "r_dimension_error": self._fix_data_error,  # Dimension errors are data errors
+            "r_na_error": self._fix_data_error,  # NA errors are also data errors
+            "r_function_not_found": self._fix_function_error,  # Function not found errors
+            "r_package_not_found": self._fix_package_error  # Package not found errors
         }
         
         strategy = patch_strategies.get(root_cause)
@@ -716,6 +832,32 @@ class RPatchGenerator:
                        source_code: str) -> Optional[Dict[str, Any]]:
         """Fix data manipulation errors."""
         message = error_data.get("message", "")
+        
+        # Handle dimension-specific errors
+        if "dimension" in message.lower():
+            return {
+                "type": "suggestion",
+                "description": "Dimension error",
+                "fixes": [
+                    "Check array/matrix dimensions with dim()",
+                    "Verify correct number of dimensions for operation",
+                    "Use drop=FALSE to preserve dimensions",
+                    "Check indexing operations"
+                ]
+            }
+        
+        # Handle NA/missing value errors
+        if "missing values" in message.lower() or " na " in message.lower():
+            return {
+                "type": "suggestion",
+                "description": "Missing values (NA) error",
+                "fixes": [
+                    "Use na.rm=TRUE in functions that support it",
+                    "Remove missing values with na.omit()",
+                    "Check for NAs with is.na()",
+                    "Handle missing values appropriately for your analysis"
+                ]
+            }
         
         if "data lengths differ" in message.lower():
             return {
@@ -1220,9 +1362,9 @@ class RLanguagePlugin(LanguagePlugin):
     def __init__(self):
         """Initialize the R language plugin."""
         self.language = "r"
-        self.supported_extensions = {".R", ".r", ".Rmd", ".rmd"}
+        self.supported_extensions = {".R", ".r", ".Rmd", ".rmd", ".Rnw"}
         self.supported_frameworks = [
-            "r", "rstudio", "shiny", "rmarkdown", "ggplot2", "dplyr", "tidyr", "caret", "mlr3"
+            "r", "rstudio", "shiny", "rmarkdown", "ggplot2", "dplyr", "tidyr", "tidyverse", "caret", "mlr3"
         ]
         
         # Initialize components
@@ -1241,7 +1383,7 @@ class RLanguagePlugin(LanguagePlugin):
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return "3.6+"
+        return "4.0+"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""

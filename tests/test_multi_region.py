@@ -27,12 +27,34 @@ from modules.deployment.multi_environment.hybrid_orchestrator import (
 @pytest.fixture
 def mock_regions():
     """Create mock regions for testing"""
+    # Create mock environments for regions
+    mock_env1 = Environment(
+        id="env1",
+        name="Production East",
+        type=EnvironmentType.ON_PREMISE,
+        region="us-east-1",
+        connection_info={"host": "prod-east.example.com"},
+        capabilities=["kubernetes", "monitoring"],
+        health_status="healthy",
+        metadata={}
+    )
+    mock_env2 = Environment(
+        id="env2",
+        name="Production West",
+        type=EnvironmentType.CLOUD_AWS,
+        region="us-west-2",
+        connection_info={"region": "us-west-2", "account_id": "123456"},
+        capabilities=["kubernetes", "monitoring"],
+        health_status="healthy",
+        metadata={}
+    )
+    
     return [
         Region(
             id="us-east-1",
             name="US East 1",
             location=(40.7128, -74.0060),  # New York
-            environments=[],
+            environments=[mock_env1],
             status=RegionStatus.HEALTHY,
             capacity={"cpu": 1000, "memory": 2000, "disk": 5000},
             metadata={"tier": "primary"}
@@ -41,7 +63,7 @@ def mock_regions():
             id="us-west-2",
             name="US West 2",
             location=(47.6062, -122.3321),  # Seattle
-            environments=[],
+            environments=[mock_env2],
             status=RegionStatus.HEALTHY,
             capacity={"cpu": 800, "memory": 1600, "disk": 4000},
             metadata={"tier": "secondary"}
@@ -50,7 +72,16 @@ def mock_regions():
             id="eu-west-1",
             name="EU West 1",
             location=(53.3498, -6.2603),  # Dublin
-            environments=[],
+            environments=[Environment(
+                id="env3",
+                name="Production EU",
+                type=EnvironmentType.CLOUD_GCP,
+                region="eu-west-1",
+                connection_info={"project_id": "prod-eu", "zone": "europe-west1"},
+                capabilities=["kubernetes", "monitoring"],
+                health_status="healthy",
+                metadata={}
+            )],
             status=RegionStatus.HEALTHY,
             capacity={"cpu": 900, "memory": 1800, "disk": 4500},
             metadata={"tier": "primary"}
@@ -59,7 +90,16 @@ def mock_regions():
             id="ap-south-1",
             name="AP South 1",
             location=(19.0760, 72.8777),  # Mumbai
-            environments=[],
+            environments=[Environment(
+                id="env4",
+                name="Production AP",
+                type=EnvironmentType.HYBRID,
+                region="ap-south-1",
+                connection_info={"primary": "cloud", "secondary": "on-premise"},
+                capabilities=["kubernetes", "monitoring"],
+                health_status="healthy",
+                metadata={}
+            )],
             status=RegionStatus.DEGRADED,
             capacity={"cpu": 700, "memory": 1400, "disk": 3500},
             metadata={"tier": "secondary"}

@@ -57,7 +57,7 @@ class WebComponentExceptionHandler:
         rules["lifecycle"] = [
             {
                 "id": "ce_constructor_super",
-                "pattern": "failed to construct '\\w+': 1st argument is not an object, or super() not called",
+                "pattern": "Failed to construct '\\w+': 1st argument is not an object, or super\\(\\) not called",
                 "category": "lifecycle",
                 "type": "constructor_error",
                 "severity": "high",
@@ -142,6 +142,34 @@ class WebComponentExceptionHandler:
                 "root_cause": "duplicate_element_definition",
                 "reliability": "high",
                 "tags": ["webcomponents", "custom-elements", "registry"]
+            }
+        ]
+        
+        rules["interop"] = [
+            {
+                "id": "react_event_handling",
+                "pattern": "React event handler not firing on custom element",
+                "category": "interop",
+                "type": "react_integration",
+                "severity": "medium",
+                "suggestion": "Use synthetic event handlers or dispatch custom events that React can handle",
+                "root_cause": "react_event_handler_issue",
+                "reliability": "high",
+                "tags": ["webcomponents", "react", "interop"]
+            }
+        ]
+        
+        rules["templates"] = [
+            {
+                "id": "template_not_cloned",
+                "pattern": "Template content never cloned properly",
+                "category": "templates",
+                "type": "template_clone",
+                "severity": "medium",
+                "suggestion": "Use document.importNode(template.content, true) to properly clone template content",
+                "root_cause": "template_content_not_cloned",
+                "reliability": "high",
+                "tags": ["webcomponents", "templates", "template"]
             }
         ]
         
@@ -469,7 +497,8 @@ class WebComponentPatchGenerator:
             if not line_info:
                 return {
                     "type": "suggestion",
-                    "description": "Add super() call at the beginning of your custom element constructor"
+                    "description": "Add super() call at the beginning of your custom element constructor",
+                    "suggestion": "Add super() call at the beginning of your custom element constructor"
                 }
             
             lines = source_code.split('\n')
@@ -486,7 +515,8 @@ class WebComponentPatchGenerator:
             if constructor_line == -1:
                 return {
                     "type": "suggestion",
-                    "description": "Make sure to call super() as the first statement in your custom element constructor"
+                    "description": "Make sure to call super() as the first statement in your custom element constructor",
+                    "suggestion": "Make sure to call super() as the first statement in your custom element constructor"
                 }
             
             # Find indentation
@@ -522,18 +552,21 @@ class WebComponentPatchGenerator:
             if not line_info:
                 return {
                     "type": "suggestion",
-                    "description": "Ensure observedAttributes is implemented as a static getter that returns an array"
+                    "description": "Ensure observedAttributes is implemented as a static getter that returns an array",
+                    "suggestion": "Ensure observedAttributes is implemented as a static getter that returns an array"
                 }
             
             return {
                 "type": "suggestion",
-                "description": "Implement observedAttributes as: static get observedAttributes() { return ['attribute-name']; }"
+                "description": "Implement observedAttributes as: static get observedAttributes() { return ['attribute-name']; }",
+                "suggestion": "Implement observedAttributes as: static get observedAttributes() { return ['attribute-name']; }"
             }
         
         # Generic lifecycle error fix
         return {
             "type": "suggestion",
-            "description": analysis.get("suggested_fix", "Check lifecycle method implementation in your custom element")
+            "description": analysis.get("suggested_fix", "Check lifecycle method implementation in your custom element"),
+            "suggestion": analysis.get("suggested_fix", "Check lifecycle method implementation in your custom element")
         }
     
     def _fix_shadow_dom_error(self, root_cause: str, error_data: Dict[str, Any], 
@@ -609,7 +642,8 @@ class WebComponentPatchGenerator:
             "missing_super_call_in_constructor": "constructor_super",
             "invalid_observed_attributes": "observed_attributes",
             "closed_shadow_root_access_attempt": "shadow_dom_access",
-            "slot_content_distribution_issue": "slot_content"
+            "slot_content_distribution_issue": "slot_content",
+            "template_content_not_cloned": "template_optimization"
         }
         
         template_name = template_map.get(root_cause)
@@ -850,6 +884,7 @@ class WebComponentLanguagePlugin(LanguagePlugin):
         web_component_patterns = [
             r"custom[ -]elements?",
             r"customelements\.define",
+            r"customelementregistry",
             r"shadow[ -]dom",
             r"shadowroot",
             r"attachshadow",

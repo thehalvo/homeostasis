@@ -61,6 +61,7 @@ class TerraformExceptionHandler:
                 r"Error deleting .+:",
                 r"Resource .+ does not exist",
                 r"Invalid resource name",
+                r"Invalid resource type",
                 r"Duplicate resource"
             ],
             "provider_error": [
@@ -69,14 +70,16 @@ class TerraformExceptionHandler:
                 r"Invalid provider configuration",
                 r"Provider authentication failed",
                 r"Provider version constraint",
-                r"Required provider .+ not specified"
+                r"Required provider .+ not specified",
+                r"Failed to query available provider packages"
             ],
             "variable_error": [
                 r"Variable .+ not defined",
                 r"Invalid variable type", 
                 r"Variable validation failed",
                 r"No value provided for required variable",
-                r"Invalid default value for variable"
+                r"Invalid default value for variable",
+                r"Reference to undeclared variable"
             ],
             "module_error": [
                 r"Module .+ not found",
@@ -86,7 +89,7 @@ class TerraformExceptionHandler:
                 r"Cyclic module dependency"
             ],
             "state_error": [
-                r"Error acquiring state lock",
+                r"Error acquiring (?:the )?state lock",
                 r"Error reading state",
                 r"Error writing state",
                 r"State file corrupted",
@@ -97,6 +100,12 @@ class TerraformExceptionHandler:
                 r"Resource depends on .+ which is not declared",
                 r"Cannot determine order for resource",
                 r"Dependency cycle detected"
+            ],
+            "validation_error": [
+                r"Invalid value for variable",
+                r"Validation failed",
+                r"Value does not match constraint",
+                r"Type constraint violation"
             ]
         }
         
@@ -237,9 +246,15 @@ class TerraformExceptionHandler:
         if matches:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
+            # Map rule type to subcategory
+            rule_type = best_match.get("type", "")
+            subcategory = self._map_rule_type_to_subcategory(rule_type)
+            if not subcategory:
+                subcategory = analysis.get("subcategory", "unknown")
+            
             analysis.update({
                 "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
+                "subcategory": subcategory,
                 "confidence": best_match.get("confidence", "medium"),
                 "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
                 "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
@@ -253,6 +268,24 @@ class TerraformExceptionHandler:
         analysis["command"] = command
         analysis["exit_code"] = exit_code
         return analysis
+    
+    def _map_rule_type_to_subcategory(self, rule_type: str) -> str:
+        """Map rule type to expected subcategory."""
+        type_mapping = {
+            "ValidationError": "validation",
+            "SyntaxError": "syntax",
+            "ResourceError": "resource",
+            "ProviderError": "provider",
+            "VariableError": "variable",
+            "StateError": "state",
+            "ModuleError": "module",
+            "DependencyError": "dependency",
+            "BackendError": "backend",
+            "WorkspaceError": "workspace",
+            "ParameterError": "parameter",
+            "AuthError": "provider_auth",
+        }
+        return type_mapping.get(rule_type, rule_type.lower() if rule_type else "")
     
     def _detect_provider(self, message: str, config_content: str) -> str:
         """Detect Terraform provider from error message or configuration."""
@@ -371,6 +404,19 @@ class TerraformExceptionHandler:
                     "root_cause": "terraform_dependency_error",
                     "severity": "medium",
                     "tags": ["terraform", "dependency", "cycle"]
+                }
+        
+        # Check validation errors
+        for pattern in self.terraform_error_patterns["validation_error"]:
+            if re.search(pattern, message, re.IGNORECASE):
+                return {
+                    "category": "terraform",
+                    "subcategory": "validation",
+                    "confidence": "high",
+                    "suggested_fix": "Fix variable values or validation constraints",
+                    "root_cause": "terraform_validation_error",
+                    "severity": "medium",
+                    "tags": ["terraform", "validation"]
                 }
         
         # Check provider-specific errors
@@ -944,7 +990,7 @@ class TerraformLanguagePlugin(LanguagePlugin):
         self.language = "terraform"
         self.supported_extensions = {".tf", ".tfvars", ".hcl"}
         self.supported_frameworks = [
-            "aws", "azurerm", "google", "kubernetes", "helm",
+            "terraform", "aws", "azurerm", "azure", "google", "gcp", "kubernetes", "helm",
             "vault", "consul", "nomad", "random", "local",
             "external", "http", "tls", "archive"
         ]
@@ -965,7 +1011,7 @@ class TerraformLanguagePlugin(LanguagePlugin):
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return "0.12+"
+        return "1.0+"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""
@@ -986,13 +1032,14 @@ class TerraformLanguagePlugin(LanguagePlugin):
             "error_type": error_data.get("error_type", "TerraformError"),
             "message": error_data.get("message", error_data.get("description", "")),
             "language": "terraform",
+            "file_path": error_data.get("file_path", error_data.get("file", "")),
+            "line_number": error_data.get("line_number", error_data.get("line", 0)),
+            "column_number": error_data.get("column_number", error_data.get("column", 0)),
             "command": error_data.get("command", ""),
             "provider": error_data.get("provider", ""),
             "exit_code": error_data.get("exit_code", error_data.get("returncode", 0)),
             "config_file": error_data.get("config_file", error_data.get("file", "")),
             "config_content": error_data.get("config_content", ""),
-            "line_number": error_data.get("line_number", error_data.get("line", 0)),
-            "column_number": error_data.get("column_number", error_data.get("column", 0)),
             "stack_trace": error_data.get("stack_trace", []),
             "context": error_data.get("context", {}),
             "timestamp": error_data.get("timestamp"),
@@ -1020,15 +1067,16 @@ class TerraformLanguagePlugin(LanguagePlugin):
         terraform_error = {
             "error_type": standard_error.get("error_type", "TerraformError"),
             "message": standard_error.get("message", ""),
+            "file_path": standard_error.get("file_path", ""),
+            "line_number": standard_error.get("line_number", 0),
+            "column_number": standard_error.get("column_number", 0),
             "command": standard_error.get("command", ""),
             "provider": standard_error.get("provider", ""),
             "exit_code": standard_error.get("exit_code", 0),
-            "config_file": standard_error.get("config_file", ""),
+            "config_file": standard_error.get("config_file", standard_error.get("file_path", "")),
             "config_content": standard_error.get("config_content", ""),
-            "line_number": standard_error.get("line_number", 0),
-            "column_number": standard_error.get("column_number", 0),
             "description": standard_error.get("message", ""),
-            "file": standard_error.get("config_file", ""),
+            "file": standard_error.get("file_path", ""),
             "line": standard_error.get("line_number", 0),
             "column": standard_error.get("column_number", 0),
             "returncode": standard_error.get("exit_code", 0),

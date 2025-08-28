@@ -1,4 +1,5 @@
 {
+  "name": "Svelte Transition Errors",
   "version": "1.0.0",
   "description": "Svelte transition and animation error detection rules",
   "rules": [

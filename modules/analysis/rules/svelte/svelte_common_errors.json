@@ -1,4 +1,5 @@
 {
+  "name": "Svelte Common Errors",
   "version": "1.0.0",
   "description": "Common Svelte framework error detection rules",
   "rules": [
@@ -6,7 +7,7 @@
       "id": "svelte_component_syntax_error",
       "category": "svelte",
       "subcategory": "components",
-      "pattern": "(?i)unexpected token.*\.svelte|syntax error.*\.svelte|parse error.*svelte",
+      "pattern": "(?i)unexpected token.*\\.svelte|syntax error.*\\.svelte|parse error.*svelte",
       "suggestion": "Check Svelte component syntax - ensure proper script, style, and markup sections",
       "root_cause": "svelte_component_syntax_error",
       "confidence": "high",

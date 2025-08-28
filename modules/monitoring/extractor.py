@@ -61,18 +61,25 @@ def extract_errors(log_file: Path = LOG_FILE,
     
     with open(log_file, "r") as f:
         for line in f:
-            # Check if line matches any of the log levels
-            if not re.search(f'({level_pattern})', line):
-                continue
-                
             try:
-                # Extract the JSON part from the log line
-                json_match = re.search(r'({.*})$', line)
-                if not json_match:
-                    continue
-                    
-                json_str = json_match.group(1)
-                error_data = json.loads(json_str)
+                # Try to parse the line as pure JSON first (for testing)
+                if line.strip().startswith('{'):
+                    error_data = json.loads(line.strip())
+                    # Check if level matches
+                    if error_data.get("level") not in levels:
+                        continue
+                else:
+                    # Check if line matches any of the log levels in formatted log
+                    if not re.search(f'({level_pattern})', line):
+                        continue
+                        
+                    # Extract the JSON part from the log line
+                    json_match = re.search(r'({.*})$', line)
+                    if not json_match:
+                        continue
+                        
+                    json_str = json_match.group(1)
+                    error_data = json.loads(json_str)
                 
                 # Apply filters
                 

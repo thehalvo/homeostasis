@@ -218,8 +218,7 @@
       "source": "built_in",
       "rule_type": "error_detection",
       "dependencies": []
-    }
-  ],
+    },
     {
       "id": "crystal_type_inference_recursive",
       "pattern": "recursive type inference",

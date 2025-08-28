@@ -241,7 +241,7 @@ class CrystalExceptionHandler:
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
             analysis.update({
                 "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
+                "subcategory": self._get_subcategory_from_rule(best_match, analysis),
                 "confidence": best_match.get("confidence", "medium"),
                 "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
                 "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
@@ -514,6 +514,33 @@ class CrystalExceptionHandler:
             base_confidence += 0.1
         
         return min(base_confidence, 1.0)
+    
+    def _get_subcategory_from_rule(self, rule: Dict[str, Any], analysis: Dict[str, Any]) -> str:
+        """Extract subcategory from rule type."""
+        rule_type = rule.get("type", "")
+        
+        # Map rule types to subcategories
+        type_to_subcategory = {
+            "FiberError": "fiber",
+            "TypeError": "type",
+            "SyntaxError": "syntax",
+            "CompilationError": "compilation",
+            "RuntimeError": "runtime",
+            "MethodError": "method",
+            "MemoryError": "memory",
+            "MacroError": "macro",
+            "GenericError": "generic",
+            "ConstantError": "constant",
+            "ClassError": "class",
+            "IOError": "io"
+        }
+        
+        subcategory = type_to_subcategory.get(rule_type, "")
+        if subcategory:
+            return subcategory
+        
+        # Fall back to analysis subcategory or rule type
+        return analysis.get("subcategory", rule_type.lower().replace("error", ""))
 
 
 class CrystalPatchGenerator:

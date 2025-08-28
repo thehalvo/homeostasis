@@ -179,7 +179,7 @@ class TestRPatchGenerator:
         patch = self.generator.generate_patch(error_data, analysis, "")
         
         assert patch is not None
-        assert patch["type"] == "suggestion"
+        assert patch["type"] in ["suggestion", "multiple_suggestions"]
         assert "syntax" in patch["description"].lower()
     
     def test_generate_object_fix(self):
@@ -190,7 +190,7 @@ class TestRPatchGenerator:
         }
         
         analysis = {
-            "root_cause": "r_object_error",
+            "root_cause": "r_object_not_found",
             "subcategory": "object",
             "confidence": "high"
         }

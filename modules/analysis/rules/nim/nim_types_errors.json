@@ -216,8 +216,7 @@
       "source": "built_in",
       "rule_type": "error_detection",
       "dependencies": []
-    }
-  ],
+    },
     {
       "id": "nim_type_generic_constraint",
       "pattern": "Error: cannot instantiate: '(.+)'.*?not derived from required super type",

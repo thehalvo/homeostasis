@@ -1058,6 +1058,28 @@ class CompilerIntegration:
         
         return diagnostics
     
+    def analyze_python_code(self, source_code: str, file_path: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Analyze Python code using AST and return diagnostic information.
+        
+        Args:
+            source_code: Python source code to analyze
+            file_path: Optional file path (not used but kept for compatibility)
+            
+        Returns:
+            Dictionary with success status and errors list
+        """
+        result = self._analyze_python_code(source_code)
+        
+        # Convert to expected format for tests
+        return {
+            "success": result.get("syntax_valid", False),
+            "errors": [
+                {"type": "SyntaxError", "message": error} 
+                for error in result.get("compilation_errors", [])
+            ]
+        }
+    
     def _analyze_java_code(self, source_code: str) -> Dict[str, Any]:
         """Analyze Java code using javac."""
         result = {

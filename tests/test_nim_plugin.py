@@ -66,7 +66,7 @@ class TestNimExceptionHandler:
         analysis = self.handler.analyze_exception(error_data)
         
         assert analysis["category"] == "nim"
-        assert analysis["subcategory"] == "nil"
+        assert analysis["subcategory"] == "nil_access"
         assert analysis["confidence"] == "high"
         assert "nil" in analysis["tags"]
     
@@ -209,8 +209,8 @@ class TestNimPatchGenerator:
         }
         
         analysis = {
-            "root_cause": "nim_nil_error",
-            "subcategory": "nil",
+            "root_cause": "nim_nil_access",
+            "subcategory": "nil_access",
             "confidence": "high"
         }
         
@@ -228,7 +228,7 @@ class TestNimPatchGenerator:
         }
         
         analysis = {
-            "root_cause": "nim_undefined_error",
+            "root_cause": "nim_undefined_identifier",
             "subcategory": "undefined",
             "confidence": "high"
         }

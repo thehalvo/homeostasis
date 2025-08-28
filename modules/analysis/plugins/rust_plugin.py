@@ -169,23 +169,7 @@ class RustErrorHandler:
         error_type = error_data.get("error_type", "")
         message = error_data.get("message", "")
         
-        # Check for panic messages
-        if "panicked at" in message:
-            return {
-                "error_data": error_data,
-                "rule_id": "rust_panic",
-                "error_type": error_type or "Panic",
-                "root_cause": "rust_panic",
-                "description": "Runtime panic in Rust program",
-                "suggestion": "Add proper error handling with Result<T, E> instead of panicking. Check for None values with Option's methods like unwrap_or, unwrap_or_else, or match expressions.",
-                "confidence": "high",
-                "severity": "high",
-                "category": "runtime",
-                "match_groups": tuple(),
-                "framework": ""
-            }
-        
-        # Check for common error patterns
+        # Check for common error patterns first (more specific)
         if "unwrap" in message and "None" in message:
             return {
                 "error_data": error_data,
@@ -243,6 +227,22 @@ class RustErrorHandler:
                 "framework": ""
             }
         
+        # Check for general panic messages
+        elif "panicked at" in message:
+            return {
+                "error_data": error_data,
+                "rule_id": "rust_panic",
+                "error_type": error_type or "Panic",
+                "root_cause": "rust_panic",
+                "description": "Runtime panic in Rust program",
+                "suggestion": "Add proper error handling with Result<T, E> instead of panicking. Check for None values with Option's methods like unwrap_or, unwrap_or_else, or match expressions.",
+                "confidence": "high",
+                "severity": "high",
+                "category": "runtime",
+                "match_groups": tuple(),
+                "framework": ""
+            }
+        
         # Generic fallback for unknown errors
         return {
             "error_data": error_data,
@@ -287,19 +287,19 @@ class RustErrorHandler:
         """Load rules for core Rust errors."""
         return [
             {
-                "id": "rust_panic",
-                "pattern": "thread '.*' panicked at '(.*?)'",
+                "id": "rust_index_out_of_bounds",
+                "pattern": "panicked at '.*index out of bounds: the len is (\\d+) but the index is (\\d+)'",
                 "type": "Panic",
-                "description": "Runtime panic in Rust program",
-                "root_cause": "rust_panic",
-                "suggestion": "Add proper error handling with Result<T, E> instead of panicking. Check for None values with Option's methods like unwrap_or, unwrap_or_else, or match expressions.",
+                "description": "Attempted to access an index beyond the bounds of a collection",
+                "root_cause": "rust_index_out_of_bounds",
+                "suggestion": "Check that the index is within bounds before accessing it. Use methods like .get() that return an Option instead of direct indexing, or check indices against collection length.",
                 "confidence": "high",
                 "severity": "high",
                 "category": "runtime"
             },
             {
                 "id": "rust_unwrap_on_none",
-                "pattern": "panicked at '.*unwrap\\(\\).*: None'",
+                "pattern": "panicked at '.*unwrap\\(\\).*None.*value'",
                 "type": "Panic",
                 "description": "Called unwrap() on a None value",
                 "root_cause": "rust_unwrap_none",
@@ -320,12 +320,12 @@ class RustErrorHandler:
                 "category": "runtime"
             },
             {
-                "id": "rust_index_out_of_bounds",
-                "pattern": "panicked at '.*index out of bounds: the len is (\\d+) but the index is (\\d+)'",
+                "id": "rust_panic",
+                "pattern": "thread '.*' panicked at '(.*?)'",
                 "type": "Panic",
-                "description": "Attempted to access an index beyond the bounds of a collection",
-                "root_cause": "rust_index_out_of_bounds",
-                "suggestion": "Check that the index is within bounds before accessing it. Use methods like .get() that return an Option instead of direct indexing, or check indices against collection length.",
+                "description": "Runtime panic in Rust program",
+                "root_cause": "rust_panic",
+                "suggestion": "Add proper error handling with Result<T, E> instead of panicking. Check for None values with Option's methods like unwrap_or, unwrap_or_else, or match expressions.",
                 "confidence": "high",
                 "severity": "high",
                 "category": "runtime"

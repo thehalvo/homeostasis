@@ -70,7 +70,7 @@ def test_generate_patch_for_known_bug():
     assert patch["bug_id"] == "bug_1"
     assert patch["file_path"] == "services/example_service/app.py"
     assert "patch_code" in patch
-    assert "KeyError" in patch["patch_code"]
+    assert "HTTPException" in patch["patch_code"]
     assert "patch_id" in patch
 
 

@@ -1,10 +1,12 @@
 {
   "created_at": "2025-08-22T17:16:37.307598",
-  "updated_at": "2025-08-22T17:16:37.307602",
-  "error_count": 0,
+  "updated_at": "2025-08-27T23:01:22.509768",
+  "error_count": 18,
   "labeled_count": 0,
   "feedback_count": 0,
   "error_types": {},
-  "sources": {},
+  "sources": {
+    "feedback_loop": 18
+  },
   "version": "1.0"
 }

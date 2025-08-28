@@ -221,8 +221,7 @@
       "source": "built_in",
       "rule_type": "error_detection",
       "dependencies": []
-    }
-  ],
+    },
     {
       "id": "crystal_fiber_blocking_operation",
       "pattern": "warning: blocking operation inside fiber",

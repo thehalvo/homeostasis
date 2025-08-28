@@ -341,6 +341,11 @@ class VueExceptionHandler:
                 "fix": "Define the mutation in your Vuex store modules",
                 "severity": "error"
             },
+            "unknown mutation type": {
+                "cause": "vuex_undefined_mutation",
+                "fix": "Define the mutation in your Vuex store modules",
+                "severity": "error"
+            },
             "action type is not defined": {
                 "cause": "vuex_undefined_action",
                 "fix": "Define the action in your Vuex store modules",
@@ -348,7 +353,7 @@ class VueExceptionHandler:
             },
             "do not mutate vuex store state outside mutation handlers": {
                 "cause": "vuex_direct_state_mutation",
-                "fix": "Use mutations to modify Vuex state instead of direct assignment",
+                "fix": "Use commit() with mutations to modify Vuex state instead of direct assignment",
                 "severity": "error"
             },
             "module not found": {
@@ -401,6 +406,11 @@ class VueExceptionHandler:
                 "severity": "error"
             },
             "route not found": {
+                "cause": "vue_router_route_not_found",
+                "fix": "Check route configuration and ensure the route path is defined",
+                "severity": "error"
+            },
+            "no match found for location": {
                 "cause": "vue_router_route_not_found",
                 "fix": "Check route configuration and ensure the route path is defined",
                 "severity": "error"
@@ -884,6 +894,14 @@ class VueLanguagePlugin(LanguagePlugin):
         # Check error message for Vue-specific patterns
         message = error_data.get("message", "").lower()
         stack_trace = str(error_data.get("stack_trace", "")).lower()
+        
+        # Check for Vuex-specific patterns first
+        if "vuex" in message or "mutation" in message or "store" in message:
+            return True
+        
+        # Check for Vue Router patterns
+        if "router" in message or "route" in message or "navigation" in message or ("location" in message and "path" in message):
+            return True
         
         vue_patterns = [
             r"vue",

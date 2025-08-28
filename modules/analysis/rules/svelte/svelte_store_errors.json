@@ -1,4 +1,5 @@
 {
+  "name": "Svelte Store Errors",
   "version": "1.0.0",
   "description": "Svelte store management error detection rules",
   "rules": [

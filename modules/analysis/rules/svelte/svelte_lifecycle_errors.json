@@ -1,4 +1,5 @@
 {
+  "name": "Svelte Lifecycle Errors",
   "version": "1.0.0",
   "description": "Svelte component lifecycle error detection rules",
   "rules": [

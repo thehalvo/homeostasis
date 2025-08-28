@@ -1,4 +1,5 @@
 {
+  "name": "Svelte Event Handling Errors",
   "version": "1.0.0",
   "description": "Svelte event handling and DOM manipulation error detection rules",
   "rules": [

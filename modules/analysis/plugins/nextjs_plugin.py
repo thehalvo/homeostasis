@@ -290,7 +290,7 @@ class NextjsExceptionHandler:
         
         # Common data fetching error patterns
         data_fetching_patterns = {
-            "getServerSideProps.*not.*return.*object": {
+            "getServerSideProps.*(not.*return.*object|must.*return.*object)": {
                 "cause": "nextjs_getserversideprops_return_type",
                 "fix": "Ensure getServerSideProps returns an object with a props property",
                 "severity": "error"

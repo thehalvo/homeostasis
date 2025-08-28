@@ -35,26 +35,30 @@ class PowerShellExceptionHandler:
         
         self.powershell_error_patterns = {
             "syntax_error": [
-                r"UnexpectedToken", r"MissingEndCurlyBrace", r"MissingEndParenthesis",
+                r"UnexpectedToken", r"Unexpected token", r"MissingEndCurlyBrace", r"MissingEndParenthesis",
                 r"MissingEndSquareBracket", r"MissingExpression", r"MissingFunctionBody",
                 r"MissingOpenParenthesisInFunctionParameterList", r"MissingCloseParenthesisInFunctionParameterList"
             ],
             "cmdlet_error": [
                 r"CommandNotFoundException", r"ParameterNotFound", r"AmbiguousParameterSet",
                 r"MissingMandatoryParameter", r"ParameterArgumentValidationError",
-                r"InvalidOperation", r"MethodNotFound", r"PropertyNotFound"
+                r"InvalidOperation", r"MethodNotFound", r"PropertyNotFound",
+                r"not recognized as a cmdlet", r"not recognized as the name"
             ],
             "pipeline_error": [
                 r"PipelineStoppedException", r"InvalidPipelineInput", r"ObjectNotFound",
-                r"FormatError", r"ConvertError", r"InvalidCastException"
+                r"FormatError", r"ConvertError", r"InvalidCastException",
+                r"The input object cannot be bound"
             ],
             "execution_error": [
                 r"ExecutionPolicyRestricted", r"UnauthorizedAccessException",
-                r"SecurityException", r"RemoteException", r"PSSecurityException"
+                r"SecurityException", r"RemoteException", r"PSSecurityException",
+                r"Access to the path is denied", r"Access.*denied"
             ],
             "module_error": [
                 r"ModuleNotFoundError", r"ImportModuleError", r"FileNotFound",
-                r"PathNotFound", r"DirectoryNotFound", r"AccessDenied"
+                r"PathNotFound", r"DirectoryNotFound", r"AccessDenied",
+                r"The specified module.*was not loaded"
             ]
         }
         
@@ -98,7 +102,7 @@ class PowerShellExceptionHandler:
         
         # Check for PowerShell-specific error patterns
         for pattern in self.powershell_error_patterns["syntax_error"]:
-            if re.search(pattern, message, re.IGNORECASE):
+            if pattern in message or re.search(pattern, message, re.IGNORECASE):
                 return {
                     "category": "powershell",
                     "subcategory": "syntax",
@@ -110,7 +114,7 @@ class PowerShellExceptionHandler:
                 }
         
         for pattern in self.powershell_error_patterns["cmdlet_error"]:
-            if re.search(pattern, message, re.IGNORECASE):
+            if pattern in message or re.search(pattern, message, re.IGNORECASE):
                 return {
                     "category": "powershell",
                     "subcategory": "cmdlet",
@@ -121,16 +125,67 @@ class PowerShellExceptionHandler:
                     "tags": ["powershell", "cmdlet"]
                 }
         
+        # Check for variable errors
+        if re.search(r"The variable.*cannot be retrieved|VariableNotFound|UndefinedVariable|Cannot find a variable", message, re.IGNORECASE):
+            return {
+                "category": "powershell",
+                "subcategory": "variable",
+                "confidence": "high",
+                "suggested_fix": "Check variable declaration and scope",
+                "root_cause": "powershell_variable_error",
+                "severity": "medium",
+                "tags": ["powershell", "variable"]
+            }
+        
+        # Check for permission errors
         for pattern in self.powershell_error_patterns["execution_error"]:
-            if re.search(pattern, message, re.IGNORECASE):
+            if pattern in message or re.search(pattern, message, re.IGNORECASE):
                 return {
                     "category": "powershell",
-                    "subcategory": "execution",
+                    "subcategory": "permission",
                     "confidence": "high",
                     "suggested_fix": "Fix execution policy and permissions",
-                    "root_cause": "powershell_execution_error",
+                    "root_cause": "powershell_permission_error",
                     "severity": "high",
-                    "tags": ["powershell", "execution", "security"]
+                    "tags": ["powershell", "permission", "security"]
+                }
+        
+        # Check for module errors
+        for pattern in self.powershell_error_patterns["module_error"]:
+            if pattern in message or re.search(pattern, message, re.IGNORECASE):
+                return {
+                    "category": "powershell",
+                    "subcategory": "module",
+                    "confidence": "high",
+                    "suggested_fix": "Check module installation and imports",
+                    "root_cause": "powershell_module_error",
+                    "severity": "high",
+                    "tags": ["powershell", "module"]
+                }
+        
+        # Check for type errors
+        if re.search(r"Cannot convert|TypeMismatch|InvalidArgument|InvalidCastException|Cannot convert value to type", message, re.IGNORECASE):
+            return {
+                "category": "powershell",
+                "subcategory": "type",
+                "confidence": "high",
+                "suggested_fix": "Check data types and conversions",
+                "root_cause": "powershell_type_error",
+                "severity": "medium",
+                "tags": ["powershell", "type"]
+            }
+        
+        # Check for pipeline errors
+        for pattern in self.powershell_error_patterns["pipeline_error"]:
+            if pattern in message or re.search(pattern, message, re.IGNORECASE):
+                return {
+                    "category": "powershell",
+                    "subcategory": "pipeline",
+                    "confidence": "high",
+                    "suggested_fix": "Check pipeline operations and object flow",
+                    "root_cause": "powershell_pipeline_error",
+                    "severity": "medium",
+                    "tags": ["powershell", "pipeline"]
                 }
         
         return {
@@ -178,8 +233,16 @@ class PowerShellPatchGenerator:
             return self._fix_syntax_error(error_data, analysis, source_code)
         elif root_cause == "powershell_cmdlet_error":
             return self._fix_cmdlet_error(error_data, analysis, source_code)
-        elif root_cause == "powershell_execution_error":
-            return self._fix_execution_error(error_data, analysis, source_code)
+        elif root_cause == "powershell_permission_error":
+            return self._fix_permission_error(error_data, analysis, source_code)
+        elif root_cause == "powershell_variable_error":
+            return self._fix_variable_error(error_data, analysis, source_code)
+        elif root_cause == "powershell_module_error":
+            return self._fix_module_error(error_data, analysis, source_code)
+        elif root_cause == "powershell_type_error":
+            return self._fix_type_error(error_data, analysis, source_code)
+        elif root_cause == "powershell_pipeline_error":
+            return self._fix_pipeline_error(error_data, analysis, source_code)
         
         return {
             "type": "suggestion",
@@ -219,17 +282,73 @@ class PowerShellPatchGenerator:
             ]
         }
     
-    def _fix_execution_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                            source_code: str) -> Dict[str, Any]:
-        """Fix PowerShell execution errors."""
+    def _fix_permission_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                             source_code: str) -> Dict[str, Any]:
+        """Fix PowerShell permission errors."""
         return {
             "type": "suggestion",
-            "description": "PowerShell execution error",
+            "description": "PowerShell permission or access error",
             "fixes": [
                 "Set execution policy: Set-ExecutionPolicy RemoteSigned",
                 "Run PowerShell as administrator",
                 "Check file and directory permissions",
                 "Verify module signing and trust"
+            ]
+        }
+    
+    def _fix_variable_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                           source_code: str) -> Dict[str, Any]:
+        """Fix PowerShell variable errors."""
+        return {
+            "type": "suggestion",
+            "description": "PowerShell variable error",
+            "fixes": [
+                "Declare variable before use: $variableName = value",
+                "Check variable scope and visibility",
+                "Use Set-Variable for explicit declaration",
+                "Check for typos in variable names"
+            ]
+        }
+    
+    def _fix_module_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                         source_code: str) -> Dict[str, Any]:
+        """Fix PowerShell module errors."""
+        return {
+            "type": "suggestion",
+            "description": "PowerShell module or import error",
+            "fixes": [
+                "Install missing module: Install-Module ModuleName",
+                "Import module: Import-Module ModuleName",
+                "Check module path with $env:PSModulePath",
+                "Update PowerShell Gallery: Update-Module"
+            ]
+        }
+    
+    def _fix_type_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                       source_code: str) -> Dict[str, Any]:
+        """Fix PowerShell type errors."""
+        return {
+            "type": "suggestion",
+            "description": "PowerShell type conversion error",
+            "fixes": [
+                "Cast to correct type: [type]$variable",
+                "Use explicit conversion methods",
+                "Check input data types",
+                "Use -as operator for safe casting"
+            ]
+        }
+    
+    def _fix_pipeline_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                           source_code: str) -> Dict[str, Any]:
+        """Fix PowerShell pipeline errors."""
+        return {
+            "type": "suggestion",
+            "description": "PowerShell pipeline or parameter binding error",
+            "fixes": [
+                "Check pipeline input compatibility",
+                "Use ForEach-Object for processing",
+                "Verify parameter bindings",
+                "Add -ErrorAction parameter handling"
             ]
         }
 
@@ -242,7 +361,7 @@ class PowerShellLanguagePlugin(LanguagePlugin):
     
     def __init__(self):
         self.language = "powershell"
-        self.supported_extensions = {".ps1", ".psm1", ".psd1"}
+        self.supported_extensions = {".ps1", ".psm1", ".psd1", ".ps1xml"}
         self.supported_frameworks = ["powershell", "pwsh", "windows-powershell"]
         self.exception_handler = PowerShellExceptionHandler()
         self.patch_generator = PowerShellPatchGenerator()
@@ -255,7 +374,7 @@ class PowerShellLanguagePlugin(LanguagePlugin):
         return "PowerShell"
     
     def get_language_version(self) -> str:
-        return "5.1+"
+        return "7.0+"
     
     def get_supported_frameworks(self) -> List[str]:
         return self.supported_frameworks

@@ -17,7 +17,7 @@ import hashlib
 
 from ..llm_integration.patch_generator import PatchData
 from ..analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
-from ..analysis.rule_config import Rule
+from ..analysis.rule_config import Rule, RuleConfidence
 
 
 class RuleEngine:
@@ -52,28 +52,37 @@ class ExtractedPattern:
     def to_rule(self) -> Optional[Rule]:
         """Convert pattern to a Rule object."""
         if self.pattern_type == 'error_detection':
+            # Rule constructor expects specific parameters
             return Rule(
-                rule_id=f"auto_{self.pattern_id}",
-                name=f"Auto-extracted: {self.description}",
-                error_patterns=self.error_patterns,
-                confidence_score=self.confidence,
-                auto_generated=True,
+                pattern=self.error_patterns[0] if self.error_patterns else "",
+                type="AutoExtracted",
+                description=self.description,
+                root_cause=f"auto_detected_{self.pattern_id}",
+                suggestion="Auto-generated suggestion based on pattern analysis",
+                id=f"auto_{self.pattern_id}",
+                confidence=str(RuleConfidence.MEDIUM) if self.confidence < 0.8 else str(RuleConfidence.HIGH),
                 metadata={
                     'source_examples': self.source_examples,
-                    'frequency': self.frequency
+                    'frequency': self.frequency,
+                    'auto_generated': True
                 }
             )
         elif self.pattern_type == 'fix_template':
+            # Rule constructor expects specific parameters - use fix template as suggestion
             return Rule(
-                rule_id=f"auto_{self.pattern_id}",
-                name=f"Auto-extracted: {self.description}",
-                fix_template=self.fix_template,
-                conditions=self.conditions,
-                confidence_score=self.confidence,
-                auto_generated=True,
+                pattern=self.error_patterns[0] if self.error_patterns else "",
+                type="AutoExtractedFix",
+                description=self.description,
+                root_cause=f"auto_fix_{self.pattern_id}",
+                suggestion=self.fix_template if self.fix_template else "Auto-generated fix based on pattern analysis",
+                id=f"auto_{self.pattern_id}",
+                confidence=str(RuleConfidence.MEDIUM) if self.confidence < 0.8 else str(RuleConfidence.HIGH),
                 metadata={
                     'source_examples': self.source_examples,
-                    'frequency': self.frequency
+                    'frequency': self.frequency,
+                    'auto_generated': True,
+                    'fix_template': self.fix_template,
+                    'conditions': self.conditions
                 }
             )
         return None
@@ -334,9 +343,19 @@ class RuleExtractor:
         
         # Check each transformation pattern
         for transform in transformations:
-            if (re.search(transform['before_pattern'], before_text) and
-                re.search(transform['after_pattern'], after_text)):
-                return transform
+            # Only check if the before pattern matches; after_pattern contains backreferences
+            # which are not valid in search patterns
+            if re.search(transform['before_pattern'], before_text):
+                # Check if the transformation could explain the change
+                # This is a simplified check - in reality we'd need more sophisticated analysis
+                if transform['name'] == 'null_check_addition' and 'if' in after_text and 'null' in after_text:
+                    return transform
+                elif transform['name'] == 'try_catch_wrapper' and 'try' in after_text and 'catch' in after_text:
+                    return transform
+                elif transform['name'] == 'bounds_check' and 'length' in after_text:
+                    return transform
+                elif transform['name'] == 'resource_cleanup' and 'try' in after_text:
+                    return transform
         
         # Generic transformation if no specific pattern matches
         if before_text != after_text:

@@ -863,6 +863,7 @@ export default PlatformManager;
         # Map root causes to patch strategies
         patch_strategies = {
             "capacitor_plugin_not_found": self._fix_plugin_installation,
+            "plugin_not_installed": self._fix_plugin_installation,  # Add this mapping
             "cordova_plugin_error": self._fix_cordova_plugin,
             "native_bridge_communication_error": self._fix_bridge_communication,
             "mobile_permission_denied": self._fix_permission_handling,

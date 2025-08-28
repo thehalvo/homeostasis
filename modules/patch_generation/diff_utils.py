@@ -195,34 +195,40 @@ def identify_code_block(code: str, line_number: int) -> Tuple[int, int]:
         # Get indentation of the current line
         indent = len(line) - len(line.lstrip())
         
-        # If indentation is less than or equal to target line,
-        # we've found the start of the block (or a parent block)
-        if indent <= target_indent:
-            start_idx = i + 1
+        # If indentation is less than target line, we've found the parent block
+        if indent < target_indent:
+            # Check if this is a block starter
+            if re.match(r'^\s*(if|for|while|def|class|try|with)', line):
+                start_idx = i
+            else:
+                start_idx = i + 1
             break
-            
-        # Also check for block starters like if/def/class at the same level
-        if indent == target_indent and re.match(r'^\s*(if|for|while|def|class|try|with)', line):
+        
+        # If we reach indentation of 0 (top level), this is our start
+        if indent == 0 and line.strip():
             start_idx = i
             break
     
     # Find the block end
     end_idx = line_idx
+    last_non_empty = line_idx
     for i in range(line_idx + 1, len(lines)):
         line = lines[i]
         
-        # Skip empty lines
-        if not line.strip():
-            continue
+        # Track last non-empty line
+        if line.strip():
+            last_non_empty = i
             
         # Get indentation of the current line
         indent = len(line) - len(line.lstrip())
         
-        # If indentation is less than or equal to target line,
-        # we've found the end of the block
-        if indent <= target_indent:
-            end_idx = i - 1
+        # If we hit a non-empty line with less indentation, we've found the end
+        if line.strip() and indent < target_indent:
+            end_idx = last_non_empty
             break
+    else:
+        # If we reached the end of file
+        end_idx = last_non_empty
     
     # Convert back to 1-based line numbers
     return (start_idx + 1, end_idx + 1)

@@ -31,7 +31,7 @@ from modules.reliability.chaos_engineering import (
     ChaosMonkey
 )
 from modules.monitoring.error_collector import ErrorCollector
-from modules.monitoring.metrics import MetricsCollector
+from modules.monitoring.metrics_collector import MetricsCollector
 
 
 class ChaosTestRunner:

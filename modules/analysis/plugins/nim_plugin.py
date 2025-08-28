@@ -51,8 +51,13 @@ class NimExceptionHandler:
                 r"Error: invalid syntax",
                 r"Error: expression expected",
                 r"Error: statement expected",
-                r"Error: undeclared identifier",
                 r"Error: closing.*?expected"
+            ],
+            "undefined_error": [
+                r"Error: undeclared identifier",
+                r"Error: undefined reference",
+                r"Error: symbol.*?not found",
+                r"Error: unknown identifier"
             ],
             "type_error": [
                 r"Error: type mismatch: got.*?but expected",
@@ -69,7 +74,8 @@ class NimExceptionHandler:
                 r"Error: undeclared identifier",
                 r"Error: redefinition of",
                 r"Error: '.*?' is not accessible",
-                r"Error: recursive dependency"
+                r"Error: recursive dependency",
+                r"Error: internal error"
             ],
             "memory_error": [
                 r"Error: out of memory",
@@ -151,7 +157,7 @@ class NimExceptionHandler:
                     logger.info(f"Loaded {len(rules['common'])} common Nim rules")
             
             # Load concept-specific rules
-            for concept in ["memory", "types", "async", "macros"]:
+            for concept in ["memory", "types", "async", "macros", "pragma"]:
                 concept_rules_path = rules_dir / f"nim_{concept}_errors.json"
                 if concept_rules_path.exists():
                     with open(concept_rules_path, 'r') as f:
@@ -211,9 +217,40 @@ class NimExceptionHandler:
         if matches:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
+            
+            # Map rule types to subcategories
+            rule_type = best_match.get("type", "")
+            subcategory_map = {
+                "TypeError": "type",
+                "ImportError": "import",
+                "SyntaxError": "syntax",
+                "ProcedureError": "proc",
+                "MacroError": "macro",
+                "RuntimeError": "runtime",
+                "CompilationError": "compilation",
+                "PragmaError": "pragma"
+            }
+            
+            # Check for specific subcategories based on root cause
+            root_cause = best_match.get("root_cause", "")
+            if "nil_access" in root_cause:
+                subcategory = "nil_access"
+            elif "undefined" in root_cause:
+                subcategory = "undefined"
+            elif "option_error" in root_cause:
+                subcategory = "optionals"
+            elif "result_error" in root_cause:
+                subcategory = "result"
+            elif "bounds_error" in root_cause:
+                subcategory = "bounds"
+            elif "pragma" in root_cause:
+                subcategory = "pragma"
+            else:
+                subcategory = subcategory_map.get(rule_type, analysis.get("subcategory", "unknown"))
+            
             analysis.update({
                 "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
+                "subcategory": subcategory,
                 "confidence": best_match.get("confidence", "medium"),
                 "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
                 "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
@@ -244,6 +281,20 @@ class NimExceptionHandler:
                     "severity": "high",
                     "tags": ["nim", "syntax", "parser"]
                 }
+        
+        # Check undefined identifier errors
+        if "undefined_error" in self.nim_error_patterns:
+            for pattern in self.nim_error_patterns["undefined_error"]:
+                if re.search(pattern, message, re.IGNORECASE):
+                    return {
+                        "category": "nim",
+                        "subcategory": "undefined",
+                        "confidence": "high",
+                        "suggested_fix": "Define the identifier or import required module",
+                        "root_cause": "nim_undefined_identifier",
+                        "severity": "high",
+                        "tags": ["nim", "undefined", "identifier"]
+                    }
         
         # Check type errors
         for pattern in self.nim_error_patterns["type_error"]:
@@ -399,8 +450,8 @@ class NimExceptionHandler:
                 "tags": ["nim", "seq", "collection"]
             }
         
-        # Check for option type errors
-        if any(keyword in message_lower for keyword in ["option", "some", "none"]):
+        # Check for option type errors (be more specific)
+        if any(keyword in message_lower for keyword in ["option[", "option ", ".some", ".none", "issome", "isnone"]):
             return {
                 "category": "nim",
                 "subcategory": "optionals",
@@ -411,8 +462,8 @@ class NimExceptionHandler:
                 "tags": ["nim", "option", "safety"]
             }
         
-        # Check for result type errors
-        if any(keyword in message_lower for keyword in ["result", "error"]):
+        # Check for result type errors (be more specific to avoid matching generic "error" word)
+        if any(keyword in message_lower for keyword in ["result[", "result type", "result value", ".error", ".iserr"]):
             return {
                 "category": "nim",
                 "subcategory": "result",
@@ -556,7 +607,9 @@ class NimPatchGenerator:
             "nim_nil_access": self._fix_nil_access_error,
             "nim_bounds_error": self._fix_bounds_error,
             "nim_option_error": self._fix_option_error,
-            "nim_result_error": self._fix_result_error
+            "nim_result_error": self._fix_result_error,
+            "nim_undefined_identifier": self._fix_undefined_error,
+            "nim_pragma_error": self._fix_pragma_error
         }
         
         strategy = patch_strategies.get(root_cause)
@@ -591,11 +644,10 @@ class NimPatchGenerator:
                 })
         
         if "invalid indentation" in message.lower():
-            fixes.append({
+            return {
                 "type": "suggestion",
-                "description": "Invalid indentation",
-                "fix": "Fix indentation - Nim uses significant whitespace (2 spaces per level)"
-            })
+                "description": "Fix indentation - Nim uses significant whitespace (2 spaces per level)"
+            }
         
         if "unexpected token" in message.lower():
             fixes.append({
@@ -983,6 +1035,42 @@ class NimPatchGenerator:
             ]
         }
     
+    def _fix_undefined_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                           source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix undefined identifier errors."""
+        message = error_data.get("message", "")
+        
+        # Extract identifier name
+        identifier_match = re.search(r"undeclared identifier: '(.+?)'", message)
+        identifier = identifier_match.group(1) if identifier_match else "identifier"
+        
+        return {
+            "type": "suggestion",
+            "description": f"Undefined identifier '{identifier}'",
+            "fixes": [
+                f"Declare variable '{identifier}': var {identifier} = value",
+                f"Check spelling of '{identifier}'",
+                f"Import module containing '{identifier}'",
+                "Check if identifier is in scope"
+            ]
+        }
+    
+    def _fix_pragma_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                         source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix pragma errors."""
+        message = error_data.get("message", "")
+        
+        return {
+            "type": "suggestion",
+            "description": "Pragma error",
+            "fixes": [
+                "Check pragma syntax and spelling",
+                "Ensure pragma is valid for this context",
+                "Remove invalid pragma or replace with valid one",
+                "Check documentation for available pragmas"
+            ]
+        }
+    
     def _template_based_patch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                             source_code: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
@@ -1026,7 +1114,7 @@ class NimLanguagePlugin(LanguagePlugin):
     def __init__(self):
         """Initialize the Nim language plugin."""
         self.language = "nim"
-        self.supported_extensions = {".nim", ".nims"}
+        self.supported_extensions = {".nim", ".nims", ".nimble"}
         self.supported_frameworks = [
             "nim", "nimble", "jester", "prologue", "karax", "nigui"
         ]
@@ -1047,7 +1135,7 @@ class NimLanguagePlugin(LanguagePlugin):
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return "1.6+"
+        return "2.0+"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""

@@ -1,4 +1,5 @@
 {
+  "name": "Svelte Performance Errors",
   "version": "1.0.0",
   "description": "Svelte performance optimization error detection rules",
   "rules": [

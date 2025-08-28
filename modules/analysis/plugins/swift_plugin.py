@@ -549,8 +549,19 @@ class SwiftPatchGenerator:
         if not stack_trace:
             return None
         
-        # Look for line number in first frame
-        first_frame = stack_trace[0] if isinstance(stack_trace[0], str) else str(stack_trace[0])
+        # Handle different stack trace formats
+        first_frame = stack_trace[0]
+        
+        # If it's a dictionary with file/line info, return it directly
+        if isinstance(first_frame, dict) and "file" in first_frame and "line" in first_frame:
+            return {
+                "file": first_frame.get("file", ""),
+                "line": first_frame.get("line", 0),
+                "column": first_frame.get("column", 0)
+            }
+        
+        # Otherwise convert to string and parse
+        first_frame = str(first_frame)
         
         # Common patterns for extracting line info
         patterns = [

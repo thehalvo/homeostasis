@@ -1,4 +1,5 @@
 {
+  "name": "Svelte Styling Errors",
   "version": "1.0.0",
   "description": "Svelte styling and CSS error detection rules",
   "rules": [

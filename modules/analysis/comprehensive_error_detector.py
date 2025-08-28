@@ -248,7 +248,32 @@ class PythonParser(LanguageSpecificParser):
             if error_match:
                 error_type = error_match.group(1)
                 error_message = error_match.group(2)
+            else:
+                # Check for Django-style exceptions
+                django_match = re.match(r'(django\.\w+\.exceptions\.(\w+)): (.+)', line)
+                if django_match:
+                    error_type = django_match.group(2)
+                    error_message = django_match.group(3)
+                else:
+                    # Check for asyncio.exceptions.TimeoutError and similar patterns
+                    asyncio_match = re.match(r'(asyncio\.exceptions\.(\w+))$', line)
+                    if asyncio_match:
+                        error_type = asyncio_match.group(2)
+                        error_message = "Async operation timed out"
+                    else:
+                        # Check for other framework exceptions (Flask, etc.)
+                        framework_match = re.match(r'(\w+\.\w+(?:\.\w+)*\.(\w+)): (.+)', line)
+                        if framework_match:
+                            error_type = framework_match.group(2)
+                            error_message = framework_match.group(3)
+                        else:
+                            # Check for module.exceptions.Error without message
+                            module_exception_match = re.match(r'(\w+(?:\.\w+)*\.(\w+))$', line)
+                            if module_exception_match and module_exception_match.group(2).endswith('Error'):
+                                error_type = module_exception_match.group(2)
+                                error_message = f"{error_type} occurred"
                 
+            if error_type:
                 # Categorize errors properly
                 if error_type in ["SyntaxError", "IndentationError", "TabError"]:
                     category = ErrorCategory.SYNTAX
@@ -290,6 +315,16 @@ class PythonParser(LanguageSpecificParser):
                     category = ErrorCategory.LOGIC
                     suggestion = "Use decimal or fractions module for precise arithmetic, or check for integer overflow"
                     
+                elif error_type == "ObjectDoesNotExist":
+                    category = ErrorCategory.DATABASE
+                    suggestion = "Check if object exists before accessing. Use get_object_or_404() or handle DoesNotExist exception"
+                elif error_type == "TemplateNotFound":
+                    category = ErrorCategory.FILESYSTEM
+                    suggestion = "Check template path and ensure template file exists in the correct directory"
+                elif error_type == "TimeoutError":
+                    category = ErrorCategory.NETWORK
+                    if not suggestion:
+                        suggestion = "Increase timeout duration or optimize the async operation"
                 elif error_type in ["NameError", "AttributeError", "KeyError", "IndexError", "TypeError", "ValueError", "ZeroDivisionError"]:
                     category = ErrorCategory.LOGIC  # These are typically logic errors
                     
@@ -473,6 +508,38 @@ class JavaScriptParser(LanguageSpecificParser):
             (r"RangeError: Maximum call stack size exceeded", "stack_overflow"),
             (r"Error: Cannot find module '([^']+)'", "missing_module"),
         ]
+    
+    def parse(self, error_string: str, context: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+        """Parse JavaScript error strings into structured format."""
+        if not error_string:
+            return None
+        
+        # Check for syntax errors first
+        if "SyntaxError" in error_string:
+            result = self.parse_syntax_error(error_string)
+            if result:
+                return result
+        
+        # Check for runtime errors
+        for pattern, error_type in self.runtime_patterns:
+            match = re.search(pattern, error_string)
+            if match:
+                return {
+                    "category": ErrorCategory.RUNTIME.value,
+                    "error_type": error_type,
+                    "severity": ErrorSeverity.MEDIUM.value,
+                    "language": self.language.value,
+                    "match_groups": match.groups()
+                }
+        
+        # Default to unknown error
+        return {
+            "category": ErrorCategory.UNKNOWN.value,
+            "error_type": "unknown",
+            "severity": ErrorSeverity.LOW.value,
+            "language": self.language.value,
+            "raw_error": error_string
+        }
     
     def parse_syntax_error(self, error_message: str, source_code: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """Parse JavaScript syntax errors."""

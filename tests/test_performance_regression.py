@@ -521,11 +521,13 @@ class TestRegressionReporting:
         def slow_operation():
             time.sleep(0.02)  # 20ms (2x slower)
         
-        result = self.tester.benchmark(slow_operation, test_name, iterations=3)
+        # The benchmark should raise AssertionError for critical regressions
+        with pytest.raises(AssertionError) as exc_info:
+            result = self.tester.benchmark(slow_operation, test_name, iterations=3)
         
-        # Should detect regression
-        assert len(result["regressions"]) > 0
-        assert any(r["metric_type"] == "duration" for r in result["regressions"])
+        # Verify the regression was detected
+        assert "Performance regression detected" in str(exc_info.value)
+        assert "duration" in str(exc_info.value)
 
 
 @performance_test(iterations=10)

@@ -77,8 +77,8 @@ class MonitoringLogger:
         # Remove sensitive values even if not caught by the key filter
         self.system_info["environment_variables"] = env_vars
         
-        # Configure logging
-        self.logger = logging.getLogger(service_name)
+        # Configure logging with homeostasis namespace
+        self.logger = logging.getLogger(f"homeostasis.{service_name}")
         self.logger.setLevel(self.log_level)
         
         # Remove existing handlers if any
@@ -146,6 +146,10 @@ class MonitoringLogger:
         
         return log_record
 
+    def debug(self, message: str, **kwargs) -> Dict[str, Any]:
+        """Log a debug message."""
+        return self.log("DEBUG", message, **kwargs)
+    
     def info(self, message: str, **kwargs) -> Dict[str, Any]:
         """Log an info message."""
         return self.log("INFO", message, **kwargs)

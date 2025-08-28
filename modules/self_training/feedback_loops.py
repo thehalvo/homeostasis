@@ -151,14 +151,18 @@ class MLFeedbackLoop:
         
         # Add to data collector
         for item in training_data:
+            # Add error data with label in metadata
+            error_data = item['input_data'].copy()
+            error_data['label'] = item['actual_outcome']
+            error_data['metadata'] = {
+                'source': 'feedback_loop',
+                'original_prediction': item['prediction'],
+                'model_version': model_version,
+                'actual_outcome': item['actual_outcome']
+            }
             self.data_collector.add_error(
-                error_data=item['input_data'],
-                label=item['actual_outcome'],
-                metadata={
-                    'source': 'feedback_loop',
-                    'original_prediction': item['prediction'],
-                    'model_version': model_version
-                }
+                error_data=error_data,
+                source='feedback_loop'
             )
         
         # Clear feedback buffer for this model

@@ -62,10 +62,19 @@ class AndroidJavaExceptionHandler:
         """Load Android Java error rules from rule files."""
         rules = {}
         rules_dir = Path(__file__).parent.parent / "rules" / "java_android"
+        java_rules_dir = Path(__file__).parent.parent / "rules" / "java"
         
         try:
             # Create rules directory if it doesn't exist
             rules_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Load Android rules from java directory first
+            android_rules_path = java_rules_dir / "android_errors.json"
+            if android_rules_path.exists():
+                with open(android_rules_path, 'r') as f:
+                    android_data = json.load(f)
+                    rules["android"] = android_data.get("rules", [])
+                    logger.info(f"Loaded {len(rules['android'])} Android rules from java directory")
             
             # Load common Android Java rules
             common_rules_path = rules_dir / "java_android_common_errors.json"

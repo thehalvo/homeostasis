@@ -232,30 +232,43 @@ class MATLABExceptionHandler:
         # Analyze based on error patterns
         analysis = self._analyze_by_patterns(message, file_path)
         
-        # Check for concept-specific issues
-        concept_analysis = self._analyze_matlab_concepts(message)
-        if concept_analysis.get("confidence", "low") != "low":
-            # Merge concept-specific findings
-            analysis.update(concept_analysis)
+        # Check for concept-specific issues only if we don't have high confidence yet
+        if analysis.get("confidence") != "high":
+            concept_analysis = self._analyze_matlab_concepts(message)
+            if concept_analysis.get("confidence", "low") != "low":
+                # Merge concept-specific findings without overwriting existing good subcategory
+                if analysis.get("subcategory") in ["unknown", "runtime"]:
+                    analysis.update(concept_analysis)
+                else:
+                    # Keep existing subcategory but update other fields
+                    for key, value in concept_analysis.items():
+                        if key != "subcategory":
+                            analysis[key] = value
         
         # Find matching rules
         matches = self._find_matching_rules(message, error_data)
         
-        if matches:
+        # Only use rule matches if we don't already have high confidence analysis
+        if matches and analysis.get("confidence") != "high":
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
+            # Only update if they have values - preserve existing category if rule doesn't specify
+            if best_match.get("category"):
+                analysis["category"] = best_match["category"]
+            if best_match.get("type") and analysis.get("subcategory") == "unknown":
+                analysis["subcategory"] = best_match["type"]
             analysis.update({
-                "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
-                "confidence": best_match.get("confidence", "medium"),
+                "confidence": best_match.get("confidence", analysis.get("confidence", "medium")),
                 "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
                 "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
                 "severity": best_match.get("severity", "medium"),
                 "rule_id": best_match.get("id", ""),
-                "tags": best_match.get("tags", []),
+                "tags": best_match.get("tags", analysis.get("tags", [])),
                 "all_matches": matches
             })
         
+        # Always ensure category is "matlab" for this plugin
+        analysis["category"] = "matlab"
         analysis["file_path"] = file_path
         analysis["line_number"] = line_number
         return analysis
@@ -276,6 +289,42 @@ class MATLABExceptionHandler:
                     "severity": "high",
                     "tags": ["matlab", "syntax", "parser"]
                 }
+        
+        # Check for specific undefined errors
+        if "undefined function or variable" in message_lower or "undefined variable" in message_lower:
+            return {
+                "category": "matlab",
+                "subcategory": "undefined",
+                "confidence": "high",
+                "suggested_fix": "Define the variable or function before use",
+                "root_cause": "matlab_undefined_error",
+                "severity": "high",
+                "tags": ["matlab", "undefined", "variable"]
+            }
+        
+        # Check for dimension errors
+        if "matrix dimensions" in message_lower and ("must agree" in message_lower or "not agree" in message_lower):
+            return {
+                "category": "matlab",
+                "subcategory": "dimension",
+                "confidence": "high",
+                "suggested_fix": "Check matrix dimensions for compatibility",
+                "root_cause": "matlab_dimension_error",
+                "severity": "high",
+                "tags": ["matlab", "dimension", "matrix"]
+            }
+        
+        # Check for index errors
+        if "index exceeds" in message_lower or "indices must" in message_lower:
+            return {
+                "category": "matlab",
+                "subcategory": "index",
+                "confidence": "high",
+                "suggested_fix": "Check array bounds and indices",
+                "root_cause": "matlab_index_error",
+                "severity": "high",
+                "tags": ["matlab", "index", "bounds"]
+            }
         
         # Check runtime errors
         for pattern in self.matlab_error_patterns["runtime_error"]:
@@ -615,7 +664,8 @@ class MATLABPatchGenerator:
             "matlab_index_error": self._fix_index_error,
             "matlab_type_error": self._fix_type_error,
             "matlab_optimization_error": self._fix_optimization_error,
-            "matlab_undefined_error": self._fix_undefined_error
+            "matlab_undefined_error": self._fix_undefined_error,
+            "matlab_dimension_error": self._fix_dimension_error
         }
         
         strategy = patch_strategies.get(root_cause)
@@ -1113,6 +1163,36 @@ class MATLABPatchGenerator:
             ]
         }
     
+    def _fix_dimension_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                            source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix matrix dimension mismatch errors."""
+        message = error_data.get("message", "")
+        
+        if "must agree" in message.lower():
+            return {
+                "type": "suggestion",
+                "description": "Matrix dimensions must agree",
+                "fixes": [
+                    "Check matrix sizes with size() before operations",
+                    "Use element-wise operators (.*, ./, .^) for element operations",
+                    "Use transpose (') or reshape() to align dimensions",
+                    "Ensure compatible dimensions for matrix multiplication",
+                    "Use bsxfun() for operations on different sized arrays"
+                ]
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Matrix dimension error",
+            "fixes": [
+                "Check matrix dimensions with size() or length()",
+                "Ensure matrices have compatible dimensions",
+                "Use element-wise operations when appropriate",
+                "Consider using repmat() or broadcast operations",
+                "Debug with disp(size(variable)) to check dimensions"
+            ]
+        }
+    
     def _template_based_patch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                             source_code: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
@@ -1178,7 +1258,7 @@ class MATLABLanguagePlugin(LanguagePlugin):
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return "R2018a+"
+        return "R2021a+"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""

@@ -265,6 +265,16 @@ class SvelteExceptionHandler:
         Returns:
             Analysis results with reactivity-specific fixes
         """
+        # First try using the loaded rules
+        analysis = self.analyze_exception(error_data)
+        
+        # If we got a good match from rules, return it
+        if (analysis.get("subcategory") == "reactivity" and 
+            analysis.get("confidence") in ["high", "medium"] and
+            analysis.get("rule_id") != "svelte_generic_handler"):
+            return analysis
+        
+        # Fallback to hardcoded patterns for backward compatibility
         message = error_data.get("message", "")
         
         # Common reactivity error patterns
@@ -275,6 +285,11 @@ class SvelteExceptionHandler:
                 "severity": "error"
             },
             "variable is not defined": {
+                "cause": "svelte_reactive_undefined_variable",
+                "fix": "Declare variables before using them in reactive statements",
+                "severity": "error"
+            },
+            "undefinedvariable": {
                 "cause": "svelte_reactive_undefined_variable",
                 "fix": "Declare variables before using them in reactive statements",
                 "severity": "error"
@@ -410,7 +425,7 @@ class SvelteExceptionHandler:
         sveltekit_patterns = {
             "load function must return an object": {
                 "cause": "sveltekit_load_return_type",
-                "fix": "Return an object from load function with props or other data",
+                "fix": "Load function must return an object with props or other data",
                 "severity": "error"
             },
             "cannot use goto during ssr": {
@@ -672,7 +687,7 @@ export const myStore = {store_type}(initialValue);"""
         """Fix SvelteKit load function return type."""
         return {
             "type": "suggestion",
-            "description": "Return proper object from load function",
+            "description": "Must return object from load function with proper structure",
             "fix_commands": [
                 "Return object with props property for component data",
                 "Return object with status and error for error handling",
@@ -918,6 +933,9 @@ class SvelteLanguagePlugin(LanguagePlugin):
             r"writable\(",
             r"readable\(",
             r"derived\(",
+            r"writable.*not.*defined",
+            r"readable.*not.*defined",
+            r"derived.*not.*defined",
             r"\.svelte:",
             r"svelte/store",
             r"svelte/transition",

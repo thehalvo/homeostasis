@@ -1,4 +1,5 @@
 {
+  "name": "Svelte Testing Errors",
   "version": "1.0.0",
   "description": "Svelte testing framework error detection rules",
   "rules": [

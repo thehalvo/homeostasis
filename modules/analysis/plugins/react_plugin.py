@@ -129,8 +129,8 @@ class ReactExceptionHandler:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
             return {
-                "category": best_match.get("category", "react"),
-                "subcategory": best_match.get("subcategory", "unknown"),
+                "category": "react",  # Always keep category as "react" for React plugin
+                "subcategory": best_match.get("category", best_match.get("subcategory", "unknown")),
                 "confidence": best_match.get("confidence", "medium"),
                 "suggested_fix": best_match.get("suggestion", ""),
                 "root_cause": best_match.get("root_cause", ""),
@@ -215,11 +215,22 @@ class ReactExceptionHandler:
             category = "state"
             suggestion = "Check state management and updates"
         elif "render" in message:
-            category = "rendering"
-            suggestion = "Check component rendering logic"
+            if "unnecessary" in message or "performance" in message or "re-render" in message:
+                category = "performance"
+                suggestion = "Optimize rendering performance - use React.memo, useMemo, or useCallback"
+            else:
+                category = "rendering"
+                suggestion = "Check component rendering logic"
+        elif "server" in message or "client" in message:
+            category = "server"
+            suggestion = "Check server/client component boundaries and ensure proper code separation"
         else:
             category = "unknown"
             suggestion = "Review React component implementation"
+        
+        tags = ["react", "generic", category]
+        if category == "performance":
+            tags.append("optimization")
         
         return {
             "category": "react",
@@ -229,7 +240,7 @@ class ReactExceptionHandler:
             "root_cause": f"react_{category}_error",
             "severity": "medium",
             "rule_id": "react_generic_handler",
-            "tags": ["react", "generic", category]
+            "tags": tags
         }
     
     def analyze_hooks_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -309,8 +320,8 @@ class ReactExceptionHandler:
         message = error_data.get("message", "").lower()
         stack_trace = str(error_data.get("stack_trace", "")).lower()
         
-        # Redux specific errors
-        if "redux" in message or "store" in message or "dispatch" in message:
+        # Redux specific errors (check first since Redux also uses Provider)
+        if "redux" in message or "store" in message or "dispatch" in message or "getstate" in message:
             return self._analyze_redux_error(message, error_data)
         
         # Context specific errors
@@ -341,7 +352,7 @@ class ReactExceptionHandler:
     
     def _analyze_redux_error(self, message: str, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Analyze Redux-specific errors."""
-        if "store" in message and ("undefined" in message or "not found" in message):
+        if ("store" in message or "getstate" in message) and ("undefined" in message or "not found" in message):
             return {
                 "category": "react",
                 "subcategory": "redux",

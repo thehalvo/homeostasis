@@ -167,20 +167,49 @@ class SQLExceptionHandler:
         if matches:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
+            
+            # Map rule type to subcategory
+            rule_type = best_match.get("type", "")
+            subcategory = self._map_rule_type_to_subcategory(rule_type)
+            if not subcategory:
+                subcategory = analysis.get("subcategory", "unknown")
+            
+            # Get tags and ensure subcategory is included
+            tags = best_match.get("tags", [])
+            if subcategory and subcategory not in tags:
+                tags = list(tags)  # Make a copy
+                tags.append(subcategory)
+            
             analysis.update({
                 "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
+                "subcategory": subcategory,
                 "confidence": best_match.get("confidence", "medium"),
                 "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
                 "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
                 "severity": best_match.get("severity", "medium"),
                 "rule_id": best_match.get("id", ""),
-                "tags": best_match.get("tags", []),
+                "tags": tags,
                 "all_matches": matches
             })
         
         analysis["database_type"] = database_type
         return analysis
+    
+    def _map_rule_type_to_subcategory(self, rule_type: str) -> str:
+        """Map rule type to expected subcategory."""
+        type_mapping = {
+            "SyntaxError": "syntax",
+            "ConstraintError": "constraint",
+            "SchemaError": "schema",
+            "PermissionError": "permission",
+            "ConnectionError": "connection",
+            "DataTypeError": "type",
+            "TransactionError": "transaction",
+            "FunctionError": "function",
+            "IndexError": "index",
+            "JoinError": "join"
+        }
+        return type_mapping.get(rule_type, rule_type.lower() if rule_type else "")
     
     def _detect_database_type(self, message: str, error_code: str) -> str:
         """Detect database type from error message or code."""
@@ -270,6 +299,20 @@ class SQLExceptionHandler:
                 "tags": ["sql", "column", "schema"]
             }
         
+        # Check for index errors before general constraint errors
+        if ("index" in message_lower and ("duplicate" in message_lower or "unique" in message_lower)) or \
+           ("cannot create index" in message_lower) or \
+           ("index" in message_lower and "already exists" in message_lower):
+            return {
+                "category": "sql",
+                "subcategory": "index",
+                "confidence": "high",
+                "suggested_fix": "Check index constraints and ensure unique values where required",
+                "root_cause": "sql_index_constraint_violation",
+                "severity": "medium",
+                "tags": ["sql", "index", "constraint"]
+            }
+            
         if "duplicate" in message_lower or "unique constraint" in message_lower:
             return {
                 "category": "sql",
@@ -290,6 +333,42 @@ class SQLExceptionHandler:
                 "root_cause": "sql_permission_denied",
                 "severity": "high",
                 "tags": ["sql", "permission", "access"]
+            }
+        
+        if "ambiguous" in message_lower and ("column" in message_lower or "reference" in message_lower):
+            return {
+                "category": "sql",
+                "subcategory": "join",
+                "confidence": "high",
+                "suggested_fix": "Qualify column names with table aliases to resolve ambiguity",
+                "root_cause": "sql_ambiguous_column",
+                "severity": "high",
+                "tags": ["sql", "join", "ambiguous"]
+            }
+        
+        if "invalid input syntax" in message_lower and "type" in message_lower:
+            return {
+                "category": "sql",
+                "subcategory": "type",
+                "confidence": "high",
+                "suggested_fix": "Check data types and ensure proper type conversions",
+                "root_cause": "sql_type_mismatch",
+                "severity": "medium",
+                "tags": ["sql", "type", "conversion"]
+            }
+        
+        if ("could not connect" in message_lower) or \
+           ("connection" in message_lower and ("failed" in message_lower or "refused" in message_lower or "timeout" in message_lower)) or \
+           ("unable to connect" in message_lower) or \
+           ("database server" in message_lower and "connect" in message_lower):
+            return {
+                "category": "sql",
+                "subcategory": "connection",
+                "confidence": "high",
+                "suggested_fix": "Check database server status, network connectivity, and connection parameters",
+                "root_cause": "sql_connection_error",
+                "severity": "high",
+                "tags": ["sql", "connection", "network"]
             }
         
         return {
@@ -530,7 +609,10 @@ class SQLPatchGenerator:
             "sql_unique_constraint_violation": self._fix_unique_constraint,
             "sql_foreign_key_violation": self._fix_foreign_key_constraint,
             "sql_permission_denied": self._fix_permission_error,
-            "sql_connection_failed": self._fix_connection_error
+            "sql_connection_failed": self._fix_connection_error,
+            "sql_ambiguous_column": self._fix_ambiguous_column,
+            "sql_type_mismatch": self._fix_type_mismatch,
+            "sql_index_constraint_violation": self._fix_index_constraint
         }
         
         # Try database-specific patches first
@@ -733,6 +815,67 @@ class SQLPatchGenerator:
             ]
         }
     
+    def _fix_ambiguous_column(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                             query: str) -> Optional[Dict[str, Any]]:
+        """Fix ambiguous column reference errors."""
+        message = error_data.get("message", "")
+        
+        # Extract column name if possible
+        column_match = re.search(r"column (?:reference )?'([^']+)'", message)
+        column_name = column_match.group(1) if column_match else "column"
+        
+        return {
+            "type": "suggestion",
+            "description": f"Qualify the ambiguous column '{column_name}' with a table alias",
+            "fix_steps": [
+                f"Add table aliases to your query (e.g., SELECT t1.{column_name} FROM table1 t1)",
+                f"Prefix the column with the correct table name (e.g., table1.{column_name})",
+                "If using joins, ensure all columns are qualified with their respective table aliases",
+                "Consider using AS clause for column aliases to avoid conflicts"
+            ],
+            "example": f"SELECT t1.{column_name}, t2.other_column\nFROM table1 t1\nJOIN table2 t2 ON t1.id = t2.id"
+        }
+    
+    def _fix_type_mismatch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                          query: str) -> Optional[Dict[str, Any]]:
+        """Fix type mismatch errors."""
+        message = error_data.get("message", "")
+        
+        # Try to extract type information
+        type_match = re.search(r"type (\w+)", message)
+        expected_type = type_match.group(1) if type_match else "expected type"
+        
+        return {
+            "type": "suggestion",
+            "description": f"Fix data type mismatch for {expected_type}",
+            "fix_steps": [
+                f"Cast the value to {expected_type} (e.g., CAST(value AS {expected_type.upper()}))",
+                "Check if the value format matches the expected type",
+                "For dates/timestamps, ensure proper format (YYYY-MM-DD)",
+                "For numeric types, remove non-numeric characters",
+                "Use appropriate conversion functions for your database"
+            ],
+            "example": f"-- For PostgreSQL\nSELECT CAST('123' AS INTEGER);\n-- For MySQL\nSELECT CONVERT('123', SIGNED);"
+        }
+    
+    def _fix_index_constraint(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                             query: str) -> Optional[Dict[str, Any]]:
+        """Fix index constraint violations."""
+        message = error_data.get("message", "")
+        
+        return {
+            "type": "suggestion",
+            "description": "Resolve index constraint violation due to duplicate values",
+            "fix_steps": [
+                "Remove duplicate values from the column before creating the index",
+                "Use a non-unique index if duplicate values are allowed",
+                "Clean up existing data to satisfy unique constraints",
+                "Consider using a partial unique index with a WHERE clause",
+                "Drop and recreate the index with appropriate options"
+            ],
+            "example": "-- Remove duplicates before creating unique index\nDELETE FROM table_name t1\nUSING table_name t2\nWHERE t1.ctid < t2.ctid\n  AND t1.column_name = t2.column_name;"
+        }
+    
     def _template_based_patch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                             query: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
@@ -773,7 +916,7 @@ class SQLLanguagePlugin(LanguagePlugin):
     def __init__(self):
         """Initialize the SQL language plugin."""
         self.language = "sql"
-        self.supported_extensions = {".sql", ".ddl", ".dml"}
+        self.supported_extensions = {".sql", ".ddl", ".dml", ".psql", ".mysql"}
         self.supported_frameworks = [
             "postgresql", "mysql", "sqlite", "sqlserver", "oracle",
             "mariadb", "mongodb", "cassandra", "redis"
@@ -795,7 +938,7 @@ class SQLLanguagePlugin(LanguagePlugin):
     
     def get_language_version(self) -> str:
         """Get the version of the language supported by this plugin."""
-        return "SQL-92+"
+        return "ANSI SQL"
     
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""
@@ -816,6 +959,9 @@ class SQLLanguagePlugin(LanguagePlugin):
             "error_type": error_data.get("error_type", error_data.get("sqlstate", "SQLError")),
             "message": error_data.get("message", error_data.get("description", "")),
             "language": "sql",
+            "file_path": error_data.get("file_path", error_data.get("file", "")),
+            "line_number": error_data.get("line_number", error_data.get("line", 0)),
+            "column_number": error_data.get("column_number", error_data.get("column", 0)),
             "database_type": error_data.get("database_type", error_data.get("driver", "")),
             "error_code": error_data.get("error_code", error_data.get("code", "")),
             "query": error_data.get("query", error_data.get("sql", "")),
@@ -846,6 +992,9 @@ class SQLLanguagePlugin(LanguagePlugin):
         sql_error = {
             "error_type": standard_error.get("error_type", "SQLError"),
             "message": standard_error.get("message", ""),
+            "file": standard_error.get("file_path", ""),
+            "line": standard_error.get("line_number", 0),
+            "column": standard_error.get("column_number", 0),
             "database_type": standard_error.get("database_type", ""),
             "error_code": standard_error.get("error_code", ""),
             "query": standard_error.get("query", ""),

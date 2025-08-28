@@ -97,7 +97,7 @@ class ScalaExceptionHandler:
                     result = {
                         "error_data": error_data,
                         "rule_id": rule.get("id", "unknown"),
-                        "error_type": rule.get("type", error_type),
+                        "error_type": error_type,  # Preserve original error type
                         "root_cause": rule.get("root_cause", "scala_unknown_error"),
                         "description": rule.get("description", "Unknown Scala error"),
                         "suggestion": rule.get("suggestion", "No suggestion available"),
@@ -321,7 +321,7 @@ class ScalaExceptionHandler:
                 "type": "MatchError",
                 "description": "Pattern match is not exhaustive, missing cases for some possible values",
                 "root_cause": "scala_incomplete_match",
-                "suggestion": "Ensure pattern matches cover all possible cases. Add a wildcard case (_) as fallback or use Option pattern matching for safer handling.",
+                "suggestion": "Ensure pattern matches are exhaustive and cover all possible cases. Add a wildcard case (_) as fallback or use Option pattern matching for safer handling.",
                 "confidence": "high",
                 "severity": "medium",
                 "category": "core"

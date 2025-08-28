@@ -153,8 +153,9 @@ def test_get_latest_errors():
             errors = get_latest_errors(limit=10)
             
             assert len(errors) == 2  # Only ERROR messages
-            assert errors[0]["message"] == "Test error 1"
-            assert errors[1]["message"] == "Test error 2"
+            # get_latest_errors returns newest first
+            assert errors[0]["message"] == "Test error 2"
+            assert errors[1]["message"] == "Test error 1"
 
 
 def test_get_latest_errors_with_limit():
@@ -171,25 +172,35 @@ def test_get_latest_errors_with_limit():
             errors = get_latest_errors(limit=2)
             
             assert len(errors) == 2  # Only the latest 2 errors
-            assert errors[0]["message"] == "Test error 2"
-            assert errors[1]["message"] == "Test error 3"
+            # get_latest_errors returns newest first
+            assert errors[0]["message"] == "Test error 3"
+            assert errors[1]["message"] == "Test error 2"
 
 
 def test_get_error_summary():
     """Test getting error summary from log file."""
-    mock_errors = [
-        {"level": "ERROR", "message": "KeyError: 'test'", "exception": "KeyError"},
-        {"level": "ERROR", "message": "KeyError: 'test'", "exception": "KeyError"},
-        {"level": "ERROR", "message": "ValueError: invalid value", "exception": "ValueError"}
+    from datetime import datetime, timedelta
+    # Use recent timestamps (within last 7 days)
+    now = datetime.now()
+    time1 = (now - timedelta(hours=2)).isoformat()
+    time2 = (now - timedelta(hours=1)).isoformat()
+    time3 = now.isoformat()
+    
+    mock_log_lines = [
+        f'{{"timestamp": "{time1}", "level": "ERROR", "message": "KeyError: test", "error_details": {{"exception_type": "KeyError", "message": "test"}}}}',
+        f'{{"timestamp": "{time2}", "level": "ERROR", "message": "KeyError: test", "error_details": {{"exception_type": "KeyError", "message": "test"}}}}',
+        f'{{"timestamp": "{time3}", "level": "ERROR", "message": "ValueError: invalid value", "error_details": {{"exception_type": "ValueError", "message": "invalid value"}}}}'
     ]
     
-    summary = get_error_summary(mock_errors)
-    
-    assert len(summary) == 2  # Two types of errors
-    assert summary[0]["count"] == 2  # Two KeyErrors
-    assert summary[0]["exception"] == "KeyError"
-    assert summary[1]["count"] == 1  # One ValueError
-    assert summary[1]["exception"] == "ValueError"
+    with patch("builtins.open", mock_open(read_data="\n".join(mock_log_lines))):
+        with patch("os.path.exists", return_value=True):
+            summary = get_error_summary(days_back=7)
+            
+            assert summary["total_errors"] == 3
+            assert "KeyError" in summary["error_types"]
+            assert summary["error_types"]["KeyError"] == 2  # Two KeyErrors
+            assert "ValueError" in summary["error_types"]
+            assert summary["error_types"]["ValueError"] == 1  # One ValueError
 
 
 def test_add_logging_middleware():
@@ -200,4 +211,4 @@ def test_add_logging_middleware():
     add_logging_middleware(mock_app, "test_service")
     
     # The middleware should have been added to the app
-    mock_app.middleware.assert_called_once()
+    mock_app.add_middleware.assert_called_once()

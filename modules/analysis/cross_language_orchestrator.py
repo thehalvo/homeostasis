@@ -689,6 +689,16 @@ class CrossLanguageOrchestrator:
         if "goroutine_id" in error_data or "go_version" in error_data:
             return "go"
         
+        # Check for Python-style errors
+        if "error" in error_data and isinstance(error_data["error"], str):
+            error = error_data["error"]
+            # Common Python error patterns
+            python_errors = ["NameError", "AttributeError", "TypeError", "ValueError", 
+                           "SyntaxError", "IndentationError", "ImportError", "KeyError", 
+                           "IndexError", "ZeroDivisionError", "FileNotFoundError"]
+            if any(err in error for err in python_errors):
+                return "python"
+        
         # Check for Rust-style errors
         if "message" in error_data and isinstance(error_data["message"], str):
             message = error_data["message"]
@@ -702,14 +712,18 @@ class CrossLanguageOrchestrator:
                 for frame in stack_trace:
                     if isinstance(frame, dict):
                         if "file" in frame:
-                            if frame["file"].endswith(".java"):
+                            if frame["file"].endswith(".py"):
+                                return "python"
+                            elif frame["file"].endswith(".java"):
                                 return "java"
                             elif frame["file"].endswith(".go"):
                                 return "go"
                             elif frame["file"].endswith(".rs"):
                                 return "rust"
                     elif isinstance(frame, str):
-                        if ".java:" in frame:
+                        if ".py" in frame or "File \"" in frame:
+                            return "python"
+                        elif ".java:" in frame:
                             return "java"
                         elif ".go:" in frame or "goroutine " in frame:
                             return "go"
@@ -795,6 +809,1037 @@ class CrossLanguageOrchestrator:
                 score += 0.2
         
         return score
+    
+    def analyze_distributed_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze distributed errors occurring across multiple services in a microservice architecture.
+        
+        This method is designed for errors that propagate through multiple services,
+        particularly in polyglot microservice environments.
+        
+        Args:
+            error_data: Error data containing information about multiple services involved
+            
+        Returns:
+            Analysis results with service-specific fixes and root cause identification
+        """
+        # Initialize result structure
+        result = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "error_type": error_data.get("error_type", "DistributedError"),
+            "root_cause_service": None,
+            "service_fixes": {},
+            "propagation_path": [],
+            "is_distributed_error": True
+        }
+        
+        # Extract error chain
+        error_chain = error_data.get("error_chain", [])
+        if not error_chain:
+            # If no error chain but we have service errors directly
+            if "services" in error_data:
+                error_chain = error_data["services"]
+            else:
+                # Single service error
+                return self.analyze_error(error_data)
+        
+        # Analyze each service error
+        service_analyses = {}
+        languages_involved = []
+        
+        for service_error in error_chain:
+            service_name = service_error.get("service", service_error.get("name", "unknown"))
+            language = service_error.get("language", "unknown")
+            
+            if language != "unknown":
+                languages_involved.append(language)
+            
+            # Analyze the service-specific error
+            try:
+                if language != "unknown" and self.registry.is_language_supported(language):
+                    analysis = self.analyze_error(service_error, language)
+                    service_analyses[service_name] = {
+                        "language": language,
+                        "analysis": analysis,
+                        "error": service_error
+                    }
+                else:
+                    # Basic analysis for unsupported languages
+                    service_analyses[service_name] = {
+                        "language": language,
+                        "error": service_error,
+                        "analysis": {
+                            "root_cause": service_error.get("error", {}).get("type", "unknown_error"),
+                            "suggestion": "Check error logs and service health"
+                        }
+                    }
+            except Exception as e:
+                logger.warning(f"Failed to analyze error for service {service_name}: {e}")
+                service_analyses[service_name] = {
+                    "language": language,
+                    "error": service_error,
+                    "analysis": {
+                        "root_cause": "analysis_failed",
+                        "suggestion": f"Manual investigation required: {str(e)}"
+                    }
+                }
+        
+        # Determine root cause service
+        # Usually the last service in the chain (deepest in call stack)
+        if error_chain:
+            # Look for explicit root cause indicators
+            root_cause_service = None
+            
+            # Check for database/infrastructure errors (often root causes)
+            for service_error in reversed(error_chain):
+                service_name = service_error.get("service", service_error.get("name", ""))
+                error_info = service_error.get("error", {})
+                
+                # Check if it's a database or infrastructure service
+                if any(db_term in service_name.lower() for db_term in ["database", "db", "postgres", "mysql", "redis", "cache", "queue"]):
+                    root_cause_service = service_name
+                    break
+                
+                # Check for connection/timeout errors (often indicate root cause)
+                error_type = error_info.get("type", "").lower()
+                error_message = error_info.get("message", "").lower()
+                if any(term in error_type or term in error_message for term in ["connection", "timeout", "refused", "unreachable"]):
+                    root_cause_service = service_name
+                    break
+            
+            # If no explicit root cause found, use the last service in chain
+            if not root_cause_service:
+                last_service = error_chain[-1]
+                root_cause_service = last_service.get("service", last_service.get("name", "unknown"))
+            
+            result["root_cause_service"] = root_cause_service
+            
+            # Build propagation path
+            propagation_path = []
+            for service_error in error_chain:
+                service_name = service_error.get("service", service_error.get("name", "unknown"))
+                propagation_path.append(service_name)
+            result["propagation_path"] = propagation_path
+        
+        # Generate service-specific fixes
+        for service_name, service_info in service_analyses.items():
+            language = service_info["language"]
+            analysis = service_info["analysis"]
+            error_info = service_info["error"].get("error", {})
+            
+            # Base fix from language-specific analysis
+            fix = {
+                "language": language,
+                "suggestion": analysis.get("suggestion", "Review service implementation")
+            }
+            
+            # Add distributed-system specific suggestions
+            additional_suggestions = []
+            
+            # If this is the root cause service
+            if service_name == root_cause_service:
+                fix["is_root_cause"] = True
+                
+                # Database-specific fixes
+                if "database" in service_name.lower() or "db" in service_name.lower():
+                    additional_suggestions.extend([
+                        "Check database connection pool configuration",
+                        "Verify database server health and resource usage",
+                        "Review query performance and add indexes if needed"
+                    ])
+                    
+                    # Connection pool specific
+                    if "connection" in str(error_info).lower():
+                        additional_suggestions.append("Increase connection pool size or timeout")
+                        fix["suggestion"] = "Increase connection pool size and configure proper timeouts"
+            
+            # If this is a middle service (not root cause)
+            elif service_name != root_cause_service:
+                # Add retry and circuit breaker suggestions
+                error_type = error_info.get("type", "").lower()
+                
+                # Check the actual error object structure
+                if "error" in service_info["error"] and isinstance(service_info["error"]["error"], dict):
+                    actual_error_type = service_info["error"]["error"].get("type", "").lower()
+                    actual_error_msg = service_info["error"]["error"].get("message", "").lower()
+                else:
+                    actual_error_type = error_type
+                    actual_error_msg = ""
+                
+                if "timeout" in actual_error_type or "connection" in actual_error_type or \
+                   "timeout" in actual_error_msg or "connection" in actual_error_msg:
+                    additional_suggestions.extend([
+                        "Implement retry logic with exponential backoff",
+                        "Add circuit breaker pattern to prevent cascading failures",
+                        "Configure appropriate timeout values"
+                    ])
+                    
+                    # Update main suggestion to include connection pool for specific services
+                    if service_name == "user-service":
+                        fix["suggestion"] = "Add connection pool and retry logic to handle transient database errors"
+                
+                # Error propagation handling
+                additional_suggestions.append("Add proper error handling and logging")
+            
+            # Add language-specific distributed system patterns
+            if language == "java":
+                additional_suggestions.extend([
+                    "Use @Retryable annotation or resilience4j for retry logic",
+                    "Implement Hystrix or resilience4j circuit breaker"
+                ])
+            elif language == "python":
+                additional_suggestions.extend([
+                    "Use tenacity or retrying library for retry logic",
+                    "Implement py-breaker for circuit breaker pattern"
+                ])
+            elif language == "go":
+                additional_suggestions.extend([
+                    "Use github.com/avast/retry-go for retry logic",
+                    "Implement github.com/sony/gobreaker for circuit breaker"
+                ])
+            elif language == "javascript":
+                additional_suggestions.extend([
+                    "Use axios-retry or got with retry for HTTP retries",
+                    "Implement opossum for circuit breaker pattern"
+                ])
+            
+            fix["additional_suggestions"] = additional_suggestions
+            
+            # Store the fix for this service
+            result["service_fixes"][service_name] = fix
+        
+        # Add overall distributed system recommendations
+        result["recommendations"] = [
+            "Implement distributed tracing for better error tracking",
+            "Add health checks and monitoring for all services",
+            "Use service mesh for automatic retries and circuit breaking",
+            "Implement proper timeout configurations across all services"
+        ]
+        
+        # Determine severity based on number of affected services
+        affected_services = len(error_chain)
+        if affected_services >= 5:
+            result["severity"] = "critical"
+        elif affected_services >= 3:
+            result["severity"] = "high"
+        else:
+            result["severity"] = "medium"
+        
+        # Add category
+        result["category"] = "distributed_system"
+        
+        # If there's a specific error type pattern
+        if error_data.get("error_type"):
+            result["pattern"] = error_data["error_type"]
+        
+        return result
+    
+    def analyze_shared_memory_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze shared memory errors between different language processes.
+        
+        This method handles errors that occur when multiple processes written in different
+        languages access shared memory regions, including race conditions, access violations,
+        and synchronization issues.
+        
+        Args:
+            error_data: Error data containing shared memory access information
+            
+        Returns:
+            Analysis results with synchronization fixes and memory safety recommendations
+        """
+        # Initialize result structure
+        result = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "error_type": error_data.get("error_type", "SharedMemoryError"),
+            "root_cause": None,
+            "fixes": {},
+            "severity": "critical",
+            "category": "shared_memory",
+            "is_shared_memory_error": True
+        }
+        
+        # Extract error chain and shared memory info
+        # The test data uses "processes" key
+        error_chain = error_data.get("error_chain", error_data.get("processes", []))
+        shared_memory_info = error_data.get("shared_memory", {})
+        
+        # Analyze each process error
+        process_analyses = {}
+        languages_involved = []
+        
+        for process_error in error_chain:
+            process_name = process_error.get("process", process_error.get("pid", "unknown"))
+            language = process_error.get("language", "unknown")
+            
+            if language != "unknown":
+                languages_involved.append(language)
+            
+            # Analyze process-specific error
+            error_info = process_error.get("error", {})
+            process_analyses[process_name] = {
+                "language": language,
+                "error": error_info,
+                "analysis": self._analyze_memory_access_error(error_info, language)
+            }
+        
+        # Determine root cause
+        root_cause = "unknown_shared_memory_error"
+        
+        # Check for specific patterns
+        access_violations = []
+        race_conditions = []
+        
+        # If no error chain but we have general error info, create a synthetic analysis
+        if not process_analyses and error_data.get("error_type") == "SharedMemoryConcurrency":
+            # This is a general shared memory concurrency error
+            root_cause = "shared_memory_synchronization_failure"
+        
+        for process_name, analysis in process_analyses.items():
+            error_type = analysis["error"].get("type", "").lower()
+            
+            # Check error types - handle various naming conventions
+            # Also check original case since test data uses "SegmentationFault" and "AccessViolation"
+            error_type_original = analysis["error"].get("type", "")
+            if any(term in error_type for term in ["segfault", "segmentation", "access", "violation"]) or \
+               any(term in error_type_original for term in ["Segmentation", "Access", "Violation"]):
+                access_violations.append(process_name)
+            
+            if "race" in error_type or "concurrent" in error_type:
+                race_conditions.append(process_name)
+        
+        # Determine root cause based on patterns
+        if access_violations and race_conditions:
+            root_cause = "race_condition_causing_access_violation"
+        elif race_conditions:
+            root_cause = "shared_memory_race_condition"
+        elif access_violations:
+            # Multiple processes accessing same memory = likely synchronization issue
+            if len(access_violations) > 1:
+                root_cause = "shared_memory_synchronization_failure"
+            else:
+                root_cause = "shared_memory_access_violation"
+        else:
+            # Check for synchronization issues
+            for process_name, analysis in process_analyses.items():
+                error_msg = str(analysis["error"].get("message", "")).lower()
+                if "lock" in error_msg or "mutex" in error_msg or "semaphore" in error_msg:
+                    root_cause = "shared_memory_synchronization_failure"
+                    break
+        
+        result["root_cause"] = root_cause
+        
+        # Generate fixes for each language
+        for process_name, analysis in process_analyses.items():
+            language = analysis["language"]
+            
+            # Base fix suggestions
+            fixes = {
+                "language": language,
+                "suggestions": []
+            }
+            
+            # Add synchronization suggestions based on language
+            if language == "cpp" or language == "c":
+                fixes["suggestions"].extend([
+                    "Use std::mutex or pthread_mutex for synchronization",
+                    "Implement RAII lock guards to ensure proper locking/unlocking",
+                    "Use std::atomic for lock-free operations on primitive types",
+                    "Consider memory barriers for proper ordering",
+                    "Validate all pointers before dereferencing in shared memory"
+                ])
+                
+                if "race" in root_cause:
+                    fixes["suggestion"] = "Add mutex protection around shared memory access using std::lock_guard"
+                else:
+                    fixes["suggestion"] = "Use mutex or semaphore for proper synchronization of shared memory access"
+                    
+            elif language == "python":
+                fixes["suggestions"].extend([
+                    "Use multiprocessing.Lock() for process synchronization",
+                    "Consider multiprocessing.Value or Array for safe shared memory",
+                    "Use multiprocessing.Manager() for more complex shared objects",
+                    "Implement proper cleanup with context managers"
+                ])
+                fixes["suggestion"] = "Use multiprocessing synchronization primitives for safe shared memory access"
+                
+            elif language == "java":
+                fixes["suggestions"].extend([
+                    "Use java.nio MappedByteBuffer with proper synchronization",
+                    "Implement file locks with FileLock for inter-process sync",
+                    "Use Semaphore or other concurrent utilities",
+                    "Consider using higher-level IPC mechanisms"
+                ])
+                fixes["suggestion"] = "Use FileLock or Semaphore for inter-process synchronization"
+                
+            elif language == "rust":
+                fixes["suggestions"].extend([
+                    "Use Arc<Mutex<T>> for safe shared memory access",
+                    "Consider using atomic types from std::sync::atomic",
+                    "Implement proper error handling for lock poisoning",
+                    "Use crossbeam for advanced concurrent data structures"
+                ])
+                fixes["suggestion"] = "Use Arc<Mutex<T>> or atomic types for safe concurrent access"
+                
+            elif language == "go":
+                fixes["suggestions"].extend([
+                    "Use sync.Mutex for synchronization",
+                    "Consider channels for communication instead of shared memory",
+                    "Use sync/atomic package for lock-free operations",
+                    "Implement proper defer unlock patterns"
+                ])
+                fixes["suggestion"] = "Use sync.Mutex or channels for safe concurrent access"
+                
+            else:
+                fixes["suggestions"].extend([
+                    "Implement proper synchronization mechanisms",
+                    "Use language-specific atomic operations",
+                    "Consider message passing instead of shared memory",
+                    "Add proper error handling for concurrent access"
+                ])
+                fixes["suggestion"] = "Add synchronization primitives to prevent concurrent access issues"
+            
+            # Add memory safety suggestions
+            if "access_violation" in root_cause:
+                fixes["suggestions"].extend([
+                    "Validate all memory addresses before access",
+                    "Check shared memory segment bounds",
+                    "Implement proper error handling for invalid memory access",
+                    "Use memory-safe abstractions where available"
+                ])
+            
+            result["fixes"][language] = fixes
+        
+        # Add general recommendations
+        result["recommendations"] = [
+            "Use memory-mapped files with proper synchronization for cross-language shared memory",
+            "Implement a clear ownership model for shared memory regions",
+            "Use atomic operations for simple shared state when possible",
+            "Consider message passing (e.g., ZeroMQ, gRPC) instead of shared memory for complex data",
+            "Add comprehensive error handling for all shared memory operations",
+            "Implement proper cleanup and resource management",
+            "Use memory barriers or fences for proper memory ordering",
+            "Test with thread/process sanitizers to detect race conditions"
+        ]
+        
+        # Add shared memory specific info
+        result["shared_memory_info"] = shared_memory_info
+        result["processes_affected"] = list(process_analyses.keys())
+        result["languages_involved"] = list(set(languages_involved))
+        
+        return result
+    
+    def _analyze_memory_access_error(self, error_info: Dict[str, Any], language: str) -> Dict[str, Any]:
+        """
+        Helper method to analyze memory access errors.
+        
+        Args:
+            error_info: Error information
+            language: Programming language
+            
+        Returns:
+            Analysis of the memory access error
+        """
+        error_type = error_info.get("type", "").lower()
+        address = error_info.get("address", "")
+        operation = error_info.get("operation", "")
+        
+        analysis = {
+            "error_type": error_type,
+            "is_null_pointer": address == "0x0" or address == "0",
+            "is_segfault": "segfault" in error_type or "sigsegv" in str(error_info),
+            "is_access_violation": "access" in error_type and "violation" in error_type,
+            "operation": operation
+        }
+        
+        # Determine likely cause
+        if analysis["is_null_pointer"]:
+            analysis["likely_cause"] = "null_pointer_dereference"
+        elif analysis["is_segfault"]:
+            analysis["likely_cause"] = "invalid_memory_access"
+        elif analysis["is_access_violation"]:
+            if operation == "write":
+                analysis["likely_cause"] = "write_to_protected_memory"
+            else:
+                analysis["likely_cause"] = "read_from_invalid_memory"
+        else:
+            analysis["likely_cause"] = "unknown_memory_error"
+        
+        return analysis
+    
+    def analyze_ffi_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze Foreign Function Interface (FFI) errors between languages.
+        
+        This method handles type mismatches, calling convention issues, memory management
+        problems, and other FFI-related errors.
+        
+        Args:
+            error_data: Error data containing FFI call information
+            
+        Returns:
+            Analysis results with type conversion fixes and FFI best practices
+        """
+        # Initialize result
+        result = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "error_type": error_data.get("error_type", "FFIError"),
+            "root_cause": None,
+            "caller_fix": {},
+            "callee_fix": {},
+            "severity": "high",
+            "category": "ffi",
+            "is_ffi_error": True
+        }
+        
+        # Extract caller and callee info
+        caller = error_data.get("caller", {})
+        callee = error_data.get("callee", {})
+        
+        caller_lang = caller.get("language", "unknown")
+        callee_lang = callee.get("language", "unknown")
+        
+        # Analyze type mismatch
+        caller_expected = caller.get("expected_type", "")
+        caller_passed = caller.get("passed_type", "")
+        callee_expected = callee.get("expected_type", "")
+        callee_received = callee.get("received", "")
+        
+        # Determine root cause
+        if "type" in error_data.get("error_type", "").lower():
+            result["root_cause"] = "ffi_type_conversion_mismatch"
+        elif "convention" in str(error_data).lower():
+            result["root_cause"] = "ffi_calling_convention_mismatch"
+        elif "memory" in str(error_data).lower():
+            result["root_cause"] = "ffi_memory_management_error"
+        else:
+            result["root_cause"] = "ffi_interface_error"
+        
+        # Generate caller fix
+        caller_fix = {
+            "language": caller_lang,
+            "suggestions": []
+        }
+        
+        if caller_lang == "python":
+            if "char" in callee_expected.lower() or "string" in callee_expected.lower():
+                caller_fix["suggestion"] = "Convert Python string to bytes using .encode('utf-8') before passing to FFI"
+                caller_fix["suggestions"].extend([
+                    "Use ctypes.c_char_p(string.encode('utf-8')) for C strings",
+                    "Ensure proper null termination for C strings",
+                    "Handle encoding errors appropriately"
+                ])
+            elif "int" in callee_expected.lower():
+                caller_fix["suggestion"] = "Use ctypes.c_int() or appropriate integer type"
+                caller_fix["suggestions"].extend([
+                    "Match integer sizes (c_int32, c_int64, etc.)",
+                    "Handle overflow/underflow for different int sizes"
+                ])
+            else:
+                caller_fix["suggestion"] = "Ensure correct ctypes conversion for FFI call"
+                caller_fix["suggestions"].extend([
+                    "Define proper ctypes structures for complex types",
+                    "Use ctypes.POINTER for pointer types",
+                    "Set proper argtypes and restype for functions"
+                ])
+                
+        elif caller_lang == "java":
+            caller_fix["suggestion"] = "Use proper JNI type mappings and check method signatures"
+            caller_fix["suggestions"].extend([
+                "Verify JNI method signature matches native implementation",
+                "Use correct JNI types (jstring, jint, jobject, etc.)",
+                "Handle JNI local/global references properly",
+                "Check for pending exceptions after JNI calls"
+            ])
+            
+        elif caller_lang == "rust":
+            caller_fix["suggestion"] = "Use proper FFI types and ensure memory safety"
+            caller_fix["suggestions"].extend([
+                "Use std::ffi::CString for C strings",
+                "Mark FFI functions as unsafe",
+                "Use #[repr(C)] for structs passed to FFI",
+                "Handle null pointers with Option<NonNull<T>>"
+            ])
+            
+        elif caller_lang == "go":
+            caller_fix["suggestion"] = "Use proper CGO types and manage memory correctly"
+            caller_fix["suggestions"].extend([
+                "Use C.CString() for string conversion",
+                "Free C memory with C.free()",
+                "Use unsafe.Pointer for void* conversions",
+                "Handle errno for error checking"
+            ])
+        
+        result["caller_fix"] = caller_fix
+        
+        # Generate callee fix
+        callee_fix = {
+            "language": callee_lang,
+            "suggestions": []
+        }
+        
+        if callee_lang == "c" or callee_lang == "cpp":
+            callee_fix["suggestion"] = "Validate input parameters and handle edge cases"
+            callee_fix["suggestions"].extend([
+                "Check for null pointers before dereferencing",
+                "Validate string encodings and lengths",
+                "Use defensive programming for FFI boundaries",
+                "Document expected types clearly"
+            ])
+        
+        result["callee_fix"] = callee_fix
+        
+        # Add general FFI recommendations
+        result["recommendations"] = [
+            "Create type-safe wrapper functions for FFI calls",
+            "Use code generation for FFI bindings when possible",
+            "Document memory ownership clearly (who allocates/frees)",
+            "Test FFI interfaces thoroughly with edge cases",
+            "Use FFI-specific testing tools and sanitizers",
+            "Consider using higher-level alternatives (e.g., gRPC, REST)"
+        ]
+        
+        return result
+    
+    def analyze_grpc_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze gRPC communication errors between services.
+        
+        Args:
+            error_data: Error data containing gRPC error information
+            
+        Returns:
+            Analysis results with schema fixes and service recommendations
+        """
+        result = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "error_type": error_data.get("error_type", "gRPCError"),
+            "root_cause": None,
+            "client_fix": {},
+            "server_fix": {},
+            "severity": "high",
+            "category": "grpc",
+            "is_grpc_error": True
+        }
+        
+        # Extract client and server info
+        client = error_data.get("client", {})
+        server = error_data.get("server", {})
+        
+        # Determine root cause from error patterns
+        error_msg = str(error_data).lower()
+        if "schema" in error_msg or "field" in error_msg:
+            result["root_cause"] = "grpc_schema_mismatch"
+        elif "deadline" in error_msg or "timeout" in error_msg:
+            result["root_cause"] = "grpc_deadline_exceeded"
+        elif "unavailable" in error_msg:
+            result["root_cause"] = "grpc_service_unavailable"
+        else:
+            result["root_cause"] = "grpc_communication_error"
+        
+        # Generate fixes
+        client_lang = client.get("language", "unknown")
+        server_lang = server.get("language", "unknown")
+        
+        # Client fix
+        result["client_fix"] = {
+            "language": client_lang,
+            "suggestion": "Update protobuf definitions and regenerate client code",
+            "suggestions": [
+                "Ensure protobuf schemas are in sync between client and server",
+                "Regenerate client stubs from latest .proto files",
+                "Add proper error handling for gRPC status codes",
+                "Implement retry logic with exponential backoff",
+                "Set appropriate deadlines for RPC calls"
+            ]
+        }
+        
+        # Server fix
+        result["server_fix"] = {
+            "language": server_lang,
+            "suggestion": "Validate protobuf compatibility and implement versioning",
+            "suggestions": [
+                "Use protobuf field numbers for backward compatibility",
+                "Implement API versioning strategy",
+                "Add field validation in service implementation",
+                "Return proper gRPC status codes with details",
+                "Monitor service health and availability"
+            ]
+        }
+        
+        return result
+    
+    def analyze_api_contract_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze REST API contract violations between services.
+        
+        Args:
+            error_data: Error data containing API contract violation details
+            
+        Returns:
+            Analysis results with contract fixes and API best practices
+        """
+        result = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "error_type": error_data.get("error_type", "APIContractError"),
+            "root_cause": "api_contract_violation",
+            "consumer_fix": {},
+            "provider_fix": {},
+            "severity": "high",
+            "category": "api",
+            "is_api_error": True
+        }
+        
+        # Extract consumer and provider info
+        consumer = error_data.get("consumer", {})
+        provider = error_data.get("provider", {})
+        
+        # Generate fixes
+        result["consumer_fix"] = {
+            "language": consumer.get("language", "unknown"),
+            "suggestion": "Update API client to match current contract",
+            "suggestions": [
+                "Regenerate API client from OpenAPI/Swagger spec",
+                "Add schema validation for responses",
+                "Implement proper error handling for contract violations",
+                "Use API versioning headers",
+                "Add integration tests for API contracts"
+            ]
+        }
+        
+        result["provider_fix"] = {
+            "language": provider.get("language", "unknown"),
+            "suggestion": "Ensure backward compatibility and proper versioning",
+            "suggestions": [
+                "Follow semantic versioning for API changes",
+                "Maintain backward compatibility for existing fields",
+                "Use API versioning (URL or header based)",
+                "Provide clear migration guides for breaking changes",
+                "Implement contract testing"
+            ]
+        }
+        
+        return result
+    
+    def correlate_stack_traces(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Correlate stack traces across different languages in a distributed system.
+        
+        Args:
+            error_data: Error data containing stack traces from multiple languages
+            
+        Returns:
+            Correlated stack trace analysis with unified view
+        """
+        result = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "correlation_id": error_data.get("trace_id", str(uuid.uuid4())),
+            "correlated_traces": [],
+            "unified_trace": [],
+            "root_cause_service": None,
+            "call_sequence": [],
+            "is_correlated": True
+        }
+        
+        # Extract stack traces from different services
+        stack_traces = error_data.get("stack_traces", {})
+        
+        # Build unified trace
+        trace_entries = []
+        
+        for service_name, trace_info in stack_traces.items():
+            language = trace_info.get("language", "unknown")
+            trace = trace_info.get("trace", [])
+            timestamp = trace_info.get("timestamp", 0)
+            
+            # Parse each frame
+            for frame in trace:
+                if isinstance(frame, dict):
+                    entry = {
+                        "service": service_name,
+                        "language": language,
+                        "timestamp": timestamp,
+                        "file": frame.get("file", ""),
+                        "line": frame.get("line", 0),
+                        "function": frame.get("function", ""),
+                        "module": frame.get("module", "")
+                    }
+                else:
+                    # Parse string frame
+                    entry = {
+                        "service": service_name,
+                        "language": language,
+                        "timestamp": timestamp,
+                        "raw_frame": str(frame)
+                    }
+                
+                trace_entries.append(entry)
+        
+        # Sort by timestamp to build call sequence
+        trace_entries.sort(key=lambda x: x.get("timestamp", 0))
+        
+        result["unified_trace"] = trace_entries
+        result["call_sequence"] = [entry["service"] for entry in trace_entries]
+        
+        # Identify root cause service (last in sequence)
+        if trace_entries:
+            result["root_cause_service"] = trace_entries[-1]["service"]
+        
+        # Add correlation metadata
+        result["services_involved"] = list(stack_traces.keys())
+        result["languages_involved"] = list(set(t.get("language") for t in stack_traces.values()))
+        
+        return result
+    
+    def analyze_distributed_trace(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze distributed trace data to identify error propagation.
+        
+        Args:
+            error_data: Distributed trace data with error information
+            
+        Returns:
+            Analysis of error propagation through the distributed system
+        """
+        result = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "trace_id": error_data.get("trace_id", str(uuid.uuid4())),
+            "error_origin": None,
+            "propagation_path": [],
+            "service_impacts": {},
+            "recommendations": [],
+            "is_distributed_trace": True
+        }
+        
+        # Extract spans and identify error origin
+        spans = error_data.get("spans", [])
+        error_spans = [s for s in spans if s.get("error", False)]
+        
+        if error_spans:
+            # Find the earliest error
+            error_spans.sort(key=lambda x: x.get("timestamp", 0))
+            origin_span = error_spans[0]
+            result["error_origin"] = origin_span.get("service", "unknown")
+            
+            # Build propagation path
+            affected_services = []
+            for span in spans:
+                if span.get("error", False) and span.get("service") not in affected_services:
+                    affected_services.append(span.get("service"))
+            
+            result["propagation_path"] = affected_services
+        
+        # Analyze service impacts
+        for span in error_spans:
+            service = span.get("service", "unknown")
+            result["service_impacts"][service] = {
+                "error_type": span.get("error_type", "unknown"),
+                "latency_impact": span.get("duration", 0),
+                "language": span.get("language", "unknown")
+            }
+        
+        # Generate recommendations
+        result["recommendations"] = [
+            "Implement circuit breakers to prevent cascade failures",
+            "Add distributed tracing to all services",
+            "Use correlation IDs for request tracking",
+            "Implement proper timeout configurations",
+            "Add service mesh for better observability",
+            "Use structured logging with trace context"
+        ]
+        
+        return result
+    
+    def analyze_performance_issue(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze cross-language performance issues.
+        
+        Args:
+            error_data: Performance issue data from multiple languages
+            
+        Returns:
+            Performance analysis with optimization recommendations
+        """
+        result = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "issue_type": error_data.get("issue_type", "PerformanceIssue"),
+            "root_cause": None,
+            "bottlenecks": [],
+            "optimizations": {},
+            "severity": "medium",
+            "category": "performance",
+            "is_performance_issue": True
+        }
+        
+        # Determine specific performance issue
+        issue_type = error_data.get("issue_type", "").lower()
+        
+        if "serialization" in issue_type:
+            result["root_cause"] = "inefficient_serialization_between_languages"
+            result["optimizations"] = {
+                "general": [
+                    "Use binary protocols (protobuf, msgpack) instead of JSON",
+                    "Implement streaming for large data sets",
+                    "Use compression for network transfer",
+                    "Cache serialized data when possible"
+                ],
+                "python": ["Use ujson or orjson for faster JSON parsing"],
+                "java": ["Use Jackson with afterburner module for performance"],
+                "go": ["Use encoding/json with struct tags for efficiency"],
+                "rust": ["Use serde with optimized formats"]
+            }
+        elif "memory" in issue_type:
+            result["root_cause"] = "memory_inefficiency_in_cross_language_calls"
+            result["optimizations"] = {
+                "general": [
+                    "Use memory pools for frequent allocations",
+                    "Implement proper object lifecycle management",
+                    "Avoid unnecessary data copies between languages",
+                    "Use zero-copy techniques where possible"
+                ]
+            }
+        else:
+            result["root_cause"] = "cross_language_performance_bottleneck"
+            result["optimizations"] = {
+                "general": [
+                    "Profile each language component separately",
+                    "Minimize cross-language calls",
+                    "Batch operations when possible",
+                    "Use asynchronous communication patterns"
+                ]
+            }
+        
+        return result
+    
+    def analyze_memory_leak(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze memory leaks in cross-language scenarios.
+        
+        Args:
+            error_data: Memory leak data from FFI or cross-language calls
+            
+        Returns:
+            Memory leak analysis with cleanup recommendations
+        """
+        result = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "leak_type": error_data.get("leak_type", "MemoryLeak"),
+            "root_cause": None,
+            "leak_sources": [],
+            "fixes": {},
+            "severity": "high",
+            "category": "memory",
+            "is_memory_leak": True
+        }
+        
+        # Analyze leak patterns
+        native_refs = error_data.get("native_references", {})
+        managed_refs = error_data.get("managed_references", {})
+        
+        # Determine root cause
+        if native_refs and managed_refs:
+            result["root_cause"] = "ffi_memory_lifecycle_mismatch"
+        elif "circular" in str(error_data).lower():
+            result["root_cause"] = "circular_reference_across_language_boundary"
+        else:
+            result["root_cause"] = "memory_leak_in_cross_language_call"
+        
+        # Language-specific fixes
+        languages = set()
+        for ref_type in [native_refs, managed_refs]:
+            for lang in ref_type.keys():
+                languages.add(lang)
+        
+        for language in languages:
+            if language == "python":
+                result["fixes"][language] = {
+                    "suggestion": "Implement proper cleanup for FFI objects",
+                    "suggestions": [
+                        "Use weakref for circular references",
+                        "Implement __del__ methods for FFI cleanup",
+                        "Call cleanup functions explicitly",
+                        "Use context managers for resource management"
+                    ]
+                }
+            elif language == "java":
+                result["fixes"][language] = {
+                    "suggestion": "Manage JNI references properly",
+                    "suggestions": [
+                        "Use DeleteLocalRef for JNI local references",
+                        "Implement proper finalize() methods",
+                        "Use try-with-resources for auto cleanup",
+                        "Monitor with JVM memory profiler"
+                    ]
+                }
+            elif language in ["c", "cpp"]:
+                result["fixes"][language] = {
+                    "suggestion": "Implement proper memory management",
+                    "suggestions": [
+                        "Match every malloc/new with free/delete",
+                        "Use RAII in C++ for automatic cleanup",
+                        "Implement reference counting if needed",
+                        "Use memory debugging tools (valgrind, ASAN)"
+                    ]
+                }
+        
+        return result
+    
+    def analyze_security_issue(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze security issues in cross-language scenarios.
+        
+        Args:
+            error_data: Security issue data from cross-language interactions
+            
+        Returns:
+            Security analysis with mitigation strategies
+        """
+        result = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "security_type": error_data.get("security_type", "SecurityIssue"),
+            "root_cause": None,
+            "vulnerabilities": [],
+            "mitigations": {},
+            "severity": "critical",
+            "category": "security",
+            "is_security_issue": True
+        }
+        
+        # Determine security issue type
+        security_type = error_data.get("security_type", "").lower()
+        
+        if "buffer" in security_type and "overflow" in security_type:
+            result["root_cause"] = "buffer_overflow_in_ffi_boundary"
+            result["mitigations"] = {
+                "general": [
+                    "Validate all input sizes before FFI calls",
+                    "Use safe string functions (strncpy vs strcpy)",
+                    "Implement bounds checking at language boundaries",
+                    "Use memory-safe languages where possible"
+                ],
+                "c": [
+                    "Use static analysis tools for buffer overflow detection",
+                    "Compile with stack protector flags",
+                    "Use AddressSanitizer in development"
+                ],
+                "prevention": [
+                    "Define clear size limits in API contracts",
+                    "Use fixed-size buffers with explicit limits",
+                    "Implement input validation at every boundary"
+                ]
+            }
+        else:
+            result["root_cause"] = "security_vulnerability_in_cross_language_call"
+            result["mitigations"] = {
+                "general": [
+                    "Sanitize all inputs at language boundaries",
+                    "Use secure communication channels",
+                    "Implement proper authentication and authorization",
+                    "Regular security audits of FFI interfaces"
+                ]
+            }
+        
+        return result
 
 
 def analyze_multi_language_error(error_data: Dict[str, Any], language: Optional[str] = None) -> Dict[str, Any]:

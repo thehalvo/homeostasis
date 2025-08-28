@@ -60,8 +60,8 @@ class TestSelfTrainingIntegration:
         """Create deployment monitor instance."""
         return DeploymentMonitor(
             storage_dir=temp_dir / "deployments",
-            monitoring_duration_hours=0.01,  # Very short for testing
-            check_interval_hours=0.001
+            monitoring_duration_hours=0.000005,  # 0.018 seconds for testing
+            check_interval_hours=0.0000001
         )
     
     def test_end_to_end_feedback_loop(self, ml_feedback_loop):
@@ -233,13 +233,13 @@ class TestSelfTrainingIntegration:
         # Simulate time passing and check deployment
         time.sleep(0.02)  # Wait for monitoring duration
         
-        health_checker = Mock(spec=HealthChecker)
-        health_checker.check_health.return_value = {
+        health_checker = Mock()
+        health_checker.check_health = Mock(return_value={
             "status": "healthy",
             "cpu_usage": 45,
             "memory_usage": 55,
             "avg_response_time": 95
-        }
+        })
         
         # Check deployments
         reports = deployment_monitor.check_deployments(health_checker)
@@ -328,8 +328,8 @@ class TestSelfTrainingIntegration:
         # Wait and run learning cycle
         time.sleep(0.01)
         
-        health_checker = Mock(spec=HealthChecker)
-        health_checker.check_health.return_value = {"status": "healthy"}
+        health_checker = Mock()
+        health_checker.check_health = Mock(return_value={"status": "healthy"})
         
         results = pipeline.run_learning_cycle(health_checker)
         
