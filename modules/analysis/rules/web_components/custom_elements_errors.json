@@ -13,7 +13,12 @@
       "suggestion": "Ensure the constructor calls super() before any other statements",
       "root_cause": "missing_super_call_in_constructor",
       "reliability": "high",
-      "tags": ["webcomponents", "custom-elements", "constructor"]
+      "tags": [
+        "webcomponents",
+        "custom-elements",
+        "constructor"
+      ],
+      "description": "Ce Constructor Super"
     },
     {
       "id": "ce_connected_callback_error",
@@ -24,7 +29,12 @@
       "suggestion": "Check for errors in the connectedCallback method",
       "root_cause": "error_in_connected_callback",
       "reliability": "high",
-      "tags": ["webcomponents", "custom-elements", "lifecycle"]
+      "tags": [
+        "webcomponents",
+        "custom-elements",
+        "lifecycle"
+      ],
+      "description": "Ce Connected Callback"
     },
     {
       "id": "ce_disconnected_callback_error",
@@ -35,7 +45,12 @@
       "suggestion": "Check for errors in the disconnectedCallback method",
       "root_cause": "error_in_disconnected_callback",
       "reliability": "high",
-      "tags": ["webcomponents", "custom-elements", "lifecycle"]
+      "tags": [
+        "webcomponents",
+        "custom-elements",
+        "lifecycle"
+      ],
+      "description": "Ce Disconnected Callback"
     },
     {
       "id": "ce_attribute_changed_callback_error",
@@ -46,7 +61,12 @@
       "suggestion": "Check for errors in the attributeChangedCallback method",
       "root_cause": "error_in_attribute_changed_callback",
       "reliability": "high",
-      "tags": ["webcomponents", "custom-elements", "lifecycle"]
+      "tags": [
+        "webcomponents",
+        "custom-elements",
+        "lifecycle"
+      ],
+      "description": "Ce Attribute Changed Callback"
     },
     {
       "id": "ce_adopted_callback_error",
@@ -57,7 +77,12 @@
       "suggestion": "Check for errors in the adoptedCallback method",
       "root_cause": "error_in_adopted_callback",
       "reliability": "high",
-      "tags": ["webcomponents", "custom-elements", "lifecycle"]
+      "tags": [
+        "webcomponents",
+        "custom-elements",
+        "lifecycle"
+      ],
+      "description": "Ce Adopted Callback"
     },
     {
       "id": "ce_observed_attributes_error",
@@ -68,7 +93,12 @@
       "suggestion": "Ensure observedAttributes returns an array of attribute names",
       "root_cause": "invalid_observed_attributes",
       "reliability": "high",
-      "tags": ["webcomponents", "custom-elements", "attributes"]
+      "tags": [
+        "webcomponents",
+        "custom-elements",
+        "attributes"
+      ],
+      "description": "Ce Observed Attributes"
     },
     {
       "id": "ce_define_before_customElements",
@@ -79,7 +109,12 @@
       "suggestion": "Ensure customElements is available before defining components",
       "root_cause": "custom_elements_registry_unavailable",
       "reliability": "high",
-      "tags": ["webcomponents", "custom-elements", "registry"]
+      "tags": [
+        "webcomponents",
+        "custom-elements",
+        "registry"
+      ],
+      "description": "Ce Define Before Customelements"
     },
     {
       "id": "ce_already_defined",
@@ -90,7 +125,12 @@
       "suggestion": "Element with this name is already defined. Use a different name or check for duplicate registrations",
       "root_cause": "duplicate_element_definition",
       "reliability": "high",
-      "tags": ["webcomponents", "custom-elements", "registry"]
+      "tags": [
+        "webcomponents",
+        "custom-elements",
+        "registry"
+      ],
+      "description": "Ce Already Defined"
     },
     {
       "id": "ce_invalid_name",
@@ -101,7 +141,12 @@
       "suggestion": "Custom element names must contain a hyphen (-) and follow naming conventions",
       "root_cause": "invalid_custom_element_name",
       "reliability": "high",
-      "tags": ["webcomponents", "custom-elements", "registry"]
+      "tags": [
+        "webcomponents",
+        "custom-elements",
+        "registry"
+      ],
+      "description": "Ce Invalid Name"
     },
     {
       "id": "ce_constructor_error",
@@ -112,7 +157,12 @@
       "suggestion": "Use a class that extends HTMLElement for defining custom elements",
       "root_cause": "invalid_constructor_type",
       "reliability": "high",
-      "tags": ["webcomponents", "custom-elements", "registry"]
+      "tags": [
+        "webcomponents",
+        "custom-elements",
+        "registry"
+      ],
+      "description": "Ce Constructor"
     }
   ]
 }

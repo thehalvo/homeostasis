@@ -213,8 +213,7 @@
       "source": "built_in",
       "rule_type": "error_detection",
       "dependencies": []
-    }
-  ],
+    },
     {
       "id": "zig_memory_slice_bounds",
       "pattern": "error: slice access out of bounds",

@@ -13,12 +13,19 @@
       "confidence": "high",
       "severity": "warning",
       "reliability": "high",
-      "tags": ["svelte", "accessibility", "a11y", "alt", "images"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "alt",
+        "images"
+      ],
       "fix_commands": [
         "Add alt attribute: <img src=\"...\" alt=\"Description\">",
         "Use empty alt=\"\" for decorative images",
         "Provide meaningful alt text describing the image content"
-      ]
+      ],
+      "description": "Svelte A11y Missing Alt"
     },
     {
       "id": "svelte_a11y_missing_label",
@@ -30,12 +37,19 @@
       "confidence": "high",
       "severity": "warning",
       "reliability": "high",
-      "tags": ["svelte", "accessibility", "a11y", "label", "forms"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "label",
+        "forms"
+      ],
       "fix_commands": [
         "Use for attribute: <label for=\"input-id\">",
         "Wrap input in label: <label>Name <input></label>",
         "Use aria-label for inputs without visible labels"
-      ]
+      ],
+      "description": "Svelte A11y Missing Label"
     },
     {
       "id": "svelte_a11y_click_events_keyboard",
@@ -47,12 +61,19 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "accessibility", "a11y", "keyboard", "events"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "keyboard",
+        "events"
+      ],
       "fix_commands": [
         "Add keydown handler: on:keydown={handleKeydown}",
         "Check for Enter/Space keys in keyboard handler",
         "Use role=\"button\" and tabindex=\"0\" for non-button clickable elements"
-      ]
+      ],
+      "description": "Svelte A11y Click Events Keyboard"
     },
     {
       "id": "svelte_a11y_missing_aria_attributes",
@@ -64,12 +85,18 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "accessibility", "a11y", "aria"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "aria"
+      ],
       "fix_commands": [
         "Add aria-label for elements without visible text",
         "Use aria-describedby for additional descriptions",
         "Add aria-expanded for collapsible elements"
-      ]
+      ],
+      "description": "Svelte A11y Missing Aria Attributes"
     },
     {
       "id": "svelte_a11y_invalid_role",
@@ -81,12 +108,19 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "accessibility", "a11y", "role", "aria"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "role",
+        "aria"
+      ],
       "fix_commands": [
         "Use valid ARIA roles: button, navigation, main, article, etc.",
         "Check ARIA specification for correct role names",
         "Remove invalid or custom roles"
-      ]
+      ],
+      "description": "Svelte A11y Invalid Role"
     },
     {
       "id": "svelte_a11y_heading_hierarchy",
@@ -98,12 +132,19 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "accessibility", "a11y", "headings", "hierarchy"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "headings",
+        "hierarchy"
+      ],
       "fix_commands": [
         "Use headings in order: h1 -> h2 -> h3",
         "Don't skip heading levels",
         "Use only one h1 per page"
-      ]
+      ],
+      "description": "Svelte A11y Heading Hierarchy"
     },
     {
       "id": "svelte_a11y_focus_management",
@@ -115,12 +156,19 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "accessibility", "a11y", "focus", "keyboard"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "focus",
+        "keyboard"
+      ],
       "fix_commands": [
         "Set focus to first element in modals",
         "Return focus to trigger element when closing modals",
         "Use tabindex=\"-1\" for programmatic focus"
-      ]
+      ],
+      "description": "Svelte A11y Focus Management"
     },
     {
       "id": "svelte_a11y_color_contrast",
@@ -132,12 +180,19 @@
       "confidence": "low",
       "severity": "warning",
       "reliability": "low",
-      "tags": ["svelte", "accessibility", "a11y", "contrast", "colors"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "contrast",
+        "colors"
+      ],
       "fix_commands": [
         "Use WCAG contrast ratio guidelines (4.5:1 for normal text)",
         "Test color combinations with accessibility tools",
         "Avoid relying solely on color to convey information"
-      ]
+      ],
+      "description": "Svelte A11y Color Contrast"
     },
     {
       "id": "svelte_a11y_semantic_elements",
@@ -149,12 +204,19 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "accessibility", "a11y", "semantic", "html"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "semantic",
+        "html"
+      ],
       "fix_commands": [
         "Use <button> instead of <div> for clickable elements",
         "Use <nav>, <main>, <article>, <section> for page structure",
         "Use <input> instead of contenteditable divs for form inputs"
-      ]
+      ],
+      "description": "Svelte A11y Semantic Elements"
     },
     {
       "id": "svelte_a11y_skip_links",
@@ -166,12 +228,19 @@
       "confidence": "low",
       "severity": "warning",
       "reliability": "low",
-      "tags": ["svelte", "accessibility", "a11y", "skip-links", "navigation"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "skip-links",
+        "navigation"
+      ],
       "fix_commands": [
         "Add skip to main content link at page top",
         "Include skip navigation links",
         "Make skip links visible on focus"
-      ]
+      ],
+      "description": "Svelte A11y Skip Links"
     },
     {
       "id": "svelte_a11y_live_regions",
@@ -183,12 +252,19 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "accessibility", "a11y", "live-regions", "aria"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "live-regions",
+        "aria"
+      ],
       "fix_commands": [
         "Add aria-live=\"polite\" for non-urgent updates",
         "Use aria-live=\"assertive\" for important announcements",
         "Use role=\"status\" or role=\"alert\" for status messages"
-      ]
+      ],
+      "description": "Svelte A11y Live Regions"
     },
     {
       "id": "svelte_a11y_form_validation",
@@ -200,12 +276,19 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "accessibility", "a11y", "forms", "validation"],
+      "tags": [
+        "svelte",
+        "accessibility",
+        "a11y",
+        "forms",
+        "validation"
+      ],
       "fix_commands": [
         "Use aria-describedby to associate error messages with inputs",
         "Add role=\"alert\" to error message containers",
         "Ensure error messages are announced by screen readers"
-      ]
+      ],
+      "description": "Svelte A11y Form Validation"
     }
   ]
 }

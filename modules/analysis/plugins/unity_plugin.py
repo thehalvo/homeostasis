@@ -942,7 +942,9 @@ public class MobilePerformancePatterns : MonoBehaviour
             "unity_mobile_build_error": self._fix_mobile_build,
             "unity_ui_null_reference": self._fix_ui_null_reference,
             "unity_android_gradle_error": self._fix_android_gradle,
-            "unity_ios_xcode_error": self._fix_ios_xcode
+            "unity_android_sdk_error": self._fix_android_sdk,
+            "unity_ios_xcode_error": self._fix_ios_xcode,
+            "unity_ios_provisioning_error": self._fix_ios_provisioning
         }
         
         strategy = patch_strategies.get(root_cause)
@@ -1130,6 +1132,35 @@ if (gameObject.activeInHierarchy && enabled)
                 "Check iOS deployment target compatibility",
                 "Verify provisioning profiles and certificates",
                 "Check iOS SDK version in Unity"
+            ]
+        }
+    
+    def _fix_android_sdk(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                        source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix Android SDK related errors."""
+        return {
+            "type": "suggestion",
+            "description": "Configure Android SDK paths in Unity",
+            "fix_commands": [
+                "Open Unity Preferences/External Tools",
+                "Set Android SDK path to valid SDK location",
+                "Verify Android SDK minimum API level",
+                "Install required Android SDK components",
+                "Check Android NDK path if using native plugins"
+            ]
+        }
+    
+    def _fix_ios_provisioning(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                             source_code: str) -> Optional[Dict[str, Any]]:
+        """Fix iOS provisioning profile errors."""
+        return {
+            "type": "suggestion",
+            "description": "Fix iOS provisioning profiles and certificates",
+            "fix_commands": [
+                "Open Xcode and update provisioning profiles",
+                "Check Apple Developer account certificates",
+                "Ensure correct team ID in Unity iOS settings",
+                "Update iOS bundle identifier to match provisioning profile"
             ]
         }
     

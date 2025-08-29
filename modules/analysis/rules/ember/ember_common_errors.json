@@ -1,4 +1,5 @@
 {
+  "name": "Ember Ember Common Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "ember",
@@ -21,11 +22,16 @@
         "Ensure component is properly exported and registered",
         "Verify the correct invocation syntax in templates"
       ],
-      "tags": ["ember", "components", "templates"],
+      "tags": [
+        "ember",
+        "components",
+        "templates"
+      ],
       "examples": [
         "Ember error: Component not found: 'user-profile'",
         "No component named 'data-table' was found"
-      ]
+      ],
+      "description": "Ember Component Not Found"
     },
     {
       "id": "ember_service_not_injected",
@@ -43,11 +49,16 @@
         "In older Ember, use serviceName: service() syntax",
         "Ensure service name is spelled correctly"
       ],
-      "tags": ["ember", "services", "injection"],
+      "tags": [
+        "ember",
+        "services",
+        "injection"
+      ],
       "examples": [
         "Uncaught TypeError: Cannot read property 'fetch' of undefined at this.store.fetch",
         "Service 'store' was not found"
-      ]
+      ],
+      "description": "Ember Service Not Injected"
     },
     {
       "id": "ember_action_not_found",
@@ -65,11 +76,16 @@
         "Check for typos in action name",
         "Ensure correct 'this' binding in older Ember components"
       ],
-      "tags": ["ember", "components", "actions"],
+      "tags": [
+        "ember",
+        "components",
+        "actions"
+      ],
       "examples": [
         "Uncaught TypeError: undefined is not a function at this.actions.saveUser",
         "Action 'submitForm' was not found"
-      ]
+      ],
+      "description": "Ember Action Not Found"
     },
     {
       "id": "ember_computed_property_error",
@@ -87,11 +103,16 @@
         "Check that dependent properties exist",
         "Use @tracked for properties in Octane"
       ],
-      "tags": ["ember", "computed", "properties"],
+      "tags": [
+        "ember",
+        "computed",
+        "properties"
+      ],
       "examples": [
         "Error: Assertion Failed: Cannot call get with 'fullName' on an undefined object",
         "Computed property 'totalPrice' cannot resolve dependencies"
-      ]
+      ],
+      "description": "Ember Computed Property"
     },
     {
       "id": "ember_deprecated_usage",
@@ -109,11 +130,16 @@
         "Replace deprecated methods with recommended alternatives",
         "Run ember-cli-deprecation-workflow to manage deprecations"
       ],
-      "tags": ["ember", "deprecation", "migration"],
+      "tags": [
+        "ember",
+        "deprecation",
+        "migration"
+      ],
       "examples": [
         "DEPRECATION: Using this._super() in an Ember object is deprecated",
         "DEPRECATION: 'Ember.String.htmlSafe' will be removed in Ember 4.0"
-      ]
+      ],
+      "description": "Ember Deprecated Usage"
     },
     {
       "id": "ember_import_error",
@@ -131,11 +157,16 @@
         "Use correct Ember module import paths",
         "Run npm/yarn install to ensure dependencies are installed"
       ],
-      "tags": ["ember", "imports", "modules"],
+      "tags": [
+        "ember",
+        "imports",
+        "modules"
+      ],
       "examples": [
         "Could not find module 'ember-data/model'",
         "Cannot resolve module '@ember/component'"
-      ]
+      ],
+      "description": "Ember Import"
     },
     {
       "id": "ember_template_syntax_error",
@@ -153,11 +184,17 @@
         "Validate correct helper syntax",
         "Check for malformed component invocations"
       ],
-      "tags": ["ember", "templates", "handlebars", "syntax"],
+      "tags": [
+        "ember",
+        "templates",
+        "handlebars",
+        "syntax"
+      ],
       "examples": [
         "Error: Parse error on line 5: Expecting 'ID', got 'INVALID'",
         "Unclosed element 'div' at line 12"
-      ]
+      ],
+      "description": "Ember Template Syntax"
     },
     {
       "id": "ember_helper_not_found",
@@ -175,11 +212,16 @@
         "Ensure helper is properly exported",
         "Import third-party helpers correctly"
       ],
-      "tags": ["ember", "templates", "helpers"],
+      "tags": [
+        "ember",
+        "templates",
+        "helpers"
+      ],
       "examples": [
         "Helper 'format-date' not found",
         "Unknown helper 'calculate-total' in template"
-      ]
+      ],
+      "description": "Ember Helper Not Found"
     },
     {
       "id": "ember_lifecycle_hook_error",
@@ -197,11 +239,16 @@
         "Move data fetching to model hooks in routes",
         "Use willDestroy for cleanup operations"
       ],
-      "tags": ["ember", "components", "lifecycle"],
+      "tags": [
+        "ember",
+        "components",
+        "lifecycle"
+      ],
       "examples": [
         "Assertion Failed: You cannot update during a render or rerender",
         "Cannot call set during destroy phase"
-      ]
+      ],
+      "description": "Ember Lifecycle Hook"
     },
     {
       "id": "ember_binding_error",
@@ -219,11 +266,16 @@
         "Use @tracked properties in Octane",
         "Verify parent component exposes needed properties"
       ],
-      "tags": ["ember", "components", "binding"],
+      "tags": [
+        "ember",
+        "components",
+        "binding"
+      ],
       "examples": [
         "Error: Cannot find bound property 'user'",
         "Binding failed: property 'items' not found"
-      ]
+      ],
+      "description": "Ember Binding"
     }
   ]
 }

@@ -1,4 +1,5 @@
 {
+  "name": "Swift Swift Memory Advanced",
   "version": "1.0.0",
   "description": "Advanced Swift memory management error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "critical",
       "suggestion": "Use weak references instead of unowned when the referenced object might be deallocated. Always verify object lifetime",
       "root_cause": "swift_unowned_deallocated",
-      "tags": ["swift", "memory", "unowned", "crash"]
+      "tags": [
+        "swift",
+        "memory",
+        "unowned",
+        "crash"
+      ],
+      "description": "Swift Unowned Reference Crash"
     },
     {
       "id": "swift_weak_strong_dance_error",
@@ -24,7 +31,13 @@
       "severity": "low",
       "suggestion": "After guard let strongSelf = self, use strongSelf consistently throughout the closure",
       "root_cause": "swift_weak_strong_pattern",
-      "tags": ["swift", "memory", "weak", "closure"]
+      "tags": [
+        "swift",
+        "memory",
+        "weak",
+        "closure"
+      ],
+      "description": "Swift Weak Strong Dance"
     },
     {
       "id": "swift_capture_list_missing",
@@ -36,7 +49,13 @@
       "severity": "medium",
       "suggestion": "Add explicit capture list [weak self] or [unowned self] to prevent retain cycles",
       "root_cause": "swift_missing_capture_list",
-      "tags": ["swift", "memory", "capture", "closure"]
+      "tags": [
+        "swift",
+        "memory",
+        "capture",
+        "closure"
+      ],
+      "description": "Swift Capture List Missing"
     },
     {
       "id": "swift_multiple_capture_semantics",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Be explicit about capture semantics when multiple closures capture the same variable",
       "root_cause": "swift_capture_semantics",
-      "tags": ["swift", "memory", "capture", "multiple"]
+      "tags": [
+        "swift",
+        "memory",
+        "capture",
+        "multiple"
+      ],
+      "description": "Swift Multiple Capture Semantics"
     },
     {
       "id": "swift_delegate_retain_cycle",
@@ -60,7 +85,13 @@
       "severity": "high",
       "suggestion": "Delegates should be declared as weak var to prevent retain cycles",
       "root_cause": "swift_strong_delegate",
-      "tags": ["swift", "memory", "delegate", "cycle"]
+      "tags": [
+        "swift",
+        "memory",
+        "delegate",
+        "cycle"
+      ],
+      "description": "Swift Delegate Retain Cycle"
     },
     {
       "id": "swift_closure_self_reference",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Use explicit self. in closures or add to capture list to make memory semantics clear",
       "root_cause": "swift_implicit_self_capture",
-      "tags": ["swift", "memory", "self", "closure"]
+      "tags": [
+        "swift",
+        "memory",
+        "self",
+        "closure"
+      ],
+      "description": "Swift Closure Self Reference"
     },
     {
       "id": "swift_value_type_reference_cycle",
@@ -84,7 +121,13 @@
       "severity": "high",
       "suggestion": "Use indirect enum cases or reference types to break recursion in value types",
       "root_cause": "swift_recursive_value_type",
-      "tags": ["swift", "memory", "struct", "recursive"]
+      "tags": [
+        "swift",
+        "memory",
+        "struct",
+        "recursive"
+      ],
+      "description": "Swift Value Type Reference Cycle"
     },
     {
       "id": "swift_autoreleasepool_missing",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Use autoreleasepool { } in loops that create many temporary objects",
       "root_cause": "swift_autorelease_accumulation",
-      "tags": ["swift", "memory", "autoreleasepool", "temporary"]
+      "tags": [
+        "swift",
+        "memory",
+        "autoreleasepool",
+        "temporary"
+      ],
+      "description": "Swift Autoreleasepool Missing"
     },
     {
       "id": "swift_copy_on_write_unexpected",
@@ -108,7 +157,13 @@
       "severity": "medium",
       "suggestion": "Understand copy-on-write behavior for Array, Dictionary, Set. Use isKnownUniquelyReferenced for custom COW types",
       "root_cause": "swift_cow_exclusive_access",
-      "tags": ["swift", "memory", "cow", "exclusive"]
+      "tags": [
+        "swift",
+        "memory",
+        "cow",
+        "exclusive"
+      ],
+      "description": "Swift Copy On Write Unexpected"
     },
     {
       "id": "swift_unsafe_pointer_misuse",
@@ -120,7 +175,13 @@
       "severity": "critical",
       "suggestion": "Ensure proper initialization and lifetime management when using unsafe pointers",
       "root_cause": "swift_unsafe_pointer",
-      "tags": ["swift", "memory", "unsafe", "pointer"]
+      "tags": [
+        "swift",
+        "memory",
+        "unsafe",
+        "pointer"
+      ],
+      "description": "Swift Unsafe Pointer Misuse"
     },
     {
       "id": "swift_escaping_closure_lifetime",
@@ -132,7 +193,13 @@
       "severity": "high",
       "suggestion": "Mark closure parameter as @escaping if it outlives the function call",
       "root_cause": "swift_escaping_lifetime",
-      "tags": ["swift", "memory", "escaping", "closure"]
+      "tags": [
+        "swift",
+        "memory",
+        "escaping",
+        "closure"
+      ],
+      "description": "Swift Escaping Closure Lifetime"
     },
     {
       "id": "swift_actor_isolation_memory",
@@ -144,7 +211,13 @@
       "severity": "medium",
       "suggestion": "Access actor-isolated state through async methods or within the actor's context",
       "root_cause": "swift_actor_memory_isolation",
-      "tags": ["swift", "memory", "actor", "isolation"]
+      "tags": [
+        "swift",
+        "memory",
+        "actor",
+        "isolation"
+      ],
+      "description": "Swift Actor Isolation Memory"
     },
     {
       "id": "swift_reference_counting_overflow",
@@ -156,7 +229,13 @@
       "severity": "critical",
       "suggestion": "Review object graph for excessive retain counts or circular references",
       "root_cause": "swift_refcount_overflow",
-      "tags": ["swift", "memory", "refcount", "overflow"]
+      "tags": [
+        "swift",
+        "memory",
+        "refcount",
+        "overflow"
+      ],
+      "description": "Swift Reference Counting Overflow"
     },
     {
       "id": "swift_deinit_not_called",
@@ -168,7 +247,13 @@
       "severity": "high",
       "suggestion": "Check for retain cycles preventing deinitialization. Use memory graph debugger",
       "root_cause": "swift_deinit_not_called",
-      "tags": ["swift", "memory", "deinit", "leak"]
+      "tags": [
+        "swift",
+        "memory",
+        "deinit",
+        "leak"
+      ],
+      "description": "Swift Deinit Not Called"
     },
     {
       "id": "swift_notification_observer_leak",
@@ -180,7 +265,13 @@
       "severity": "medium",
       "suggestion": "Remove notification observers in deinit or use weak references in closure-based observers",
       "root_cause": "swift_notification_observer_leak",
-      "tags": ["swift", "memory", "notification", "observer"]
+      "tags": [
+        "swift",
+        "memory",
+        "notification",
+        "observer"
+      ],
+      "description": "Swift Notification Observer Leak"
     }
   ]
 }

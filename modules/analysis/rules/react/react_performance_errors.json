@@ -1,4 +1,5 @@
 {
+  "name": "React React Performance Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "react",
@@ -21,11 +22,17 @@
         "Use useCallback for function props to prevent child re-renders",
         "Split state to reduce re-render scope"
       ],
-      "tags": ["react", "performance", "re-renders", "optimization"],
+      "tags": [
+        "react",
+        "performance",
+        "re-renders",
+        "optimization"
+      ],
       "examples": [
         "Component re-rendering on every parent update",
         "Expensive calculations running on every render"
-      ]
+      ],
+      "description": "React Unnecessary Rerenders"
     },
     {
       "id": "react_large_component_tree",
@@ -43,11 +50,17 @@
         "Implement virtualization for large lists",
         "Consider code splitting at the route level"
       ],
-      "tags": ["react", "performance", "component-tree", "optimization"],
+      "tags": [
+        "react",
+        "performance",
+        "component-tree",
+        "optimization"
+      ],
       "examples": [
         "Single component with hundreds of lines",
         "Deep nesting of components"
-      ]
+      ],
+      "description": "React Large Component Tree"
     },
     {
       "id": "react_inefficient_list_rendering",
@@ -65,11 +78,17 @@
         "Add proper key props for list items",
         "Memoize list item components"
       ],
-      "tags": ["react", "performance", "lists", "virtualization"],
+      "tags": [
+        "react",
+        "performance",
+        "lists",
+        "virtualization"
+      ],
       "examples": [
         "Rendering thousands of list items at once",
         "Large lists without virtualization"
-      ]
+      ],
+      "description": "React Inefficient List Rendering"
     },
     {
       "id": "react_inline_object_creation",
@@ -87,11 +106,17 @@
         "Use useCallback for inline functions",
         "Extract object creation to custom hooks"
       ],
-      "tags": ["react", "performance", "inline-objects", "useMemo"],
+      "tags": [
+        "react",
+        "performance",
+        "inline-objects",
+        "useMemo"
+      ],
       "examples": [
         "style={{}} objects created on every render",
         "Complex objects created in JSX"
-      ]
+      ],
+      "description": "React Inline Object Creation"
     },
     {
       "id": "react_expensive_computation_in_render",
@@ -109,11 +134,17 @@
         "Consider using Web Workers for heavy computations",
         "Implement lazy evaluation patterns"
       ],
-      "tags": ["react", "performance", "computation", "useMemo"],
+      "tags": [
+        "react",
+        "performance",
+        "computation",
+        "useMemo"
+      ],
       "examples": [
         "Heavy data processing in render function",
         "Complex calculations without memoization"
-      ]
+      ],
+      "description": "React Expensive Computation In Render"
     },
     {
       "id": "react_bundle_size_large",
@@ -131,11 +162,17 @@
         "Analyze bundle with webpack-bundle-analyzer",
         "Remove unused imports and dependencies"
       ],
-      "tags": ["react", "performance", "bundle-size", "code-splitting"],
+      "tags": [
+        "react",
+        "performance",
+        "bundle-size",
+        "code-splitting"
+      ],
       "examples": [
         "Large initial bundle size",
         "Heavy libraries loaded unnecessarily"
-      ]
+      ],
+      "description": "React Bundle Size Large"
     },
     {
       "id": "react_memory_leak_listeners",
@@ -153,11 +190,17 @@
         "Cancel subscriptions and timeouts",
         "Use AbortController for fetch requests"
       ],
-      "tags": ["react", "performance", "memory-leak", "cleanup"],
+      "tags": [
+        "react",
+        "performance",
+        "memory-leak",
+        "cleanup"
+      ],
       "examples": [
         "Event listeners not removed on unmount",
         "Subscriptions not cancelled"
-      ]
+      ],
+      "description": "React Memory Leak Listeners"
     },
     {
       "id": "react_prop_drilling",
@@ -175,11 +218,17 @@
         "Implement compound component pattern",
         "Use component composition to reduce prop passing"
       ],
-      "tags": ["react", "performance", "prop-drilling", "context"],
+      "tags": [
+        "react",
+        "performance",
+        "prop-drilling",
+        "context"
+      ],
       "examples": [
         "Props passed through 5+ component levels",
         "Many components just passing props down"
-      ]
+      ],
+      "description": "React Prop Drilling"
     },
     {
       "id": "react_dev_tools_production",
@@ -197,11 +246,17 @@
         "Remove development-only code before deployment",
         "Enable production optimizations in bundler"
       ],
-      "tags": ["react", "performance", "production", "dev-tools"],
+      "tags": [
+        "react",
+        "performance",
+        "production",
+        "dev-tools"
+      ],
       "examples": [
         "Development build deployed to production",
         "React DevTools warnings in production"
-      ]
+      ],
+      "description": "React Dev Tools Production"
     },
     {
       "id": "react_concurrent_features_blocking",
@@ -219,11 +274,17 @@
         "Use useDeferredValue for expensive computations",
         "Upgrade to React 18 concurrent mode"
       ],
-      "tags": ["react", "performance", "concurrent", "react-18"],
+      "tags": [
+        "react",
+        "performance",
+        "concurrent",
+        "react-18"
+      ],
       "examples": [
         "Heavy updates blocking UI",
         "Missing Suspense boundaries"
-      ]
+      ],
+      "description": "React Concurrent Features Blocking"
     }
   ]
 }

@@ -5,11 +5,12 @@
     {
       "id": "dockerfile_security_root_user",
       "pattern": "running as root|USER root|no USER instruction|default root user|container runs as root|privileged user|root by default|root privileges|as root user|non-root user missing|non-privileged user|unprivileged user",
-      "type": "SecurityIssue",
+      "type": "security",
       "description": "Container running as root user",
       "root_cause": "dockerfile_security_issue",
       "suggestion": "Add USER instruction to run as non-root user",
-      "category": "security",
+      "category": "dockerfile",
+      "subcategory": "security",
       "severity": "high",
       "confidence": "high",
       "tags": [
@@ -34,11 +35,12 @@
     {
       "id": "dockerfile_security_latest_tag",
       "pattern": "FROM .*:latest|latest tag|unspecified version|using latest|no version specified|unversioned image|floating tag|mutable tag|unstable tag|non-specific tag|unspecific version|moving tag",
-      "type": "SecurityIssue",
+      "type": "security",
       "description": "Using 'latest' or other floating tags for base image",
       "root_cause": "dockerfile_security_issue",
       "suggestion": "Use specific version tags for reproducible and secure builds",
-      "category": "security",
+      "category": "dockerfile",
+      "subcategory": "security",
       "severity": "medium",
       "confidence": "high",
       "tags": [
@@ -63,11 +65,12 @@
     {
       "id": "dockerfile_security_exposed_secrets",
       "pattern": "password|secret|token|key|credential|api key|auth token|private key|ssh key|access key|certificate|apikey|access token|auth key|encryption key|signing key|secret key|sensitive data",
-      "type": "SecurityIssue",
+      "type": "security",
       "description": "Potential hardcoded secrets in Dockerfile",
       "root_cause": "dockerfile_security_issue",
       "suggestion": "Use build args, multi-stage builds, or Docker secrets for sensitive data",
-      "category": "security",
+      "category": "dockerfile",
+      "subcategory": "security",
       "severity": "critical",
       "confidence": "medium",
       "tags": [
@@ -92,11 +95,12 @@
     {
       "id": "dockerfile_security_package_version",
       "pattern": "install without version|no version specified|unspecified package version|no package version|wildcard version|unspecified dependency version|version pinning|missing version|exact version|version not fixed|version constraint",
-      "type": "SecurityIssue",
+      "type": "security",
       "description": "Installing packages without specific versions",
       "root_cause": "dockerfile_security_issue",
       "suggestion": "Pin package versions for security and reproducibility",
-      "category": "security",
+      "category": "dockerfile",
+      "subcategory": "security",
       "severity": "medium",
       "confidence": "high",
       "tags": [
@@ -121,11 +125,12 @@
     {
       "id": "dockerfile_security_updates_missing",
       "pattern": "missing updates|no updates|update packages|security updates|apply updates|package updates|outdated packages|vulnerability fixes|security patches|system updates|apt-get upgrade|apt upgrade|yum update|dnf upgrade",
-      "type": "SecurityIssue",
+      "type": "security",
       "description": "Missing security updates in Dockerfile",
       "root_cause": "dockerfile_security_issue",
       "suggestion": "Include package updates, but use specific versions for consistency",
-      "category": "security",
+      "category": "dockerfile",
+      "subcategory": "security",
       "severity": "medium",
       "confidence": "medium",
       "tags": [
@@ -150,11 +155,12 @@
     {
       "id": "dockerfile_security_suspicious_permissions",
       "pattern": "chmod 777|chmod -R 777|chmod a+rwx|chmod ugo+rwx|world-writeable|world-readable|excessive permissions|overly permissive|insecure permissions|chmod.*o+w|permissions 777|open permissions|global permissions|public permissions",
-      "type": "SecurityIssue",
+      "type": "security",
       "description": "Setting overly permissive file permissions",
       "root_cause": "dockerfile_security_issue",
       "suggestion": "Use least privilege permissions appropriate for the application",
-      "category": "security",
+      "category": "dockerfile",
+      "subcategory": "security",
       "severity": "high",
       "confidence": "high",
       "tags": [
@@ -179,11 +185,12 @@
     {
       "id": "dockerfile_security_exposed_ports",
       "pattern": "unnecessary ports|excess ports|exposed ports|insecure port|unencrypted port|clear text port|plaintext port|EXPOSE 23|EXPOSE 21|EXPOSE 25|EXPOSE 110|EXPOSE 143|EXPOSE 139|EXPOSE 389|unsafe port",
-      "type": "SecurityIssue",
+      "type": "security",
       "description": "Exposing unnecessary or insecure ports",
       "root_cause": "dockerfile_security_issue",
       "suggestion": "Only expose essential ports and prefer encrypted alternatives",
-      "category": "security",
+      "category": "dockerfile",
+      "subcategory": "security",
       "severity": "medium",
       "confidence": "medium",
       "tags": [
@@ -208,11 +215,12 @@
     {
       "id": "dockerfile_security_healthcheck_missing",
       "pattern": "healthcheck missing|no health check|missing HEALTHCHECK|container health|container monitoring|service health|health monitoring|health status|missing monitoring|container status|no healthcheck|health check",
-      "type": "SecurityIssue",
+      "type": "security",
       "description": "No HEALTHCHECK instruction defined",
       "root_cause": "dockerfile_security_issue",
       "suggestion": "Add HEALTHCHECK to enable container health monitoring",
-      "category": "security",
+      "category": "dockerfile",
+      "subcategory": "security",
       "severity": "low",
       "confidence": "medium",
       "tags": [
@@ -237,11 +245,12 @@
     {
       "id": "dockerfile_security_curl_insecure",
       "pattern": "curl -k|curl --insecure|curl --no-check-certificate|curl.*--insecure|wget --no-check-certificate|insecure download|bypass certificate|skip certificate|ignore certificate|disable SSL|no certificate check",
-      "type": "SecurityIssue",
+      "type": "security",
       "description": "Insecure file downloads with disabled certificate validation",
       "root_cause": "dockerfile_security_issue",
       "suggestion": "Always validate certificates when downloading files",
-      "category": "security",
+      "category": "dockerfile",
+      "subcategory": "security",
       "severity": "high",
       "confidence": "high",
       "tags": [
@@ -266,11 +275,12 @@
     {
       "id": "dockerfile_security_untrusted_source",
       "pattern": "untrusted source|unknown source|third party repository|external repository|unofficial repository|unofficial source|unauthenticated source|unverified source|arbitrary URL|external script|unofficial package|untrusted script|curl.*sh|wget.*sh|pipe to shell",
-      "type": "SecurityIssue",
+      "type": "security",
       "description": "Installing packages or scripts from untrusted sources",
       "root_cause": "dockerfile_security_issue",
       "suggestion": "Only use trusted sources with verification (checksums, signatures)",
-      "category": "security",
+      "category": "dockerfile",
+      "subcategory": "security",
       "severity": "high",
       "confidence": "medium",
       "tags": [
@@ -295,11 +305,12 @@
     {
       "id": "dockerfile_security_nonverified_content",
       "pattern": "no verification|missing checksum|without verification|no integrity check|no signature check|missing verification|no hash|no SHA|no MD5|no GPG|no signature|checksum verification|integrity verification|digital signature",
-      "type": "SecurityIssue",
+      "type": "security",
       "description": "Downloaded content without verification",
       "root_cause": "dockerfile_security_issue",
       "suggestion": "Verify downloads with checksums, signatures, or secure hashes",
-      "category": "security",
+      "category": "dockerfile",
+      "subcategory": "security",
       "severity": "high",
       "confidence": "medium",
       "tags": [

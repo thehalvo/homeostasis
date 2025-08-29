@@ -1,4 +1,5 @@
 {
+  "name": "Swift Swift Type System Errors",
   "version": "1.0.0",
   "description": "Swift type system and inference error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "medium",
       "suggestion": "Add explicit type annotation to resolve ambiguity",
       "root_cause": "swift_ambiguous_type",
-      "tags": ["swift", "type", "inference", "ambiguous"]
+      "tags": [
+        "swift",
+        "type",
+        "inference",
+        "ambiguous"
+      ],
+      "description": "Swift Type Inference Ambiguity"
     },
     {
       "id": "swift_property_wrapper_error",
@@ -24,7 +31,13 @@
       "severity": "medium",
       "suggestion": "Check property wrapper requirements and initialization",
       "root_cause": "swift_property_wrapper",
-      "tags": ["swift", "property_wrapper", "attribute", "type"]
+      "tags": [
+        "swift",
+        "property_wrapper",
+        "attribute",
+        "type"
+      ],
+      "description": "Swift Property Wrapper"
     },
     {
       "id": "swift_result_builder_error",
@@ -36,7 +49,13 @@
       "severity": "medium",
       "suggestion": "Ensure all statements in result builder conform to builder requirements",
       "root_cause": "swift_result_builder",
-      "tags": ["swift", "result_builder", "dsl", "type"]
+      "tags": [
+        "swift",
+        "result_builder",
+        "dsl",
+        "type"
+      ],
+      "description": "Swift Result Builder"
     },
     {
       "id": "swift_enum_associated_value_extraction",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Use pattern matching or if case to extract associated values from enums",
       "root_cause": "swift_enum_extraction",
-      "tags": ["swift", "enum", "associated", "pattern"]
+      "tags": [
+        "swift",
+        "enum",
+        "associated",
+        "pattern"
+      ],
+      "description": "Swift Enum Associated Value Extraction"
     },
     {
       "id": "swift_lazy_property_initialization",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "Lazy properties must be var, not let, as they mutate on first access",
       "root_cause": "swift_lazy_var",
-      "tags": ["swift", "lazy", "property", "initialization"]
+      "tags": [
+        "swift",
+        "lazy",
+        "property",
+        "initialization"
+      ],
+      "description": "Swift Lazy Property Initialization"
     },
     {
       "id": "swift_type_alias_cycle",
@@ -72,7 +103,13 @@
       "severity": "high",
       "suggestion": "Remove circular dependencies in type alias definitions",
       "root_cause": "swift_typealias_cycle",
-      "tags": ["swift", "typealias", "circular", "type"]
+      "tags": [
+        "swift",
+        "typealias",
+        "circular",
+        "type"
+      ],
+      "description": "Swift Type Alias Cycle"
     },
     {
       "id": "swift_dynamic_member_lookup",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Implement required subscript(dynamicMember:) for @dynamicMemberLookup",
       "root_cause": "swift_dynamic_member",
-      "tags": ["swift", "dynamic", "member", "subscript"]
+      "tags": [
+        "swift",
+        "dynamic",
+        "member",
+        "subscript"
+      ],
+      "description": "Swift Dynamic Member Lookup"
     },
     {
       "id": "swift_function_type_conversion",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Function types must match exactly including parameter types and return type",
       "root_cause": "swift_function_type",
-      "tags": ["swift", "function", "type", "conversion"]
+      "tags": [
+        "swift",
+        "function",
+        "type",
+        "conversion"
+      ],
+      "description": "Swift Function Type Conversion"
     },
     {
       "id": "swift_tuple_element_label_mismatch",
@@ -108,7 +157,13 @@
       "severity": "low",
       "suggestion": "Tuple types must match including element labels or use type alias",
       "root_cause": "swift_tuple_labels",
-      "tags": ["swift", "tuple", "label", "type"]
+      "tags": [
+        "swift",
+        "tuple",
+        "label",
+        "type"
+      ],
+      "description": "Swift Tuple Element Label Mismatch"
     },
     {
       "id": "swift_keypaths_type_error",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Ensure keypath types match and properties are accessible",
       "root_cause": "swift_keypath_type",
-      "tags": ["swift", "keypath", "type", "property"]
+      "tags": [
+        "swift",
+        "keypath",
+        "type",
+        "property"
+      ],
+      "description": "Swift Keypaths Type"
     },
     {
       "id": "swift_never_type_unreachable",
@@ -132,7 +193,13 @@
       "severity": "low",
       "suggestion": "Code after Never-returning functions (like fatalError) is unreachable",
       "root_cause": "swift_never_type",
-      "tags": ["swift", "never", "unreachable", "type"]
+      "tags": [
+        "swift",
+        "never",
+        "unreachable",
+        "type"
+      ],
+      "description": "Swift Never Type Unreachable"
     },
     {
       "id": "swift_type_annotation_redundant",
@@ -144,7 +211,13 @@
       "severity": "low",
       "suggestion": "Consider removing redundant type annotations where type can be inferred",
       "root_cause": "swift_redundant_type",
-      "tags": ["swift", "type", "annotation", "redundant"]
+      "tags": [
+        "swift",
+        "type",
+        "annotation",
+        "redundant"
+      ],
+      "description": "Swift Type Annotation Redundant"
     },
     {
       "id": "swift_any_vs_anyobject_confusion",
@@ -156,7 +229,13 @@
       "severity": "medium",
       "suggestion": "Use Any for any type, AnyObject for class types only",
       "root_cause": "swift_any_anyobject",
-      "tags": ["swift", "any", "anyobject", "type"]
+      "tags": [
+        "swift",
+        "any",
+        "anyobject",
+        "type"
+      ],
+      "description": "Swift Any Vs Anyobject Confusion"
     },
     {
       "id": "swift_static_vs_class_member",
@@ -168,7 +247,13 @@
       "severity": "medium",
       "suggestion": "Use 'static' for structs/enums, 'class' for overridable class members",
       "root_cause": "swift_static_class",
-      "tags": ["swift", "static", "class", "member"]
+      "tags": [
+        "swift",
+        "static",
+        "class",
+        "member"
+      ],
+      "description": "Swift Static Vs Class Member"
     },
     {
       "id": "swift_literal_type_default",
@@ -180,7 +265,13 @@
       "severity": "medium",
       "suggestion": "Add type annotation for literals when default type inference is insufficient",
       "root_cause": "swift_literal_type",
-      "tags": ["swift", "literal", "type", "inference"]
+      "tags": [
+        "swift",
+        "literal",
+        "type",
+        "inference"
+      ],
+      "description": "Swift Literal Type Default"
     }
   ]
 }

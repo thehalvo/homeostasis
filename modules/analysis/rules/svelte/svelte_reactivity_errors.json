@@ -13,12 +13,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "reactivity", "infinite-loop"],
+      "tags": [
+        "svelte",
+        "reactivity",
+        "infinite-loop"
+      ],
       "fix_commands": [
         "Break circular dependencies in reactive statements",
         "Use intermediate variables to avoid direct circular references",
         "Consider using stores for complex state management"
-      ]
+      ],
+      "description": "Svelte Reactive Infinite Loop"
     },
     {
       "id": "svelte_reactive_undefined_variable",
@@ -30,12 +35,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "reactivity", "undefined"],
+      "tags": [
+        "svelte",
+        "reactivity",
+        "undefined"
+      ],
       "fix_commands": [
         "Declare variables with let before using in reactive statements",
         "Initialize variables with default values",
         "Check variable scope and spelling"
-      ]
+      ],
+      "description": "Svelte Reactive Undefined Variable"
     },
     {
       "id": "svelte_reactive_const_assignment",
@@ -47,12 +57,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "reactivity", "const"],
+      "tags": [
+        "svelte",
+        "reactivity",
+        "const"
+      ],
       "fix_commands": [
         "Change const to let for variables that need to be reactive",
         "Use const only for values that never change",
         "Consider using stores for mutable shared state"
-      ]
+      ],
+      "description": "Svelte Reactive Const Assignment"
     },
     {
       "id": "svelte_reactive_access_before_init",
@@ -64,12 +79,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "reactivity", "initialization"],
+      "tags": [
+        "svelte",
+        "reactivity",
+        "initialization"
+      ],
       "fix_commands": [
         "Initialize variables at declaration",
         "Use conditional checks before accessing variables",
         "Move reactive statements after variable declarations"
-      ]
+      ],
+      "description": "Svelte Reactive Access Before Init"
     },
     {
       "id": "svelte_reactive_unused_dependencies",
@@ -81,12 +101,17 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "reactivity", "unused"],
+      "tags": [
+        "svelte",
+        "reactivity",
+        "unused"
+      ],
       "fix_commands": [
         "Remove unused variables from reactive statement",
         "Simplify reactive statement logic",
         "Check if all referenced variables are necessary"
-      ]
+      ],
+      "description": "Svelte Reactive Unused Dependencies"
     },
     {
       "id": "svelte_reactive_missing_dependencies",
@@ -98,12 +123,17 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "reactivity", "dependencies"],
+      "tags": [
+        "svelte",
+        "reactivity",
+        "dependencies"
+      ],
       "fix_commands": [
         "Add missing variables to reactive statement dependencies",
         "Ensure all referenced variables trigger reactivity",
         "Check variable scope and accessibility"
-      ]
+      ],
+      "description": "Svelte Reactive Missing Dependencies"
     }
   ]
 }

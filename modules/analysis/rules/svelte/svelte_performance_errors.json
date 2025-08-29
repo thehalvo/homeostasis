@@ -13,12 +13,17 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "performance", "reactivity"],
+      "tags": [
+        "svelte",
+        "performance",
+        "reactivity"
+      ],
       "fix_commands": [
         "Move expensive computations to derived stores",
         "Use memoization for complex calculations",
         "Debounce reactive statements that depend on frequently changing values"
-      ]
+      ],
+      "description": "Svelte Reactive Statement Performance"
     },
     {
       "id": "svelte_component_rerender_performance",
@@ -30,12 +35,17 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "performance", "rerendering"],
+      "tags": [
+        "svelte",
+        "performance",
+        "rerendering"
+      ],
       "fix_commands": [
         "Split large components into smaller ones",
         "Use derived stores to reduce reactive dependencies",
         "Move static content outside reactive blocks"
-      ]
+      ],
+      "description": "Svelte Component Rerender Performance"
     },
     {
       "id": "svelte_store_subscription_performance",
@@ -47,12 +57,18 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "performance", "stores", "subscriptions"],
+      "tags": [
+        "svelte",
+        "performance",
+        "stores",
+        "subscriptions"
+      ],
       "fix_commands": [
         "Use derived stores to combine multiple store values",
         "Debounce store updates for frequently changing data",
         "Use $ syntax for automatic subscription management"
-      ]
+      ],
+      "description": "Svelte Store Subscription Performance"
     },
     {
       "id": "svelte_large_list_performance",
@@ -64,12 +80,18 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "performance", "lists", "each"],
+      "tags": [
+        "svelte",
+        "performance",
+        "lists",
+        "each"
+      ],
       "fix_commands": [
         "Implement virtual scrolling for large lists",
         "Use pagination to limit rendered items",
         "Add keys to each blocks for better diffing"
-      ]
+      ],
+      "description": "Svelte Large List Performance"
     },
     {
       "id": "svelte_each_block_key_missing",
@@ -81,12 +103,18 @@
       "confidence": "high",
       "severity": "warning",
       "reliability": "high",
-      "tags": ["svelte", "performance", "each", "keys"],
+      "tags": [
+        "svelte",
+        "performance",
+        "each",
+        "keys"
+      ],
       "fix_commands": [
         "Add key to each block: {#each items as item (item.id)}",
         "Use unique identifiers as keys",
         "Ensure keys are stable and unique"
-      ]
+      ],
+      "description": "Svelte Each Block Key Missing"
     },
     {
       "id": "svelte_bundle_size_warning",
@@ -98,12 +126,17 @@
       "confidence": "low",
       "severity": "warning",
       "reliability": "low",
-      "tags": ["svelte", "performance", "bundle-size"],
+      "tags": [
+        "svelte",
+        "performance",
+        "bundle-size"
+      ],
       "fix_commands": [
         "Use dynamic imports for code splitting",
         "Remove unused dependencies and code",
         "Configure build tool for tree shaking"
-      ]
+      ],
+      "description": "Svelte Bundle Size Warning"
     },
     {
       "id": "svelte_animation_performance",
@@ -115,12 +148,18 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "performance", "animations", "transitions"],
+      "tags": [
+        "svelte",
+        "performance",
+        "animations",
+        "transitions"
+      ],
       "fix_commands": [
         "Use transform and opacity for smooth animations",
         "Avoid animating layout properties like width/height",
         "Use will-change CSS property for complex animations"
-      ]
+      ],
+      "description": "Svelte Animation Performance"
     },
     {
       "id": "svelte_dom_manipulation_performance",
@@ -132,12 +171,17 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "performance", "dom"],
+      "tags": [
+        "svelte",
+        "performance",
+        "dom"
+      ],
       "fix_commands": [
         "Use Svelte's reactive system instead of direct DOM manipulation",
         "Batch DOM operations where necessary",
         "Use bind:this sparingly for DOM references"
-      ]
+      ],
+      "description": "Svelte Dom Manipulation Performance"
     },
     {
       "id": "svelte_memory_leak_warning",
@@ -149,12 +193,17 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "performance", "memory-leak"],
+      "tags": [
+        "svelte",
+        "performance",
+        "memory-leak"
+      ],
       "fix_commands": [
         "Use onDestroy to clean up subscriptions",
         "Clear intervals and timeouts in onDestroy",
         "Use $ syntax for automatic store subscription cleanup"
-      ]
+      ],
+      "description": "Svelte Memory Leak Warning"
     },
     {
       "id": "svelte_hydration_performance",
@@ -166,12 +215,18 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "performance", "hydration", "ssr"],
+      "tags": [
+        "svelte",
+        "performance",
+        "hydration",
+        "ssr"
+      ],
       "fix_commands": [
         "Reduce initial component state size",
         "Defer non-critical component initialization",
         "Use lazy loading for heavy components"
-      ]
+      ],
+      "description": "Svelte Hydration Performance"
     },
     {
       "id": "svelte_css_unused_performance",
@@ -183,12 +238,18 @@
       "confidence": "low",
       "severity": "warning",
       "reliability": "low",
-      "tags": ["svelte", "performance", "css", "optimization"],
+      "tags": [
+        "svelte",
+        "performance",
+        "css",
+        "optimization"
+      ],
       "fix_commands": [
         "Remove unused CSS selectors and rules",
         "Use CSS purging tools in production",
         "Leverage Svelte's scoped styling for better tree shaking"
-      ]
+      ],
+      "description": "Svelte Css Unused Performance"
     },
     {
       "id": "svelte_event_listener_performance",
@@ -200,12 +261,17 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "performance", "events"],
+      "tags": [
+        "svelte",
+        "performance",
+        "events"
+      ],
       "fix_commands": [
         "Use passive event listeners where appropriate",
         "Remove unnecessary event listeners",
         "Use event delegation for list items"
-      ]
+      ],
+      "description": "Svelte Event Listener Performance"
     }
   ]
 }

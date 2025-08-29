@@ -1,4 +1,5 @@
 {
+  "name": "Nextjs Nextjs Api Routes Errors",
   "version": "1.0.0",
   "description": "Next.js API routes error detection rules",
   "rules": [
@@ -12,12 +13,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "api-routes", "response"],
+      "tags": [
+        "nextjs",
+        "api-routes",
+        "response"
+      ],
       "fix_commands": [
         "Add res.status().json() to send a proper response",
         "Ensure all code paths end with a response",
         "Check for early returns without responses"
-      ]
+      ],
+      "description": "Nextjs Api No Response"
     },
     {
       "id": "nextjs_api_method_not_allowed",
@@ -29,12 +35,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "api-routes", "http-method"],
+      "tags": [
+        "nextjs",
+        "api-routes",
+        "http-method"
+      ],
       "fix_commands": [
         "Check request method with req.method",
         "Add handlers for each supported method",
         "Return 405 Method Not Allowed for unsupported methods"
-      ]
+      ],
+      "description": "Nextjs Api Method Not Allowed"
     },
     {
       "id": "nextjs_api_body_parsing",
@@ -46,13 +57,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "api-routes", "body-parsing"],
+      "tags": [
+        "nextjs",
+        "api-routes",
+        "body-parsing"
+      ],
       "fix_commands": [
         "Check content-type headers match body format",
         "Add error handling for body parsing",
         "Verify body format (JSON, form data, etc.)",
         "Use body-parser middleware if needed"
-      ]
+      ],
+      "description": "Nextjs Api Body Parsing"
     },
     {
       "id": "nextjs_api_headers_already_sent",
@@ -64,13 +80,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "api-routes", "headers"],
+      "tags": [
+        "nextjs",
+        "api-routes",
+        "headers"
+      ],
       "fix_commands": [
         "Ensure only one response is sent per request",
         "Set headers before sending response",
         "Use early returns to avoid multiple responses",
         "Check for asynchronous code sending multiple responses"
-      ]
+      ],
+      "description": "Nextjs Api Headers Already Sent"
     },
     {
       "id": "nextjs_api_missing_handler",
@@ -82,12 +103,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "api-routes", "handler"],
+      "tags": [
+        "nextjs",
+        "api-routes",
+        "handler"
+      ],
       "fix_commands": [
         "Export a default function with (req, res) parameters",
         "Ensure the function is async if using await",
         "Verify export syntax is correct"
-      ]
+      ],
+      "description": "Nextjs Api Missing Handler"
     },
     {
       "id": "nextjs_api_cors_error",
@@ -99,13 +125,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["nextjs", "api-routes", "cors"],
+      "tags": [
+        "nextjs",
+        "api-routes",
+        "cors"
+      ],
       "fix_commands": [
         "Add appropriate CORS headers",
         "Use a CORS middleware like cors npm package",
         "Configure Access-Control-Allow-Origin header",
         "Handle OPTIONS requests for preflight"
-      ]
+      ],
+      "description": "Nextjs Api Cors"
     },
     {
       "id": "nextjs_api_validation_error",
@@ -117,13 +148,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["nextjs", "api-routes", "validation"],
+      "tags": [
+        "nextjs",
+        "api-routes",
+        "validation"
+      ],
       "fix_commands": [
         "Validate request parameters and body",
         "Return 400 Bad Request for invalid input",
         "Use validation libraries like yup, joi, or zod",
         "Add clear error messages for invalid inputs"
-      ]
+      ],
+      "description": "Nextjs Api Validation"
     },
     {
       "id": "nextjs_api_middleware_error",
@@ -135,13 +171,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["nextjs", "api-routes", "middleware"],
+      "tags": [
+        "nextjs",
+        "api-routes",
+        "middleware"
+      ],
       "fix_commands": [
         "Check API route middleware implementation",
         "Verify middleware executes and calls next()",
         "Check export config is properly formatted",
         "Ensure middleware functions are async if they use await"
-      ]
+      ],
+      "description": "Nextjs Api Middleware"
     }
   ]
 }

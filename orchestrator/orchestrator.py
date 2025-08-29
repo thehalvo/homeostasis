@@ -131,16 +131,16 @@ class Orchestrator:
             self.security_enabled = True
             
             # Initialize approval manager if approval workflow is enabled
-            if (self.config["security"].get("approval", {}).get("enabled", False) or
+            if (self.config.get("security", {}).get("approval", {}).get("enabled", False) or
                 self.config["deployment"].get("production", {}).get("require_approval", False)):
                 self.approval_required = True
-                self.approval_manager = get_approval_manager(self.config["security"].get("approval", {}))
+                self.approval_manager = get_approval_manager(self.config.get("security", {}).get("approval", {}))
                 self.logger.info("Approval workflow initialized for critical changes")
             else:
                 self.approval_required = False
                 
             # Initialize audit logger
-            self.audit_logger = get_audit_logger(self.config["security"].get("audit", {}))
+            self.audit_logger = get_audit_logger(self.config.get("security", {}).get("audit", {}))
             self.logger.info("Audit logging initialized")
             
             # Initialize healing activity auditor
@@ -154,7 +154,7 @@ class Orchestrator:
             self.logger.info("Audit monitor initialized")
             
             # Initialize healing rate limiter if enabled
-            healing_rate_limits_config = self.config["security"].get("healing_rate_limits", {})
+            healing_rate_limits_config = self.config.get("security", {}).get("healing_rate_limits", {})
             if healing_rate_limits_config.get("enabled", False):
                 # Add current environment to the config for environment-specific limits
                 healing_rate_limits_config["environment"] = self.config["general"]["environment"]
@@ -198,14 +198,17 @@ class Orchestrator:
         self.logger.info("Traffic managers initialized")
             
         # Initialize canary deployment if enabled
-        if (self.config["security"].get("canary", {}).get("enabled", False) or
+        print(f"DEBUG: Config keys: {list(self.config.keys())}")
+        print(f"DEBUG: Security config: {self.config.get('security', 'NOT FOUND')}")
+        
+        if (self.config.get("security", {}).get("canary", {}).get("enabled", False) or
             self.config["deployment"].get("production", {}).get("canary_deployment", False)):
             self.canary_enabled = True
             
             # Combine canary configs from security and deployment sections
             canary_config = {}
             if "canary" in self.config.get("security", {}):
-                canary_config.update(self.config["security"]["canary"])
+                canary_config.update(self.config.get("security", {})["canary"])
             if "canary" in self.config.get("deployment", {}):
                 canary_config.update(self.config["deployment"]["canary"])
                 
@@ -382,8 +385,17 @@ class Orchestrator:
         """
         self.logger.info("Checking for errors in logs")
         
-        # Get the latest errors from the log file
-        errors = get_latest_errors(limit=10)
+        # Get log file path from configuration
+        log_file_path = self.config.get("monitoring", {}).get("log_file")
+        if log_file_path:
+            from pathlib import Path
+            log_file = Path(log_file_path)
+            # Import extract_errors directly to pass log_file parameter
+            from modules.monitoring.extractor import extract_errors
+            errors = extract_errors(log_file=log_file, levels=["ERROR", "CRITICAL"], limit=10)
+        else:
+            # Fall back to default
+            errors = get_latest_errors(limit=10)
         
         if errors:
             self.logger.info(f"Found {len(errors)} errors")
@@ -750,7 +762,7 @@ class Orchestrator:
             title=title,
             description=description,
             data={"patches": patches},
-            required_approvers=self.config["security"]["approval"].get("required_approvers", 1)
+            required_approvers=self.config.get("security", {}).get("approval", {}).get("required_approvers", 1)
         )
         
         self.logger.info(f"Created approval request {request.request_id} for {len(patches)} patch(es)")

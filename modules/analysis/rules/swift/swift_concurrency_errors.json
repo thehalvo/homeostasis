@@ -1,4 +1,5 @@
 {
+  "name": "Swift Swift Concurrency Errors",
   "version": "1.0.0",
   "description": "Swift concurrency and async/await error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Async function call missing 'await' keyword - add await before the function call",
       "root_cause": "swift_missing_await",
-      "tags": ["swift", "async", "await", "concurrency"]
+      "tags": [
+        "swift",
+        "async",
+        "await",
+        "concurrency"
+      ],
+      "description": "Swift Async Function Not Awaited"
     },
     {
       "id": "swift_task_cancellation_error",
@@ -24,7 +31,13 @@
       "severity": "medium",
       "suggestion": "Task was cancelled - handle cancellation with try Task.checkCancellation() or catch CancellationError",
       "root_cause": "swift_async_await_error",
-      "tags": ["swift", "task", "cancellation", "async"]
+      "tags": [
+        "swift",
+        "task",
+        "cancellation",
+        "async"
+      ],
+      "description": "Swift Task Cancellation"
     },
     {
       "id": "swift_actor_isolation_violation",
@@ -36,7 +49,13 @@
       "severity": "high",
       "suggestion": "Actor isolation violation - access actor properties/methods from async context or use await",
       "root_cause": "swift_actor_isolation_violation",
-      "tags": ["swift", "actor", "isolation", "concurrency"]
+      "tags": [
+        "swift",
+        "actor",
+        "isolation",
+        "concurrency"
+      ],
+      "description": "Swift Actor Isolation Violation"
     },
     {
       "id": "swift_sendable_violation",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Sendable protocol violation - ensure types crossing concurrency boundaries conform to Sendable",
       "root_cause": "swift_sendable_violation",
-      "tags": ["swift", "sendable", "concurrency", "protocol"]
+      "tags": [
+        "swift",
+        "sendable",
+        "concurrency",
+        "protocol"
+      ],
+      "description": "Swift Sendable Violation"
     },
     {
       "id": "swift_main_actor_violation",
@@ -60,7 +85,13 @@
       "severity": "high",
       "suggestion": "MainActor isolation violation - use await or mark function with @MainActor",
       "root_cause": "swift_main_actor_violation",
-      "tags": ["swift", "main_actor", "ui", "concurrency"]
+      "tags": [
+        "swift",
+        "main_actor",
+        "ui",
+        "concurrency"
+      ],
+      "description": "Swift Main Actor Violation"
     },
     {
       "id": "swift_structured_concurrency_leak",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Structured concurrency leak - ensure all child tasks complete before parent task ends",
       "root_cause": "swift_concurrency_leak",
-      "tags": ["swift", "structured", "concurrency", "leak"]
+      "tags": [
+        "swift",
+        "structured",
+        "concurrency",
+        "leak"
+      ],
+      "description": "Swift Structured Concurrency Leak"
     },
     {
       "id": "swift_async_sequence_error",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "AsyncSequence error - handle errors in async iteration with do-catch blocks",
       "root_cause": "swift_async_sequence_error",
-      "tags": ["swift", "async_sequence", "iteration", "error"]
+      "tags": [
+        "swift",
+        "async_sequence",
+        "iteration",
+        "error"
+      ],
+      "description": "Swift Async Sequence"
     },
     {
       "id": "swift_continuation_resumed_multiple_times",
@@ -96,7 +139,13 @@
       "severity": "critical",
       "suggestion": "Continuation resumed multiple times - ensure continuation.resume() is called exactly once",
       "root_cause": "swift_continuation_misuse",
-      "tags": ["swift", "continuation", "resume", "concurrency"]
+      "tags": [
+        "swift",
+        "continuation",
+        "resume",
+        "concurrency"
+      ],
+      "description": "Swift Continuation Resumed Multiple Times"
     },
     {
       "id": "swift_detached_task_leak",
@@ -108,7 +157,13 @@
       "severity": "medium",
       "suggestion": "Detached task may leak - consider using Task.init instead or properly cancel detached tasks",
       "root_cause": "swift_detached_task_leak",
-      "tags": ["swift", "detached", "task", "leak"]
+      "tags": [
+        "swift",
+        "detached",
+        "task",
+        "leak"
+      ],
+      "description": "Swift Detached Task Leak"
     },
     {
       "id": "swift_async_let_error",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "async let binding error - ensure all async let variables are awaited before scope ends",
       "root_cause": "swift_async_let_error",
-      "tags": ["swift", "async_let", "binding", "concurrency"]
+      "tags": [
+        "swift",
+        "async_let",
+        "binding",
+        "concurrency"
+      ],
+      "description": "Swift Async Let"
     },
     {
       "id": "swift_task_group_error",
@@ -132,7 +193,13 @@
       "severity": "medium",
       "suggestion": "Task group error - handle errors from child tasks and ensure proper group completion",
       "root_cause": "swift_task_group_error",
-      "tags": ["swift", "task_group", "error", "concurrency"]
+      "tags": [
+        "swift",
+        "task_group",
+        "error",
+        "concurrency"
+      ],
+      "description": "Swift Task Group"
     },
     {
       "id": "swift_global_actor_reentrancy",
@@ -144,7 +211,13 @@
       "severity": "high",
       "suggestion": "Global actor reentrancy detected - avoid synchronous calls that may cause reentrancy",
       "root_cause": "swift_actor_reentrancy",
-      "tags": ["swift", "global_actor", "reentrancy", "concurrency"]
+      "tags": [
+        "swift",
+        "global_actor",
+        "reentrancy",
+        "concurrency"
+      ],
+      "description": "Swift Global Actor Reentrancy"
     }
   ]
 }

@@ -239,17 +239,20 @@ class CrystalExceptionHandler:
         if matches:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
-            analysis.update({
-                "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": self._get_subcategory_from_rule(best_match, analysis),
-                "confidence": best_match.get("confidence", "medium"),
-                "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
-                "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
-                "severity": best_match.get("severity", "medium"),
-                "rule_id": best_match.get("id", ""),
-                "tags": best_match.get("tags", []),
-                "all_matches": matches
-            })
+            
+            # Only update if we don't already have a high confidence nil subcategory
+            if not (analysis.get("subcategory") == "nil" and analysis.get("confidence") == "high"):
+                analysis.update({
+                    "category": best_match.get("category", analysis.get("category", "unknown")),
+                    "subcategory": self._get_subcategory_from_rule(best_match, analysis),
+                    "confidence": best_match.get("confidence", "medium"),
+                    "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
+                    "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
+                    "severity": best_match.get("severity", "medium"),
+                    "rule_id": best_match.get("id", ""),
+                    "tags": best_match.get("tags", []),
+                    "all_matches": matches
+                })
         
         analysis["file_path"] = file_path
         analysis["line_number"] = line_number
@@ -259,6 +262,18 @@ class CrystalExceptionHandler:
     def _analyze_by_patterns(self, message: str, file_path: str) -> Dict[str, Any]:
         """Analyze error by matching against common patterns."""
         message_lower = message.lower()
+        
+        # Check nil errors first (priority over runtime)
+        if "null reference" in message_lower or ("nil" in message_lower and "method" in message_lower):
+            return {
+                "category": "crystal",
+                "subcategory": "nil",
+                "confidence": "high",
+                "suggested_fix": "Add nil check or use safe navigation",
+                "root_cause": "crystal_nil_error",
+                "severity": "high",
+                "tags": ["crystal", "nil", "runtime"]
+            }
         
         # Check syntax errors
         for pattern in self.crystal_error_patterns["syntax_error"]:

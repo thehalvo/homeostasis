@@ -1,4 +1,5 @@
 {
+  "name": "Swift Swift Optionals Advanced",
   "version": "1.0.0",
   "description": "Advanced Swift optional handling error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Avoid implicitly unwrapped optionals (!) in property declarations. Use regular optionals with proper unwrapping",
       "root_cause": "swift_implicit_unwrap_nil",
-      "tags": ["swift", "optional", "implicit", "nil"]
+      "tags": [
+        "swift",
+        "optional",
+        "implicit",
+        "nil"
+      ],
+      "description": "Swift Implicitly Unwrapped Optional Nil"
     },
     {
       "id": "swift_optional_binding_pattern_error",
@@ -24,7 +31,13 @@
       "severity": "medium",
       "suggestion": "Ensure the value being bound is actually optional. Remove unnecessary optional binding for non-optional values",
       "root_cause": "swift_optional_binding_non_optional",
-      "tags": ["swift", "optional", "binding", "if_let"]
+      "tags": [
+        "swift",
+        "optional",
+        "binding",
+        "if_let"
+      ],
+      "description": "Swift Optional Binding Pattern"
     },
     {
       "id": "swift_nil_coalescing_type_mismatch",
@@ -36,7 +49,13 @@
       "severity": "medium",
       "suggestion": "Ensure both sides of ?? operator have compatible types. The default value must match the unwrapped type",
       "root_cause": "swift_nil_coalescing_type",
-      "tags": ["swift", "optional", "nil_coalescing", "type"]
+      "tags": [
+        "swift",
+        "optional",
+        "nil_coalescing",
+        "type"
+      ],
+      "description": "Swift Nil Coalescing Type Mismatch"
     },
     {
       "id": "swift_optional_map_misuse",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Use flatMap instead of map when the transform returns an optional to avoid double optionals",
       "root_cause": "swift_optional_map_flatmap",
-      "tags": ["swift", "optional", "map", "flatMap"]
+      "tags": [
+        "swift",
+        "optional",
+        "map",
+        "flatMap"
+      ],
+      "description": "Swift Optional Map Misuse"
     },
     {
       "id": "swift_guard_let_scope_error",
@@ -60,7 +85,13 @@
       "severity": "low",
       "suggestion": "Guard statements must transfer control (return, throw, break, continue) in the else block",
       "root_cause": "swift_guard_control_flow",
-      "tags": ["swift", "optional", "guard", "scope"]
+      "tags": [
+        "swift",
+        "optional",
+        "guard",
+        "scope"
+      ],
+      "description": "Swift Guard Let Scope"
     },
     {
       "id": "swift_optional_chaining_void_confusion",
@@ -72,7 +103,13 @@
       "severity": "low",
       "suggestion": "Optional chaining on void methods returns Void? - use if statement or ignore with _ =",
       "root_cause": "swift_optional_chaining_void",
-      "tags": ["swift", "optional", "chaining", "void"]
+      "tags": [
+        "swift",
+        "optional",
+        "chaining",
+        "void"
+      ],
+      "description": "Swift Optional Chaining Void Confusion"
     },
     {
       "id": "swift_optional_comparison_error",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Unwrap optionals before comparison or use nil-coalescing to provide defaults",
       "root_cause": "swift_optional_comparison",
-      "tags": ["swift", "optional", "comparison", "operator"]
+      "tags": [
+        "swift",
+        "optional",
+        "comparison",
+        "operator"
+      ],
+      "description": "Swift Optional Comparison"
     },
     {
       "id": "swift_optional_try_confusion",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Use try? for optional result, try! for force try, or proper do-catch for error handling",
       "root_cause": "swift_optional_try",
-      "tags": ["swift", "optional", "try", "error"]
+      "tags": [
+        "swift",
+        "optional",
+        "try",
+        "error"
+      ],
+      "description": "Swift Optional Try Confusion"
     },
     {
       "id": "swift_multiple_optional_binding",
@@ -108,7 +157,13 @@
       "severity": "low",
       "suggestion": "Separate multiple optional bindings with commas, ensure all are optionals",
       "root_cause": "swift_multiple_optional_binding",
-      "tags": ["swift", "optional", "binding", "multiple"]
+      "tags": [
+        "swift",
+        "optional",
+        "binding",
+        "multiple"
+      ],
+      "description": "Swift Multiple Optional Binding"
     },
     {
       "id": "swift_optional_as_any_warning",
@@ -120,7 +175,13 @@
       "severity": "low",
       "suggestion": "Explicitly handle optional before casting to Any to avoid unexpected optional wrapping",
       "root_cause": "swift_optional_any_coercion",
-      "tags": ["swift", "optional", "any", "casting"]
+      "tags": [
+        "swift",
+        "optional",
+        "any",
+        "casting"
+      ],
+      "description": "Swift Optional As Any Warning"
     },
     {
       "id": "swift_optional_in_string_interpolation",
@@ -132,7 +193,13 @@
       "severity": "low",
       "suggestion": "Unwrap optional or use nil-coalescing (?? \"default\") in string interpolation to avoid \"Optional(...)\" output",
       "root_cause": "swift_optional_interpolation",
-      "tags": ["swift", "optional", "string", "interpolation"]
+      "tags": [
+        "swift",
+        "optional",
+        "string",
+        "interpolation"
+      ],
+      "description": "Swift Optional In String Interpolation"
     },
     {
       "id": "swift_optional_closure_capture",
@@ -144,7 +211,13 @@
       "severity": "medium",
       "suggestion": "Use [weak self] or [unowned self] in closures, then safely unwrap with guard let",
       "root_cause": "swift_optional_closure_capture",
-      "tags": ["swift", "optional", "closure", "capture"]
+      "tags": [
+        "swift",
+        "optional",
+        "closure",
+        "capture"
+      ],
+      "description": "Swift Optional Closure Capture"
     },
     {
       "id": "swift_optional_collection_confusion",
@@ -156,7 +229,13 @@
       "severity": "medium",
       "suggestion": "Prefer empty collections over optional collections. Use nil-coalescing with empty array/dictionary",
       "root_cause": "swift_optional_collection",
-      "tags": ["swift", "optional", "collection", "array"]
+      "tags": [
+        "swift",
+        "optional",
+        "collection",
+        "array"
+      ],
+      "description": "Swift Optional Collection Confusion"
     },
     {
       "id": "swift_optional_protocol_requirement",
@@ -168,7 +247,13 @@
       "severity": "medium",
       "suggestion": "Optional protocol requirements require @objc, which limits types that can be used",
       "root_cause": "swift_optional_protocol",
-      "tags": ["swift", "optional", "protocol", "objc"]
+      "tags": [
+        "swift",
+        "optional",
+        "protocol",
+        "objc"
+      ],
+      "description": "Swift Optional Protocol Requirement"
     },
     {
       "id": "swift_compactMap_performance",
@@ -180,7 +265,13 @@
       "severity": "low",
       "suggestion": "Use compactMap to filter out nils and transform in one operation for better performance",
       "root_cause": "swift_compactmap_optimization",
-      "tags": ["swift", "optional", "compactMap", "performance"]
+      "tags": [
+        "swift",
+        "optional",
+        "compactMap",
+        "performance"
+      ],
+      "description": "Swift Compactmap Performance"
     }
   ]
 }

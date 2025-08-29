@@ -12,7 +12,13 @@
       "severity": "medium",
       "suggestion": "Ensure proper context inheritance using coroutineContext + newElement",
       "root_cause": "kotlin_context_inheritance_error",
-      "tags": ["kotlin", "coroutines", "context", "inheritance"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "context",
+        "inheritance"
+      ],
+      "description": "Kotlin Coroutine Context Inheritance"
     },
     {
       "id": "kotlin_supervisor_vs_regular_scope",
@@ -24,7 +30,13 @@
       "severity": "high",
       "suggestion": "Use SupervisorScope or SupervisorJob when child failures should not affect siblings",
       "root_cause": "kotlin_supervisor_scope_needed",
-      "tags": ["kotlin", "coroutines", "supervisor", "scope"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "supervisor",
+        "scope"
+      ],
+      "description": "Kotlin Supervisor Vs Regular Scope"
     },
     {
       "id": "kotlin_cold_flow_hot_flow_confusion",
@@ -36,7 +48,13 @@
       "severity": "medium",
       "suggestion": "Use SharedFlow/StateFlow for hot streams, Flow for cold streams",
       "root_cause": "kotlin_flow_type_confusion",
-      "tags": ["kotlin", "coroutines", "flow", "hot_cold"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "flow",
+        "hot_cold"
+      ],
+      "description": "Kotlin Cold Flow Hot Flow Confusion"
     },
     {
       "id": "kotlin_stateflow_initial_value",
@@ -48,7 +66,13 @@
       "severity": "high",
       "suggestion": "Provide initial value when creating StateFlow",
       "root_cause": "kotlin_stateflow_init_error",
-      "tags": ["kotlin", "coroutines", "stateflow", "initialization"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "stateflow",
+        "initialization"
+      ],
+      "description": "Kotlin Stateflow Initial Value"
     },
     {
       "id": "kotlin_sharedflow_replay_confusion",
@@ -60,7 +84,13 @@
       "severity": "low",
       "suggestion": "Configure SharedFlow replay parameter correctly for your use case",
       "root_cause": "kotlin_sharedflow_replay",
-      "tags": ["kotlin", "coroutines", "sharedflow", "replay"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "sharedflow",
+        "replay"
+      ],
+      "description": "Kotlin Sharedflow Replay Confusion"
     },
     {
       "id": "kotlin_test_dispatcher_missing",
@@ -72,7 +102,13 @@
       "severity": "medium",
       "suggestion": "Use TestDispatcher and runTest for coroutine testing",
       "root_cause": "kotlin_test_dispatcher_missing",
-      "tags": ["kotlin", "coroutines", "testing", "dispatcher"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "testing",
+        "dispatcher"
+      ],
+      "description": "Kotlin Test Dispatcher Missing"
     },
     {
       "id": "kotlin_conflated_channel_data_loss",
@@ -84,7 +120,13 @@
       "severity": "medium",
       "suggestion": "Be aware of data loss with conflated channels or DROP_ overflow strategies",
       "root_cause": "kotlin_conflated_channel_loss",
-      "tags": ["kotlin", "coroutines", "channel", "conflated"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "channel",
+        "conflated"
+      ],
+      "description": "Kotlin Conflated Channel Data Loss"
     },
     {
       "id": "kotlin_select_expression_error",
@@ -96,7 +138,13 @@
       "severity": "medium",
       "suggestion": "Handle all cases in select expression, ensure mutual exclusivity",
       "root_cause": "kotlin_select_expression",
-      "tags": ["kotlin", "coroutines", "select", "expression"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "select",
+        "expression"
+      ],
+      "description": "Kotlin Select Expression"
     },
     {
       "id": "kotlin_flow_conflate_data_loss",
@@ -108,7 +156,13 @@
       "severity": "low",
       "suggestion": "Use conflate() when only latest value matters, otherwise use buffer()",
       "root_cause": "kotlin_flow_conflate",
-      "tags": ["kotlin", "coroutines", "flow", "conflate"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "flow",
+        "conflate"
+      ],
+      "description": "Kotlin Flow Conflate Data Loss"
     },
     {
       "id": "kotlin_coroutine_name_debugging",
@@ -120,7 +174,13 @@
       "severity": "low",
       "suggestion": "Use CoroutineName for easier debugging of coroutines",
       "root_cause": "kotlin_coroutine_unnamed",
-      "tags": ["kotlin", "coroutines", "debugging", "name"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "debugging",
+        "name"
+      ],
+      "description": "Kotlin Coroutine Name Debugging"
     },
     {
       "id": "kotlin_flow_on_each_side_effect",
@@ -132,7 +192,13 @@
       "severity": "low",
       "suggestion": "Use onEach for side effects, keep map/transform pure",
       "root_cause": "kotlin_flow_side_effect",
-      "tags": ["kotlin", "coroutines", "flow", "side_effect"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "flow",
+        "side_effect"
+      ],
+      "description": "Kotlin Flow On Each Side Effect"
     },
     {
       "id": "kotlin_dispatcher_unconfined_danger",
@@ -144,7 +210,13 @@
       "severity": "medium",
       "suggestion": "Avoid Dispatchers.Unconfined unless you understand the implications",
       "root_cause": "kotlin_dispatcher_unconfined",
-      "tags": ["kotlin", "coroutines", "dispatcher", "unconfined"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "dispatcher",
+        "unconfined"
+      ],
+      "description": "Kotlin Dispatcher Unconfined Danger"
     },
     {
       "id": "kotlin_flow_lifecycle_mismatch",
@@ -156,7 +228,13 @@
       "severity": "high",
       "suggestion": "Use flowWithLifecycle or lifecycleScope.launch for Android lifecycle-aware collection",
       "root_cause": "kotlin_flow_lifecycle",
-      "tags": ["kotlin", "coroutines", "flow", "lifecycle"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "flow",
+        "lifecycle"
+      ],
+      "description": "Kotlin Flow Lifecycle Mismatch"
     },
     {
       "id": "kotlin_mutex_deadlock",
@@ -168,7 +246,13 @@
       "severity": "critical",
       "suggestion": "Avoid nested mutex locks, use consistent lock ordering",
       "root_cause": "kotlin_mutex_deadlock",
-      "tags": ["kotlin", "coroutines", "mutex", "deadlock"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "mutex",
+        "deadlock"
+      ],
+      "description": "Kotlin Mutex Deadlock"
     },
     {
       "id": "kotlin_broadcast_channel_deprecated",
@@ -180,7 +264,14 @@
       "severity": "low",
       "suggestion": "Migrate from BroadcastChannel to SharedFlow",
       "root_cause": "kotlin_broadcast_channel_deprecated",
-      "tags": ["kotlin", "coroutines", "broadcast", "deprecated"]
+      "tags": [
+        "kotlin",
+        "coroutines",
+        "broadcast",
+        "deprecated"
+      ],
+      "description": "Kotlin Broadcast Channel Deprecated"
     }
-  ]
+  ],
+  "name": "Kotlin Coroutines Advanced"
 }

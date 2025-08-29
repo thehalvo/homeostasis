@@ -1174,6 +1174,16 @@ class XamarinLanguagePlugin(LanguagePlugin):
         """Check if this is a Xamarin.Forms related error."""
         message = error_data.get("message", "").lower()
         stack_trace = str(error_data.get("stack_trace", "")).lower()
+        framework = error_data.get("framework", "").lower()
+        error_type = error_data.get("error_type", "").lower()
+        
+        # Check framework explicitly
+        if "xamarin.forms" in framework:
+            return True
+            
+        # Check error type for Xamarin.Forms specific exceptions
+        if "bindingexception" in error_type:
+            return True
         
         forms_patterns = [
             "xamarin.forms",
@@ -1223,6 +1233,18 @@ class XamarinLanguagePlugin(LanguagePlugin):
             
             if patch_result:
                 return patch_result
+            
+            # If no specific patch was generated, return a generic fix with binding info
+            if "binding" in error_data.get("message", "").lower():
+                return {
+                    "type": "suggestion",
+                    "description": "Fix XAML binding issue",
+                    "fix_commands": [
+                        "Check binding path spelling",
+                        "Ensure BindingContext is set",
+                        "Verify property exists on view model"
+                    ]
+                }
             
             # Return empty dict if no patch generated (as per abstract method)
             return {}

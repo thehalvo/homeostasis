@@ -1,4 +1,5 @@
 {
+  "name": "Clojure Lazy Sequence Errors",
   "version": "1.0.0",
   "description": "Clojure lazy sequence realization and performance error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "critical",
       "suggestion": "Use take, take-while, or other limiting functions before realizing infinite sequences",
       "root_cause": "clojure_infinite_seq_realized",
-      "tags": ["clojure", "lazy", "infinite", "memory"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "infinite",
+        "memory"
+      ],
+      "description": "Clojure Infinite Sequence Realization"
     },
     {
       "id": "clojure_chunked_sequence_performance",
@@ -24,7 +31,13 @@
       "severity": "low",
       "suggestion": "Be aware of chunked sequences (32 elements). Use (seq (eduction ...)) to avoid chunking",
       "root_cause": "clojure_chunked_seq_performance",
-      "tags": ["clojure", "lazy", "chunked", "performance"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "chunked",
+        "performance"
+      ],
+      "description": "Clojure Chunked Sequence Performance"
     },
     {
       "id": "clojure_side_effects_in_lazy_seq",
@@ -36,7 +49,13 @@
       "severity": "medium",
       "suggestion": "Avoid side effects in lazy sequences. Use doseq for side effects or doall to force realization",
       "root_cause": "clojure_lazy_side_effects",
-      "tags": ["clojure", "lazy", "side_effect", "io"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "side_effect",
+        "io"
+      ],
+      "description": "Clojure Side Effects In Lazy Seq"
     },
     {
       "id": "clojure_head_retention_memory_leak",
@@ -48,7 +67,13 @@
       "severity": "high",
       "suggestion": "Don't hold references to heads of large lazy sequences. Process and discard",
       "root_cause": "clojure_head_retention",
-      "tags": ["clojure", "lazy", "memory_leak", "head"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "memory_leak",
+        "head"
+      ],
+      "description": "Clojure Head Retention Memory Leak"
     },
     {
       "id": "clojure_doall_dorun_misuse",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "Use doall to realize and keep results, dorun for side effects only, doseq for iteration",
       "root_cause": "clojure_lazy_realization_misuse",
-      "tags": ["clojure", "lazy", "doall", "dorun"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "doall",
+        "dorun"
+      ],
+      "description": "Clojure Doall Dorun Misuse"
     },
     {
       "id": "clojure_lazy_seq_in_atom_ref",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Realize lazy sequences before storing in atoms/refs to avoid realization during transactions",
       "root_cause": "clojure_lazy_in_state",
-      "tags": ["clojure", "lazy", "atom", "ref"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "atom",
+        "ref"
+      ],
+      "description": "Clojure Lazy Seq In Atom Ref"
     },
     {
       "id": "clojure_lazy_seq_delay_interaction",
@@ -84,7 +121,13 @@
       "severity": "low",
       "suggestion": "Combine delay with lazy-seq carefully. Consider memoization for expensive computations",
       "root_cause": "clojure_lazy_delay_combo",
-      "tags": ["clojure", "lazy", "delay", "deref"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "delay",
+        "deref"
+      ],
+      "description": "Clojure Lazy Seq Delay Interaction"
     },
     {
       "id": "clojure_recursive_lazy_seq_stackoverflow",
@@ -96,7 +139,13 @@
       "severity": "high",
       "suggestion": "Use recur for tail recursion or trampoline for mutual recursion in lazy sequences",
       "root_cause": "clojure_lazy_recursion_overflow",
-      "tags": ["clojure", "lazy", "recursion", "stackoverflow"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "recursion",
+        "stackoverflow"
+      ],
+      "description": "Clojure Recursive Lazy Seq Stackoverflow"
     },
     {
       "id": "clojure_lazy_filter_nothing_found",
@@ -108,7 +157,13 @@
       "severity": "medium",
       "suggestion": "Use (first (filter ...)) with take-while or limited sequences to avoid full realization",
       "root_cause": "clojure_lazy_filter_exhaustive",
-      "tags": ["clojure", "lazy", "filter", "realization"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "filter",
+        "realization"
+      ],
+      "description": "Clojure Lazy Filter Nothing Found"
     },
     {
       "id": "clojure_concat_stackoverflow",
@@ -120,7 +175,13 @@
       "severity": "high",
       "suggestion": "Avoid deeply nested concat. Use into or reduce with conj for better performance",
       "root_cause": "clojure_concat_overflow",
-      "tags": ["clojure", "lazy", "concat", "nesting"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "concat",
+        "nesting"
+      ],
+      "description": "Clojure Concat Stackoverflow"
     },
     {
       "id": "clojure_lazy_io_resource_leak",
@@ -132,7 +193,13 @@
       "severity": "high",
       "suggestion": "Don't return lazy sequences from with-open. Realize within the resource scope",
       "root_cause": "clojure_lazy_io_leak",
-      "tags": ["clojure", "lazy", "io", "resource"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "io",
+        "resource"
+      ],
+      "description": "Clojure Lazy Io Resource Leak"
     },
     {
       "id": "clojure_lazy_parallel_overhead",
@@ -144,7 +211,13 @@
       "severity": "low",
       "suggestion": "pmap has overhead. Use for CPU-intensive operations. Consider reducers for parallelism",
       "root_cause": "clojure_lazy_parallel_overhead",
-      "tags": ["clojure", "lazy", "parallel", "pmap"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "parallel",
+        "pmap"
+      ],
+      "description": "Clojure Lazy Parallel Overhead"
     },
     {
       "id": "clojure_lazy_seq_type_hint_loss",
@@ -156,7 +229,13 @@
       "severity": "low",
       "suggestion": "Type hints may be lost through lazy sequences. Re-hint after realization if needed",
       "root_cause": "clojure_lazy_type_hint",
-      "tags": ["clojure", "lazy", "reflection", "type_hint"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "reflection",
+        "type_hint"
+      ],
+      "description": "Clojure Lazy Seq Type Hint Loss"
     },
     {
       "id": "clojure_lazy_nesting_complexity",
@@ -168,7 +247,13 @@
       "severity": "medium",
       "suggestion": "Simplify deeply nested lazy operations. Consider transducers for complex transformations",
       "root_cause": "clojure_lazy_nesting",
-      "tags": ["clojure", "lazy", "nesting", "complexity"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "nesting",
+        "complexity"
+      ],
+      "description": "Clojure Lazy Nesting Complexity"
     },
     {
       "id": "clojure_unrealized_in_equality",
@@ -180,7 +265,13 @@
       "severity": "medium",
       "suggestion": "Equality comparison realizes lazy sequences. Consider if full realization is intended",
       "root_cause": "clojure_lazy_equality_realizes",
-      "tags": ["clojure", "lazy", "equality", "comparison"]
+      "tags": [
+        "clojure",
+        "lazy",
+        "equality",
+        "comparison"
+      ],
+      "description": "Clojure Unrealized In Equality"
     }
   ]
 }

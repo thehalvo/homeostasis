@@ -4,7 +4,12 @@
     "description": "Detection rules for common React Native framework errors including component, styling, and general runtime issues",
     "version": "1.0.0",
     "author": "Homeostasis Team",
-    "tags": ["react-native", "mobile", "javascript", "typescript"]
+    "tags": [
+      "react-native",
+      "mobile",
+      "javascript",
+      "typescript"
+    ]
   },
   "rules": [
     {
@@ -17,7 +22,12 @@
       "severity": "error",
       "suggestion": "Check the red screen error details and stack trace for the underlying JavaScript error",
       "description": "React Native red screen error indicating JavaScript runtime exception",
-      "tags": ["react-native", "redbox", "fatal", "runtime"],
+      "tags": [
+        "react-native",
+        "redbox",
+        "fatal",
+        "runtime"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Check the red screen error message and stack trace",
@@ -36,7 +46,12 @@
       "severity": "error",
       "suggestion": "Check component render method for syntax errors, undefined props, or invalid JSX",
       "description": "React Native component rendering failure",
-      "tags": ["react-native", "component", "render", "jsx"],
+      "tags": [
+        "react-native",
+        "component",
+        "render",
+        "jsx"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Verify all props are properly defined and passed",
@@ -55,7 +70,11 @@
       "severity": "error",
       "suggestion": "Invariant violations indicate incorrect React Native API usage or component lifecycle issues",
       "description": "React Native invariant violation error",
-      "tags": ["react-native", "invariant", "api-usage"],
+      "tags": [
+        "react-native",
+        "invariant",
+        "api-usage"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Check the specific invariant violation message",
@@ -74,7 +93,11 @@
       "severity": "error",
       "suggestion": "Check for undefined variables, missing imports, or incorrect property access",
       "description": "Accessing properties of undefined objects in React Native",
-      "tags": ["react-native", "undefined", "property-access"],
+      "tags": [
+        "react-native",
+        "undefined",
+        "property-access"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Add null/undefined checks before property access",
@@ -93,7 +116,11 @@
       "severity": "error",
       "suggestion": "Check component imports and ensure components are properly exported",
       "description": "Invalid React element type error in React Native",
-      "tags": ["react-native", "element-type", "import"],
+      "tags": [
+        "react-native",
+        "element-type",
+        "import"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Verify component import statements",
@@ -112,7 +139,11 @@
       "severity": "error",
       "suggestion": "Wrap all text strings in <Text> components in React Native",
       "description": "Text rendered outside of Text component in React Native",
-      "tags": ["react-native", "text", "component"],
+      "tags": [
+        "react-native",
+        "text",
+        "component"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Wrap all text strings in <Text> components",
@@ -131,7 +162,11 @@
       "severity": "warning",
       "suggestion": "Handle cancelled network requests properly in React Native",
       "description": "Network task cancellation in React Native",
-      "tags": ["react-native", "networking", "cancellation"],
+      "tags": [
+        "react-native",
+        "networking",
+        "cancellation"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check for cancelled network requests",
@@ -150,7 +185,11 @@
       "severity": "warning",
       "suggestion": "Check StyleSheet usage and property names in React Native",
       "description": "React Native StyleSheet error or invalid style property",
-      "tags": ["react-native", "stylesheet", "styling"],
+      "tags": [
+        "react-native",
+        "stylesheet",
+        "styling"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Verify StyleSheet.create() usage",
@@ -169,7 +208,11 @@
       "severity": "error",
       "suggestion": "Check AsyncStorage operations and handle errors properly",
       "description": "React Native AsyncStorage operation error",
-      "tags": ["react-native", "async-storage", "storage"],
+      "tags": [
+        "react-native",
+        "async-storage",
+        "storage"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Add try-catch blocks around AsyncStorage operations",
@@ -188,7 +231,11 @@
       "severity": "warning",
       "suggestion": "Handle Dimensions.get() calls properly and listen for dimension changes",
       "description": "React Native Dimensions API error",
-      "tags": ["react-native", "dimensions", "layout"],
+      "tags": [
+        "react-native",
+        "dimensions",
+        "layout"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check Dimensions.get() parameter ('window' or 'screen')",
@@ -207,7 +254,11 @@
       "severity": "warning",
       "suggestion": "Configure KeyboardAvoidingView properly for your platform",
       "description": "React Native KeyboardAvoidingView configuration error",
-      "tags": ["react-native", "keyboard", "avoiding-view"],
+      "tags": [
+        "react-native",
+        "keyboard",
+        "avoiding-view"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Set correct behavior prop for platform ('padding', 'height', 'position')",
@@ -226,7 +277,11 @@
       "severity": "error",
       "suggestion": "Check FlatList data prop, renderItem function, and key extraction",
       "description": "React Native FlatList rendering error",
-      "tags": ["react-native", "flatlist", "virtualized-list"],
+      "tags": [
+        "react-native",
+        "flatlist",
+        "virtualized-list"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Ensure data prop is an array",
@@ -245,7 +300,11 @@
       "severity": "warning",
       "suggestion": "Check image source URI, format, and add error handling",
       "description": "React Native Image component loading error",
-      "tags": ["react-native", "image", "loading"],
+      "tags": [
+        "react-native",
+        "image",
+        "loading"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Verify image URI is valid and accessible",
@@ -264,7 +323,11 @@
       "severity": "warning",
       "suggestion": "Check Animated API usage and value initialization",
       "description": "React Native Animated API error",
-      "tags": ["react-native", "animated", "animation"],
+      "tags": [
+        "react-native",
+        "animated",
+        "animation"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Initialize Animated.Value with proper initial value",
@@ -283,7 +346,11 @@
       "severity": "warning",
       "suggestion": "Check SafeAreaView usage and platform-specific considerations",
       "description": "React Native SafeAreaView usage error",
-      "tags": ["react-native", "safe-area", "layout"],
+      "tags": [
+        "react-native",
+        "safe-area",
+        "layout"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Import SafeAreaView from react-native",
@@ -292,5 +359,6 @@
         "Handle different safe area behavior on iOS and Android"
       ]
     }
-  ]
+  ],
+  "name": "React Native Common Errors"
 }

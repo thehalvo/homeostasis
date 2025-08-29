@@ -307,6 +307,8 @@ void loop() {
     def test_esp32_task_stack_detection(self):
         """Test ESP32 task stack size detection"""
         code = """
+#include <WiFi.h>  // ESP32 WiFi library
+
 void setup() {
     xTaskCreate(sensorTask, "Sensor", 1024, NULL, 1, NULL);  // Small stack
 }
@@ -319,9 +321,14 @@ void setup() {
     def test_mqtt_callback_error_handling(self):
         """Test MQTT callback error handling detection"""
         code = """
+import paho.mqtt.client as mqtt
+
 def on_message(client, userdata, msg):
     data = json.loads(msg.payload)  # No error handling
     process_data(data)
+    
+client = mqtt.Client()
+client.connect("broker", 1883)
         """
         
         errors = self.plugin.detect_errors(code, "mqtt_handler.py")
@@ -338,6 +345,7 @@ def on_message(client, userdata, msg):
             "temperature": 78.5
         }
         
+        # This is the custom analyze_error method defined at line 317 in iot_plugin.py
         analysis = self.plugin.analyze_error(error_msg, code, "sensor.ino", metrics)
         
         self.assertIsNotNone(analysis)

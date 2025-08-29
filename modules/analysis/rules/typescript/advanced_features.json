@@ -1,4 +1,5 @@
 {
+  "name": "TypeScript Advanced Features",
   "category": "typescript_advanced_features",
   "description": "TypeScript advanced features errors including generics, decorators, and complex types",
   "rules": [
@@ -14,7 +15,12 @@
       "subcategory": "generics",
       "root_cause": "typescript_generic_constraint_error",
       "suggestion": "Fix generic type constraints or provide explicit type arguments",
-      "tags": ["typescript", "generics", "constraints", "inference"],
+      "tags": [
+        "typescript",
+        "generics",
+        "constraints",
+        "inference"
+      ],
       "fix_commands": [
         "Check generic type constraints",
         "Provide explicit type arguments: <Type>",
@@ -25,7 +31,8 @@
       "examples": [
         "Type 'string' does not satisfy the constraint 'number'",
         "Property 'length' in type 'T' is not assignable to the same property in base type"
-      ]
+      ],
+      "description": "Ts Generic Inference"
     },
     {
       "id": "ts_conditional_type_error",
@@ -39,7 +46,12 @@
       "subcategory": "conditional_types",
       "root_cause": "typescript_complex_type_error",
       "suggestion": "Simplify complex conditional types or use type aliases",
-      "tags": ["typescript", "conditional-types", "complexity", "performance"],
+      "tags": [
+        "typescript",
+        "conditional-types",
+        "complexity",
+        "performance"
+      ],
       "fix_commands": [
         "Break down complex conditional types into smaller parts",
         "Use type aliases to simplify complex types",
@@ -50,7 +62,8 @@
       "examples": [
         "Type instantiation is excessively deep and possibly infinite",
         "Expression produces a union type that is too complex to represent"
-      ]
+      ],
+      "description": "Ts Conditional Type"
     },
     {
       "id": "ts_mapped_type_error",
@@ -64,7 +77,12 @@
       "subcategory": "mapped_types",
       "root_cause": "typescript_mapped_type_error",
       "suggestion": "Fix mapped type constraints or key types",
-      "tags": ["typescript", "mapped-types", "keyof", "indexing"],
+      "tags": [
+        "typescript",
+        "mapped-types",
+        "keyof",
+        "indexing"
+      ],
       "fix_commands": [
         "Check keyof constraints in mapped types",
         "Ensure index type is valid for the object",
@@ -75,7 +93,8 @@
       "examples": [
         "Type 'string' cannot be used to index type 'MyObject'",
         "Type 'keyof T' is not assignable to type 'string'"
-      ]
+      ],
+      "description": "Ts Mapped Type"
     },
     {
       "id": "ts_decorator_error",
@@ -89,7 +108,12 @@
       "subcategory": "decorators",
       "root_cause": "typescript_decorator_signature_error",
       "suggestion": "Fix decorator signature or enable experimental decorators",
-      "tags": ["typescript", "decorators", "experimental", "metadata"],
+      "tags": [
+        "typescript",
+        "decorators",
+        "experimental",
+        "metadata"
+      ],
       "fix_commands": [
         "Enable experimentalDecorators in tsconfig.json",
         "Check decorator function signature",
@@ -100,7 +124,8 @@
       "examples": [
         "Unable to resolve signature of class decorator",
         "Unable to resolve signature of parameter decorator"
-      ]
+      ],
+      "description": "Ts Decorator"
     },
     {
       "id": "ts_namespace_error",
@@ -114,7 +139,12 @@
       "subcategory": "namespaces",
       "root_cause": "typescript_namespace_not_found",
       "suggestion": "Import namespace or declare ambient namespace",
-      "tags": ["typescript", "namespaces", "ambient", "declarations"],
+      "tags": [
+        "typescript",
+        "namespaces",
+        "ambient",
+        "declarations"
+      ],
       "fix_commands": [
         "Import namespace with import * as Name",
         "Declare ambient namespace with declare namespace",
@@ -124,7 +154,8 @@
       "examples": [
         "Cannot find namespace 'NodeJS'",
         "Cannot find name 'React'. Did you mean the React namespace?"
-      ]
+      ],
+      "description": "Ts Namespace"
     },
     {
       "id": "ts_intersection_type_error",
@@ -138,7 +169,12 @@
       "subcategory": "intersection_types",
       "root_cause": "typescript_intersection_assignment_error",
       "suggestion": "Ensure object satisfies all types in intersection",
-      "tags": ["typescript", "intersection", "union", "type-composition"],
+      "tags": [
+        "typescript",
+        "intersection",
+        "union",
+        "type-composition"
+      ],
       "fix_commands": [
         "Ensure object has all properties from intersection types",
         "Use type assertion if object actually satisfies intersection",
@@ -148,7 +184,8 @@
       "examples": [
         "Type 'A' is not assignable to type 'A & B'",
         "Property 'prop' is missing in type 'T' but required in type 'T & U'"
-      ]
+      ],
+      "description": "Ts Intersection Type"
     },
     {
       "id": "ts_template_literal_error",
@@ -162,7 +199,12 @@
       "subcategory": "template_literals",
       "root_cause": "typescript_template_literal_constraint_error",
       "suggestion": "Fix template literal type constraints",
-      "tags": ["typescript", "template-literals", "string-manipulation", "constraints"],
+      "tags": [
+        "typescript",
+        "template-literals",
+        "string-manipulation",
+        "constraints"
+      ],
       "fix_commands": [
         "Check template literal pattern constraints",
         "Ensure string literal types match template",
@@ -172,7 +214,8 @@
       "examples": [
         "Type 'hello' does not satisfy the constraint template literal pattern",
         "Template literal type too complex to represent"
-      ]
+      ],
+      "description": "Ts Template Literal"
     },
     {
       "id": "ts_utility_type_error",
@@ -186,7 +229,13 @@
       "subcategory": "utility_types",
       "root_cause": "typescript_utility_type_constraint_error",
       "suggestion": "Fix utility type usage and constraints",
-      "tags": ["typescript", "utility-types", "pick", "omit", "record"],
+      "tags": [
+        "typescript",
+        "utility-types",
+        "pick",
+        "omit",
+        "record"
+      ],
       "fix_commands": [
         "Check utility type parameters",
         "Ensure keys exist on source type for Pick/Omit",
@@ -196,7 +245,8 @@
       "examples": [
         "Type 'invalidKey' does not satisfy the constraint 'keyof MyType'",
         "Type 'string' does not satisfy Record<K, V> constraint"
-      ]
+      ],
+      "description": "Ts Utility Type"
     },
     {
       "id": "ts_recursive_type_error",
@@ -210,7 +260,12 @@
       "subcategory": "recursive_types",
       "root_cause": "typescript_circular_reference_error",
       "suggestion": "Fix circular type references or use proper recursive patterns",
-      "tags": ["typescript", "recursive", "circular", "type-aliases"],
+      "tags": [
+        "typescript",
+        "recursive",
+        "circular",
+        "type-aliases"
+      ],
       "fix_commands": [
         "Break circular references with intermediate types",
         "Use interfaces instead of type aliases for recursive types",
@@ -220,7 +275,8 @@
       "examples": [
         "Type alias 'Node' circularly references itself",
         "Type 'MyType' is not generic but used as one"
-      ]
+      ],
+      "description": "Ts Recursive Type"
     },
     {
       "id": "ts_infer_keyword_error",
@@ -234,7 +290,12 @@
       "subcategory": "infer_keyword",
       "root_cause": "typescript_infer_misuse",
       "suggestion": "Use infer keyword only in conditional type extends clauses",
-      "tags": ["typescript", "infer", "conditional-types", "type-inference"],
+      "tags": [
+        "typescript",
+        "infer",
+        "conditional-types",
+        "type-inference"
+      ],
       "fix_commands": [
         "Move infer to extends clause of conditional type",
         "Use proper conditional type pattern: T extends infer U ? ... : ...",
@@ -244,7 +305,8 @@
       "examples": [
         "'infer' declarations are only permitted in the 'extends' clause of a conditional type",
         "Cannot use 'infer' outside conditional type"
-      ]
+      ],
+      "description": "Ts Infer Keyword"
     }
   ]
 }

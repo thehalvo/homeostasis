@@ -212,8 +212,7 @@
       "source": "built_in",
       "rule_type": "error_detection",
       "dependencies": []
-    }
-  ],
+    },
     {
       "id": "zig_comptime_switch_not_exhaustive",
       "pattern": "error: switch must handle all possibilities",

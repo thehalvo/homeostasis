@@ -1,4 +1,5 @@
 {
+  "name": "Capacitor_cordova Capacitor Cordova Platform Errors",
   "metadata": {
     "description": "Platform-specific build and deployment errors for Capacitor/Cordova apps",
     "framework": "capacitor_cordova",
@@ -23,7 +24,14 @@
         "Update Gradle wrapper version",
         "Check plugin compatibility with Android"
       ],
-      "tags": ["capacitor", "cordova", "android", "gradle", "build"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "android",
+        "gradle",
+        "build"
+      ],
+      "description": "Android Gradle Build"
     },
     {
       "id": "android_sdk_error",
@@ -41,7 +49,14 @@
         "Update Android SDK and build tools",
         "Check SDK path configuration"
       ],
-      "tags": ["capacitor", "cordova", "android", "sdk", "environment"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "android",
+        "sdk",
+        "environment"
+      ],
+      "description": "Android Sdk"
     },
     {
       "id": "android_manifest_error",
@@ -59,7 +74,14 @@
         "Resolve manifest merger conflicts",
         "Check activity declarations"
       ],
-      "tags": ["capacitor", "cordova", "android", "manifest", "permissions"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "android",
+        "manifest",
+        "permissions"
+      ],
+      "description": "Android Manifest"
     },
     {
       "id": "android_minsdkversion_error",
@@ -77,7 +99,14 @@
         "Update target and compile SDK versions",
         "Test on appropriate Android version"
       ],
-      "tags": ["capacitor", "cordova", "android", "sdk-version", "api-level"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "android",
+        "sdk-version",
+        "api-level"
+      ],
+      "description": "Android Minsdkversion"
     },
     {
       "id": "ios_xcode_build_error",
@@ -95,7 +124,14 @@
         "Check iOS deployment target version",
         "Sync Capacitor: npx cap sync ios"
       ],
-      "tags": ["capacitor", "cordova", "ios", "xcode", "code-signing"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "ios",
+        "xcode",
+        "code-signing"
+      ],
+      "description": "Ios Xcode Build"
     },
     {
       "id": "ios_cocoapods_error",
@@ -113,7 +149,14 @@
         "Clean pods: pod deintegrate && pod install",
         "Check Podfile syntax and dependencies"
       ],
-      "tags": ["capacitor", "cordova", "ios", "cocoapods", "dependencies"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "ios",
+        "cocoapods",
+        "dependencies"
+      ],
+      "description": "Ios Cocoapods"
     },
     {
       "id": "ios_deployment_target_error",
@@ -131,7 +174,14 @@
         "Update plugin iOS version requirements",
         "Test on appropriate iOS version"
       ],
-      "tags": ["capacitor", "cordova", "ios", "deployment-target", "version"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "ios",
+        "deployment-target",
+        "version"
+      ],
+      "description": "Ios Deployment Target"
     },
     {
       "id": "ios_simulator_error",
@@ -149,7 +199,14 @@
         "Check simulator device compatibility",
         "Try different simulator device"
       ],
-      "tags": ["capacitor", "cordova", "ios", "simulator", "testing"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "ios",
+        "simulator",
+        "testing"
+      ],
+      "description": "Ios Simulator"
     },
     {
       "id": "capacitor_sync_error",
@@ -167,7 +224,13 @@
         "Clean and reinstall: npm install && npx cap sync",
         "Check platform-specific configurations"
       ],
-      "tags": ["capacitor", "sync", "configuration", "platform"]
+      "tags": [
+        "capacitor",
+        "sync",
+        "configuration",
+        "platform"
+      ],
+      "description": "Capacitor Sync"
     },
     {
       "id": "cordova_platform_add_error",
@@ -185,7 +248,13 @@
         "Clear Cordova cache: cordova clean",
         "Check internet connectivity for platform download"
       ],
-      "tags": ["cordova", "platform", "installation", "build"]
+      "tags": [
+        "cordova",
+        "platform",
+        "installation",
+        "build"
+      ],
+      "description": "Cordova Platform Add"
     },
     {
       "id": "webview_version_error",
@@ -203,7 +272,14 @@
         "Test on different devices/WebView versions",
         "Consider WebView compatibility settings"
       ],
-      "tags": ["capacitor", "cordova", "webview", "compatibility", "android"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "webview",
+        "compatibility",
+        "android"
+      ],
+      "description": "Webview Version"
     },
     {
       "id": "build_tools_version_error",
@@ -221,7 +297,14 @@
         "Check available build tools versions",
         "Update Android SDK and tools"
       ],
-      "tags": ["capacitor", "cordova", "android", "build-tools", "sdk"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "android",
+        "build-tools",
+        "sdk"
+      ],
+      "description": "Build Tools Version"
     },
     {
       "id": "java_version_error",
@@ -239,7 +322,14 @@
         "Check Java version: java -version",
         "Update Android Studio JDK settings"
       ],
-      "tags": ["capacitor", "cordova", "java", "jdk", "environment"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "java",
+        "jdk",
+        "environment"
+      ],
+      "description": "Version"
     },
     {
       "id": "node_version_error",
@@ -257,7 +347,14 @@
         "Check version requirements in package.json",
         "Use nvm to manage Node versions"
       ],
-      "tags": ["capacitor", "cordova", "node", "npm", "version"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "node",
+        "npm",
+        "version"
+      ],
+      "description": "Node Version"
     },
     {
       "id": "native_dependencies_error",
@@ -275,7 +372,14 @@
         "Rebuild native modules if needed",
         "Verify platform-specific requirements"
       ],
-      "tags": ["capacitor", "cordova", "native", "dependencies", "modules"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "native",
+        "dependencies",
+        "modules"
+      ],
+      "description": "Native Dependencies"
     },
     {
       "id": "memory_limit_error",
@@ -293,7 +397,14 @@
         "Close other applications during build",
         "Consider incremental builds"
       ],
-      "tags": ["capacitor", "cordova", "memory", "build", "performance"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "memory",
+        "build",
+        "performance"
+      ],
+      "description": "Memory Limit"
     }
   ]
 }

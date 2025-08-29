@@ -1,4 +1,5 @@
 {
+  "name": "Kotlin Kotlin Room Errors",
   "description": "Room database and persistence-specific errors",
   "version": "1.0.0",
   "rules": [

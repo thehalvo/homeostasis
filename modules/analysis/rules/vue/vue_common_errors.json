@@ -23,10 +23,16 @@
         "Register in components: { MyComponent }",
         "Check component name spelling and case sensitivity"
       ],
-      "tags": ["vue", "components", "import", "registration"],
+      "tags": [
+        "vue",
+        "components",
+        "import",
+        "registration"
+      ],
       "examples": [
         "Failed to resolve component: MyButton"
-      ]
+      ],
+      "description": "Vue Component Not Found"
     },
     {
       "id": "vue_template_compile_error",
@@ -44,10 +50,16 @@
         "Ensure proper closing tags",
         "Check expression syntax in bindings"
       ],
-      "tags": ["vue", "template", "compilation", "syntax"],
+      "tags": [
+        "vue",
+        "template",
+        "compilation",
+        "syntax"
+      ],
       "examples": [
         "Template compilation error: invalid expression"
-      ]
+      ],
+      "description": "Vue Template Compile"
     },
     {
       "id": "vue_prop_validation_failed",
@@ -65,10 +77,16 @@
         "Add proper prop validation",
         "Use default values for optional props"
       ],
-      "tags": ["vue", "props", "validation", "types"],
+      "tags": [
+        "vue",
+        "props",
+        "validation",
+        "types"
+      ],
       "examples": [
         "Invalid prop: type check failed for prop \"count\". Expected Number, got String."
-      ]
+      ],
+      "description": "Vue Prop Validation Failed"
     },
     {
       "id": "vue_duplicate_keys",
@@ -85,10 +103,16 @@
         "Use item.id or unique identifier as key",
         "Avoid using array index as key if list order changes"
       ],
-      "tags": ["vue", "v-for", "keys", "template"],
+      "tags": [
+        "vue",
+        "v-for",
+        "keys",
+        "template"
+      ],
       "examples": [
         "Duplicate keys detected: '0'. This may cause update errors."
-      ]
+      ],
+      "description": "Vue Duplicate Keys"
     },
     {
       "id": "vue_reactivity_lost",
@@ -106,10 +130,16 @@
         "Avoid destructuring reactive objects",
         "Use toRef() or toRefs() when needed"
       ],
-      "tags": ["vue", "reactivity", "ref", "reactive"],
+      "tags": [
+        "vue",
+        "reactivity",
+        "ref",
+        "reactive"
+      ],
       "examples": [
         "Reactivity lost after destructuring"
-      ]
+      ],
+      "description": "Vue Reactivity Lost"
     },
     {
       "id": "vue_lifecycle_error",
@@ -127,10 +157,16 @@
         "Ensure proper cleanup in beforeDestroy/unmounted",
         "Validate component state"
       ],
-      "tags": ["vue", "lifecycle", "hooks", "error-handling"],
+      "tags": [
+        "vue",
+        "lifecycle",
+        "hooks",
+        "error-handling"
+      ],
       "examples": [
         "Error in mounted hook: \"Cannot read property of undefined\""
-      ]
+      ],
+      "description": "Vue Lifecycle"
     },
     {
       "id": "vue_event_handler_error",
@@ -148,10 +184,16 @@
         "Validate event object usage",
         "Ensure proper this binding"
       ],
-      "tags": ["vue", "events", "handlers", "error-handling"],
+      "tags": [
+        "vue",
+        "events",
+        "handlers",
+        "error-handling"
+      ],
       "examples": [
         "Error in event handler for \"click\""
-      ]
+      ],
+      "description": "Vue Event Handler"
     },
     {
       "id": "vue_directive_error",
@@ -169,10 +211,15 @@
         "Validate directive arguments and modifiers",
         "Ensure proper directive implementation"
       ],
-      "tags": ["vue", "directives", "custom-directives"],
+      "tags": [
+        "vue",
+        "directives",
+        "custom-directives"
+      ],
       "examples": [
         "Directive v-my-directive error: binding value required"
-      ]
+      ],
+      "description": "Vue Directive"
     },
     {
       "id": "vue_memory_leak",
@@ -190,10 +237,16 @@
         "Unsubscribe from observables",
         "Clean up DOM references"
       ],
-      "tags": ["vue", "memory-leak", "cleanup", "performance"],
+      "tags": [
+        "vue",
+        "memory-leak",
+        "cleanup",
+        "performance"
+      ],
       "examples": [
         "Memory leak detected: event listeners not removed"
-      ]
+      ],
+      "description": "Vue Memory Leak"
     },
     {
       "id": "vue_hydration_mismatch",
@@ -211,10 +264,17 @@
         "Use <ClientOnly> wrapper for client-specific components",
         "Check for async data loading differences"
       ],
-      "tags": ["vue", "ssr", "hydration", "nuxt"],
+      "tags": [
+        "vue",
+        "ssr",
+        "hydration",
+        "nuxt"
+      ],
       "examples": [
         "Hydration failed because the initial UI does not match"
-      ]
+      ],
+      "description": "Vue Hydration Mismatch"
     }
-  ]
+  ],
+  "name": "Vue Common Errors"
 }

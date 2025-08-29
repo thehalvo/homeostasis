@@ -1,4 +1,5 @@
 {
+  "name": "Flutter Flutter Performance Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "flutter",
@@ -22,12 +23,18 @@
         "Use const constructors where possible",
         "Consider using FutureBuilder or StreamBuilder for async operations"
       ],
-      "tags": ["flutter", "performance", "build", "optimization"],
+      "tags": [
+        "flutter",
+        "performance",
+        "build",
+        "optimization"
+      ],
       "examples": [
         "Heavy calculations in build method",
         "File I/O operations in build",
         "Network requests in build"
-      ]
+      ],
+      "description": "Flutter Build Method Expensive Operations"
     },
     {
       "id": "flutter_list_performance_issue",
@@ -45,12 +52,18 @@
         "Implement lazy loading for infinite lists",
         "Use AutomaticKeepAliveClientMixin for complex list items"
       ],
-      "tags": ["flutter", "performance", "listview", "scrolling"],
+      "tags": [
+        "flutter",
+        "performance",
+        "listview",
+        "scrolling"
+      ],
       "examples": [
         "ListView with hundreds of children",
         "Complex widgets in list items",
         "Missing itemExtent optimization"
-      ]
+      ],
+      "description": "Flutter List Performance Issue"
     },
     {
       "id": "flutter_image_memory_leak",
@@ -68,12 +81,18 @@
         "Use FadeInImage or cached_network_image for better memory management",
         "Resize images to appropriate sizes"
       ],
-      "tags": ["flutter", "performance", "images", "memory"],
+      "tags": [
+        "flutter",
+        "performance",
+        "images",
+        "memory"
+      ],
       "examples": [
         "Large images not optimized",
         "Image cache not managed",
         "Multiple high-resolution images"
-      ]
+      ],
+      "description": "Flutter Image Memory Leak"
     },
     {
       "id": "flutter_animation_performance",
@@ -91,12 +110,18 @@
         "Use RepaintBoundary to isolate animation layers",
         "Avoid animating expensive properties like shadows"
       ],
-      "tags": ["flutter", "performance", "animations", "fps"],
+      "tags": [
+        "flutter",
+        "performance",
+        "animations",
+        "fps"
+      ],
       "examples": [
         "Heavy widgets in animation",
         "Multiple simultaneous animations",
         "Expensive paint operations"
-      ]
+      ],
+      "description": "Flutter Animation Performance"
     },
     {
       "id": "flutter_widget_rebuilds_excessive",
@@ -114,12 +139,18 @@
         "Use ValueListenableBuilder for granular updates",
         "Implement shouldRebuild logic in custom widgets"
       ],
-      "tags": ["flutter", "performance", "rebuilds", "optimization"],
+      "tags": [
+        "flutter",
+        "performance",
+        "rebuilds",
+        "optimization"
+      ],
       "examples": [
         "Entire page rebuilding for small changes",
         "Non-const widgets in static content",
         "Large widgets without const constructors"
-      ]
+      ],
+      "description": "Flutter Widget Rebuilds Excessive"
     },
     {
       "id": "flutter_futurebuilder_recreation",
@@ -137,12 +168,18 @@
         "Use late final Future<T> for delayed initialization",
         "Cache Future results when appropriate"
       ],
-      "tags": ["flutter", "performance", "futurebuilder", "async"],
+      "tags": [
+        "flutter",
+        "performance",
+        "futurebuilder",
+        "async"
+      ],
       "examples": [
         "Future created in build method",
         "FutureBuilder with inline Future",
         "HTTP requests recreated on rebuild"
-      ]
+      ],
+      "description": "Flutter Futurebuilder Recreation"
     },
     {
       "id": "flutter_streambuilder_multiple_listeners",
@@ -160,12 +197,18 @@
         "Cache stream data when appropriate",
         "Close streams properly to prevent memory leaks"
       ],
-      "tags": ["flutter", "performance", "streams", "broadcast"],
+      "tags": [
+        "flutter",
+        "performance",
+        "streams",
+        "broadcast"
+      ],
       "examples": [
         "Multiple StreamBuilders on same stream",
         "Stream not properly closed",
         "Expensive stream operations"
-      ]
+      ],
+      "description": "Flutter Streambuilder Multiple Listeners"
     },
     {
       "id": "flutter_layout_performance",
@@ -183,12 +226,18 @@
         "Optimize nested scrolling widgets",
         "Use specific dimensions instead of MainAxisSize.min"
       ],
-      "tags": ["flutter", "performance", "layout", "constraints"],
+      "tags": [
+        "flutter",
+        "performance",
+        "layout",
+        "constraints"
+      ],
       "examples": [
         "Nested IntrinsicHeight widgets",
         "Complex constraint calculations",
         "Multiple scrollable widgets"
-      ]
+      ],
+      "description": "Flutter Layout Performance"
     },
     {
       "id": "flutter_dispose_not_called",
@@ -206,12 +255,18 @@
         "Cancel timers and streams in dispose()",
         "Close sinks and subscriptions"
       ],
-      "tags": ["flutter", "performance", "disposal", "memory-leaks"],
+      "tags": [
+        "flutter",
+        "performance",
+        "disposal",
+        "memory-leaks"
+      ],
       "examples": [
         "TextEditingController not disposed",
         "AnimationController not disposed",
         "StreamSubscription not canceled"
-      ]
+      ],
+      "description": "Flutter Dispose Not Called"
     },
     {
       "id": "flutter_large_widget_tree",
@@ -229,12 +284,18 @@
         "Combine multiple Container/Padding widgets",
         "Use Slivers for complex scrolling layouts"
       ],
-      "tags": ["flutter", "performance", "widget-tree", "architecture"],
+      "tags": [
+        "flutter",
+        "performance",
+        "widget-tree",
+        "architecture"
+      ],
       "examples": [
         "20+ levels of nested widgets",
         "Large single-method widget builds",
         "Repeated widget patterns"
-      ]
+      ],
+      "description": "Flutter Large Widget Tree"
     }
   ]
 }

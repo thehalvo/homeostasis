@@ -13,12 +13,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "syntax", "component"],
+      "tags": [
+        "svelte",
+        "syntax",
+        "component"
+      ],
       "fix_commands": [
         "Check for unclosed tags in template",
         "Ensure proper script and style tag placement",
         "Validate HTML structure in component"
-      ]
+      ],
+      "description": "Svelte Component Syntax"
     },
     {
       "id": "svelte_undefined_component",
@@ -30,12 +35,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "component", "import"],
+      "tags": [
+        "svelte",
+        "component",
+        "import"
+      ],
       "fix_commands": [
         "Import the component: import MyComponent from './MyComponent.svelte'",
         "Check component file path and name",
         "Ensure component is exported properly"
-      ]
+      ],
+      "description": "Svelte Undefined Component"
     },
     {
       "id": "svelte_invalid_binding",
@@ -47,12 +57,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "binding", "two-way"],
+      "tags": [
+        "svelte",
+        "binding",
+        "two-way"
+      ],
       "fix_commands": [
         "Use bind: directive for supported properties",
         "Check if the element/component supports the binding",
         "Ensure bound variable is declared with let"
-      ]
+      ],
+      "description": "Svelte Invalid Binding"
     },
     {
       "id": "svelte_slot_error",
@@ -64,12 +79,17 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "slot", "composition"],
+      "tags": [
+        "svelte",
+        "slot",
+        "composition"
+      ],
       "fix_commands": [
         "Define slots in child component with <slot></slot>",
         "Use slot=\"name\" for named slots",
         "Check slot name spelling and availability"
-      ]
+      ],
+      "description": "Svelte Slot"
     },
     {
       "id": "svelte_action_error",
@@ -81,12 +101,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "action", "directive"],
+      "tags": [
+        "svelte",
+        "action",
+        "directive"
+      ],
       "fix_commands": [
         "Define action function that returns update and destroy methods",
         "Import action before using with use: directive",
         "Check action function signature"
-      ]
+      ],
+      "description": "Svelte Action"
     },
     {
       "id": "svelte_context_error",
@@ -98,12 +123,17 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "context", "api"],
+      "tags": [
+        "svelte",
+        "context",
+        "api"
+      ],
       "fix_commands": [
         "Use setContext in parent component",
         "Use getContext in child component",
         "Check context key consistency"
-      ]
+      ],
+      "description": "Svelte Context"
     }
   ]
 }

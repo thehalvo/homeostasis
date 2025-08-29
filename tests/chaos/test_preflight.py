@@ -74,7 +74,20 @@ class TestPreflightChecks:
         
         # Check file descriptor limits
         soft_limit, hard_limit = resource.getrlimit(resource.RLIMIT_NOFILE)
-        assert soft_limit >= 1024, f"File descriptor limit too low: {soft_limit}"
+        print(f"DEBUG: Current file descriptor limits - soft: {soft_limit}, hard: {hard_limit}")
+        
+        # Try to increase the soft limit if it's too low
+        if soft_limit < 1024:
+            print(f"DEBUG: Attempting to increase soft limit from {soft_limit} to 1024")
+            try:
+                new_limit = min(1024, hard_limit)  # Can't exceed hard limit
+                resource.setrlimit(resource.RLIMIT_NOFILE, (new_limit, hard_limit))
+                soft_limit, hard_limit = resource.getrlimit(resource.RLIMIT_NOFILE)
+                print(f"DEBUG: Updated file descriptor limits - soft: {soft_limit}, hard: {hard_limit}")
+            except Exception as e:
+                print(f"DEBUG: Failed to increase file descriptor limit: {e}")
+        
+        assert soft_limit >= 1024, f"File descriptor limit too low: {soft_limit} (expected >= 1024)"
         
         # Check process limits
         if hasattr(resource, 'RLIMIT_NPROC'):

@@ -4,7 +4,12 @@
     "description": "Detection rules for React Native performance issues, memory leaks, and optimization problems",
     "version": "1.0.0",
     "author": "Homeostasis Team",
-    "tags": ["react-native", "performance", "memory", "optimization"]
+    "tags": [
+      "react-native",
+      "performance",
+      "memory",
+      "optimization"
+    ]
   },
   "rules": [
     {
@@ -17,7 +22,12 @@
       "severity": "warning",
       "suggestion": "Optimize JavaScript execution to avoid blocking the main thread",
       "description": "React Native JavaScript thread blocking the main thread",
-      "tags": ["react-native", "performance", "js-thread", "blocking"],
+      "tags": [
+        "react-native",
+        "performance",
+        "js-thread",
+        "blocking"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Use InteractionManager.runAfterInteractions() for non-critical tasks",
@@ -37,7 +47,12 @@
       "severity": "warning",
       "suggestion": "Check for memory leaks in event listeners, timers, and component cleanup",
       "description": "React Native memory leak detection",
-      "tags": ["react-native", "memory", "leak", "cleanup"],
+      "tags": [
+        "react-native",
+        "memory",
+        "leak",
+        "cleanup"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Clean up event listeners in useEffect cleanup",
@@ -57,7 +72,12 @@
       "severity": "warning",
       "suggestion": "Optimize FlatList performance with proper configuration",
       "description": "React Native large list performance issue",
-      "tags": ["react-native", "flatlist", "performance", "virtualization"],
+      "tags": [
+        "react-native",
+        "flatlist",
+        "performance",
+        "virtualization"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Use getItemLayout for consistent item heights",
@@ -77,7 +97,12 @@
       "severity": "warning",
       "suggestion": "Optimize image loading and caching to reduce memory usage",
       "description": "React Native image memory usage issue",
-      "tags": ["react-native", "image", "memory", "cache"],
+      "tags": [
+        "react-native",
+        "image",
+        "memory",
+        "cache"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Use appropriate image sizes and formats",
@@ -97,7 +122,12 @@
       "severity": "warning",
       "suggestion": "Optimize animations for better performance",
       "description": "React Native animation performance issue",
-      "tags": ["react-native", "animation", "performance", "frames"],
+      "tags": [
+        "react-native",
+        "animation",
+        "performance",
+        "frames"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Use useNativeDriver: true for Animated API",
@@ -117,7 +147,12 @@
       "severity": "warning",
       "suggestion": "Reduce bridge communication for better performance",
       "description": "React Native bridge communication performance issue",
-      "tags": ["react-native", "bridge", "performance", "communication"],
+      "tags": [
+        "react-native",
+        "bridge",
+        "performance",
+        "communication"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Batch bridge calls when possible",
@@ -137,7 +172,12 @@
       "severity": "warning",
       "suggestion": "Optimize bundle size to improve app startup time",
       "description": "React Native large bundle size affecting performance",
-      "tags": ["react-native", "bundle-size", "performance", "startup"],
+      "tags": [
+        "react-native",
+        "bundle-size",
+        "performance",
+        "startup"
+      ],
       "reliability": "low",
       "fix_commands": [
         "Enable code splitting and lazy loading",
@@ -157,7 +197,12 @@
       "severity": "warning",
       "suggestion": "Optimize app startup time and initial load performance",
       "description": "React Native app startup performance issue",
-      "tags": ["react-native", "startup", "performance", "launch"],
+      "tags": [
+        "react-native",
+        "startup",
+        "performance",
+        "launch"
+      ],
       "reliability": "low",
       "fix_commands": [
         "Reduce initial bundle size",
@@ -177,7 +222,12 @@
       "severity": "warning",
       "suggestion": "Optimize navigation performance and screen transitions",
       "description": "React Native navigation performance issue",
-      "tags": ["react-native", "navigation", "performance", "transitions"],
+      "tags": [
+        "react-native",
+        "navigation",
+        "performance",
+        "transitions"
+      ],
       "reliability": "low",
       "fix_commands": [
         "Use lazy loading for navigation screens",
@@ -197,7 +247,12 @@
       "severity": "warning",
       "suggestion": "Optimize state management and reduce unnecessary re-renders",
       "description": "React Native state management performance issue",
-      "tags": ["react-native", "state-management", "performance", "re-renders"],
+      "tags": [
+        "react-native",
+        "state-management",
+        "performance",
+        "re-renders"
+      ],
       "reliability": "low",
       "fix_commands": [
         "Use React.memo to prevent unnecessary re-renders",
@@ -217,7 +272,12 @@
       "severity": "warning",
       "suggestion": "Optimize network requests and API call performance",
       "description": "React Native network request performance issue",
-      "tags": ["react-native", "network", "performance", "api"],
+      "tags": [
+        "react-native",
+        "network",
+        "performance",
+        "api"
+      ],
       "reliability": "low",
       "fix_commands": [
         "Implement request caching strategies",
@@ -237,7 +297,12 @@
       "severity": "info",
       "suggestion": "Check Hermes JavaScript engine configuration and optimization",
       "description": "React Native Hermes JavaScript engine performance consideration",
-      "tags": ["react-native", "hermes", "performance", "javascript-engine"],
+      "tags": [
+        "react-native",
+        "hermes",
+        "performance",
+        "javascript-engine"
+      ],
       "reliability": "low",
       "fix_commands": [
         "Enable Hermes in android/app/build.gradle",
@@ -247,5 +312,6 @@
         "Update React Native version for Hermes improvements"
       ]
     }
-  ]
+  ],
+  "name": "React Native Performance Errors"
 }

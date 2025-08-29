@@ -1,4 +1,5 @@
 {
+  "name": "Swift Swift Swiftui Errors",
   "version": "1.0.0",
   "description": "SwiftUI framework error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Avoid modifying @State during view updates - use DispatchQueue.main.async or view lifecycle methods",
       "root_cause": "swift_swiftui_state_error",
-      "tags": ["swift", "swiftui", "state", "update"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "state",
+        "update"
+      ],
+      "description": "Swiftui State Update During View"
     },
     {
       "id": "swiftui_preview_crash",
@@ -24,7 +31,13 @@
       "severity": "medium",
       "suggestion": "SwiftUI Preview crash - check preview data and avoid complex initialization in previews",
       "root_cause": "swift_swiftui_preview_error",
-      "tags": ["swift", "swiftui", "preview", "xcode"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "preview",
+        "xcode"
+      ],
+      "description": "Swiftui Preview Crash"
     },
     {
       "id": "swiftui_binding_unwrap_error",
@@ -36,7 +49,13 @@
       "severity": "medium",
       "suggestion": "Binding to optional value - use Binding<Optional> or unwrap safely before binding",
       "root_cause": "swift_swiftui_binding_optional",
-      "tags": ["swift", "swiftui", "binding", "optional"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "binding",
+        "optional"
+      ],
+      "description": "Swiftui Binding Unwrap"
     },
     {
       "id": "swiftui_environment_object_missing",
@@ -48,7 +67,13 @@
       "severity": "high",
       "suggestion": "EnvironmentObject not provided - add .environmentObject() to parent view",
       "root_cause": "swift_swiftui_environment_object_missing",
-      "tags": ["swift", "swiftui", "environment", "observable"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "environment",
+        "observable"
+      ],
+      "description": "Swiftui Environment Object Missing"
     },
     {
       "id": "swiftui_list_id_uniqueness",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "List items must have unique IDs - ensure id values are unique across all items",
       "root_cause": "swift_swiftui_duplicate_id",
-      "tags": ["swift", "swiftui", "list", "id"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "list",
+        "id"
+      ],
+      "description": "Swiftui List Id Uniqueness"
     },
     {
       "id": "swiftui_navigation_link_error",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "NavigationLink destination is nil - ensure destination view is properly initialized",
       "root_cause": "swift_swiftui_navigation_nil_destination",
-      "tags": ["swift", "swiftui", "navigation", "link"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "navigation",
+        "link"
+      ],
+      "description": "Swiftui Navigation Link"
     },
     {
       "id": "swiftui_sheet_presentation_error",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Sheet presentation error - check binding state and content initialization",
       "root_cause": "swift_swiftui_sheet_error",
-      "tags": ["swift", "swiftui", "sheet", "presentation"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "sheet",
+        "presentation"
+      ],
+      "description": "Swiftui Sheet Presentation"
     },
     {
       "id": "swiftui_geometry_reader_error",
@@ -96,7 +139,13 @@
       "severity": "low",
       "suggestion": "GeometryReader size issue - ensure parent provides valid size constraints",
       "root_cause": "swift_swiftui_geometry_error",
-      "tags": ["swift", "swiftui", "geometry", "layout"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "geometry",
+        "layout"
+      ],
+      "description": "Swiftui Geometry Reader"
     },
     {
       "id": "swiftui_animation_state_error",
@@ -108,7 +157,13 @@
       "severity": "medium",
       "suggestion": "Animation state change during view update - use withAnimation or explicit state management",
       "root_cause": "swift_swiftui_animation_state_error",
-      "tags": ["swift", "swiftui", "animation", "state"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "animation",
+        "state"
+      ],
+      "description": "Swiftui Animation State"
     },
     {
       "id": "swiftui_tab_view_selection_error",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "TabView selection value doesn't match any tab tags - ensure selection matches available tabs",
       "root_cause": "swift_swiftui_tab_selection_error",
-      "tags": ["swift", "swiftui", "tabview", "selection"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "tabview",
+        "selection"
+      ],
+      "description": "Swiftui Tab View Selection"
     },
     {
       "id": "swiftui_observable_object_update",
@@ -132,7 +193,13 @@
       "severity": "medium",
       "suggestion": "ObservableObject updates must be on main thread - use @MainActor or DispatchQueue.main",
       "root_cause": "swift_swiftui_observable_main_thread",
-      "tags": ["swift", "swiftui", "observable", "main_thread"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "observable",
+        "main_thread"
+      ],
+      "description": "Swiftui Observable Object Update"
     },
     {
       "id": "swiftui_view_modifier_order",
@@ -144,7 +211,13 @@
       "severity": "low",
       "suggestion": "View modifier order affects behavior - review modifier chain for correct precedence",
       "root_cause": "swift_swiftui_modifier_order",
-      "tags": ["swift", "swiftui", "modifier", "order"]
+      "tags": [
+        "swift",
+        "swiftui",
+        "modifier",
+        "order"
+      ],
+      "description": "Swiftui View Modifier Order"
     }
   ]
 }

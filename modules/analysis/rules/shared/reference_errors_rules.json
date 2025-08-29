@@ -13,7 +13,13 @@
       ],
       "root_cause": "null_pointer_dereference",
       "suggestion": "Check if the object is null/nil before accessing its properties or methods",
-      "applicable_languages": ["java", "go", "python", "javascript", "csharp"],
+      "applicable_languages": [
+        "java",
+        "go",
+        "python",
+        "javascript",
+        "csharp"
+      ],
       "language_specific_patterns": {
         "java": "(?:java\\.lang\\.NullPointerException)",
         "javascript": "(?:TypeError: Cannot read propert(?:y|ies) '[^']+' of (null|undefined))",
@@ -30,7 +36,12 @@
       },
       "confidence": "high",
       "severity": "high",
-      "tags": ["null", "nil", "reference", "pointer"],
+      "tags": [
+        "null",
+        "nil",
+        "reference",
+        "pointer"
+      ],
       "examples": {
         "java": {
           "exception_class": "java.lang.NullPointerException",
@@ -68,7 +79,12 @@
       ],
       "root_cause": "undefined_reference",
       "suggestion": "Ensure the variable is defined and accessible in the current scope",
-      "applicable_languages": ["python", "javascript", "go", "ruby"],
+      "applicable_languages": [
+        "python",
+        "javascript",
+        "go",
+        "ruby"
+      ],
       "language_specific_patterns": {
         "python": "(?:NameError: name '([^']+)' is not defined)",
         "javascript": "(?:ReferenceError: ([^\\s]+) is not defined)",
@@ -83,7 +99,12 @@
       },
       "confidence": "high",
       "severity": "medium",
-      "tags": ["variable", "reference", "undefined", "name"],
+      "tags": [
+        "variable",
+        "reference",
+        "undefined",
+        "name"
+      ],
       "examples": {
         "python": {
           "exception_type": "NameError",
@@ -102,5 +123,6 @@
         }
       }
     }
-  ]
+  ],
+  "name": "Reference Errors Rules"
 }

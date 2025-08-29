@@ -1,4 +1,5 @@
 {
+  "name": "Clojure Syntax Errors",
   "rules": [
     {
       "id": "clojure_reader_error",
@@ -15,9 +16,18 @@
       "confidence": 0.95,
       "severity": "high",
       "category": "syntax",
-      "tags": ["reader", "delimiters", "parentheses"],
+      "tags": [
+        "reader",
+        "delimiters",
+        "parentheses"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_invalid_token",
@@ -34,9 +44,18 @@
       "confidence": 0.9,
       "severity": "high",
       "category": "syntax",
-      "tags": ["reader", "tokens", "symbols"],
+      "tags": [
+        "reader",
+        "tokens",
+        "symbols"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_unable_to_resolve",
@@ -53,9 +72,18 @@
       "confidence": 0.95,
       "severity": "high",
       "category": "syntax",
-      "tags": ["symbols", "resolution", "namespaces"],
+      "tags": [
+        "symbols",
+        "resolution",
+        "namespaces"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_cannot_take_value",
@@ -72,9 +100,18 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "syntax",
-      "tags": ["functions", "calls", "evaluation"],
+      "tags": [
+        "functions",
+        "calls",
+        "evaluation"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_def_not_allowed",
@@ -91,9 +128,18 @@
       "confidence": 0.95,
       "severity": "medium",
       "category": "syntax",
-      "tags": ["def", "bindings", "scope"],
+      "tags": [
+        "def",
+        "bindings",
+        "scope"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_duplicate_key",
@@ -110,9 +156,18 @@
       "confidence": 0.95,
       "severity": "medium",
       "category": "syntax",
-      "tags": ["maps", "keys", "literals"],
+      "tags": [
+        "maps",
+        "keys",
+        "literals"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_odd_forms",
@@ -129,9 +184,18 @@
       "confidence": 0.95,
       "severity": "medium",
       "category": "syntax",
-      "tags": ["maps", "literals", "key-value"],
+      "tags": [
+        "maps",
+        "literals",
+        "key-value"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_invalid_escape",
@@ -148,9 +212,18 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "syntax",
-      "tags": ["strings", "escape", "literals"],
+      "tags": [
+        "strings",
+        "escape",
+        "literals"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_invalid_regex",
@@ -167,9 +240,18 @@
       "confidence": 0.85,
       "severity": "medium",
       "category": "syntax",
-      "tags": ["regex", "patterns", "validation"],
+      "tags": [
+        "regex",
+        "patterns",
+        "validation"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_namespace_not_found",
@@ -186,9 +268,18 @@
       "confidence": 0.9,
       "severity": "high",
       "category": "syntax",
-      "tags": ["namespaces", "classpath", "files"],
+      "tags": [
+        "namespaces",
+        "classpath",
+        "files"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_circular_dependency",
@@ -205,9 +296,18 @@
       "confidence": 0.95,
       "severity": "high",
       "category": "syntax",
-      "tags": ["namespaces", "dependencies", "circular"],
+      "tags": [
+        "namespaces",
+        "dependencies",
+        "circular"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_invalid_keyword",
@@ -224,9 +324,18 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "syntax",
-      "tags": ["keywords", "syntax", "naming"],
+      "tags": [
+        "keywords",
+        "syntax",
+        "naming"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     }
   ]
 }

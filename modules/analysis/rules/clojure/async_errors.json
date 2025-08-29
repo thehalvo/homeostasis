@@ -1,4 +1,5 @@
 {
+  "name": "Clojure Async Errors",
   "rules": [
     {
       "id": "async_blocking_in_go",
@@ -15,9 +16,20 @@
       "confidence": 0.95,
       "severity": "high",
       "category": "async",
-      "tags": ["core.async", "go", "blocking"],
-      "frameworks": ["core.async"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "core.async",
+        "go",
+        "blocking"
+      ],
+      "frameworks": [
+        "core.async"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "async_channel_closed",
@@ -34,9 +46,20 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "async",
-      "tags": ["core.async", "channels", "closed"],
-      "frameworks": ["core.async"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "core.async",
+        "channels",
+        "closed"
+      ],
+      "frameworks": [
+        "core.async"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "async_buffer_overflow",
@@ -53,9 +76,20 @@
       "confidence": 0.85,
       "severity": "medium",
       "category": "async",
-      "tags": ["core.async", "buffer", "overflow"],
-      "frameworks": ["core.async"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "core.async",
+        "buffer",
+        "overflow"
+      ],
+      "frameworks": [
+        "core.async"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "async_invalid_transducer",
@@ -72,9 +106,20 @@
       "confidence": 0.8,
       "severity": "medium",
       "category": "async",
-      "tags": ["core.async", "transducers", "channels"],
-      "frameworks": ["core.async"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "core.async",
+        "transducers",
+        "channels"
+      ],
+      "frameworks": [
+        "core.async"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "async_timeout_error",
@@ -91,9 +136,20 @@
       "confidence": 0.75,
       "severity": "medium",
       "category": "async",
-      "tags": ["core.async", "timeout", "channels"],
-      "frameworks": ["core.async"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "core.async",
+        "timeout",
+        "channels"
+      ],
+      "frameworks": [
+        "core.async"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "async_pipeline_error",
@@ -110,9 +166,20 @@
       "confidence": 0.7,
       "severity": "medium",
       "category": "async",
-      "tags": ["core.async", "pipeline", "parallelism"],
-      "frameworks": ["core.async"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "core.async",
+        "pipeline",
+        "parallelism"
+      ],
+      "frameworks": [
+        "core.async"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "async_pub_sub_error",
@@ -129,9 +196,21 @@
       "confidence": 0.75,
       "severity": "medium",
       "category": "async",
-      "tags": ["core.async", "pub", "sub", "topics"],
-      "frameworks": ["core.async"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "core.async",
+        "pub",
+        "sub",
+        "topics"
+      ],
+      "frameworks": [
+        "core.async"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "async_mult_tap_error",
@@ -148,9 +227,20 @@
       "confidence": 0.7,
       "severity": "medium",
       "category": "async",
-      "tags": ["core.async", "mult", "tap"],
-      "frameworks": ["core.async"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "core.async",
+        "mult",
+        "tap"
+      ],
+      "frameworks": [
+        "core.async"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "async_go_loop_error",
@@ -167,9 +257,20 @@
       "confidence": 0.8,
       "severity": "medium",
       "category": "async",
-      "tags": ["core.async", "go-loop", "iteration"],
-      "frameworks": ["core.async"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "core.async",
+        "go-loop",
+        "iteration"
+      ],
+      "frameworks": [
+        "core.async"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     }
   ]
 }

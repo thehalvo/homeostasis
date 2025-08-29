@@ -1,4 +1,5 @@
 {
+  "name": "Clojure Runtime Errors",
   "rules": [
     {
       "id": "clojure_key_not_found",
@@ -15,9 +16,18 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["maps", "keys", "access"],
+      "tags": [
+        "maps",
+        "keys",
+        "access"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_first_on_nil",
@@ -34,9 +44,18 @@
       "confidence": 0.85,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["sequences", "nil", "first"],
+      "tags": [
+        "sequences",
+        "nil",
+        "first"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_rest_on_nil",
@@ -53,9 +72,18 @@
       "confidence": 0.85,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["sequences", "nil", "rest"],
+      "tags": [
+        "sequences",
+        "nil",
+        "rest"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_count_on_nil",
@@ -72,9 +100,18 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["collections", "nil", "count"],
+      "tags": [
+        "collections",
+        "nil",
+        "count"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_seq_on_number",
@@ -91,9 +128,18 @@
       "confidence": 0.85,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["sequences", "types", "conversion"],
+      "tags": [
+        "sequences",
+        "types",
+        "conversion"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_divide_by_zero",
@@ -110,9 +156,18 @@
       "confidence": 0.95,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["arithmetic", "division", "zero"],
+      "tags": [
+        "arithmetic",
+        "division",
+        "zero"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_numeric_overflow",
@@ -129,9 +184,18 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["arithmetic", "overflow", "integers"],
+      "tags": [
+        "arithmetic",
+        "overflow",
+        "integers"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_lazy_seq_error",
@@ -148,9 +212,18 @@
       "confidence": 0.8,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["lazy", "sequences", "evaluation"],
+      "tags": [
+        "lazy",
+        "sequences",
+        "evaluation"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_reflection_warning",
@@ -167,9 +240,18 @@
       "confidence": 0.7,
       "severity": "low",
       "category": "runtime",
-      "tags": ["reflection", "performance", "type-hints"],
+      "tags": [
+        "reflection",
+        "performance",
+        "type-hints"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_transducer_error",
@@ -186,9 +268,19 @@
       "confidence": 0.75,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["transducers", "composition", "collections"],
+      "tags": [
+        "transducers",
+        "composition",
+        "collections"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.7+", "1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.7+",
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_protocol_error",
@@ -205,9 +297,18 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["protocols", "implementation", "types"],
+      "tags": [
+        "protocols",
+        "implementation",
+        "types"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_multimethod_error",
@@ -224,9 +325,18 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["multimethods", "dispatch", "implementation"],
+      "tags": [
+        "multimethods",
+        "dispatch",
+        "implementation"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     }
   ]
 }

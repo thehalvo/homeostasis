@@ -1,4 +1,5 @@
 {
+  "name": "Go Common Errors",
   "description": "Common Go error patterns and fixes",
   "version": "0.1.0",
   "rules": [

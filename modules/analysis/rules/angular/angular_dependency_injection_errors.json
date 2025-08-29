@@ -1,4 +1,5 @@
 {
+  "name": "Angular Angular Dependency Injection Errors",
   "metadata": {
     "description": "Angular dependency injection errors and their fixes",
     "framework": "angular",
@@ -21,7 +22,13 @@
         "Use @Injectable({providedIn: 'root'}) on the service",
         "Import the service in the module"
       ],
-      "tags": ["angular", "dependency-injection", "provider", "service"]
+      "tags": [
+        "angular",
+        "dependency-injection",
+        "provider",
+        "service"
+      ],
+      "description": "Angular No Provider"
     },
     {
       "id": "angular_injection_token_error",
@@ -38,7 +45,13 @@
         "Use { provide: TOKEN, useFactory: factory } for dynamic values",
         "Ensure InjectionToken is properly defined"
       ],
-      "tags": ["angular", "dependency-injection", "injection-token", "provider"]
+      "tags": [
+        "angular",
+        "dependency-injection",
+        "injection-token",
+        "provider"
+      ],
+      "description": "Angular Injection Token"
     },
     {
       "id": "angular_circular_dependency",
@@ -55,7 +68,13 @@
         "Restructure services to avoid circular references",
         "Extract shared logic to a separate service"
       ],
-      "tags": ["angular", "dependency-injection", "circular", "forwardref"]
+      "tags": [
+        "angular",
+        "dependency-injection",
+        "circular",
+        "forwardref"
+      ],
+      "description": "Angular Circular Dependency"
     },
     {
       "id": "angular_cannot_resolve_parameters",
@@ -72,7 +91,13 @@
         "Ensure all constructor parameters are provided",
         "Use @Inject() for custom tokens or primitive types"
       ],
-      "tags": ["angular", "dependency-injection", "injectable", "parameters"]
+      "tags": [
+        "angular",
+        "dependency-injection",
+        "injectable",
+        "parameters"
+      ],
+      "description": "Angular Cannot Resolve Parameters"
     },
     {
       "id": "angular_invalid_provider",
@@ -89,7 +114,13 @@
         "Use provide/useValue, provide/useClass, or provide/useFactory",
         "Check for missing imports or exports"
       ],
-      "tags": ["angular", "dependency-injection", "provider", "configuration"]
+      "tags": [
+        "angular",
+        "dependency-injection",
+        "provider",
+        "configuration"
+      ],
+      "description": "Angular Invalid Provider"
     },
     {
       "id": "angular_injector_not_found",
@@ -106,7 +137,13 @@
         "Ensure component is used within Angular application",
         "Verify module imports and bootstrapping"
       ],
-      "tags": ["angular", "dependency-injection", "injector", "context"]
+      "tags": [
+        "angular",
+        "dependency-injection",
+        "injector",
+        "context"
+      ],
+      "description": "Angular Injector Not Found"
     },
     {
       "id": "angular_optional_injection",
@@ -123,7 +160,13 @@
         "Provide default value or null check",
         "Add provider for the dependency"
       ],
-      "tags": ["angular", "dependency-injection", "optional", "static-injector"]
+      "tags": [
+        "angular",
+        "dependency-injection",
+        "optional",
+        "static-injector"
+      ],
+      "description": "Angular Optional Injection"
     },
     {
       "id": "angular_self_injection",
@@ -140,7 +183,14 @@
         "Use @Self() to limit injection to current element",
         "Use @Host() to limit injection to current component"
       ],
-      "tags": ["angular", "dependency-injection", "self", "skip-self", "host"]
+      "tags": [
+        "angular",
+        "dependency-injection",
+        "self",
+        "skip-self",
+        "host"
+      ],
+      "description": "Angular Self Injection"
     },
     {
       "id": "angular_multi_provider_error",
@@ -157,7 +207,13 @@
         "Ensure all multi providers are arrays",
         "Don't mix single and multi providers for same token"
       ],
-      "tags": ["angular", "dependency-injection", "multi-provider", "provider"]
+      "tags": [
+        "angular",
+        "dependency-injection",
+        "multi-provider",
+        "provider"
+      ],
+      "description": "Angular Multi Provider"
     },
     {
       "id": "angular_view_destroyed_injection",
@@ -174,7 +230,14 @@
         "Check component state before accessing views",
         "Use takeUntil pattern for subscription management"
       ],
-      "tags": ["angular", "dependency-injection", "view", "lifecycle", "destroy"]
+      "tags": [
+        "angular",
+        "dependency-injection",
+        "view",
+        "lifecycle",
+        "destroy"
+      ],
+      "description": "Angular View Destroyed Injection"
     }
   ]
 }

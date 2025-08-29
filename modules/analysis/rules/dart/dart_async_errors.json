@@ -1,4 +1,5 @@
 {
+  "name": "Dart Dart Async Errors",
   "description": "Dart async and Future error patterns",
   "version": "0.1.0",
   "rules": [

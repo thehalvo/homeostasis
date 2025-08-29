@@ -13,7 +13,13 @@
       "suggestion": "Use uppercase event names for React (e.g., onClick instead of onclick) and ensure events bubble and are composed",
       "root_cause": "react_event_binding_issue",
       "reliability": "high",
-      "tags": ["webcomponents", "interop", "react", "events"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "react",
+        "events"
+      ],
+      "description": "React Event Binding"
     },
     {
       "id": "angular_binding_syntax",
@@ -24,7 +30,13 @@
       "suggestion": "Ensure properties reflect to attributes and dispatch events with detail objects for Angular binding",
       "root_cause": "angular_binding_syntax_issue",
       "reliability": "high",
-      "tags": ["webcomponents", "interop", "angular", "binding"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "angular",
+        "binding"
+      ],
+      "description": "Angular Binding Syntax"
     },
     {
       "id": "vue_custom_event",
@@ -35,7 +47,13 @@
       "suggestion": "Use kebab-case for custom events in Vue (e.g., 'custom-change' instead of 'customChange')",
       "root_cause": "vue_custom_event_naming",
       "reliability": "high",
-      "tags": ["webcomponents", "interop", "vue", "events"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "vue",
+        "events"
+      ],
+      "description": "Vue Custom Event"
     },
     {
       "id": "property_attribute_reflection",
@@ -46,7 +64,13 @@
       "suggestion": "Implement both property setters and attributeChangedCallback to keep properties and attributes in sync",
       "root_cause": "property_attribute_reflection_missing",
       "reliability": "high",
-      "tags": ["webcomponents", "interop", "properties", "attributes"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "properties",
+        "attributes"
+      ],
+      "description": "Property Attribute Reflection"
     },
     {
       "id": "event_bubbling_missing",
@@ -57,7 +81,13 @@
       "suggestion": "Set bubbles: true and composed: true when dispatching events to cross shadow DOM boundaries",
       "root_cause": "event_bubbling_composed_missing",
       "reliability": "high",
-      "tags": ["webcomponents", "interop", "events", "bubbling"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "events",
+        "bubbling"
+      ],
+      "description": "Event Bubbling Missing"
     },
     {
       "id": "event_detail_missing",
@@ -68,7 +98,13 @@
       "suggestion": "Use CustomEvent with a detail object to pass data with events",
       "root_cause": "event_detail_missing",
       "reliability": "high",
-      "tags": ["webcomponents", "interop", "events", "detail"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "events",
+        "detail"
+      ],
+      "description": "Event Detail Missing"
     },
     {
       "id": "framework_styling_leakage",
@@ -79,7 +115,13 @@
       "suggestion": "Use Shadow DOM with the ::part() pseudo-element for styling hooks instead of global styles",
       "root_cause": "style_encapsulation_breach",
       "reliability": "medium",
-      "tags": ["webcomponents", "interop", "styles", "encapsulation"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "styles",
+        "encapsulation"
+      ],
+      "description": "Framework Styling Leakage"
     },
     {
       "id": "aria_role_missing",
@@ -90,7 +132,13 @@
       "suggestion": "Add appropriate ARIA roles and attributes for accessibility across frameworks",
       "root_cause": "aria_attributes_missing",
       "reliability": "medium",
-      "tags": ["webcomponents", "interop", "accessibility", "aria"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "accessibility",
+        "aria"
+      ],
+      "description": "Aria Role Missing"
     },
     {
       "id": "slot_content_projection",
@@ -101,7 +149,13 @@
       "suggestion": "Use slots for content projection and ensure slot names match between frameworks and components",
       "root_cause": "slot_content_projection_issue",
       "reliability": "high",
-      "tags": ["webcomponents", "interop", "slots", "content"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "slots",
+        "content"
+      ],
+      "description": "Slot Content Projection"
     },
     {
       "id": "form_association_missing",
@@ -112,7 +166,13 @@
       "suggestion": "Implement the ElementInternals interface with formAssociated for form integration",
       "root_cause": "form_association_missing",
       "reliability": "high",
-      "tags": ["webcomponents", "interop", "forms", "association"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "forms",
+        "association"
+      ],
+      "description": "Form Association Missing"
     }
   ]
 }

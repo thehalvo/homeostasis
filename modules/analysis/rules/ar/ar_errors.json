@@ -1,231 +1,261 @@
 {
-    "rules": [
-        {
-            "id": "ar_tracking_lost",
-            "pattern": ".*tracking.*lost|.*tracking.*failed|.*insufficient.*features|.*tracking.*paused",
-            "error_type": "ARTrackingLostError",
-            "platform": ["all"],
-            "severity": "high",
-            "description": "AR tracking has been lost",
-            "fix_strategy": "Show tracking recovery UI and guide user",
-            "healing_options": [
-                "tracking_recovery_ui",
-                "relocalization",
-                "fallback_tracking"
-            ]
-        },
-        {
-            "id": "ar_performance_degradation",
-            "pattern": ".*fps.*drop|.*frame.*budget.*exceeded|.*performance.*warning|.*lag.*detected",
-            "error_type": "ARPerformanceDegradationError",
-            "platform": ["all"],
-            "severity": "high",
-            "description": "AR application performance degradation",
-            "fix_strategy": "Reduce rendering quality or scene complexity",
-            "healing_options": [
-                "dynamic_lod",
-                "render_scale_adjustment",
-                "occlusion_culling"
-            ]
-        },
-        {
-            "id": "plane_detection_failure",
-            "pattern": ".*plane.*not.*found|.*surface.*detection.*fail|.*no.*planes.*detected",
-            "error_type": "PlaneDetectionError",
-            "platform": ["arcore", "arkit", "unity_ar"],
-            "severity": "medium",
-            "description": "Failed to detect planes or surfaces",
-            "fix_strategy": "Guide user to scan flat surfaces",
-            "healing_options": [
-                "plane_detection_guidance",
-                "manual_plane_placement",
-                "detection_timeout_extension"
-            ]
-        },
-        {
-            "id": "anchor_drift",
-            "pattern": ".*anchor.*drift|.*anchor.*moved|.*position.*drift|.*anchor.*unstable",
-            "error_type": "AnchorDriftError",
-            "platform": ["all"],
-            "severity": "medium",
-            "description": "AR anchor position drifting",
-            "fix_strategy": "Stabilize anchors using multiple references",
-            "healing_options": [
-                "anchor_update",
-                "multi_anchor_fusion",
-                "anchor_persistence"
-            ]
-        },
-        {
-            "id": "motion_sickness_risk",
-            "pattern": ".*motion.*sick|.*nausea|.*dizzy|.*comfort.*mode|.*vr.*sickness",
-            "error_type": "MotionSicknessRiskError",
-            "platform": ["all"],
-            "severity": "high",
-            "description": "Motion sickness risk detected",
-            "fix_strategy": "Enable comfort settings",
-            "healing_options": [
-                "comfort_mode",
-                "motion_smoothing",
-                "teleportation"
-            ]
-        },
-        {
-            "id": "thermal_throttling",
-            "pattern": ".*thermal.*throttl|.*overheat|.*temperature.*high|.*device.*hot",
-            "error_type": "ThermalThrottlingError",
-            "platform": ["mobile"],
-            "severity": "critical",
-            "description": "Device thermal throttling detected",
-            "fix_strategy": "Reduce workload to manage temperature",
-            "healing_options": [
-                "thermal_management",
-                "frame_rate_limiting",
-                "quality_reduction"
-            ]
-        },
-        {
-            "id": "cloud_anchor_error",
-            "pattern": ".*cloud.*anchor.*fail|.*anchor.*hosting.*error|.*anchor.*resolve.*fail",
-            "error_type": "CloudAnchorError",
-            "platform": ["arcore", "arkit"],
-            "severity": "medium",
-            "description": "Cloud anchor operation failed",
-            "fix_strategy": "Retry or fallback to local anchors",
-            "healing_options": [
-                "cloud_anchor_retry",
-                "local_anchor_fallback",
-                "network_check"
-            ]
-        },
-        {
-            "id": "lighting_estimation_error",
-            "pattern": ".*lighting.*estimat|.*illumination.*fail|.*light.*probe.*error",
-            "error_type": "LightingEstimationError",
-            "platform": ["arcore", "arkit"],
-            "severity": "low",
-            "description": "Environmental lighting estimation failed",
-            "fix_strategy": "Use default lighting or manual adjustment",
-            "healing_options": [
-                "default_lighting",
-                "manual_lighting_control",
-                "lighting_probe_fallback"
-            ]
-        },
-        {
-            "id": "occlusion_error",
-            "pattern": ".*occlusion.*error|.*depth.*fail|.*people.*occlusion.*fail",
-            "error_type": "OcclusionError",
-            "platform": ["arcore", "arkit"],
-            "severity": "low",
-            "description": "Occlusion handling error",
-            "fix_strategy": "Disable or simplify occlusion",
-            "healing_options": [
-                "occlusion_fallback",
-                "depth_map_recovery",
-                "simple_occlusion"
-            ]
-        },
-        {
-            "id": "webxr_session_lost",
-            "pattern": ".*xrsession.*ended|.*immersive.*session.*lost|.*webgl.*context.*lost",
-            "error_type": "WebXRSessionError",
-            "platform": ["webxr"],
-            "severity": "high",
-            "description": "WebXR session ended unexpectedly",
-            "fix_strategy": "Request new immersive session",
-            "healing_options": [
-                "session_recovery",
-                "context_restoration",
-                "fallback_mode"
-            ]
-        },
-        {
-            "id": "memory_pressure",
-            "pattern": ".*memory.*pressure|.*low.*memory|.*allocation.*fail",
-            "error_type": "MemoryPressureError",
-            "platform": ["all"],
-            "severity": "high",
-            "description": "Memory pressure detected",
-            "fix_strategy": "Reduce memory usage",
-            "healing_options": [
-                "texture_compression",
-                "model_unloading",
-                "memory_cleanup"
-            ]
-        },
-        {
-            "id": "sensor_fusion_error",
-            "pattern": ".*sensor.*fusion.*fail|.*imu.*error|.*gyroscope.*fail",
-            "error_type": "SensorFusionError",
-            "platform": ["all"],
-            "severity": "high",
-            "description": "Sensor fusion error detected",
-            "fix_strategy": "Recalibrate sensors or use fallback",
-            "healing_options": [
-                "sensor_recalibration",
-                "sensor_fallback",
-                "fusion_reset"
-            ]
-        }
-    ],
-    "platform_specific": {
-        "arcore": {
-            "min_api_level": 24,
-            "required_features": [
-                "camera",
-                "motion_tracking"
-            ],
-            "optional_features": [
-                "cloud_anchors",
-                "augmented_faces",
-                "depth_api"
-            ]
-        },
-        "arkit": {
-            "min_ios_version": "11.0",
-            "device_requirements": [
-                "A9_processor",
-                "rear_camera"
-            ],
-            "advanced_features": {
-                "face_tracking": "TrueDepth_camera",
-                "people_occlusion": "A12_processor",
-                "motion_capture": "A12_processor"
-            }
-        },
-        "webxr": {
-            "required_permissions": [
-                "camera",
-                "motion_sensors"
-            ],
-            "feature_detection": [
-                "hit-test",
-                "anchors",
-                "depth-sensing",
-                "light-estimation"
-            ]
-        },
-        "unity_ar": {
-            "ar_foundation_version": "4.0+",
-            "subsystems": [
-                "session",
-                "camera",
-                "plane_detection",
-                "raycast",
-                "anchor"
-            ]
-        }
+  "name": "AR/VR Ar Errors",
+  "rules": [
+    {
+      "id": "ar_tracking_lost",
+      "pattern": ".*tracking.*lost|.*tracking.*failed|.*insufficient.*features|.*tracking.*paused",
+      "error_type": "ARTrackingLostError",
+      "platform": [
+        "all"
+      ],
+      "severity": "high",
+      "description": "AR tracking has been lost",
+      "fix_strategy": "Show tracking recovery UI and guide user",
+      "healing_options": [
+        "tracking_recovery_ui",
+        "relocalization",
+        "fallback_tracking"
+      ]
     },
-    "comfort_thresholds": {
-        "max_angular_velocity_deg_s": 180,
-        "max_linear_acceleration_m_s2": 5.0,
-        "min_fov_degrees": 60,
-        "max_motion_blur_threshold_deg_s": 90,
-        "recommended_fps": {
-            "mobile_ar": 60,
-            "standalone_vr": 90,
-            "pc_vr": 120
-        }
+    {
+      "id": "ar_performance_degradation",
+      "pattern": ".*fps.*drop|.*frame.*budget.*exceeded|.*performance.*warning|.*lag.*detected",
+      "error_type": "ARPerformanceDegradationError",
+      "platform": [
+        "all"
+      ],
+      "severity": "high",
+      "description": "AR application performance degradation",
+      "fix_strategy": "Reduce rendering quality or scene complexity",
+      "healing_options": [
+        "dynamic_lod",
+        "render_scale_adjustment",
+        "occlusion_culling"
+      ]
+    },
+    {
+      "id": "plane_detection_failure",
+      "pattern": ".*plane.*not.*found|.*surface.*detection.*fail|.*no.*planes.*detected",
+      "error_type": "PlaneDetectionError",
+      "platform": [
+        "arcore",
+        "arkit",
+        "unity_ar"
+      ],
+      "severity": "medium",
+      "description": "Failed to detect planes or surfaces",
+      "fix_strategy": "Guide user to scan flat surfaces",
+      "healing_options": [
+        "plane_detection_guidance",
+        "manual_plane_placement",
+        "detection_timeout_extension"
+      ]
+    },
+    {
+      "id": "anchor_drift",
+      "pattern": ".*anchor.*drift|.*anchor.*moved|.*position.*drift|.*anchor.*unstable",
+      "error_type": "AnchorDriftError",
+      "platform": [
+        "all"
+      ],
+      "severity": "medium",
+      "description": "AR anchor position drifting",
+      "fix_strategy": "Stabilize anchors using multiple references",
+      "healing_options": [
+        "anchor_update",
+        "multi_anchor_fusion",
+        "anchor_persistence"
+      ]
+    },
+    {
+      "id": "motion_sickness_risk",
+      "pattern": ".*motion.*sick|.*nausea|.*dizzy|.*comfort.*mode|.*vr.*sickness",
+      "error_type": "MotionSicknessRiskError",
+      "platform": [
+        "all"
+      ],
+      "severity": "high",
+      "description": "Motion sickness risk detected",
+      "fix_strategy": "Enable comfort settings",
+      "healing_options": [
+        "comfort_mode",
+        "motion_smoothing",
+        "teleportation"
+      ]
+    },
+    {
+      "id": "thermal_throttling",
+      "pattern": ".*thermal.*throttl|.*overheat|.*temperature.*high|.*device.*hot",
+      "error_type": "ThermalThrottlingError",
+      "platform": [
+        "mobile"
+      ],
+      "severity": "critical",
+      "description": "Device thermal throttling detected",
+      "fix_strategy": "Reduce workload to manage temperature",
+      "healing_options": [
+        "thermal_management",
+        "frame_rate_limiting",
+        "quality_reduction"
+      ]
+    },
+    {
+      "id": "cloud_anchor_error",
+      "pattern": ".*cloud.*anchor.*fail|.*anchor.*hosting.*error|.*anchor.*resolve.*fail",
+      "error_type": "CloudAnchorError",
+      "platform": [
+        "arcore",
+        "arkit"
+      ],
+      "severity": "medium",
+      "description": "Cloud anchor operation failed",
+      "fix_strategy": "Retry or fallback to local anchors",
+      "healing_options": [
+        "cloud_anchor_retry",
+        "local_anchor_fallback",
+        "network_check"
+      ]
+    },
+    {
+      "id": "lighting_estimation_error",
+      "pattern": ".*lighting.*estimat|.*illumination.*fail|.*light.*probe.*error",
+      "error_type": "LightingEstimationError",
+      "platform": [
+        "arcore",
+        "arkit"
+      ],
+      "severity": "low",
+      "description": "Environmental lighting estimation failed",
+      "fix_strategy": "Use default lighting or manual adjustment",
+      "healing_options": [
+        "default_lighting",
+        "manual_lighting_control",
+        "lighting_probe_fallback"
+      ]
+    },
+    {
+      "id": "occlusion_error",
+      "pattern": ".*occlusion.*error|.*depth.*fail|.*people.*occlusion.*fail",
+      "error_type": "OcclusionError",
+      "platform": [
+        "arcore",
+        "arkit"
+      ],
+      "severity": "low",
+      "description": "Occlusion handling error",
+      "fix_strategy": "Disable or simplify occlusion",
+      "healing_options": [
+        "occlusion_fallback",
+        "depth_map_recovery",
+        "simple_occlusion"
+      ]
+    },
+    {
+      "id": "webxr_session_lost",
+      "pattern": ".*xrsession.*ended|.*immersive.*session.*lost|.*webgl.*context.*lost",
+      "error_type": "WebXRSessionError",
+      "platform": [
+        "webxr"
+      ],
+      "severity": "high",
+      "description": "WebXR session ended unexpectedly",
+      "fix_strategy": "Request new immersive session",
+      "healing_options": [
+        "session_recovery",
+        "context_restoration",
+        "fallback_mode"
+      ]
+    },
+    {
+      "id": "memory_pressure",
+      "pattern": ".*memory.*pressure|.*low.*memory|.*allocation.*fail",
+      "error_type": "MemoryPressureError",
+      "platform": [
+        "all"
+      ],
+      "severity": "high",
+      "description": "Memory pressure detected",
+      "fix_strategy": "Reduce memory usage",
+      "healing_options": [
+        "texture_compression",
+        "model_unloading",
+        "memory_cleanup"
+      ]
+    },
+    {
+      "id": "sensor_fusion_error",
+      "pattern": ".*sensor.*fusion.*fail|.*imu.*error|.*gyroscope.*fail",
+      "error_type": "SensorFusionError",
+      "platform": [
+        "all"
+      ],
+      "severity": "high",
+      "description": "Sensor fusion error detected",
+      "fix_strategy": "Recalibrate sensors or use fallback",
+      "healing_options": [
+        "sensor_recalibration",
+        "sensor_fallback",
+        "fusion_reset"
+      ]
     }
+  ],
+  "platform_specific": {
+    "arcore": {
+      "min_api_level": 24,
+      "required_features": [
+        "camera",
+        "motion_tracking"
+      ],
+      "optional_features": [
+        "cloud_anchors",
+        "augmented_faces",
+        "depth_api"
+      ]
+    },
+    "arkit": {
+      "min_ios_version": "11.0",
+      "device_requirements": [
+        "A9_processor",
+        "rear_camera"
+      ],
+      "advanced_features": {
+        "face_tracking": "TrueDepth_camera",
+        "people_occlusion": "A12_processor",
+        "motion_capture": "A12_processor"
+      }
+    },
+    "webxr": {
+      "required_permissions": [
+        "camera",
+        "motion_sensors"
+      ],
+      "feature_detection": [
+        "hit-test",
+        "anchors",
+        "depth-sensing",
+        "light-estimation"
+      ]
+    },
+    "unity_ar": {
+      "ar_foundation_version": "4.0+",
+      "subsystems": [
+        "session",
+        "camera",
+        "plane_detection",
+        "raycast",
+        "anchor"
+      ]
+    }
+  },
+  "comfort_thresholds": {
+    "max_angular_velocity_deg_s": 180,
+    "max_linear_acceleration_m_s2": 5.0,
+    "min_fov_degrees": 60,
+    "max_motion_blur_threshold_deg_s": 90,
+    "recommended_fps": {
+      "mobile_ar": 60,
+      "standalone_vr": 90,
+      "pc_vr": 120
+    }
+  }
 }

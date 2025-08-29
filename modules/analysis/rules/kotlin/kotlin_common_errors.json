@@ -1,4 +1,5 @@
 {
+  "name": "Kotlin Kotlin Common Errors",
   "description": "Common Kotlin language errors and exceptions",
   "version": "1.0.0",
   "rules": [
@@ -41,7 +42,7 @@
     {
       "id": "kotlin_index_out_of_bounds",
       "pattern": "java\\.lang\\.IndexOutOfBoundsException.*Index.*out of bounds",
-      "error_type": "IndexOutOfBoundsException", 
+      "error_type": "IndexOutOfBoundsException",
       "description": "Attempted to access list/array element with invalid index",
       "root_cause": "kotlin_index_out_of_bounds",
       "suggestion": "Check collection bounds using size/indices properties before accessing elements, or use getOrNull() for safe access",
@@ -95,7 +96,7 @@
       "suggestion": "Check if collection is not empty before accessing first/last elements, or use firstOrNull()/lastOrNull()",
       "confidence": "high",
       "severity": "medium",
-      "category": "collections", 
+      "category": "collections",
       "framework": ""
     },
     {
@@ -118,7 +119,7 @@
       "root_cause": "kotlin_unsupported_operation",
       "suggestion": "Use mutable collection types (MutableList, MutableSet, MutableMap) for modification operations",
       "confidence": "high",
-      "severity": "medium", 
+      "severity": "medium",
       "category": "collections",
       "framework": ""
     },

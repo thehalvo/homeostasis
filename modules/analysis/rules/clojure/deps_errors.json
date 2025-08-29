@@ -1,4 +1,5 @@
 {
+  "name": "Clojure Deps Errors",
   "rules": [
     {
       "id": "deps_classpath_error",
@@ -15,9 +16,18 @@
       "confidence": 0.9,
       "severity": "high",
       "category": "deps",
-      "tags": ["dependencies", "classpath", "resources"],
+      "tags": [
+        "dependencies",
+        "classpath",
+        "resources"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "deps_version_conflict",
@@ -34,9 +44,17 @@
       "confidence": 0.8,
       "severity": "medium",
       "category": "deps",
-      "tags": ["dependencies", "versions", "conflicts"],
+      "tags": [
+        "dependencies",
+        "versions",
+        "conflicts"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "deps_download_error",
@@ -53,9 +71,17 @@
       "confidence": 0.85,
       "severity": "high",
       "category": "deps",
-      "tags": ["dependencies", "download", "repositories"],
+      "tags": [
+        "dependencies",
+        "download",
+        "repositories"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "lein_plugin_error",
@@ -72,9 +98,18 @@
       "confidence": 0.8,
       "severity": "medium",
       "category": "deps",
-      "tags": ["leiningen", "plugins", "configuration"],
+      "tags": [
+        "leiningen",
+        "plugins",
+        "configuration"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "deps_namespace_load_error",
@@ -91,9 +126,18 @@
       "confidence": 0.9,
       "severity": "high",
       "category": "deps",
-      "tags": ["namespaces", "loading", "files"],
+      "tags": [
+        "namespaces",
+        "loading",
+        "files"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "deps_git_dependency_error",
@@ -110,9 +154,17 @@
       "confidence": 0.8,
       "severity": "medium",
       "category": "deps",
-      "tags": ["dependencies", "git", "repositories"],
+      "tags": [
+        "dependencies",
+        "git",
+        "repositories"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "deps_local_dependency_error",
@@ -129,9 +181,17 @@
       "confidence": 0.85,
       "severity": "medium",
       "category": "deps",
-      "tags": ["dependencies", "local", "paths"],
+      "tags": [
+        "dependencies",
+        "local",
+        "paths"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "deps_alias_error",
@@ -148,9 +208,17 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "deps",
-      "tags": ["dependencies", "aliases", "configuration"],
+      "tags": [
+        "dependencies",
+        "aliases",
+        "configuration"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     }
   ]
 }

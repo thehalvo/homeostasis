@@ -1,4 +1,5 @@
 {
+  "name": "Rust Common Errors",
   "language": "rust",
   "rules": [
     {

@@ -4,7 +4,13 @@
     "description": "Detection rules for React Native native module integration and linking errors",
     "version": "1.0.0",
     "author": "Homeostasis Team",
-    "tags": ["react-native", "native-modules", "linking", "ios", "android"]
+    "tags": [
+      "react-native",
+      "native-modules",
+      "linking",
+      "ios",
+      "android"
+    ]
   },
   "rules": [
     {
@@ -17,7 +23,11 @@
       "severity": "error",
       "suggestion": "Check if native module is properly linked and installed",
       "description": "React Native native module not found or not properly linked",
-      "tags": ["react-native", "native-modules", "linking"],
+      "tags": [
+        "react-native",
+        "native-modules",
+        "linking"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Check package.json for the dependency",
@@ -38,7 +48,12 @@
       "severity": "error",
       "suggestion": "Run 'cd ios && pod install' to install iOS dependencies",
       "description": "React Native iOS CocoaPods installation or configuration error",
-      "tags": ["react-native", "ios", "cocoapods", "pods"],
+      "tags": [
+        "react-native",
+        "ios",
+        "cocoapods",
+        "pods"
+      ],
       "reliability": "high",
       "fix_commands": [
         "cd ios && pod install",
@@ -59,7 +74,12 @@
       "severity": "error",
       "suggestion": "Check Android Gradle configuration and dependencies",
       "description": "React Native Android Gradle build error",
-      "tags": ["react-native", "android", "gradle", "build"],
+      "tags": [
+        "react-native",
+        "android",
+        "gradle",
+        "build"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Clean and rebuild Android project: 'cd android && ./gradlew clean'",
@@ -80,7 +100,11 @@
       "severity": "error",
       "suggestion": "Check native module linking configuration",
       "description": "React Native native module linking error",
-      "tags": ["react-native", "linking", "native-modules"],
+      "tags": [
+        "react-native",
+        "linking",
+        "native-modules"
+      ],
       "reliability": "high",
       "fix_commands": [
         "For React Native 0.60+: Check autolinking in react-native.config.js",
@@ -100,7 +124,11 @@
       "severity": "error",
       "suggestion": "Check React Native autolinking configuration",
       "description": "React Native autolinking system error",
-      "tags": ["react-native", "autolinking", "native-modules"],
+      "tags": [
+        "react-native",
+        "autolinking",
+        "native-modules"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Check react-native.config.js for autolinking settings",
@@ -120,7 +148,11 @@
       "severity": "warning",
       "suggestion": "Check Flipper configuration or disable if not needed",
       "description": "React Native Flipper debugging tool integration error",
-      "tags": ["react-native", "flipper", "debugging"],
+      "tags": [
+        "react-native",
+        "flipper",
+        "debugging"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check use_flipper! configuration in Podfile",
@@ -140,7 +172,11 @@
       "severity": "warning",
       "suggestion": "Check Hermes JavaScript engine configuration",
       "description": "React Native Hermes JavaScript engine error",
-      "tags": ["react-native", "hermes", "javascript-engine"],
+      "tags": [
+        "react-native",
+        "hermes",
+        "javascript-engine"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check enableHermes setting in android/app/build.gradle",
@@ -160,7 +196,11 @@
       "severity": "warning",
       "suggestion": "Check rnx-kit dependency management configuration",
       "description": "React Native rnx-kit dependency management error",
-      "tags": ["react-native", "rnx-kit", "dependencies"],
+      "tags": [
+        "react-native",
+        "rnx-kit",
+        "dependencies"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check rnx-kit configuration in package.json",
@@ -180,7 +220,12 @@
       "severity": "warning",
       "suggestion": "Check React Native New Architecture (Fabric/TurboModules) configuration",
       "description": "React Native New Architecture (Fabric/TurboModules) error",
-      "tags": ["react-native", "fabric", "turbo-modules", "new-architecture"],
+      "tags": [
+        "react-native",
+        "fabric",
+        "turbo-modules",
+        "new-architecture"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check newArchEnabled setting in gradle.properties",
@@ -200,7 +245,11 @@
       "severity": "warning",
       "suggestion": "Check React Native configuration files",
       "description": "React Native configuration file error affecting native modules",
-      "tags": ["react-native", "configuration", "metro"],
+      "tags": [
+        "react-native",
+        "configuration",
+        "metro"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check react-native.config.js syntax and dependencies",
@@ -220,7 +269,11 @@
       "severity": "warning",
       "suggestion": "Check Expo modules integration and configuration",
       "description": "React Native Expo modules integration error",
-      "tags": ["react-native", "expo", "expo-modules"],
+      "tags": [
+        "react-native",
+        "expo",
+        "expo-modules"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check expo-modules-core installation",
@@ -240,7 +293,11 @@
       "severity": "warning",
       "suggestion": "Check third-party React Native module integration",
       "description": "Third-party React Native module integration error",
-      "tags": ["react-native", "third-party", "community"],
+      "tags": [
+        "react-native",
+        "third-party",
+        "community"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check module documentation for integration steps",
@@ -250,5 +307,6 @@
         "Check GitHub issues for known integration problems"
       ]
     }
-  ]
+  ],
+  "name": "React Native Native Modules Errors"
 }

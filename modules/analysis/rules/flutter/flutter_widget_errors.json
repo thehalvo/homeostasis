@@ -1,4 +1,5 @@
 {
+  "name": "Flutter Flutter Widget Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "flutter",
@@ -22,11 +23,17 @@
         "Use Container with specific height",
         "Consider using ListView.builder for performance"
       ],
-      "tags": ["flutter", "listview", "constraints", "layout"],
+      "tags": [
+        "flutter",
+        "listview",
+        "constraints",
+        "layout"
+      ],
       "examples": [
         "ListView inside Column without Expanded",
         "Nested scrollable widgets"
-      ]
+      ],
+      "description": "Flutter Listview Unbounded Height"
     },
     {
       "id": "flutter_textfield_controller_disposal",
@@ -44,11 +51,17 @@
         "Check if controller is disposed before use",
         "Use late final for controller declaration"
       ],
-      "tags": ["flutter", "textfield", "controller", "disposal"],
+      "tags": [
+        "flutter",
+        "textfield",
+        "controller",
+        "disposal"
+      ],
       "examples": [
         "Controller accessed after dispose",
         "Missing controller disposal"
-      ]
+      ],
+      "description": "Flutter Textfield Controller Disposal"
     },
     {
       "id": "flutter_futurebuilder_snapshot_error",
@@ -66,11 +79,17 @@
         "Add try-catch in async functions",
         "Implement proper error UI"
       ],
-      "tags": ["flutter", "futurebuilder", "async", "error-handling"],
+      "tags": [
+        "flutter",
+        "futurebuilder",
+        "async",
+        "error-handling"
+      ],
       "examples": [
         "Unhandled Future errors",
         "Missing error state UI"
-      ]
+      ],
+      "description": "Flutter Futurebuilder Snapshot"
     },
     {
       "id": "flutter_streambuilder_closed_stream",
@@ -88,11 +107,17 @@
         "Close streams properly in dispose()",
         "Use StreamController for custom streams"
       ],
-      "tags": ["flutter", "streambuilder", "streams", "broadcast"],
+      "tags": [
+        "flutter",
+        "streambuilder",
+        "streams",
+        "broadcast"
+      ],
       "examples": [
         "Multiple StreamBuilders on same stream",
         "Stream listened multiple times"
-      ]
+      ],
+      "description": "Flutter Streambuilder Closed Stream"
     },
     {
       "id": "flutter_hero_tag_duplicate",
@@ -110,11 +135,17 @@
         "Ensure Hero widgets have unique tags",
         "Remove heroTag if only one FAB on screen"
       ],
-      "tags": ["flutter", "hero", "floatingactionbutton", "animation"],
+      "tags": [
+        "flutter",
+        "hero",
+        "floatingactionbutton",
+        "animation"
+      ],
       "examples": [
         "Multiple FloatingActionButtons with same heroTag",
         "Hero widgets with duplicate tags"
-      ]
+      ],
+      "description": "Flutter Hero Tag Duplicate"
     },
     {
       "id": "flutter_pageview_controller_error",
@@ -132,11 +163,17 @@
         "Check if controller is attached before use",
         "Use single PageController per PageView"
       ],
-      "tags": ["flutter", "pageview", "controller", "lifecycle"],
+      "tags": [
+        "flutter",
+        "pageview",
+        "controller",
+        "lifecycle"
+      ],
       "examples": [
         "PageController used before attachment",
         "Multiple PageViews sharing controller"
-      ]
+      ],
+      "description": "Flutter Pageview Controller"
     },
     {
       "id": "flutter_tabcontroller_length_mismatch",
@@ -154,11 +191,17 @@
         "Use with SingleTickerProviderStateMixin",
         "Dispose TabController properly"
       ],
-      "tags": ["flutter", "tabs", "tabcontroller", "length"],
+      "tags": [
+        "flutter",
+        "tabs",
+        "tabcontroller",
+        "length"
+      ],
       "examples": [
         "TabController length differs from Tab count",
         "Dynamic tab addition/removal"
-      ]
+      ],
+      "description": "Flutter Tabcontroller Length Mismatch"
     },
     {
       "id": "flutter_animationcontroller_ticker_disposed",
@@ -176,11 +219,17 @@
         "Check if controller is disposed before use",
         "Stop animations before disposal"
       ],
-      "tags": ["flutter", "animation", "controller", "ticker"],
+      "tags": [
+        "flutter",
+        "animation",
+        "controller",
+        "ticker"
+      ],
       "examples": [
         "AnimationController used after disposal",
         "Ticker not properly managed"
-      ]
+      ],
+      "description": "Flutter Animationcontroller Ticker Disposed"
     },
     {
       "id": "flutter_textspan_recognizer_disposal",
@@ -198,11 +247,17 @@
         "Use onTap callback instead of recognizer when possible",
         "Implement proper cleanup for gesture recognizers"
       ],
-      "tags": ["flutter", "textspan", "gesture", "memory-leak"],
+      "tags": [
+        "flutter",
+        "textspan",
+        "gesture",
+        "memory-leak"
+      ],
       "examples": [
         "TapGestureRecognizer not disposed",
         "RichText with gesture recognizers"
-      ]
+      ],
+      "description": "Flutter Textspan Recognizer Disposal"
     },
     {
       "id": "flutter_cupertino_context_error",
@@ -220,11 +275,17 @@
         "Check widget tree structure",
         "Use Material widgets with MaterialApp instead"
       ],
-      "tags": ["flutter", "cupertino", "theme", "context"],
+      "tags": [
+        "flutter",
+        "cupertino",
+        "theme",
+        "context"
+      ],
       "examples": [
         "Cupertino widgets without CupertinoApp",
         "Missing Cupertino theme context"
-      ]
+      ],
+      "description": "Flutter Cupertino Context"
     }
   ]
 }

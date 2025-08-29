@@ -1,4 +1,5 @@
 {
+  "name": "CSS Modules Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "css-modules",
@@ -21,11 +22,17 @@
         "Ensure CSS module is properly imported",
         "Use camelCase for class names with hyphens"
       ],
-      "tags": ["css-modules", "class", "import", "undefined"],
+      "tags": [
+        "css-modules",
+        "class",
+        "import",
+        "undefined"
+      ],
       "examples": [
         "styles.nonExistentClass",
         "Accessing kebab-case class incorrectly"
-      ]
+      ],
+      "description": "Css Modules Class Not Found"
     },
     {
       "id": "css_modules_import_error",
@@ -43,11 +50,17 @@
         "Verify build configuration supports CSS Modules",
         "Check file exists in correct location"
       ],
-      "tags": ["css-modules", "import", "module-not-found", "path"],
+      "tags": [
+        "css-modules",
+        "import",
+        "module-not-found",
+        "path"
+      ],
       "examples": [
         "import styles from './Component.css' (should be .module.css)",
         "Incorrect file path"
-      ]
+      ],
+      "description": "Css Modules Import"
     },
     {
       "id": "css_modules_config_error",
@@ -65,11 +78,17 @@
         "Verify localIdentName pattern for class names",
         "Ensure proper loader order in webpack"
       ],
-      "tags": ["css-modules", "configuration", "webpack", "css-loader"],
+      "tags": [
+        "css-modules",
+        "configuration",
+        "webpack",
+        "css-loader"
+      ],
       "examples": [
         "Missing modules: true in css-loader",
         "Incorrect webpack configuration"
-      ]
+      ],
+      "description": "Css Modules Config"
     },
     {
       "id": "sass_compilation_error",
@@ -87,11 +106,17 @@
         "Ensure SASS variables are properly defined",
         "Check for missing semicolons in SCSS"
       ],
-      "tags": ["sass", "scss", "compilation", "syntax"],
+      "tags": [
+        "sass",
+        "scss",
+        "compilation",
+        "syntax"
+      ],
       "examples": [
         "Invalid SASS syntax",
         "Missing variable definitions"
-      ]
+      ],
+      "description": "Sass Compilation"
     },
     {
       "id": "sass_import_error",
@@ -109,11 +134,17 @@
         "Verify SASS load paths configuration",
         "Check for circular imports"
       ],
-      "tags": ["sass", "import", "use", "partials"],
+      "tags": [
+        "sass",
+        "import",
+        "use",
+        "partials"
+      ],
       "examples": [
         "@import 'missing-file'",
         "Incorrect partial file naming"
-      ]
+      ],
+      "description": "Sass Import"
     },
     {
       "id": "sass_variable_error",
@@ -131,11 +162,17 @@
         "Ensure variables are in proper scope",
         "Import files containing variable definitions"
       ],
-      "tags": ["sass", "variables", "scope", "undefined"],
+      "tags": [
+        "sass",
+        "variables",
+        "scope",
+        "undefined"
+      ],
       "examples": [
         "Using undefined $primary-color",
         "Variable scope issues"
-      ]
+      ],
+      "description": "Sass Variable"
     },
     {
       "id": "less_compilation_error",
@@ -153,11 +190,17 @@
         "Ensure LESS variables are properly defined",
         "Check mixin definitions and usage"
       ],
-      "tags": ["less", "compilation", "syntax", "mixins"],
+      "tags": [
+        "less",
+        "compilation",
+        "syntax",
+        "mixins"
+      ],
       "examples": [
         "Invalid LESS syntax",
         "Missing mixin definitions"
-      ]
+      ],
+      "description": "Less Compilation"
     },
     {
       "id": "less_variable_error",
@@ -175,11 +218,17 @@
         "Ensure variables are in proper scope",
         "Import files containing variable definitions"
       ],
-      "tags": ["less", "variables", "scope", "undefined"],
+      "tags": [
+        "less",
+        "variables",
+        "scope",
+        "undefined"
+      ],
       "examples": [
         "Using undefined @primary-color",
         "Variable scope issues in LESS"
-      ]
+      ],
+      "description": "Less Variable"
     },
     {
       "id": "postcss_plugin_error",
@@ -197,11 +246,17 @@
         "Check plugin options and syntax",
         "Ensure proper plugin order"
       ],
-      "tags": ["postcss", "plugins", "configuration", "autoprefixer"],
+      "tags": [
+        "postcss",
+        "plugins",
+        "configuration",
+        "autoprefixer"
+      ],
       "examples": [
         "Missing PostCSS plugin",
         "Incorrect plugin configuration"
-      ]
+      ],
+      "description": "Postcss Plugin"
     },
     {
       "id": "css_preprocessing_watch_error",
@@ -219,11 +274,17 @@
         "Restart development server",
         "Check for file system permission issues"
       ],
-      "tags": ["css", "watch", "file-watching", "development"],
+      "tags": [
+        "css",
+        "watch",
+        "file-watching",
+        "development"
+      ],
       "examples": [
         "SASS files not recompiling on change",
         "File watcher not detecting changes"
-      ]
+      ],
+      "description": "Css Preprocessing Watch"
     },
     {
       "id": "css_source_map_error",
@@ -241,11 +302,17 @@
         "Verify source map files are generated correctly",
         "Ensure proper devtool configuration in webpack"
       ],
-      "tags": ["css", "source-maps", "debugging", "development"],
+      "tags": [
+        "css",
+        "source-maps",
+        "debugging",
+        "development"
+      ],
       "examples": [
         "Missing CSS source maps",
         "Incorrect source map configuration"
-      ]
+      ],
+      "description": "Css Source Map"
     },
     {
       "id": "css_minification_error",
@@ -263,11 +330,17 @@
         "Check for CSS syntax errors preventing minification",
         "Ensure proper optimization options"
       ],
-      "tags": ["css", "minification", "optimization", "cssnano"],
+      "tags": [
+        "css",
+        "minification",
+        "optimization",
+        "cssnano"
+      ],
       "examples": [
         "CSS minification failing due to syntax errors",
         "Incorrect optimization plugin configuration"
-      ]
+      ],
+      "description": "Css Minification"
     }
   ]
 }

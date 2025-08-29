@@ -1,4 +1,5 @@
 {
+  "name": "Rust Unsafe Errors",
   "language": "rust",
   "description": "Rust unsafe code and FFI error patterns",
   "version": "0.1.0",

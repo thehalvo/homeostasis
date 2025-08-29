@@ -1,4 +1,5 @@
 {
+  "name": "Dart Dart Isolate Errors",
   "description": "Dart isolate and concurrency error patterns",
   "version": "0.1.0",
   "rules": [

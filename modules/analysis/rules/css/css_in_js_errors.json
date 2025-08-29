@@ -1,4 +1,5 @@
 {
+  "name": "CSS-in-JS Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "css-in-js",
@@ -21,11 +22,17 @@
         "Enable SSR and minification options for production",
         "Restart development server after configuration changes"
       ],
-      "tags": ["styled-components", "babel", "transform", "configuration"],
+      "tags": [
+        "styled-components",
+        "babel",
+        "transform",
+        "configuration"
+      ],
       "examples": [
         "Missing Babel plugin configuration",
         "Incorrect plugin options"
-      ]
+      ],
+      "description": "Styled Components Babel"
     },
     {
       "id": "styled_components_ssr_error",
@@ -43,11 +50,17 @@
         "Inject styles into HTML head with sheet.getStyleTags()",
         "Clear styles after rendering with sheet.seal()"
       ],
-      "tags": ["styled-components", "ssr", "server-side-rendering", "hydration"],
+      "tags": [
+        "styled-components",
+        "ssr",
+        "server-side-rendering",
+        "hydration"
+      ],
       "examples": [
         "Missing SSR style collection",
         "Hydration mismatch due to missing styles"
-      ]
+      ],
+      "description": "Styled Components Ssr"
     },
     {
       "id": "styled_components_theme_error",
@@ -65,11 +78,17 @@
         "Check theme property access in styled components",
         "Ensure theme object is not undefined"
       ],
-      "tags": ["styled-components", "theme", "theme-provider", "context"],
+      "tags": [
+        "styled-components",
+        "theme",
+        "theme-provider",
+        "context"
+      ],
       "examples": [
         "Missing ThemeProvider wrapper",
         "Accessing undefined theme properties"
-      ]
+      ],
+      "description": "Styled Components Theme"
     },
     {
       "id": "emotion_jsx_error",
@@ -87,11 +106,17 @@
         "Import jsx from @emotion/react when needed",
         "Update TypeScript configuration for JSX"
       ],
-      "tags": ["emotion", "jsx", "pragma", "css-prop"],
+      "tags": [
+        "emotion",
+        "jsx",
+        "pragma",
+        "css-prop"
+      ],
       "examples": [
         "Using css prop without JSX pragma",
         "Missing @emotion/react import"
-      ]
+      ],
+      "description": "Emotion Jsx"
     },
     {
       "id": "emotion_cache_error",
@@ -109,11 +134,17 @@
         "Configure cache options for SSR if needed",
         "Ensure cache is consistent between server and client"
       ],
-      "tags": ["emotion", "cache", "provider", "ssr"],
+      "tags": [
+        "emotion",
+        "cache",
+        "provider",
+        "ssr"
+      ],
       "examples": [
         "Missing cache configuration",
         "SSR cache mismatch"
-      ]
+      ],
+      "description": "Emotion Cache"
     },
     {
       "id": "emotion_typescript_error",
@@ -131,11 +162,17 @@
         "Install @types/styled-components if using styled API",
         "Update JSX element types for css prop"
       ],
-      "tags": ["emotion", "typescript", "types", "jsx"],
+      "tags": [
+        "emotion",
+        "typescript",
+        "types",
+        "jsx"
+      ],
       "examples": [
         "css prop type errors",
         "Styled component type issues"
-      ]
+      ],
+      "description": "Emotion Typescript"
     },
     {
       "id": "css_in_js_template_literal_error",
@@ -153,11 +190,17 @@
         "Use kebab-case for CSS properties or camelCase for JS objects",
         "Validate CSS values and units"
       ],
-      "tags": ["css-in-js", "template-literal", "syntax", "css"],
+      "tags": [
+        "css-in-js",
+        "template-literal",
+        "syntax",
+        "css"
+      ],
       "examples": [
         "Invalid CSS property names",
         "Incorrect CSS value syntax"
-      ]
+      ],
+      "description": "Css In Js Template Literal"
     },
     {
       "id": "css_in_js_props_error",
@@ -175,11 +218,17 @@
         "Use proper TypeScript interfaces for styled components",
         "Validate theme and prop access patterns"
       ],
-      "tags": ["css-in-js", "props", "typescript", "types"],
+      "tags": [
+        "css-in-js",
+        "props",
+        "typescript",
+        "types"
+      ],
       "examples": [
         "Accessing undefined props",
         "Type mismatch in styled component props"
-      ]
+      ],
+      "description": "Css In Js Props"
     },
     {
       "id": "css_in_js_performance_warning",
@@ -197,11 +246,17 @@
         "Avoid creating styles in render",
         "Use CSS variables for theme values"
       ],
-      "tags": ["css-in-js", "performance", "optimization", "memoization"],
+      "tags": [
+        "css-in-js",
+        "performance",
+        "optimization",
+        "memoization"
+      ],
       "examples": [
         "Creating styles in render function",
         "Excessive style recalculations"
-      ]
+      ],
+      "description": "Css In Js Performance Warning"
     },
     {
       "id": "css_in_js_vendor_prefix_error",
@@ -219,11 +274,17 @@
         "Add manual vendor prefixes for critical properties",
         "Test across different browsers"
       ],
-      "tags": ["css-in-js", "vendor-prefixes", "autoprefixer", "browser-support"],
+      "tags": [
+        "css-in-js",
+        "vendor-prefixes",
+        "autoprefixer",
+        "browser-support"
+      ],
       "examples": [
         "Missing vendor prefixes for flexbox",
         "Webkit-specific property issues"
-      ]
+      ],
+      "description": "Css In Js Vendor Prefix"
     }
   ]
 }

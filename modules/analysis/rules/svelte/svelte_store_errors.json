@@ -13,12 +13,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "store", "import"],
+      "tags": [
+        "svelte",
+        "store",
+        "import"
+      ],
       "fix_commands": [
         "Import writable, readable, or derived from 'svelte/store'",
         "Check import statement syntax",
         "Ensure correct store type is imported"
-      ]
+      ],
+      "description": "Svelte Store Not Imported"
     },
     {
       "id": "svelte_store_subscription_leak",
@@ -30,12 +35,17 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "store", "memory-leak"],
+      "tags": [
+        "svelte",
+        "store",
+        "memory-leak"
+      ],
       "fix_commands": [
         "Use $ syntax for automatic subscription management",
         "Call unsubscribe function in onDestroy",
         "Store unsubscribe function and call it on component destruction"
-      ]
+      ],
+      "description": "Svelte Store Subscription Leak"
     },
     {
       "id": "svelte_store_undefined_subscription",
@@ -47,12 +57,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "store", "undefined"],
+      "tags": [
+        "svelte",
+        "store",
+        "undefined"
+      ],
       "fix_commands": [
         "Check store import and definition",
         "Initialize store before subscribing",
         "Verify store file path and export"
-      ]
+      ],
+      "description": "Svelte Store Undefined Subscription"
     },
     {
       "id": "svelte_store_invalid_initial_value",
@@ -64,12 +79,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "store", "initial-value"],
+      "tags": [
+        "svelte",
+        "store",
+        "initial-value"
+      ],
       "fix_commands": [
         "Provide appropriate initial value for store type",
         "Check data type compatibility",
         "Use proper default values"
-      ]
+      ],
+      "description": "Svelte Store Invalid Initial Value"
     },
     {
       "id": "svelte_derived_store_error",
@@ -81,12 +101,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "store", "derived"],
+      "tags": [
+        "svelte",
+        "store",
+        "derived"
+      ],
       "fix_commands": [
         "Ensure all dependency stores are valid",
         "Check derived function returns correct value",
         "Verify callback function signature"
-      ]
+      ],
+      "description": "Svelte Derived Store"
     },
     {
       "id": "svelte_store_update_error",
@@ -98,12 +123,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "store", "update"],
+      "tags": [
+        "svelte",
+        "store",
+        "update"
+      ],
       "fix_commands": [
         "Use proper store.set() or store.update() methods",
         "Check update function returns valid value",
         "Ensure store is writable before updating"
-      ]
+      ],
+      "description": "Svelte Store Update"
     }
   ]
 }

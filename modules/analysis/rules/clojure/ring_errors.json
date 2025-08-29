@@ -1,4 +1,5 @@
 {
+  "name": "Clojure Ring Errors",
   "rules": [
     {
       "id": "ring_missing_handler",
@@ -15,9 +16,21 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "ring",
-      "tags": ["ring", "routing", "handlers"],
-      "frameworks": ["ring", "compojure"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "ring",
+        "routing",
+        "handlers"
+      ],
+      "frameworks": [
+        "ring",
+        "compojure"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "ring_malformed_request",
@@ -34,9 +47,20 @@
       "confidence": 0.95,
       "severity": "high",
       "category": "ring",
-      "tags": ["ring", "request", "validation"],
-      "frameworks": ["ring"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "ring",
+        "request",
+        "validation"
+      ],
+      "frameworks": [
+        "ring"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "compojure_route_compilation",
@@ -53,9 +77,20 @@
       "confidence": 0.8,
       "severity": "high",
       "category": "compojure",
-      "tags": ["compojure", "routes", "compilation"],
-      "frameworks": ["compojure"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "compojure",
+        "routes",
+        "compilation"
+      ],
+      "frameworks": [
+        "compojure"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "ring_middleware_error",
@@ -72,9 +107,20 @@
       "confidence": 0.75,
       "severity": "medium",
       "category": "ring",
-      "tags": ["ring", "middleware", "configuration"],
-      "frameworks": ["ring"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "ring",
+        "middleware",
+        "configuration"
+      ],
+      "frameworks": [
+        "ring"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "ring_response_format",
@@ -91,9 +137,20 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "ring",
-      "tags": ["ring", "response", "format"],
-      "frameworks": ["ring"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "ring",
+        "response",
+        "format"
+      ],
+      "frameworks": [
+        "ring"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "compojure_context_error",
@@ -110,9 +167,20 @@
       "confidence": 0.8,
       "severity": "medium",
       "category": "compojure",
-      "tags": ["compojure", "context", "routes"],
-      "frameworks": ["compojure"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "compojure",
+        "context",
+        "routes"
+      ],
+      "frameworks": [
+        "compojure"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "ring_adapter_error",
@@ -129,9 +197,20 @@
       "confidence": 0.7,
       "severity": "high",
       "category": "ring",
-      "tags": ["ring", "adapter", "server"],
-      "frameworks": ["ring"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "ring",
+        "adapter",
+        "server"
+      ],
+      "frameworks": [
+        "ring"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "ring_json_parsing_error",
@@ -148,9 +227,20 @@
       "confidence": 0.85,
       "severity": "medium",
       "category": "ring",
-      "tags": ["ring", "json", "parsing"],
-      "frameworks": ["ring"],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "tags": [
+        "ring",
+        "json",
+        "parsing"
+      ],
+      "frameworks": [
+        "ring"
+      ],
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     }
   ]
 }

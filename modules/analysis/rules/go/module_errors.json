@@ -1,4 +1,5 @@
 {
+  "name": "Go Module Errors",
   "description": "Go module system and dependency management error patterns",
   "version": "1.0.0",
   "rules": [

@@ -13,7 +13,12 @@
       "suggestion": "Can't access elements inside a closed shadow root. Consider using open mode or storing references",
       "root_cause": "closed_shadow_root_access_attempt",
       "reliability": "medium",
-      "tags": ["webcomponents", "shadow-dom", "encapsulation"]
+      "tags": [
+        "webcomponents",
+        "shadow-dom",
+        "encapsulation"
+      ],
+      "description": "Sd Closed Mode Access"
     },
     {
       "id": "sd_style_leakage",
@@ -24,7 +29,12 @@
       "suggestion": "Use :host selector or create styles inside shadow DOM to prevent leakage",
       "root_cause": "css_style_leakage",
       "reliability": "medium",
-      "tags": ["webcomponents", "shadow-dom", "css"]
+      "tags": [
+        "webcomponents",
+        "shadow-dom",
+        "css"
+      ],
+      "description": "Sd Style Leakage"
     },
     {
       "id": "sd_event_retargeting",
@@ -35,7 +45,12 @@
       "suggestion": "Use composedPath() to access original target in shadow DOM",
       "root_cause": "event_retargeting_confusion",
       "reliability": "medium",
-      "tags": ["webcomponents", "shadow-dom", "events"]
+      "tags": [
+        "webcomponents",
+        "shadow-dom",
+        "events"
+      ],
+      "description": "Sd Event Retargeting"
     },
     {
       "id": "sd_slot_content",
@@ -46,7 +61,12 @@
       "suggestion": "Check that elements have the correct slot attribute or that default slot is available",
       "root_cause": "slot_content_distribution_issue",
       "reliability": "medium",
-      "tags": ["webcomponents", "shadow-dom", "slots"]
+      "tags": [
+        "webcomponents",
+        "shadow-dom",
+        "slots"
+      ],
+      "description": "Sd Slot Content"
     },
     {
       "id": "sd_part_styling",
@@ -57,7 +77,13 @@
       "suggestion": "Ensure the part attribute is correctly set on the shadow DOM element",
       "root_cause": "part_attribute_styling_issue",
       "reliability": "medium",
-      "tags": ["webcomponents", "shadow-dom", "css", "theming"]
+      "tags": [
+        "webcomponents",
+        "shadow-dom",
+        "css",
+        "theming"
+      ],
+      "description": "Sd Part Styling"
     },
     {
       "id": "sd_query_error",
@@ -68,7 +94,12 @@
       "suggestion": "Make sure shadowRoot is initialized before querying elements",
       "root_cause": "shadow_root_not_initialized",
       "reliability": "high",
-      "tags": ["webcomponents", "shadow-dom", "query"]
+      "tags": [
+        "webcomponents",
+        "shadow-dom",
+        "query"
+      ],
+      "description": "Sd Query"
     },
     {
       "id": "sd_slot_assignment",
@@ -79,7 +110,13 @@
       "suggestion": "Check slot assignments and ensure content is properly distributed",
       "root_cause": "slot_assignment_issue",
       "reliability": "medium",
-      "tags": ["webcomponents", "shadow-dom", "slots", "events"]
+      "tags": [
+        "webcomponents",
+        "shadow-dom",
+        "slots",
+        "events"
+      ],
+      "description": "Sd Slot Assignment"
     },
     {
       "id": "sd_shadow_parts_not_exposed",
@@ -90,7 +127,13 @@
       "suggestion": "Use the part attribute to expose internal elements for styling",
       "root_cause": "shadow_parts_not_exposed",
       "reliability": "medium",
-      "tags": ["webcomponents", "shadow-dom", "css", "theming"]
+      "tags": [
+        "webcomponents",
+        "shadow-dom",
+        "css",
+        "theming"
+      ],
+      "description": "Sd Shadow Parts Not Exposed"
     },
     {
       "id": "sd_content_not_projected",
@@ -101,7 +144,12 @@
       "suggestion": "Check slot markup and ensure light DOM content is properly assigned",
       "root_cause": "content_not_projected",
       "reliability": "medium",
-      "tags": ["webcomponents", "shadow-dom", "slots"]
+      "tags": [
+        "webcomponents",
+        "shadow-dom",
+        "slots"
+      ],
+      "description": "Sd Content Not Projected"
     },
     {
       "id": "sd_event_composition",
@@ -112,7 +160,12 @@
       "suggestion": "Use the composed: true option when dispatching events to cross shadow boundaries",
       "root_cause": "event_composition_issue",
       "reliability": "high",
-      "tags": ["webcomponents", "shadow-dom", "events"]
+      "tags": [
+        "webcomponents",
+        "shadow-dom",
+        "events"
+      ],
+      "description": "Sd Event Composition"
     }
   ]
 }

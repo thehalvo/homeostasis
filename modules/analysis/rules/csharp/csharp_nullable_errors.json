@@ -1,4 +1,5 @@
 {
+  "name": "C# Csharp Nullable Errors",
   "description": "C# nullable reference types and null safety error detection rules",
   "version": "1.0.0",
   "rules": [

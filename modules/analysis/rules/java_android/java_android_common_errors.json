@@ -18,7 +18,8 @@
         "manifest",
         "intent"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "Activity Not Found"
     },
     {
       "id": "permission_denied",
@@ -35,7 +36,8 @@
         "security",
         "manifest"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "Permission Denied"
     },
     {
       "id": "out_of_memory",
@@ -52,7 +54,8 @@
         "performance",
         "lifecycle"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "Out Of Memory"
     },
     {
       "id": "illegal_state_activity",
@@ -69,7 +72,8 @@
         "lifecycle",
         "state"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "Illegal State Activity"
     },
     {
       "id": "fragment_not_attached",
@@ -86,7 +90,8 @@
         "lifecycle",
         "activity"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "Fragment Not Attached"
     },
     {
       "id": "view_not_found",
@@ -103,7 +108,8 @@
         "layout",
         "ui"
       ],
-      "reliability": "medium"
+      "reliability": "medium",
+      "description": "View Not Found"
     },
     {
       "id": "network_on_main_thread",
@@ -120,7 +126,8 @@
         "threading",
         "main-thread"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "Network On Main Thread"
     },
     {
       "id": "resource_not_found",
@@ -137,7 +144,8 @@
         "configuration",
         "assets"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "Resource Not Found"
     },
     {
       "id": "api_compatibility_issue",
@@ -154,7 +162,8 @@
         "compatibility",
         "sdk"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "Api Compatibility Issue"
     },
     {
       "id": "background_limit_violation",
@@ -171,7 +180,8 @@
         "background",
         "api26"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "Background Limit Violation"
     },
     {
       "id": "activity_lifecycle_violation",
@@ -188,7 +198,8 @@
         "lifecycle",
         "state"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "Activity Lifecycle Violation"
     },
     {
       "id": "view_not_found_npe",
@@ -205,7 +216,8 @@
         "layout",
         "null"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "View Not Found Npe"
     },
     {
       "id": "bad_token_exception",
@@ -222,7 +234,8 @@
         "dialog",
         "token"
       ],
-      "reliability": "high"
+      "reliability": "high",
+      "description": "Bad Token Exception"
     }
   ]
 }

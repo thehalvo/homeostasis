@@ -1,4 +1,5 @@
 {
+  "name": "Kotlin Kotlin Multiplatform Errors",
   "description": "Kotlin Multiplatform-specific errors and platform compatibility issues",
   "version": "1.0.0",
   "rules": [

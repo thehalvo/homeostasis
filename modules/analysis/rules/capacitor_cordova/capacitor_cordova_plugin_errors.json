@@ -1,4 +1,5 @@
 {
+  "name": "Capacitor_cordova Capacitor Cordova Plugin Errors",
   "metadata": {
     "description": "Capacitor/Cordova plugin-specific errors and integration issues",
     "framework": "capacitor_cordova",
@@ -23,7 +24,13 @@
         "Add camera permissions to platform manifests",
         "Check camera availability before use"
       ],
-      "tags": ["capacitor", "camera", "plugin", "permissions"]
+      "tags": [
+        "capacitor",
+        "camera",
+        "plugin",
+        "permissions"
+      ],
+      "description": "Capacitor Camera Plugin"
     },
     {
       "id": "capacitor_geolocation_plugin_error",
@@ -41,7 +48,13 @@
         "Handle permission requests properly",
         "Provide fallback for location unavailable"
       ],
-      "tags": ["capacitor", "geolocation", "plugin", "permissions"]
+      "tags": [
+        "capacitor",
+        "geolocation",
+        "plugin",
+        "permissions"
+      ],
+      "description": "Capacitor Geolocation Plugin"
     },
     {
       "id": "capacitor_filesystem_plugin_error",
@@ -59,7 +72,13 @@
         "Use proper directory constants",
         "Handle file not found errors"
       ],
-      "tags": ["capacitor", "filesystem", "plugin", "file-operations"]
+      "tags": [
+        "capacitor",
+        "filesystem",
+        "plugin",
+        "file-operations"
+      ],
+      "description": "Capacitor Filesystem Plugin"
     },
     {
       "id": "capacitor_network_plugin_error",
@@ -77,7 +96,13 @@
         "Handle offline scenarios",
         "Check connectivity before network requests"
       ],
-      "tags": ["capacitor", "network", "plugin", "connectivity"]
+      "tags": [
+        "capacitor",
+        "network",
+        "plugin",
+        "connectivity"
+      ],
+      "description": "Capacitor Network Plugin"
     },
     {
       "id": "capacitor_storage_plugin_error",
@@ -95,7 +120,13 @@
         "Handle storage errors gracefully",
         "Check storage availability"
       ],
-      "tags": ["capacitor", "storage", "plugin", "persistence"]
+      "tags": [
+        "capacitor",
+        "storage",
+        "plugin",
+        "persistence"
+      ],
+      "description": "Capacitor Storage Plugin"
     },
     {
       "id": "capacitor_push_notifications_plugin_error",
@@ -113,7 +144,14 @@
         "Configure APNS for iOS",
         "Request notification permissions"
       ],
-      "tags": ["capacitor", "push-notifications", "plugin", "firebase", "apns"]
+      "tags": [
+        "capacitor",
+        "push-notifications",
+        "plugin",
+        "firebase",
+        "apns"
+      ],
+      "description": "Capacitor Push Notifications Plugin"
     },
     {
       "id": "capacitor_app_plugin_error",
@@ -131,7 +169,13 @@
         "Check app info availability",
         "Handle lifecycle events"
       ],
-      "tags": ["capacitor", "app", "plugin", "lifecycle"]
+      "tags": [
+        "capacitor",
+        "app",
+        "plugin",
+        "lifecycle"
+      ],
+      "description": "Capacitor App Plugin"
     },
     {
       "id": "cordova_file_plugin_error",
@@ -149,7 +193,13 @@
         "Use proper file paths",
         "Handle file operation errors"
       ],
-      "tags": ["cordova", "file", "plugin", "filesystem"]
+      "tags": [
+        "cordova",
+        "file",
+        "plugin",
+        "filesystem"
+      ],
+      "description": "Cordova File Plugin"
     },
     {
       "id": "cordova_camera_plugin_error",
@@ -167,7 +217,13 @@
         "Handle camera options properly",
         "Check camera availability"
       ],
-      "tags": ["cordova", "camera", "plugin", "permissions"]
+      "tags": [
+        "cordova",
+        "camera",
+        "plugin",
+        "permissions"
+      ],
+      "description": "Cordova Camera Plugin"
     },
     {
       "id": "cordova_device_plugin_error",
@@ -185,7 +241,13 @@
         "Check device object availability",
         "Handle device info safely"
       ],
-      "tags": ["cordova", "device", "plugin", "device-info"]
+      "tags": [
+        "cordova",
+        "device",
+        "plugin",
+        "device-info"
+      ],
+      "description": "Cordova Device Plugin"
     },
     {
       "id": "cordova_network_plugin_error",
@@ -203,7 +265,13 @@
         "Check connection object availability",
         "Handle offline scenarios"
       ],
-      "tags": ["cordova", "network", "plugin", "connectivity"]
+      "tags": [
+        "cordova",
+        "network",
+        "plugin",
+        "connectivity"
+      ],
+      "description": "Cordova Network Plugin"
     },
     {
       "id": "cordova_geolocation_plugin_error",
@@ -221,7 +289,13 @@
         "Handle permission requests",
         "Provide location error handling"
       ],
-      "tags": ["cordova", "geolocation", "plugin", "permissions"]
+      "tags": [
+        "cordova",
+        "geolocation",
+        "plugin",
+        "permissions"
+      ],
+      "description": "Cordova Geolocation Plugin"
     },
     {
       "id": "ionic_native_plugin_error",
@@ -239,7 +313,13 @@
         "Add provider to app module",
         "Import and inject properly"
       ],
-      "tags": ["ionic", "ionic-native", "plugin", "provider"]
+      "tags": [
+        "ionic",
+        "ionic-native",
+        "plugin",
+        "provider"
+      ],
+      "description": "Ionic Native Plugin"
     },
     {
       "id": "plugin_compatibility_error",
@@ -257,7 +337,14 @@
         "Find alternative plugin if incompatible",
         "Check plugin changelog for breaking changes"
       ],
-      "tags": ["capacitor", "cordova", "plugin", "compatibility", "version"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "plugin",
+        "compatibility",
+        "version"
+      ],
+      "description": "Plugin Compatibility"
     },
     {
       "id": "plugin_method_not_available",
@@ -275,7 +362,14 @@
         "Use feature detection",
         "Provide graceful degradation"
       ],
-      "tags": ["capacitor", "cordova", "plugin", "platform", "feature-detection"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "plugin",
+        "platform",
+        "feature-detection"
+      ],
+      "description": "Plugin Method Not Available"
     },
     {
       "id": "plugin_configuration_error",
@@ -293,7 +387,14 @@
         "Verify config.xml plugin preferences for Cordova",
         "Ensure required permissions are declared"
       ],
-      "tags": ["capacitor", "cordova", "plugin", "configuration", "settings"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "plugin",
+        "configuration",
+        "settings"
+      ],
+      "description": "Plugin Configuration"
     }
   ]
 }

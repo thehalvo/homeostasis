@@ -1,4 +1,5 @@
 {
+  "name": "Rust Framework Errors",
   "language": "rust",
   "rules": [
     {

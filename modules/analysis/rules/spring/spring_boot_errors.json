@@ -1,4 +1,5 @@
 {
+  "name": "Spring Spring Boot Errors",
   "rules": [
     {
       "id": "spring_autowired_failure",
@@ -47,7 +48,11 @@
       "severity": "high",
       "category": "spring",
       "framework": "spring",
-      "tags": ["bean", "configuration", "initialization"]
+      "tags": [
+        "bean",
+        "configuration",
+        "initialization"
+      ]
     },
     {
       "id": "spring_property_not_found",
@@ -116,7 +121,7 @@
       "description": "Content-Type header in the request is not supported",
       "root_cause": "spring_media_type_not_supported",
       "suggestion": "Check the Content-Type header in the client request. Ensure the controller's consumes attribute matches the client's Content-Type. Add support for the required media type in your controller.",
-      "confidence": "high", 
+      "confidence": "high",
       "severity": "medium",
       "category": "spring",
       "framework": "spring"

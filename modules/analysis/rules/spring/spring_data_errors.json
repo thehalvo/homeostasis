@@ -1,4 +1,5 @@
 {
+  "name": "Spring Spring Data Errors",
   "rules": [
     {
       "id": "spring_data_jpa_entity_not_found",

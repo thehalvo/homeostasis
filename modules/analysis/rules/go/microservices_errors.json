@@ -1,4 +1,5 @@
 {
+  "name": "Go Microservices Errors",
   "description": "Go microservices, gRPC, and distributed systems error patterns",
   "version": "1.0.0",
   "rules": [

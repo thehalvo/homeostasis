@@ -1,4 +1,5 @@
 {
+  "name": "Angular Angular Module Errors",
   "metadata": {
     "description": "Angular module and lazy loading errors and their fixes",
     "framework": "angular",
@@ -21,7 +22,13 @@
         "Ensure the lazy-loaded module is properly exported",
         "Check for typos in module file name or path"
       ],
-      "tags": ["angular", "module", "lazy-loading", "routing"]
+      "tags": [
+        "angular",
+        "module",
+        "lazy-loading",
+        "routing"
+      ],
+      "description": "Angular Lazy Loading"
     },
     {
       "id": "angular_module_import_error",
@@ -38,7 +45,13 @@
         "Check the import statement syntax",
         "Verify the module's public API"
       ],
-      "tags": ["angular", "module", "import", "export"]
+      "tags": [
+        "angular",
+        "module",
+        "import",
+        "export"
+      ],
+      "description": "Angular Module Import"
     },
     {
       "id": "angular_feature_module_not_imported",
@@ -55,7 +68,13 @@
         "Ensure the component is declared in its module",
         "Check module dependencies and exports"
       ],
-      "tags": ["angular", "module", "feature", "component"]
+      "tags": [
+        "angular",
+        "module",
+        "feature",
+        "component"
+      ],
+      "description": "Angular Feature Module Not Imported"
     },
     {
       "id": "angular_shared_module_error",
@@ -72,7 +91,13 @@
         "Export components from shared module",
         "Import shared module in feature modules"
       ],
-      "tags": ["angular", "module", "shared", "declarations"]
+      "tags": [
+        "angular",
+        "module",
+        "shared",
+        "declarations"
+      ],
+      "description": "Angular Shared Module"
     },
     {
       "id": "angular_circular_module_dependency",
@@ -89,7 +114,13 @@
         "Use forwardRef() if necessary",
         "Redesign module structure to eliminate cycles"
       ],
-      "tags": ["angular", "module", "circular", "dependency"]
+      "tags": [
+        "angular",
+        "module",
+        "circular",
+        "dependency"
+      ],
+      "description": "Angular Circular Module Dependency"
     },
     {
       "id": "angular_core_module_multiple_imports",
@@ -106,7 +137,13 @@
         "Add guard to prevent multiple imports",
         "Use throwIfAlreadyLoaded guard in CoreModule constructor"
       ],
-      "tags": ["angular", "module", "core", "singleton"]
+      "tags": [
+        "angular",
+        "module",
+        "core",
+        "singleton"
+      ],
+      "description": "Angular Core Module Multiple Imports"
     },
     {
       "id": "angular_preloading_strategy_error",
@@ -123,7 +160,13 @@
         "Check network connectivity for module loading",
         "Ensure all lazy-loaded modules are accessible"
       ],
-      "tags": ["angular", "module", "preloading", "lazy-loading"]
+      "tags": [
+        "angular",
+        "module",
+        "preloading",
+        "lazy-loading"
+      ],
+      "description": "Angular Preloading Strategy"
     },
     {
       "id": "angular_module_with_providers_error",
@@ -140,7 +183,13 @@
         "Specify the module type in ModuleWithProviders<T>",
         "Follow Angular module configuration patterns"
       ],
-      "tags": ["angular", "module", "providers", "typing"]
+      "tags": [
+        "angular",
+        "module",
+        "providers",
+        "typing"
+      ],
+      "description": "Angular Module With Providers"
     }
   ]
 }

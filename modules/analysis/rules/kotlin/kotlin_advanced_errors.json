@@ -1,4 +1,5 @@
 {
+  "name": "Kotlin Kotlin Advanced Errors",
   "version": "1.0.0",
   "description": "Advanced Kotlin language feature error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "medium",
       "suggestion": "Use appropriate LazyThreadSafetyMode: SYNCHRONIZED (default), PUBLICATION, or NONE",
       "root_cause": "kotlin_lazy_thread_safety",
-      "tags": ["kotlin", "delegation", "lazy", "thread_safety"]
+      "tags": [
+        "kotlin",
+        "delegation",
+        "lazy",
+        "thread_safety"
+      ],
+      "description": "Kotlin Delegation Lazy Thread Safety"
     },
     {
       "id": "kotlin_observable_delegate_error",
@@ -24,7 +31,13 @@
       "severity": "medium",
       "suggestion": "Handle exceptions in observable delegate callbacks",
       "root_cause": "kotlin_observable_callback_error",
-      "tags": ["kotlin", "delegation", "observable", "callback"]
+      "tags": [
+        "kotlin",
+        "delegation",
+        "observable",
+        "callback"
+      ],
+      "description": "Kotlin Observable Delegate"
     },
     {
       "id": "kotlin_sealed_class_exhaustive",
@@ -36,7 +49,13 @@
       "severity": "high",
       "suggestion": "Cover all sealed class/interface subtypes in when expression or add else branch",
       "root_cause": "kotlin_sealed_not_exhaustive",
-      "tags": ["kotlin", "sealed", "when", "exhaustive"]
+      "tags": [
+        "kotlin",
+        "sealed",
+        "when",
+        "exhaustive"
+      ],
+      "description": "Kotlin Sealed Class Exhaustive"
     },
     {
       "id": "kotlin_inline_function_non_local_return",
@@ -48,7 +67,13 @@
       "severity": "high",
       "suggestion": "Use crossinline for lambda parameters that shouldn't allow non-local returns",
       "root_cause": "kotlin_inline_non_local_return",
-      "tags": ["kotlin", "inline", "return", "crossinline"]
+      "tags": [
+        "kotlin",
+        "inline",
+        "return",
+        "crossinline"
+      ],
+      "description": "Kotlin Inline Function Non Local Return"
     },
     {
       "id": "kotlin_reified_type_erasure",
@@ -60,7 +85,13 @@
       "severity": "high",
       "suggestion": "Mark type parameter as reified and function as inline",
       "root_cause": "kotlin_reified_not_inline",
-      "tags": ["kotlin", "inline", "reified", "generics"]
+      "tags": [
+        "kotlin",
+        "inline",
+        "reified",
+        "generics"
+      ],
+      "description": "Kotlin Reified Type Erasure"
     },
     {
       "id": "kotlin_operator_overload_signature",
@@ -72,7 +103,13 @@
       "severity": "high",
       "suggestion": "Operator functions must have specific signatures defined by convention",
       "root_cause": "kotlin_operator_signature_wrong",
-      "tags": ["kotlin", "operator", "overload", "signature"]
+      "tags": [
+        "kotlin",
+        "operator",
+        "overload",
+        "signature"
+      ],
+      "description": "Kotlin Operator Overload Signature"
     },
     {
       "id": "kotlin_destructuring_component_missing",
@@ -84,7 +121,13 @@
       "severity": "high",
       "suggestion": "Add componentN() functions or use data class for automatic destructuring",
       "root_cause": "kotlin_destructuring_no_component",
-      "tags": ["kotlin", "destructuring", "component", "declaration"]
+      "tags": [
+        "kotlin",
+        "destructuring",
+        "component",
+        "declaration"
+      ],
+      "description": "Kotlin Destructuring Component Missing"
     },
     {
       "id": "kotlin_typealias_recursive",
@@ -96,7 +139,13 @@
       "severity": "high",
       "suggestion": "Remove circular references in typealias definitions",
       "root_cause": "kotlin_typealias_recursive",
-      "tags": ["kotlin", "typealias", "recursive", "circular"]
+      "tags": [
+        "kotlin",
+        "typealias",
+        "recursive",
+        "circular"
+      ],
+      "description": "Kotlin Typealias Recursive"
     },
     {
       "id": "kotlin_annotation_target_wrong",
@@ -108,7 +157,13 @@
       "severity": "medium",
       "suggestion": "Check @Target annotation on custom annotations or use appropriate use-site target",
       "root_cause": "kotlin_annotation_wrong_target",
-      "tags": ["kotlin", "annotation", "target", "meta"]
+      "tags": [
+        "kotlin",
+        "annotation",
+        "target",
+        "meta"
+      ],
+      "description": "Kotlin Annotation Target Wrong"
     },
     {
       "id": "kotlin_reflection_not_available",
@@ -120,7 +175,13 @@
       "severity": "high",
       "suggestion": "Add kotlin-reflect dependency for reflection API usage",
       "root_cause": "kotlin_reflection_missing_dependency",
-      "tags": ["kotlin", "reflection", "dependency", "classpath"]
+      "tags": [
+        "kotlin",
+        "reflection",
+        "dependency",
+        "classpath"
+      ],
+      "description": "Kotlin Reflection Not Available"
     },
     {
       "id": "kotlin_contract_violation",
@@ -132,7 +193,13 @@
       "severity": "medium",
       "suggestion": "Ensure function implementation matches its contract declaration",
       "root_cause": "kotlin_contract_not_satisfied",
-      "tags": ["kotlin", "contract", "effect", "violation"]
+      "tags": [
+        "kotlin",
+        "contract",
+        "effect",
+        "violation"
+      ],
+      "description": "Kotlin Contract Violation"
     },
     {
       "id": "kotlin_value_class_boxing",
@@ -144,7 +211,13 @@
       "severity": "low",
       "suggestion": "Be aware of value class boxing in generic contexts or when used as nullable",
       "root_cause": "kotlin_value_class_boxed",
-      "tags": ["kotlin", "value_class", "inline_class", "boxing"]
+      "tags": [
+        "kotlin",
+        "value_class",
+        "inline_class",
+        "boxing"
+      ],
+      "description": "Kotlin Value Class Boxing"
     },
     {
       "id": "kotlin_companion_const_required",
@@ -156,7 +229,13 @@
       "severity": "medium",
       "suggestion": "Use const val for compile-time constants in companion objects",
       "root_cause": "kotlin_companion_const",
-      "tags": ["kotlin", "companion", "const", "compile_time"]
+      "tags": [
+        "kotlin",
+        "companion",
+        "const",
+        "compile_time"
+      ],
+      "description": "Kotlin Companion Const Required"
     },
     {
       "id": "kotlin_delegation_class_conflict",
@@ -168,7 +247,13 @@
       "severity": "medium",
       "suggestion": "Explicitly override conflicting members when using class delegation",
       "root_cause": "kotlin_delegation_conflict",
-      "tags": ["kotlin", "delegation", "class", "conflict"]
+      "tags": [
+        "kotlin",
+        "delegation",
+        "class",
+        "conflict"
+      ],
+      "description": "Kotlin Delegation Class Conflict"
     },
     {
       "id": "kotlin_sam_conversion_ambiguity",
@@ -180,7 +265,13 @@
       "severity": "medium",
       "suggestion": "Use explicit SAM constructor or ensure single abstract method interface",
       "root_cause": "kotlin_sam_ambiguity",
-      "tags": ["kotlin", "sam", "functional_interface", "conversion"]
+      "tags": [
+        "kotlin",
+        "sam",
+        "functional_interface",
+        "conversion"
+      ],
+      "description": "Kotlin Sam Conversion Ambiguity"
     }
   ]
 }

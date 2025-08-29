@@ -1,4 +1,5 @@
 {
+  "name": "Nextjs Nextjs Common Errors",
   "version": "1.0.0",
   "description": "Common Next.js framework error detection rules",
   "rules": [
@@ -12,12 +13,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "import", "configuration"],
+      "tags": [
+        "nextjs",
+        "import",
+        "configuration"
+      ],
       "fix_commands": [
         "Ensure Next.js is installed: npm install next",
         "Check package.json for correct Next.js dependency",
         "Verify import paths are correct"
-      ]
+      ],
+      "description": "Nextjs Import"
     },
     {
       "id": "nextjs_routing_error",
@@ -29,12 +35,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["nextjs", "routing", "pages"],
+      "tags": [
+        "nextjs",
+        "routing",
+        "pages"
+      ],
       "fix_commands": [
         "Verify file naming follows Next.js conventions",
         "Check dynamic route parameters",
         "Ensure file exists in pages/ or app/ directory"
-      ]
+      ],
+      "description": "Nextjs Routing"
     },
     {
       "id": "nextjs_build_error",
@@ -46,13 +57,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["nextjs", "build", "compilation"],
+      "tags": [
+        "nextjs",
+        "build",
+        "compilation"
+      ],
       "fix_commands": [
         "Review code for syntax errors",
         "Check next.config.js configuration",
         "Verify module imports and dependencies",
         "Look for TypeScript errors"
-      ]
+      ],
+      "description": "Nextjs Build"
     },
     {
       "id": "nextjs_config_error",
@@ -64,13 +80,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "configuration", "next.config.js"],
+      "tags": [
+        "nextjs",
+        "configuration",
+        "next.config.js"
+      ],
       "fix_commands": [
         "Check next.config.js syntax",
         "Verify configuration options are valid",
         "Ensure exports are properly structured",
         "Check for conflicting configuration options"
-      ]
+      ],
+      "description": "Nextjs Config"
     },
     {
       "id": "nextjs_hydration_error",
@@ -82,13 +103,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "hydration", "rendering"],
+      "tags": [
+        "nextjs",
+        "hydration",
+        "rendering"
+      ],
       "fix_commands": [
         "Ensure components render the same content on server and client",
         "Check for date, random values or browser-only APIs",
         "Use useEffect for client-only code",
         "Use dynamic import with ssr:false for client-only components"
-      ]
+      ],
+      "description": "Nextjs Hydration"
     },
     {
       "id": "nextjs_typescript_error",
@@ -100,13 +126,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["nextjs", "typescript", "types"],
+      "tags": [
+        "nextjs",
+        "typescript",
+        "types"
+      ],
       "fix_commands": [
         "Check TypeScript type definitions",
         "Verify types for Next.js components and APIs",
         "Update Next.js types with 'npm install @types/react @types/node'",
         "Check tsconfig.json configuration"
-      ]
+      ],
+      "description": "Nextjs Typescript"
     },
     {
       "id": "nextjs_link_error",
@@ -118,13 +149,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "link", "navigation"],
+      "tags": [
+        "nextjs",
+        "link",
+        "navigation"
+      ],
       "fix_commands": [
         "Ensure href prop is provided",
         "Check that href value is valid",
         "Verify Link component import",
         "Remove <a> tag as direct child or use legacyBehavior prop"
-      ]
+      ],
+      "description": "Nextjs Link"
     },
     {
       "id": "nextjs_environment_variable_error",
@@ -136,13 +172,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["nextjs", "env", "configuration"],
+      "tags": [
+        "nextjs",
+        "env",
+        "configuration"
+      ],
       "fix_commands": [
         "Create or update .env.local file",
         "Prefix variables with NEXT_PUBLIC_ for client-side access",
         "Verify environment variable names",
         "Check .env files for proper formatting"
-      ]
+      ],
+      "description": "Nextjs Environment Variable"
     }
   ]
 }

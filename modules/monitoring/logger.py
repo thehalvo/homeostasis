@@ -256,12 +256,15 @@ class MonitoringLogger:
         }
         
         # Log the exception
+        # Remove 'message' from kwargs if it exists to avoid conflict
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k != 'message'}
+        
         log_record = self.log(
             "ERROR",
-            str(e),
+            message,
             include_call_location=True,
             error_details=error_data,
-            **kwargs
+            **filtered_kwargs
         )
         
         return log_record

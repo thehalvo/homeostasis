@@ -1,4 +1,5 @@
 {
+  "name": "Scala Implicit Errors",
   "version": "1.0.0",
   "description": "Scala implicit resolution and type class error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Disambiguate by importing specific implicit, using explicit parameter, or adjusting implicit priority",
       "root_cause": "scala_implicit_ambiguity",
-      "tags": ["scala", "implicit", "ambiguous", "resolution"]
+      "tags": [
+        "scala",
+        "implicit",
+        "ambiguous",
+        "resolution"
+      ],
+      "description": "Scala Ambiguous Implicit Values"
     },
     {
       "id": "scala_implicit_conversion_not_applicable",
@@ -24,7 +31,13 @@
       "severity": "medium",
       "suggestion": "Import required implicit conversion or define one. Enable with import scala.language.implicitConversions",
       "root_cause": "scala_implicit_conversion_missing",
-      "tags": ["scala", "implicit", "conversion", "type"]
+      "tags": [
+        "scala",
+        "implicit",
+        "conversion",
+        "type"
+      ],
+      "description": "Scala Implicit Conversion Not Applicable"
     },
     {
       "id": "scala_context_bound_not_satisfied",
@@ -36,7 +49,13 @@
       "severity": "high",
       "suggestion": "Provide implicit instance for the required type class or import it into scope",
       "root_cause": "scala_context_bound_missing",
-      "tags": ["scala", "implicit", "context_bound", "evidence"]
+      "tags": [
+        "scala",
+        "implicit",
+        "context_bound",
+        "evidence"
+      ],
+      "description": "Scala Context Bound Not Satisfied"
     },
     {
       "id": "scala_type_class_derivation_failed",
@@ -48,7 +67,13 @@
       "severity": "high",
       "suggestion": "Ensure all components have type class instances or provide custom instance",
       "root_cause": "scala_type_class_derivation",
-      "tags": ["scala", "implicit", "type_class", "derivation"]
+      "tags": [
+        "scala",
+        "implicit",
+        "type_class",
+        "derivation"
+      ],
+      "description": "Scala Type Class Derivation Failed"
     },
     {
       "id": "scala_implicit_not_found_custom",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "Follow the custom error message provided by @implicitNotFound annotation",
       "root_cause": "scala_implicit_not_found_annotated",
-      "tags": ["scala", "implicit", "not_found", "annotation"]
+      "tags": [
+        "scala",
+        "implicit",
+        "not_found",
+        "annotation"
+      ],
+      "description": "Scala Implicit Not Found Custom"
     },
     {
       "id": "scala_implicit_priority_shadowing",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Understand implicit priority rules: local > imported > inherited > package object",
       "root_cause": "scala_implicit_priority",
-      "tags": ["scala", "implicit", "priority", "shadowing"]
+      "tags": [
+        "scala",
+        "implicit",
+        "priority",
+        "shadowing"
+      ],
+      "description": "Scala Implicit Priority Shadowing"
     },
     {
       "id": "scala_implicit_scope_issue",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Ensure implicit is in scope: companion object, import, or local definition",
       "root_cause": "scala_implicit_out_of_scope",
-      "tags": ["scala", "implicit", "scope", "visibility"]
+      "tags": [
+        "scala",
+        "implicit",
+        "scope",
+        "visibility"
+      ],
+      "description": "Scala Implicit Scope Issue"
     },
     {
       "id": "scala_diverging_implicit_expansion",
@@ -96,7 +139,13 @@
       "severity": "high",
       "suggestion": "Break recursive implicit resolution with explicit type annotations or Lazy wrapper",
       "root_cause": "scala_implicit_diverging",
-      "tags": ["scala", "implicit", "diverging", "recursive"]
+      "tags": [
+        "scala",
+        "implicit",
+        "diverging",
+        "recursive"
+      ],
+      "description": "Scala Diverging Implicit Expansion"
     },
     {
       "id": "scala_implicit_class_not_found",
@@ -108,7 +157,13 @@
       "severity": "medium",
       "suggestion": "Import the implicit class or ensure it's in companion object of target type",
       "root_cause": "scala_implicit_class_missing",
-      "tags": ["scala", "implicit", "class", "extension"]
+      "tags": [
+        "scala",
+        "implicit",
+        "class",
+        "extension"
+      ],
+      "description": "Scala Implicit Class Not Found"
     },
     {
       "id": "scala_aux_pattern_type_mismatch",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Ensure Aux pattern type members align: Foo.Aux[A, B] matches Foo[A] { type Out = B }",
       "root_cause": "scala_aux_pattern_mismatch",
-      "tags": ["scala", "implicit", "aux", "type_member"]
+      "tags": [
+        "scala",
+        "implicit",
+        "aux",
+        "type_member"
+      ],
+      "description": "Scala Aux Pattern Type Mismatch"
     },
     {
       "id": "scala_implicit_macro_expansion_failed",
@@ -132,7 +193,13 @@
       "severity": "high",
       "suggestion": "Check macro implementation for errors, ensure macro paradise plugin if needed",
       "root_cause": "scala_implicit_macro_failed",
-      "tags": ["scala", "implicit", "macro", "expansion"]
+      "tags": [
+        "scala",
+        "implicit",
+        "macro",
+        "expansion"
+      ],
+      "description": "Scala Implicit Macro Expansion Failed"
     },
     {
       "id": "scala_implicit_parameter_explicit",
@@ -144,7 +211,13 @@
       "severity": "high",
       "suggestion": "Provide implicit parameter explicitly or ensure implicit value is in scope",
       "root_cause": "scala_implicit_parameter_missing",
-      "tags": ["scala", "implicit", "parameter", "argument"]
+      "tags": [
+        "scala",
+        "implicit",
+        "parameter",
+        "argument"
+      ],
+      "description": "Scala Implicit Parameter Explicit"
     },
     {
       "id": "scala_view_bound_deprecated",
@@ -156,7 +229,13 @@
       "severity": "low",
       "suggestion": "Replace view bounds (A <% B) with context bounds or implicit parameters",
       "root_cause": "scala_view_bound_deprecated",
-      "tags": ["scala", "implicit", "view_bound", "deprecated"]
+      "tags": [
+        "scala",
+        "implicit",
+        "view_bound",
+        "deprecated"
+      ],
+      "description": "Scala View Bound Deprecated"
     },
     {
       "id": "scala_implicit_def_recursion",
@@ -168,7 +247,13 @@
       "severity": "high",
       "suggestion": "Add explicit result type to recursive implicit def",
       "root_cause": "scala_implicit_recursive_def",
-      "tags": ["scala", "implicit", "recursive", "def"]
+      "tags": [
+        "scala",
+        "implicit",
+        "recursive",
+        "def"
+      ],
+      "description": "Scala Implicit Def Recursion"
     },
     {
       "id": "scala_magnet_pattern_overload",
@@ -180,7 +265,13 @@
       "severity": "medium",
       "suggestion": "Magnet pattern can cause ambiguity. Consider alternative overloading strategies",
       "root_cause": "scala_magnet_pattern",
-      "tags": ["scala", "implicit", "magnet", "overload"]
+      "tags": [
+        "scala",
+        "implicit",
+        "magnet",
+        "overload"
+      ],
+      "description": "Scala Magnet Pattern Overload"
     }
   ]
 }

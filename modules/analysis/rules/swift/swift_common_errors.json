@@ -1,4 +1,5 @@
 {
+  "name": "Swift Swift Common Errors",
   "version": "1.0.0",
   "description": "Common Swift error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Replace force unwrapping (!) with safe unwrapping using if let, guard let, or nil coalescing operator (??)",
       "root_cause": "swift_force_unwrap_nil",
-      "tags": ["swift", "optionals", "fatal", "nil"]
+      "tags": [
+        "swift",
+        "optionals",
+        "fatal",
+        "nil"
+      ],
+      "description": "Swift Force Unwrap Nil"
     },
     {
       "id": "swift_array_index_bounds",
@@ -24,7 +31,13 @@
       "severity": "high",
       "suggestion": "Check array bounds before accessing elements using array.indices.contains(index)",
       "root_cause": "swift_array_index_out_of_bounds",
-      "tags": ["swift", "array", "bounds", "fatal"]
+      "tags": [
+        "swift",
+        "array",
+        "bounds",
+        "fatal"
+      ],
+      "description": "Swift Array Index Bounds"
     },
     {
       "id": "swift_dictionary_key_not_found",
@@ -36,7 +49,13 @@
       "severity": "medium",
       "suggestion": "Use optional subscripting dictionary[key] or provide default with dictionary[key, default: value]",
       "root_cause": "swift_dictionary_key_not_found",
-      "tags": ["swift", "dictionary", "key", "optional"]
+      "tags": [
+        "swift",
+        "dictionary",
+        "key",
+        "optional"
+      ],
+      "description": "Swift Dictionary Key Not Found"
     },
     {
       "id": "swift_exc_bad_access",
@@ -48,7 +67,13 @@
       "severity": "critical",
       "suggestion": "Memory access violation - check for retain cycles, dangling pointers, or accessing deallocated objects",
       "root_cause": "swift_exc_bad_access",
-      "tags": ["swift", "memory", "crash", "access"]
+      "tags": [
+        "swift",
+        "memory",
+        "crash",
+        "access"
+      ],
+      "description": "Swift Exc Bad Access"
     },
     {
       "id": "swift_thread_sanitizer_race",
@@ -60,7 +85,13 @@
       "severity": "high",
       "suggestion": "Data race detected - ensure proper synchronization using locks, actors, or async/await",
       "root_cause": "swift_data_race",
-      "tags": ["swift", "concurrency", "race", "threading"]
+      "tags": [
+        "swift",
+        "concurrency",
+        "race",
+        "threading"
+      ],
+      "description": "Swift Thread Sanitizer Race"
     },
     {
       "id": "swift_main_thread_checker",
@@ -72,7 +103,13 @@
       "severity": "high",
       "suggestion": "UI updates must be performed on the main thread - use DispatchQueue.main.async or @MainActor",
       "root_cause": "swift_main_thread_violation",
-      "tags": ["swift", "ui", "threading", "main_thread"]
+      "tags": [
+        "swift",
+        "ui",
+        "threading",
+        "main_thread"
+      ],
+      "description": "Swift Main Thread Checker"
     },
     {
       "id": "swift_weak_reference_cycle",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Use [weak self] or [unowned self] in closures to break retain cycles",
       "root_cause": "swift_weak_reference_cycle",
-      "tags": ["swift", "memory", "cycle", "closure"]
+      "tags": [
+        "swift",
+        "memory",
+        "cycle",
+        "closure"
+      ],
+      "description": "Swift Weak Reference Cycle"
     },
     {
       "id": "swift_optional_chaining_error",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Remove force unwrapping operator (!) or ensure the value is actually optional",
       "root_cause": "swift_invalid_force_unwrap",
-      "tags": ["swift", "optionals", "unwrap", "type"]
+      "tags": [
+        "swift",
+        "optionals",
+        "unwrap",
+        "type"
+      ],
+      "description": "Swift Optional Chaining"
     },
     {
       "id": "swift_string_interpolation_error",
@@ -108,7 +157,13 @@
       "severity": "low",
       "suggestion": "Ensure objects in string interpolation conform to CustomStringConvertible",
       "root_cause": "swift_string_interpolation_debug",
-      "tags": ["swift", "string", "interpolation", "debug"]
+      "tags": [
+        "swift",
+        "string",
+        "interpolation",
+        "debug"
+      ],
+      "description": "Swift String Interpolation"
     },
     {
       "id": "swift_async_operation_cancelled",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Handle task cancellation gracefully with try Task.checkCancellation() or catch CancellationError",
       "root_cause": "swift_task_cancelled",
-      "tags": ["swift", "async", "cancellation", "task"]
+      "tags": [
+        "swift",
+        "async",
+        "cancellation",
+        "task"
+      ],
+      "description": "Swift Async Operation Cancelled"
     },
     {
       "id": "swift_deadlock_detection",
@@ -132,7 +193,13 @@
       "severity": "critical",
       "suggestion": "Deadlock detected - review synchronization code and avoid nested locks",
       "root_cause": "swift_deadlock",
-      "tags": ["swift", "deadlock", "concurrency", "lock"]
+      "tags": [
+        "swift",
+        "deadlock",
+        "concurrency",
+        "lock"
+      ],
+      "description": "Swift Deadlock Detection"
     },
     {
       "id": "swift_nsobject_dealloc_error",
@@ -144,7 +211,13 @@
       "severity": "high",
       "suggestion": "Accessing deallocated object - check object lifecycle and weak references",
       "root_cause": "swift_deallocated_object_access",
-      "tags": ["swift", "memory", "dealloc", "lifecycle"]
+      "tags": [
+        "swift",
+        "memory",
+        "dealloc",
+        "lifecycle"
+      ],
+      "description": "Swift Nsobject Dealloc"
     },
     {
       "id": "swift_casting_failure",
@@ -156,7 +229,13 @@
       "severity": "medium",
       "suggestion": "Type casting failed - use conditional casting (as?) or ensure type compatibility",
       "root_cause": "swift_type_casting_failure",
-      "tags": ["swift", "casting", "type", "nsobject"]
+      "tags": [
+        "swift",
+        "casting",
+        "type",
+        "nsobject"
+      ],
+      "description": "Swift Casting Failure"
     },
     {
       "id": "swift_precondition_failure",
@@ -168,7 +247,13 @@
       "severity": "high",
       "suggestion": "Precondition failed - review the failing condition and ensure valid input",
       "root_cause": "swift_precondition_failure",
-      "tags": ["swift", "precondition", "assert", "validation"]
+      "tags": [
+        "swift",
+        "precondition",
+        "assert",
+        "validation"
+      ],
+      "description": "Swift Precondition Failure"
     },
     {
       "id": "swift_fatalError_call",
@@ -180,7 +265,13 @@
       "severity": "critical",
       "suggestion": "Review the fatal error condition and implement proper error handling",
       "root_cause": "swift_fatal_error",
-      "tags": ["swift", "fatal", "error", "crash"]
+      "tags": [
+        "swift",
+        "fatal",
+        "error",
+        "crash"
+      ],
+      "description": "Swift Fatalerror Call"
     }
   ]
 }

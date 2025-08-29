@@ -13,12 +13,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "svelte5", "runes", "state"],
+      "tags": [
+        "svelte",
+        "svelte5",
+        "runes",
+        "state"
+      ],
       "fix_commands": [
         "Use $state() for reactive state: let count = $state(0)",
         "Use $derived() for computed values: let doubled = $derived(count * 2)",
         "Use $effect() for side effects: $effect(() => { console.log(count) })"
-      ]
+      ],
+      "description": "Svelte Runes Usage"
     },
     {
       "id": "svelte_snippet_syntax_error",
@@ -30,12 +36,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "svelte5", "snippets"],
+      "tags": [
+        "svelte",
+        "svelte5",
+        "snippets"
+      ],
       "fix_commands": [
         "Define snippet: {#snippet mySnippet(param)} content {/snippet}",
         "Use snippet: {@render mySnippet(value)}",
         "Check snippet parameter syntax"
-      ]
+      ],
+      "description": "Svelte Snippet Syntax"
     },
     {
       "id": "svelte_render_tag_error",
@@ -47,12 +58,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "svelte5", "render", "snippets"],
+      "tags": [
+        "svelte",
+        "svelte5",
+        "render",
+        "snippets"
+      ],
       "fix_commands": [
         "Use @render to call snippets: {@render mySnippet()}",
         "Pass parameters: {@render mySnippet(param1, param2)}",
         "Check snippet exists before rendering"
-      ]
+      ],
+      "description": "Svelte Render Tag"
     },
     {
       "id": "svelte_component_events_error",
@@ -64,12 +81,18 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "svelte5", "events", "callbacks"],
+      "tags": [
+        "svelte",
+        "svelte5",
+        "events",
+        "callbacks"
+      ],
       "fix_commands": [
         "Use callback props: export let onclick",
         "Call callback prop: onclick?.(event)",
         "Migrate from createEventDispatcher to callback props"
-      ]
+      ],
+      "description": "Svelte Component Events"
     },
     {
       "id": "svelte_bind_this_error",
@@ -81,12 +104,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "svelte5", "runes", "bind"],
+      "tags": [
+        "svelte",
+        "svelte5",
+        "runes",
+        "bind"
+      ],
       "fix_commands": [
         "Declare with $state: let element = $state()",
         "Use bind:this={element} with runes",
         "Access element.value or element properties"
-      ]
+      ],
+      "description": "Svelte Bind This"
     },
     {
       "id": "svelte_legacy_reactive_statements",
@@ -98,12 +127,18 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "svelte5", "runes", "reactive"],
+      "tags": [
+        "svelte",
+        "svelte5",
+        "runes",
+        "reactive"
+      ],
       "fix_commands": [
         "Replace $: computed = value * 2 with let computed = $derived(value * 2)",
         "Replace $: { effect() } with $effect(() => { effect() })",
         "Use $derived.by() for complex computations"
-      ]
+      ],
+      "description": "Svelte Legacy Reactive Statements"
     },
     {
       "id": "svelte_mount_unmount_error",
@@ -115,12 +150,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "svelte5", "mount", "components"],
+      "tags": [
+        "svelte",
+        "svelte5",
+        "mount",
+        "components"
+      ],
       "fix_commands": [
         "Import mount from 'svelte': import { mount } from 'svelte'",
         "Mount component: const instance = mount(Component, { target, props })",
         "Unmount component: instance.unmount()"
-      ]
+      ],
+      "description": "Svelte Mount Unmount"
     },
     {
       "id": "svelte_hydration_boundary_error",
@@ -132,12 +173,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "ssr", "hydration", "client"],
+      "tags": [
+        "svelte",
+        "ssr",
+        "hydration",
+        "client"
+      ],
       "fix_commands": [
         "Use browser check: import { browser } from '$app/environment'",
         "Conditional rendering: {#if browser} client-only content {/if}",
         "Use onMount for client-side initialization"
-      ]
+      ],
+      "description": "Svelte Hydration Boundary"
     },
     {
       "id": "svelte_inspector_error",
@@ -149,12 +196,17 @@
       "confidence": "low",
       "severity": "warning",
       "reliability": "low",
-      "tags": ["svelte", "inspector", "devtools"],
+      "tags": [
+        "svelte",
+        "inspector",
+        "devtools"
+      ],
       "fix_commands": [
         "Install @sveltejs/inspector package",
         "Configure inspector in vite.config.js",
         "Use inspector only in development mode"
-      ]
+      ],
+      "description": "Svelte Inspector"
     },
     {
       "id": "svelte_module_context_error",
@@ -166,12 +218,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "module", "context", "script"],
+      "tags": [
+        "svelte",
+        "module",
+        "context",
+        "script"
+      ],
       "fix_commands": [
         "Use module context for imports: <script context=\"module\">",
         "Export module-level functions and constants",
         "Avoid component instance code in module context"
-      ]
+      ],
+      "description": "Svelte Module Context"
     },
     {
       "id": "svelte_custom_elements_error",
@@ -183,12 +241,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "custom-elements", "web-components"],
+      "tags": [
+        "svelte",
+        "custom-elements",
+        "web-components"
+      ],
       "fix_commands": [
         "Use svelte:options tag=\"my-element\"",
         "Configure compiler for custom elements",
         "Handle props and events for custom elements"
-      ]
+      ],
+      "description": "Svelte Custom Elements"
     },
     {
       "id": "svelte_compiler_options_error",
@@ -200,12 +263,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "compiler", "config"],
+      "tags": [
+        "svelte",
+        "compiler",
+        "config"
+      ],
       "fix_commands": [
         "Check svelte.config.js syntax",
         "Verify compiler options compatibility",
         "Update adapter and preprocessor configurations"
-      ]
+      ],
+      "description": "Svelte Compiler Options"
     }
   ]
 }

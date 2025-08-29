@@ -99,6 +99,7 @@ class TestDockerfileExceptionHandler:
         
         analysis = self.handler.analyze_exception(error_data)
         
+        print(f"Analysis result: {analysis}")
         assert analysis["category"] == "dockerfile"
         assert analysis["subcategory"] == "path"
         assert analysis["confidence"] == "high"
@@ -211,7 +212,7 @@ class TestDockerfilePatchGenerator:
         }
         
         analysis = {
-            "root_cause": "dockerfile_security_error",
+            "root_cause": "dockerfile_security_issue",
             "subcategory": "security",
             "confidence": "high"
         }

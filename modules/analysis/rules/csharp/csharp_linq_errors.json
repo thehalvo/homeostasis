@@ -1,4 +1,5 @@
 {
+  "name": "C# Csharp Linq Errors",
   "description": "C# LINQ and query expression error detection rules",
   "version": "1.0.0",
   "rules": [

@@ -13,12 +13,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "events", "undefined"],
+      "tags": [
+        "svelte",
+        "events",
+        "undefined"
+      ],
       "fix_commands": [
         "Define event handler function in script section",
         "Check function name spelling",
         "Ensure function is in scope"
-      ]
+      ],
+      "description": "Svelte Event Handler Undefined"
     },
     {
       "id": "svelte_event_modifier_error",
@@ -30,12 +35,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "events", "modifiers"],
+      "tags": [
+        "svelte",
+        "events",
+        "modifiers"
+      ],
       "fix_commands": [
         "Use valid event modifiers: preventDefault, stopPropagation, passive, once, capture, self, trusted",
         "Check modifier spelling",
         "Combine modifiers with | (pipe) character"
-      ]
+      ],
+      "description": "Svelte Event Modifier"
     },
     {
       "id": "svelte_custom_event_dispatch_error",
@@ -47,12 +57,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "events", "custom", "dispatch"],
+      "tags": [
+        "svelte",
+        "events",
+        "custom",
+        "dispatch"
+      ],
       "fix_commands": [
         "Import createEventDispatcher from 'svelte'",
         "Create dispatcher: const dispatch = createEventDispatcher()",
         "Use dispatch('eventName', eventData) to emit events"
-      ]
+      ],
+      "description": "Svelte Custom Event Dispatch"
     },
     {
       "id": "svelte_event_forwarding_error",
@@ -64,12 +80,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "events", "forwarding"],
+      "tags": [
+        "svelte",
+        "events",
+        "forwarding"
+      ],
       "fix_commands": [
         "Use on:click (without handler) to forward DOM events",
         "Use on:custom to forward custom events",
         "Ensure event name matches between child and parent"
-      ]
+      ],
+      "description": "Svelte Event Forwarding"
     },
     {
       "id": "svelte_dom_reference_error",
@@ -81,12 +102,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "dom", "reference", "bind"],
+      "tags": [
+        "svelte",
+        "dom",
+        "reference",
+        "bind"
+      ],
       "fix_commands": [
         "Declare variable for element reference",
         "Use bind:this={elementRef} on element",
         "Access element after component mounts (in onMount)"
-      ]
+      ],
+      "description": "Svelte Dom Reference"
     },
     {
       "id": "svelte_dom_manipulation_timing",
@@ -98,12 +125,18 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "dom", "timing", "onMount"],
+      "tags": [
+        "svelte",
+        "dom",
+        "timing",
+        "onMount"
+      ],
       "fix_commands": [
         "Move DOM manipulation to onMount lifecycle hook",
         "Use await tick() before DOM operations",
         "Check element exists before manipulation"
-      ]
+      ],
+      "description": "Svelte Dom Manipulation Timing"
     },
     {
       "id": "svelte_window_binding_error",
@@ -115,12 +148,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "dom", "window", "binding"],
+      "tags": [
+        "svelte",
+        "dom",
+        "window",
+        "binding"
+      ],
       "fix_commands": [
         "Use valid window properties for binding",
         "Check binding syntax: bind:innerWidth={width}",
         "Ensure bound variable is declared with let"
-      ]
+      ],
+      "description": "Svelte Window Binding"
     },
     {
       "id": "svelte_document_binding_error",
@@ -132,12 +171,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "dom", "document", "binding"],
+      "tags": [
+        "svelte",
+        "dom",
+        "document",
+        "binding"
+      ],
       "fix_commands": [
         "Use valid document properties for binding",
         "Check binding syntax on svelte:document",
         "Ensure bound variable is declared with let"
-      ]
+      ],
+      "description": "Svelte Document Binding"
     },
     {
       "id": "svelte_form_binding_error",
@@ -149,13 +194,19 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "dom", "forms", "binding"],
+      "tags": [
+        "svelte",
+        "dom",
+        "forms",
+        "binding"
+      ],
       "fix_commands": [
         "Use bind:value for input, textarea, select",
         "Use bind:checked for checkboxes and radio buttons",
         "Use bind:group for radio button groups",
         "Use bind:files for file inputs"
-      ]
+      ],
+      "description": "Svelte Form Binding"
     },
     {
       "id": "svelte_media_binding_error",
@@ -167,12 +218,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "dom", "media", "binding"],
+      "tags": [
+        "svelte",
+        "dom",
+        "media",
+        "binding"
+      ],
       "fix_commands": [
         "Use valid media element properties for binding",
         "Check binding syntax on audio/video elements",
         "Ensure bound variable is declared with let"
-      ]
+      ],
+      "description": "Svelte Media Binding"
     },
     {
       "id": "svelte_keyboard_event_error",
@@ -184,12 +241,17 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "events", "keyboard"],
+      "tags": [
+        "svelte",
+        "events",
+        "keyboard"
+      ],
       "fix_commands": [
         "Use event.key for character keys",
         "Use event.code for physical key locations",
         "Handle keyboard events in appropriate handlers"
-      ]
+      ],
+      "description": "Svelte Keyboard Event"
     },
     {
       "id": "svelte_touch_event_error",
@@ -201,12 +263,18 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "events", "touch", "mobile"],
+      "tags": [
+        "svelte",
+        "events",
+        "touch",
+        "mobile"
+      ],
       "fix_commands": [
         "Use touchstart, touchmove, touchend events",
         "Handle touch events with proper event object",
         "Consider passive event listeners for better performance"
-      ]
+      ],
+      "description": "Svelte Touch Event"
     }
   ]
 }

@@ -1,4 +1,5 @@
 {
+  "name": "Clojure Transducer Errors",
   "version": "1.0.0",
   "description": "Clojure transducer composition and usage error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "medium",
       "suggestion": "Transducers compose left-to-right with comp. Order matters for correctness and performance",
       "root_cause": "clojure_transducer_comp_order",
-      "tags": ["clojure", "transducer", "composition", "order"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "composition",
+        "order"
+      ],
+      "description": "Clojure Transducer Composition Order"
     },
     {
       "id": "clojure_stateful_transducer_error",
@@ -24,7 +31,13 @@
       "severity": "high",
       "suggestion": "Stateful transducers must not share state. Create new instances for each use",
       "root_cause": "clojure_transducer_shared_state",
-      "tags": ["clojure", "transducer", "stateful", "concurrent"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "stateful",
+        "concurrent"
+      ],
+      "description": "Clojure Stateful Transducer"
     },
     {
       "id": "clojure_reduced_not_respected",
@@ -36,7 +49,13 @@
       "severity": "high",
       "suggestion": "Respect reduced values for early termination. Use unreduced carefully",
       "root_cause": "clojure_reduced_ignored",
-      "tags": ["clojure", "transducer", "reduced", "termination"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "reduced",
+        "termination"
+      ],
+      "description": "Clojure Reduced Not Respected"
     },
     {
       "id": "clojure_transducer_context_mismatch",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Some transducers work differently in different contexts (into vs sequence vs chan)",
       "root_cause": "clojure_transducer_context",
-      "tags": ["clojure", "transducer", "context", "usage"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "context",
+        "usage"
+      ],
+      "description": "Clojure Transducer Context Mismatch"
     },
     {
       "id": "clojure_transducer_stack_overflow",
@@ -60,7 +85,13 @@
       "severity": "high",
       "suggestion": "Avoid excessive transducer composition. Consider breaking into steps",
       "root_cause": "clojure_transducer_stack_depth",
-      "tags": ["clojure", "transducer", "stackoverflow", "composition"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "stackoverflow",
+        "composition"
+      ],
+      "description": "Clojure Transducer Stack Overflow"
     },
     {
       "id": "clojure_completing_function_error",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Completing functions need both 2-arity (step) and 1-arity (completion) implementations",
       "root_cause": "clojure_completing_arity",
-      "tags": ["clojure", "transducer", "completing", "arity"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "completing",
+        "arity"
+      ],
+      "description": "Clojure Completing Function"
     },
     {
       "id": "clojure_transducer_type_mismatch",
@@ -84,7 +121,13 @@
       "severity": "high",
       "suggestion": "Transducers must be functions that transform reducing functions",
       "root_cause": "clojure_not_transducer",
-      "tags": ["clojure", "transducer", "type", "function"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "type",
+        "function"
+      ],
+      "description": "Clojure Transducer Type Mismatch"
     },
     {
       "id": "clojure_parallel_fold_error",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Not all transducers work with parallel fold. Ensure combine function is provided",
       "root_cause": "clojure_fold_transducer",
-      "tags": ["clojure", "transducer", "fold", "parallel"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "fold",
+        "parallel"
+      ],
+      "description": "Clojure Parallel Fold"
     },
     {
       "id": "clojure_cat_transducer_error",
@@ -108,7 +157,13 @@
       "severity": "medium",
       "suggestion": "cat transducer flattens one level. Input must be collections",
       "root_cause": "clojure_cat_transducer",
-      "tags": ["clojure", "transducer", "cat", "flatten"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "cat",
+        "flatten"
+      ],
+      "description": "Clojure Cat Transducer"
     },
     {
       "id": "clojure_transducer_init_value",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Provide initial value for transduce or ensure reducing function has 0-arity",
       "root_cause": "clojure_transducer_init",
-      "tags": ["clojure", "transducer", "init", "reduce"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "init",
+        "reduce"
+      ],
+      "description": "Clojure Transducer Init Value"
     },
     {
       "id": "clojure_transducer_resource_cleanup",
@@ -132,7 +193,13 @@
       "severity": "high",
       "suggestion": "Use completion arity to clean up resources in stateful transducers",
       "root_cause": "clojure_transducer_cleanup",
-      "tags": ["clojure", "transducer", "resource", "cleanup"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "resource",
+        "cleanup"
+      ],
+      "description": "Clojure Transducer Resource Cleanup"
     },
     {
       "id": "clojure_dedupe_transducer_state",
@@ -144,7 +211,13 @@
       "severity": "medium",
       "suggestion": "dedupe and distinct are stateful transducers. Don't reuse instances",
       "root_cause": "clojure_dedupe_state",
-      "tags": ["clojure", "transducer", "dedupe", "stateful"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "dedupe",
+        "stateful"
+      ],
+      "description": "Clojure Dedupe Transducer State"
     },
     {
       "id": "clojure_partition_transducer_remainder",
@@ -156,7 +229,13 @@
       "severity": "medium",
       "suggestion": "partition drops incomplete groups. Use partition-all to keep remainder",
       "root_cause": "clojure_partition_remainder",
-      "tags": ["clojure", "transducer", "partition", "remainder"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "partition",
+        "remainder"
+      ],
+      "description": "Clojure Partition Transducer Remainder"
     },
     {
       "id": "clojure_halt_when_condition",
@@ -168,7 +247,13 @@
       "severity": "medium",
       "suggestion": "halt-when stops on predicate match. Ensure predicate logic is correct",
       "root_cause": "clojure_halt_when",
-      "tags": ["clojure", "transducer", "halt", "predicate"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "halt",
+        "predicate"
+      ],
+      "description": "Clojure Halt When Condition"
     },
     {
       "id": "clojure_eduction_realization",
@@ -180,7 +265,13 @@
       "severity": "low",
       "suggestion": "Eductions are recomputed on each use. Cache results if needed",
       "root_cause": "clojure_eduction_recompute",
-      "tags": ["clojure", "transducer", "eduction", "performance"]
+      "tags": [
+        "clojure",
+        "transducer",
+        "eduction",
+        "performance"
+      ],
+      "description": "Clojure Eduction Realization"
     }
   ]
 }

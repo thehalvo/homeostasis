@@ -13,12 +13,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "sveltekit", "load"],
+      "tags": [
+        "svelte",
+        "sveltekit",
+        "load"
+      ],
       "fix_commands": [
         "Return object with props property for component data",
         "Return object with status and error for error handling",
         "Use proper TypeScript types for load function"
-      ]
+      ],
+      "description": "Sveltekit Load Return Type"
     },
     {
       "id": "sveltekit_goto_ssr_error",
@@ -30,12 +35,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "sveltekit", "ssr", "goto"],
+      "tags": [
+        "svelte",
+        "sveltekit",
+        "ssr",
+        "goto"
+      ],
       "fix_commands": [
         "Check browser environment before using goto",
         "Use proper navigation methods for SSR",
         "Handle navigation in onMount or client-side events"
-      ]
+      ],
+      "description": "Sveltekit Goto Ssr"
     },
     {
       "id": "sveltekit_layout_not_found",
@@ -47,12 +58,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "sveltekit", "layout"],
+      "tags": [
+        "svelte",
+        "sveltekit",
+        "layout"
+      ],
       "fix_commands": [
         "Create +layout.svelte file in appropriate directory",
         "Check layout file naming conventions",
         "Ensure layout file is in correct route directory"
-      ]
+      ],
+      "description": "Sveltekit Layout Not Found"
     },
     {
       "id": "sveltekit_page_not_found",
@@ -64,12 +80,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "sveltekit", "page", "routing"],
+      "tags": [
+        "svelte",
+        "sveltekit",
+        "page",
+        "routing"
+      ],
       "fix_commands": [
         "Create +page.svelte file for the route",
         "Check page file naming conventions",
         "Ensure page file is in correct route directory"
-      ]
+      ],
+      "description": "Sveltekit Page Not Found"
     },
     {
       "id": "sveltekit_endpoint_export_error",
@@ -81,12 +103,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "sveltekit", "endpoint", "api"],
+      "tags": [
+        "svelte",
+        "sveltekit",
+        "endpoint",
+        "api"
+      ],
       "fix_commands": [
         "Export named functions for HTTP methods (GET, POST, etc.)",
         "Ensure proper function signatures for endpoints",
         "Check +server.js file structure"
-      ]
+      ],
+      "description": "Sveltekit Endpoint Export"
     },
     {
       "id": "sveltekit_hydration_mismatch",
@@ -98,12 +126,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "sveltekit", "hydration", "ssr"],
+      "tags": [
+        "svelte",
+        "sveltekit",
+        "hydration",
+        "ssr"
+      ],
       "fix_commands": [
         "Use browser check for client-only content",
         "Ensure consistent data between server and client",
         "Use {#if mounted} for client-only components"
-      ]
+      ],
+      "description": "Sveltekit Hydration Mismatch"
     },
     {
       "id": "sveltekit_prerender_error",
@@ -115,12 +149,18 @@
       "confidence": "medium",
       "severity": "warning",
       "reliability": "medium",
-      "tags": ["svelte", "sveltekit", "prerender", "static"],
+      "tags": [
+        "svelte",
+        "sveltekit",
+        "prerender",
+        "static"
+      ],
       "fix_commands": [
         "Check prerender option in page configuration",
         "Ensure all data is available at build time",
         "Handle dynamic content appropriately"
-      ]
+      ],
+      "description": "Sveltekit Prerender"
     },
     {
       "id": "sveltekit_adapter_error",
@@ -132,12 +172,18 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "sveltekit", "adapter", "config"],
+      "tags": [
+        "svelte",
+        "sveltekit",
+        "adapter",
+        "config"
+      ],
       "fix_commands": [
         "Install appropriate adapter for deployment target",
         "Configure adapter in svelte.config.js",
         "Check adapter documentation for setup"
-      ]
+      ],
+      "description": "Sveltekit Adapter"
     }
   ]
 }

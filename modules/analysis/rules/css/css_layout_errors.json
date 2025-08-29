@@ -1,4 +1,5 @@
 {
+  "name": "CSS Layout Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "css-layout",
@@ -21,11 +22,17 @@
         "Ensure grid track sizes are valid (fr, px, %, auto)",
         "Validate grid line names and positioning"
       ],
-      "tags": ["css", "grid", "template", "layout"],
+      "tags": [
+        "css",
+        "grid",
+        "template",
+        "layout"
+      ],
       "examples": [
         "Invalid track size syntax",
         "Mismatched grid areas"
-      ]
+      ],
+      "description": "Css Grid Template"
     },
     {
       "id": "css_grid_area_error",
@@ -43,11 +50,17 @@
         "Ensure grid item positions are within grid bounds",
         "Check for overlapping grid items"
       ],
-      "tags": ["css", "grid", "area", "placement"],
+      "tags": [
+        "css",
+        "grid",
+        "area",
+        "placement"
+      ],
       "examples": [
         "Grid area name mismatch",
         "Grid item placed outside grid"
-      ]
+      ],
+      "description": "Css Grid Area"
     },
     {
       "id": "css_grid_gap_error",
@@ -65,11 +78,17 @@
         "Ensure browser support for gap property",
         "Consider fallbacks for older browsers"
       ],
-      "tags": ["css", "grid", "gap", "spacing"],
+      "tags": [
+        "css",
+        "grid",
+        "gap",
+        "spacing"
+      ],
       "examples": [
         "Invalid gap value",
         "Browser compatibility issues"
-      ]
+      ],
+      "description": "Css Grid Gap"
     },
     {
       "id": "css_flexbox_direction_error",
@@ -87,11 +106,17 @@
         "Adjust justify-content for main axis alignment",
         "Use align-items for cross axis alignment"
       ],
-      "tags": ["css", "flexbox", "direction", "axis"],
+      "tags": [
+        "css",
+        "flexbox",
+        "direction",
+        "axis"
+      ],
       "examples": [
         "Invalid flex-direction value",
         "Confusion between main and cross axis"
-      ]
+      ],
+      "description": "Css Flexbox Direction"
     },
     {
       "id": "css_flexbox_justify_error",
@@ -109,11 +134,17 @@
         "Ensure property applies to flex container, not flex items",
         "Consider flex-direction when using justify-content"
       ],
-      "tags": ["css", "flexbox", "justify-content", "alignment"],
+      "tags": [
+        "css",
+        "flexbox",
+        "justify-content",
+        "alignment"
+      ],
       "examples": [
         "Invalid justify-content value",
         "Applied to wrong element"
-      ]
+      ],
+      "description": "Css Flexbox Justify"
     },
     {
       "id": "css_flexbox_align_error",
@@ -131,11 +162,17 @@
         "Valid values: stretch, flex-start, flex-end, center, baseline",
         "Understand difference between align-items and align-content"
       ],
-      "tags": ["css", "flexbox", "align-items", "align-content"],
+      "tags": [
+        "css",
+        "flexbox",
+        "align-items",
+        "align-content"
+      ],
       "examples": [
         "Confusion between align-items and align-content",
         "Invalid alignment value"
-      ]
+      ],
+      "description": "Css Flexbox Align"
     },
     {
       "id": "css_flexbox_flex_property_error",
@@ -153,11 +190,19 @@
         "Understand flex-shrink (how much to shrink)",
         "Set flex-basis for initial size before growing/shrinking"
       ],
-      "tags": ["css", "flexbox", "flex", "grow", "shrink", "basis"],
+      "tags": [
+        "css",
+        "flexbox",
+        "flex",
+        "grow",
+        "shrink",
+        "basis"
+      ],
       "examples": [
         "Invalid flex shorthand syntax",
         "Misunderstanding flex behavior"
-      ]
+      ],
+      "description": "Css Flexbox Flex Property"
     },
     {
       "id": "css_position_error",
@@ -175,11 +220,18 @@
         "Check z-index stacking context",
         "Verify top, right, bottom, left values"
       ],
-      "tags": ["css", "position", "absolute", "relative", "z-index"],
+      "tags": [
+        "css",
+        "position",
+        "absolute",
+        "relative",
+        "z-index"
+      ],
       "examples": [
         "Absolute positioning without relative parent",
         "Z-index not working due to stacking context"
-      ]
+      ],
+      "description": "Css Position"
     },
     {
       "id": "css_box_model_error",
@@ -197,11 +249,18 @@
         "Verify width/height calculations include padding and border",
         "Consider using CSS calc() for complex calculations"
       ],
-      "tags": ["css", "box-model", "box-sizing", "margin", "padding"],
+      "tags": [
+        "css",
+        "box-model",
+        "box-sizing",
+        "margin",
+        "padding"
+      ],
       "examples": [
         "Unexpected element sizing",
         "Margin collapse issues"
-      ]
+      ],
+      "description": "Css Box Model"
     },
     {
       "id": "css_responsive_error",
@@ -219,11 +278,17 @@
         "Ensure proper viewport meta tag",
         "Test responsive behavior at different screen sizes"
       ],
-      "tags": ["css", "responsive", "media-query", "breakpoint"],
+      "tags": [
+        "css",
+        "responsive",
+        "media-query",
+        "breakpoint"
+      ],
       "examples": [
         "Invalid media query syntax",
         "Incorrect breakpoint logic"
-      ]
+      ],
+      "description": "Css Responsive"
     },
     {
       "id": "css_overflow_error",
@@ -241,11 +306,17 @@
         "Ensure scrollable content has proper height constraints",
         "Check for unintended content clipping"
       ],
-      "tags": ["css", "overflow", "scroll", "clipping"],
+      "tags": [
+        "css",
+        "overflow",
+        "scroll",
+        "clipping"
+      ],
       "examples": [
         "Content being clipped unexpectedly",
         "Scrollbars not appearing when needed"
-      ]
+      ],
+      "description": "Css Overflow"
     },
     {
       "id": "css_float_clearfix_error",
@@ -263,11 +334,17 @@
         "Consider migrating to Flexbox or Grid layout",
         "Check for collapsed container height"
       ],
-      "tags": ["css", "float", "clearfix", "layout"],
+      "tags": [
+        "css",
+        "float",
+        "clearfix",
+        "layout"
+      ],
       "examples": [
         "Parent container collapsing due to floated children",
         "Missing clearfix implementation"
-      ]
+      ],
+      "description": "Css Float Clearfix"
     }
   ]
 }

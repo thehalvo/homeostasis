@@ -1,4 +1,5 @@
 {
+  "name": "Scala Type System Errors",
   "version": "1.0.0",
   "description": "Scala type system and variance error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Covariant types (+T) can only appear in output positions. Use contravariance (-T) for input positions",
       "root_cause": "scala_covariance_position",
-      "tags": ["scala", "variance", "covariant", "type"]
+      "tags": [
+        "scala",
+        "variance",
+        "covariant",
+        "type"
+      ],
+      "description": "Scala Covariance Violation"
     },
     {
       "id": "scala_contravariance_violation",
@@ -24,7 +31,13 @@
       "severity": "high",
       "suggestion": "Contravariant types (-T) can only appear in input positions. Use covariance (+T) for output positions",
       "root_cause": "scala_contravariance_position",
-      "tags": ["scala", "variance", "contravariant", "type"]
+      "tags": [
+        "scala",
+        "variance",
+        "contravariant",
+        "type"
+      ],
+      "description": "Scala Contravariance Violation"
     },
     {
       "id": "scala_invariant_type_expected",
@@ -36,7 +49,13 @@
       "severity": "medium",
       "suggestion": "Invariant types cannot be used where variant types are expected. Consider using wildcards or type bounds",
       "root_cause": "scala_invariant_context",
-      "tags": ["scala", "variance", "invariant", "type"]
+      "tags": [
+        "scala",
+        "variance",
+        "invariant",
+        "type"
+      ],
+      "description": "Scala Invariant Type Expected"
     },
     {
       "id": "scala_type_bound_violation",
@@ -48,7 +67,13 @@
       "severity": "high",
       "suggestion": "Ensure type parameters satisfy upper (<:) and lower (>:) bounds",
       "root_cause": "scala_type_bound_not_satisfied",
-      "tags": ["scala", "type", "bounds", "constraint"]
+      "tags": [
+        "scala",
+        "type",
+        "bounds",
+        "constraint"
+      ],
+      "description": "Scala Type Bound Violation"
     },
     {
       "id": "scala_f_bounded_polymorphism",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "F-bounded types must reference themselves correctly: trait F[A <: F[A]]",
       "root_cause": "scala_f_bounded_error",
-      "tags": ["scala", "type", "f_bounded", "recursive"]
+      "tags": [
+        "scala",
+        "type",
+        "f_bounded",
+        "recursive"
+      ],
+      "description": "Scala F Bounded Polymorphism"
     },
     {
       "id": "scala_higher_kinded_type_error",
@@ -72,7 +103,13 @@
       "severity": "high",
       "suggestion": "Higher-kinded types need type parameters: F[_] for type constructors",
       "root_cause": "scala_hkt_parameter_missing",
-      "tags": ["scala", "type", "higher_kinded", "parameter"]
+      "tags": [
+        "scala",
+        "type",
+        "higher_kinded",
+        "parameter"
+      ],
+      "description": "Scala Higher Kinded Type"
     },
     {
       "id": "scala_type_projection_error",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Type projections T#U require stable prefixes. Use path-dependent types or type aliases",
       "root_cause": "scala_type_projection_volatile",
-      "tags": ["scala", "type", "projection", "path"]
+      "tags": [
+        "scala",
+        "type",
+        "projection",
+        "path"
+      ],
+      "description": "Scala Type Projection"
     },
     {
       "id": "scala_path_dependent_type_error",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Path-dependent types require stable paths. Ensure the path is properly initialized",
       "root_cause": "scala_path_dependent_invalid",
-      "tags": ["scala", "type", "path_dependent", "member"]
+      "tags": [
+        "scala",
+        "type",
+        "path_dependent",
+        "member"
+      ],
+      "description": "Scala Path Dependent Type"
     },
     {
       "id": "scala_existential_type_warning",
@@ -108,7 +157,13 @@
       "severity": "low",
       "suggestion": "Replace existential types with wildcards (_) or proper type parameters",
       "root_cause": "scala_existential_deprecated",
-      "tags": ["scala", "type", "existential", "deprecated"]
+      "tags": [
+        "scala",
+        "type",
+        "existential",
+        "deprecated"
+      ],
+      "description": "Scala Existential Type Warning"
     },
     {
       "id": "scala_type_lambda_error",
@@ -118,9 +173,15 @@
       "confidence": "medium",
       "reliability": "medium",
       "severity": "medium",
-      "suggestion": "Use proper type lambda syntax or kind-projector plugin: ({type λ[α] = F[α]})#λ",
+      "suggestion": "Use proper type lambda syntax or kind-projector plugin: ({type \u03bb[\u03b1] = F[\u03b1]})#\u03bb",
       "root_cause": "scala_type_lambda_syntax",
-      "tags": ["scala", "type", "lambda", "syntax"]
+      "tags": [
+        "scala",
+        "type",
+        "lambda",
+        "syntax"
+      ],
+      "description": "Scala Type Lambda"
     },
     {
       "id": "scala_wildcard_type_capture",
@@ -132,7 +193,13 @@
       "severity": "medium",
       "suggestion": "Wildcard types cannot escape their defining scope. Use named type parameters",
       "root_cause": "scala_wildcard_escape",
-      "tags": ["scala", "type", "wildcard", "existential"]
+      "tags": [
+        "scala",
+        "type",
+        "wildcard",
+        "existential"
+      ],
+      "description": "Scala Wildcard Type Capture"
     },
     {
       "id": "scala_type_alias_cycle",
@@ -144,7 +211,13 @@
       "severity": "high",
       "suggestion": "Remove circular dependencies in type alias definitions",
       "root_cause": "scala_type_alias_cyclic",
-      "tags": ["scala", "type", "alias", "cycle"]
+      "tags": [
+        "scala",
+        "type",
+        "alias",
+        "cycle"
+      ],
+      "description": "Scala Type Alias Cycle"
     },
     {
       "id": "scala_structural_type_reflection",
@@ -156,7 +229,13 @@
       "severity": "low",
       "suggestion": "Enable reflective calls with import scala.language.reflectiveCalls or avoid structural types",
       "root_cause": "scala_structural_reflection",
-      "tags": ["scala", "type", "structural", "reflection"]
+      "tags": [
+        "scala",
+        "type",
+        "structural",
+        "reflection"
+      ],
+      "description": "Scala Structural Type Reflection"
     },
     {
       "id": "scala_type_erasure_warning",
@@ -168,7 +247,13 @@
       "severity": "medium",
       "suggestion": "Type parameters are erased at runtime. Use ClassTag or TypeTag for runtime type information",
       "root_cause": "scala_type_erasure",
-      "tags": ["scala", "type", "erasure", "runtime"]
+      "tags": [
+        "scala",
+        "type",
+        "erasure",
+        "runtime"
+      ],
+      "description": "Scala Type Erasure Warning"
     },
     {
       "id": "scala_variance_annotation_position",
@@ -180,7 +265,13 @@
       "severity": "high",
       "suggestion": "Variance annotations (+/-) are only allowed on type parameters of classes and traits",
       "root_cause": "scala_variance_annotation_invalid",
-      "tags": ["scala", "variance", "annotation", "position"]
+      "tags": [
+        "scala",
+        "variance",
+        "annotation",
+        "position"
+      ],
+      "description": "Scala Variance Annotation Position"
     }
   ]
 }

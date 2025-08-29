@@ -1,4 +1,5 @@
 {
+  "name": "Scala Concurrency Errors",
   "rules": [
     {
       "id": "scala_future_timeout",

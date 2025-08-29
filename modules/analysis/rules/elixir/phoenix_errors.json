@@ -1,4 +1,5 @@
 {
+  "name": "Elixir Phoenix Errors",
   "rules": [
     {
       "id": "phoenix_conn_already_sent",
@@ -87,7 +88,7 @@
     {
       "id": "phoenix_param_error",
       "pattern": "\\*\\* \\(Phoenix\\.MissingParamError\\) (.*)",
-      "type": "Phoenix.MissingParamError", 
+      "type": "Phoenix.MissingParamError",
       "description": "Required parameter missing from request",
       "root_cause": "phoenix_param_error",
       "suggestion": "Check that all required parameters are being passed. Use pattern matching with default values or handle the case when parameters are missing explicitly.",
@@ -113,7 +114,7 @@
       "pattern": "\\*\\* \\(Phoenix\\.PubSub\\.(.*?)Error\\) (.*)",
       "type": "Phoenix.PubSub.Error",
       "description": "Error in Phoenix PubSub system",
-      "root_cause": "phoenix_pubsub_error", 
+      "root_cause": "phoenix_pubsub_error",
       "suggestion": "Check your PubSub configuration and ensure your cluster is properly configured. For local development, ensure the process is still alive.",
       "confidence": "high",
       "severity": "medium",

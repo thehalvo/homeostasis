@@ -1,4 +1,5 @@
 {
+  "name": "Flutter Flutter Navigation Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "flutter",
@@ -22,11 +23,17 @@
         "Check widget tree has Navigator ancestor",
         "Use named routes with proper app structure"
       ],
-      "tags": ["flutter", "navigation", "navigator", "context"],
+      "tags": [
+        "flutter",
+        "navigation",
+        "navigator",
+        "context"
+      ],
       "examples": [
         "Navigator.push without Navigator ancestor",
         "Navigation outside app widget tree"
-      ]
+      ],
+      "description": "Flutter Navigator Operation"
     },
     {
       "id": "flutter_route_not_found",
@@ -44,11 +51,17 @@
         "Check route name spelling",
         "Use Navigator.pushNamed with defined routes"
       ],
-      "tags": ["flutter", "navigation", "routes", "routing"],
+      "tags": [
+        "flutter",
+        "navigation",
+        "routes",
+        "routing"
+      ],
       "examples": [
         "Undefined named route",
         "Missing route configuration"
-      ]
+      ],
+      "description": "Flutter Route Not Found"
     },
     {
       "id": "flutter_pop_scope_error",
@@ -66,11 +79,17 @@
         "Use WillPopScope for custom back behavior",
         "Avoid popping last route in navigator stack"
       ],
-      "tags": ["flutter", "navigation", "pop", "back-navigation"],
+      "tags": [
+        "flutter",
+        "navigation",
+        "pop",
+        "back-navigation"
+      ],
       "examples": [
         "Popping empty navigation stack",
         "Back button on root route"
-      ]
+      ],
+      "description": "Flutter Pop Scope"
     },
     {
       "id": "flutter_modal_barrier_dismissible",
@@ -88,11 +107,17 @@
         "Use WillPopScope to handle back button",
         "Check modal dismissal behavior"
       ],
-      "tags": ["flutter", "navigation", "modal", "dialog"],
+      "tags": [
+        "flutter",
+        "navigation",
+        "modal",
+        "dialog"
+      ],
       "examples": [
         "Non-dismissible dialog without close button",
         "Inconsistent modal behavior"
-      ]
+      ],
+      "description": "Flutter Modal Barrier Dismissible"
     },
     {
       "id": "flutter_nested_navigator_error",
@@ -110,11 +135,17 @@
         "Check navigator hierarchy",
         "Handle context properly in nested scenarios"
       ],
-      "tags": ["flutter", "navigation", "nested", "context"],
+      "tags": [
+        "flutter",
+        "navigation",
+        "nested",
+        "context"
+      ],
       "examples": [
         "Wrong navigator level access",
         "Nested navigation context confusion"
-      ]
+      ],
+      "description": "Flutter Nested Navigator"
     },
     {
       "id": "flutter_page_route_builder_error",
@@ -132,11 +163,17 @@
         "Set transitionDuration if needed",
         "Use MaterialPageRoute for standard behavior"
       ],
-      "tags": ["flutter", "navigation", "page-route", "custom"],
+      "tags": [
+        "flutter",
+        "navigation",
+        "page-route",
+        "custom"
+      ],
       "examples": [
         "Missing pageBuilder implementation",
         "Incomplete custom route definition"
-      ]
+      ],
+      "description": "Flutter Page Route Builder"
     },
     {
       "id": "flutter_navigator_key_error",
@@ -154,11 +191,17 @@
         "Use different keys for different navigator instances",
         "Check navigator key management"
       ],
-      "tags": ["flutter", "navigation", "global-key", "navigator"],
+      "tags": [
+        "flutter",
+        "navigation",
+        "global-key",
+        "navigator"
+      ],
       "examples": [
         "Same GlobalKey used for multiple Navigators",
         "Navigator key conflicts"
-      ]
+      ],
+      "description": "Flutter Navigator Key"
     },
     {
       "id": "flutter_route_arguments_error",
@@ -176,11 +219,17 @@
         "Pass arguments when navigating: Navigator.pushNamed(context, route, arguments: data)",
         "Use null-aware operators for argument access"
       ],
-      "tags": ["flutter", "navigation", "arguments", "null-safety"],
+      "tags": [
+        "flutter",
+        "navigation",
+        "arguments",
+        "null-safety"
+      ],
       "examples": [
         "Accessing null route arguments",
         "Navigation without required arguments"
-      ]
+      ],
+      "description": "Flutter Route Arguments"
     },
     {
       "id": "flutter_bottom_navigation_index_error",
@@ -198,11 +247,17 @@
         "Update currentIndex when items change",
         "Add bounds checking for index updates"
       ],
-      "tags": ["flutter", "navigation", "bottom-navigation", "index"],
+      "tags": [
+        "flutter",
+        "navigation",
+        "bottom-navigation",
+        "index"
+      ],
       "examples": [
         "currentIndex exceeds item count",
         "Negative currentIndex value"
-      ]
+      ],
+      "description": "Flutter Bottom Navigation Index"
     },
     {
       "id": "flutter_drawer_context_error",
@@ -220,11 +275,17 @@
         "Check widget tree for Scaffold ancestor",
         "Use proper context for drawer operations"
       ],
-      "tags": ["flutter", "navigation", "drawer", "scaffold"],
+      "tags": [
+        "flutter",
+        "navigation",
+        "drawer",
+        "scaffold"
+      ],
       "examples": [
         "Drawer operations outside Scaffold",
         "Missing Scaffold for drawer"
-      ]
+      ],
+      "description": "Flutter Drawer Context"
     }
   ]
 }

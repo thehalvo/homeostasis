@@ -326,7 +326,7 @@ class LLMPatchGenerator:
             return None
             
         except Exception as e:
-            logger.error(f"Error generating LLM patch: {e}")
+            logger.error(f"Error generating LLM patch: {e}", exc_info=True)
             return None
 
     def generate_patch_from_analysis(self, analysis_result: Dict[str, Any]) -> Optional[Dict[str, Any]]:

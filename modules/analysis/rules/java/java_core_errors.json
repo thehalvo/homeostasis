@@ -1,4 +1,5 @@
 {
+  "name": "Java Java Core Errors",
   "description": "Core Java error detection rules covering common runtime exceptions, I/O errors, and fundamental language issues",
   "version": "1.0.0",
   "rules": [

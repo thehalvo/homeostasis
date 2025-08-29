@@ -1,4 +1,5 @@
 {
+  "name": "Scala Common Errors",
   "rules": [
     {
       "id": "scala_null_pointer",
@@ -25,7 +26,7 @@
       "framework": "scala"
     },
     {
-      "id": "scala_match_error", 
+      "id": "scala_match_error",
       "pattern": "scala\\.MatchError: (.*)",
       "type": "MatchError",
       "description": "Pattern match is not exhaustive, missing cases for some possible values",
@@ -188,7 +189,7 @@
       "root_cause": "scala_unsupported_operation",
       "suggestion": "Check if the object supports the operation before calling it. Common with immutable collections or views.",
       "confidence": "high",
-      "severity": "medium", 
+      "severity": "medium",
       "category": "core",
       "framework": "scala"
     },

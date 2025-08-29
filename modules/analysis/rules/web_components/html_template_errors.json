@@ -13,7 +13,12 @@
       "suggestion": "Use document.importNode(template.content, true) to clone template content",
       "root_cause": "template_content_not_cloned",
       "reliability": "high",
-      "tags": ["webcomponents", "templates", "performance"]
+      "tags": [
+        "webcomponents",
+        "templates",
+        "performance"
+      ],
+      "description": "Template Content Not Cloned"
     },
     {
       "id": "template_inefficient_creation",
@@ -24,7 +29,12 @@
       "suggestion": "Create templates once at class level rather than per-instance",
       "root_cause": "inefficient_template_creation",
       "reliability": "high",
-      "tags": ["webcomponents", "templates", "performance"]
+      "tags": [
+        "webcomponents",
+        "templates",
+        "performance"
+      ],
+      "description": "Template Inefficient Creation"
     },
     {
       "id": "template_content_modified",
@@ -35,7 +45,12 @@
       "suggestion": "Avoid modifying template.content directly; clone it first",
       "root_cause": "template_content_modified",
       "reliability": "medium",
-      "tags": ["webcomponents", "templates", "best-practices"]
+      "tags": [
+        "webcomponents",
+        "templates",
+        "best-practices"
+      ],
+      "description": "Template Content Modified"
     },
     {
       "id": "template_inefficient_cloning",
@@ -46,7 +61,12 @@
       "suggestion": "Use document.importNode(template.content, true) instead of template.cloneNode(true)",
       "root_cause": "inefficient_template_cloning",
       "reliability": "medium",
-      "tags": ["webcomponents", "templates", "performance"]
+      "tags": [
+        "webcomponents",
+        "templates",
+        "performance"
+      ],
+      "description": "Template Inefficient Cloning"
     },
     {
       "id": "template_missing_content",
@@ -57,7 +77,12 @@
       "suggestion": "Ensure template element is properly created and has content",
       "root_cause": "template_content_missing",
       "reliability": "high",
-      "tags": ["webcomponents", "templates", "error"]
+      "tags": [
+        "webcomponents",
+        "templates",
+        "error"
+      ],
+      "description": "Template Missing Content"
     },
     {
       "id": "template_invalid_content_type",
@@ -68,7 +93,12 @@
       "suggestion": "Ensure the template contains valid HTML content",
       "root_cause": "template_invalid_content",
       "reliability": "medium",
-      "tags": ["webcomponents", "templates", "content"]
+      "tags": [
+        "webcomponents",
+        "templates",
+        "content"
+      ],
+      "description": "Template Invalid Content Type"
     },
     {
       "id": "template_not_in_dom",
@@ -79,7 +109,12 @@
       "suggestion": "Ensure the template element exists in the DOM before trying to access it",
       "root_cause": "template_not_in_dom",
       "reliability": "high",
-      "tags": ["webcomponents", "templates", "dom"]
+      "tags": [
+        "webcomponents",
+        "templates",
+        "dom"
+      ],
+      "description": "Template Not In Dom"
     },
     {
       "id": "template_parsing_error",
@@ -90,7 +125,12 @@
       "suggestion": "Check for HTML syntax errors in the template content",
       "root_cause": "template_parsing_error",
       "reliability": "high",
-      "tags": ["webcomponents", "templates", "syntax"]
+      "tags": [
+        "webcomponents",
+        "templates",
+        "syntax"
+      ],
+      "description": "Template Parsing"
     },
     {
       "id": "template_slot_mismatch",
@@ -101,7 +141,12 @@
       "suggestion": "Ensure the slot name in the template matches the slot attribute in the content",
       "root_cause": "template_slot_mismatch",
       "reliability": "medium",
-      "tags": ["webcomponents", "templates", "slots"]
+      "tags": [
+        "webcomponents",
+        "templates",
+        "slots"
+      ],
+      "description": "Template Slot Mismatch"
     },
     {
       "id": "template_event_leak",
@@ -112,7 +157,13 @@
       "suggestion": "Do not add event listeners to template.content directly; add them to cloned nodes",
       "root_cause": "template_event_listener_leak",
       "reliability": "high",
-      "tags": ["webcomponents", "templates", "events", "memory-leak"]
+      "tags": [
+        "webcomponents",
+        "templates",
+        "events",
+        "memory-leak"
+      ],
+      "description": "Template Event Leak"
     }
   ]
 }

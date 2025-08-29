@@ -270,8 +270,13 @@ class TestJavaAndroidPlugin(unittest.TestCase):
     def test_android_rules_loading(self):
         """Test that Android-specific rules are loaded."""
         # Check that Android rules are included in the loaded rules
-        android_rules = [rule for rule in self.exception_handler.rules 
-                        if rule.get("category") == "android"]
+        android_rules = []
+        # Flatten rules from all categories
+        for category, rule_list in self.exception_handler.rules.items():
+            if isinstance(rule_list, list):
+                for rule in rule_list:
+                    if isinstance(rule, dict) and rule.get("category") == "android":
+                        android_rules.append(rule)
         
         self.assertGreater(len(android_rules), 0, "No Android rules loaded")
         

@@ -1,4 +1,5 @@
 {
+  "name": "Spring Spring Cloud Errors",
   "rules": [
     {
       "id": "spring_cloud_eureka_connection_failed",

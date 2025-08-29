@@ -1,4 +1,5 @@
 {
+  "name": "Elixir Otp Errors",
   "rules": [
     {
       "id": "otp_supervisor_error",
@@ -75,7 +76,7 @@
     {
       "id": "otp_application_start_error",
       "pattern": "\\*\\* \\(Mix\\.Error\\) (.*?)Could not start application ([^:]+): (.*)",
-      "type": "Mix.Error", 
+      "type": "Mix.Error",
       "description": "Failed to start an application",
       "root_cause": "otp_application_start_error",
       "suggestion": "Check application dependencies and ensure they're started first. Look at the error message for specific reasons the application didn't start.",

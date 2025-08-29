@@ -1,4 +1,5 @@
 {
+  "name": "Java Android Errors",
   "description": "Java Android error detection rules for activity lifecycle, fragments, and platform-specific issues",
   "version": "1.0.0",
   "rules": [

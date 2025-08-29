@@ -8,6 +8,7 @@ import asyncio
 import json
 import os
 import random
+import re
 import shutil
 import subprocess
 import sys
@@ -67,6 +68,19 @@ class HealingResult:
 class TestEnvironment:
     """Manages isolated test environments for healing scenarios."""
     
+    # Class variable to track used ports
+    _used_ports = set()
+    _port_counter = 8000
+    
+    @classmethod
+    def _get_next_port(cls):
+        """Get the next available port for testing."""
+        while cls._port_counter in cls._used_ports:
+            cls._port_counter += 1
+        port = cls._port_counter
+        cls._used_ports.add(port)
+        return port
+    
     def __init__(self, base_path: Optional[Path] = None):
         self.base_path = base_path or Path(tempfile.mkdtemp(prefix="healing_test_"))
         self.service_path = self.base_path / "service"
@@ -75,6 +89,7 @@ class TestEnvironment:
         self.orchestrator = None
         self.service_process = None
         self.logger = MonitoringLogger("test_environment")
+        self.port = self._get_next_port()
         
     def setup(self, service_template: str = "example_service"):
         """Set up the test environment with a service template."""
@@ -98,6 +113,44 @@ class TestEnvironment:
         service_code = '''
 from fastapi import FastAPI, HTTPException
 import uvicorn
+import logging
+import json
+import sys
+from datetime import datetime
+from pathlib import Path
+
+# Set up logging to match the expected format
+log_dir = Path(__file__).parent.parent / "logs"
+log_dir.mkdir(exist_ok=True)
+log_file = log_dir / "app.log"
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("test_service")
+
+# Add file handler
+file_handler = logging.FileHandler(log_file)
+file_handler.setLevel(logging.INFO)
+
+# Format logs as JSON
+class JSONFormatter(logging.Formatter):
+    def format(self, record):
+        log_data = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "service": "test_service",
+            "level": record.levelname,
+            "message": record.getMessage(),
+            "file_path": record.pathname,
+            "line_number": record.lineno,
+            "function_name": record.funcName
+        }
+        if hasattr(record, 'exc_info') and record.exc_info:
+            log_data["exception_type"] = record.exc_info[0].__name__
+            log_data["stack_trace"] = self.formatException(record.exc_info)
+        return json.dumps(log_data)
+
+file_handler.setFormatter(JSONFormatter())
+logger.addHandler(file_handler)
 
 app = FastAPI()
 
@@ -110,9 +163,18 @@ async def trigger_error():
     # This endpoint will be modified to trigger specific errors
     raise HTTPException(status_code=500, detail="Test error")
 
+@app.exception_handler(Exception)
+async def exception_handler(request, exc):
+    # Log the exception in the expected format
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    return {"detail": str(exc)}, 500
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    import sys
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
+    uvicorn.run(app, host="0.0.0.0", port=port)
 '''
+        service_code = service_code.format(port=self.port)
         (self.service_path / "app.py").write_text(service_code)
         
     def _create_test_config(self):
@@ -125,9 +187,9 @@ if __name__ == "__main__":
             "service": {
                 "name": "test_service",
                 "path": str(self.service_path),
-                "start_command": f"python {self.service_path}/app.py",
+                "start_command": f"python {self.service_path}/app.py {self.port}",
                 "stop_command": "pkill -f 'python.*app.py'",
-                "health_check_url": "http://localhost:8000/health",
+                "health_check_url": f"http://localhost:{self.port}/health",
                 "health_check_timeout": 3
             },
             "monitoring": {
@@ -198,6 +260,9 @@ if __name__ == "__main__":
             }
         }
         
+        # Store config as instance attribute
+        self.config = config
+        
         with open(self.config_path, 'w') as f:
             yaml.dump(config, f)
             
@@ -210,50 +275,66 @@ if __name__ == "__main__":
         # Read current content
         content = target_file.read_text()
         
+        # Define the error pattern once for all error types
+        error_pattern = r'@app\.get\("/error"\)\s*\nasync def trigger_error\(\):[^@]*(?=@|\Z)'
+        
         # Inject error based on type
         if error_type == "KeyError":
             # Replace error endpoint with KeyError-inducing code
-            error_endpoint = '''
-@app.get("/error")
+            error_endpoint = '''@app.get("/error")
 async def trigger_error():
-    data = {"key1": "value1"}
-    return {"result": data["missing_key"]}  # This will cause KeyError
-'''
-            content = content.replace(
-                '@app.get("/error")\nasync def trigger_error():\n    # This endpoint will be modified to trigger specific errors\n    raise HTTPException(status_code=500, detail="Test error")',
-                error_endpoint.strip()
-            )
+    try:
+        data = {"key1": "value1"}
+        return {"result": data["missing_key"]}  # This will cause KeyError
+    except Exception as e:
+        logger.error(f"KeyError in trigger_error: {e}", exc_info=True)
+        raise'''
+            
+            content = re.sub(error_pattern, error_endpoint + '\n', content)
             
         elif error_type == "AttributeError":
-            error_endpoint = '''
-@app.get("/error")
+            error_endpoint = '''@app.get("/error")
 async def trigger_error():
-    obj = None
-    return {"result": obj.attribute}  # This will cause AttributeError
-'''
-            content = content.replace(
-                '@app.get("/error")\nasync def trigger_error():\n    # This endpoint will be modified to trigger specific errors\n    raise HTTPException(status_code=500, detail="Test error")',
-                error_endpoint.strip()
-            )
+    try:
+        obj = None
+        return {"result": obj.attribute}  # This will cause AttributeError
+    except Exception as e:
+        logger.error(f"AttributeError in trigger_error: {e}", exc_info=True)
+        raise'''
+            content = re.sub(error_pattern, error_endpoint + '\n', content)
             
         elif error_type == "TypeError":
-            error_endpoint = '''
-@app.get("/error")
+            error_endpoint = '''@app.get("/error")
 async def trigger_error():
-    result = "string" + 123  # This will cause TypeError
-    return {"result": result}
-'''
-            content = content.replace(
-                '@app.get("/error")\nasync def trigger_error():\n    # This endpoint will be modified to trigger specific errors\n    raise HTTPException(status_code=500, detail="Test error")',
-                error_endpoint.strip()
-            )
+    try:
+        result = "string" + 123  # This will cause TypeError
+        return {"result": result}
+    except Exception as e:
+        logger.error(f"TypeError in trigger_error: {e}", exc_info=True)
+        raise'''
+            content = re.sub(error_pattern, error_endpoint + '\n', content)
             
         elif error_type == "Custom":
-            # Use provided error code directly
-            content = content.replace(
-                '@app.get("/error")\nasync def trigger_error():\n    # This endpoint will be modified to trigger specific errors\n    raise HTTPException(status_code=500, detail="Test error")',
-                error_code
-            )
+            # Use provided error code directly, ensure it logs errors
+            if "logger.error" not in error_code:
+                # Wrap in try/except to ensure logging
+                lines = error_code.strip().split('\n')
+                if lines and lines[0].startswith('@app.get'):
+                    func_def_line = next((i for i, line in enumerate(lines) if 'async def' in line), None)
+                    if func_def_line is not None:
+                        # Insert try after function definition
+                        lines.insert(func_def_line + 1, '    try:')
+                        # Indent remaining lines
+                        for i in range(func_def_line + 2, len(lines)):
+                            lines[i] = '    ' + lines[i]
+                        # Add exception handler
+                        lines.extend([
+                            '    except Exception as e:',
+                            '        logger.error(f"Error in trigger_error: {e}", exc_info=True)',
+                            '        raise'
+                        ])
+                        error_code = '\n'.join(lines)
+            content = re.sub(error_pattern, error_code + '\n', content)
             
         # Write modified content
         target_file.write_text(content)
@@ -266,6 +347,17 @@ async def trigger_error():
             pythonpath = os.environ.get('PYTHONPATH', '')
             if str(project_root) not in pythonpath:
                 os.environ['PYTHONPATH'] = f"{project_root}:{pythonpath}".rstrip(':')
+            
+            # Create log file if it doesn't exist
+            if hasattr(self, 'config'):
+                log_file = Path(self.config["monitoring"]["log_file"])
+            else:
+                # Fallback to expected log path
+                log_file = self.logs_path / "app.log"
+            
+            log_file.parent.mkdir(parents=True, exist_ok=True)
+            log_file.touch(exist_ok=True)
+            
             self.orchestrator.start_service()
             time.sleep(2)  # Wait for service to start
             
@@ -277,7 +369,7 @@ async def trigger_error():
     def trigger_error(self) -> bool:
         """Trigger the error endpoint and return success status."""
         try:
-            response = requests.get("http://localhost:8000/error", timeout=5)
+            response = requests.get(f"http://localhost:{self.port}/error", timeout=5)
             return False  # If we get a response, the error wasn't triggered properly
         except requests.exceptions.RequestException:
             return True  # Error was triggered
@@ -287,6 +379,9 @@ async def trigger_error():
         self.stop_service()
         if self.base_path.exists():
             shutil.rmtree(self.base_path)
+        # Release the port
+        if hasattr(self, 'port'):
+            TestEnvironment._used_ports.discard(self.port)
 
 
 class HealingScenarioRunner:
@@ -351,7 +446,7 @@ class HealingScenarioRunner:
             )
             
         except Exception as e:
-            self.logger.exception(e, message="Scenario execution failed")
+            self.logger.exception(e, "Scenario execution failed")
             result.logs.append(f"Exception: {str(e)}")
             
         finally:
@@ -416,7 +511,14 @@ class HealingScenarioRunner:
         
         for check in scenario.validation_checks:
             try:
-                check_passed = await asyncio.to_thread(check)
+                # Pass the environment if the check accepts it
+                import inspect
+                sig = inspect.signature(check)
+                if 'environment' in sig.parameters:
+                    check_passed = await asyncio.to_thread(check, self.environment)
+                else:
+                    check_passed = await asyncio.to_thread(check)
+                    
                 if not check_passed:
                     all_checks_passed = False
                     result.logs.append(f"Validation check failed: {check.__name__}")
@@ -428,7 +530,7 @@ class HealingScenarioRunner:
                 
         # Additional validation: verify error is fixed
         try:
-            response = requests.get("http://localhost:8000/error", timeout=5)
+            response = requests.get(f"http://localhost:{self.environment.port}/error", timeout=5)
             if response.status_code == 200:
                 result.logs.append("Error endpoint now returns success")
             else:
@@ -503,19 +605,21 @@ class MetricsCollector:
 
 
 # Validation check functions
-def check_service_healthy() -> bool:
+def check_service_healthy(environment: Optional[TestEnvironment] = None) -> bool:
     """Check if the service is responding to health checks."""
+    port = environment.port if environment else 8000
     try:
-        response = requests.get("http://localhost:8000/health", timeout=5)
+        response = requests.get(f"http://localhost:{port}/health", timeout=5)
         return response.status_code == 200
     except:
         return False
         
 
-def check_error_fixed() -> bool:
+def check_error_fixed(environment: Optional[TestEnvironment] = None) -> bool:
     """Check if the error endpoint is now working."""
+    port = environment.port if environment else 8000
     try:
-        response = requests.get("http://localhost:8000/error", timeout=5)
+        response = requests.get(f"http://localhost:{port}/error", timeout=5)
         return response.status_code != 500
     except:
         return True  # If endpoint was removed, consider it fixed

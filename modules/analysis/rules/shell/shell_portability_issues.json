@@ -91,7 +91,7 @@
     },
     {
       "id": "shell_gnu_specific_utility",
-      "pattern": "\\bgnuplot\\b|\\bgawk\\b|\\bgfind\\b|\\bgsed\\b|\\bggrep\\b|\\bgmake\\b|\\bgcc\\b|\\bgdb\\b|\\bgtar\\b|\\bgzip\\b|\\bgmake\\b|\\bgreadlink\\b|\\bgdu\\b|\\bgdf\\b|\\bgdircolors\\b|\\bgpatch\\b|\\bgwc\\b|\\bgtouch\\b|\\bgmkdir\\b|\\ggrm\\b|\\bgchmod\\b|\\bgchown\\b",
+      "pattern": "\\bgnuplot\\b|\\bgawk\\b|\\bgfind\\b|\\bgsed\\b|\\bggrep\\b|\\bgmake\\b|\\bgcc\\b|\\bgdb\\b|\\bgtar\\b|\\bgzip\\b|\\bgmake\\b|\\bgreadlink\\b|\\bgdu\\b|\\bgdf\\b|\\bgdircolors\\b|\\bgpatch\\b|\\bgwc\\b|\\bgtouch\\b|\\bgmkdir\\b|\\bggrm\\b|\\bgchmod\\b|\\bgchown\\b",
       "type": "PortabilityIssue",
       "description": "Using GNU-specific utilities not available on all UNIX systems",
       "root_cause": "shell_portability_issue",

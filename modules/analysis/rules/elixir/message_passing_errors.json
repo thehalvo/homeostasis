@@ -12,7 +12,13 @@
       "severity": "medium",
       "suggestion": "Check if process is alive with Process.alive?/1 before sending",
       "root_cause": "elixir_send_dead_process",
-      "tags": ["elixir", "send", "process", "dead"]
+      "tags": [
+        "elixir",
+        "send",
+        "process",
+        "dead"
+      ],
+      "description": "Send To Dead Process"
     },
     {
       "id": "elixir_mailbox_size_exceeded",
@@ -24,7 +30,13 @@
       "severity": "critical",
       "suggestion": "Implement flow control or use GenStage for backpressure",
       "root_cause": "elixir_mailbox_overflow",
-      "tags": ["elixir", "mailbox", "overflow", "memory"]
+      "tags": [
+        "elixir",
+        "mailbox",
+        "overflow",
+        "memory"
+      ],
+      "description": "Mailbox Size Exceeded"
     },
     {
       "id": "elixir_receive_timeout_infinite_wait",
@@ -36,7 +48,13 @@
       "severity": "medium",
       "suggestion": "Add after clause with timeout to receive blocks",
       "root_cause": "elixir_receive_no_timeout",
-      "tags": ["elixir", "receive", "timeout", "blocking"]
+      "tags": [
+        "elixir",
+        "receive",
+        "timeout",
+        "blocking"
+      ],
+      "description": "Receive Timeout Infinite Wait"
     },
     {
       "id": "elixir_selective_receive_performance",
@@ -48,7 +66,13 @@
       "severity": "medium",
       "suggestion": "Avoid selective receive with large mailboxes. Process messages in order",
       "root_cause": "elixir_selective_receive_slow",
-      "tags": ["elixir", "receive", "performance", "selective"]
+      "tags": [
+        "elixir",
+        "receive",
+        "performance",
+        "selective"
+      ],
+      "description": "Selective Receive Performance"
     },
     {
       "id": "elixir_send_after_timer_error",
@@ -60,7 +84,13 @@
       "severity": "medium",
       "suggestion": "Cancel timers with Process.cancel_timer/1 when process stops",
       "root_cause": "elixir_send_after_error",
-      "tags": ["elixir", "timer", "send_after", "process"]
+      "tags": [
+        "elixir",
+        "timer",
+        "send_after",
+        "process"
+      ],
+      "description": "Send After Timer"
     },
     {
       "id": "elixir_monitor_dead_process",
@@ -72,7 +102,13 @@
       "severity": "low",
       "suggestion": "Monitoring dead process immediately sends DOWN message",
       "root_cause": "elixir_monitor_dead",
-      "tags": ["elixir", "monitor", "process", "dead"]
+      "tags": [
+        "elixir",
+        "monitor",
+        "process",
+        "dead"
+      ],
+      "description": "Monitor Dead Process"
     },
     {
       "id": "elixir_link_trap_exit_not_set",
@@ -84,7 +120,13 @@
       "severity": "high",
       "suggestion": "Set Process.flag(:trap_exit, true) to convert exit signals to messages",
       "root_cause": "elixir_link_no_trap_exit",
-      "tags": ["elixir", "link", "exit", "trap"]
+      "tags": [
+        "elixir",
+        "link",
+        "exit",
+        "trap"
+      ],
+      "description": "Link Trap Exit Not Set"
     },
     {
       "id": "elixir_distributed_send_node_down",
@@ -96,7 +138,13 @@
       "severity": "high",
       "suggestion": "Check Node.connect/1 and monitor nodes with Node.monitor/2",
       "root_cause": "elixir_distributed_send_failed",
-      "tags": ["elixir", "distributed", "node", "send"]
+      "tags": [
+        "elixir",
+        "distributed",
+        "node",
+        "send"
+      ],
+      "description": "Distributed Send Node Down"
     },
     {
       "id": "elixir_message_ordering_assumption",
@@ -108,7 +156,13 @@
       "severity": "medium",
       "suggestion": "Message order only guaranteed between pairs of processes",
       "root_cause": "elixir_message_order_assumption",
-      "tags": ["elixir", "message", "ordering", "race"]
+      "tags": [
+        "elixir",
+        "message",
+        "ordering",
+        "race"
+      ],
+      "description": "Message Ordering Assumption"
     },
     {
       "id": "elixir_process_register_conflict",
@@ -120,7 +174,13 @@
       "severity": "medium",
       "suggestion": "Check if name is registered with Process.whereis/1 before registering",
       "root_cause": "elixir_process_name_taken",
-      "tags": ["elixir", "process", "register", "name"]
+      "tags": [
+        "elixir",
+        "process",
+        "register",
+        "name"
+      ],
+      "description": "Process Register Conflict"
     },
     {
       "id": "elixir_receive_match_error",
@@ -132,7 +192,13 @@
       "severity": "medium",
       "suggestion": "Add catch-all clause or ensure all message patterns are handled",
       "root_cause": "elixir_receive_no_match",
-      "tags": ["elixir", "receive", "pattern", "match"]
+      "tags": [
+        "elixir",
+        "receive",
+        "pattern",
+        "match"
+      ],
+      "description": "Receive Match"
     },
     {
       "id": "elixir_process_info_dead_process",
@@ -144,7 +210,13 @@
       "severity": "low",
       "suggestion": "Process.info/1 returns nil for dead processes",
       "root_cause": "elixir_process_info_nil",
-      "tags": ["elixir", "process", "info", "dead"]
+      "tags": [
+        "elixir",
+        "process",
+        "info",
+        "dead"
+      ],
+      "description": "Process Info Dead Process"
     },
     {
       "id": "elixir_exit_signal_propagation",
@@ -156,7 +228,13 @@
       "severity": "high",
       "suggestion": "Use supervisors or trap exits to control exit propagation",
       "root_cause": "elixir_exit_propagation",
-      "tags": ["elixir", "exit", "link", "propagation"]
+      "tags": [
+        "elixir",
+        "exit",
+        "link",
+        "propagation"
+      ],
+      "description": "Exit Signal Propagation"
     },
     {
       "id": "elixir_call_timeout_vs_genserver",
@@ -168,7 +246,13 @@
       "severity": "low",
       "suggestion": "Consider using GenServer instead of manual call/response patterns",
       "root_cause": "elixir_manual_call_pattern",
-      "tags": ["elixir", "call", "timeout", "pattern"]
+      "tags": [
+        "elixir",
+        "call",
+        "timeout",
+        "pattern"
+      ],
+      "description": "Call Timeout Vs Genserver"
     },
     {
       "id": "elixir_pg_process_group_error",
@@ -180,7 +264,14 @@
       "severity": "medium",
       "suggestion": "Use :pg (not :pg2) for process groups in newer Elixir versions",
       "root_cause": "elixir_process_group_error",
-      "tags": ["elixir", "pg", "process_group", "distributed"]
+      "tags": [
+        "elixir",
+        "pg",
+        "process_group",
+        "distributed"
+      ],
+      "description": "Pg Process Group"
     }
-  ]
+  ],
+  "name": "Message Passing Errors"
 }

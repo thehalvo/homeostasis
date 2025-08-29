@@ -867,17 +867,17 @@ class CSSLanguagePlugin(LanguagePlugin):
         try:
             message = error_data.get("message", "").lower()
             
-            # Check if it's a Tailwind-related error
-            if self._is_tailwind_error(error_data):
-                analysis = self.exception_handler.analyze_tailwind_error(error_data)
+            # Check if it's a layout error first (more specific)
+            if self._is_layout_error(error_data):
+                analysis = self.exception_handler.analyze_layout_error(error_data)
             
             # Check if it's a CSS-in-JS error
             elif self._is_css_in_js_error(error_data):
                 analysis = self.exception_handler.analyze_css_in_js_error(error_data)
             
-            # Check if it's a layout error
-            elif self._is_layout_error(error_data):
-                analysis = self.exception_handler.analyze_layout_error(error_data)
+            # Check if it's a Tailwind-related error
+            elif self._is_tailwind_error(error_data):
+                analysis = self.exception_handler.analyze_tailwind_error(error_data)
             
             # Default CSS error analysis
             else:

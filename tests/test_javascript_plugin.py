@@ -438,12 +438,20 @@ class TestIntegration:
         context = {
             "error_data": {
                 "error_type": "TypeError",
-                "message": "Cannot read property 'id' of undefined"
+                "message": "Cannot read property 'id' of undefined",
+                "stack_trace": [
+                    {
+                        "file": "test.js",
+                        "line": 1,
+                        "function": "main"
+                    }
+                ]
             },
             "source_code": "const id = user.id;"
         }
         
-        fix = plugin.generate_fix(analysis, context)
+        # Pass source_code as third argument to match expected signature
+        fix = plugin.generate_fix(analysis, context, context["source_code"])
         
         assert fix is not None
         assert "type" in fix

@@ -1,4 +1,5 @@
 {
+  "name": "Tailwind CSS Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "tailwindcss",
@@ -21,12 +22,17 @@
         "Ensure class is not purged by PurgeCSS configuration",
         "Add custom utility to tailwind.config.js if needed"
       ],
-      "tags": ["tailwind", "class", "purge"],
+      "tags": [
+        "tailwind",
+        "class",
+        "purge"
+      ],
       "examples": [
         "bg-blue-1000 (invalid color scale)",
         "text-xl-large (invalid size)",
         "Custom class name misspelling"
-      ]
+      ],
+      "description": "Tailwind Unknown Class"
     },
     {
       "id": "tailwind_purge_error",
@@ -44,11 +50,17 @@
         "Check purge.options for custom extractors",
         "Disable purge in development mode"
       ],
-      "tags": ["tailwind", "purge", "build", "configuration"],
+      "tags": [
+        "tailwind",
+        "purge",
+        "build",
+        "configuration"
+      ],
       "examples": [
         "Dynamic class names being purged",
         "Conditional classes not detected by PurgeCSS"
-      ]
+      ],
+      "description": "Tailwind Purge"
     },
     {
       "id": "tailwind_apply_error",
@@ -66,11 +78,17 @@
         "Ensure applied utilities are available in your build",
         "Avoid using @apply with complex selectors"
       ],
-      "tags": ["tailwind", "apply", "directive", "css"],
+      "tags": [
+        "tailwind",
+        "apply",
+        "directive",
+        "css"
+      ],
       "examples": [
         "@apply invalid-class-name",
         "@apply with component class names"
-      ]
+      ],
+      "description": "Tailwind Apply"
     },
     {
       "id": "tailwind_config_error",
@@ -88,11 +106,17 @@
         "Ensure plugins are properly configured",
         "Check PostCSS configuration for Tailwind inclusion"
       ],
-      "tags": ["tailwind", "configuration", "config", "syntax"],
+      "tags": [
+        "tailwind",
+        "configuration",
+        "config",
+        "syntax"
+      ],
       "examples": [
         "Invalid JavaScript syntax in config",
         "Incorrect theme extension format"
-      ]
+      ],
+      "description": "Tailwind Config"
     },
     {
       "id": "tailwind_build_error",
@@ -110,11 +134,17 @@
         "Ensure Tailwind CSS is properly installed",
         "Check for conflicting CSS processing tools"
       ],
-      "tags": ["tailwind", "build", "postcss", "compilation"],
+      "tags": [
+        "tailwind",
+        "build",
+        "postcss",
+        "compilation"
+      ],
       "examples": [
         "PostCSS plugin configuration issues",
         "Build tool integration problems"
-      ]
+      ],
+      "description": "Tailwind Build"
     },
     {
       "id": "tailwind_jit_error",
@@ -132,11 +162,17 @@
         "Verify file watching is working correctly",
         "Check for JIT-specific syntax usage"
       ],
-      "tags": ["tailwind", "jit", "just-in-time", "mode"],
+      "tags": [
+        "tailwind",
+        "jit",
+        "just-in-time",
+        "mode"
+      ],
       "examples": [
         "Dynamic class generation issues",
         "File watching problems in JIT mode"
-      ]
+      ],
+      "description": "Tailwind Jit"
     },
     {
       "id": "tailwind_variant_error",
@@ -154,11 +190,17 @@
         "Enable required variants in configuration",
         "Use correct variant syntax"
       ],
-      "tags": ["tailwind", "variants", "modifiers", "responsive"],
+      "tags": [
+        "tailwind",
+        "variants",
+        "modifiers",
+        "responsive"
+      ],
       "examples": [
         "Using disabled variant",
         "Incorrect variant syntax"
-      ]
+      ],
+      "description": "Tailwind Variant"
     },
     {
       "id": "tailwind_arbitrary_value_error",
@@ -176,11 +218,17 @@
         "Use proper escaping for special characters",
         "Verify Tailwind version supports arbitrary values"
       ],
-      "tags": ["tailwind", "arbitrary", "custom", "values"],
+      "tags": [
+        "tailwind",
+        "arbitrary",
+        "custom",
+        "values"
+      ],
       "examples": [
         "w-[invalid-value]",
         "bg-[#invalid-color]"
-      ]
+      ],
+      "description": "Tailwind Arbitrary Value"
     },
     {
       "id": "tailwind_performance_warning",
@@ -198,11 +246,17 @@
         "Use only necessary Tailwind plugins",
         "Consider using Tailwind JIT mode"
       ],
-      "tags": ["tailwind", "performance", "optimization", "bundle-size"],
+      "tags": [
+        "tailwind",
+        "performance",
+        "optimization",
+        "bundle-size"
+      ],
       "examples": [
         "Large CSS bundle in production",
         "Unused utilities included in build"
-      ]
+      ],
+      "description": "Tailwind Performance Warning"
     },
     {
       "id": "tailwind_theme_error",
@@ -220,11 +274,17 @@
         "Ensure theme extensions don't override required properties",
         "Use proper CSS values for theme properties"
       ],
-      "tags": ["tailwind", "theme", "customization", "configuration"],
+      "tags": [
+        "tailwind",
+        "theme",
+        "customization",
+        "configuration"
+      ],
       "examples": [
         "Invalid color format in theme",
         "Missing required theme properties"
-      ]
+      ],
+      "description": "Tailwind Theme"
     }
   ]
 }

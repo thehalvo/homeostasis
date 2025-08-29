@@ -1,4 +1,5 @@
 {
+  "name": "Go Database Errors",
   "description": "Go database-related error patterns for SQL, ORM libraries",
   "version": "0.1.0",
   "rules": [

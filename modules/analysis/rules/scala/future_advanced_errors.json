@@ -1,4 +1,5 @@
 {
+  "name": "Scala Future Advanced Errors",
   "version": "1.0.0",
   "description": "Advanced Scala Future composition and error handling patterns",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "medium",
       "suggestion": "Future.zip fails fast if any Future fails. Use Future.zipWith or handle failures individually",
       "root_cause": "scala_future_zip_fail_fast",
-      "tags": ["scala", "future", "zip", "composition"]
+      "tags": [
+        "scala",
+        "future",
+        "zip",
+        "composition"
+      ],
+      "description": "Scala Future Zip Failure"
     },
     {
       "id": "scala_future_sequence_failure",
@@ -24,7 +31,13 @@
       "severity": "medium",
       "suggestion": "Future.sequence fails if any Future fails. Use Future.traverse or collect successful results",
       "root_cause": "scala_future_sequence_fail",
-      "tags": ["scala", "future", "sequence", "traverse"]
+      "tags": [
+        "scala",
+        "future",
+        "sequence",
+        "traverse"
+      ],
+      "description": "Scala Future Sequence Failure"
     },
     {
       "id": "scala_future_traverse_error",
@@ -36,7 +49,13 @@
       "severity": "medium",
       "suggestion": "Ensure traverse function handles errors. Consider using Future.sequence with pre-mapped Futures",
       "root_cause": "scala_future_traverse_error",
-      "tags": ["scala", "future", "traverse", "error"]
+      "tags": [
+        "scala",
+        "future",
+        "traverse",
+        "error"
+      ],
+      "description": "Scala Future Traverse"
     },
     {
       "id": "scala_future_recover_partial",
@@ -48,7 +67,13 @@
       "severity": "high",
       "suggestion": "Ensure recover/recoverWith partial functions handle all expected exceptions",
       "root_cause": "scala_future_recover_partial",
-      "tags": ["scala", "future", "recover", "partial"]
+      "tags": [
+        "scala",
+        "future",
+        "recover",
+        "partial"
+      ],
+      "description": "Scala Future Recover Partial"
     },
     {
       "id": "scala_future_fallback_chain",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "Chain multiple fallbacks or use recoverWith for more control over fallback logic",
       "root_cause": "scala_future_fallback_failed",
-      "tags": ["scala", "future", "fallback", "chain"]
+      "tags": [
+        "scala",
+        "future",
+        "fallback",
+        "chain"
+      ],
+      "description": "Scala Future Fallback Chain"
     },
     {
       "id": "scala_future_transform_error",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Handle exceptions in transform/transformWith functions",
       "root_cause": "scala_future_transform_exception",
-      "tags": ["scala", "future", "transform", "exception"]
+      "tags": [
+        "scala",
+        "future",
+        "transform",
+        "exception"
+      ],
+      "description": "Scala Future Transform"
     },
     {
       "id": "scala_future_failed_projection",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Future.failed only works on failed Futures. Check with isCompleted or handle both cases",
       "root_cause": "scala_future_failed_success",
-      "tags": ["scala", "future", "failed", "projection"]
+      "tags": [
+        "scala",
+        "future",
+        "failed",
+        "projection"
+      ],
+      "description": "Scala Future Failed Projection"
     },
     {
       "id": "scala_execution_context_starvation",
@@ -96,7 +139,13 @@
       "severity": "critical",
       "suggestion": "Use appropriate ExecutionContext. Avoid blocking operations or use blocking {} construct",
       "root_cause": "scala_ec_starvation",
-      "tags": ["scala", "future", "execution_context", "starvation"]
+      "tags": [
+        "scala",
+        "future",
+        "execution_context",
+        "starvation"
+      ],
+      "description": "Scala Execution Context Starvation"
     },
     {
       "id": "scala_future_cancellation_unsupported",
@@ -108,7 +157,13 @@
       "severity": "low",
       "suggestion": "Scala Futures are not cancellable. Use Monix Task or Cats Effect IO for cancellation",
       "root_cause": "scala_future_no_cancel",
-      "tags": ["scala", "future", "cancellation", "limitation"]
+      "tags": [
+        "scala",
+        "future",
+        "cancellation",
+        "limitation"
+      ],
+      "description": "Scala Future Cancellation Unsupported"
     },
     {
       "id": "scala_promise_already_completed",
@@ -120,7 +175,13 @@
       "severity": "high",
       "suggestion": "Promises can only be completed once. Use tryComplete methods or check isCompleted",
       "root_cause": "scala_promise_completed",
-      "tags": ["scala", "future", "promise", "completed"]
+      "tags": [
+        "scala",
+        "future",
+        "promise",
+        "completed"
+      ],
+      "description": "Scala Promise Already Completed"
     },
     {
       "id": "scala_future_foreach_side_effect",
@@ -132,7 +193,13 @@
       "severity": "low",
       "suggestion": "Handle exceptions in foreach callbacks. Use onComplete for error handling",
       "root_cause": "scala_future_foreach_error",
-      "tags": ["scala", "future", "foreach", "side_effect"]
+      "tags": [
+        "scala",
+        "future",
+        "foreach",
+        "side_effect"
+      ],
+      "description": "Scala Future Foreach Side Effect"
     },
     {
       "id": "scala_future_filter_nosuchelement",
@@ -144,7 +211,13 @@
       "severity": "medium",
       "suggestion": "Future.filter fails with NoSuchElementException if predicate is false. Use collect or flatMap",
       "root_cause": "scala_future_filter_false",
-      "tags": ["scala", "future", "filter", "predicate"]
+      "tags": [
+        "scala",
+        "future",
+        "filter",
+        "predicate"
+      ],
+      "description": "Scala Future Filter Nosuchelement"
     },
     {
       "id": "scala_future_collect_partial",
@@ -156,7 +229,13 @@
       "severity": "medium",
       "suggestion": "Ensure collect partial function handles all success cases or use recover for failures",
       "root_cause": "scala_future_collect_partial",
-      "tags": ["scala", "future", "collect", "partial"]
+      "tags": [
+        "scala",
+        "future",
+        "collect",
+        "partial"
+      ],
+      "description": "Scala Future Collect Partial"
     },
     {
       "id": "scala_future_onfailure_deprecated",
@@ -168,7 +247,13 @@
       "severity": "low",
       "suggestion": "Replace onFailure with onComplete { case Failure(e) => ... } or failed.foreach",
       "root_cause": "scala_future_onfailure_deprecated",
-      "tags": ["scala", "future", "deprecated", "onFailure"]
+      "tags": [
+        "scala",
+        "future",
+        "deprecated",
+        "onFailure"
+      ],
+      "description": "Scala Future Onfailure Deprecated"
     },
     {
       "id": "scala_future_blocking_await",
@@ -180,7 +265,13 @@
       "severity": "medium",
       "suggestion": "Avoid Await.result in production. Use map/flatMap or async frameworks",
       "root_cause": "scala_future_await_blocking",
-      "tags": ["scala", "future", "await", "blocking"]
+      "tags": [
+        "scala",
+        "future",
+        "await",
+        "blocking"
+      ],
+      "description": "Scala Future Blocking Await"
     }
   ]
 }

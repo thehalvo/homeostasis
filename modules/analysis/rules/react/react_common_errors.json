@@ -1,4 +1,5 @@
 {
+  "name": "React React Common Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "react",
@@ -20,12 +21,17 @@
         "Ensure hooks are not called inside loops, conditions, or nested functions",
         "Use custom hooks to encapsulate hook logic if needed"
       ],
-      "tags": ["react", "hooks", "rules-of-hooks"],
+      "tags": [
+        "react",
+        "hooks",
+        "rules-of-hooks"
+      ],
       "examples": [
         "Hooks called inside conditional statements",
         "Hooks called inside loops",
         "Hooks called inside event handlers"
-      ]
+      ],
+      "description": "React Invalid Hook Call"
     },
     {
       "id": "react_hooks_dependency_array",
@@ -42,11 +48,17 @@
         "Use useCallback for function dependencies",
         "Consider moving functions inside useEffect if they're only used there"
       ],
-      "tags": ["react", "hooks", "useEffect", "dependencies"],
+      "tags": [
+        "react",
+        "hooks",
+        "useEffect",
+        "dependencies"
+      ],
       "examples": [
         "useEffect missing state variable in dependency array",
         "useCallback missing prop in dependency array"
-      ]
+      ],
+      "description": "React Hooks Dependency Array"
     },
     {
       "id": "react_state_update_unmounted",
@@ -63,11 +75,17 @@
         "Use AbortController for fetch requests",
         "Check component mount status before setState in async operations"
       ],
-      "tags": ["react", "lifecycle", "memory-leak", "unmounted"],
+      "tags": [
+        "react",
+        "lifecycle",
+        "memory-leak",
+        "unmounted"
+      ],
       "examples": [
         "setState called after component unmounts",
         "Async API call completing after unmount"
-      ]
+      ],
+      "description": "React State Update Unmounted"
     },
     {
       "id": "react_key_prop_missing",
@@ -84,11 +102,17 @@
         "Use array index as key only if list items never reorder",
         "Ensure keys are stable, predictable, and unique"
       ],
-      "tags": ["react", "rendering", "lists", "keys"],
+      "tags": [
+        "react",
+        "rendering",
+        "lists",
+        "keys"
+      ],
       "examples": [
         "map() function rendering without keys",
         "Dynamic list rendering"
-      ]
+      ],
+      "description": "React Key Prop Missing"
     },
     {
       "id": "react_jsx_not_in_scope",
@@ -105,11 +129,17 @@
         "Configure JSX transform in Babel/TypeScript config",
         "Use React 17+ automatic JSX transform"
       ],
-      "tags": ["react", "jsx", "import", "scope"],
+      "tags": [
+        "react",
+        "jsx",
+        "import",
+        "scope"
+      ],
       "examples": [
         "JSX used without React import",
         "JSX transform configuration issues"
-      ]
+      ],
+      "description": "React Jsx Not In Scope"
     },
     {
       "id": "react_prop_types_validation",
@@ -126,11 +156,17 @@
         "Fix the prop value being passed to match expected type",
         "Consider using TypeScript for better type safety"
       ],
-      "tags": ["react", "props", "propTypes", "validation"],
+      "tags": [
+        "react",
+        "props",
+        "propTypes",
+        "validation"
+      ],
       "examples": [
         "String passed where number expected",
         "Object structure mismatch in props"
-      ]
+      ],
+      "description": "React Prop Types Validation"
     },
     {
       "id": "react_render_non_element",
@@ -147,11 +183,17 @@
         "Call functions that return JSX instead of rendering the function itself",
         "Use JSON.stringify() for debugging object values"
       ],
-      "tags": ["react", "rendering", "children", "jsx"],
+      "tags": [
+        "react",
+        "rendering",
+        "children",
+        "jsx"
+      ],
       "examples": [
         "Rendering object directly in JSX",
         "Rendering function reference instead of function call"
-      ]
+      ],
+      "description": "React Render Non Element"
     },
     {
       "id": "react_useeffect_infinite_loop",
@@ -168,11 +210,17 @@
         "Memoize objects and functions used in dependencies",
         "Move object/array creation inside useEffect if possible"
       ],
-      "tags": ["react", "hooks", "useEffect", "infinite-loop"],
+      "tags": [
+        "react",
+        "hooks",
+        "useEffect",
+        "infinite-loop"
+      ],
       "examples": [
         "useEffect with missing dependency array",
         "Object created in render causing useEffect to re-run"
-      ]
+      ],
+      "description": "React Useeffect Infinite Loop"
     },
     {
       "id": "react_component_not_exported",
@@ -189,11 +237,17 @@
         "Check import statement matches export type",
         "Verify component name spelling in import/export"
       ],
-      "tags": ["react", "components", "export", "import"],
+      "tags": [
+        "react",
+        "components",
+        "export",
+        "import"
+      ],
       "examples": [
         "Component not exported from module",
         "Named export imported as default export"
-      ]
+      ],
+      "description": "React Component Not Exported"
     },
     {
       "id": "react_event_handler_binding",
@@ -210,11 +264,17 @@
         "Bind methods in constructor or use bind() in render",
         "Convert to function component with hooks"
       ],
-      "tags": ["react", "events", "binding", "this"],
+      "tags": [
+        "react",
+        "events",
+        "binding",
+        "this"
+      ],
       "examples": [
         "Class method not bound to this",
         "Event handler losing context"
-      ]
+      ],
+      "description": "React Event Handler Binding"
     }
   ]
 }

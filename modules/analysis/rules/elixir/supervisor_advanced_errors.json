@@ -1,4 +1,5 @@
 {
+  "name": "Elixir Supervisor Advanced Errors",
   "version": "1.0.0",
   "description": "Advanced Elixir Supervisor error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "With rest_for_one, ensure child order reflects dependencies. Consider one_for_one if independent",
       "root_cause": "elixir_supervisor_rest_for_one",
-      "tags": ["elixir", "supervisor", "strategy", "rest_for_one"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "strategy",
+        "rest_for_one"
+      ],
+      "description": "Supervisor Rest For One Cascade"
     },
     {
       "id": "elixir_supervisor_simple_one_for_one_deprecated",
@@ -24,7 +31,13 @@
       "severity": "low",
       "suggestion": "Replace simple_one_for_one with DynamicSupervisor for dynamic children",
       "root_cause": "elixir_supervisor_deprecated_strategy",
-      "tags": ["elixir", "supervisor", "deprecated", "simple_one_for_one"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "deprecated",
+        "simple_one_for_one"
+      ],
+      "description": "Supervisor Simple One For One Deprecated"
     },
     {
       "id": "elixir_supervisor_start_child_error",
@@ -36,7 +49,13 @@
       "severity": "high",
       "suggestion": "Ensure child spec is valid and supervisor supports dynamic children",
       "root_cause": "elixir_supervisor_start_child_failed",
-      "tags": ["elixir", "supervisor", "start_child", "dynamic"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "start_child",
+        "dynamic"
+      ],
+      "description": "Supervisor Start Child"
     },
     {
       "id": "elixir_supervisor_terminate_child_error",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Ensure child processes handle shutdown properly within shutdown timeout",
       "root_cause": "elixir_supervisor_terminate_child",
-      "tags": ["elixir", "supervisor", "terminate", "shutdown"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "terminate",
+        "shutdown"
+      ],
+      "description": "Supervisor Terminate Child"
     },
     {
       "id": "elixir_supervisor_circular_dependency",
@@ -60,7 +85,13 @@
       "severity": "critical",
       "suggestion": "Review supervision tree structure to eliminate circular dependencies",
       "root_cause": "elixir_supervisor_circular_dep",
-      "tags": ["elixir", "supervisor", "dependency", "circular"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "dependency",
+        "circular"
+      ],
+      "description": "Supervisor Circular Dependency"
     },
     {
       "id": "elixir_supervisor_init_timeout",
@@ -72,7 +103,13 @@
       "severity": "high",
       "suggestion": "Ensure supervisor init/1 returns quickly. Move slow operations to child processes",
       "root_cause": "elixir_supervisor_init_slow",
-      "tags": ["elixir", "supervisor", "init", "timeout"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "init",
+        "timeout"
+      ],
+      "description": "Supervisor Init Timeout"
     },
     {
       "id": "elixir_supervisor_invalid_shutdown_value",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Use integer timeout, :infinity, or :brutal_kill for shutdown in child spec",
       "root_cause": "elixir_supervisor_bad_shutdown",
-      "tags": ["elixir", "supervisor", "shutdown", "child_spec"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "shutdown",
+        "child_spec"
+      ],
+      "description": "Supervisor Invalid Shutdown Value"
     },
     {
       "id": "elixir_supervisor_transient_child_not_restarted",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Transient children restart only on abnormal termination. Use permanent for always restart",
       "root_cause": "elixir_supervisor_transient_restart",
-      "tags": ["elixir", "supervisor", "transient", "restart"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "transient",
+        "restart"
+      ],
+      "description": "Supervisor Transient Child Not Restarted"
     },
     {
       "id": "elixir_supervisor_temporary_child_restarted",
@@ -108,7 +157,13 @@
       "severity": "low",
       "suggestion": "Temporary children should never restart. Check restart strategy configuration",
       "root_cause": "elixir_supervisor_temporary_restart",
-      "tags": ["elixir", "supervisor", "temporary", "restart"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "temporary",
+        "restart"
+      ],
+      "description": "Supervisor Temporary Child Restarted"
     },
     {
       "id": "elixir_supervisor_max_seconds_max_restarts",
@@ -120,7 +175,13 @@
       "severity": "critical",
       "suggestion": "Adjust max_restarts and max_seconds or fix the root cause of crashes",
       "root_cause": "elixir_supervisor_restart_intensity",
-      "tags": ["elixir", "supervisor", "restart", "intensity"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "restart",
+        "intensity"
+      ],
+      "description": "Supervisor Max Seconds Max Restarts"
     },
     {
       "id": "elixir_supervisor_child_order_dependency",
@@ -132,7 +193,13 @@
       "severity": "high",
       "suggestion": "Children start in order defined. Place dependencies before dependents",
       "root_cause": "elixir_supervisor_child_order",
-      "tags": ["elixir", "supervisor", "order", "dependency"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "order",
+        "dependency"
+      ],
+      "description": "Supervisor Child Order Dependency"
     },
     {
       "id": "elixir_supervisor_dynamic_child_spec_fun",
@@ -144,7 +211,13 @@
       "severity": "medium",
       "suggestion": "Ensure child spec functions return valid specs: {module, args} or map",
       "root_cause": "elixir_supervisor_spec_function",
-      "tags": ["elixir", "supervisor", "child_spec", "function"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "child_spec",
+        "function"
+      ],
+      "description": "Supervisor Dynamic Child Spec Fun"
     },
     {
       "id": "elixir_supervisor_which_children_timeout",
@@ -156,7 +229,13 @@
       "severity": "low",
       "suggestion": "which_children may timeout under load. Consider alternative monitoring",
       "root_cause": "elixir_supervisor_which_children",
-      "tags": ["elixir", "supervisor", "introspection", "timeout"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "introspection",
+        "timeout"
+      ],
+      "description": "Supervisor Which Children Timeout"
     },
     {
       "id": "elixir_supervisor_shutdown_timeout",
@@ -168,7 +247,13 @@
       "severity": "high",
       "suggestion": "Increase shutdown timeout or ensure children stop gracefully",
       "root_cause": "elixir_supervisor_shutdown_slow",
-      "tags": ["elixir", "supervisor", "shutdown", "timeout"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "shutdown",
+        "timeout"
+      ],
+      "description": "Supervisor Shutdown Timeout"
     },
     {
       "id": "elixir_supervisor_restart_child_not_found",
@@ -180,7 +265,13 @@
       "severity": "medium",
       "suggestion": "Ensure child exists and use correct child id for restart_child",
       "root_cause": "elixir_supervisor_child_not_found",
-      "tags": ["elixir", "supervisor", "restart", "not_found"]
+      "tags": [
+        "elixir",
+        "supervisor",
+        "restart",
+        "not_found"
+      ],
+      "description": "Supervisor Restart Child Not Found"
     }
   ]
 }

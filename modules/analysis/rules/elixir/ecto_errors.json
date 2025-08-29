@@ -1,4 +1,5 @@
 {
+  "name": "Elixir Ecto Errors",
   "rules": [
     {
       "id": "ecto_changeset_error",
@@ -99,7 +100,7 @@
     {
       "id": "ecto_stale_entry_error",
       "pattern": "\\*\\* \\(Ecto\\.StaleEntryError\\) (.*)",
-      "type": "Ecto.StaleEntryError", 
+      "type": "Ecto.StaleEntryError",
       "description": "Attempted to update or delete a stale entry",
       "root_cause": "ecto_stale_entry_error",
       "suggestion": "Add optimistic locking to your schema with :optimistic_lock. Always fetch the latest version of the record before updating it.",

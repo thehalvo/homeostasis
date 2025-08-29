@@ -1,4 +1,5 @@
 {
+  "name": "Clojure Common Errors",
   "rules": [
     {
       "id": "clojure_null_pointer",
@@ -15,14 +16,23 @@
       "confidence": 0.9,
       "severity": "high",
       "category": "runtime",
-      "tags": ["nil", "null", "safety"],
+      "tags": [
+        "nil",
+        "null",
+        "safety"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_arity_exception",
       "pattern": "clojure\\.lang\\.ArityException: Wrong number of args \\((\\d+)\\) passed to: ([^\\s]+)",
-      "type": "ArityException", 
+      "type": "ArityException",
       "description": "Function called with wrong number of arguments",
       "root_cause": "clojure_incorrect_arity",
       "fix_suggestions": [
@@ -34,9 +44,18 @@
       "confidence": 0.95,
       "severity": "high",
       "category": "syntax",
-      "tags": ["arity", "arguments", "function"],
+      "tags": [
+        "arity",
+        "arguments",
+        "function"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_illegal_argument",
@@ -53,9 +72,18 @@
       "confidence": 0.8,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["arguments", "validation", "types"],
+      "tags": [
+        "arguments",
+        "validation",
+        "types"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_class_cast",
@@ -72,9 +100,18 @@
       "confidence": 0.85,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["casting", "types", "polymorphism"],
+      "tags": [
+        "casting",
+        "types",
+        "polymorphism"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_unsupported_operation",
@@ -91,9 +128,18 @@
       "confidence": 0.7,
       "severity": "medium",
       "category": "collections",
-      "tags": ["collections", "immutability", "operations"],
+      "tags": [
+        "collections",
+        "immutability",
+        "operations"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_index_out_of_bounds",
@@ -110,9 +156,18 @@
       "confidence": 0.9,
       "severity": "medium",
       "category": "collections",
-      "tags": ["index", "bounds", "collections"],
+      "tags": [
+        "index",
+        "bounds",
+        "collections"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_number_format",
@@ -129,9 +184,18 @@
       "confidence": 0.85,
       "severity": "medium",
       "category": "runtime",
-      "tags": ["parsing", "numbers", "validation"],
+      "tags": [
+        "parsing",
+        "numbers",
+        "validation"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_concurrent_modification",
@@ -148,9 +212,18 @@
       "confidence": 0.8,
       "severity": "medium",
       "category": "concurrency",
-      "tags": ["concurrency", "iteration", "modification"],
+      "tags": [
+        "concurrency",
+        "iteration",
+        "modification"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_stack_overflow",
@@ -167,9 +240,18 @@
       "confidence": 0.9,
       "severity": "high",
       "category": "runtime",
-      "tags": ["recursion", "tail-call", "optimization"],
+      "tags": [
+        "recursion",
+        "tail-call",
+        "optimization"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_out_of_memory",
@@ -186,9 +268,18 @@
       "confidence": 0.7,
       "severity": "critical",
       "category": "runtime",
-      "tags": ["memory", "lazy", "performance"],
+      "tags": [
+        "memory",
+        "lazy",
+        "performance"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_exception_in_thread",
@@ -205,9 +296,18 @@
       "confidence": 0.75,
       "severity": "high",
       "category": "concurrency",
-      "tags": ["threading", "exceptions", "async"],
+      "tags": [
+        "threading",
+        "exceptions",
+        "async"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     },
     {
       "id": "clojure_compilation_error",
@@ -224,9 +324,18 @@
       "confidence": 0.9,
       "severity": "high",
       "category": "syntax",
-      "tags": ["compilation", "syntax", "namespaces"],
+      "tags": [
+        "compilation",
+        "syntax",
+        "namespaces"
+      ],
       "frameworks": [],
-      "clojure_versions": ["1.8+", "1.9+", "1.10+", "1.11+"]
+      "clojure_versions": [
+        "1.8+",
+        "1.9+",
+        "1.10+",
+        "1.11+"
+      ]
     }
   ]
 }

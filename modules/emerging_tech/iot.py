@@ -471,13 +471,15 @@ class IoTDeviceMonitor:
             r"sync.*fail|time.*drift|clock.*error": IoTErrorType.SYNCHRONIZATION_ERROR,
             r"security.*breach|unauthorized|certificate.*invalid": IoTErrorType.SECURITY_BREACH,
             r"firmware.*corrupt|update.*fail|boot.*error|firmware.*verification.*fail": IoTErrorType.FIRMWARE_ERROR,
-            r"model.*inference|edge.*processing|ml.*timeout": IoTErrorType.EDGE_PROCESSING_ERROR
+            r"model.*inference|edge.*processing|ml.*timeout": IoTErrorType.EDGE_PROCESSING_ERROR,
+            r"system.*overload|resource.*exhausted|cpu.*high|memory.*high": IoTErrorType.RESOURCE_CONSTRAINT
         }
         
         # Define severity levels for different error types
         severity_map = {
             IoTErrorType.SECURITY_BREACH: "critical",
             IoTErrorType.FIRMWARE_ERROR: "critical",
+            IoTErrorType.RESOURCE_CONSTRAINT: "critical",
             IoTErrorType.MEMORY_OVERFLOW: "high",
             IoTErrorType.POWER_MANAGEMENT: "high",
             IoTErrorType.EDGE_PROCESSING_ERROR: "medium",

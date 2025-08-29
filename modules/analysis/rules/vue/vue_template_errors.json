@@ -23,10 +23,16 @@
         "Use unique identifier from item data",
         "Avoid using array index as key if list order changes"
       ],
-      "tags": ["vue", "template", "v-for", "key"],
+      "tags": [
+        "vue",
+        "template",
+        "v-for",
+        "key"
+      ],
       "examples": [
         "<li v-for=\"item in items\" :key=\"item.id\">{{ item.name }}</li>"
-      ]
+      ],
+      "description": "Vue Template V For Key Missing"
     },
     {
       "id": "vue_template_v_if_v_for_together",
@@ -43,10 +49,16 @@
         "Use computed property to filter items",
         "Separate v-if and v-for logic"
       ],
-      "tags": ["vue", "template", "v-if", "v-for"],
+      "tags": [
+        "vue",
+        "template",
+        "v-if",
+        "v-for"
+      ],
       "examples": [
         "<template v-for=\"item in items\" :key=\"item.id\">\n  <li v-if=\"item.visible\">{{ item.name }}</li>\n</template>"
-      ]
+      ],
+      "description": "Vue Template V If V For Together"
     },
     {
       "id": "vue_template_invalid_directive",
@@ -64,10 +76,16 @@
         "Import directive if using modular setup",
         "Use built-in directives correctly"
       ],
-      "tags": ["vue", "template", "directive", "custom"],
+      "tags": [
+        "vue",
+        "template",
+        "directive",
+        "custom"
+      ],
       "examples": [
         "Unknown custom directive: v-my-directive"
-      ]
+      ],
+      "description": "Vue Template Invalid Directive"
     },
     {
       "id": "vue_template_expression_error",
@@ -85,10 +103,16 @@
         "Ensure variables are available in component scope",
         "Use methods or computed properties for complex logic"
       ],
-      "tags": ["vue", "template", "expression", "syntax"],
+      "tags": [
+        "vue",
+        "template",
+        "expression",
+        "syntax"
+      ],
       "examples": [
         "Invalid expression: {{ user.name.toUpperCase() }}"
-      ]
+      ],
+      "description": "Vue Template Expression"
     },
     {
       "id": "vue_template_slot_error",
@@ -106,10 +130,16 @@
         "Check slot name spelling",
         "Use v-slot directive properly"
       ],
-      "tags": ["vue", "template", "slot", "component"],
+      "tags": [
+        "vue",
+        "template",
+        "slot",
+        "component"
+      ],
       "examples": [
         "<template v-slot:header>\n  <h1>Header content</h1>\n</template>"
-      ]
+      ],
+      "description": "Vue Template Slot"
     },
     {
       "id": "vue_template_scoped_slot_error",
@@ -127,10 +157,16 @@
         "Check slot prop names",
         "Ensure data is available in child component"
       ],
-      "tags": ["vue", "template", "scoped-slot", "props"],
+      "tags": [
+        "vue",
+        "template",
+        "scoped-slot",
+        "props"
+      ],
       "examples": [
         "<template v-slot:default=\"{ item }\">\n  <span>{{ item.name }}</span>\n</template>"
-      ]
+      ],
+      "description": "Vue Template Scoped Slot"
     },
     {
       "id": "vue_template_v_model_error",
@@ -148,10 +184,16 @@
         "Check component supports v-model",
         "Use correct v-model syntax for Vue 3"
       ],
-      "tags": ["vue", "template", "v-model", "forms"],
+      "tags": [
+        "vue",
+        "template",
+        "v-model",
+        "forms"
+      ],
       "examples": [
         "<input v-model=\"message\" type=\"text\" />"
-      ]
+      ],
+      "description": "Vue Template V Model"
     },
     {
       "id": "vue_template_event_handler_error",
@@ -169,10 +211,16 @@
         "Check method name spelling",
         "Ensure method is accessible in template scope"
       ],
-      "tags": ["vue", "template", "events", "methods"],
+      "tags": [
+        "vue",
+        "template",
+        "events",
+        "methods"
+      ],
       "examples": [
         "<button @click=\"handleClick\">Click me</button>"
-      ]
+      ],
+      "description": "Vue Template Event Handler"
     },
     {
       "id": "vue_template_binding_error",
@@ -190,10 +238,16 @@
         "Check property name spelling",
         "Ensure property is reactive"
       ],
-      "tags": ["vue", "template", "binding", "data"],
+      "tags": [
+        "vue",
+        "template",
+        "binding",
+        "data"
+      ],
       "examples": [
         "<span>{{ message }}</span>"
-      ]
+      ],
+      "description": "Vue Template Binding"
     },
     {
       "id": "vue_template_component_not_registered",
@@ -211,10 +265,17 @@
         "Register globally: app.component('MyComponent', MyComponent)",
         "Check component name spelling"
       ],
-      "tags": ["vue", "template", "component", "registration"],
+      "tags": [
+        "vue",
+        "template",
+        "component",
+        "registration"
+      ],
       "examples": [
         "Unknown custom element: <my-component>"
-      ]
+      ],
+      "description": "Vue Template Component Not Registered"
     }
-  ]
+  ],
+  "name": "Vue Template Errors"
 }

@@ -1,216 +1,249 @@
 {
-    "rules": [
-        {
-            "id": "smart_contract_revert",
-            "pattern": ".*revert.*|.*require.*fail|.*assert.*fail",
-            "error_type": "SmartContractRevert",
-            "platform": ["ethereum", "binance", "polygon"],
-            "severity": "high",
-            "description": "Smart contract execution reverted",
-            "fix_strategy": "Check contract requirements and input parameters",
-            "healing_options": [
-                "input_validation",
-                "error_recovery",
-                "state_verification"
-            ]
-        },
-        {
-            "id": "gas_estimation_failure",
-            "pattern": ".*gas.*required.*exceeds.*allowance|.*out.*of.*gas|.*gas.*too.*low",
-            "error_type": "GasEstimationError",
-            "platform": ["ethereum", "binance", "polygon"],
-            "severity": "high",
-            "description": "Gas estimation or limit error",
-            "fix_strategy": "Increase gas limit or optimize contract",
-            "healing_options": [
-                "dynamic_gas_adjustment",
-                "contract_optimization",
-                "batch_transaction"
-            ]
-        },
-        {
-            "id": "transaction_underpriced",
-            "pattern": ".*transaction.*underpriced|.*replacement.*transaction|.*gas.*price.*too.*low",
-            "error_type": "TransactionUnderpricedError",
-            "platform": ["ethereum", "binance"],
-            "severity": "medium",
-            "description": "Transaction gas price too low",
-            "fix_strategy": "Increase gas price based on network conditions",
-            "healing_options": [
-                "dynamic_gas_adjustment",
-                "priority_fee_bumping",
-                "eip1559_optimization"
-            ]
-        },
-        {
-            "id": "nonce_error",
-            "pattern": ".*nonce.*too.*low|.*nonce.*already.*used|.*invalid.*nonce",
-            "error_type": "NonceError",
-            "platform": ["ethereum", "binance", "polygon"],
-            "severity": "medium",
-            "description": "Transaction nonce mismatch",
-            "fix_strategy": "Synchronize nonce with network state",
-            "healing_options": [
-                "nonce_management",
-                "transaction_queue_recovery",
-                "pending_tx_monitoring"
-            ]
-        },
-        {
-            "id": "insufficient_funds",
-            "pattern": ".*insufficient.*funds|.*insufficient.*balance|.*not.*enough.*tokens",
-            "error_type": "InsufficientFundsError",
-            "platform": ["all"],
-            "severity": "high",
-            "description": "Account has insufficient balance",
-            "fix_strategy": "Ensure sufficient balance including fees",
-            "healing_options": [
-                "balance_verification",
-                "fee_estimation",
-                "multi_wallet_management"
-            ]
-        },
-        {
-            "id": "node_connection_error",
-            "pattern": ".*connection.*refused|.*provider.*disconnect|.*network.*error",
-            "error_type": "NodeConnectionError",
-            "platform": ["all"],
-            "severity": "high",
-            "description": "Blockchain node connection failed",
-            "fix_strategy": "Use backup nodes or retry connection",
-            "healing_options": [
-                "multi_node_fallback",
-                "connection_pooling",
-                "health_monitoring"
-            ]
-        },
-        {
-            "id": "consensus_fork_detected",
-            "pattern": ".*fork.*detected|.*reorg.*detected|.*chain.*reorganization",
-            "error_type": "ConsensusForkError",
-            "platform": ["all"],
-            "severity": "critical",
-            "description": "Blockchain fork or reorganization detected",
-            "fix_strategy": "Wait for chain finality and re-verify transactions",
-            "healing_options": [
-                "wait_for_finality",
-                "fork_detection",
-                "transaction_resubmission"
-            ]
-        },
-        {
-            "id": "permission_denied",
-            "pattern": ".*permission.*denied|.*unauthorized|.*access.*denied|.*not.*owner",
-            "error_type": "PermissionError",
-            "platform": ["all"],
-            "severity": "high",
-            "description": "Permission or authorization error",
-            "fix_strategy": "Verify account permissions and signatures",
-            "healing_options": [
-                "permission_verification",
-                "multi_sig_coordination",
-                "role_based_access"
-            ]
-        },
-        {
-            "id": "chaincode_error",
-            "pattern": ".*chaincode.*error|.*chaincode.*not.*found|.*endorsement.*fail",
-            "error_type": "ChaincodeError",
-            "platform": ["hyperledger"],
-            "severity": "high",
-            "description": "Hyperledger chaincode execution error",
-            "fix_strategy": "Verify chaincode deployment and endorsement",
-            "healing_options": [
-                "chaincode_verification",
-                "endorsement_policy_check",
-                "peer_synchronization"
-            ]
-        },
-        {
-            "id": "solana_program_error",
-            "pattern": ".*program.*error|.*instruction.*fail|.*account.*not.*found",
-            "error_type": "SolanaProgramError",
-            "platform": ["solana"],
-            "severity": "high",
-            "description": "Solana program execution failed",
-            "fix_strategy": "Check program logs and account states",
-            "healing_options": [
-                "account_verification",
-                "instruction_validation",
-                "compute_unit_optimization"
-            ]
-        },
-        {
-            "id": "mempool_congestion",
-            "pattern": ".*mempool.*full|.*transaction.*pending|.*queue.*full",
-            "error_type": "MempoolCongestionError",
-            "platform": ["ethereum", "bitcoin"],
-            "severity": "medium",
-            "description": "Transaction stuck in mempool",
-            "fix_strategy": "Increase fees or wait for congestion to clear",
-            "healing_options": [
-                "fee_bumping",
-                "transaction_replacement",
-                "mempool_monitoring"
-            ]
-        },
-        {
-            "id": "signature_verification_error",
-            "pattern": ".*signature.*invalid|.*signature.*verification.*fail|.*ecdsa.*error",
-            "error_type": "SignatureError",
-            "platform": ["all"],
-            "severity": "critical",
-            "description": "Cryptographic signature verification failed",
-            "fix_strategy": "Verify signing process and key management",
-            "healing_options": [
-                "signature_regeneration",
-                "key_rotation",
-                "hardware_wallet_integration"
-            ]
-        }
-    ],
-    "platform_specific": {
-        "ethereum": {
-            "common_contracts": [
-                "ERC20",
-                "ERC721",
-                "ERC1155",
-                "Uniswap",
-                "OpenZeppelin"
-            ],
-            "gas_optimization_patterns": [
-                "storage_packing",
-                "short_circuit_evaluation",
-                "loop_optimization",
-                "event_optimization"
-            ]
-        },
-        "hyperledger": {
-            "components": [
-                "peer",
-                "orderer",
-                "ca",
-                "couchdb",
-                "chaincode"
-            ],
-            "endorsement_policies": [
-                "AND",
-                "OR",
-                "OutOf"
-            ]
-        },
-        "solana": {
-            "account_types": [
-                "program",
-                "token",
-                "system",
-                "sysvar"
-            ],
-            "common_programs": [
-                "token_program",
-                "associated_token",
-                "system_program"
-            ]
-        }
+  "name": "Blockchain Blockchain Errors",
+  "rules": [
+    {
+      "id": "smart_contract_revert",
+      "pattern": ".*revert.*|.*require.*fail|.*assert.*fail",
+      "error_type": "SmartContractRevert",
+      "platform": [
+        "ethereum",
+        "binance",
+        "polygon"
+      ],
+      "severity": "high",
+      "description": "Smart contract execution reverted",
+      "fix_strategy": "Check contract requirements and input parameters",
+      "healing_options": [
+        "input_validation",
+        "error_recovery",
+        "state_verification"
+      ]
+    },
+    {
+      "id": "gas_estimation_failure",
+      "pattern": ".*gas.*required.*exceeds.*allowance|.*out.*of.*gas|.*gas.*too.*low",
+      "error_type": "GasEstimationError",
+      "platform": [
+        "ethereum",
+        "binance",
+        "polygon"
+      ],
+      "severity": "high",
+      "description": "Gas estimation or limit error",
+      "fix_strategy": "Increase gas limit or optimize contract",
+      "healing_options": [
+        "dynamic_gas_adjustment",
+        "contract_optimization",
+        "batch_transaction"
+      ]
+    },
+    {
+      "id": "transaction_underpriced",
+      "pattern": ".*transaction.*underpriced|.*replacement.*transaction|.*gas.*price.*too.*low",
+      "error_type": "TransactionUnderpricedError",
+      "platform": [
+        "ethereum",
+        "binance"
+      ],
+      "severity": "medium",
+      "description": "Transaction gas price too low",
+      "fix_strategy": "Increase gas price based on network conditions",
+      "healing_options": [
+        "dynamic_gas_adjustment",
+        "priority_fee_bumping",
+        "eip1559_optimization"
+      ]
+    },
+    {
+      "id": "nonce_error",
+      "pattern": ".*nonce.*too.*low|.*nonce.*already.*used|.*invalid.*nonce",
+      "error_type": "NonceError",
+      "platform": [
+        "ethereum",
+        "binance",
+        "polygon"
+      ],
+      "severity": "medium",
+      "description": "Transaction nonce mismatch",
+      "fix_strategy": "Synchronize nonce with network state",
+      "healing_options": [
+        "nonce_management",
+        "transaction_queue_recovery",
+        "pending_tx_monitoring"
+      ]
+    },
+    {
+      "id": "insufficient_funds",
+      "pattern": ".*insufficient.*funds|.*insufficient.*balance|.*not.*enough.*tokens",
+      "error_type": "InsufficientFundsError",
+      "platform": [
+        "all"
+      ],
+      "severity": "high",
+      "description": "Account has insufficient balance",
+      "fix_strategy": "Ensure sufficient balance including fees",
+      "healing_options": [
+        "balance_verification",
+        "fee_estimation",
+        "multi_wallet_management"
+      ]
+    },
+    {
+      "id": "node_connection_error",
+      "pattern": ".*connection.*refused|.*provider.*disconnect|.*network.*error",
+      "error_type": "NodeConnectionError",
+      "platform": [
+        "all"
+      ],
+      "severity": "high",
+      "description": "Blockchain node connection failed",
+      "fix_strategy": "Use backup nodes or retry connection",
+      "healing_options": [
+        "multi_node_fallback",
+        "connection_pooling",
+        "health_monitoring"
+      ]
+    },
+    {
+      "id": "consensus_fork_detected",
+      "pattern": ".*fork.*detected|.*reorg.*detected|.*chain.*reorganization",
+      "error_type": "ConsensusForkError",
+      "platform": [
+        "all"
+      ],
+      "severity": "critical",
+      "description": "Blockchain fork or reorganization detected",
+      "fix_strategy": "Wait for chain finality and re-verify transactions",
+      "healing_options": [
+        "wait_for_finality",
+        "fork_detection",
+        "transaction_resubmission"
+      ]
+    },
+    {
+      "id": "permission_denied",
+      "pattern": ".*permission.*denied|.*unauthorized|.*access.*denied|.*not.*owner",
+      "error_type": "PermissionError",
+      "platform": [
+        "all"
+      ],
+      "severity": "high",
+      "description": "Permission or authorization error",
+      "fix_strategy": "Verify account permissions and signatures",
+      "healing_options": [
+        "permission_verification",
+        "multi_sig_coordination",
+        "role_based_access"
+      ]
+    },
+    {
+      "id": "chaincode_error",
+      "pattern": ".*chaincode.*error|.*chaincode.*not.*found|.*endorsement.*fail",
+      "error_type": "ChaincodeError",
+      "platform": [
+        "hyperledger"
+      ],
+      "severity": "high",
+      "description": "Hyperledger chaincode execution error",
+      "fix_strategy": "Verify chaincode deployment and endorsement",
+      "healing_options": [
+        "chaincode_verification",
+        "endorsement_policy_check",
+        "peer_synchronization"
+      ]
+    },
+    {
+      "id": "solana_program_error",
+      "pattern": ".*program.*error|.*instruction.*fail|.*account.*not.*found",
+      "error_type": "SolanaProgramError",
+      "platform": [
+        "solana"
+      ],
+      "severity": "high",
+      "description": "Solana program execution failed",
+      "fix_strategy": "Check program logs and account states",
+      "healing_options": [
+        "account_verification",
+        "instruction_validation",
+        "compute_unit_optimization"
+      ]
+    },
+    {
+      "id": "mempool_congestion",
+      "pattern": ".*mempool.*full|.*transaction.*pending|.*queue.*full",
+      "error_type": "MempoolCongestionError",
+      "platform": [
+        "ethereum",
+        "bitcoin"
+      ],
+      "severity": "medium",
+      "description": "Transaction stuck in mempool",
+      "fix_strategy": "Increase fees or wait for congestion to clear",
+      "healing_options": [
+        "fee_bumping",
+        "transaction_replacement",
+        "mempool_monitoring"
+      ]
+    },
+    {
+      "id": "signature_verification_error",
+      "pattern": ".*signature.*invalid|.*signature.*verification.*fail|.*ecdsa.*error",
+      "error_type": "SignatureError",
+      "platform": [
+        "all"
+      ],
+      "severity": "critical",
+      "description": "Cryptographic signature verification failed",
+      "fix_strategy": "Verify signing process and key management",
+      "healing_options": [
+        "signature_regeneration",
+        "key_rotation",
+        "hardware_wallet_integration"
+      ]
     }
+  ],
+  "platform_specific": {
+    "ethereum": {
+      "common_contracts": [
+        "ERC20",
+        "ERC721",
+        "ERC1155",
+        "Uniswap",
+        "OpenZeppelin"
+      ],
+      "gas_optimization_patterns": [
+        "storage_packing",
+        "short_circuit_evaluation",
+        "loop_optimization",
+        "event_optimization"
+      ]
+    },
+    "hyperledger": {
+      "components": [
+        "peer",
+        "orderer",
+        "ca",
+        "couchdb",
+        "chaincode"
+      ],
+      "endorsement_policies": [
+        "AND",
+        "OR",
+        "OutOf"
+      ]
+    },
+    "solana": {
+      "account_types": [
+        "program",
+        "token",
+        "system",
+        "sysvar"
+      ],
+      "common_programs": [
+        "token_program",
+        "associated_token",
+        "system_program"
+      ]
+    }
+  }
 }

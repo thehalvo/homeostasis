@@ -1,4 +1,5 @@
 {
+  "name": "Kotlin Kotlin Null Safety Errors",
   "version": "1.0.0",
   "description": "Kotlin null safety error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "medium",
       "suggestion": "Use immutable val instead of var, or perform null check closer to usage",
       "root_cause": "kotlin_smart_cast_failure",
-      "tags": ["kotlin", "null_safety", "smart_cast", "mutable"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "smart_cast",
+        "mutable"
+      ],
+      "description": "Kotlin Smart Cast Impossible"
     },
     {
       "id": "kotlin_platform_type_null",
@@ -24,7 +31,13 @@
       "severity": "high",
       "suggestion": "Add explicit null checks or @Nullable/@NotNull annotations for Java interop",
       "root_cause": "kotlin_platform_type_npe",
-      "tags": ["kotlin", "null_safety", "java_interop", "platform"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "java_interop",
+        "platform"
+      ],
+      "description": "Kotlin Platform Type Null"
     },
     {
       "id": "kotlin_nullable_receiver_extension",
@@ -36,7 +49,13 @@
       "severity": "high",
       "suggestion": "Use safe call (?.) or null check before calling extension on nullable receiver",
       "root_cause": "kotlin_nullable_extension_call",
-      "tags": ["kotlin", "null_safety", "extension", "receiver"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "extension",
+        "receiver"
+      ],
+      "description": "Kotlin Nullable Receiver Extension"
     },
     {
       "id": "kotlin_elvis_operator_misuse",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Ensure elvis operator (?:) right side matches expected type or left side is nullable",
       "root_cause": "kotlin_elvis_type_mismatch",
-      "tags": ["kotlin", "null_safety", "elvis", "operator"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "elvis",
+        "operator"
+      ],
+      "description": "Kotlin Elvis Operator Misuse"
     },
     {
       "id": "kotlin_safe_call_chain_null",
@@ -60,7 +85,13 @@
       "severity": "low",
       "suggestion": "Remove unnecessary safe calls on non-null types for cleaner code",
       "root_cause": "kotlin_redundant_safe_call",
-      "tags": ["kotlin", "null_safety", "safe_call", "redundant"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "safe_call",
+        "redundant"
+      ],
+      "description": "Kotlin Safe Call Chain Null"
     },
     {
       "id": "kotlin_not_null_assertion_npe",
@@ -72,7 +103,13 @@
       "severity": "high",
       "suggestion": "Replace !! with safe call (?.) or proper null handling",
       "root_cause": "kotlin_not_null_assertion",
-      "tags": ["kotlin", "null_safety", "assertion", "npe"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "assertion",
+        "npe"
+      ],
+      "description": "Kotlin Not Null Assertion Npe"
     },
     {
       "id": "kotlin_nullable_collection_operation",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Use safe calls or null checks before collection operations, or use orEmpty()",
       "root_cause": "kotlin_nullable_collection",
-      "tags": ["kotlin", "null_safety", "collection", "iteration"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "collection",
+        "iteration"
+      ],
+      "description": "Kotlin Nullable Collection Operation"
     },
     {
       "id": "kotlin_let_scope_null_confusion",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Inside let block, 'it' is non-null. Use let for null-safe operations",
       "root_cause": "kotlin_let_null_safety",
-      "tags": ["kotlin", "null_safety", "let", "scope"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "let",
+        "scope"
+      ],
+      "description": "Kotlin Let Scope Null Confusion"
     },
     {
       "id": "kotlin_lateinit_not_initialized",
@@ -108,7 +157,13 @@
       "severity": "high",
       "suggestion": "Initialize lateinit property before use or use nullable type with null check",
       "root_cause": "kotlin_lateinit_uninitialized",
-      "tags": ["kotlin", "null_safety", "lateinit", "initialization"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "lateinit",
+        "initialization"
+      ],
+      "description": "Kotlin Lateinit Not Initialized"
     },
     {
       "id": "kotlin_nullable_generic_variance",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Consider nullability when using generic type parameters with bounds",
       "root_cause": "kotlin_generic_nullable_bound",
-      "tags": ["kotlin", "null_safety", "generic", "variance"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "generic",
+        "variance"
+      ],
+      "description": "Kotlin Nullable Generic Variance"
     },
     {
       "id": "kotlin_nullable_property_delegation",
@@ -132,7 +193,13 @@
       "severity": "medium",
       "suggestion": "Some delegates don't support nullable types. Check delegate documentation",
       "root_cause": "kotlin_nullable_delegate",
-      "tags": ["kotlin", "null_safety", "delegate", "property"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "delegate",
+        "property"
+      ],
+      "description": "Kotlin Nullable Property Delegation"
     },
     {
       "id": "kotlin_safe_cast_null_result",
@@ -144,7 +211,13 @@
       "severity": "low",
       "suggestion": "Review safe cast usage - it may always return null for incompatible types",
       "root_cause": "kotlin_safe_cast_always_null",
-      "tags": ["kotlin", "null_safety", "cast", "as_safe"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "cast",
+        "as_safe"
+      ],
+      "description": "Kotlin Safe Cast Null Result"
     },
     {
       "id": "kotlin_null_comparison_always_false",
@@ -156,7 +229,13 @@
       "severity": "low",
       "suggestion": "Remove redundant null checks on non-null types",
       "root_cause": "kotlin_redundant_null_check",
-      "tags": ["kotlin", "null_safety", "comparison", "redundant"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "comparison",
+        "redundant"
+      ],
+      "description": "Kotlin Null Comparison Always False"
     },
     {
       "id": "kotlin_nullable_lambda_parameter",
@@ -168,7 +247,13 @@
       "severity": "medium",
       "suggestion": "Handle nullable lambda parameters appropriately or adjust function signature",
       "root_cause": "kotlin_nullable_lambda_param",
-      "tags": ["kotlin", "null_safety", "lambda", "parameter"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "lambda",
+        "parameter"
+      ],
+      "description": "Kotlin Nullable Lambda Parameter"
     },
     {
       "id": "kotlin_contract_null_assertion",
@@ -180,7 +265,13 @@
       "severity": "medium",
       "suggestion": "Ensure contract conditions are met or use explicit null checks",
       "root_cause": "kotlin_contract_null_violation",
-      "tags": ["kotlin", "null_safety", "contract", "assertion"]
+      "tags": [
+        "kotlin",
+        "null_safety",
+        "contract",
+        "assertion"
+      ],
+      "description": "Kotlin Contract Null Assertion"
     }
   ]
 }

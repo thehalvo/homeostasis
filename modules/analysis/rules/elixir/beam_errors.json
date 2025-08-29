@@ -1,4 +1,5 @@
 {
+  "name": "Elixir Beam Errors",
   "rules": [
     {
       "id": "beam_badarg_error",
@@ -41,7 +42,7 @@
       "pattern": "\\*\\* \\(CaseClauseError\\) no case clause matching: (.*)",
       "type": "CaseClauseError",
       "description": "No matching case clause",
-      "root_cause": "beam_case_clause_error", 
+      "root_cause": "beam_case_clause_error",
       "suggestion": "Add a catch-all clause to your case statement (like `_ -> handle_default`). Ensure all possible values are covered by your patterns.",
       "confidence": "high",
       "severity": "medium",

@@ -1,4 +1,5 @@
 {
+  "name": "Java Spring Boot Errors",
   "description": "Spring Boot error detection rules for common application context, configuration, and runtime issues",
   "version": "1.0.0",
   "rules": [

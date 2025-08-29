@@ -1,4 +1,5 @@
 {
+  "name": "Rust Concurrency Errors",
   "language": "rust",
   "rules": [
     {

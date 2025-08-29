@@ -1,4 +1,5 @@
 {
+  "name": "Spring Spring Security Errors",
   "rules": [
     {
       "id": "spring_security_authentication_failed",
@@ -183,7 +184,7 @@
     {
       "id": "spring_security_cors_configuration_error",
       "pattern": "org\\.springframework\\.web\\.cors\\.CorsConfigurationSource(?:.*?CORS.*?|.*?Cross-Origin.*?)",
-      "type": "CorsConfigurationException", 
+      "type": "CorsConfigurationException",
       "description": "CORS configuration error in Spring Security",
       "root_cause": "spring_security_cors_error",
       "suggestion": "Configure CORS properly in security configuration. Use @CrossOrigin annotations or global CORS configuration. Ensure allowed origins, methods, and headers are correctly specified.",

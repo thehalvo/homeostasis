@@ -1,4 +1,5 @@
 {
+  "name": "Scala Play Errors",
   "rules": [
     {
       "id": "play_application_exception",

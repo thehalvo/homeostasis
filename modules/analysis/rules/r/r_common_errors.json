@@ -1,4 +1,5 @@
 {
+  "name": "R R Common Errors",
   "version": "1.0.0",
   "description": "Common R error patterns and fixes",
   "rules": [
@@ -12,7 +13,12 @@
       "reliability": "high",
       "root_cause": "r_object_not_found",
       "suggestion": "Check object name and ensure it's defined",
-      "tags": ["r", "object", "variable", "runtime"],
+      "tags": [
+        "r",
+        "object",
+        "variable",
+        "runtime"
+      ],
       "description": "Object or variable not found in workspace"
     },
     {
@@ -25,7 +31,12 @@
       "reliability": "high",
       "root_cause": "r_function_error",
       "suggestion": "Load required package or check function name",
-      "tags": ["r", "function", "package", "runtime"],
+      "tags": [
+        "r",
+        "function",
+        "package",
+        "runtime"
+      ],
       "description": "Function not found, may need to load package"
     },
     {
@@ -38,7 +49,12 @@
       "reliability": "high",
       "root_cause": "r_bounds_error",
       "suggestion": "Check vector/matrix indices and dimensions",
-      "tags": ["r", "bounds", "index", "vector"],
+      "tags": [
+        "r",
+        "bounds",
+        "index",
+        "vector"
+      ],
       "description": "Array or vector index out of bounds"
     },
     {
@@ -51,7 +67,12 @@
       "reliability": "high",
       "root_cause": "r_package_error",
       "suggestion": "Install missing package with install.packages()",
-      "tags": ["r", "package", "install", "library"],
+      "tags": [
+        "r",
+        "package",
+        "install",
+        "library"
+      ],
       "description": "Package not installed or not found"
     },
     {
@@ -64,7 +85,12 @@
       "reliability": "high",
       "root_cause": "r_function_error",
       "suggestion": "Remove unused arguments or check function signature",
-      "tags": ["r", "function", "argument", "parameter"],
+      "tags": [
+        "r",
+        "function",
+        "argument",
+        "parameter"
+      ],
       "description": "Function called with unused or incorrect arguments"
     },
     {
@@ -77,7 +103,11 @@
       "reliability": "high",
       "root_cause": "r_syntax_error",
       "suggestion": "Check syntax near the reported location",
-      "tags": ["r", "syntax", "parsing"],
+      "tags": [
+        "r",
+        "syntax",
+        "parsing"
+      ],
       "description": "Unexpected symbol or syntax error"
     },
     {
@@ -90,7 +120,12 @@
       "reliability": "high",
       "root_cause": "r_data_error",
       "suggestion": "Check vector lengths and data frame dimensions",
-      "tags": ["r", "data", "vector", "length"],
+      "tags": [
+        "r",
+        "data",
+        "vector",
+        "length"
+      ],
       "description": "Vector lengths differ in data operation"
     },
     {
@@ -103,7 +138,12 @@
       "reliability": "high",
       "root_cause": "r_data_error",
       "suggestion": "Handle missing values with na.omit() or na.rm",
-      "tags": ["r", "data", "missing", "na"],
+      "tags": [
+        "r",
+        "data",
+        "missing",
+        "na"
+      ],
       "description": "Missing values preventing operation"
     },
     {
@@ -116,7 +156,12 @@
       "reliability": "high",
       "root_cause": "r_type_error",
       "suggestion": "Convert to numeric with as.numeric() or check data types",
-      "tags": ["r", "type", "numeric", "conversion"],
+      "tags": [
+        "r",
+        "type",
+        "numeric",
+        "conversion"
+      ],
       "description": "Non-numeric argument where numeric expected"
     },
     {
@@ -129,7 +174,12 @@
       "reliability": "high",
       "root_cause": "r_dataframe_error",
       "suggestion": "Check column names and data frame structure",
-      "tags": ["r", "dataframe", "column", "selection"],
+      "tags": [
+        "r",
+        "dataframe",
+        "column",
+        "selection"
+      ],
       "description": "Trying to select undefined columns from data frame"
     }
   ]

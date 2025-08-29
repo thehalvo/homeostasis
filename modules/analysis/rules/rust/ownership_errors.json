@@ -1,4 +1,5 @@
 {
+  "name": "Rust Ownership Errors",
   "language": "rust",
   "description": "Rust ownership, borrowing, and memory safety error patterns",
   "version": "0.1.0",

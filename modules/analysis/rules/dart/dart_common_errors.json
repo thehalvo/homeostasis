@@ -1,4 +1,5 @@
 {
+  "name": "Dart Dart Common Errors",
   "description": "Common Dart error patterns and fixes",
   "version": "0.1.0",
   "rules": [

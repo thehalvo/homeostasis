@@ -1,4 +1,5 @@
 {
+  "name": "Angular Angular Common Errors",
   "metadata": {
     "description": "Common Angular errors and their fixes",
     "framework": "angular",
@@ -21,7 +22,13 @@
         "Add the component to declarations if it's in the same module",
         "Check the component selector name"
       ],
-      "tags": ["angular", "component", "module", "declaration"]
+      "tags": [
+        "angular",
+        "component",
+        "module",
+        "declaration"
+      ],
+      "description": "Angular Component Not Found"
     },
     {
       "id": "angular_property_binding_error",
@@ -38,7 +45,13 @@
         "Check spelling of the property name",
         "Ensure the property is meant to be an input"
       ],
-      "tags": ["angular", "template", "binding", "input"]
+      "tags": [
+        "angular",
+        "template",
+        "binding",
+        "input"
+      ],
+      "description": "Angular Property Binding"
     },
     {
       "id": "angular_safe_navigation_needed",
@@ -55,7 +68,13 @@
         "Use *ngIf to check existence: <div *ngIf='user'>{{ user.name }}</div>",
         "Initialize the property in component"
       ],
-      "tags": ["angular", "template", "safe-navigation", "null-check"]
+      "tags": [
+        "angular",
+        "template",
+        "safe-navigation",
+        "null-check"
+      ],
+      "description": "Angular Safe Navigation Needed"
     },
     {
       "id": "angular_expression_changed_after_checked",
@@ -72,7 +91,13 @@
         "Use setTimeout(() => { ... }, 0) to defer changes",
         "Use Promise.resolve().then(() => { ... }) for async updates"
       ],
-      "tags": ["angular", "template", "change-detection", "lifecycle"]
+      "tags": [
+        "angular",
+        "template",
+        "change-detection",
+        "lifecycle"
+      ],
+      "description": "Angular Expression Changed After Checked"
     },
     {
       "id": "angular_component_constructor_error",
@@ -89,7 +114,13 @@
         "Ensure all dependencies are provided in module",
         "Use @Inject() decorator for custom tokens"
       ],
-      "tags": ["angular", "component", "dependency-injection", "constructor"]
+      "tags": [
+        "angular",
+        "component",
+        "dependency-injection",
+        "constructor"
+      ],
+      "description": "Angular Component Constructor"
     },
     {
       "id": "angular_module_import_error",
@@ -106,7 +137,13 @@
         "Check the module's public API",
         "Ensure the module is properly installed"
       ],
-      "tags": ["angular", "module", "import", "export"]
+      "tags": [
+        "angular",
+        "module",
+        "import",
+        "export"
+      ],
+      "description": "Angular Module Import"
     },
     {
       "id": "angular_lifecycle_hook_error",
@@ -123,7 +160,13 @@
         "Add the lifecycle method to your component",
         "Import the interface from @angular/core"
       ],
-      "tags": ["angular", "lifecycle", "interface", "implementation"]
+      "tags": [
+        "angular",
+        "lifecycle",
+        "interface",
+        "implementation"
+      ],
+      "description": "Angular Lifecycle Hook"
     },
     {
       "id": "angular_router_navigation_error",
@@ -140,7 +183,13 @@
         "Check for typos in the route path",
         "Ensure the route is imported in the routing module"
       ],
-      "tags": ["angular", "router", "navigation", "route"]
+      "tags": [
+        "angular",
+        "router",
+        "navigation",
+        "route"
+      ],
+      "description": "Angular Router Navigation"
     },
     {
       "id": "angular_form_control_error",
@@ -157,7 +206,13 @@
         "Check the control name spelling",
         "Ensure FormControl is properly initialized"
       ],
-      "tags": ["angular", "forms", "reactive-forms", "form-control"]
+      "tags": [
+        "angular",
+        "forms",
+        "reactive-forms",
+        "form-control"
+      ],
+      "description": "Angular Form Control"
     },
     {
       "id": "angular_pipe_not_found",
@@ -174,7 +229,13 @@
         "Add the pipe to declarations if it's custom",
         "Check the pipe name spelling"
       ],
-      "tags": ["angular", "pipes", "module", "declaration"]
+      "tags": [
+        "angular",
+        "pipes",
+        "module",
+        "declaration"
+      ],
+      "description": "Angular Pipe Not Found"
     }
   ]
 }

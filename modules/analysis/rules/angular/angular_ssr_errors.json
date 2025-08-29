@@ -1,4 +1,5 @@
 {
+  "name": "Angular Angular Ssr Errors",
   "metadata": {
     "description": "Angular Universal SSR errors and their fixes",
     "framework": "angular",
@@ -22,7 +23,13 @@
         "Inject PLATFORM_ID token",
         "Wrap window usage in isPlatformBrowser() check"
       ],
-      "tags": ["angular", "ssr", "window", "platform"]
+      "tags": [
+        "angular",
+        "ssr",
+        "window",
+        "platform"
+      ],
+      "description": "Angular Ssr Window Undefined"
     },
     {
       "id": "angular_ssr_document_undefined",
@@ -39,7 +46,13 @@
         "Inject DOCUMENT token from @angular/common",
         "Wrap document usage in platform checks"
       ],
-      "tags": ["angular", "ssr", "document", "platform"]
+      "tags": [
+        "angular",
+        "ssr",
+        "document",
+        "platform"
+      ],
+      "description": "Angular Ssr Document Undefined"
     },
     {
       "id": "angular_ssr_localstorage_undefined",
@@ -56,7 +69,13 @@
         "Provide fallback for server-side rendering",
         "Use a service to abstract storage access"
       ],
-      "tags": ["angular", "ssr", "localstorage", "storage"]
+      "tags": [
+        "angular",
+        "ssr",
+        "localstorage",
+        "storage"
+      ],
+      "description": "Angular Ssr Localstorage Undefined"
     },
     {
       "id": "angular_ssr_hydration_mismatch",
@@ -73,7 +92,13 @@
         "Ensure consistent data between server and client",
         "Use TransferState for data synchronization"
       ],
-      "tags": ["angular", "ssr", "hydration", "mismatch"]
+      "tags": [
+        "angular",
+        "ssr",
+        "hydration",
+        "mismatch"
+      ],
+      "description": "Angular Ssr Hydration Mismatch"
     },
     {
       "id": "angular_ssr_dom_manipulation_error",
@@ -90,7 +115,13 @@
         "Check platform before DOM operations",
         "Use ViewChild and lifecycle hooks properly"
       ],
-      "tags": ["angular", "ssr", "dom", "manipulation"]
+      "tags": [
+        "angular",
+        "ssr",
+        "dom",
+        "manipulation"
+      ],
+      "description": "Angular Ssr Dom Manipulation"
     },
     {
       "id": "angular_ssr_external_library_error",
@@ -107,7 +138,13 @@
         "Check platform before loading external scripts",
         "Provide server-side compatible alternatives"
       ],
-      "tags": ["angular", "ssr", "external", "library"]
+      "tags": [
+        "angular",
+        "ssr",
+        "external",
+        "library"
+      ],
+      "description": "Angular Ssr External Library"
     },
     {
       "id": "angular_ssr_transfer_state_error",
@@ -124,7 +161,13 @@
         "Import ServerTransferStateModule in server module",
         "Use TransferState service to share data"
       ],
-      "tags": ["angular", "ssr", "transfer-state", "data"]
+      "tags": [
+        "angular",
+        "ssr",
+        "transfer-state",
+        "data"
+      ],
+      "description": "Angular Ssr Transfer State"
     },
     {
       "id": "angular_ssr_meta_tags_error",
@@ -141,7 +184,13 @@
         "Use Title service for title updates",
         "Ensure meta tag updates happen on server side"
       ],
-      "tags": ["angular", "ssr", "meta", "seo"]
+      "tags": [
+        "angular",
+        "ssr",
+        "meta",
+        "seo"
+      ],
+      "description": "Angular Ssr Meta Tags"
     }
   ]
 }

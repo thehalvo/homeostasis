@@ -1,4 +1,5 @@
 {
+  "name": "Spring Spring Mvc Webflux Errors",
   "rules": [
     {
       "id": "spring_mvc_handler_not_found",

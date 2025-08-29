@@ -1,4 +1,5 @@
 {
+  "name": "Clojure Macro Errors",
   "version": "1.0.0",
   "description": "Clojure macro expansion and hygiene error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Macros are expanded at compile time. Ensure macro is defined before use and returns valid code",
       "root_cause": "clojure_macro_expansion_failed",
-      "tags": ["clojure", "macro", "expansion", "compile"]
+      "tags": [
+        "clojure",
+        "macro",
+        "expansion",
+        "compile"
+      ],
+      "description": "Clojure Macro Expansion"
     },
     {
       "id": "clojure_macro_hygiene_violation",
@@ -24,7 +31,13 @@
       "severity": "high",
       "suggestion": "Use gensym or auto-gensym (name#) to avoid variable capture in macros",
       "root_cause": "clojure_macro_variable_capture",
-      "tags": ["clojure", "macro", "hygiene", "gensym"]
+      "tags": [
+        "clojure",
+        "macro",
+        "hygiene",
+        "gensym"
+      ],
+      "description": "Clojure Macro Hygiene Violation"
     },
     {
       "id": "clojure_macro_argument_evaluation",
@@ -36,7 +49,13 @@
       "severity": "high",
       "suggestion": "Remember macros receive unevaluated forms. Use ~arg to evaluate arguments when needed",
       "root_cause": "clojure_macro_arg_evaluation",
-      "tags": ["clojure", "macro", "argument", "evaluation"]
+      "tags": [
+        "clojure",
+        "macro",
+        "argument",
+        "evaluation"
+      ],
+      "description": "Clojure Macro Argument Evaluation"
     },
     {
       "id": "clojure_syntax_quote_error",
@@ -48,7 +67,13 @@
       "severity": "high",
       "suggestion": "Use ` for syntax-quote, ~ for unquote, and ~@ for unquote-splicing correctly",
       "root_cause": "clojure_syntax_quote_misuse",
-      "tags": ["clojure", "macro", "syntax_quote", "unquote"]
+      "tags": [
+        "clojure",
+        "macro",
+        "syntax_quote",
+        "unquote"
+      ],
+      "description": "Clojure Syntax Quote"
     },
     {
       "id": "clojure_macro_recursive_expansion",
@@ -60,7 +85,13 @@
       "severity": "critical",
       "suggestion": "Avoid infinite recursive macro expansion. Ensure base case or use recur for tail recursion",
       "root_cause": "clojure_macro_infinite_recursion",
-      "tags": ["clojure", "macro", "recursion", "stackoverflow"]
+      "tags": [
+        "clojure",
+        "macro",
+        "recursion",
+        "stackoverflow"
+      ],
+      "description": "Clojure Macro Recursive Expansion"
     },
     {
       "id": "clojure_compile_time_runtime_confusion",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Distinguish compile-time (macro expansion) from runtime. Use eval carefully if needed",
       "root_cause": "clojure_macro_phase_confusion",
-      "tags": ["clojure", "macro", "compile_time", "runtime"]
+      "tags": [
+        "clojure",
+        "macro",
+        "compile_time",
+        "runtime"
+      ],
+      "description": "Clojure Compile Time Runtime Confusion"
     },
     {
       "id": "clojure_anaphoric_macro_error",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Anaphoric macros introduce implicit bindings. Document and use them correctly",
       "root_cause": "clojure_anaphoric_macro",
-      "tags": ["clojure", "macro", "anaphoric", "implicit"]
+      "tags": [
+        "clojure",
+        "macro",
+        "anaphoric",
+        "implicit"
+      ],
+      "description": "Clojure Anaphoric Macro"
     },
     {
       "id": "clojure_macro_symbol_resolution",
@@ -96,7 +139,13 @@
       "severity": "high",
       "suggestion": "Use namespace-qualified symbols or ~'symbol to prevent namespace resolution in macros",
       "root_cause": "clojure_macro_symbol_resolution",
-      "tags": ["clojure", "macro", "symbol", "namespace"]
+      "tags": [
+        "clojure",
+        "macro",
+        "symbol",
+        "namespace"
+      ],
+      "description": "Clojure Macro Symbol Resolution"
     },
     {
       "id": "clojure_macro_metadata_loss",
@@ -108,7 +157,13 @@
       "severity": "low",
       "suggestion": "Preserve metadata using with-meta or ^:preserve metadata annotation",
       "root_cause": "clojure_macro_metadata_loss",
-      "tags": ["clojure", "macro", "metadata", "type_hint"]
+      "tags": [
+        "clojure",
+        "macro",
+        "metadata",
+        "type_hint"
+      ],
+      "description": "Clojure Macro Metadata Loss"
     },
     {
       "id": "clojure_macro_multiple_evaluation",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Use let bindings in macro to ensure arguments are evaluated only once",
       "root_cause": "clojure_macro_multiple_eval",
-      "tags": ["clojure", "macro", "evaluation", "side_effect"]
+      "tags": [
+        "clojure",
+        "macro",
+        "evaluation",
+        "side_effect"
+      ],
+      "description": "Clojure Macro Multiple Evaluation"
     },
     {
       "id": "clojure_defmacro_wrong_context",
@@ -132,7 +193,13 @@
       "severity": "medium",
       "suggestion": "Define macros at top level, not inside functions or conditionals",
       "root_cause": "clojure_defmacro_context",
-      "tags": ["clojure", "macro", "defmacro", "top_level"]
+      "tags": [
+        "clojure",
+        "macro",
+        "defmacro",
+        "top_level"
+      ],
+      "description": "Clojure Defmacro Wrong Context"
     },
     {
       "id": "clojure_macroexpand_debugging",
@@ -144,7 +211,13 @@
       "severity": "low",
       "suggestion": "Use macroexpand-1, macroexpand, or macroexpand-all for debugging macro issues",
       "root_cause": "clojure_macro_debugging",
-      "tags": ["clojure", "macro", "debugging", "expand"]
+      "tags": [
+        "clojure",
+        "macro",
+        "debugging",
+        "expand"
+      ],
+      "description": "Clojure Macroexpand Debugging"
     },
     {
       "id": "clojure_reader_macro_error",
@@ -156,7 +229,13 @@
       "severity": "high",
       "suggestion": "Use standard reader macros correctly: #() for anonymous fn, #{} for sets, etc.",
       "root_cause": "clojure_reader_macro_invalid",
-      "tags": ["clojure", "macro", "reader", "syntax"]
+      "tags": [
+        "clojure",
+        "macro",
+        "reader",
+        "syntax"
+      ],
+      "description": "Clojure Reader Macro"
     },
     {
       "id": "clojure_macro_arity_error",
@@ -168,7 +247,13 @@
       "severity": "high",
       "suggestion": "Check macro signature and provide correct number of arguments",
       "root_cause": "clojure_macro_arity",
-      "tags": ["clojure", "macro", "arity", "arguments"]
+      "tags": [
+        "clojure",
+        "macro",
+        "arity",
+        "arguments"
+      ],
+      "description": "Clojure Macro Arity"
     },
     {
       "id": "clojure_macro_spec_failure",
@@ -180,7 +265,13 @@
       "severity": "medium",
       "suggestion": "Ensure macro arguments conform to defined spec using s/fdef",
       "root_cause": "clojure_macro_spec_violation",
-      "tags": ["clojure", "macro", "spec", "validation"]
+      "tags": [
+        "clojure",
+        "macro",
+        "spec",
+        "validation"
+      ],
+      "description": "Clojure Macro Spec Failure"
     }
   ]
 }

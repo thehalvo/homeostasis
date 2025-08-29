@@ -4,7 +4,12 @@
     "description": "Detection rules for iOS and Android platform-specific errors in React Native applications",
     "version": "1.0.0",
     "author": "Homeostasis Team",
-    "tags": ["react-native", "ios", "android", "platform-specific"]
+    "tags": [
+      "react-native",
+      "ios",
+      "android",
+      "platform-specific"
+    ]
   },
   "rules": [
     {
@@ -17,7 +22,12 @@
       "severity": "error",
       "suggestion": "Check iOS Simulator configuration and Xcode installation",
       "description": "React Native iOS Simulator error",
-      "tags": ["react-native", "ios", "simulator", "xcode"],
+      "tags": [
+        "react-native",
+        "ios",
+        "simulator",
+        "xcode"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Open Xcode and launch iOS Simulator manually",
@@ -37,7 +47,12 @@
       "severity": "error",
       "suggestion": "Check Android emulator configuration and Android Studio setup",
       "description": "React Native Android emulator error",
-      "tags": ["react-native", "android", "emulator", "avd"],
+      "tags": [
+        "react-native",
+        "android",
+        "emulator",
+        "avd"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Launch Android Studio and create/start an AVD",
@@ -57,7 +72,12 @@
       "severity": "error",
       "suggestion": "Check iOS project configuration and Xcode build settings",
       "description": "React Native iOS build failure",
-      "tags": ["react-native", "ios", "build", "xcode"],
+      "tags": [
+        "react-native",
+        "ios",
+        "build",
+        "xcode"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Open ios/YourApp.xcworkspace in Xcode",
@@ -77,7 +97,12 @@
       "severity": "error",
       "suggestion": "Check Android project configuration and Gradle build settings",
       "description": "React Native Android build failure",
-      "tags": ["react-native", "android", "build", "gradle"],
+      "tags": [
+        "react-native",
+        "android",
+        "build",
+        "gradle"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Clean Android build: 'cd android && ./gradlew clean'",
@@ -97,7 +122,12 @@
       "severity": "error",
       "suggestion": "Check iOS code signing and provisioning profile configuration",
       "description": "React Native iOS code signing error",
-      "tags": ["react-native", "ios", "code-signing", "provisioning"],
+      "tags": [
+        "react-native",
+        "ios",
+        "code-signing",
+        "provisioning"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check signing configuration in Xcode project",
@@ -117,7 +147,12 @@
       "severity": "error",
       "suggestion": "Check Android SDK installation and environment variables",
       "description": "React Native Android SDK configuration error",
-      "tags": ["react-native", "android", "sdk", "environment"],
+      "tags": [
+        "react-native",
+        "android",
+        "sdk",
+        "environment"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Set ANDROID_HOME environment variable",
@@ -137,7 +172,11 @@
       "severity": "warning",
       "suggestion": "Check iOS deployment target compatibility",
       "description": "React Native iOS deployment target version error",
-      "tags": ["react-native", "ios", "deployment-target"],
+      "tags": [
+        "react-native",
+        "ios",
+        "deployment-target"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check iOS Deployment Target in Xcode project settings",
@@ -157,7 +196,12 @@
       "severity": "warning",
       "suggestion": "Check Android API level and SDK version compatibility",
       "description": "React Native Android API level compatibility error",
-      "tags": ["react-native", "android", "api-level", "sdk-version"],
+      "tags": [
+        "react-native",
+        "android",
+        "api-level",
+        "sdk-version"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Update compileSdkVersion in android/app/build.gradle",
@@ -177,7 +221,12 @@
       "severity": "warning",
       "suggestion": "Check iOS device connection and trust settings",
       "description": "React Native iOS physical device connection error",
-      "tags": ["react-native", "ios", "device", "physical"],
+      "tags": [
+        "react-native",
+        "ios",
+        "device",
+        "physical"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check iOS device is connected via USB",
@@ -197,7 +246,12 @@
       "severity": "warning",
       "suggestion": "Check Android device connection and USB debugging",
       "description": "React Native Android physical device connection error",
-      "tags": ["react-native", "android", "device", "adb"],
+      "tags": [
+        "react-native",
+        "android",
+        "device",
+        "adb"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Enable USB debugging on Android device",
@@ -217,7 +271,12 @@
       "severity": "error",
       "suggestion": "Check iOS bundle generation and build phases",
       "description": "React Native iOS bundle generation error",
-      "tags": ["react-native", "ios", "bundle", "build-phase"],
+      "tags": [
+        "react-native",
+        "ios",
+        "bundle",
+        "build-phase"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check Bundle React Native code build phase in Xcode",
@@ -237,7 +296,11 @@
       "severity": "error",
       "suggestion": "Check AndroidManifest.xml configuration and manifest merging",
       "description": "React Native Android manifest configuration error",
-      "tags": ["react-native", "android", "manifest"],
+      "tags": [
+        "react-native",
+        "android",
+        "manifest"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check AndroidManifest.xml syntax",
@@ -257,7 +320,11 @@
       "severity": "warning",
       "suggestion": "Check Info.plist configuration and required keys",
       "description": "React Native iOS Info.plist configuration error",
-      "tags": ["react-native", "ios", "info-plist"],
+      "tags": [
+        "react-native",
+        "ios",
+        "info-plist"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check Info.plist syntax and format",
@@ -267,5 +334,6 @@
         "Check supported interface orientations"
       ]
     }
-  ]
+  ],
+  "name": "React Native Platform Errors"
 }

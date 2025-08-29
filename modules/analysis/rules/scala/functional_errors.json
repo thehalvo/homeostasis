@@ -1,4 +1,5 @@
 {
+  "name": "Scala Functional Errors",
   "version": "1.0.0",
   "description": "Scala functional programming and effect system error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "medium",
       "suggestion": "Use flatMap for F[B] results, map for B results to avoid nested effects",
       "root_cause": "scala_monad_nesting",
-      "tags": ["scala", "functional", "monad", "flatMap"]
+      "tags": [
+        "scala",
+        "functional",
+        "monad",
+        "flatMap"
+      ],
+      "description": "Scala Monad Flatmap Type Mismatch"
     },
     {
       "id": "scala_functor_map_side_effect",
@@ -24,7 +31,13 @@
       "severity": "low",
       "suggestion": "Use foreach for side effects, keep map pure for transformations",
       "root_cause": "scala_functor_side_effect",
-      "tags": ["scala", "functional", "functor", "side_effect"]
+      "tags": [
+        "scala",
+        "functional",
+        "functor",
+        "side_effect"
+      ],
+      "description": "Scala Functor Map Side Effect"
     },
     {
       "id": "scala_cats_effect_unsafe_run",
@@ -36,7 +49,13 @@
       "severity": "high",
       "suggestion": "Avoid unsafeRun in production code. Use IOApp or proper effect management",
       "root_cause": "scala_cats_unsafe_run",
-      "tags": ["scala", "cats", "effect", "unsafe"]
+      "tags": [
+        "scala",
+        "cats",
+        "effect",
+        "unsafe"
+      ],
+      "description": "Scala Cats Effect Unsafe Run"
     },
     {
       "id": "scala_zio_fiber_leak",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Use fiber.join, fiber.interrupt, or ZIO.forkScoped for managed fibers",
       "root_cause": "scala_zio_fiber_leak",
-      "tags": ["scala", "zio", "fiber", "leak"]
+      "tags": [
+        "scala",
+        "zio",
+        "fiber",
+        "leak"
+      ],
+      "description": "Scala Zio Fiber Leak"
     },
     {
       "id": "scala_monad_transformer_stack",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "Consider tagless final or ZIO/cats-effect for complex effect stacks",
       "root_cause": "scala_transformer_complexity",
-      "tags": ["scala", "functional", "transformer", "stack"]
+      "tags": [
+        "scala",
+        "functional",
+        "transformer",
+        "stack"
+      ],
+      "description": "Scala Monad Transformer Stack"
     },
     {
       "id": "scala_free_monad_interpreter",
@@ -72,7 +103,13 @@
       "severity": "high",
       "suggestion": "Provide interpreter (natural transformation) for Free monad algebra",
       "root_cause": "scala_free_interpreter_missing",
-      "tags": ["scala", "functional", "free", "interpreter"]
+      "tags": [
+        "scala",
+        "functional",
+        "free",
+        "interpreter"
+      ],
+      "description": "Scala Free Monad Interpreter"
     },
     {
       "id": "scala_tagless_final_constraint",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Ensure F[_] has required type class instances (Monad, Sync, etc.)",
       "root_cause": "scala_tagless_constraint",
-      "tags": ["scala", "functional", "tagless", "constraint"]
+      "tags": [
+        "scala",
+        "functional",
+        "tagless",
+        "constraint"
+      ],
+      "description": "Scala Tagless Final Constraint"
     },
     {
       "id": "scala_applicative_sequence_error",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Use traverse instead of map + sequence for efficiency",
       "root_cause": "scala_applicative_sequence",
-      "tags": ["scala", "functional", "applicative", "sequence"]
+      "tags": [
+        "scala",
+        "functional",
+        "applicative",
+        "sequence"
+      ],
+      "description": "Scala Applicative Sequence"
     },
     {
       "id": "scala_kleisli_composition",
@@ -108,7 +157,13 @@
       "severity": "medium",
       "suggestion": "Ensure Kleisli arrow types align: A => F[B] and B => F[C]",
       "root_cause": "scala_kleisli_types",
-      "tags": ["scala", "functional", "kleisli", "composition"]
+      "tags": [
+        "scala",
+        "functional",
+        "kleisli",
+        "composition"
+      ],
+      "description": "Scala Kleisli Composition"
     },
     {
       "id": "scala_lens_composition_error",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Lens composition requires matching types: Lens[A,B] andThen Lens[B,C]",
       "root_cause": "scala_lens_composition",
-      "tags": ["scala", "functional", "lens", "optics"]
+      "tags": [
+        "scala",
+        "functional",
+        "lens",
+        "optics"
+      ],
+      "description": "Scala Lens Composition"
     },
     {
       "id": "scala_effect_referential_transparency",
@@ -132,7 +193,13 @@
       "severity": "medium",
       "suggestion": "Wrap side effects in IO/Task/ZIO to maintain referential transparency",
       "root_cause": "scala_effect_impure",
-      "tags": ["scala", "functional", "effect", "purity"]
+      "tags": [
+        "scala",
+        "functional",
+        "effect",
+        "purity"
+      ],
+      "description": "Scala Effect Referential Transparency"
     },
     {
       "id": "scala_semigroup_associativity",
@@ -144,7 +211,13 @@
       "severity": "high",
       "suggestion": "Ensure Semigroup/Monoid instances satisfy laws: associativity and identity",
       "root_cause": "scala_algebra_laws",
-      "tags": ["scala", "functional", "semigroup", "laws"]
+      "tags": [
+        "scala",
+        "functional",
+        "semigroup",
+        "laws"
+      ],
+      "description": "Scala Semigroup Associativity"
     },
     {
       "id": "scala_stream_resource_leak",
@@ -156,7 +229,13 @@
       "severity": "high",
       "suggestion": "Compile fs2 streams or run Akka streams to ensure resource cleanup",
       "root_cause": "scala_stream_not_run",
-      "tags": ["scala", "functional", "stream", "resource"]
+      "tags": [
+        "scala",
+        "functional",
+        "stream",
+        "resource"
+      ],
+      "description": "Scala Stream Resource Leak"
     },
     {
       "id": "scala_validated_accumulation",
@@ -168,7 +247,13 @@
       "severity": "low",
       "suggestion": "Use Validated for error accumulation, Either for fail-fast",
       "root_cause": "scala_validated_usage",
-      "tags": ["scala", "functional", "validated", "accumulation"]
+      "tags": [
+        "scala",
+        "functional",
+        "validated",
+        "accumulation"
+      ],
+      "description": "Scala Validated Accumulation"
     },
     {
       "id": "scala_io_monad_stack_safety",
@@ -180,7 +265,13 @@
       "severity": "high",
       "suggestion": "Use tailRecM or IO.suspend for stack-safe recursion",
       "root_cause": "scala_io_stack_unsafe",
-      "tags": ["scala", "functional", "io", "stack_safety"]
+      "tags": [
+        "scala",
+        "functional",
+        "io",
+        "stack_safety"
+      ],
+      "description": "Scala Io Monad Stack Safety"
     }
   ]
 }

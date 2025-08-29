@@ -1,4 +1,5 @@
 {
+  "name": "Hibernate Errors",
   "rules": [
     {
       "id": "hibernate_entity_not_found",
@@ -182,7 +183,7 @@
     },
     {
       "id": "hibernate_session_closed",
-      "pattern": "org\.hibernate\.SessionException(?:.*?Session is closed.*?|.*?Session was already closed.*?)",
+      "pattern": "org\\.hibernate\\.SessionException(?:.*?Session is closed.*?|.*?Session was already closed.*?)",
       "type": "SessionException", 
       "description": "Attempted to use a closed Hibernate session",
       "root_cause": "hibernate_session_closed",
@@ -194,7 +195,7 @@
     },
     {
       "id": "hibernate_session_factory_closed",
-      "pattern": "org\.hibernate\.HibernateException(?:.*?SessionFactory is closed.*?|.*?Cannot create session.*?factory.*?closed.*?)",
+      "pattern": "org\\.hibernate\\.HibernateException(?:.*?SessionFactory is closed.*?|.*?Cannot create session.*?factory.*?closed.*?)",
       "type": "HibernateException",
       "description": "Attempted to use a closed SessionFactory",
       "root_cause": "hibernate_session_factory_closed",
@@ -206,7 +207,7 @@
     },
     {
       "id": "hibernate_flush_exception",
-      "pattern": "org\.hibernate\.exception\.GenericJDBCException(?:.*?could not execute statement.*?|.*?flush.*?|.*?batch.*?)",
+      "pattern": "org\\.hibernate\\.exception\\.GenericJDBCException(?:.*?could not execute statement.*?|.*?flush.*?|.*?batch.*?)",
       "type": "GenericJDBCException",
       "description": "Exception occurred during session flush operation",
       "root_cause": "hibernate_flush_error",
@@ -218,7 +219,7 @@
     },
     {
       "id": "hibernate_detached_instance",
-      "pattern": "org\.hibernate\.PersistentObjectException(?:.*?detached instance passed to persist.*?|.*?detached entity passed to persist.*?)",
+      "pattern": "org\\.hibernate\\.PersistentObjectException(?:.*?detached instance passed to persist.*?|.*?detached entity passed to persist.*?)",
       "type": "PersistentObjectException",
       "description": "Attempted to persist a detached entity instance",
       "root_cause": "hibernate_detached_entity",
@@ -230,7 +231,7 @@
     },
     {
       "id": "hibernate_identifier_generation",
-      "pattern": "org\.hibernate\.id\.IdentifierGenerationException(?:.*?identifier generation failed.*?|.*?could not generate identifier.*?)",
+      "pattern": "org\\.hibernate\\.id\\.IdentifierGenerationException(?:.*?identifier generation failed.*?|.*?could not generate identifier.*?)",
       "type": "IdentifierGenerationException",
       "description": "Failed to generate entity identifier",
       "root_cause": "hibernate_id_generation_error",
@@ -242,7 +243,7 @@
     },
     {
       "id": "hibernate_configuration_error",
-      "pattern": "org\.hibernate\.boot\.registry\.classloading\.spi\.ClassLoadingException(?:.*?Unable to load class.*?|.*?class not found.*?)",
+      "pattern": "org\\.hibernate\\.boot\\.registry\\.classloading\\.spi\\.ClassLoadingException(?:.*?Unable to load class.*?|.*?class not found.*?)",
       "type": "ClassLoadingException",
       "description": "Unable to load required class during Hibernate configuration",
       "root_cause": "hibernate_class_loading_error",
@@ -254,7 +255,7 @@
     },
     {
       "id": "hibernate_dialect_error",
-      "pattern": "org\.hibernate\.HibernateException(?:.*?Access to DialectResolutionInfo cannot be null.*?|.*?dialect.*?not found.*?|.*?Unable to determine Dialect.*?)",
+      "pattern": "org\\.hibernate\\.HibernateException(?:.*?Access to DialectResolutionInfo cannot be null.*?|.*?dialect.*?not found.*?|.*?Unable to determine Dialect.*?)",
       "type": "HibernateException",
       "description": "Unable to determine or configure database dialect",
       "root_cause": "hibernate_dialect_configuration_error",
@@ -266,7 +267,7 @@
     },
     {
       "id": "hibernate_schema_management_error",
-      "pattern": "org\.hibernate\.tool\.schema\.spi\.SchemaManagementException(?:.*?Unable to execute schema management.*?|.*?schema creation failed.*?)",
+      "pattern": "org\\.hibernate\\.tool\\.schema\\.spi\\.SchemaManagementException(?:.*?Unable to execute schema management.*?|.*?schema creation failed.*?)",
       "type": "SchemaManagementException",
       "description": "Error during schema creation or management",
       "root_cause": "hibernate_schema_management_error",
@@ -278,7 +279,7 @@
     },
     {
       "id": "hibernate_connection_pool_error",
-      "pattern": "(?:org\.hibernate\.exception\.JDBCConnectionException|java\.sql\.SQLException)(?:.*?Unable to acquire JDBC Connection.*?|.*?Connection pool exhausted.*?|.*?timeout.*?connection.*?)",
+      "pattern": "(?:org\\.hibernate\\.exception\\.JDBCConnectionException|java\\.sql\\.SQLException)(?:.*?Unable to acquire JDBC Connection.*?|.*?Connection pool exhausted.*?|.*?timeout.*?connection.*?)",
       "type": "JDBCConnectionException",
       "description": "Database connection pool exhausted or connection timeout",
       "root_cause": "hibernate_connection_pool_exhausted",
@@ -290,7 +291,7 @@
     },
     {
       "id": "hibernate_transaction_rollback",
-      "pattern": "org\.hibernate\.TransactionException(?:.*?Transaction not successfully started.*?|.*?rollback.*?|.*?Transaction was marked for rollback only.*?)",
+      "pattern": "org\\.hibernate\\.TransactionException(?:.*?Transaction not successfully started.*?|.*?rollback.*?|.*?Transaction was marked for rollback only.*?)",
       "type": "TransactionException",
       "description": "Transaction rollback or transaction state error",
       "root_cause": "hibernate_transaction_rollback",
@@ -302,7 +303,7 @@
     },
     {
       "id": "hibernate_batch_update_exception",
-      "pattern": "java\.sql\.BatchUpdateException(?:.*?Batch entry.*?was aborted.*?|.*?batch update.*?failed.*?)",
+      "pattern": "java\\.sql\\.BatchUpdateException(?:.*?Batch entry.*?was aborted.*?|.*?batch update.*?failed.*?)",
       "type": "BatchUpdateException",
       "description": "Batch operation failed during execution",
       "root_cause": "hibernate_batch_operation_failed",
@@ -314,7 +315,7 @@
     },
     {
       "id": "hibernate_cache_exception",
-      "pattern": "org\.hibernate\.cache\.CacheException(?:.*?Unable to.*?cache.*?|.*?cache provider.*?|.*?cache region.*?)",
+      "pattern": "org\\.hibernate\\.cache\\.CacheException(?:.*?Unable to.*?cache.*?|.*?cache provider.*?|.*?cache region.*?)",
       "type": "CacheException",
       "description": "Error with second-level cache configuration or operation",
       "root_cause": "hibernate_cache_error",
@@ -326,7 +327,7 @@
     },
     {
       "id": "hibernate_criteria_exception",
-      "pattern": "org\.hibernate\.QueryException(?:.*?could not resolve property.*?criteria.*?|.*?criteria.*?invalid.*?|.*?unknown entity.*?criteria.*?)",
+      "pattern": "org\\.hibernate\\.QueryException(?:.*?could not resolve property.*?criteria.*?|.*?criteria.*?invalid.*?|.*?unknown entity.*?criteria.*?)",
       "type": "QueryException",
       "description": "Error in Criteria API query construction",
       "root_cause": "hibernate_criteria_api_error",
@@ -338,7 +339,7 @@
     },
     {
       "id": "hibernate_validation_exception",
-      "pattern": "javax\.validation\.ConstraintViolationException(?:.*?Validation failed.*?|.*?constraint.*?violated.*?)",
+      "pattern": "javax\\.validation\\.ConstraintViolationException(?:.*?Validation failed.*?|.*?constraint.*?violated.*?)",
       "type": "ConstraintViolationException",
       "description": "Bean Validation constraint violation",
       "root_cause": "hibernate_validation_failed",
@@ -350,7 +351,7 @@
     },
     {
       "id": "hibernate_metamodel_exception",
-      "pattern": "javax\.persistence\.metamodel\.IllegalArgumentException(?:.*?Unable to locate Attribute.*?|.*?metamodel.*?not found.*?)",
+      "pattern": "javax\\.persistence\\.metamodel\\.IllegalArgumentException(?:.*?Unable to locate Attribute.*?|.*?metamodel.*?not found.*?)",
       "type": "IllegalArgumentException",
       "description": "Error accessing JPA metamodel",
       "root_cause": "hibernate_metamodel_error",
@@ -362,7 +363,7 @@
     },
     {
       "id": "hibernate_proxy_exception",
-      "pattern": "org\.hibernate\.proxy\.HibernateProxy(?:.*?proxy.*?failed.*?|.*?could not initialize proxy.*?)",
+      "pattern": "org\\.hibernate\\.proxy\\.HibernateProxy(?:.*?proxy.*?failed.*?|.*?could not initialize proxy.*?)",
       "type": "HibernateException",
       "description": "Error with Hibernate proxy initialization",
       "root_cause": "hibernate_proxy_error",
@@ -374,7 +375,7 @@
     },
     {
       "id": "hibernate_statistics_exception",
-      "pattern": "org\.hibernate\.stat\.Statistics(?:.*?statistics.*?not enabled.*?|.*?unable to collect statistics.*?)",
+      "pattern": "org\\.hibernate\\.stat\\.Statistics(?:.*?statistics.*?not enabled.*?|.*?unable to collect statistics.*?)",
       "type": "HibernateException",
       "description": "Error with Hibernate statistics collection",
       "root_cause": "hibernate_statistics_error",
@@ -386,7 +387,7 @@
     },
     {
       "id": "hibernate_envers_exception",
-      "pattern": "org\.hibernate\.envers\.exception\.AuditException(?:.*?audit.*?failed.*?|.*?revision.*?error.*?)",
+      "pattern": "org\\.hibernate\\.envers\\.exception\\.AuditException(?:.*?audit.*?failed.*?|.*?revision.*?error.*?)",
       "type": "AuditException",
       "description": "Error with Hibernate Envers auditing",
       "root_cause": "hibernate_envers_error",
@@ -398,7 +399,7 @@
     },
     {
       "id": "hibernate_search_exception",
-      "pattern": "org\.hibernate\.search\.exception\.SearchException(?:.*?search.*?failed.*?|.*?index.*?error.*?)",
+      "pattern": "org\\.hibernate\\.search\\.exception\\.SearchException(?:.*?search.*?failed.*?|.*?index.*?error.*?)",
       "type": "SearchException",
       "description": "Error with Hibernate Search indexing",
       "root_cause": "hibernate_search_error",
@@ -410,7 +411,7 @@
     },
     {
       "id": "hibernate_spatial_exception",
-      "pattern": "org\.hibernate\.spatial\.SpatialException(?:.*?spatial.*?operation.*?failed.*?|.*?geometry.*?error.*?)",
+      "pattern": "org\\.hibernate\\.spatial\\.SpatialException(?:.*?spatial.*?operation.*?failed.*?|.*?geometry.*?error.*?)",
       "type": "SpatialException",
       "description": "Error with Hibernate Spatial operations",
       "root_cause": "hibernate_spatial_error",

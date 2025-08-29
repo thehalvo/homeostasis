@@ -1,4 +1,5 @@
 {
+  "name": "Ember Ember Template Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "ember",
@@ -21,11 +22,17 @@
         "Fix malformed expressions",
         "Close HTML elements properly"
       ],
-      "tags": ["ember", "templates", "handlebars", "syntax"],
+      "tags": [
+        "ember",
+        "templates",
+        "handlebars",
+        "syntax"
+      ],
       "examples": [
         "Error: Parse error on line 5: Expecting 'ID', got 'INVALID'",
         "Unclosed element 'div' at line 12"
-      ]
+      ],
+      "description": "Ember Template Syntax"
     },
     {
       "id": "ember_template_helper_not_found",
@@ -43,11 +50,16 @@
         "Ensure helper is properly exported",
         "Import third-party helpers correctly"
       ],
-      "tags": ["ember", "templates", "helpers"],
+      "tags": [
+        "ember",
+        "templates",
+        "helpers"
+      ],
       "examples": [
         "Helper 'format-date' not found",
         "Unknown helper 'calculate-total' in template"
-      ]
+      ],
+      "description": "Ember Template Helper Not Found"
     },
     {
       "id": "ember_template_component_not_found",
@@ -65,11 +77,16 @@
         "Ensure component is properly exported and registered",
         "Verify the correct invocation syntax in templates"
       ],
-      "tags": ["ember", "templates", "components"],
+      "tags": [
+        "ember",
+        "templates",
+        "components"
+      ],
       "examples": [
         "Ember error: Component not found: 'user-profile'",
         "No component named 'data-table' was found"
-      ]
+      ],
+      "description": "Ember Template Component Not Found"
     },
     {
       "id": "ember_template_modifier_not_found",
@@ -87,11 +104,17 @@
         "Ensure modifier is properly exported",
         "Import third-party modifiers correctly"
       ],
-      "tags": ["ember", "templates", "modifiers", "octane"],
+      "tags": [
+        "ember",
+        "templates",
+        "modifiers",
+        "octane"
+      ],
       "examples": [
         "Error: Modifier 'on-click' not found",
         "Unknown modifier 'scroll-into-view' in template"
-      ]
+      ],
+      "description": "Ember Template Modifier Not Found"
     },
     {
       "id": "ember_template_block_params_error",
@@ -109,11 +132,17 @@
         "Verify null/undefined checks before iteration",
         "Use {{#let}} for variable binding in templates"
       ],
-      "tags": ["ember", "templates", "each", "block-params"],
+      "tags": [
+        "ember",
+        "templates",
+        "each",
+        "block-params"
+      ],
       "examples": [
         "Error: Each only takes a single argument",
         "Cannot read property 'forEach' of undefined in each helper"
-      ]
+      ],
+      "description": "Ember Template Block Params"
     },
     {
       "id": "ember_template_variable_error",
@@ -131,11 +160,16 @@
         "Ensure properties are passed to components",
         "Set default values for properties in components"
       ],
-      "tags": ["ember", "templates", "variables"],
+      "tags": [
+        "ember",
+        "templates",
+        "variables"
+      ],
       "examples": [
         "Cannot read property 'name' of undefined",
         "Error: Variable 'user' is undefined"
-      ]
+      ],
+      "description": "Ember Template Variable"
     },
     {
       "id": "ember_template_action_error",
@@ -153,11 +187,17 @@
         "Check for typos in action names",
         "Use {{on}} modifier in Octane templates"
       ],
-      "tags": ["ember", "templates", "actions", "events"],
+      "tags": [
+        "ember",
+        "templates",
+        "actions",
+        "events"
+      ],
       "examples": [
         "Error: Action 'saveUser' was not found",
         "Unknown action handleSubmit"
-      ]
+      ],
+      "description": "Ember Template Action"
     },
     {
       "id": "ember_template_yield_error",
@@ -175,11 +215,17 @@
         "Add default content with {{has-block}}",
         "Use named yields for complex components"
       ],
-      "tags": ["ember", "templates", "yield", "blocks"],
+      "tags": [
+        "ember",
+        "templates",
+        "yield",
+        "blocks"
+      ],
       "examples": [
         "Error: Block not supplied for component expecting yield",
         "Cannot read property of undefined in yield helper"
-      ]
+      ],
+      "description": "Ember Template Yield"
     },
     {
       "id": "ember_template_link_to_error",
@@ -197,11 +243,17 @@
         "Check dynamic segment parameters",
         "Use <LinkTo> component in newer Ember"
       ],
-      "tags": ["ember", "templates", "link-to", "routing"],
+      "tags": [
+        "ember",
+        "templates",
+        "link-to",
+        "routing"
+      ],
       "examples": [
         "Error while processing link-to helper: route 'users.profile' not found",
         "LinkTo failed: Missing required parameters"
-      ]
+      ],
+      "description": "Ember Template Link To"
     },
     {
       "id": "ember_template_if_unless_error",
@@ -219,11 +271,18 @@
         "Add null checks before complex conditions",
         "Use and/or helpers for compound conditions"
       ],
-      "tags": ["ember", "templates", "if", "unless", "conditionals"],
+      "tags": [
+        "ember",
+        "templates",
+        "if",
+        "unless",
+        "conditionals"
+      ],
       "examples": [
         "Error: The if helper requires exactly one argument",
         "Cannot read property 'isActive' of undefined in if helper"
-      ]
+      ],
+      "description": "Ember Template If Unless"
     }
   ]
 }

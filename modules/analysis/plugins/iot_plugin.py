@@ -169,10 +169,10 @@ class IoTPlugin(LanguagePlugin):
         # Detect platform
         platform = self.monitor.detect_platform(code, file_path or "")
         
-        if platform == IoTPlatform.UNKNOWN:
-            # Still try to detect common IoT patterns
-            errors.extend(self._detect_generic_iot_issues(code))
-        else:
+        # Always check for generic IoT issues
+        errors.extend(self._detect_generic_iot_issues(code))
+        
+        if platform != IoTPlatform.UNKNOWN:
             # Apply rule-based detection
             for rule in self.rules.get("rules", []):
                 if self._rule_applies(rule, code, platform.value):
@@ -268,14 +268,19 @@ class IoTPlugin(LanguagePlugin):
         # Check for task creation without adequate stack
         task_creates = re.findall(r'xTaskCreate[^;]+', code)
         for task in task_creates:
-            stack_match = re.search(r'(\d+)\s*[,)]', task)
-            if stack_match and int(stack_match.group(1)) < 2048:
-                issues.append({
-                    "type": "InsufficientTaskStack",
-                    "description": "Task created with insufficient stack size",
-                    "severity": "high",
-                    "suggestion": "Increase stack size to at least 2048 bytes"
-                })
+            # Look for stack size parameter (third parameter in xTaskCreate)
+            # xTaskCreate(function, "name", stackSize, ...)
+            parts = task.split(',')
+            if len(parts) >= 3:
+                stack_param = parts[2].strip()
+                stack_match = re.search(r'(\d+)', stack_param)
+                if stack_match and int(stack_match.group(1)) < 2048:
+                    issues.append({
+                        "type": "InsufficientTaskStack",
+                        "description": "Task created with insufficient stack size",
+                        "severity": "high",
+                        "suggestion": "Increase stack size to at least 2048 bytes"
+                    })
         
         # Check for WiFi without event handlers
         if "WiFi.begin" in code and not re.search(r"WiFi\.on|WiFiEvent", code):
@@ -293,15 +298,18 @@ class IoTPlugin(LanguagePlugin):
         issues = []
         
         # Check for missing error handling in callbacks
-        if re.search(r"on_message.*def|on_connect.*def", code):
-            callback_content = re.search(r"def\s+on_\w+\([^)]+\):[^}]+", code, re.DOTALL)
-            if callback_content and "try" not in callback_content.group(0):
-                issues.append({
-                    "type": "UnprotectedMQTTCallback",
-                    "description": "MQTT callback without error handling",
-                    "severity": "high",
-                    "suggestion": "Add try-except blocks in MQTT callbacks"
-                })
+        if re.search(r"def\s+on_message|def\s+on_connect", code):
+            # Look for function definitions and check if they have try-except
+            callback_match = re.search(r"def\s+on_\w+\([^)]+\):\s*\n(.*?)(?=\ndef|\Z)", code, re.DOTALL)
+            if callback_match:
+                callback_body = callback_match.group(1)
+                if "try:" not in callback_body:
+                    issues.append({
+                        "type": "UnprotectedMQTTCallback",
+                        "description": "MQTT callback without error handling",
+                        "severity": "high",
+                        "suggestion": "Add try-except blocks in MQTT callbacks"
+                    })
         
         # Check for missing QoS specification
         if re.search(r"publish\([^)]+\)", code) and not re.search(r"qos\s*=", code):
@@ -339,7 +347,7 @@ class IoTPlugin(LanguagePlugin):
         
         healing_strategies = self.monitor.suggest_healing(iot_error)
         
-        return {
+        result = {
             "error_type": iot_error.error_type.value,
             "platform": iot_error.platform.value,
             "description": iot_error.description,
@@ -347,9 +355,19 @@ class IoTPlugin(LanguagePlugin):
             "suggested_fix": iot_error.suggested_fix,
             "healing_strategies": healing_strategies,
             "device_info": iot_error.device_info,
-            "resource_usage": iot_error.resource_usage,
+            "resource_usage": iot_error.resource_usage if iot_error.resource_usage else {"cpu": 0, "memory": 0},
             "severity": iot_error.severity
         }
+        
+        # Add resource usage from metrics if available
+        if metrics:
+            result["resource_usage"] = {
+                "cpu_usage": metrics.cpu_usage,
+                "memory_usage": metrics.memory_usage,
+                "temperature": metrics.temperature
+            }
+        
+        return result
     
     def generate_fix(self, error_analysis: Dict[str, Any],
                     code_context: str) -> Optional[str]:

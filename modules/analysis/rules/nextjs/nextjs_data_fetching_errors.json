@@ -1,4 +1,5 @@
 {
+  "name": "Nextjs Nextjs Data Fetching Errors",
   "version": "1.0.0",
   "description": "Next.js data fetching error detection rules",
   "rules": [
@@ -12,12 +13,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "data-fetching", "getServerSideProps"],
+      "tags": [
+        "nextjs",
+        "data-fetching",
+        "getServerSideProps"
+      ],
       "fix_commands": [
         "Return an object with { props: { ... } }",
         "For redirects, return { redirect: { destination: '/path', permanent: false } }",
         "For 404 pages, return { notFound: true }"
-      ]
+      ],
+      "description": "Nextjs Getserversideprops Return"
     },
     {
       "id": "nextjs_getstaticprops_return_error",
@@ -29,13 +35,18 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "data-fetching", "getStaticProps"],
+      "tags": [
+        "nextjs",
+        "data-fetching",
+        "getStaticProps"
+      ],
       "fix_commands": [
         "Return an object with { props: { ... } }",
         "For redirects, return { redirect: { destination: '/path', permanent: false } }",
         "For 404 pages, return { notFound: true }",
         "For ISR, include revalidate: seconds"
-      ]
+      ],
+      "description": "Nextjs Getstaticprops Return"
     },
     {
       "id": "nextjs_getstaticpaths_return_error",
@@ -47,12 +58,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "data-fetching", "getStaticPaths"],
+      "tags": [
+        "nextjs",
+        "data-fetching",
+        "getStaticPaths"
+      ],
       "fix_commands": [
         "Return an object with { paths: [...], fallback: boolean|'blocking' }",
         "Each path should be an object with params property",
         "Fallback must be true, false, or 'blocking'"
-      ]
+      ],
+      "description": "Nextjs Getstaticpaths Return"
     },
     {
       "id": "nextjs_revalidate_error",
@@ -64,12 +80,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "data-fetching", "ISR"],
+      "tags": [
+        "nextjs",
+        "data-fetching",
+        "ISR"
+      ],
       "fix_commands": [
         "Set revalidate to a positive number (seconds)",
         "Use revalidate: false to disable ISR",
         "Remove revalidate property if not using ISR"
-      ]
+      ],
+      "description": "Nextjs Revalidate"
     },
     {
       "id": "nextjs_fetch_url_error",
@@ -81,12 +102,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "data-fetching", "fetch"],
+      "tags": [
+        "nextjs",
+        "data-fetching",
+        "fetch"
+      ],
       "fix_commands": [
         "Use absolute URLs with protocol for external APIs",
         "Use relative URLs for internal API routes",
         "For server-side internal API requests, construct full URL with host"
-      ]
+      ],
+      "description": "Nextjs Fetch Url"
     },
     {
       "id": "nextjs_data_fetching_invalid_context",
@@ -98,12 +124,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["nextjs", "data-fetching", "context"],
+      "tags": [
+        "nextjs",
+        "data-fetching",
+        "context"
+      ],
       "fix_commands": [
         "Ensure data fetching function accepts context parameter",
         "Destructure params, query, req, res from context",
         "Check that dynamic route parameters match file name"
-      ]
+      ],
+      "description": "Nextjs Data Fetching Invalid Context"
     },
     {
       "id": "nextjs_server_function_browser",
@@ -115,12 +146,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["nextjs", "data-fetching", "server-side"],
+      "tags": [
+        "nextjs",
+        "data-fetching",
+        "server-side"
+      ],
       "fix_commands": [
         "Move server-side functions to a separate file",
         "Use client-side data fetching with SWR or React Query",
         "Create an API route to fetch data client-side"
-      ]
+      ],
+      "description": "Nextjs Server Function Browser"
     },
     {
       "id": "nextjs_missing_id_error",
@@ -132,12 +168,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["nextjs", "data-fetching", "routing"],
+      "tags": [
+        "nextjs",
+        "data-fetching",
+        "routing"
+      ],
       "fix_commands": [
         "Check that params object contains expected properties",
         "Verify dynamic route file name ([id].js, [slug].js)",
         "Add fallback handling for missing parameters"
-      ]
+      ],
+      "description": "Nextjs Missing Id"
     }
   ]
 }

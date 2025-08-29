@@ -1,4 +1,5 @@
 {
+  "name": "Swift Swift Generics Errors",
   "version": "1.0.0",
   "description": "Swift generic programming error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Ensure type arguments satisfy all generic constraints. Add explicit type annotations if inference fails",
       "root_cause": "swift_generic_constraint",
-      "tags": ["swift", "generics", "constraint", "conformance"]
+      "tags": [
+        "swift",
+        "generics",
+        "constraint",
+        "conformance"
+      ],
+      "description": "Swift Generic Constraint Failure"
     },
     {
       "id": "swift_generic_type_inference_failure",
@@ -24,7 +31,13 @@
       "severity": "medium",
       "suggestion": "Provide explicit type parameters or add more context for type inference",
       "root_cause": "swift_generic_inference",
-      "tags": ["swift", "generics", "inference", "type"]
+      "tags": [
+        "swift",
+        "generics",
+        "inference",
+        "type"
+      ],
+      "description": "Swift Generic Type Inference Failure"
     },
     {
       "id": "swift_generic_where_clause_conflict",
@@ -36,7 +49,13 @@
       "severity": "high",
       "suggestion": "Review where clause constraints for conflicts or impossible requirements",
       "root_cause": "swift_generic_where_conflict",
-      "tags": ["swift", "generics", "where", "conflict"]
+      "tags": [
+        "swift",
+        "generics",
+        "where",
+        "conflict"
+      ],
+      "description": "Swift Generic Where Clause Conflict"
     },
     {
       "id": "swift_generic_associated_type_mismatch",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Ensure associated types match when using generic protocols",
       "root_cause": "swift_generic_associated_type",
-      "tags": ["swift", "generics", "associated", "protocol"]
+      "tags": [
+        "swift",
+        "generics",
+        "associated",
+        "protocol"
+      ],
+      "description": "Swift Generic Associated Type Mismatch"
     },
     {
       "id": "swift_generic_variance_error",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "Swift generics are invariant. Cannot pass [Subclass] where [Superclass] is expected",
       "root_cause": "swift_generic_variance",
-      "tags": ["swift", "generics", "variance", "covariance"]
+      "tags": [
+        "swift",
+        "generics",
+        "variance",
+        "covariance"
+      ],
+      "description": "Swift Generic Variance"
     },
     {
       "id": "swift_generic_function_ambiguity",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Disambiguate generic function calls with explicit type parameters or type context",
       "root_cause": "swift_generic_ambiguity",
-      "tags": ["swift", "generics", "ambiguity", "overload"]
+      "tags": [
+        "swift",
+        "generics",
+        "ambiguity",
+        "overload"
+      ],
+      "description": "Swift Generic Function Ambiguity"
     },
     {
       "id": "swift_generic_metatype_error",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Use type(of:) or .self appropriately when working with metatypes in generic contexts",
       "root_cause": "swift_generic_metatype",
-      "tags": ["swift", "generics", "metatype", "type"]
+      "tags": [
+        "swift",
+        "generics",
+        "metatype",
+        "type"
+      ],
+      "description": "Swift Generic Metatype"
     },
     {
       "id": "swift_generic_existential_limitation",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Use generic constraints or type erasure for protocols with associated types",
       "root_cause": "swift_generic_existential",
-      "tags": ["swift", "generics", "existential", "protocol"]
+      "tags": [
+        "swift",
+        "generics",
+        "existential",
+        "protocol"
+      ],
+      "description": "Swift Generic Existential Limitation"
     },
     {
       "id": "swift_generic_recursive_constraint",
@@ -108,7 +157,13 @@
       "severity": "high",
       "suggestion": "Avoid circular dependencies in generic constraints",
       "root_cause": "swift_generic_recursive",
-      "tags": ["swift", "generics", "recursive", "circular"]
+      "tags": [
+        "swift",
+        "generics",
+        "recursive",
+        "circular"
+      ],
+      "description": "Swift Generic Recursive Constraint"
     },
     {
       "id": "swift_generic_conditional_conformance_missing",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Check if conditional conformance requirements are met for this specific type",
       "root_cause": "swift_generic_conditional",
-      "tags": ["swift", "generics", "conditional", "conformance"]
+      "tags": [
+        "swift",
+        "generics",
+        "conditional",
+        "conformance"
+      ],
+      "description": "Swift Generic Conditional Conformance Missing"
     },
     {
       "id": "swift_generic_opaque_type_error",
@@ -132,7 +193,13 @@
       "severity": "medium",
       "suggestion": "Ensure consistent return type when using opaque return types (some Protocol)",
       "root_cause": "swift_generic_opaque",
-      "tags": ["swift", "generics", "opaque", "some"]
+      "tags": [
+        "swift",
+        "generics",
+        "opaque",
+        "some"
+      ],
+      "description": "Swift Generic Opaque Type"
     },
     {
       "id": "swift_generic_type_erasure_needed",
@@ -144,7 +211,13 @@
       "severity": "low",
       "suggestion": "Use type erasure wrapper (like AnySequence) for heterogeneous collections of protocol types",
       "root_cause": "swift_generic_erasure",
-      "tags": ["swift", "generics", "erasure", "any"]
+      "tags": [
+        "swift",
+        "generics",
+        "erasure",
+        "any"
+      ],
+      "description": "Swift Generic Type Erasure Needed"
     },
     {
       "id": "swift_generic_specialization_error",
@@ -156,7 +229,13 @@
       "severity": "medium",
       "suggestion": "Swift doesn't support explicit generic specialization. Use type aliases or wrapper types",
       "root_cause": "swift_generic_specialization",
-      "tags": ["swift", "generics", "specialization", "explicit"]
+      "tags": [
+        "swift",
+        "generics",
+        "specialization",
+        "explicit"
+      ],
+      "description": "Swift Generic Specialization"
     },
     {
       "id": "swift_generic_phantom_type",
@@ -168,7 +247,13 @@
       "severity": "low",
       "suggestion": "Phantom types are valid but ensure the generic parameter serves a purpose",
       "root_cause": "swift_generic_phantom",
-      "tags": ["swift", "generics", "phantom", "unused"]
+      "tags": [
+        "swift",
+        "generics",
+        "phantom",
+        "unused"
+      ],
+      "description": "Swift Generic Phantom Type"
     },
     {
       "id": "swift_generic_higher_kinded_limitation",
@@ -180,7 +265,13 @@
       "severity": "medium",
       "suggestion": "Swift doesn't support higher-kinded types. Use protocols with associated types as workaround",
       "root_cause": "swift_generic_higher_kinded",
-      "tags": ["swift", "generics", "higher_kinded", "limitation"]
+      "tags": [
+        "swift",
+        "generics",
+        "higher_kinded",
+        "limitation"
+      ],
+      "description": "Swift Generic Higher Kinded Limitation"
     }
   ]
 }

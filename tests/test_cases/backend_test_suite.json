@@ -20,14 +20,17 @@
         "framework_version": "0.68.0"
       },
       "expected_analysis": {
-        "root_cause": "key_error",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "def get_user(data):\n    user_id = data['user_id']\n    return get_user_by_id(user_id)",
         "function_name": "get_user"
       },
-      "tags": ["python", "key-error", "data-access"]
+      "tags": [
+        "python",
+        "key-error",
+        "data-access"
+      ]
     },
     {
       "name": "Python TypeError Test",
@@ -45,14 +48,17 @@
         "python_version": "3.9.7"
       },
       "expected_analysis": {
-        "root_cause": "unpacking_none",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "def process_data(user_id):\n    name, age = get_user_details(user_id)\n    return format_user_data(name, age)",
         "function_name": "process_data"
       },
-      "tags": ["python", "type-error", "none-handling"]
+      "tags": [
+        "python",
+        "type-error",
+        "none-handling"
+      ]
     },
     {
       "name": "JavaScript TypeError Test",
@@ -66,14 +72,17 @@
         "runtime_version": "14.17.5"
       },
       "expected_analysis": {
-        "root_cause": "undefined_property_access",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "function getUserId(user) {\n  return user.id;\n}",
         "function_name": "getUserId"
       },
-      "tags": ["javascript", "type-error", "undefined"]
+      "tags": [
+        "javascript",
+        "type-error",
+        "undefined"
+      ]
     },
     {
       "name": "JavaScript Reference Error Test",
@@ -87,14 +96,17 @@
         "runtime_version": "14.17.5"
       },
       "expected_analysis": {
-        "root_cause": "reference_error",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "function saveUserData(userData) {\n  database.save(usrData); // Typo: should be userData\n}",
         "function_name": "saveUserData"
       },
-      "tags": ["javascript", "reference-error", "typo"]
+      "tags": [
+        "javascript",
+        "reference-error",
+        "typo"
+      ]
     },
     {
       "name": "Java NullPointerException Test",
@@ -107,14 +119,17 @@
         "java_version": "11.0.12"
       },
       "expected_analysis": {
-        "root_cause": "java_null_pointer",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "public int processString(String str) {\n    return str.length();\n}",
         "method_params": "String str"
       },
-      "tags": ["java", "null-pointer", "string-handling"]
+      "tags": [
+        "java",
+        "null-pointer",
+        "string-handling"
+      ]
     },
     {
       "name": "Java ConcurrentModificationException Test",
@@ -127,14 +142,17 @@
         "java_version": "11.0.12"
       },
       "expected_analysis": {
-        "root_cause": "java_concurrent_modification",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "public void processItems(List<Item> items) {\n    for (Item item : items) {\n        if (item.isExpired()) {\n            items.remove(item);\n        }\n    }\n}",
         "method_params": "List<Item> items"
       },
-      "tags": ["java", "concurrent-modification", "collections"]
+      "tags": [
+        "java",
+        "concurrent-modification",
+        "collections"
+      ]
     },
     {
       "name": "Go Nil Pointer Test",
@@ -147,13 +165,16 @@
         "go_version": "1.17.3"
       },
       "expected_analysis": {
-        "root_cause": "go_nil_pointer",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "func processValue(value *User) string {\n    return value.Name\n}"
       },
-      "tags": ["go", "nil-pointer", "struct-access"]
+      "tags": [
+        "go",
+        "nil-pointer",
+        "struct-access"
+      ]
     },
     {
       "name": "Go Concurrent Map Access Test",
@@ -166,13 +187,16 @@
         "go_version": "1.17.3"
       },
       "expected_analysis": {
-        "root_cause": "go_concurrent_map_write",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "func (c *Counter) Inc(key string) {\n    c.counters[key]++\n}"
       },
-      "tags": ["go", "concurrency", "map-access"]
+      "tags": [
+        "go",
+        "concurrency",
+        "map-access"
+      ]
     },
     {
       "name": "Spring Bean Definition Error",
@@ -187,14 +211,17 @@
         "framework_version": "5.3.9"
       },
       "expected_analysis": {
-        "root_cause": "spring_missing_bean",
         "confidence": "high",
-        "framework": "spring"
+        "framework": "spring-boot"
       },
       "context": {
         "code_snippet": "@Service\npublic class UserServiceImpl implements UserService {\n    private final UserRepository userRepository;\n    \n    public UserServiceImpl(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n}"
       },
-      "tags": ["java", "spring", "dependency-injection"]
+      "tags": [
+        "java",
+        "spring",
+        "dependency-injection"
+      ]
     },
     {
       "name": "Gin Router Error",
@@ -209,14 +236,18 @@
         "framework_version": "1.7.2"
       },
       "expected_analysis": {
-        "root_cause": "go_nil_pointer",
         "confidence": "high",
         "framework": "gin"
       },
       "context": {
         "code_snippet": "func GetUserHandler(c *gin.Context) {\n    id := c.Param(\"id\")\n    user, err := service.GetUserByID(id)\n    c.JSON(200, user)\n}"
       },
-      "tags": ["go", "gin", "web-framework", "handler"]
+      "tags": [
+        "go",
+        "gin",
+        "web-framework",
+        "handler"
+      ]
     },
     {
       "name": "Ruby NoMethodError (Nil) Test",
@@ -235,13 +266,16 @@
         "framework_version": "6.1.0"
       },
       "expected_analysis": {
-        "root_cause": "ruby_nil_reference",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "def display_name\n  user.name\nend"
       },
-      "tags": ["ruby", "nil-reference", "rails"]
+      "tags": [
+        "ruby",
+        "nil-reference",
+        "rails"
+      ]
     },
     {
       "name": "Ruby ActiveRecord::RecordNotFound Test",
@@ -259,7 +293,6 @@
         "framework_version": "6.1.0"
       },
       "expected_analysis": {
-        "root_cause": "rails_record_not_found",
         "confidence": "high",
         "framework": "rails"
       },
@@ -267,7 +300,12 @@
         "code_snippet": "def show\n  @user = User.find(params[:id])\nend",
         "framework": "rails"
       },
-      "tags": ["ruby", "rails", "activerecord", "record-not-found"]
+      "tags": [
+        "ruby",
+        "rails",
+        "activerecord",
+        "record-not-found"
+      ]
     },
     {
       "name": "Ruby Gem LoadError Test",
@@ -283,13 +321,16 @@
         "ruby_version": "3.0.0"
       },
       "expected_analysis": {
-        "root_cause": "ruby_missing_gem",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "require 'httparty'\n\nresponse = HTTParty.get('https://example.com')"
       },
-      "tags": ["ruby", "load-error", "missing-gem"]
+      "tags": [
+        "ruby",
+        "load-error",
+        "missing-gem"
+      ]
     },
     {
       "name": "Ruby Sinatra NotFound Test",
@@ -307,14 +348,18 @@
         "framework_version": "2.2.0"
       },
       "expected_analysis": {
-        "root_cause": "sinatra_not_found",
         "confidence": "high",
         "framework": "sinatra"
       },
       "context": {
         "code_snippet": "get '/users/:id' do\n  user = User.find(params[:id])\n  erb :user\nend"
       },
-      "tags": ["ruby", "sinatra", "routing", "not-found"]
+      "tags": [
+        "ruby",
+        "sinatra",
+        "routing",
+        "not-found"
+      ]
     },
     {
       "name": "Ruby Metaprogramming Method Missing Test",
@@ -330,14 +375,17 @@
         "ruby_version": "3.0.0"
       },
       "expected_analysis": {
-        "root_cause": "ruby_method_missing",
         "confidence": "medium",
         "category": "metaprogramming"
       },
       "context": {
         "code_snippet": "def method_missing(method_name, *args, &block)\n  if method_name.to_s.start_with?('find_by_')\n    # Custom finder method implementation\n  else\n    super\n  end\nend"
       },
-      "tags": ["ruby", "metaprogramming", "method-missing"]
+      "tags": [
+        "ruby",
+        "metaprogramming",
+        "method-missing"
+      ]
     },
     {
       "name": "Rust Unwrap None Test",
@@ -360,13 +408,16 @@
         "rust_version": "1.65.0"
       },
       "expected_analysis": {
-        "root_cause": "rust_unwrap_none",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "fn get_user_name(user_id: u32) -> String {\n    let user_option = find_user(user_id);\n    let user = user_option.unwrap();\n    user.name\n}"
       },
-      "tags": ["rust", "unwrap", "option-none"]
+      "tags": [
+        "rust",
+        "unwrap",
+        "option-none"
+      ]
     },
     {
       "name": "Rust Index Out of Bounds Test",
@@ -387,13 +438,16 @@
         "rust_version": "1.65.0"
       },
       "expected_analysis": {
-        "root_cause": "rust_index_out_of_bounds",
         "confidence": "high"
       },
       "context": {
         "code_snippet": "fn get_element(items: &Vec<String>, index: usize) -> &String {\n    &items[index]\n}"
       },
-      "tags": ["rust", "index", "bounds-check"]
+      "tags": [
+        "rust",
+        "index",
+        "bounds-check"
+      ]
     },
     {
       "name": "Rust Actix Web Error Test",
@@ -414,14 +468,18 @@
         "framework": "actix"
       },
       "expected_analysis": {
-        "root_cause": "rust_actix_extraction",
         "confidence": "high",
         "framework": "actix"
       },
       "context": {
         "code_snippet": "#[get(\"/users/{user_id}\")]\nasync fn get_user(path: web::Path<u32>) -> impl Responder {\n    let user_id = path.into_inner();\n    // Handler implementation\n}"
       },
-      "tags": ["rust", "actix", "web-framework", "extraction"]
+      "tags": [
+        "rust",
+        "actix",
+        "web-framework",
+        "extraction"
+      ]
     },
     {
       "name": "Rust Deadlock Test",
@@ -441,14 +499,18 @@
         "rust_version": "1.65.0"
       },
       "expected_analysis": {
-        "root_cause": "rust_deadlock",
         "confidence": "high",
         "category": "concurrency"
       },
       "context": {
         "code_snippet": "fn process_data(mutex_a: &Mutex<Vec<i32>>, mutex_b: &Mutex<HashMap<i32, String>>) {\n    let mut data_a = mutex_a.lock().unwrap();\n    // Some processing\n    let mut data_b = mutex_b.lock().unwrap();\n    // More processing\n}"
       },
-      "tags": ["rust", "concurrency", "deadlock", "mutex"]
+      "tags": [
+        "rust",
+        "concurrency",
+        "deadlock",
+        "mutex"
+      ]
     },
     {
       "name": "Rust Tokio Runtime Error Test",
@@ -467,14 +529,18 @@
         "framework": "tokio"
       },
       "expected_analysis": {
-        "root_cause": "rust_tokio_runtime",
         "confidence": "high",
         "framework": "tokio"
       },
       "context": {
         "code_snippet": "async fn process_async() -> Result<(), Error> {\n    let blocking_task = tokio::task::spawn_blocking(|| {\n        // This is a CPU-intensive operation\n        std::thread::sleep(std::time::Duration::from_secs(5));\n        42\n    });\n    \n    let result = blocking_task.await?;\n    Ok(())\n}"
       },
-      "tags": ["rust", "tokio", "async", "runtime"]
+      "tags": [
+        "rust",
+        "tokio",
+        "async",
+        "runtime"
+      ]
     }
   ]
 }

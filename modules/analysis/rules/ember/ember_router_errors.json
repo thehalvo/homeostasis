@@ -1,4 +1,5 @@
 {
+  "name": "Ember Ember Router Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "ember",
@@ -21,11 +22,16 @@
         "Check for typos in route name",
         "Ensure route name matches transitionTo calls"
       ],
-      "tags": ["ember", "router", "routes"],
+      "tags": [
+        "ember",
+        "router",
+        "routes"
+      ],
       "examples": [
         "Error: No route matched 'users.profile'",
         "Route 'settings' not found"
-      ]
+      ],
+      "description": "Ember Router Route Not Found"
     },
     {
       "id": "ember_router_transition_error",
@@ -43,11 +49,16 @@
         "Check for transition guards that reject improperly",
         "Use intermediateTransitionTo for non-URL changing transitions"
       ],
-      "tags": ["ember", "router", "transition"],
+      "tags": [
+        "ember",
+        "router",
+        "transition"
+      ],
       "examples": [
         "Transition to 'profile' was aborted",
         "Transition was rejected with: Error: Not authenticated"
-      ]
+      ],
+      "description": "Ember Router Transition"
     },
     {
       "id": "ember_router_dynamic_segment_error",
@@ -65,11 +76,17 @@
         "Ensure parameters match :segment names in route path",
         "Provide default values for optional parameters"
       ],
-      "tags": ["ember", "router", "dynamic-segments", "parameters"],
+      "tags": [
+        "ember",
+        "router",
+        "dynamic-segments",
+        "parameters"
+      ],
       "examples": [
         "Error: Missing required parameter 'userId'",
         "Dynamic segment 'postId' not provided"
-      ]
+      ],
+      "description": "Ember Router Dynamic Segment"
     },
     {
       "id": "ember_router_model_hook_error",
@@ -87,11 +104,16 @@
         "Handle missing records properly in model hooks",
         "Use catch blocks for failed data fetching"
       ],
-      "tags": ["ember", "router", "model-hook"],
+      "tags": [
+        "ember",
+        "router",
+        "model-hook"
+      ],
       "examples": [
         "Error occurred in route model hook",
         "Assertion Failed: Route model hook returned undefined"
-      ]
+      ],
+      "description": "Ember Router Model Hook"
     },
     {
       "id": "ember_router_loaded_error",
@@ -109,11 +131,16 @@
         "Return promises from model hooks for proper loading states",
         "Use ember-loading-service for more control"
       ],
-      "tags": ["ember", "router", "loading-state"],
+      "tags": [
+        "ember",
+        "router",
+        "loading-state"
+      ],
       "examples": [
         "Error in loading route",
         "Failed to resolve loading template"
-      ]
+      ],
+      "description": "Ember Router Loaded"
     },
     {
       "id": "ember_router_error_handling_error",
@@ -131,11 +158,16 @@
         "Use try/catch in model hooks",
         "Return rejected promises with useful error messages"
       ],
-      "tags": ["ember", "router", "error-handling"],
+      "tags": [
+        "ember",
+        "router",
+        "error-handling"
+      ],
       "examples": [
         "Failed to load error template",
         "Error handling in route failed"
-      ]
+      ],
+      "description": "Ember Router Handling"
     },
     {
       "id": "ember_router_redirect_loop",
@@ -153,11 +185,17 @@
         "Use session or state checking before redirects",
         "Consider using intermediateTransitionTo instead"
       ],
-      "tags": ["ember", "router", "redirect", "infinite-loop"],
+      "tags": [
+        "ember",
+        "router",
+        "redirect",
+        "infinite-loop"
+      ],
       "examples": [
         "Error: Detected redirect loop in route 'application'",
         "Maximum number of redirects exceeded"
-      ]
+      ],
+      "description": "Ember Router Redirect Loop"
     },
     {
       "id": "ember_router_refresh_error",
@@ -175,11 +213,17 @@
         "Handle async behavior in refreshed model hooks",
         "Check controller state in route refreshes"
       ],
-      "tags": ["ember", "router", "refresh", "resetController"],
+      "tags": [
+        "ember",
+        "router",
+        "refresh",
+        "resetController"
+      ],
       "examples": [
         "Error refreshing route 'posts'",
         "Failed to reset controller during refresh"
-      ]
+      ],
+      "description": "Ember Router Refresh"
     },
     {
       "id": "ember_router_url_error",
@@ -197,11 +241,17 @@
         "Ensure root URL is correctly set",
         "Handle URL encoding/decoding properly"
       ],
-      "tags": ["ember", "router", "url", "location"],
+      "tags": [
+        "ember",
+        "router",
+        "url",
+        "location"
+      ],
       "examples": [
         "Error: Cannot generate URL for route 'profile'",
         "Failed to parse location URL"
-      ]
+      ],
+      "description": "Ember Router Url"
     },
     {
       "id": "ember_router_service_error",
@@ -219,11 +269,17 @@
         "Use this.router.transitionTo() instead of this.transitionTo()",
         "Check router service is available before using it"
       ],
-      "tags": ["ember", "router", "service", "injection"],
+      "tags": [
+        "ember",
+        "router",
+        "service",
+        "injection"
+      ],
       "examples": [
         "Cannot read property 'transitionTo' of undefined",
         "Router service not injected"
-      ]
+      ],
+      "description": "Ember Router Service"
     }
   ]
 }

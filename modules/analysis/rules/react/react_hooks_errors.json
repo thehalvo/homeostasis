@@ -1,4 +1,5 @@
 {
+  "name": "React React Hooks Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "react",
@@ -20,11 +21,17 @@
         "Use conditional logic inside hooks, not around them",
         "Create separate hooks for different conditions if needed"
       ],
-      "tags": ["react", "hooks", "conditional", "rules-of-hooks"],
+      "tags": [
+        "react",
+        "hooks",
+        "conditional",
+        "rules-of-hooks"
+      ],
       "examples": [
         "if (condition) { useState(value); }",
         "early return before hook calls"
-      ]
+      ],
+      "description": "React Hooks Conditional Call"
     },
     {
       "id": "react_hooks_loop_call",
@@ -41,11 +48,17 @@
         "Create a custom hook that manages the collection",
         "Move hook calls outside the loop"
       ],
-      "tags": ["react", "hooks", "loops", "rules-of-hooks"],
+      "tags": [
+        "react",
+        "hooks",
+        "loops",
+        "rules-of-hooks"
+      ],
       "examples": [
         "for loop containing useState calls",
         "map function with hook calls"
-      ]
+      ],
+      "description": "React Hooks Loop Call"
     },
     {
       "id": "react_usestate_direct_mutation",
@@ -62,11 +75,17 @@
         "Use immer library for complex state updates",
         "Use functional setState updates for state based on previous state"
       ],
-      "tags": ["react", "hooks", "useState", "immutability"],
+      "tags": [
+        "react",
+        "hooks",
+        "useState",
+        "immutability"
+      ],
       "examples": [
         "state.push(newItem) instead of setState([...state, newItem])",
         "state.property = newValue"
-      ]
+      ],
+      "description": "React Usestate Direct Mutation"
     },
     {
       "id": "react_useeffect_missing_cleanup",
@@ -83,11 +102,18 @@
         "Clear timeouts and intervals in cleanup",
         "Unsubscribe from event listeners and observables"
       ],
-      "tags": ["react", "hooks", "useEffect", "cleanup", "memory-leak"],
+      "tags": [
+        "react",
+        "hooks",
+        "useEffect",
+        "cleanup",
+        "memory-leak"
+      ],
       "examples": [
         "setInterval without clearInterval",
         "event listeners without removeEventListener"
-      ]
+      ],
+      "description": "React Useeffect Missing Cleanup"
     },
     {
       "id": "react_usecallback_missing_deps",
@@ -104,11 +130,17 @@
         "Move variables inside useCallback if they're constants",
         "Use useRef for values that shouldn't trigger re-creation"
       ],
-      "tags": ["react", "hooks", "useCallback", "dependencies"],
+      "tags": [
+        "react",
+        "hooks",
+        "useCallback",
+        "dependencies"
+      ],
       "examples": [
         "useCallback using props without including them in deps",
         "useCallback using state without including it in deps"
-      ]
+      ],
+      "description": "React Usecallback Missing Deps"
     },
     {
       "id": "react_usememo_missing_deps",
@@ -125,11 +157,17 @@
         "Move calculations inside useMemo if they're constants",
         "Consider if useMemo is actually needed for performance"
       ],
-      "tags": ["react", "hooks", "useMemo", "dependencies"],
+      "tags": [
+        "react",
+        "hooks",
+        "useMemo",
+        "dependencies"
+      ],
       "examples": [
         "useMemo computing value using props without including them in deps",
         "useMemo using state without including it in deps"
-      ]
+      ],
+      "description": "React Usememo Missing Deps"
     },
     {
       "id": "react_custom_hook_invalid_return",
@@ -146,11 +184,17 @@
         "Return objects or arrays with named properties",
         "Document what the custom hook returns"
       ],
-      "tags": ["react", "hooks", "custom-hooks", "return-value"],
+      "tags": [
+        "react",
+        "hooks",
+        "custom-hooks",
+        "return-value"
+      ],
       "examples": [
         "Custom hook not returning anything",
         "Custom hook returning undefined"
-      ]
+      ],
+      "description": "React Custom Hook Invalid Return"
     },
     {
       "id": "react_useref_current_null",
@@ -167,11 +211,17 @@
         "Use optional chaining: ref.current?.method()",
         "Ensure ref is attached to a DOM element"
       ],
-      "tags": ["react", "hooks", "useRef", "null-check"],
+      "tags": [
+        "react",
+        "hooks",
+        "useRef",
+        "null-check"
+      ],
       "examples": [
         "Accessing ref.current before component mount",
         "Using ref with conditional rendering"
-      ]
+      ],
+      "description": "React Useref Current Null"
     },
     {
       "id": "react_usecontext_no_provider",
@@ -188,11 +238,17 @@
         "Check that Provider is wrapping the component using useContext",
         "Verify Provider is imported and used correctly"
       ],
-      "tags": ["react", "hooks", "useContext", "provider"],
+      "tags": [
+        "react",
+        "hooks",
+        "useContext",
+        "provider"
+      ],
       "examples": [
         "useContext called outside Provider component",
         "Missing Provider in component tree"
-      ]
+      ],
+      "description": "React Usecontext No Provider"
     },
     {
       "id": "react_hook_wrong_component_type",
@@ -209,11 +265,17 @@
         "Use class component lifecycle methods instead of hooks",
         "Create a custom hook and use it in a function component wrapper"
       ],
-      "tags": ["react", "hooks", "class-component", "function-component"],
+      "tags": [
+        "react",
+        "hooks",
+        "class-component",
+        "function-component"
+      ],
       "examples": [
         "useState in class component",
         "useEffect in class component"
-      ]
+      ],
+      "description": "React Hook Wrong Component Type"
     }
   ]
 }

@@ -1,4 +1,5 @@
 {
+  "name": "Kotlin Kotlin Extension Errors",
   "version": "1.0.0",
   "description": "Kotlin extension function error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Disambiguate by explicit imports, qualified calls, or type annotations",
       "root_cause": "kotlin_extension_ambiguity",
-      "tags": ["kotlin", "extension", "resolution", "ambiguity"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "resolution",
+        "ambiguity"
+      ],
+      "description": "Kotlin Extension Resolution Ambiguity"
     },
     {
       "id": "kotlin_extension_property_initialization",
@@ -24,7 +31,13 @@
       "severity": "high",
       "suggestion": "Extension properties cannot have backing fields. Use custom getter/setter",
       "root_cause": "kotlin_extension_property_init",
-      "tags": ["kotlin", "extension", "property", "initialization"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "property",
+        "initialization"
+      ],
+      "description": "Kotlin Extension Property Initialization"
     },
     {
       "id": "kotlin_member_extension_visibility",
@@ -36,7 +49,13 @@
       "severity": "medium",
       "suggestion": "Member extensions are only visible within the declaring class",
       "root_cause": "kotlin_member_extension_access",
-      "tags": ["kotlin", "extension", "member", "visibility"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "member",
+        "visibility"
+      ],
+      "description": "Kotlin Member Extension Visibility"
     },
     {
       "id": "kotlin_extension_receiver_type_mismatch",
@@ -48,7 +67,13 @@
       "severity": "high",
       "suggestion": "Extension function receiver type must match the object it's called on",
       "root_cause": "kotlin_extension_receiver_mismatch",
-      "tags": ["kotlin", "extension", "receiver", "type"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "receiver",
+        "type"
+      ],
+      "description": "Kotlin Extension Receiver Type Mismatch"
     },
     {
       "id": "kotlin_static_extension_confusion",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "Extensions are resolved statically. Cannot override member functions",
       "root_cause": "kotlin_extension_static_dispatch",
-      "tags": ["kotlin", "extension", "static", "dispatch"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "static",
+        "dispatch"
+      ],
+      "description": "Kotlin Static Extension Confusion"
     },
     {
       "id": "kotlin_generic_extension_inference",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Provide explicit type parameters for generic extension functions",
       "root_cause": "kotlin_generic_extension_inference",
-      "tags": ["kotlin", "extension", "generic", "inference"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "generic",
+        "inference"
+      ],
+      "description": "Kotlin Generic Extension Inference"
     },
     {
       "id": "kotlin_scope_function_misuse",
@@ -84,7 +121,13 @@
       "severity": "low",
       "suggestion": "Use appropriate scope function: apply/also (return receiver), let/run (return result)",
       "root_cause": "kotlin_scope_function_confusion",
-      "tags": ["kotlin", "extension", "scope", "function"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "scope",
+        "function"
+      ],
+      "description": "Kotlin Scope Function Misuse"
     },
     {
       "id": "kotlin_extension_import_missing",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Import extension functions explicitly when defined in different packages",
       "root_cause": "kotlin_extension_import",
-      "tags": ["kotlin", "extension", "import", "unresolved"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "import",
+        "unresolved"
+      ],
+      "description": "Kotlin Extension Import Missing"
     },
     {
       "id": "kotlin_companion_extension_access",
@@ -108,7 +157,13 @@
       "severity": "medium",
       "suggestion": "Extensions on companion objects need special syntax: ClassName.Companion.extension()",
       "root_cause": "kotlin_companion_extension",
-      "tags": ["kotlin", "extension", "companion", "access"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "companion",
+        "access"
+      ],
+      "description": "Kotlin Companion Extension Access"
     },
     {
       "id": "kotlin_extension_lambda_receiver",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Use function types with receiver: T.() -> R for extension lambdas",
       "root_cause": "kotlin_extension_lambda_receiver",
-      "tags": ["kotlin", "extension", "lambda", "receiver"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "lambda",
+        "receiver"
+      ],
+      "description": "Kotlin Extension Lambda Receiver"
     },
     {
       "id": "kotlin_infix_extension_error",
@@ -132,7 +193,13 @@
       "severity": "medium",
       "suggestion": "Infix extensions must have exactly one parameter with no default value",
       "root_cause": "kotlin_infix_extension",
-      "tags": ["kotlin", "extension", "infix", "modifier"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "infix",
+        "modifier"
+      ],
+      "description": "Kotlin Infix Extension"
     },
     {
       "id": "kotlin_extension_shadowing",
@@ -144,7 +211,13 @@
       "severity": "low",
       "suggestion": "Member functions always take precedence over extension functions",
       "root_cause": "kotlin_extension_shadowing",
-      "tags": ["kotlin", "extension", "shadowing", "member"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "shadowing",
+        "member"
+      ],
+      "description": "Kotlin Extension Shadowing"
     },
     {
       "id": "kotlin_protected_extension_error",
@@ -156,7 +229,13 @@
       "severity": "medium",
       "suggestion": "Protected extensions are only allowed as members of a class",
       "root_cause": "kotlin_protected_extension",
-      "tags": ["kotlin", "extension", "protected", "visibility"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "protected",
+        "visibility"
+      ],
+      "description": "Kotlin Protected Extension"
     },
     {
       "id": "kotlin_extension_operator_overload",
@@ -168,7 +247,13 @@
       "severity": "high",
       "suggestion": "Add 'operator' modifier to extension functions that overload operators",
       "root_cause": "kotlin_extension_operator",
-      "tags": ["kotlin", "extension", "operator", "overload"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "operator",
+        "overload"
+      ],
+      "description": "Kotlin Extension Operator Overload"
     },
     {
       "id": "kotlin_extension_recursive_call",
@@ -180,7 +265,13 @@
       "severity": "high",
       "suggestion": "Avoid infinite recursion in extension functions, check base cases",
       "root_cause": "kotlin_extension_recursion",
-      "tags": ["kotlin", "extension", "recursion", "stackoverflow"]
+      "tags": [
+        "kotlin",
+        "extension",
+        "recursion",
+        "stackoverflow"
+      ],
+      "description": "Kotlin Extension Recursive Call"
     }
   ]
 }

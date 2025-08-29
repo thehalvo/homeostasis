@@ -1,4 +1,5 @@
 {
+  "name": "Scala Sbt Errors",
   "rules": [
     {
       "id": "sbt_compilation_error",

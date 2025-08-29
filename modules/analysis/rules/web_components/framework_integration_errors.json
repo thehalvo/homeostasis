@@ -13,7 +13,12 @@
       "suggestion": "Declare the property in the static properties object with its type",
       "root_cause": "lit_undeclared_property",
       "reliability": "high",
-      "tags": ["webcomponents", "lit", "properties"]
+      "tags": [
+        "webcomponents",
+        "lit",
+        "properties"
+      ],
+      "description": "Lit Property Declaration"
     },
     {
       "id": "lit_property_change",
@@ -24,7 +29,12 @@
       "suggestion": "Ensure the property is declared in the static properties object and use this.requestUpdate() for manual updates",
       "root_cause": "lit_property_change_not_reactive",
       "reliability": "medium",
-      "tags": ["webcomponents", "lit", "reactivity"]
+      "tags": [
+        "webcomponents",
+        "lit",
+        "reactivity"
+      ],
+      "description": "Lit Property Change"
     },
     {
       "id": "lit_template_syntax",
@@ -35,7 +45,12 @@
       "suggestion": "Check Lit HTML template syntax in the render() method",
       "root_cause": "lit_template_syntax_error",
       "reliability": "high",
-      "tags": ["webcomponents", "lit", "templates"]
+      "tags": [
+        "webcomponents",
+        "lit",
+        "templates"
+      ],
+      "description": "Lit Template Syntax"
     },
     {
       "id": "lit_super_update",
@@ -46,7 +61,12 @@
       "suggestion": "Call super.update() when overriding the update() method",
       "root_cause": "lit_missing_super_update",
       "reliability": "high",
-      "tags": ["webcomponents", "lit", "lifecycle"]
+      "tags": [
+        "webcomponents",
+        "lit",
+        "lifecycle"
+      ],
+      "description": "Lit Super Update"
     },
     {
       "id": "stencil_decorator_missing",
@@ -57,7 +77,12 @@
       "suggestion": "Add the appropriate decorator (@Prop, @State, @Event, @Element, @Method) to the class member",
       "root_cause": "stencil_missing_decorator",
       "reliability": "high",
-      "tags": ["webcomponents", "stencil", "decorators"]
+      "tags": [
+        "webcomponents",
+        "stencil",
+        "decorators"
+      ],
+      "description": "Stencil Decorator Missing"
     },
     {
       "id": "stencil_render_return",
@@ -68,7 +93,12 @@
       "suggestion": "Ensure the render() method returns JSX or h() function calls",
       "root_cause": "stencil_invalid_render_return",
       "reliability": "high",
-      "tags": ["webcomponents", "stencil", "rendering"]
+      "tags": [
+        "webcomponents",
+        "stencil",
+        "rendering"
+      ],
+      "description": "Stencil Render Return"
     },
     {
       "id": "stencil_component_tag",
@@ -79,7 +109,12 @@
       "suggestion": "Ensure the tag name in @Component decorator matches your usage",
       "root_cause": "stencil_tag_mismatch",
       "reliability": "high",
-      "tags": ["webcomponents", "stencil", "component"]
+      "tags": [
+        "webcomponents",
+        "stencil",
+        "component"
+      ],
+      "description": "Stencil Component Tag"
     },
     {
       "id": "stencil_lifecycle_order",
@@ -90,7 +125,12 @@
       "suggestion": "Check the order of lifecycle method calls and avoid side effects that could trigger premature rendering",
       "root_cause": "stencil_lifecycle_order_issue",
       "reliability": "medium",
-      "tags": ["webcomponents", "stencil", "lifecycle"]
+      "tags": [
+        "webcomponents",
+        "stencil",
+        "lifecycle"
+      ],
+      "description": "Stencil Lifecycle Order"
     },
     {
       "id": "wc_framework_interop",
@@ -101,7 +141,12 @@
       "suggestion": "Use appropriate framework integration libraries or wrappers for Web Components",
       "root_cause": "framework_integration_issue",
       "reliability": "medium",
-      "tags": ["webcomponents", "interop", "framework-integration"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "framework-integration"
+      ],
+      "description": "Wc Framework Interop"
     },
     {
       "id": "wc_property_vs_attribute",
@@ -112,7 +157,13 @@
       "suggestion": "Ensure properties are properly reflected to attributes when needed",
       "root_cause": "property_attribute_reflection_issue",
       "reliability": "medium",
-      "tags": ["webcomponents", "interop", "properties", "attributes"]
+      "tags": [
+        "webcomponents",
+        "interop",
+        "properties",
+        "attributes"
+      ],
+      "description": "Wc Property Vs Attribute"
     }
   ]
 }

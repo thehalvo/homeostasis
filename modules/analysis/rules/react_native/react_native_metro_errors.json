@@ -4,7 +4,13 @@
     "description": "Detection rules for Metro bundler configuration, module resolution, and build errors",
     "version": "1.0.0",
     "author": "Homeostasis Team",
-    "tags": ["react-native", "metro", "bundler", "build", "module-resolution"]
+    "tags": [
+      "react-native",
+      "metro",
+      "bundler",
+      "build",
+      "module-resolution"
+    ]
   },
   "rules": [
     {
@@ -17,7 +23,12 @@
       "severity": "error",
       "suggestion": "Check module path and ensure dependency is installed",
       "description": "Metro bundler cannot resolve module import",
-      "tags": ["react-native", "metro", "modules", "resolution"],
+      "tags": [
+        "react-native",
+        "metro",
+        "modules",
+        "resolution"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Check import/require statement spelling",
@@ -37,7 +48,11 @@
       "severity": "warning",
       "suggestion": "Clear Metro cache and restart bundler",
       "description": "Metro bundler cache corruption or error",
-      "tags": ["react-native", "metro", "cache"],
+      "tags": [
+        "react-native",
+        "metro",
+        "cache"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Clear Metro cache: 'npx react-native start --reset-cache'",
@@ -56,7 +71,11 @@
       "severity": "error",
       "suggestion": "Check metro.config.js file syntax and configuration",
       "description": "Metro bundler configuration file error",
-      "tags": ["react-native", "metro", "configuration"],
+      "tags": [
+        "react-native",
+        "metro",
+        "configuration"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Check metro.config.js syntax for errors",
@@ -76,7 +95,12 @@
       "severity": "error",
       "suggestion": "Check Babel and Metro transformer configuration",
       "description": "Metro bundler transformer or Babel configuration error",
-      "tags": ["react-native", "metro", "transformer", "babel"],
+      "tags": [
+        "react-native",
+        "metro",
+        "transformer",
+        "babel"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check .babelrc or babel.config.js configuration",
@@ -96,7 +120,11 @@
       "severity": "error",
       "suggestion": "Check Metro resolver configuration and module paths",
       "description": "Metro bundler module resolver configuration error",
-      "tags": ["react-native", "metro", "resolver"],
+      "tags": [
+        "react-native",
+        "metro",
+        "resolver"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check resolver configuration in metro.config.js",
@@ -116,7 +144,12 @@
       "severity": "warning",
       "suggestion": "Check Watchman file watching service",
       "description": "Metro bundler Watchman file watching error",
-      "tags": ["react-native", "metro", "watchman", "file-watching"],
+      "tags": [
+        "react-native",
+        "metro",
+        "watchman",
+        "file-watching"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Clear watchman cache: 'watchman watch-del-all'",
@@ -136,7 +169,12 @@
       "severity": "warning",
       "suggestion": "Change Metro bundler port or kill existing process",
       "description": "Metro bundler port 8081 already in use",
-      "tags": ["react-native", "metro", "port", "8081"],
+      "tags": [
+        "react-native",
+        "metro",
+        "port",
+        "8081"
+      ],
       "reliability": "high",
       "fix_commands": [
         "Kill existing Metro process: 'lsof -ti:8081 | xargs kill'",
@@ -155,7 +193,11 @@
       "severity": "warning",
       "suggestion": "Check asset paths and Metro asset configuration",
       "description": "Metro bundler asset resolution error",
-      "tags": ["react-native", "metro", "assets"],
+      "tags": [
+        "react-native",
+        "metro",
+        "assets"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check asset file paths and names",
@@ -175,7 +217,11 @@
       "severity": "warning",
       "suggestion": "Check symlink configuration and Metro resolver settings",
       "description": "Metro bundler symlink resolution error",
-      "tags": ["react-native", "metro", "symlinks"],
+      "tags": [
+        "react-native",
+        "metro",
+        "symlinks"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Enable symlink support in metro.config.js resolver",
@@ -195,7 +241,11 @@
       "severity": "error",
       "suggestion": "Check for duplicate module names or conflicting dependencies",
       "description": "Metro bundler duplicate module name error",
-      "tags": ["react-native", "metro", "duplicate-modules"],
+      "tags": [
+        "react-native",
+        "metro",
+        "duplicate-modules"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Check for duplicate package installations",
@@ -215,7 +265,12 @@
       "severity": "warning",
       "suggestion": "Increase Node.js memory limit or optimize Metro configuration",
       "description": "Metro bundler running out of memory",
-      "tags": ["react-native", "metro", "memory", "heap"],
+      "tags": [
+        "react-native",
+        "metro",
+        "memory",
+        "heap"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Increase Node.js memory: 'export NODE_OPTIONS=\"--max-old-space-size=8192\"'",
@@ -235,7 +290,11 @@
       "severity": "warning",
       "suggestion": "Check for circular import dependencies in your code",
       "description": "Metro bundler detected circular dependency",
-      "tags": ["react-native", "metro", "circular-dependency"],
+      "tags": [
+        "react-native",
+        "metro",
+        "circular-dependency"
+      ],
       "reliability": "medium",
       "fix_commands": [
         "Identify circular import chain from error message",
@@ -245,5 +304,6 @@
         "Check import/export structure"
       ]
     }
-  ]
+  ],
+  "name": "React Native Metro Errors"
 }

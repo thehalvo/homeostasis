@@ -1,4 +1,5 @@
 {
+  "name": "Java Maven Gradle Errors",
   "rules": [
     {
       "id": "maven_dependency_not_found",

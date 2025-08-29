@@ -539,17 +539,30 @@ class CPPExceptionHandler:
         """
         # Extract error message from standard format
         error_message = error_data.get("message", "")
-        if not error_message and "stack_trace" in error_data:
-            # Try to reconstruct error message from stack trace
-            stack_trace = error_data["stack_trace"]
-            if stack_trace and isinstance(stack_trace[0], dict):
-                # Structured stack trace
-                error_message = f"Error in {stack_trace[0].get('function', 'unknown')} at {stack_trace[0].get('file', 'unknown')}:{stack_trace[0].get('line', 0)}"
-            elif stack_trace and isinstance(stack_trace[0], str):
-                # String stack trace
-                error_message = " ".join(stack_trace)
-            else:
-                error_message = "Unknown error"
+        
+        # Include error_type and signal in the message for better matching
+        error_type = error_data.get("error_type", "")
+        signal = error_data.get("signal", "")
+        
+        if not error_message:
+            # Build error message from available fields
+            message_parts = []
+            if error_type:
+                message_parts.append(error_type)
+            if signal:
+                message_parts.append(signal)
+            
+            if "stack_trace" in error_data:
+                # Try to reconstruct error message from stack trace
+                stack_trace = error_data["stack_trace"]
+                if stack_trace and isinstance(stack_trace[0], dict):
+                    # Structured stack trace
+                    message_parts.append(f"Error in {stack_trace[0].get('function', 'unknown')} at {stack_trace[0].get('file', 'unknown')}:{stack_trace[0].get('line', 0)}")
+                elif stack_trace and isinstance(stack_trace[0], str):
+                    # String stack trace
+                    message_parts.append(" ".join(stack_trace))
+            
+            error_message = " ".join(message_parts) if message_parts else "Unknown error"
         
         # Create context from error data
         context = {
@@ -991,7 +1004,11 @@ if (buffer == NULL) {{
     def _generate_compilation_patch(self, error_analysis: Dict[str, Any], source_code: Optional[str]) -> Dict[str, Any]:
         """Generate patch for compilation errors."""
         # Check if this is a specific undeclared identifier error
+        # Try to get error message from different places
         error_msg = error_analysis.get("error_message", "").lower()
+        if not error_msg and "error_data" in error_analysis:
+            error_msg = error_analysis["error_data"].get("message", "").lower()
+        
         root_cause = error_analysis.get("root_cause", "")
         
         # Handle undeclared identifier errors

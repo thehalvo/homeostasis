@@ -1,4 +1,5 @@
 {
+  "name": "Scala Pattern Matching Errors",
   "version": "1.0.0",
   "description": "Scala pattern matching error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Add missing cases for sealed trait/class subtypes or add a wildcard case",
       "root_cause": "scala_sealed_non_exhaustive",
-      "tags": ["scala", "pattern", "sealed", "exhaustive"]
+      "tags": [
+        "scala",
+        "pattern",
+        "sealed",
+        "exhaustive"
+      ],
+      "description": "Scala Sealed Trait Non Exhaustive"
     },
     {
       "id": "scala_pattern_guard_failure",
@@ -24,7 +31,13 @@
       "severity": "medium",
       "suggestion": "Ensure pattern guard conditions are correct or add fallback case",
       "root_cause": "scala_pattern_guard_false",
-      "tags": ["scala", "pattern", "guard", "condition"]
+      "tags": [
+        "scala",
+        "pattern",
+        "guard",
+        "condition"
+      ],
+      "description": "Scala Pattern Guard Failure"
     },
     {
       "id": "scala_extractor_unapply_error",
@@ -36,7 +49,13 @@
       "severity": "high",
       "suggestion": "Extractor unapply/unapplySeq must return Option with correct arity",
       "root_cause": "scala_extractor_signature",
-      "tags": ["scala", "pattern", "extractor", "unapply"]
+      "tags": [
+        "scala",
+        "pattern",
+        "extractor",
+        "unapply"
+      ],
+      "description": "Scala Extractor Unapply"
     },
     {
       "id": "scala_variable_pattern_binding",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Use unique variable names in patterns or @ for binding",
       "root_cause": "scala_pattern_variable_conflict",
-      "tags": ["scala", "pattern", "variable", "binding"]
+      "tags": [
+        "scala",
+        "pattern",
+        "variable",
+        "binding"
+      ],
+      "description": "Scala Variable Pattern Binding"
     },
     {
       "id": "scala_type_pattern_erasure",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "Type parameters are erased at runtime. Use ClassTag or match on concrete types",
       "root_cause": "scala_type_pattern_erasure",
-      "tags": ["scala", "pattern", "type", "erasure"]
+      "tags": [
+        "scala",
+        "pattern",
+        "type",
+        "erasure"
+      ],
+      "description": "Scala Type Pattern Erasure"
     },
     {
       "id": "scala_sequence_pattern_error",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Use _* for sequence patterns and ensure it's the last element",
       "root_cause": "scala_sequence_pattern",
-      "tags": ["scala", "pattern", "sequence", "varargs"]
+      "tags": [
+        "scala",
+        "pattern",
+        "sequence",
+        "varargs"
+      ],
+      "description": "Scala Sequence Pattern"
     },
     {
       "id": "scala_pattern_match_unreachable",
@@ -84,7 +121,13 @@
       "severity": "low",
       "suggestion": "Remove or reorder cases - more specific patterns should come before general ones",
       "root_cause": "scala_pattern_unreachable",
-      "tags": ["scala", "pattern", "unreachable", "dead_code"]
+      "tags": [
+        "scala",
+        "pattern",
+        "unreachable",
+        "dead_code"
+      ],
+      "description": "Scala Pattern Match Unreachable"
     },
     {
       "id": "scala_for_comprehension_pattern",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Patterns in for-comprehensions must match or use guards to filter",
       "root_cause": "scala_for_pattern_mismatch",
-      "tags": ["scala", "pattern", "for_comprehension", "generator"]
+      "tags": [
+        "scala",
+        "pattern",
+        "for_comprehension",
+        "generator"
+      ],
+      "description": "Scala For Comprehension Pattern"
     },
     {
       "id": "scala_custom_extractor_exception",
@@ -108,7 +157,13 @@
       "severity": "high",
       "suggestion": "Extractors should not throw exceptions. Return None for non-matching cases",
       "root_cause": "scala_extractor_exception",
-      "tags": ["scala", "pattern", "extractor", "exception"]
+      "tags": [
+        "scala",
+        "pattern",
+        "extractor",
+        "exception"
+      ],
+      "description": "Scala Custom Extractor Exception"
     },
     {
       "id": "scala_pattern_alternative_type",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Pattern alternatives (|) must bind variables of the same type",
       "root_cause": "scala_pattern_alternative_type",
-      "tags": ["scala", "pattern", "alternative", "type"]
+      "tags": [
+        "scala",
+        "pattern",
+        "alternative",
+        "type"
+      ],
+      "description": "Scala Pattern Alternative Type"
     },
     {
       "id": "scala_pattern_binder_arity",
@@ -132,7 +193,13 @@
       "severity": "medium",
       "suggestion": "Pattern binders (@) must match the arity of the pattern",
       "root_cause": "scala_pattern_binder_arity",
-      "tags": ["scala", "pattern", "binder", "arity"]
+      "tags": [
+        "scala",
+        "pattern",
+        "binder",
+        "arity"
+      ],
+      "description": "Scala Pattern Binder Arity"
     },
     {
       "id": "scala_stable_identifier_pattern",
@@ -144,7 +211,13 @@
       "severity": "low",
       "suggestion": "Use backticks for stable identifiers or uppercase for constants in patterns",
       "root_cause": "scala_pattern_stable_id",
-      "tags": ["scala", "pattern", "identifier", "stable"]
+      "tags": [
+        "scala",
+        "pattern",
+        "identifier",
+        "stable"
+      ],
+      "description": "Scala Stable Identifier Pattern"
     },
     {
       "id": "scala_irrefutable_pattern_expected",
@@ -156,7 +229,13 @@
       "severity": "medium",
       "suggestion": "Val/var definitions require irrefutable patterns (always match)",
       "root_cause": "scala_pattern_refutable",
-      "tags": ["scala", "pattern", "irrefutable", "val"]
+      "tags": [
+        "scala",
+        "pattern",
+        "irrefutable",
+        "val"
+      ],
+      "description": "Scala Irrefutable Pattern Expected"
     },
     {
       "id": "scala_pattern_match_analysis_warning",
@@ -168,7 +247,13 @@
       "severity": "medium",
       "suggestion": "Consider all possible inputs including edge cases and null values",
       "root_cause": "scala_pattern_analysis",
-      "tags": ["scala", "pattern", "analysis", "warning"]
+      "tags": [
+        "scala",
+        "pattern",
+        "analysis",
+        "warning"
+      ],
+      "description": "Scala Pattern Match Analysis Warning"
     },
     {
       "id": "scala_gadt_pattern_type_refinement",
@@ -180,7 +265,13 @@
       "severity": "low",
       "suggestion": "GADT patterns can refine types in match branches",
       "root_cause": "scala_gadt_pattern",
-      "tags": ["scala", "pattern", "gadt", "refinement"]
+      "tags": [
+        "scala",
+        "pattern",
+        "gadt",
+        "refinement"
+      ],
+      "description": "Scala Gadt Pattern Type Refinement"
     }
   ]
 }

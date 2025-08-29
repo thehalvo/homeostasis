@@ -23,10 +23,16 @@
         "Install in Vue app: app.use(store)",
         "Check store configuration and export"
       ],
-      "tags": ["vue", "vuex", "store", "import"],
+      "tags": [
+        "vue",
+        "vuex",
+        "store",
+        "import"
+      ],
       "examples": [
         "ReferenceError: store is not defined"
-      ]
+      ],
+      "description": "Vuex Store Not Defined"
     },
     {
       "id": "vuex_mutation_not_found",
@@ -44,10 +50,16 @@
         "Ensure proper mutation export",
         "Verify module namespace if using modules"
       ],
-      "tags": ["vue", "vuex", "mutations", "undefined"],
+      "tags": [
+        "vue",
+        "vuex",
+        "mutations",
+        "undefined"
+      ],
       "examples": [
         "unknown mutation type: INCREMENT_COUNTER"
-      ]
+      ],
+      "description": "Vuex Mutation Not Found"
     },
     {
       "id": "vuex_action_not_found",
@@ -65,10 +77,16 @@
         "Ensure proper action export",
         "Verify module namespace if using modules"
       ],
-      "tags": ["vue", "vuex", "actions", "undefined"],
+      "tags": [
+        "vue",
+        "vuex",
+        "actions",
+        "undefined"
+      ],
       "examples": [
         "unknown action type: fetchUserData"
-      ]
+      ],
+      "description": "Vuex Action Not Found"
     },
     {
       "id": "vuex_direct_state_mutation",
@@ -85,10 +103,16 @@
         "Create mutations for state modifications",
         "Use this.$store.commit('mutationName', payload)"
       ],
-      "tags": ["vue", "vuex", "mutations", "state"],
+      "tags": [
+        "vue",
+        "vuex",
+        "mutations",
+        "state"
+      ],
       "examples": [
         "Do not mutate vuex store state outside mutation handlers"
-      ]
+      ],
+      "description": "Vuex Direct State Mutation"
     },
     {
       "id": "vuex_module_not_found",
@@ -106,10 +130,16 @@
         "Ensure proper module export",
         "Verify module structure"
       ],
-      "tags": ["vue", "vuex", "modules", "registration"],
+      "tags": [
+        "vue",
+        "vuex",
+        "modules",
+        "registration"
+      ],
       "examples": [
         "unknown module: user"
-      ]
+      ],
+      "description": "Vuex Module Not Found"
     },
     {
       "id": "vuex_getter_not_found",
@@ -127,10 +157,16 @@
         "Ensure proper getter function definition",
         "Verify module namespace if using modules"
       ],
-      "tags": ["vue", "vuex", "getters", "undefined"],
+      "tags": [
+        "vue",
+        "vuex",
+        "getters",
+        "undefined"
+      ],
       "examples": [
         "unknown getter: getUserById"
-      ]
+      ],
+      "description": "Vuex Getter Not Found"
     },
     {
       "id": "vuex_async_mutation",
@@ -148,10 +184,16 @@
         "Keep mutations synchronous",
         "Use async/await in actions, not mutations"
       ],
-      "tags": ["vue", "vuex", "mutations", "async"],
+      "tags": [
+        "vue",
+        "vuex",
+        "mutations",
+        "async"
+      ],
       "examples": [
         "Mutations should be synchronous"
-      ]
+      ],
+      "description": "Vuex Async Mutation"
     },
     {
       "id": "vuex_mapstate_error",
@@ -169,10 +211,16 @@
         "Verify module namespace",
         "Use computed property syntax"
       ],
-      "tags": ["vue", "vuex", "mapstate", "helpers"],
+      "tags": [
+        "vue",
+        "vuex",
+        "mapstate",
+        "helpers"
+      ],
       "examples": [
         "mapState error: property not found"
-      ]
+      ],
+      "description": "Vuex Mapstate"
     },
     {
       "id": "vuex_namespace_error",
@@ -190,10 +238,16 @@
         "Check module registration",
         "Use namespace helpers correctly"
       ],
-      "tags": ["vue", "vuex", "namespace", "modules"],
+      "tags": [
+        "vue",
+        "vuex",
+        "namespace",
+        "modules"
+      ],
       "examples": [
         "Module namespace 'user/' not found"
-      ]
+      ],
+      "description": "Vuex Namespace"
     },
     {
       "id": "vuex_payload_error",
@@ -211,10 +265,17 @@
         "Check payload structure",
         "Use payload destructuring carefully"
       ],
-      "tags": ["vue", "vuex", "payload", "validation"],
+      "tags": [
+        "vue",
+        "vuex",
+        "payload",
+        "validation"
+      ],
       "examples": [
         "Payload is required for this mutation"
-      ]
+      ],
+      "description": "Vuex Payload"
     }
-  ]
+  ],
+  "name": "Vue Vuex Errors"
 }

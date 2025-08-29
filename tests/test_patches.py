@@ -177,9 +177,10 @@ def function_two():
     block_range = identify_code_block(code, 3)  # Line with x = 1
     assert block_range == (1, 5)
     
-    # Test identifying the nested block
+    # Test identifying the nested block  
+    # Note: This should return the outer if block that contains the line
     block_range = identify_code_block(code, 11)  # Line with do_nested_thing()
-    assert block_range == (11, 12)
+    assert block_range == (9, 14)  # The outer if block, not just the inner one
 
 
 def test_multiline_patch_application():

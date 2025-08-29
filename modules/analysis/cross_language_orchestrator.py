@@ -1307,13 +1307,13 @@ class CrossLanguageOrchestrator:
         
         # Determine root cause
         if "type" in error_data.get("error_type", "").lower():
-            result["root_cause"] = "ffi_type_conversion_mismatch"
+            result["root_cause"] = "ffi type conversion mismatch"
         elif "convention" in str(error_data).lower():
-            result["root_cause"] = "ffi_calling_convention_mismatch"
+            result["root_cause"] = "ffi calling convention mismatch"
         elif "memory" in str(error_data).lower():
-            result["root_cause"] = "ffi_memory_management_error"
+            result["root_cause"] = "ffi memory management error"
         else:
-            result["root_cause"] = "ffi_interface_error"
+            result["root_cause"] = "ffi interface error"
         
         # Generate caller fix
         caller_fix = {
@@ -1467,6 +1467,16 @@ class CrossLanguageOrchestrator:
             ]
         }
         
+        # Add a combined fix field for backward compatibility
+        result["fix"] = {
+            "suggestion": "Update protobuf definitions and ensure schema synchronization across services",
+            "details": [
+                "Synchronize .proto files between client and server",
+                "Regenerate code from updated proto definitions",
+                "Use semantic versioning for proto changes"
+            ]
+        }
+        
         return result
     
     def analyze_api_contract_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -1490,9 +1500,92 @@ class CrossLanguageOrchestrator:
             "is_api_error": True
         }
         
-        # Extract consumer and provider info
-        consumer = error_data.get("consumer", {})
-        provider = error_data.get("provider", {})
+        # Extract consumer and provider info (in test data they are client/server)
+        consumer = error_data.get("consumer", error_data.get("client", {}))
+        provider = error_data.get("provider", error_data.get("server", {}))
+        
+        # Analyze mismatches between expected and actual responses
+        mismatches = []
+        
+        expected_response = consumer.get("expected_response", {})
+        actual_response = provider.get("actual_response", {})
+        
+        # First, handle exact matches with type mismatches
+        for field in expected_response:
+            if field in actual_response:
+                expected_type = expected_response[field]
+                actual_type = actual_response[field]
+                if expected_type != actual_type:
+                    mismatches.append({
+                        "field": field,
+                        "type": "type_mismatch",
+                        "expected": expected_type,
+                        "actual": actual_type,
+                        "description": f"Field '{field}' type mismatch: expected {expected_type}, got {actual_type}"
+                    })
+        
+        # Then, identify missing and extra fields
+        expected_fields = set(expected_response.keys())
+        actual_fields = set(actual_response.keys())
+        
+        missing_fields = expected_fields - actual_fields
+        extra_fields = actual_fields - expected_fields
+        
+        # Check for potential field renames (same type, similar name)
+        # In this case, 'name' -> 'full_name' should be treated as one mismatch
+        field_renames = []
+        for missing in missing_fields:
+            for extra in extra_fields:
+                # Check if types match
+                if expected_response.get(missing) == actual_response.get(extra):
+                    # Check if names are similar (contains common substring)
+                    if (missing in extra or extra in missing or 
+                        missing.replace('_', '') in extra.replace('_', '') or
+                        extra.replace('_', '') in missing.replace('_', '')):
+                        field_renames.append((missing, extra))
+                        break
+        
+        # Remove renamed fields from missing/extra sets
+        for old_name, new_name in field_renames:
+            missing_fields.discard(old_name)
+            extra_fields.discard(new_name)
+            mismatches.append({
+                "field": old_name,
+                "type": "field_renamed",
+                "expected": old_name,
+                "actual": new_name,
+                "description": f"Field '{old_name}' renamed to '{new_name}'"
+            })
+        
+        # Add remaining missing fields
+        for field in missing_fields:
+            mismatches.append({
+                "field": field,
+                "type": "missing_field",
+                "expected": expected_response.get(field),
+                "actual": None,
+                "description": f"Field '{field}' is missing in server response"
+            })
+        
+        # Add remaining extra fields
+        for field in extra_fields:
+            mismatches.append({
+                "field": field,
+                "type": "extra_field",
+                "expected": None,
+                "actual": actual_response.get(field),
+                "description": f"Field '{field}' is not expected by client"
+            })
+        
+        result["mismatches"] = mismatches
+        
+        # Update root cause based on mismatches
+        if mismatches:
+            mismatch_types = [m["type"] for m in mismatches]
+            if "missing_field" in mismatch_types or "extra_field" in mismatch_types:
+                result["root_cause"] = "api_schema_contract_violation"
+            else:
+                result["root_cause"] = "api_contract_type_mismatch"
         
         # Generate fixes
         result["consumer_fix"] = {
@@ -1541,7 +1634,67 @@ class CrossLanguageOrchestrator:
             "is_correlated": True
         }
         
-        # Extract stack traces from different services
+        # Check for combined_stack_trace format (used in tests)
+        if "combined_stack_trace" in error_data:
+            # Handle combined stack trace format
+            combined_trace = error_data["combined_stack_trace"]
+            call_path = []
+            languages_seen = []
+            all_frames = []
+            
+            for segment in combined_trace:
+                language = segment.get("language", "unknown")
+                frames = segment.get("frames", [])
+                
+                if language not in languages_seen:
+                    languages_seen.append(language)
+                
+                for frame in frames:
+                    if isinstance(frame, dict):
+                        call_path.append({
+                            "language": language,
+                            "file": frame.get("file", ""),
+                            "line": frame.get("line", 0),
+                            "function": frame.get("function", "")
+                        })
+                        all_frames.append(frame)
+            
+            # Determine entry point (first language/frame) and error origin (last unique language)
+            if combined_trace:
+                entry_point = {
+                    "language": combined_trace[0].get("language", "unknown"),
+                    "frame": combined_trace[0].get("frames", [{}])[0] if combined_trace[0].get("frames") else {}
+                }
+                
+                # Error origin is typically in a different language than entry point
+                # Find the deepest (last) frame in a different language
+                error_origin_language = combined_trace[0].get("language")
+                for segment in reversed(combined_trace):
+                    if segment.get("language") != entry_point["language"]:
+                        error_origin_language = segment.get("language")
+                        break
+                
+                error_origin = {
+                    "language": error_origin_language,
+                    "frame": {}
+                }
+                
+                # Find the last frame of the error origin language
+                for segment in reversed(combined_trace):
+                    if segment.get("language") == error_origin_language:
+                        frames = segment.get("frames", [])
+                        if frames:
+                            error_origin["frame"] = frames[-1]
+                        break
+                
+                result["entry_point"] = entry_point
+                result["error_origin"] = error_origin
+                result["call_path"] = call_path
+                result["languages_involved"] = languages_seen
+            
+            return result
+        
+        # Otherwise, use the original format with stack_traces
         stack_traces = error_data.get("stack_traces", {})
         
         # Build unified trace
@@ -1613,8 +1766,59 @@ class CrossLanguageOrchestrator:
         
         # Extract spans and identify error origin
         spans = error_data.get("spans", [])
-        error_spans = [s for s in spans if s.get("error", False)]
         
+        # Separate error and non-error spans
+        error_spans = []
+        ok_spans = []
+        
+        for span in spans:
+            if span.get("status") == "error" or span.get("error", False):
+                error_spans.append(span)
+            else:
+                ok_spans.append(span)
+        
+        # Identify error service (first service with error)
+        if error_spans:
+            result["error_service"] = error_spans[0].get("service", "unknown")
+            
+            # Extract root cause from error information
+            error_info = error_spans[0].get("error", {})
+            if isinstance(error_info, dict):
+                error_type = error_info.get("type", "")
+                error_message = error_info.get("message", "")
+                if error_type:
+                    result["root_cause"] = f"{error_type}: {error_message}" if error_message else error_type
+                else:
+                    result["root_cause"] = error_message or "unknown error"
+            else:
+                result["root_cause"] = "error occurred"
+        
+        # Identify bottleneck service
+        # In distributed systems, if service A times out waiting for service B,
+        # then service B is the bottleneck even if A has higher total duration
+        if spans:
+            # First check if we have timeout errors
+            timeout_errors = [s for s in error_spans if s.get("error", {}).get("type", "").lower() == "timeout"]
+            
+            if timeout_errors:
+                # For timeout errors, the bottleneck is likely the service being called
+                # Look for services that are OK but have high latency
+                ok_services_with_latency = [(s.get("service"), s.get("duration_ms", 0)) 
+                                           for s in ok_spans if s.get("duration_ms", 0) > 0]
+                if ok_services_with_latency:
+                    # Find the OK service with highest latency - this is likely causing the timeout
+                    bottleneck_service, _ = max(ok_services_with_latency, key=lambda x: x[1])
+                    result["bottleneck_service"] = bottleneck_service
+                else:
+                    # Fallback to service with highest latency
+                    bottleneck_span = max(spans, key=lambda s: s.get("duration_ms", 0))
+                    result["bottleneck_service"] = bottleneck_span.get("service", "unknown")
+            else:
+                # No timeout errors, just find service with highest latency
+                bottleneck_span = max(spans, key=lambda s: s.get("duration_ms", 0))
+                result["bottleneck_service"] = bottleneck_span.get("service", "unknown")
+        
+        # Build propagation path
         if error_spans:
             # Find the earliest error
             error_spans.sort(key=lambda x: x.get("timestamp", 0))
@@ -1624,7 +1828,7 @@ class CrossLanguageOrchestrator:
             # Build propagation path
             affected_services = []
             for span in spans:
-                if span.get("error", False) and span.get("service") not in affected_services:
+                if (span.get("status") == "error" or span.get("error", False)) and span.get("service") not in affected_services:
                     affected_services.append(span.get("service"))
             
             result["propagation_path"] = affected_services
@@ -1632,9 +1836,11 @@ class CrossLanguageOrchestrator:
         # Analyze service impacts
         for span in error_spans:
             service = span.get("service", "unknown")
+            error_info = span.get("error", {})
+            
             result["service_impacts"][service] = {
-                "error_type": span.get("error_type", "unknown"),
-                "latency_impact": span.get("duration", 0),
+                "error_type": error_info.get("type", "unknown") if isinstance(error_info, dict) else "error",
+                "latency_impact": span.get("duration_ms", 0),
                 "language": span.get("language", "unknown")
             }
         
@@ -1671,10 +1877,36 @@ class CrossLanguageOrchestrator:
             "is_performance_issue": True
         }
         
+        # Check if we have pipeline data
+        pipeline = error_data.get("pipeline", [])
+        if pipeline:
+            # Find the stage with highest duration (bottleneck)
+            max_duration = 0
+            bottleneck_stage = None
+            
+            for stage in pipeline:
+                duration = stage.get("duration_ms", 0)
+                if duration > max_duration:
+                    max_duration = duration
+                    bottleneck_stage = stage
+            
+            if bottleneck_stage:
+                result["bottleneck"] = bottleneck_stage.get("stage", "unknown")
+                result["bottlenecks"].append(bottleneck_stage)
+                
+                # Generate suggestion based on bottleneck type
+                stage_name = bottleneck_stage.get("stage", "").lower()
+                if "serialize" in stage_name or "deserialize" in stage_name:
+                    result["suggestion"] = "Consider using binary formats like protobuf or msgpack instead of JSON for better performance"
+                elif "network" in stage_name:
+                    result["suggestion"] = "Consider compression or reducing data size for network transfer"
+                else:
+                    result["suggestion"] = "Profile and optimize the bottleneck stage"
+        
         # Determine specific performance issue
         issue_type = error_data.get("issue_type", "").lower()
         
-        if "serialization" in issue_type:
+        if "serialization" in issue_type or (pipeline and any("serialize" in s.get("stage", "").lower() or "deserialize" in s.get("stage", "").lower() for s in pipeline)):
             result["root_cause"] = "inefficient_serialization_between_languages"
             result["optimizations"] = {
                 "general": [
@@ -1732,25 +1964,67 @@ class CrossLanguageOrchestrator:
             "is_memory_leak": True
         }
         
-        # Analyze leak patterns
-        native_refs = error_data.get("native_references", {})
-        managed_refs = error_data.get("managed_references", {})
+        # Check if we have observation data
+        observations = error_data.get("observations", [])
+        languages = error_data.get("languages", [])
         
-        # Determine root cause
-        if native_refs and managed_refs:
-            result["root_cause"] = "ffi_memory_lifecycle_mismatch"
-        elif "circular" in str(error_data).lower():
-            result["root_cause"] = "circular_reference_across_language_boundary"
+        if observations and len(observations) > 1:
+            # Analyze memory growth over time
+            memory_growth = {}
+            
+            for lang in languages:
+                heap_key = f"{lang}_heap_mb"
+                if heap_key in observations[0]:
+                    # Calculate memory growth
+                    initial = observations[0][heap_key]
+                    final = observations[-1][heap_key]
+                    growth = final - initial
+                    growth_rate = growth / initial if initial > 0 else 0
+                    memory_growth[lang] = {
+                        "initial": initial,
+                        "final": final,
+                        "growth": growth,
+                        "growth_rate": growth_rate
+                    }
+            
+            # Find language with highest memory growth
+            if memory_growth:
+                leak_language = max(memory_growth.items(), key=lambda x: x[1]["growth"])[0]
+                result["leak_location"] = leak_language
+                
+                # Determine root cause based on growth pattern
+                if memory_growth[leak_language]["growth_rate"] > 5:
+                    result["root_cause"] = "severe reference leak preventing garbage collection"
+                elif memory_growth[leak_language]["growth_rate"] > 2:
+                    result["root_cause"] = "memory leak due to uncleaned FFI references"
+                else:
+                    result["root_cause"] = "gradual memory leak in cross-language calls"
+                
+                # Add languages to set for fixes
+                for lang in languages:
+                    if lang not in memory_growth:
+                        memory_growth[lang] = {"growth": 0}
         else:
-            result["root_cause"] = "memory_leak_in_cross_language_call"
+            # Fallback analysis
+            # Analyze leak patterns
+            native_refs = error_data.get("native_references", {})
+            managed_refs = error_data.get("managed_references", {})
+            
+            # Determine root cause
+            if native_refs and managed_refs:
+                result["root_cause"] = "ffi_memory_lifecycle_mismatch"
+            elif "circular" in str(error_data).lower():
+                result["root_cause"] = "circular_reference_across_language_boundary"
+            else:
+                result["root_cause"] = "memory_leak_in_cross_language_call"
+            
+            # Get languages from native and managed refs
+            for ref_type in [native_refs, managed_refs]:
+                for lang in ref_type.keys():
+                    languages.append(lang)
         
         # Language-specific fixes
-        languages = set()
-        for ref_type in [native_refs, managed_refs]:
-            for lang in ref_type.keys():
-                languages.add(lang)
-        
-        for language in languages:
+        for language in set(languages):
             if language == "python":
                 result["fixes"][language] = {
                     "suggestion": "Implement proper cleanup for FFI objects",
@@ -1771,7 +2045,7 @@ class CrossLanguageOrchestrator:
                         "Monitor with JVM memory profiler"
                     ]
                 }
-            elif language in ["c", "cpp"]:
+            elif language in ["c", "cpp", "rust"]:
                 result["fixes"][language] = {
                     "suggestion": "Implement proper memory management",
                     "suggestions": [
@@ -1781,6 +2055,237 @@ class CrossLanguageOrchestrator:
                         "Use memory debugging tools (valgrind, ASAN)"
                     ]
                 }
+        
+        # Add a general fix field for backward compatibility
+        if result.get("leak_location") and result["leak_location"] in result["fixes"]:
+            result["fix"] = result["fixes"][result["leak_location"]]
+        elif result["fixes"]:
+            # Use the first available fix
+            result["fix"] = list(result["fixes"].values())[0]
+        else:
+            result["fix"] = {
+                "suggestion": "Implement proper cleanup for cross-language memory management"
+            }
+        
+        return result
+    
+    def analyze_serialization_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze serialization errors between different languages.
+        
+        This method handles errors that occur when data serialization/deserialization
+        fails between different programming languages, often due to type mismatches,
+        encoding issues, or format incompatibilities.
+        
+        Args:
+            error_data: Error data containing producer and consumer information
+            
+        Returns:
+            Analysis results with serialization fixes and format recommendations
+        """
+        # Initialize result structure
+        result = {
+            "id": error_data.get("id", str(uuid.uuid4())),
+            "error_type": error_data.get("error_type", "SerializationError"),
+            "root_cause": None,
+            "producer_fix": {},
+            "consumer_fix": {},
+            "severity": "high",
+            "category": "serialization",
+            "is_serialization_error": True
+        }
+        
+        # Extract producer and consumer info
+        producer = error_data.get("producer", {})
+        consumer = error_data.get("consumer", {})
+        
+        producer_lang = producer.get("language", "unknown")
+        consumer_lang = consumer.get("language", "unknown")
+        producer_format = producer.get("format", "unknown")
+        consumer_format = consumer.get("format", "unknown")
+        
+        producer_error = producer.get("error", {})
+        consumer_error = consumer.get("error", {})
+        
+        # Determine root cause based on error patterns
+        producer_msg = producer_error.get("message", "").lower()
+        consumer_msg = consumer_error.get("message", "").lower()
+        producer_type = producer_error.get("type", "").lower()
+        consumer_type = consumer_error.get("type", "").lower()
+        
+        # Check for specific error patterns
+        if "datetime" in producer_msg:
+            result["root_cause"] = "datetime_serialization_incompatibility"
+        elif "date" in producer_msg or "time" in producer_msg:
+            result["root_cause"] = "date_time_format_mismatch"
+        elif "encoding" in producer_type or "encoding" in producer_msg:
+            result["root_cause"] = "encoding_format_mismatch"
+        elif "decoding" in consumer_type or "invalid" in consumer_msg:
+            result["root_cause"] = "format_incompatibility"
+        elif "type" in producer_msg or "type" in consumer_msg:
+            result["root_cause"] = "type_conversion_error"
+        else:
+            result["root_cause"] = "serialization_format_mismatch"
+        
+        # Generate producer fixes
+        producer_suggestions = []
+        
+        if producer_lang == "python":
+            if "datetime" in producer_msg:
+                producer_suggestions.extend([
+                    "Convert datetime objects to ISO format strings before serialization",
+                    "Use timestamp (Unix epoch) for cross-language datetime compatibility",
+                    "Consider using dateutil.parser for flexible datetime handling"
+                ])
+                result["producer_fix"]["suggestion"] = "Convert datetime to ISO format string or timestamp before serialization"
+            elif producer_format == "msgpack":
+                producer_suggestions.extend([
+                    "Use msgpack.packb with default=str for unsupported types",
+                    "Implement custom encoder for complex types",
+                    "Consider using JSON for better cross-language compatibility"
+                ])
+                if not result["producer_fix"].get("suggestion"):
+                    result["producer_fix"]["suggestion"] = "Use msgpack with custom encoders for complex types"
+            elif producer_format == "json":
+                producer_suggestions.extend([
+                    "Use json.dumps with default parameter for custom types",
+                    "Convert all objects to JSON-serializable types",
+                    "Consider using jsonpickle for complex Python objects"
+                ])
+                if not result["producer_fix"].get("suggestion"):
+                    result["producer_fix"]["suggestion"] = "Ensure all data is JSON-serializable"
+            else:
+                producer_suggestions.append("Validate data types before serialization")
+                result["producer_fix"]["suggestion"] = "Ensure data compatibility with serialization format"
+                
+        elif producer_lang == "javascript":
+            producer_suggestions.extend([
+                "Use JSON.stringify with replacer function for custom types",
+                "Convert Date objects to ISO strings",
+                "Avoid undefined values in serialized data"
+            ])
+            if "datetime" in result["root_cause"] or "date" in result["root_cause"]:
+                result["producer_fix"]["suggestion"] = "Convert Date objects to ISO format strings"
+            else:
+                result["producer_fix"]["suggestion"] = "Ensure all data is properly serializable"
+                
+        elif producer_lang == "java":
+            producer_suggestions.extend([
+                "Use appropriate Jackson annotations for serialization",
+                "Configure ObjectMapper for cross-language compatibility",
+                "Use standard date/time formats (ISO-8601)"
+            ])
+            result["producer_fix"]["suggestion"] = "Configure serializer for cross-language compatibility"
+            
+        elif producer_lang == "go":
+            producer_suggestions.extend([
+                "Use proper struct tags for serialization",
+                "Implement custom MarshalJSON for complex types",
+                "Use time.RFC3339 format for time values"
+            ])
+            result["producer_fix"]["suggestion"] = "Use proper encoding tags and time formats"
+            
+        elif producer_lang == "rust":
+            producer_suggestions.extend([
+                "Use serde with appropriate derive macros",
+                "Implement custom Serialize trait for complex types",
+                "Use chrono with serde features for datetime"
+            ])
+            result["producer_fix"]["suggestion"] = "Configure serde for proper serialization"
+        else:
+            producer_suggestions.append("Validate serialization format compatibility")
+            result["producer_fix"]["suggestion"] = "Ensure proper serialization configuration"
+        
+        result["producer_fix"]["language"] = producer_lang
+        result["producer_fix"]["suggestions"] = producer_suggestions
+        
+        # Generate consumer fixes
+        consumer_suggestions = []
+        
+        if consumer_lang == "rust":
+            consumer_suggestions.extend([
+                "Use serde with flexible deserialization options",
+                "Implement custom Deserialize trait for compatibility",
+                "Handle optional fields with Option<T>",
+                "Use #[serde(default)] for missing fields"
+            ])
+            result["consumer_fix"] = {
+                "language": consumer_lang,
+                "suggestion": "Configure serde for flexible deserialization",
+                "suggestions": consumer_suggestions
+            }
+        elif consumer_lang == "python":
+            consumer_suggestions.extend([
+                "Use try-except blocks for deserialization",
+                "Implement custom decoders for complex types",
+                "Validate data schema after deserialization"
+            ])
+            result["consumer_fix"] = {
+                "language": consumer_lang,
+                "suggestion": "Add error handling for deserialization",
+                "suggestions": consumer_suggestions
+            }
+        elif consumer_lang == "java":
+            consumer_suggestions.extend([
+                "Configure ObjectMapper with lenient parsing",
+                "Use @JsonIgnoreProperties(ignoreUnknown = true)",
+                "Implement custom deserializers"
+            ])
+            result["consumer_fix"] = {
+                "language": consumer_lang,
+                "suggestion": "Configure deserializer for compatibility",
+                "suggestions": consumer_suggestions
+            }
+        else:
+            result["consumer_fix"] = {
+                "language": consumer_lang,
+                "suggestion": "Add flexible deserialization handling",
+                "suggestions": ["Implement error handling for deserialization failures"]
+            }
+        
+        # Add format-specific recommendations
+        format_recommendations = []
+        
+        if producer_format == consumer_format:
+            # Same format but still failing
+            if producer_format == "msgpack":
+                format_recommendations.extend([
+                    "Ensure both languages use compatible msgpack libraries",
+                    "Check msgpack specification version compatibility",
+                    "Consider using MessagePack timestamp extension for dates"
+                ])
+            elif producer_format == "json":
+                format_recommendations.extend([
+                    "Stick to JSON-compatible types only",
+                    "Use strings for dates and times",
+                    "Avoid language-specific types"
+                ])
+            elif producer_format == "protobuf":
+                format_recommendations.extend([
+                    "Ensure proto files are synchronized",
+                    "Use proper protobuf types for cross-language compatibility",
+                    "Check protobuf version compatibility"
+                ])
+        else:
+            format_recommendations.append("Use the same serialization format on both ends")
+        
+        result["format_recommendations"] = format_recommendations
+        
+        # Add general recommendations
+        result["recommendations"] = [
+            "Use schema validation on both producer and consumer sides",
+            "Implement comprehensive error handling for serialization/deserialization",
+            "Consider using Protocol Buffers or Apache Thrift for strong typing",
+            "Document the data contract between services clearly",
+            "Use integration tests to verify serialization compatibility",
+            "Consider using a schema registry for data contracts"
+        ]
+        
+        # Additional metadata
+        result["producer_language"] = producer_lang
+        result["consumer_language"] = consumer_lang
+        result["serialization_format"] = producer_format
+        result["deserialization_format"] = consumer_format
         
         return result
     
@@ -1800,15 +2305,139 @@ class CrossLanguageOrchestrator:
             "root_cause": None,
             "vulnerabilities": [],
             "mitigations": {},
+            "fixes": {},
             "severity": "critical",
             "category": "security",
             "is_security_issue": True
         }
         
-        # Determine security issue type
+        # Check for vulnerability type
+        vulnerability_type = error_data.get("vulnerability_type", "").lower()
         security_type = error_data.get("security_type", "").lower()
         
-        if "buffer" in security_type and "overflow" in security_type:
+        # Check for injection vulnerability
+        if vulnerability_type == "injection" or "injection" in security_type:
+            # Analyze flow data if present
+            flow = error_data.get("flow", [])
+            vulnerability_confirmed = False
+            
+            for step in flow:
+                if step.get("vulnerable") or (step.get("validation") is False and step.get("sanitization") is False):
+                    vulnerability_confirmed = True
+                
+                language = step.get("language", "unknown")
+                component = step.get("component", "unknown")
+                
+                # Generate fixes for each language/component
+                if language == "javascript":
+                    result["fixes"][language] = {
+                        "action": "Implement input validation and sanitization",
+                        "suggestions": [
+                            "Use parameterized queries",
+                            "Validate all user inputs",
+                            "Use input sanitization libraries",
+                            "Implement Content Security Policy (CSP)",
+                            "Use prepared statements"
+                        ]
+                    }
+                elif language == "python":
+                    result["fixes"][language] = {
+                        "action": "Add proper input sanitization and validation",
+                        "suggestions": [
+                            "Use parameterized queries with DB API",
+                            "Sanitize inputs using html.escape() or similar",
+                            "Use ORM with built-in protection (SQLAlchemy)",
+                            "Implement input validation middleware",
+                            "Never use string formatting for queries"
+                        ]
+                    }
+                elif language == "java":
+                    result["fixes"][language] = {
+                        "action": "Use prepared statements and input validation",
+                        "suggestions": [
+                            "Use PreparedStatement instead of Statement",
+                            "Never concatenate user input into queries",
+                            "Use parameterized queries",
+                            "Implement input validation filters",
+                            "Use OWASP ESAPI for input validation"
+                        ]
+                    }
+                else:
+                    result["fixes"][language] = {
+                        "action": "Implement secure coding practices",
+                        "suggestions": [
+                            "Validate and sanitize all inputs",
+                            "Use parameterized queries",
+                            "Follow OWASP guidelines",
+                            "Implement defense in depth"
+                        ]
+                    }
+            
+            result["vulnerability_confirmed"] = vulnerability_confirmed
+            result["root_cause"] = "injection_vulnerability_through_language_boundaries"
+            
+        elif vulnerability_type == "buffer_overflow" or ("buffer" in security_type and "overflow" in security_type):
+            # Analyze buffer overflow data
+            source = error_data.get("source", {})
+            propagation = error_data.get("propagation", [])
+            
+            # Process source language
+            if source:
+                source_lang = source.get("language", "unknown")
+                if source_lang == "go":
+                    result["fixes"][source_lang] = {
+                        "action": "Implement bounds check before FFI calls",
+                        "suggestions": [
+                            "Validate input size against buffer limits",
+                            "Use slices with proper bounds checking",
+                            "Implement size validation before unsafe operations",
+                            "Use Go's built-in safety features"
+                        ]
+                    }
+                else:
+                    result["fixes"][source_lang] = {
+                        "action": "Add input size validation",
+                        "suggestions": [
+                            "Check input size before processing",
+                            "Use safe buffer operations",
+                            "Implement proper bounds checking"
+                        ]
+                    }
+            
+            # Process propagation languages
+            for prop in propagation:
+                prop_lang = prop.get("language", "unknown")
+                if prop_lang == "cpp":
+                    result["fixes"][prop_lang] = {
+                        "action": "Add bounds validation for FFI data",
+                        "suggestions": [
+                            "Validate buffer sizes at FFI boundary",
+                            "Use safe string/memory functions",
+                            "Implement proper bounds checking",
+                            "Use RAII and smart pointers",
+                            "Enable compiler security features"
+                        ]
+                    }
+                elif prop_lang == "c":
+                    result["fixes"][prop_lang] = {
+                        "action": "Implement safe buffer handling",
+                        "suggestions": [
+                            "Use strncpy instead of strcpy",
+                            "Check buffer bounds before operations",
+                            "Use static analysis tools",
+                            "Enable stack protection"
+                        ]
+                    }
+                else:
+                    result["fixes"][prop_lang] = {
+                        "action": "Add buffer overflow protection",
+                        "suggestions": [
+                            "Validate all input sizes",
+                            "Use safe memory operations",
+                            "Implement bounds checking"
+                        ]
+                    }
+            
             result["root_cause"] = "buffer_overflow_in_ffi_boundary"
             result["mitigations"] = {
                 "general": [

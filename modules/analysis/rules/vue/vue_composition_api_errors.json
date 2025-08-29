@@ -23,10 +23,16 @@
         "Use ref() to create reactive references",
         "Access ref values with .value"
       ],
-      "tags": ["vue", "composition-api", "ref", "import"],
+      "tags": [
+        "vue",
+        "composition-api",
+        "ref",
+        "import"
+      ],
       "examples": [
         "ReferenceError: ref is not defined"
-      ]
+      ],
+      "description": "Vue Composition Ref Not Defined"
     },
     {
       "id": "vue_composition_computed_not_defined",
@@ -43,10 +49,16 @@
         "Use computed() for derived reactive state",
         "Access computed values with .value"
       ],
-      "tags": ["vue", "composition-api", "computed", "import"],
+      "tags": [
+        "vue",
+        "composition-api",
+        "computed",
+        "import"
+      ],
       "examples": [
         "ReferenceError: computed is not defined"
-      ]
+      ],
+      "description": "Vue Composition Computed Not Defined"
     },
     {
       "id": "vue_composition_watch_not_defined",
@@ -63,10 +75,16 @@
         "Use watch() to observe reactive changes",
         "Provide source and callback function"
       ],
-      "tags": ["vue", "composition-api", "watch", "import"],
+      "tags": [
+        "vue",
+        "composition-api",
+        "watch",
+        "import"
+      ],
       "examples": [
         "ReferenceError: watch is not defined"
-      ]
+      ],
+      "description": "Vue Composition Watch Not Defined"
     },
     {
       "id": "vue_composition_reactive_not_defined",
@@ -83,10 +101,16 @@
         "Use reactive() for complex objects",
         "Access reactive properties directly (no .value)"
       ],
-      "tags": ["vue", "composition-api", "reactive", "import"],
+      "tags": [
+        "vue",
+        "composition-api",
+        "reactive",
+        "import"
+      ],
       "examples": [
         "ReferenceError: reactive is not defined"
-      ]
+      ],
+      "description": "Vue Composition Reactive Not Defined"
     },
     {
       "id": "vue_composition_lifecycle_not_defined",
@@ -103,10 +127,16 @@
         "Use lifecycle hooks inside setup() function",
         "Provide callback functions to lifecycle hooks"
       ],
-      "tags": ["vue", "composition-api", "lifecycle", "import"],
+      "tags": [
+        "vue",
+        "composition-api",
+        "lifecycle",
+        "import"
+      ],
       "examples": [
         "ReferenceError: onMounted is not defined"
-      ]
+      ],
+      "description": "Vue Composition Lifecycle Not Defined"
     },
     {
       "id": "vue_composition_setup_return_error",
@@ -123,10 +153,16 @@
         "Include reactive data and methods in the return object",
         "Use proper object shorthand syntax"
       ],
-      "tags": ["vue", "composition-api", "setup", "return"],
+      "tags": [
+        "vue",
+        "composition-api",
+        "setup",
+        "return"
+      ],
       "examples": [
         "setup() function must return an object"
-      ]
+      ],
+      "description": "Vue Composition Setup Return"
     },
     {
       "id": "vue_composition_ref_access_before_init",
@@ -143,10 +179,16 @@
         "Initialize refs with default values",
         "Move ref definitions to the top of setup()"
       ],
-      "tags": ["vue", "composition-api", "ref", "initialization"],
+      "tags": [
+        "vue",
+        "composition-api",
+        "ref",
+        "initialization"
+      ],
       "examples": [
         "Cannot access 'count' before initialization"
-      ]
+      ],
+      "description": "Vue Composition Ref Access Before Init"
     },
     {
       "id": "vue_composition_ref_value_access",
@@ -163,10 +205,16 @@
         "Use myRef directly in templates",
         "Check if ref is properly initialized"
       ],
-      "tags": ["vue", "composition-api", "ref", "value"],
+      "tags": [
+        "vue",
+        "composition-api",
+        "ref",
+        "value"
+      ],
       "examples": [
         "Cannot read property 'value' of undefined"
-      ]
+      ],
+      "description": "Vue Composition Ref Value Access"
     },
     {
       "id": "vue_composition_watch_invalid_source",
@@ -183,10 +231,16 @@
         "Wrap complex expressions in getter functions",
         "Provide valid callback function"
       ],
-      "tags": ["vue", "composition-api", "watch", "source"],
+      "tags": [
+        "vue",
+        "composition-api",
+        "watch",
+        "source"
+      ],
       "examples": [
         "watch() expects a getter function or ref as source"
-      ]
+      ],
+      "description": "Vue Composition Watch Invalid Source"
     },
     {
       "id": "vue_composition_computed_readonly",
@@ -203,10 +257,17 @@
         "Create writable computed with get/set",
         "Don't assign to computed properties directly"
       ],
-      "tags": ["vue", "composition-api", "computed", "readonly"],
+      "tags": [
+        "vue",
+        "composition-api",
+        "computed",
+        "readonly"
+      ],
       "examples": [
         "Cannot assign to read only property of computed"
-      ]
+      ],
+      "description": "Vue Composition Computed Readonly"
     }
-  ]
+  ],
+  "name": "Vue Composition Api Errors"
 }

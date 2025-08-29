@@ -1,4 +1,5 @@
 {
+  "name": "Go Framework Errors",
   "description": "Go web framework (Gin, Echo) specific error patterns",
   "version": "0.1.0",
   "rules": [

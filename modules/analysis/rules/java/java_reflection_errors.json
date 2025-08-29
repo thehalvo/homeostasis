@@ -1,4 +1,5 @@
 {
+  "name": "Java Java Reflection Errors",
   "description": "Java reflection API error detection rules for runtime type introspection and manipulation",
   "version": "1.0.0",
   "rules": [

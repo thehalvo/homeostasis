@@ -1,4 +1,5 @@
 {
+  "name": "C# Csharp Delegates Errors",
   "description": "C# delegates, events, and functional programming error detection rules",
   "version": "1.0.0",
   "rules": [

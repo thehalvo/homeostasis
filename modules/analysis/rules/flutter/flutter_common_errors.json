@@ -1,4 +1,5 @@
 {
+  "name": "Flutter Flutter Common Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "flutter",
@@ -22,12 +23,18 @@
         "Replace Row/Column with Wrap for wrapping behavior",
         "Set overflow property in Text widget"
       ],
-      "tags": ["flutter", "layout", "renderbox", "overflow"],
+      "tags": [
+        "flutter",
+        "layout",
+        "renderbox",
+        "overflow"
+      ],
       "examples": [
         "Row with too many children",
         "Text widget with long content",
         "Column height exceeding screen"
-      ]
+      ],
+      "description": "Flutter Renderbox Overflow"
     },
     {
       "id": "flutter_null_check_operator",
@@ -45,11 +52,17 @@
         "Initialize variables properly",
         "Use late keyword for delayed initialization"
       ],
-      "tags": ["flutter", "dart", "null-safety", "runtime"],
+      "tags": [
+        "flutter",
+        "dart",
+        "null-safety",
+        "runtime"
+      ],
       "examples": [
         "Using ! operator on nullable variable",
         "Accessing property on null object"
-      ]
+      ],
+      "description": "Flutter Null Check Operator"
     },
     {
       "id": "flutter_setState_called_after_dispose",
@@ -67,11 +80,17 @@
         "Use StatefulWidget lifecycle properly",
         "Avoid async operations after dispose"
       ],
-      "tags": ["flutter", "lifecycle", "setState", "dispose"],
+      "tags": [
+        "flutter",
+        "lifecycle",
+        "setState",
+        "dispose"
+      ],
       "examples": [
         "Timer completing after widget disposal",
         "HTTP response completing after navigation"
-      ]
+      ],
+      "description": "Flutter Setstate Called After Dispose"
     },
     {
       "id": "flutter_missing_material_ancestor",
@@ -89,11 +108,17 @@
         "Use Material widget for custom designs",
         "Ensure proper widget tree structure"
       ],
-      "tags": ["flutter", "material", "scaffold", "widget-tree"],
+      "tags": [
+        "flutter",
+        "material",
+        "scaffold",
+        "widget-tree"
+      ],
       "examples": [
         "Using Material widgets without MaterialApp",
         "FloatingActionButton without Scaffold"
-      ]
+      ],
+      "description": "Flutter Missing Material Ancestor"
     },
     {
       "id": "flutter_unbounded_height",
@@ -111,11 +136,17 @@
         "Add SizedBox with fixed height",
         "Use Flexible with FlexFit.tight"
       ],
-      "tags": ["flutter", "layout", "constraints", "height"],
+      "tags": [
+        "flutter",
+        "layout",
+        "constraints",
+        "height"
+      ],
       "examples": [
         "ListView inside Column without Expanded",
         "GridView without height constraint"
-      ]
+      ],
+      "description": "Flutter Unbounded Height"
     },
     {
       "id": "flutter_late_initialization_error",
@@ -133,11 +164,17 @@
         "Use late final for immutable fields",
         "Add proper initialization logic"
       ],
-      "tags": ["flutter", "dart", "late", "initialization"],
+      "tags": [
+        "flutter",
+        "dart",
+        "late",
+        "initialization"
+      ],
       "examples": [
         "late field accessed before assignment",
         "Controller not initialized in initState"
-      ]
+      ],
+      "description": "Flutter Late Initialization"
     },
     {
       "id": "flutter_incorrect_use_of_parent_data",
@@ -155,11 +192,17 @@
         "Check parent-child widget compatibility",
         "Remove or relocate ParentDataWidget"
       ],
-      "tags": ["flutter", "widgets", "parent-data", "layout"],
+      "tags": [
+        "flutter",
+        "widgets",
+        "parent-data",
+        "layout"
+      ],
       "examples": [
         "Positioned widget outside Stack",
         "Flexible widget outside Row/Column"
-      ]
+      ],
+      "description": "Flutter Incorrect Use Of Parent Data"
     },
     {
       "id": "flutter_duplicate_global_key",
@@ -177,11 +220,17 @@
         "Use ValueKey or ObjectKey for list items",
         "Check key management in StatefulWidgets"
       ],
-      "tags": ["flutter", "widgets", "keys", "global-key"],
+      "tags": [
+        "flutter",
+        "widgets",
+        "keys",
+        "global-key"
+      ],
       "examples": [
         "Same GlobalKey used in multiple widgets",
         "Key reused in list items"
-      ]
+      ],
+      "description": "Flutter Duplicate Global Key"
     },
     {
       "id": "flutter_gesture_binding_not_initialized",
@@ -199,11 +248,17 @@
         "Use runApp() for proper Flutter initialization",
         "Check async operations in main()"
       ],
-      "tags": ["flutter", "binding", "initialization", "gestures"],
+      "tags": [
+        "flutter",
+        "binding",
+        "initialization",
+        "gestures"
+      ],
       "examples": [
         "Platform channel access before runApp",
         "Plugin initialization before binding"
-      ]
+      ],
+      "description": "Flutter Gesture Binding Not Initialized"
     },
     {
       "id": "flutter_invalid_image_data",
@@ -221,12 +276,18 @@
         "Use proper asset path syntax",
         "Handle network image loading errors"
       ],
-      "tags": ["flutter", "assets", "images", "loading"],
+      "tags": [
+        "flutter",
+        "assets",
+        "images",
+        "loading"
+      ],
       "examples": [
         "Missing asset declaration",
         "Incorrect image path",
         "Network connectivity issues"
-      ]
+      ],
+      "description": "Flutter Invalid Image Data"
     }
   ]
 }

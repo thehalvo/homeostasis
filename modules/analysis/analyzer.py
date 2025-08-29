@@ -148,9 +148,22 @@ class Analyzer:
         rule_analysis = self.rule_analyzer.analyze_error(error_data)
         rule_confidence = rule_analysis.get("confidence", "low")
         
-        # Convert string confidence to numeric for easier comparison
+        # Convert confidence to numeric for easier comparison
         confidence_map = {"high": 0.8, "medium": 0.5, "low": 0.3}
-        rule_confidence_score = confidence_map.get(rule_confidence, 0.3)
+        if isinstance(rule_confidence, (int, float)):
+            # Already numeric
+            rule_confidence_score = rule_confidence
+            # Determine string confidence based on numeric value
+            if rule_confidence >= 0.8:
+                rule_confidence_str = "high"
+            elif rule_confidence >= 0.5:
+                rule_confidence_str = "medium"
+            else:
+                rule_confidence_str = "low"
+        else:
+            # String confidence
+            rule_confidence_str = rule_confidence
+            rule_confidence_score = confidence_map.get(rule_confidence, 0.3)
         
         # If rule-based only, return rule analysis
         if self.strategy == AnalysisStrategy.RULE_BASED_ONLY or not self.ai_analyzer:
@@ -162,17 +175,17 @@ class Analyzer:
         
         # For other strategies, get AI analysis
         ai_analysis = self.ai_analyzer.analyze_error(error_data)
-        ai_confidence_score = ai_analysis.get("confidence", 0.0)
+        ai_confidence_score = ai_analysis.get("confidence", 0.0) if ai_analysis else 0.0
         
         # Apply the selected strategy
         if self.strategy == AnalysisStrategy.AI_FALLBACK:
             # Use AI analysis only when rule-based confidence is low
-            if rule_confidence == "low" and ai_confidence_score > 0.3:
+            if rule_confidence_str == "low" and ai_analysis and ai_confidence_score > 0.3:
                 return {
                     **ai_analysis,
                     "rule_analysis": rule_analysis,
                     "analysis_method": "ai_fallback",
-                    "rule_confidence": rule_confidence
+                    "rule_confidence": rule_confidence_str
                 }
             else:
                 return {
@@ -183,12 +196,12 @@ class Analyzer:
         
         elif self.strategy == AnalysisStrategy.AI_PRIMARY:
             # Use AI as primary method, fallback to rule-based if AI confidence is low
-            if ai_confidence_score >= 0.5:
+            if ai_analysis and ai_confidence_score >= 0.5:
                 return {
                     **ai_analysis,
                     "rule_analysis": rule_analysis,
                     "analysis_method": "ai_primary",
-                    "rule_confidence": rule_confidence
+                    "rule_confidence": rule_confidence_str
                 }
             else:
                 return {
@@ -209,7 +222,7 @@ class Analyzer:
             }
             
             # Select the analysis with higher confidence as the primary
-            if ai_confidence_score > rule_confidence_score:
+            if ai_analysis and ai_confidence_score > rule_confidence_score:
                 combined.update({
                     "root_cause": ai_analysis.get("root_cause", rule_analysis.get("root_cause", "unknown")),
                     "description": ai_analysis.get("description", rule_analysis.get("description", "")),
@@ -219,9 +232,9 @@ class Analyzer:
                 })
             else:
                 combined.update({
-                    "root_cause": rule_analysis.get("root_cause", ai_analysis.get("root_cause", "unknown")),
-                    "description": rule_analysis.get("description", ai_analysis.get("description", "")),
-                    "suggestion": rule_analysis.get("suggestion", ai_analysis.get("suggestion", "")),
+                    "root_cause": rule_analysis.get("root_cause", ai_analysis.get("root_cause", "unknown") if ai_analysis else "unknown"),
+                    "description": rule_analysis.get("description", ai_analysis.get("description", "") if ai_analysis else ""),
+                    "suggestion": rule_analysis.get("suggestion", ai_analysis.get("suggestion", "") if ai_analysis else ""),
                     "confidence": rule_confidence_score,
                     "primary_method": "rule_based"
                 })

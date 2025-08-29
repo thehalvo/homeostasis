@@ -1,4 +1,5 @@
 {
+  "name": "CSS Animations Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "css-animations",
@@ -21,11 +22,17 @@
         "Verify keyframes syntax and percentage values",
         "Ensure keyframes are defined in accessible scope"
       ],
-      "tags": ["css", "animations", "keyframes", "definition"],
+      "tags": [
+        "css",
+        "animations",
+        "keyframes",
+        "definition"
+      ],
       "examples": [
         "animation: undefined-animation 1s",
         "Missing @keyframes definition"
-      ]
+      ],
+      "description": "Css Animation Keyframes"
     },
     {
       "id": "css_animation_syntax_error",
@@ -43,11 +50,17 @@
         "Use valid animation timing functions",
         "Check animation direction and fill-mode values"
       ],
-      "tags": ["css", "animations", "syntax", "properties"],
+      "tags": [
+        "css",
+        "animations",
+        "syntax",
+        "properties"
+      ],
       "examples": [
         "animation: 1s invalid-easing",
         "Incorrect animation property values"
-      ]
+      ],
+      "description": "Css Animation Syntax"
     },
     {
       "id": "css_transition_syntax_error",
@@ -65,11 +78,17 @@
         "Use valid transition timing functions",
         "Ensure transitioned properties are animatable"
       ],
-      "tags": ["css", "transitions", "syntax", "properties"],
+      "tags": [
+        "css",
+        "transitions",
+        "syntax",
+        "properties"
+      ],
       "examples": [
         "transition: color invalid-duration",
         "Transitioning non-animatable properties"
-      ]
+      ],
+      "description": "Css Transition Syntax"
     },
     {
       "id": "css_animation_performance_warning",
@@ -87,11 +106,17 @@
         "Use will-change property to optimize for animations",
         "Consider using CSS contain property"
       ],
-      "tags": ["css", "animations", "performance", "optimization"],
+      "tags": [
+        "css",
+        "animations",
+        "performance",
+        "optimization"
+      ],
       "examples": [
         "Animating width/height causing layout thrashing",
         "Heavy paint operations in animations"
-      ]
+      ],
+      "description": "Css Animation Performance Warning"
     },
     {
       "id": "css_animation_timing_error",
@@ -109,11 +134,17 @@
         "Ensure timing values are within valid ranges",
         "Consider using steps() function for discrete animations"
       ],
-      "tags": ["css", "animations", "timing", "cubic-bezier"],
+      "tags": [
+        "css",
+        "animations",
+        "timing",
+        "cubic-bezier"
+      ],
       "examples": [
         "cubic-bezier(1.5, 0, 0, 1) (invalid values)",
         "Unknown timing function name"
-      ]
+      ],
+      "description": "Css Animation Timing"
     },
     {
       "id": "css_transform_error",
@@ -131,11 +162,17 @@
         "Ensure proper units for transform values",
         "Check for missing commas in transform lists"
       ],
-      "tags": ["css", "transforms", "syntax", "functions"],
+      "tags": [
+        "css",
+        "transforms",
+        "syntax",
+        "functions"
+      ],
       "examples": [
         "transform: translateX(invalid)",
         "Missing units in transform values"
-      ]
+      ],
+      "description": "Css Transform"
     },
     {
       "id": "css_animation_browser_support_error",
@@ -153,11 +190,17 @@
         "Use autoprefixer for automatic vendor prefixing",
         "Test animations across different browsers"
       ],
-      "tags": ["css", "animations", "browser-support", "vendor-prefixes"],
+      "tags": [
+        "css",
+        "animations",
+        "browser-support",
+        "vendor-prefixes"
+      ],
       "examples": [
         "Missing -webkit- prefix for Safari",
         "Using modern features in older browsers"
-      ]
+      ],
+      "description": "Css Animation Browser Support"
     },
     {
       "id": "css_animation_accessibility_warning",
@@ -175,11 +218,17 @@
         "Avoid flashing or rapidly changing animations",
         "Consider users with vestibular disorders"
       ],
-      "tags": ["css", "animations", "accessibility", "reduced-motion"],
+      "tags": [
+        "css",
+        "animations",
+        "accessibility",
+        "reduced-motion"
+      ],
       "examples": [
         "Not respecting prefers-reduced-motion",
         "Rapidly flashing animations"
-      ]
+      ],
+      "description": "Css Animation Accessibility Warning"
     },
     {
       "id": "css_animation_infinite_loop_warning",
@@ -197,11 +246,17 @@
         "Use animation-play-state to control playback",
         "Ensure infinite animations don't impact performance"
       ],
-      "tags": ["css", "animations", "infinite", "loop"],
+      "tags": [
+        "css",
+        "animations",
+        "infinite",
+        "loop"
+      ],
       "examples": [
         "Unnecessary infinite spinning animations",
         "Performance impact from infinite animations"
-      ]
+      ],
+      "description": "Css Animation Infinite Loop Warning"
     },
     {
       "id": "css_3d_transform_error",
@@ -219,11 +274,17 @@
         "Check backface-visibility settings",
         "Ensure proper 3D transform syntax"
       ],
-      "tags": ["css", "3d-transforms", "perspective", "transforms"],
+      "tags": [
+        "css",
+        "3d-transforms",
+        "perspective",
+        "transforms"
+      ],
       "examples": [
         "Missing perspective for 3D transforms",
         "Incorrect transform-style value"
-      ]
+      ],
+      "description": "Css 3d Transform"
     },
     {
       "id": "css_animation_memory_leak_warning",
@@ -241,11 +302,17 @@
         "Use animation event listeners properly",
         "Avoid creating too many simultaneous animations"
       ],
-      "tags": ["css", "animations", "memory-leaks", "cleanup"],
+      "tags": [
+        "css",
+        "animations",
+        "memory-leaks",
+        "cleanup"
+      ],
       "examples": [
         "Not cleaning up animation event listeners",
         "Too many concurrent animations"
-      ]
+      ],
+      "description": "Css Animation Memory Leak Warning"
     },
     {
       "id": "css_animation_gpu_acceleration_warning",
@@ -263,11 +330,18 @@
         "Avoid animating properties that trigger layout/paint",
         "Use transform3d() to force GPU acceleration"
       ],
-      "tags": ["css", "animations", "gpu", "acceleration", "performance"],
+      "tags": [
+        "css",
+        "animations",
+        "gpu",
+        "acceleration",
+        "performance"
+      ],
       "examples": [
         "Animating non-composited properties",
         "Missing will-change optimization"
-      ]
+      ],
+      "description": "Css Animation Gpu Acceleration Warning"
     }
   ]
 }

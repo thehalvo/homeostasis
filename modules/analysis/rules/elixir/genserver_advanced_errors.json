@@ -12,7 +12,13 @@
       "severity": "high",
       "suggestion": "Increase timeout in GenServer.call(server, msg, timeout) or optimize handle_call/3 implementation",
       "root_cause": "elixir_genserver_call_timeout",
-      "tags": ["elixir", "genserver", "timeout", "call"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "timeout",
+        "call"
+      ],
+      "description": "Genserver Call Timeout"
     },
     {
       "id": "elixir_genserver_reply_format_error",
@@ -24,7 +30,13 @@
       "severity": "high",
       "suggestion": "handle_call/3 must return {:reply, reply, state} or {:noreply, state} with GenServer.reply/2",
       "root_cause": "elixir_genserver_bad_reply",
-      "tags": ["elixir", "genserver", "reply", "format"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "reply",
+        "format"
+      ],
+      "description": "Genserver Reply Format"
     },
     {
       "id": "elixir_genserver_cast_state_corruption",
@@ -36,7 +48,13 @@
       "severity": "high",
       "suggestion": "handle_cast/2 must return {:noreply, new_state} or {:stop, reason, state}",
       "root_cause": "elixir_genserver_cast_state",
-      "tags": ["elixir", "genserver", "cast", "state"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "cast",
+        "state"
+      ],
+      "description": "Genserver Cast State Corruption"
     },
     {
       "id": "elixir_genserver_unexpected_message",
@@ -48,7 +66,13 @@
       "severity": "medium",
       "suggestion": "Implement handle_info/2 to handle unexpected messages or add catch-all clause",
       "root_cause": "elixir_genserver_unhandled_info",
-      "tags": ["elixir", "genserver", "handle_info", "message"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "handle_info",
+        "message"
+      ],
+      "description": "Genserver Unexpected Message"
     },
     {
       "id": "elixir_genserver_mailbox_overflow",
@@ -60,7 +84,13 @@
       "severity": "critical",
       "suggestion": "Implement backpressure, use GenStage, or process messages in batches",
       "root_cause": "elixir_genserver_mailbox_overflow",
-      "tags": ["elixir", "genserver", "mailbox", "overflow"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "mailbox",
+        "overflow"
+      ],
+      "description": "Genserver Mailbox Overflow"
     },
     {
       "id": "elixir_genserver_init_failure",
@@ -72,7 +102,13 @@
       "severity": "high",
       "suggestion": "init/1 must return {:ok, state}, {:ok, state, options}, or {:stop, reason}",
       "root_cause": "elixir_genserver_init_error",
-      "tags": ["elixir", "genserver", "init", "start"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "init",
+        "start"
+      ],
+      "description": "Genserver Init Failure"
     },
     {
       "id": "elixir_genserver_name_conflict",
@@ -84,7 +120,13 @@
       "severity": "high",
       "suggestion": "Use unique names or check if process exists before starting with name",
       "root_cause": "elixir_genserver_name_taken",
-      "tags": ["elixir", "genserver", "name", "registration"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "name",
+        "registration"
+      ],
+      "description": "Genserver Name Conflict"
     },
     {
       "id": "elixir_genserver_stop_callback_error",
@@ -96,7 +138,13 @@
       "severity": "medium",
       "suggestion": "terminate/2 should handle cleanup gracefully and return any value",
       "root_cause": "elixir_genserver_terminate_error",
-      "tags": ["elixir", "genserver", "terminate", "stop"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "terminate",
+        "stop"
+      ],
+      "description": "Genserver Stop Callback"
     },
     {
       "id": "elixir_genserver_handle_continue",
@@ -108,7 +156,13 @@
       "severity": "high",
       "suggestion": "Implement handle_continue/2 when using {:ok, state, {:continue, term}}",
       "root_cause": "elixir_genserver_no_continue",
-      "tags": ["elixir", "genserver", "continue", "callback"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "continue",
+        "callback"
+      ],
+      "description": "Genserver Handle Continue"
     },
     {
       "id": "elixir_genserver_hibernate_error",
@@ -120,7 +174,13 @@
       "severity": "low",
       "suggestion": "Use hibernation carefully - ensure state can be reconstructed after GC",
       "root_cause": "elixir_genserver_hibernate",
-      "tags": ["elixir", "genserver", "hibernate", "memory"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "hibernate",
+        "memory"
+      ],
+      "description": "Genserver Hibernate"
     },
     {
       "id": "elixir_genserver_code_change_failure",
@@ -132,7 +192,13 @@
       "severity": "high",
       "suggestion": "Implement code_change/3 correctly for hot code upgrades",
       "root_cause": "elixir_genserver_code_change",
-      "tags": ["elixir", "genserver", "upgrade", "code_change"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "upgrade",
+        "code_change"
+      ],
+      "description": "Genserver Code Change Failure"
     },
     {
       "id": "elixir_genserver_call_to_self",
@@ -144,7 +210,13 @@
       "severity": "critical",
       "suggestion": "Avoid GenServer.call to self - will cause deadlock. Use cast or refactor logic",
       "root_cause": "elixir_genserver_self_call",
-      "tags": ["elixir", "genserver", "deadlock", "self"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "deadlock",
+        "self"
+      ],
+      "description": "Genserver Call To Self"
     },
     {
       "id": "elixir_genserver_multi_call_failure",
@@ -156,7 +228,13 @@
       "severity": "medium",
       "suggestion": "Handle partial failures in multi_call - some nodes may timeout",
       "root_cause": "elixir_genserver_multi_call",
-      "tags": ["elixir", "genserver", "multi_call", "distributed"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "multi_call",
+        "distributed"
+      ],
+      "description": "Genserver Multi Call Failure"
     },
     {
       "id": "elixir_genserver_via_tuple_error",
@@ -168,7 +246,13 @@
       "severity": "medium",
       "suggestion": "Ensure Registry or via module is started before GenServer with via tuple",
       "root_cause": "elixir_genserver_via_error",
-      "tags": ["elixir", "genserver", "via", "registry"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "via",
+        "registry"
+      ],
+      "description": "Genserver Via Tuple"
     },
     {
       "id": "elixir_genserver_format_status",
@@ -180,7 +264,14 @@
       "severity": "medium",
       "suggestion": "Implement format_status/2 to sanitize state in error reports",
       "root_cause": "elixir_genserver_format_status",
-      "tags": ["elixir", "genserver", "debug", "security"]
+      "tags": [
+        "elixir",
+        "genserver",
+        "debug",
+        "security"
+      ],
+      "description": "Genserver Format Status"
     }
-  ]
+  ],
+  "name": "Genserver Advanced Errors"
 }

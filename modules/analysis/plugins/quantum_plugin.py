@@ -219,7 +219,7 @@ class QuantumPlugin(LanguagePlugin):
         strategy = strategies[0]
         
         # Create a QuantumError object for the mitigator
-        from ..emerging_tech.quantum_computing import QuantumErrorType
+        from modules.emerging_tech.quantum_computing import QuantumErrorType, QuantumError
         quantum_error = QuantumError(
             error_type=QuantumErrorType(error_analysis["error_type"]),
             framework=QuantumFramework(error_analysis["framework"]),
@@ -293,7 +293,7 @@ class QuantumPlugin(LanguagePlugin):
         
         feature_patterns = {
             QuantumFramework.QISKIT: {
-                "transpiler": r"from qiskit import transpile|transpile\(",
+                "transpiler": r"from qiskit import.*transpile|transpile\(|from qiskit\.compiler import transpile",
                 "quantum_info": r"from qiskit.quantum_info",
                 "pulse": r"from qiskit.pulse",
                 "experiments": r"from qiskit_experiments",
@@ -353,7 +353,7 @@ class QuantumPlugin(LanguagePlugin):
         suggestions = []
         
         # Circuit depth optimization
-        if re.search(r"\.depth\(\)\s*>|circuit.*deep", code):
+        if re.search(r"\.depth\(\)|circuit.*deep|depth\s*>\s*\d{3,}", code):
             suggestions.append({
                 "type": "circuit_depth",
                 "suggestion": "Consider using circuit optimization techniques",

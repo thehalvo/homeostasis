@@ -60,6 +60,13 @@ class DockerfileExceptionHandler:
                 r"Invalid instruction",
                 r"Bad instruction"
             ],
+            "build_error": [
+                r"failed to solve",
+                r"error building",
+                r"build failed",
+                r"failed to build",
+                r"docker build error"
+            ],
             "build_context_error": [
                 r"unable to prepare context:",
                 r"build context is empty",
@@ -95,6 +102,13 @@ class DockerfileExceptionHandler:
                 r"privileged",
                 r"--privileged",
                 r"unsafe operation"
+            ],
+            "layer_optimization": [
+                r"multiple consecutive RUN",
+                r"too many layers",
+                r"layer caching",
+                r"inefficient layering",
+                r"optimize layers"
             ]
         }
         
@@ -187,6 +201,14 @@ class DockerfileExceptionHandler:
                     practices_data = json.load(f)
                     rules["best_practices"] = practices_data.get("rules", [])
                     logger.info(f"Loaded {len(rules['best_practices'])} best practices rules")
+            
+            # Load security rules
+            security_rules_path = rules_dir / "dockerfile_security_best_practices.json"
+            if security_rules_path.exists():
+                with open(security_rules_path, 'r') as f:
+                    security_data = json.load(f)
+                    rules["security"] = security_data.get("rules", [])
+                    logger.info(f"Loaded {len(rules['security'])} security rules")
                         
         except Exception as e:
             logger.error(f"Error loading Dockerfile rules: {e}")
@@ -263,6 +285,30 @@ class DockerfileExceptionHandler:
         """Analyze error by matching against common patterns."""
         message_lower = message.lower()
         
+        # Check for COPY/ADD path errors specifically first
+        if ("copy failed" in message_lower or "add failed" in message_lower) and ("stat" in message_lower or "no such file" in message_lower):
+            return {
+                "category": "dockerfile",
+                "subcategory": "path",
+                "confidence": "high",
+                "suggested_fix": "Fix file paths in COPY/ADD instructions",
+                "root_cause": "dockerfile_path_error",
+                "severity": "high",
+                "tags": ["dockerfile", "path"]
+            }
+        
+        # Check for ARG-specific errors
+        if "arg" in message_lower and ("requires" in message_lower or "exactly one argument" in message_lower):
+            return {
+                "category": "dockerfile",
+                "subcategory": "arg",
+                "confidence": "high",
+                "suggested_fix": "Fix ARG instruction syntax",
+                "root_cause": "dockerfile_arg_error",
+                "severity": "high",
+                "tags": ["dockerfile", "arg"]
+            }
+        
         # Check syntax errors
         for pattern in self.dockerfile_error_patterns["syntax_error"]:
             if re.search(pattern, message, re.IGNORECASE):
@@ -287,6 +333,19 @@ class DockerfileExceptionHandler:
                     "root_cause": "dockerfile_instruction_error",
                     "severity": "high",
                     "tags": ["dockerfile", "instruction"]
+                }
+        
+        # Check build errors
+        for pattern in self.dockerfile_error_patterns["build_error"]:
+            if re.search(pattern, message, re.IGNORECASE):
+                return {
+                    "category": "dockerfile",
+                    "subcategory": "build",
+                    "confidence": "high",
+                    "suggested_fix": "Fix Docker build errors",
+                    "root_cause": "dockerfile_build_error",
+                    "severity": "high",
+                    "tags": ["dockerfile", "build"]
                 }
         
         # Check build context errors
@@ -352,6 +411,19 @@ class DockerfileExceptionHandler:
                     "root_cause": "dockerfile_security_issue",
                     "severity": "high",
                     "tags": ["dockerfile", "security", "best_practices"]
+                }
+        
+        # Check layer optimization issues
+        for pattern in self.dockerfile_error_patterns["layer_optimization"]:
+            if re.search(pattern, message, re.IGNORECASE):
+                return {
+                    "category": "dockerfile",
+                    "subcategory": "layer",
+                    "confidence": "high",
+                    "suggested_fix": "Optimize Dockerfile layers for better caching and smaller image size",
+                    "root_cause": "dockerfile_layer_optimization",
+                    "severity": "medium",
+                    "tags": ["dockerfile", "layer", "optimization"]
                 }
         
         return {
@@ -534,11 +606,15 @@ class DockerfilePatchGenerator:
         patch_strategies = {
             "dockerfile_syntax_error": self._fix_syntax_error,
             "dockerfile_instruction_error": self._fix_instruction_error,
+            "dockerfile_build_error": self._fix_build_error,
             "dockerfile_build_context_error": self._fix_build_context_error,
             "dockerfile_base_image_error": self._fix_base_image_error,
             "dockerfile_network_error": self._fix_network_error,
             "dockerfile_filesystem_error": self._fix_filesystem_error,
-            "dockerfile_security_issue": self._fix_security_issue
+            "dockerfile_security_issue": self._fix_security_issue,
+            "dockerfile_layer_optimization": self._fix_layer_error,
+            "dockerfile_layer_error": self._fix_layer_error,
+            "dockerfile_path_error": self._fix_path_error
         }
         
         strategy = patch_strategies.get(root_cause)
@@ -853,6 +929,81 @@ class DockerfilePatchGenerator:
             ]
         }
     
+    def _fix_build_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                        dockerfile_content: str) -> Optional[Dict[str, Any]]:
+        """Fix Docker build errors."""
+        message = error_data.get("message", "")
+        
+        if "failed to solve" in message.lower():
+            return {
+                "type": "suggestion",
+                "description": "Docker build failed to solve",
+                "fixes": [
+                    "Check Dockerfile syntax for errors",
+                    "Verify base image exists and is accessible",
+                    "Review build context and file paths",
+                    "Check Docker daemon is running",
+                    "Try building with --no-cache flag",
+                    "Verify network connectivity for image downloads"
+                ]
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Docker build error",
+            "fixes": [
+                "Check build logs for specific errors",
+                "Verify Dockerfile is valid",
+                "Test build steps individually",
+                "Check system resources (disk space, memory)"
+            ]
+        }
+    
+    def _fix_layer_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                        dockerfile_content: str) -> Optional[Dict[str, Any]]:
+        """Fix Docker layer optimization issues."""
+        return {
+            "type": "suggestion",
+            "description": "Layer optimization issue",
+            "fixes": [
+                "Combine multiple RUN commands using &&",
+                "Order instructions from least to most frequently changed",
+                "Use multi-stage builds to reduce final image size",
+                "Minimize the number of layers",
+                "Clean up package manager caches in same RUN instruction",
+                "Consider using --squash flag if available"
+            ]
+        }
+    
+    def _fix_path_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
+                       dockerfile_content: str) -> Optional[Dict[str, Any]]:
+        """Fix Docker path errors."""
+        message = error_data.get("message", "")
+        
+        if "copy failed" in message.lower():
+            return {
+                "type": "suggestion",
+                "description": "COPY path error",
+                "fixes": [
+                    "Verify source file exists in build context",
+                    "Check file paths are relative to build context",
+                    "Ensure file names match exactly (case-sensitive)",
+                    "Add files to build context if missing",
+                    "Check .dockerignore is not excluding needed files"
+                ]
+            }
+        
+        return {
+            "type": "suggestion",
+            "description": "Path error in Dockerfile",
+            "fixes": [
+                "Check all file paths are correct",
+                "Verify build context includes all needed files",
+                "Use relative paths from build context root",
+                "Check file permissions"
+            ]
+        }
+    
     def _generate_best_practices_patch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                                       dockerfile_content: str) -> Optional[Dict[str, Any]]:
         """Generate patches for best practices violations."""
@@ -918,7 +1069,7 @@ class DockerfileLanguagePlugin(LanguagePlugin):
         self.language = "dockerfile"
         self.supported_extensions = {"Dockerfile", ".dockerfile"}
         self.supported_frameworks = [
-            "docker", "buildx", "compose", "swarm", "kubernetes",
+            "docker", "docker-compose", "buildx", "compose", "swarm", "kubernetes",
             "podman", "buildah", "skopeo"
         ]
         
@@ -959,11 +1110,13 @@ class DockerfileLanguagePlugin(LanguagePlugin):
             "error_type": error_data.get("error_type", "DockerError"),
             "message": error_data.get("message", error_data.get("description", "")),
             "language": "dockerfile",
+            "file_path": error_data.get("file_path", error_data.get("file", "Dockerfile")),
+            "line_number": error_data.get("line_number", error_data.get("line", 0)),
+            "column_number": error_data.get("column_number", error_data.get("column", 0)),
             "command": error_data.get("command", ""),
             "build_step": error_data.get("build_step", error_data.get("step", "")),
             "dockerfile_path": error_data.get("dockerfile_path", error_data.get("file", "")),
             "dockerfile_content": error_data.get("dockerfile_content", ""),
-            "line_number": error_data.get("line_number", error_data.get("line", 0)),
             "instruction": error_data.get("instruction", ""),
             "build_context": error_data.get("build_context", ""),
             "image_id": error_data.get("image_id", ""),
@@ -995,19 +1148,22 @@ class DockerfileLanguagePlugin(LanguagePlugin):
         dockerfile_error = {
             "error_type": standard_error.get("error_type", "DockerError"),
             "message": standard_error.get("message", ""),
+            "file_path": standard_error.get("file_path", ""),
+            "line_number": standard_error.get("line_number", 0),
+            "column_number": standard_error.get("column_number", 0),
             "command": standard_error.get("command", ""),
             "build_step": standard_error.get("build_step", ""),
             "dockerfile_path": standard_error.get("dockerfile_path", ""),
             "dockerfile_content": standard_error.get("dockerfile_content", ""),
-            "line_number": standard_error.get("line_number", 0),
             "instruction": standard_error.get("instruction", ""),
             "build_context": standard_error.get("build_context", ""),
             "image_id": standard_error.get("image_id", ""),
             "exit_code": standard_error.get("exit_code", 0),
             "description": standard_error.get("message", ""),
             "step": standard_error.get("build_step", ""),
-            "file": standard_error.get("dockerfile_path", ""),
+            "file": standard_error.get("file_path", ""),
             "line": standard_error.get("line_number", 0),
+            "column": standard_error.get("column_number", 0),
             "returncode": standard_error.get("exit_code", 0),
             "stack_trace": standard_error.get("stack_trace", []),
             "context": standard_error.get("context", {}),

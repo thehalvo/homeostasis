@@ -468,7 +468,7 @@ class TestJavaLanguagePlugin:
         assert "spring" in analysis["root_cause"]
         assert "bean" in analysis["description"].lower()
         assert "framework" in analysis
-        assert analysis["framework"] == "spring"
+        assert analysis["framework"] == "spring-boot"
     
     def test_generate_fix_for_npe(self, java_plugin, error_data_npe):
         """Test fix generation for NullPointerException"""
@@ -865,7 +865,7 @@ class TestJavaIntegration:
         analysis = self.plugin.analyze_error(error_data)
         assert analysis is not None
         assert "spring" in analysis["root_cause"]
-        assert analysis["framework"] == "spring"
+        assert analysis["framework"] == "spring-boot"
         
         # Check that suggestions are Spring-specific
         assert "@Component" in analysis["suggestion"] or "@Repository" in analysis["suggestion"]

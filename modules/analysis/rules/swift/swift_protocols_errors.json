@@ -1,4 +1,5 @@
 {
+  "name": "Swift Swift Protocols Errors",
   "version": "1.0.0",
   "description": "Swift protocol-related error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Implement all required protocol methods and properties, or provide default implementations in protocol extensions",
       "root_cause": "swift_missing_protocol_conformance",
-      "tags": ["swift", "protocol", "conformance", "requirements"]
+      "tags": [
+        "swift",
+        "protocol",
+        "conformance",
+        "requirements"
+      ],
+      "description": "Swift Protocol Conformance Missing"
     },
     {
       "id": "swift_protocol_witness_not_found",
@@ -24,7 +31,13 @@
       "severity": "high",
       "suggestion": "Ensure the method/property signature exactly matches the protocol requirement, including parameter labels and types",
       "root_cause": "swift_protocol_witness_mismatch",
-      "tags": ["swift", "protocol", "witness", "signature"]
+      "tags": [
+        "swift",
+        "protocol",
+        "witness",
+        "signature"
+      ],
+      "description": "Swift Protocol Witness Not Found"
     },
     {
       "id": "swift_associated_type_inference_failure",
@@ -36,7 +49,13 @@
       "severity": "high",
       "suggestion": "Explicitly specify the associated type using typealias or provide enough context for type inference",
       "root_cause": "swift_associated_type_inference",
-      "tags": ["swift", "protocol", "associated_type", "generics"]
+      "tags": [
+        "swift",
+        "protocol",
+        "associated_type",
+        "generics"
+      ],
+      "description": "Swift Associated Type Inference Failure"
     },
     {
       "id": "swift_protocol_extension_ambiguity",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Disambiguate by casting to specific type or renaming conflicting methods in protocol extensions",
       "root_cause": "swift_protocol_extension_ambiguity",
-      "tags": ["swift", "protocol", "extension", "ambiguity"]
+      "tags": [
+        "swift",
+        "protocol",
+        "extension",
+        "ambiguity"
+      ],
+      "description": "Swift Protocol Extension Ambiguity"
     },
     {
       "id": "swift_protocol_default_implementation_override",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "Check protocol extension constraints and ensure proper method dispatch (static vs dynamic)",
       "root_cause": "swift_protocol_default_override",
-      "tags": ["swift", "protocol", "extension", "override"]
+      "tags": [
+        "swift",
+        "protocol",
+        "extension",
+        "override"
+      ],
+      "description": "Swift Protocol Default Implementation Override"
     },
     {
       "id": "swift_protocol_composition_error",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Use protocol composition correctly with & operator or as generic constraints",
       "root_cause": "swift_protocol_composition",
-      "tags": ["swift", "protocol", "composition", "constraint"]
+      "tags": [
+        "swift",
+        "protocol",
+        "composition",
+        "constraint"
+      ],
+      "description": "Swift Protocol Composition"
     },
     {
       "id": "swift_existential_type_error",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Use 'any' keyword for existential types or generic constraints instead of protocol as concrete type",
       "root_cause": "swift_existential_type",
-      "tags": ["swift", "protocol", "existential", "any"]
+      "tags": [
+        "swift",
+        "protocol",
+        "existential",
+        "any"
+      ],
+      "description": "Swift Existential Type"
     },
     {
       "id": "swift_protocol_self_requirement",
@@ -96,7 +139,13 @@
       "severity": "high",
       "suggestion": "Use the protocol as a generic constraint or create a type-erased wrapper",
       "root_cause": "swift_protocol_self_requirement",
-      "tags": ["swift", "protocol", "self", "constraint"]
+      "tags": [
+        "swift",
+        "protocol",
+        "self",
+        "constraint"
+      ],
+      "description": "Swift Protocol Self Requirement"
     },
     {
       "id": "swift_protocol_init_requirement",
@@ -108,7 +157,13 @@
       "severity": "high",
       "suggestion": "Mark the initializer as 'required' in the conforming class",
       "root_cause": "swift_protocol_required_init",
-      "tags": ["swift", "protocol", "init", "required"]
+      "tags": [
+        "swift",
+        "protocol",
+        "init",
+        "required"
+      ],
+      "description": "Swift Protocol Init Requirement"
     },
     {
       "id": "swift_protocol_mutating_requirement",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "For value types, ensure the instance is mutable (var) when calling mutating methods",
       "root_cause": "swift_protocol_mutating",
-      "tags": ["swift", "protocol", "mutating", "value_type"]
+      "tags": [
+        "swift",
+        "protocol",
+        "mutating",
+        "value_type"
+      ],
+      "description": "Swift Protocol Mutating Requirement"
     },
     {
       "id": "swift_protocol_objc_interop",
@@ -132,7 +193,13 @@
       "severity": "medium",
       "suggestion": "Only use @objc with class protocols or consider removing @objc requirement",
       "root_cause": "swift_protocol_objc",
-      "tags": ["swift", "protocol", "objc", "interop"]
+      "tags": [
+        "swift",
+        "protocol",
+        "objc",
+        "interop"
+      ],
+      "description": "Swift Protocol Objc Interop"
     },
     {
       "id": "swift_protocol_generic_where_clause",
@@ -144,7 +211,13 @@
       "severity": "high",
       "suggestion": "Ensure the where clause constraints can be satisfied by the concrete types",
       "root_cause": "swift_protocol_where_clause",
-      "tags": ["swift", "protocol", "where", "constraint"]
+      "tags": [
+        "swift",
+        "protocol",
+        "where",
+        "constraint"
+      ],
+      "description": "Swift Protocol Generic Where Clause"
     },
     {
       "id": "swift_protocol_retroactive_conformance",
@@ -156,7 +229,13 @@
       "severity": "medium",
       "suggestion": "Check for duplicate conformances or ensure the type can be extended with the protocol",
       "root_cause": "swift_retroactive_conformance",
-      "tags": ["swift", "protocol", "extension", "conformance"]
+      "tags": [
+        "swift",
+        "protocol",
+        "extension",
+        "conformance"
+      ],
+      "description": "Swift Protocol Retroactive Conformance"
     },
     {
       "id": "swift_protocol_conditional_conformance",
@@ -168,7 +247,13 @@
       "severity": "medium",
       "suggestion": "Understand that conditional conformances don't automatically apply - check the conditions",
       "root_cause": "swift_conditional_conformance",
-      "tags": ["swift", "protocol", "conditional", "generics"]
+      "tags": [
+        "swift",
+        "protocol",
+        "conditional",
+        "generics"
+      ],
+      "description": "Swift Protocol Conditional Conformance"
     },
     {
       "id": "swift_protocol_primary_associated_type",
@@ -180,7 +265,13 @@
       "severity": "medium",
       "suggestion": "Specify primary associated types in angle brackets or ensure they can be inferred",
       "root_cause": "swift_primary_associated_type",
-      "tags": ["swift", "protocol", "associated_type", "primary"]
+      "tags": [
+        "swift",
+        "protocol",
+        "associated_type",
+        "primary"
+      ],
+      "description": "Swift Protocol Primary Associated Type"
     }
   ]
 }

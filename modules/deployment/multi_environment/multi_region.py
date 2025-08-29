@@ -304,7 +304,7 @@ class FailoverOrchestrator:
             
             # Record event
             self.failover_history.append(event)
-            await self.auditor.log_event("region_failover", {
+            self.auditor.log_event("region_failover", user="system", details={
                 "event_id": event.event_id,
                 "from_region": from_region_id,
                 "to_region": to_region_id,

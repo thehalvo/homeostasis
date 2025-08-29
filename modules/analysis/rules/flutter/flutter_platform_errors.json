@@ -1,4 +1,5 @@
 {
+  "name": "Flutter Flutter Platform Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "flutter",
@@ -22,12 +23,18 @@
         "Handle PlatformException with try-catch",
         "Verify plugin registration in platform code"
       ],
-      "tags": ["flutter", "platform", "method-channel", "native"],
+      "tags": [
+        "flutter",
+        "platform",
+        "method-channel",
+        "native"
+      ],
       "examples": [
         "Method not implemented in native code",
         "Typo in platform method name",
         "Plugin not properly registered"
-      ]
+      ],
+      "description": "Flutter Platform Channel"
     },
     {
       "id": "flutter_permission_denied",
@@ -45,12 +52,18 @@
         "Request permissions at runtime using permission_handler",
         "Check permission status before using restricted features"
       ],
-      "tags": ["flutter", "platform", "permissions", "manifest"],
+      "tags": [
+        "flutter",
+        "platform",
+        "permissions",
+        "manifest"
+      ],
       "examples": [
         "Camera permission not requested",
         "Location permission missing from manifest",
         "Storage access denied"
-      ]
+      ],
+      "description": "Flutter Permission Denied"
     },
     {
       "id": "flutter_ios_build_error",
@@ -68,12 +81,19 @@
         "Check iOS deployment target in Podfile",
         "Update Xcode and iOS SDK if needed"
       ],
-      "tags": ["flutter", "ios", "build", "xcode", "cocoapods"],
+      "tags": [
+        "flutter",
+        "ios",
+        "build",
+        "xcode",
+        "cocoapods"
+      ],
       "examples": [
         "CocoaPods dependency conflicts",
         "iOS deployment target mismatch",
         "Xcode version compatibility"
-      ]
+      ],
+      "description": "Flutter Ios Build"
     },
     {
       "id": "flutter_android_build_error",
@@ -91,12 +111,19 @@
         "Update Gradle wrapper version",
         "Resolve dependency conflicts in build.gradle"
       ],
-      "tags": ["flutter", "android", "build", "gradle", "aapt"],
+      "tags": [
+        "flutter",
+        "android",
+        "build",
+        "gradle",
+        "aapt"
+      ],
       "examples": [
         "Gradle version compatibility",
         "Android SDK version mismatch",
         "Resource compilation errors"
-      ]
+      ],
+      "description": "Flutter Android Build"
     },
     {
       "id": "flutter_plugin_not_implemented",
@@ -114,12 +141,18 @@
         "Use platform-specific conditional code",
         "Find alternative plugin or implement platform-specific version"
       ],
-      "tags": ["flutter", "plugins", "platform-support", "compatibility"],
+      "tags": [
+        "flutter",
+        "plugins",
+        "platform-support",
+        "compatibility"
+      ],
       "examples": [
         "Plugin only supports mobile, used on web",
         "iOS-only plugin used on Android",
         "Platform-specific features not available"
-      ]
+      ],
+      "description": "Flutter Plugin Not Implemented"
     },
     {
       "id": "flutter_web_html_renderer_error",
@@ -137,12 +170,19 @@
         "Handle web-specific UI differences",
         "Test on different browsers for compatibility"
       ],
-      "tags": ["flutter", "web", "renderer", "canvaskit", "html"],
+      "tags": [
+        "flutter",
+        "web",
+        "renderer",
+        "canvaskit",
+        "html"
+      ],
       "examples": [
         "CanvasKit not supported in browser",
         "HTML renderer performance issues",
         "Web-specific widget limitations"
-      ]
+      ],
+      "description": "Flutter Web Html Renderer"
     },
     {
       "id": "flutter_keyboard_overlap",
@@ -160,12 +200,18 @@
         "Add padding: MediaQuery.of(context).viewInsets.bottom",
         "Use KeyboardVisibilityBuilder for custom handling"
       ],
-      "tags": ["flutter", "keyboard", "ui", "viewport"],
+      "tags": [
+        "flutter",
+        "keyboard",
+        "ui",
+        "viewport"
+      ],
       "examples": [
         "Keyboard covering input fields",
         "Bottom sheet overlapped by keyboard",
         "UI not adjusting for keyboard"
-      ]
+      ],
+      "description": "Flutter Keyboard Overlap"
     },
     {
       "id": "flutter_safe_area_issues",
@@ -183,12 +229,18 @@
         "Set specific SafeArea properties (top, bottom, left, right)",
         "Test on devices with notches and different screen sizes"
       ],
-      "tags": ["flutter", "safe-area", "notch", "status-bar"],
+      "tags": [
+        "flutter",
+        "safe-area",
+        "notch",
+        "status-bar"
+      ],
       "examples": [
         "Content behind status bar",
         "UI overlapped by notch",
         "Bottom content behind home indicator"
-      ]
+      ],
+      "description": "Flutter Safe Area Issues"
     },
     {
       "id": "flutter_orientation_error",
@@ -206,12 +258,18 @@
         "Use MediaQuery.of(context).orientation for responsive design",
         "Test UI in both portrait and landscape modes"
       ],
-      "tags": ["flutter", "orientation", "responsive", "layout"],
+      "tags": [
+        "flutter",
+        "orientation",
+        "responsive",
+        "layout"
+      ],
       "examples": [
         "UI breaks in landscape mode",
         "Orientation not locked when required",
         "Layout overflow in different orientations"
-      ]
+      ],
+      "description": "Flutter Orientation"
     },
     {
       "id": "flutter_file_system_error",
@@ -229,12 +287,18 @@
         "Use getApplicationDocumentsDirectory() for app-specific storage",
         "Handle file system errors with try-catch blocks"
       ],
-      "tags": ["flutter", "file-system", "storage", "permissions"],
+      "tags": [
+        "flutter",
+        "file-system",
+        "storage",
+        "permissions"
+      ],
       "examples": [
         "Writing to restricted directory",
         "File path not found",
         "Storage permission denied"
-      ]
+      ],
+      "description": "Flutter File System"
     }
   ]
 }

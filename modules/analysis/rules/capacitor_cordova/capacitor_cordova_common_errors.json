@@ -1,4 +1,5 @@
 {
+  "name": "Capacitor_cordova Capacitor Cordova Common Errors",
   "metadata": {
     "description": "Common Capacitor/Cordova hybrid mobile app errors and their fixes",
     "framework": "capacitor_cordova",
@@ -22,7 +23,13 @@
         "For iOS: npx cap run ios",
         "For Android: npx cap run android"
       ],
-      "tags": ["capacitor", "cordova", "plugins", "installation"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "plugins",
+        "installation"
+      ],
+      "description": "Capacitor Plugin Not Found"
     },
     {
       "id": "cordova_plugin_error",
@@ -39,7 +46,12 @@
         "Check plugin compatibility with Cordova version",
         "Verify config.xml plugin configuration"
       ],
-      "tags": ["cordova", "plugins", "installation"]
+      "tags": [
+        "cordova",
+        "plugins",
+        "installation"
+      ],
+      "description": "Cordova Plugin"
     },
     {
       "id": "native_bridge_error",
@@ -56,7 +68,13 @@
         "Check native method signatures",
         "Add error handling for bridge communication"
       ],
-      "tags": ["capacitor", "cordova", "native-bridge", "communication"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "native-bridge",
+        "communication"
+      ],
+      "description": "Native Bridge"
     },
     {
       "id": "permission_denied_mobile",
@@ -73,7 +91,13 @@
         "Handle permission denials gracefully",
         "Provide user-friendly explanations for permissions"
       ],
-      "tags": ["capacitor", "cordova", "permissions", "mobile"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "permissions",
+        "mobile"
+      ],
+      "description": "Permission Denied Mobile"
     },
     {
       "id": "webview_error",
@@ -90,7 +114,13 @@
         "Verify all resources are properly loaded",
         "Test on different WebView versions"
       ],
-      "tags": ["capacitor", "cordova", "webview", "loading"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "webview",
+        "loading"
+      ],
+      "description": "Webview"
     },
     {
       "id": "csp_violation",
@@ -107,7 +137,13 @@
         "Include gap: protocol for Cordova",
         "Configure CSP in index.html meta tag"
       ],
-      "tags": ["capacitor", "cordova", "security", "csp"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "security",
+        "csp"
+      ],
+      "description": "Csp Violation"
     },
     {
       "id": "platform_build_error",
@@ -124,7 +160,13 @@
         "Check platform-specific configuration files",
         "Update dependencies and build tools"
       ],
-      "tags": ["capacitor", "cordova", "build", "platform"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "build",
+        "platform"
+      ],
+      "description": "Platform Build"
     },
     {
       "id": "ionic_framework_error",
@@ -141,7 +183,13 @@
         "Check Ionic component usage",
         "Verify Ionic dependencies are installed"
       ],
-      "tags": ["ionic", "capacitor", "framework", "components"]
+      "tags": [
+        "ionic",
+        "capacitor",
+        "framework",
+        "components"
+      ],
+      "description": "Ionic Framework"
     },
     {
       "id": "device_ready_timeout",
@@ -158,7 +206,13 @@
         "Increase timeout for device ready",
         "Check Cordova initialization"
       ],
-      "tags": ["cordova", "lifecycle", "device-ready", "timeout"]
+      "tags": [
+        "cordova",
+        "lifecycle",
+        "device-ready",
+        "timeout"
+      ],
+      "description": "Device Ready Timeout"
     },
     {
       "id": "storage_access_error",
@@ -175,7 +229,13 @@
         "Handle storage quota exceeded errors",
         "Use appropriate storage APIs for the platform"
       ],
-      "tags": ["capacitor", "cordova", "storage", "filesystem"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "storage",
+        "filesystem"
+      ],
+      "description": "Storage Access"
     },
     {
       "id": "network_connectivity_error",
@@ -192,7 +252,13 @@
         "Implement offline mode fallbacks",
         "Add retry logic for network requests"
       ],
-      "tags": ["capacitor", "cordova", "network", "connectivity"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "network",
+        "connectivity"
+      ],
+      "description": "Network Connectivity"
     },
     {
       "id": "deep_link_error",
@@ -209,7 +275,13 @@
         "Add intent filters for Android",
         "Set up URL schemes for iOS"
       ],
-      "tags": ["capacitor", "cordova", "deep-linking", "navigation"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "deep-linking",
+        "navigation"
+      ],
+      "description": "Deep Link"
     },
     {
       "id": "splash_screen_error",
@@ -226,7 +298,13 @@
         "Check splash screen image resources",
         "Verify splash screen timing configuration"
       ],
-      "tags": ["capacitor", "cordova", "splash-screen", "ui"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "splash-screen",
+        "ui"
+      ],
+      "description": "Splash Screen"
     },
     {
       "id": "keyboard_handling_error",
@@ -243,7 +321,13 @@
         "Handle keyboard show/hide events",
         "Adjust viewport on keyboard appearance"
       ],
-      "tags": ["capacitor", "cordova", "keyboard", "ui"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "keyboard",
+        "ui"
+      ],
+      "description": "Keyboard Handling"
     },
     {
       "id": "camera_access_error",
@@ -260,7 +344,13 @@
         "Check camera availability",
         "Handle camera access denied scenarios"
       ],
-      "tags": ["capacitor", "cordova", "camera", "permissions"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "camera",
+        "permissions"
+      ],
+      "description": "Camera Access"
     },
     {
       "id": "geolocation_error",
@@ -277,7 +367,13 @@
         "Check if location services are enabled",
         "Provide fallback for location unavailable"
       ],
-      "tags": ["capacitor", "cordova", "geolocation", "permissions"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "geolocation",
+        "permissions"
+      ],
+      "description": "Geolocation"
     },
     {
       "id": "push_notification_error",
@@ -294,7 +390,14 @@
         "Request notification permissions",
         "Handle push notification registration errors"
       ],
-      "tags": ["capacitor", "cordova", "push-notifications", "fcm", "apns"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "push-notifications",
+        "fcm",
+        "apns"
+      ],
+      "description": "Push Notification"
     },
     {
       "id": "app_lifecycle_error",
@@ -311,7 +414,13 @@
         "Handle background/foreground transitions",
         "Save app state on pause events"
       ],
-      "tags": ["capacitor", "cordova", "lifecycle", "app-state"]
+      "tags": [
+        "capacitor",
+        "cordova",
+        "lifecycle",
+        "app-state"
+      ],
+      "description": "App Lifecycle"
     }
   ]
 }

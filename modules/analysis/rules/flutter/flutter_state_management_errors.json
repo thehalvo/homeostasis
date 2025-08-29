@@ -1,4 +1,5 @@
 {
+  "name": "Flutter Flutter State Management Errors",
   "metadata": {
     "version": "1.0.0",
     "framework": "flutter",
@@ -22,11 +23,17 @@
         "Use MultiProvider for multiple providers",
         "Ensure provider is ancestor of consumer widget"
       ],
-      "tags": ["flutter", "provider", "state-management", "dependency"],
+      "tags": [
+        "flutter",
+        "provider",
+        "state-management",
+        "dependency"
+      ],
       "examples": [
         "Consumer without matching Provider",
         "Provider.of() called outside provider tree"
-      ]
+      ],
+      "description": "Flutter Provider Not Found"
     },
     {
       "id": "flutter_bloc_not_provided",
@@ -44,11 +51,17 @@
         "Check bloc type matches requested type",
         "Ensure BlocProvider is above BlocBuilder/BlocConsumer"
       ],
-      "tags": ["flutter", "bloc", "state-management", "provider"],
+      "tags": [
+        "flutter",
+        "bloc",
+        "state-management",
+        "provider"
+      ],
       "examples": [
         "BlocBuilder without BlocProvider",
         "BlocProvider.of() outside provider tree"
-      ]
+      ],
+      "description": "Flutter Bloc Not Provided"
     },
     {
       "id": "flutter_riverpod_provider_error",
@@ -66,11 +79,17 @@
         "Use ref.watch() within provider or widget",
         "Ensure ProviderScope is at app root"
       ],
-      "tags": ["flutter", "riverpod", "state-management", "scope"],
+      "tags": [
+        "flutter",
+        "riverpod",
+        "state-management",
+        "scope"
+      ],
       "examples": [
         "Provider access without ProviderScope",
         "ref used outside provider context"
-      ]
+      ],
+      "description": "Flutter Riverpod Provider"
     },
     {
       "id": "flutter_getx_controller_not_found",
@@ -88,11 +107,17 @@
         "Check controller is registered before Get.find()",
         "Use GetBuilder or GetX widget for automatic dependency"
       ],
-      "tags": ["flutter", "getx", "state-management", "controller"],
+      "tags": [
+        "flutter",
+        "getx",
+        "state-management",
+        "controller"
+      ],
       "examples": [
         "Get.find() before Get.put()",
         "Controller not registered in GetX"
-      ]
+      ],
+      "description": "Flutter Getx Controller Not Found"
     },
     {
       "id": "flutter_inherited_widget_error",
@@ -110,11 +135,17 @@
         "Implement proper InheritedWidget structure",
         "Use dependOnInheritedWidgetOfExactType properly"
       ],
-      "tags": ["flutter", "inherited-widget", "state-management", "context"],
+      "tags": [
+        "flutter",
+        "inherited-widget",
+        "state-management",
+        "context"
+      ],
       "examples": [
         "Theme.of(context) without MaterialApp",
         "Custom InheritedWidget not in tree"
-      ]
+      ],
+      "description": "Flutter Inherited Widget"
     },
     {
       "id": "flutter_notifier_disposed_access",
@@ -132,11 +163,17 @@
         "Properly manage ChangeNotifier lifecycle",
         "Avoid async operations after disposal"
       ],
-      "tags": ["flutter", "changenotifier", "state-management", "disposal"],
+      "tags": [
+        "flutter",
+        "changenotifier",
+        "state-management",
+        "disposal"
+      ],
       "examples": [
         "notifyListeners() after dispose()",
         "Async callback completing after disposal"
-      ]
+      ],
+      "description": "Flutter Notifier Disposed Access"
     },
     {
       "id": "flutter_redux_store_error",
@@ -154,11 +191,17 @@
         "Use StoreConnector within StoreProvider tree",
         "Check store initialization"
       ],
-      "tags": ["flutter", "redux", "state-management", "store"],
+      "tags": [
+        "flutter",
+        "redux",
+        "state-management",
+        "store"
+      ],
       "examples": [
         "StoreConnector without StoreProvider",
         "Redux store not initialized"
-      ]
+      ],
+      "description": "Flutter Redux Store"
     },
     {
       "id": "flutter_mobx_observable_error",
@@ -176,11 +219,17 @@
         "Import mobx and flutter_mobx packages",
         "Run code generation for MobX"
       ],
-      "tags": ["flutter", "mobx", "state-management", "observer"],
+      "tags": [
+        "flutter",
+        "mobx",
+        "state-management",
+        "observer"
+      ],
       "examples": [
         "Observable accessed without Observer",
         "Missing @observable annotation"
-      ]
+      ],
+      "description": "Flutter Mobx Observable"
     },
     {
       "id": "flutter_state_mutation_error",
@@ -198,11 +247,17 @@
         "Use didChangeDependencies() for widget dependencies",
         "Avoid side effects in build method"
       ],
-      "tags": ["flutter", "state-management", "setState", "build"],
+      "tags": [
+        "flutter",
+        "state-management",
+        "setState",
+        "build"
+      ],
       "examples": [
         "setState called in build method",
         "State mutation during widget building"
-      ]
+      ],
+      "description": "Flutter State Mutation"
     },
     {
       "id": "flutter_context_after_async",
@@ -220,11 +275,17 @@
         "Use context synchronously when possible",
         "Avoid navigation/setState after async without mounted check"
       ],
-      "tags": ["flutter", "context", "async", "mounted"],
+      "tags": [
+        "flutter",
+        "context",
+        "async",
+        "mounted"
+      ],
       "examples": [
         "Navigator.push after await without mounted check",
         "setState after HTTP request completion"
-      ]
+      ],
+      "description": "Flutter Context After Async"
     }
   ]
 }

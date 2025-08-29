@@ -1,4 +1,5 @@
 {
+  "name": "Go Serialization Errors",
   "description": "Go JSON, XML, and other serialization error patterns",
   "version": "1.0.0",
   "rules": [

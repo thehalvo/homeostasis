@@ -13,12 +13,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "transition", "import"],
+      "tags": [
+        "svelte",
+        "transition",
+        "import"
+      ],
       "fix_commands": [
         "Import transition functions from 'svelte/transition'",
         "Check transition name spelling",
         "Ensure correct import syntax"
-      ]
+      ],
+      "description": "Svelte Transition Not Imported"
     },
     {
       "id": "svelte_transition_invalid_params",
@@ -30,12 +35,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "transition", "parameters"],
+      "tags": [
+        "svelte",
+        "transition",
+        "parameters"
+      ],
       "fix_commands": [
         "Check transition parameter types and values",
         "Ensure parameters match transition function signature",
         "Verify duration, delay, and other options"
-      ]
+      ],
+      "description": "Svelte Transition Invalid Params"
     },
     {
       "id": "svelte_animation_not_imported",
@@ -47,12 +57,17 @@
       "confidence": "high",
       "severity": "error",
       "reliability": "high",
-      "tags": ["svelte", "animation", "import"],
+      "tags": [
+        "svelte",
+        "animation",
+        "import"
+      ],
       "fix_commands": [
         "Import animation functions from 'svelte/animate'",
         "Check animation name spelling",
         "Ensure correct import syntax"
-      ]
+      ],
+      "description": "Svelte Animation Not Imported"
     },
     {
       "id": "svelte_custom_transition_error",
@@ -64,12 +79,17 @@
       "confidence": "medium",
       "severity": "error",
       "reliability": "medium",
-      "tags": ["svelte", "transition", "custom"],
+      "tags": [
+        "svelte",
+        "transition",
+        "custom"
+      ],
       "fix_commands": [
         "Ensure transition function returns object with duration and css/tick",
         "Check transition function parameters",
         "Verify css function returns valid CSS"
-      ]
+      ],
+      "description": "Svelte Custom Transition"
     }
   ]
 }

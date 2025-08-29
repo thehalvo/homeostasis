@@ -212,23 +212,43 @@ def identify_code_block(code: str, line_number: int) -> Tuple[int, int]:
     # Find the block end
     end_idx = line_idx
     last_non_empty = line_idx
-    for i in range(line_idx + 1, len(lines)):
-        line = lines[i]
+    
+    # If we're in a function/class block (starts at beginning), find where it ends
+    if start_idx < len(lines) and re.match(r'^\s*(def|class)', lines[start_idx]):
+        block_indent = len(lines[start_idx]) - len(lines[start_idx].lstrip())
         
-        # Track last non-empty line
-        if line.strip():
-            last_non_empty = i
+        for i in range(line_idx + 1, len(lines)):
+            line = lines[i]
             
-        # Get indentation of the current line
-        indent = len(line) - len(line.lstrip())
+            # Track last non-empty line with proper indentation
+            if line.strip():
+                indent = len(line) - len(line.lstrip())
+                if indent > block_indent:
+                    last_non_empty = i
+                else:
+                    # Hit a line at same or less indentation - end of block
+                    break
         
-        # If we hit a non-empty line with less indentation, we've found the end
-        if line.strip() and indent < target_indent:
-            end_idx = last_non_empty
-            break
-    else:
-        # If we reached the end of file
         end_idx = last_non_empty
+    else:
+        # Original logic for other cases
+        for i in range(line_idx + 1, len(lines)):
+            line = lines[i]
+            
+            # Track last non-empty line
+            if line.strip():
+                last_non_empty = i
+                
+            # Get indentation of the current line
+            indent = len(line) - len(line.lstrip())
+            
+            # If we hit a non-empty line with less indentation, we've found the end
+            if line.strip() and indent < target_indent:
+                end_idx = last_non_empty
+                break
+        else:
+            # If we reached the end of file
+            end_idx = last_non_empty
     
     # Convert back to 1-based line numbers
     return (start_idx + 1, end_idx + 1)

@@ -1,4 +1,5 @@
 {
+  "name": "Swift Swift Coredata Errors",
   "version": "1.0.0",
   "description": "Core Data persistence error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "high",
       "suggestion": "Core Data save failed - check validation rules and handle save errors properly",
       "root_cause": "swift_core_data_context_error",
-      "tags": ["swift", "core_data", "save", "context"]
+      "tags": [
+        "swift",
+        "core_data",
+        "save",
+        "context"
+      ],
+      "description": "Coredata Context Save"
     },
     {
       "id": "coredata_threading_violation",
@@ -24,7 +31,13 @@
       "severity": "critical",
       "suggestion": "Core Data threading violation - use context.perform() or performAndWait() for thread safety",
       "root_cause": "swift_core_data_threading_violation",
-      "tags": ["swift", "core_data", "threading", "context"]
+      "tags": [
+        "swift",
+        "core_data",
+        "threading",
+        "context"
+      ],
+      "description": "Coredata Threading Violation"
     },
     {
       "id": "coredata_faulting_error",
@@ -36,7 +49,13 @@
       "severity": "medium",
       "suggestion": "Core Data faulting error - object may have been deleted or context changed",
       "root_cause": "swift_core_data_faulting_error",
-      "tags": ["swift", "core_data", "fault", "object"]
+      "tags": [
+        "swift",
+        "core_data",
+        "fault",
+        "object"
+      ],
+      "description": "Coredata Faulting"
     },
     {
       "id": "coredata_model_version_mismatch",
@@ -48,7 +67,13 @@
       "severity": "critical",
       "suggestion": "Core Data model version mismatch - add migration or update data model version",
       "root_cause": "swift_core_data_model_version",
-      "tags": ["swift", "core_data", "model", "migration"]
+      "tags": [
+        "swift",
+        "core_data",
+        "model",
+        "migration"
+      ],
+      "description": "Coredata Model Version Mismatch"
     },
     {
       "id": "coredata_fetch_request_error",
@@ -60,7 +85,13 @@
       "severity": "medium",
       "suggestion": "Core Data fetch request failed - check entity name, predicate syntax, and context state",
       "root_cause": "swift_core_data_fetch_error",
-      "tags": ["swift", "core_data", "fetch", "request"]
+      "tags": [
+        "swift",
+        "core_data",
+        "fetch",
+        "request"
+      ],
+      "description": "Coredata Fetch Request"
     },
     {
       "id": "coredata_relationship_error",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Core Data relationship error - ensure objects are in same context and relationship is properly defined",
       "root_cause": "swift_core_data_relationship_error",
-      "tags": ["swift", "core_data", "relationship", "object"]
+      "tags": [
+        "swift",
+        "core_data",
+        "relationship",
+        "object"
+      ],
+      "description": "Coredata Relationship"
     },
     {
       "id": "coredata_validation_error",
@@ -84,7 +121,13 @@
       "severity": "medium",
       "suggestion": "Core Data validation failed - check required attributes and validation rules",
       "root_cause": "swift_core_data_validation_error",
-      "tags": ["swift", "core_data", "validation", "attribute"]
+      "tags": [
+        "swift",
+        "core_data",
+        "validation",
+        "attribute"
+      ],
+      "description": "Coredata Validation"
     },
     {
       "id": "coredata_persistent_store_error",
@@ -96,7 +139,13 @@
       "severity": "critical",
       "suggestion": "Persistent store error - check file permissions, disk space, and store URL",
       "root_cause": "swift_core_data_store_error",
-      "tags": ["swift", "core_data", "store", "persistent"]
+      "tags": [
+        "swift",
+        "core_data",
+        "store",
+        "persistent"
+      ],
+      "description": "Coredata Persistent Store"
     },
     {
       "id": "coredata_object_deleted_error",
@@ -108,7 +157,13 @@
       "severity": "medium",
       "suggestion": "Attempting to access deleted Core Data object - check object lifecycle and deletion handling",
       "root_cause": "swift_core_data_deleted_object",
-      "tags": ["swift", "core_data", "deleted", "object"]
+      "tags": [
+        "swift",
+        "core_data",
+        "deleted",
+        "object"
+      ],
+      "description": "Coredata Object Deleted"
     },
     {
       "id": "coredata_merge_conflict",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Core Data merge conflict - implement proper merge policy or conflict resolution",
       "root_cause": "swift_core_data_merge_conflict",
-      "tags": ["swift", "core_data", "merge", "conflict"]
+      "tags": [
+        "swift",
+        "core_data",
+        "merge",
+        "conflict"
+      ],
+      "description": "Coredata Merge Conflict"
     }
   ]
 }

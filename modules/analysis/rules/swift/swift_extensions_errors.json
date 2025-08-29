@@ -1,4 +1,5 @@
 {
+  "name": "Swift Swift Extensions Errors",
   "version": "1.0.0",
   "description": "Swift extension-related error detection rules",
   "rules": [
@@ -12,7 +13,13 @@
       "severity": "medium",
       "suggestion": "Extensions cannot have stored properties or explicit access control on the extension itself. Use computed properties or methods instead",
       "root_cause": "swift_extension_access_control",
-      "tags": ["swift", "extension", "access", "modifier"]
+      "tags": [
+        "swift",
+        "extension",
+        "access",
+        "modifier"
+      ],
+      "description": "Swift Extension Access Control"
     },
     {
       "id": "swift_extension_stored_property",
@@ -24,7 +31,13 @@
       "severity": "high",
       "suggestion": "Use computed properties, associated objects (for classes), or static properties in extensions",
       "root_cause": "swift_extension_stored_property",
-      "tags": ["swift", "extension", "property", "stored"]
+      "tags": [
+        "swift",
+        "extension",
+        "property",
+        "stored"
+      ],
+      "description": "Swift Extension Stored Property"
     },
     {
       "id": "swift_extension_member_ambiguity",
@@ -36,7 +49,13 @@
       "severity": "medium",
       "suggestion": "Disambiguate by using explicit type annotations or qualifying the member access",
       "root_cause": "swift_extension_ambiguity",
-      "tags": ["swift", "extension", "ambiguity", "member"]
+      "tags": [
+        "swift",
+        "extension",
+        "ambiguity",
+        "member"
+      ],
+      "description": "Swift Extension Member Ambiguity"
     },
     {
       "id": "swift_extension_retroactive_conflict",
@@ -48,7 +67,13 @@
       "severity": "medium",
       "suggestion": "Remove duplicate protocol conformance or organize extensions to avoid conflicts",
       "root_cause": "swift_extension_duplicate_conformance",
-      "tags": ["swift", "extension", "protocol", "duplicate"]
+      "tags": [
+        "swift",
+        "extension",
+        "protocol",
+        "duplicate"
+      ],
+      "description": "Swift Extension Retroactive Conflict"
     },
     {
       "id": "swift_extension_initializer_delegation",
@@ -60,7 +85,13 @@
       "severity": "high",
       "suggestion": "Extensions can only add convenience initializers that must delegate to existing initializers",
       "root_cause": "swift_extension_init_delegation",
-      "tags": ["swift", "extension", "init", "convenience"]
+      "tags": [
+        "swift",
+        "extension",
+        "init",
+        "convenience"
+      ],
+      "description": "Swift Extension Initializer Delegation"
     },
     {
       "id": "swift_extension_conditional_member",
@@ -72,7 +103,13 @@
       "severity": "medium",
       "suggestion": "Check conditional extension constraints - the member may not be available for this specific type",
       "root_cause": "swift_conditional_extension",
-      "tags": ["swift", "extension", "conditional", "constraint"]
+      "tags": [
+        "swift",
+        "extension",
+        "conditional",
+        "constraint"
+      ],
+      "description": "Swift Extension Conditional Member"
     },
     {
       "id": "swift_extension_override_error",
@@ -84,7 +121,13 @@
       "severity": "high",
       "suggestion": "Extensions cannot override existing members. Use subclassing or protocol extensions with default implementations",
       "root_cause": "swift_extension_override",
-      "tags": ["swift", "extension", "override", "inheritance"]
+      "tags": [
+        "swift",
+        "extension",
+        "override",
+        "inheritance"
+      ],
+      "description": "Swift Extension Override"
     },
     {
       "id": "swift_extension_generic_constraint",
@@ -96,7 +139,13 @@
       "severity": "medium",
       "suggestion": "Generic extensions with where clauses cannot add protocol conformances in the same declaration",
       "root_cause": "swift_extension_generic_constraint",
-      "tags": ["swift", "extension", "generic", "where"]
+      "tags": [
+        "swift",
+        "extension",
+        "generic",
+        "where"
+      ],
+      "description": "Swift Extension Generic Constraint"
     },
     {
       "id": "swift_extension_computed_property_observer",
@@ -108,7 +157,13 @@
       "severity": "medium",
       "suggestion": "Property observers (willSet/didSet) cannot be added to existing properties in extensions",
       "root_cause": "swift_extension_property_observer",
-      "tags": ["swift", "extension", "property", "observer"]
+      "tags": [
+        "swift",
+        "extension",
+        "property",
+        "observer"
+      ],
+      "description": "Swift Extension Computed Property Observer"
     },
     {
       "id": "swift_extension_nested_type",
@@ -120,7 +175,13 @@
       "severity": "medium",
       "suggestion": "Nested types must be defined in the original type declaration, not in extensions",
       "root_cause": "swift_extension_nested_type",
-      "tags": ["swift", "extension", "nested", "type"]
+      "tags": [
+        "swift",
+        "extension",
+        "nested",
+        "type"
+      ],
+      "description": "Swift Extension Nested Type"
     },
     {
       "id": "swift_extension_protocol_method_dispatch",
@@ -132,7 +193,13 @@
       "severity": "low",
       "suggestion": "Be aware of static vs dynamic dispatch in protocol extensions - non-required methods use static dispatch",
       "root_cause": "swift_extension_dispatch",
-      "tags": ["swift", "extension", "protocol", "dispatch"]
+      "tags": [
+        "swift",
+        "extension",
+        "protocol",
+        "dispatch"
+      ],
+      "description": "Swift Extension Protocol Method Dispatch"
     },
     {
       "id": "swift_extension_availability_conflict",
@@ -144,7 +211,13 @@
       "severity": "medium",
       "suggestion": "Extension members cannot have broader availability than the extended type",
       "root_cause": "swift_extension_availability",
-      "tags": ["swift", "extension", "availability", "platform"]
+      "tags": [
+        "swift",
+        "extension",
+        "availability",
+        "platform"
+      ],
+      "description": "Swift Extension Availability Conflict"
     },
     {
       "id": "swift_extension_private_member_access",
@@ -156,7 +229,13 @@
       "severity": "medium",
       "suggestion": "Use 'fileprivate' instead of 'private' if extension needs access to members in the same file",
       "root_cause": "swift_extension_private_access",
-      "tags": ["swift", "extension", "private", "access"]
+      "tags": [
+        "swift",
+        "extension",
+        "private",
+        "access"
+      ],
+      "description": "Swift Extension Private Member Access"
     },
     {
       "id": "swift_extension_type_constraint_mismatch",
@@ -168,7 +247,13 @@
       "severity": "high",
       "suggestion": "Ensure the type meets all constraints specified in the extension's where clause",
       "root_cause": "swift_extension_constraint",
-      "tags": ["swift", "extension", "constraint", "generic"]
+      "tags": [
+        "swift",
+        "extension",
+        "constraint",
+        "generic"
+      ],
+      "description": "Swift Extension Type Constraint Mismatch"
     },
     {
       "id": "swift_extension_circular_reference",
@@ -180,7 +265,13 @@
       "severity": "high",
       "suggestion": "Avoid circular dependencies between extensions and their constraints",
       "root_cause": "swift_extension_circular",
-      "tags": ["swift", "extension", "circular", "reference"]
+      "tags": [
+        "swift",
+        "extension",
+        "circular",
+        "reference"
+      ],
+      "description": "Swift Extension Circular Reference"
     }
   ]
 }

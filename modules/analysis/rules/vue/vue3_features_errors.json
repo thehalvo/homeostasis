@@ -24,10 +24,16 @@
         "Ensure target is available when teleport mounts",
         "Add disabled prop if target might not exist"
       ],
-      "tags": ["vue3", "teleport", "target", "dom"],
+      "tags": [
+        "vue3",
+        "teleport",
+        "target",
+        "dom"
+      ],
       "examples": [
         "<Teleport to=\"#modal-target\">\n  <div>Modal content</div>\n</Teleport>"
-      ]
+      ],
+      "description": "Vue3 Teleport"
     },
     {
       "id": "vue3_suspense_error",
@@ -45,10 +51,16 @@
         "Use defineAsyncComponent properly",
         "Add error boundary for async components"
       ],
-      "tags": ["vue3", "suspense", "async", "components"],
+      "tags": [
+        "vue3",
+        "suspense",
+        "async",
+        "components"
+      ],
       "examples": [
         "<Suspense>\n  <template #default>\n    <AsyncComponent />\n  </template>\n  <template #fallback>\n    <div>Loading...</div>\n  </template>\n</Suspense>"
-      ]
+      ],
+      "description": "Vue3 Suspense"
     },
     {
       "id": "vue3_fragments_error",
@@ -66,10 +78,16 @@
         "Check component integration with Vue 2 components",
         "Handle attribute inheritance properly"
       ],
-      "tags": ["vue3", "fragments", "root", "nodes"],
+      "tags": [
+        "vue3",
+        "fragments",
+        "root",
+        "nodes"
+      ],
       "examples": [
         "<template>\n  <div>First root</div>\n  <div>Second root</div>\n</template>"
-      ]
+      ],
+      "description": "Vue3 Fragments"
     },
     {
       "id": "vue3_emit_definition_error",
@@ -87,10 +105,16 @@
         "Define emit event names",
         "Add validation for emit payloads"
       ],
-      "tags": ["vue3", "emit", "defineEmits", "events"],
+      "tags": [
+        "vue3",
+        "emit",
+        "defineEmits",
+        "events"
+      ],
       "examples": [
         "// Options API\nexport default {\n  emits: ['update', 'delete'],\n  methods: {\n    handleUpdate() {\n      this.$emit('update', data)\n    }\n  }\n}\n\n// Script setup\n<script setup>\nconst emit = defineEmits(['update', 'delete'])\nemit('update', data)\n</script>"
-      ]
+      ],
+      "description": "Vue3 Emit Definition"
     },
     {
       "id": "vue3_props_definition_error",
@@ -108,10 +132,16 @@
         "Define prop types and validation",
         "Provide default values for props"
       ],
-      "tags": ["vue3", "props", "defineProps", "validation"],
+      "tags": [
+        "vue3",
+        "props",
+        "defineProps",
+        "validation"
+      ],
       "examples": [
         "// Options API\nexport default {\n  props: {\n    message: {\n      type: String,\n      required: true\n    }\n  }\n}\n\n// Script setup\n<script setup>\nconst props = defineProps({\n  message: {\n    type: String,\n    required: true\n  }\n})\n</script>"
-      ]
+      ],
+      "description": "Vue3 Props Definition"
     },
     {
       "id": "vue3_script_setup_error",
@@ -129,10 +159,16 @@
         "Return values properly from setup",
         "Use top-level variables directly in template"
       ],
-      "tags": ["vue3", "script-setup", "syntax", "defineComponent"],
+      "tags": [
+        "vue3",
+        "script-setup",
+        "syntax",
+        "defineComponent"
+      ],
       "examples": [
         "<script setup>\nimport { ref, computed } from 'vue'\n\nconst count = ref(0)\nconst doubled = computed(() => count.value * 2)\n\nfunction increment() {\n  count.value++\n}\n</script>"
-      ]
+      ],
+      "description": "Vue3 Script Setup"
     },
     {
       "id": "vue3_provide_inject_error",
@@ -150,10 +186,16 @@
         "Provide default value for inject",
         "Use Symbol keys for type safety"
       ],
-      "tags": ["vue3", "provide", "inject", "dependency-injection"],
+      "tags": [
+        "vue3",
+        "provide",
+        "inject",
+        "dependency-injection"
+      ],
       "examples": [
         "// Parent component\nconst { provide } = Vue\nprovide('message', 'Hello from parent')\n\n// Child component\nconst { inject } = Vue\nconst message = inject('message', 'Default message')"
-      ]
+      ],
+      "description": "Vue3 Provide Inject"
     },
     {
       "id": "vue3_global_api_error",
@@ -171,10 +213,16 @@
         "Use app.use() for plugins",
         "Use app.component() for global components"
       ],
-      "tags": ["vue3", "global-api", "createApp", "migration"],
+      "tags": [
+        "vue3",
+        "global-api",
+        "createApp",
+        "migration"
+      ],
       "examples": [
         "// Vue 3\nimport { createApp } from 'vue'\nconst app = createApp({})\napp.mount('#app')\n\n// Instead of Vue 2\n// new Vue({\n//   el: '#app'\n// })"
-      ]
+      ],
+      "description": "Vue3 Global Api"
     },
     {
       "id": "vue3_reactivity_transform_error",
@@ -192,10 +240,16 @@
         "Check build tool configuration",
         "Consider using standard Composition API"
       ],
-      "tags": ["vue3", "reactivity-transform", "experimental", "ref"],
+      "tags": [
+        "vue3",
+        "reactivity-transform",
+        "experimental",
+        "ref"
+      ],
       "examples": [
         "// Standard approach (recommended)\nconst count = ref(0)\n\n// Reactivity Transform (experimental)\n// let count = $ref(0)"
-      ]
+      ],
+      "description": "Vue3 Reactivity Transform"
     },
     {
       "id": "vue3_custom_renderer_error",
@@ -213,10 +267,17 @@
         "Verify platform-specific implementation",
         "Use proper renderer API"
       ],
-      "tags": ["vue3", "custom-renderer", "api", "platform"],
+      "tags": [
+        "vue3",
+        "custom-renderer",
+        "api",
+        "platform"
+      ],
       "examples": [
         "import { createRenderer } from '@vue/runtime-core'\n\nconst { render } = createRenderer({\n  // Platform-specific implementation\n})"
-      ]
+      ],
+      "description": "Vue3 Custom Renderer"
     }
-  ]
+  ],
+  "name": "Vue3 Features Errors"
 }
