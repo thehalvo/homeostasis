@@ -1,0 +1,415 @@
+"""
+Improved test utilities for healing scenarios that align with Homeostasis principles.
+"""
+import os
+import shutil
+import subprocess
+import tempfile
+import time
+import asyncio
+import yaml
+import json
+import requests
+from pathlib import Path
+from typing import Dict, Any, List, Optional, Callable
+from dataclasses import dataclass, field
+import psutil
+import socket
+from contextlib import closing
+
+def find_free_port():
+    """Find a free port to use for the test service."""
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.bind(('', 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return s.getsockname()[1]
+
+@dataclass
+class HealingScenario:
+    """Configuration for a healing test scenario."""
+    name: str
+    description: str
+    error_type: str
+    target_service: str
+    error_trigger: Callable
+    validation_checks: List[Callable]
+    expected_fix_type: str
+    timeout: int = 300
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+@dataclass
+class HealingResult:
+    """Result of a healing scenario execution."""
+    scenario: HealingScenario
+    success: bool
+    error_detected: bool
+    patch_generated: bool
+    patch_applied: bool
+    tests_passed: bool
+    deployment_successful: bool
+    duration: float
+    error_details: Optional[Dict[str, Any]] = None
+    patch_details: Optional[Dict[str, Any]] = None
+    logs: List[str] = field(default_factory=list)
+    metrics: Dict[str, Any] = field(default_factory=dict)
+
+class ImprovedTestEnvironment:
+    """Test environment that uses the mock service for realistic error scenarios."""
+    
+    def __init__(self):
+        self.temp_dir = None
+        self.service_process = None
+        self.orchestrator_process = None
+        self.port = None
+        self.orchestrator_port = None
+        self.service_url = None
+        self.log_file = None
+        self.service_path = None
+        
+    def setup(self):
+        """Set up the test environment with mock service."""
+        # Create temporary directory structure
+        self.temp_dir = Path(tempfile.mkdtemp(prefix="healing_test_"))
+        self.service_path = self.temp_dir / "service"
+        self.service_path.mkdir()
+        
+        # Copy mock service
+        mock_service_src = Path(__file__).parent / "mock_service.py"
+        mock_service_dst = self.service_path / "app.py"
+        shutil.copy(mock_service_src, mock_service_dst)
+        
+        # Create minimal requirements.txt
+        requirements = self.service_path / "requirements.txt"
+        requirements.write_text("flask\nrequests\n")
+        
+        # Create logs directory
+        logs_dir = self.temp_dir / "logs"
+        logs_dir.mkdir()
+        self.log_file = logs_dir / "service.log"
+        
+        # Find free ports
+        self.port = find_free_port()
+        self.orchestrator_port = find_free_port()
+        self.service_url = f"http://localhost:{self.port}"
+        
+        # Create monitoring configuration
+        self._create_monitoring_config()
+        
+        # Start the service
+        self.start_service()
+        
+        # Wait for service to be ready
+        self._wait_for_service()
+        
+    def _create_monitoring_config(self):
+        """Create monitoring configuration for the test."""
+        config = {
+            "general": {
+                "project_name": "test_healing",
+                "environment": "test"
+            },
+            "monitoring": {
+                "log_file": str(self.log_file),
+                "error_patterns": [
+                    "ERROR:",
+                    "Exception",
+                    "Traceback",
+                    "TypeError:",
+                    "KeyError:",
+                    "AttributeError:",
+                    "ValueError:",
+                    "NameError:"
+                ]
+            },
+            "analysis": {
+                "rule_based": {
+                    "enabled": True,
+                    "confidence_threshold": 0.7
+                }
+            },
+            "patch_generation": {
+                "generated_patches_dir": str(self.temp_dir / "patches"),
+                "backup_original_files": True,
+                "enable_llm": False
+            },
+            "testing": {
+                "enabled": True,
+                "test_command": "python -m pytest",
+                "test_timeout": 30
+            },
+            "deployment": {
+                "enabled": True,
+                "strategy": "hot_swap"
+            }
+        }
+        
+        config_file = self.temp_dir / "homeostasis_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+            
+        # Set environment variable for orchestrator
+        os.environ["HOMEOSTASIS_CONFIG"] = str(config_file)
+        
+    def start_service(self):
+        """Start the mock service."""
+        if self.service_process and self.service_process.poll() is None:
+            self.stop_service()
+            
+        # Start service with proper environment
+        env = os.environ.copy()
+        env["PORT"] = str(self.port)
+        env["PYTHONUNBUFFERED"] = "1"
+        
+        self.service_process = subprocess.Popen(
+            ["python", "app.py"],
+            cwd=str(self.service_path),
+            env=env,
+            stdout=open(self.log_file, 'a'),
+            stderr=subprocess.STDOUT
+        )
+        
+    def stop_service(self):
+        """Stop the service."""
+        if self.service_process:
+            self.service_process.terminate()
+            self.service_process.wait(timeout=5)
+            self.service_process = None
+            
+    def _wait_for_service(self, timeout=30):
+        """Wait for service to be ready."""
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            try:
+                response = requests.get(f"{self.service_url}/health", timeout=1)
+                if response.status_code == 200:
+                    return True
+            except:
+                pass
+            time.sleep(0.5)
+        raise RuntimeError("Service failed to start within timeout")
+        
+    def inject_error(self, error_type: str, file_path: str = None, error_code: str = None):
+        """Enable error triggering in the mock service."""
+        try:
+            response = requests.post(
+                f"{self.service_url}/trigger_error/{error_type}",
+                json={"file_path": file_path, "error_code": error_code},
+                timeout=5
+            )
+            return response.status_code == 200
+        except Exception as e:
+            print(f"Failed to inject error: {e}")
+            return False
+            
+    def trigger_error(self):
+        """Trigger the configured error."""
+        try:
+            response = requests.get(f"{self.service_url}/error", timeout=5)
+            # We expect an error response
+            return response.status_code == 500
+        except Exception as e:
+            print(f"Error triggering failed: {e}")
+            return False
+            
+    def disable_error(self):
+        """Disable error triggering."""
+        try:
+            response = requests.post(f"{self.service_url}/disable_error", timeout=5)
+            return response.status_code == 200
+        except:
+            return False
+            
+    def cleanup(self):
+        """Clean up the test environment."""
+        self.stop_service()
+        if self.orchestrator_process:
+            self.orchestrator_process.terminate()
+            self.orchestrator_process.wait(timeout=5)
+            
+        if self.temp_dir and self.temp_dir.exists():
+            shutil.rmtree(self.temp_dir, ignore_errors=True)
+            
+    def get_service_logs(self):
+        """Get service logs."""
+        if self.log_file and self.log_file.exists():
+            return self.log_file.read_text()
+        return ""
+
+class HealingScenarioRunner:
+    """Runner for healing scenarios with proper orchestrator integration."""
+    
+    def __init__(self, test_environment: ImprovedTestEnvironment):
+        self.test_env = test_environment
+        self.orchestrator = None
+        
+    async def run_scenario(self, scenario: HealingScenario) -> HealingResult:
+        """Run a healing scenario and return the result."""
+        start_time = time.time()
+        result = HealingResult(
+            scenario=scenario,
+            success=False,
+            error_detected=False,
+            patch_generated=False,
+            patch_applied=False,
+            tests_passed=False,
+            deployment_successful=False,
+            duration=0
+        )
+        
+        try:
+            # Initialize orchestrator
+            await self._initialize_orchestrator()
+            
+            # Trigger the error
+            result.logs.append(f"Triggering error: {scenario.error_type}")
+            scenario.error_trigger()
+            
+            # Wait for error detection
+            detected = await self._wait_for_error_detection(scenario.error_type)
+            result.error_detected = detected
+            result.logs.append(f"Error detected: {detected}")
+            
+            if detected:
+                # Wait for patch generation
+                patch_generated = await self._wait_for_patch_generation()
+                result.patch_generated = patch_generated
+                result.logs.append(f"Patch generated: {patch_generated}")
+                
+                if patch_generated:
+                    # Wait for patch application
+                    patch_applied = await self._wait_for_patch_application()
+                    result.patch_applied = patch_applied
+                    result.logs.append(f"Patch applied: {patch_applied}")
+                    
+                    if patch_applied:
+                        # Run validation checks
+                        all_passed = True
+                        for check in scenario.validation_checks:
+                            passed = check()
+                            all_passed &= passed
+                            result.logs.append(f"Validation check {check.__name__}: {'passed' if passed else 'failed'}")
+                            
+                        result.tests_passed = all_passed
+                        result.deployment_successful = all_passed
+                        result.success = all_passed
+                        
+        except Exception as e:
+            result.logs.append(f"Exception during scenario: {str(e)}")
+            result.error_details = {
+                "exception_type": type(e).__name__,
+                "message": str(e)
+            }
+            
+        finally:
+            result.duration = time.time() - start_time
+            result.logs.append(f"Scenario completed in {result.duration:.2f}s")
+            
+        return result
+        
+    async def _initialize_orchestrator(self):
+        """Initialize the orchestrator for monitoring and healing."""
+        from orchestrator.orchestrator import Orchestrator
+        config_path = Path(os.environ.get("HOMEOSTASIS_CONFIG"))
+        self.orchestrator = Orchestrator(str(config_path))
+        await self.orchestrator.start()
+        
+    async def _wait_for_error_detection(self, error_type: str, timeout: int = 30):
+        """Wait for the orchestrator to detect the error."""
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            # Check orchestrator's detected errors
+            if self.orchestrator and hasattr(self.orchestrator, 'detected_errors'):
+                for error in self.orchestrator.detected_errors:
+                    if error_type.lower() in str(error).lower():
+                        return True
+            await asyncio.sleep(1)
+        return False
+        
+    async def _wait_for_patch_generation(self, timeout: int = 60):
+        """Wait for patch generation."""
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            # Check if patches were generated
+            patches_dir = Path(self.test_env.temp_dir) / "patches"
+            if patches_dir.exists() and list(patches_dir.glob("*.patch")):
+                return True
+            await asyncio.sleep(1)
+        return False
+        
+    async def _wait_for_patch_application(self, timeout: int = 30):
+        """Wait for patch application."""
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            # Check if error is resolved
+            try:
+                response = requests.get(f"{self.test_env.service_url}/error", timeout=5)
+                if response.status_code == 200:  # No error
+                    return True
+            except:
+                pass
+            await asyncio.sleep(1)
+        return False
+
+# Common validation checks
+def check_service_healthy():
+    """Check if service is healthy."""
+    try:
+        response = requests.get("http://localhost:5000/health", timeout=5)
+        return response.status_code == 200
+    except:
+        return False
+
+def check_error_fixed():
+    """Check if error endpoint is fixed."""
+    try:
+        response = requests.get("http://localhost:5000/error", timeout=5)
+        return response.status_code == 200
+    except:
+        return False
+
+def check_no_side_effects():
+    """Check that other endpoints still work."""
+    try:
+        response = requests.get("http://localhost:5000/api/test", timeout=5)
+        return response.status_code in [200, 404]  # Either works or proper 404
+    except:
+        return False
+
+class MetricsCollector:
+    """Collect metrics from healing scenarios."""
+    
+    def __init__(self):
+        self.metrics = {
+            "healing_durations": [],
+            "error_detection_times": [],
+            "patch_generation_times": [],
+            "success_rates": {}
+        }
+        
+    def record_healing_duration(self, scenario_name: str, duration: float):
+        """Record healing duration."""
+        self.metrics["healing_durations"].append({
+            "scenario": scenario_name,
+            "duration": duration
+        })
+        
+    def record_success_rate(self, scenario_type: str, success: bool):
+        """Record success rate."""
+        if scenario_type not in self.metrics["success_rates"]:
+            self.metrics["success_rates"][scenario_type] = {"success": 0, "total": 0}
+        self.metrics["success_rates"][scenario_type]["total"] += 1
+        if success:
+            self.metrics["success_rates"][scenario_type]["success"] += 1
+            
+    def get_summary(self):
+        """Get metrics summary."""
+        summary = {
+            "average_healing_duration": sum(m["duration"] for m in self.metrics["healing_durations"]) / len(self.metrics["healing_durations"]) if self.metrics["healing_durations"] else 0,
+            "success_rates": {}
+        }
+        
+        for scenario_type, stats in self.metrics["success_rates"].items():
+            rate = stats["success"] / stats["total"] if stats["total"] > 0 else 0
+            summary["success_rates"][scenario_type] = rate
+            
+        return summary

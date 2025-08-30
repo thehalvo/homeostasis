@@ -197,6 +197,10 @@ Collects and analyzes:
 - `TEST_ENV`: Test environment (local/docker/ci)
 - `LOG_LEVEL`: Logging verbosity (DEBUG/INFO/WARNING/ERROR)
 - `HEALING_TIMEOUT`: Maximum time for healing cycle (seconds)
+- `USE_MOCK_TESTS`: Use mock infrastructure instead of real services (true/false, default: false)
+  - When set to `true`, tests use simulated services for faster execution
+  - Recommended for local development and rapid iteration
+  - Example: `USE_MOCK_TESTS=true pytest tests/e2e/healing_scenarios/`
 
 ### Configuration Files
 

@@ -10,7 +10,7 @@
       "suggestion": "Handle the case where the entity doesn't exist. Use Optional.ofNullable() with findById() or add explicit null checks. Consider logging the missing entity ID and provide meaningful error messages to the client.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -22,7 +22,7 @@
       "suggestion": "Fix the syntax error in your HQL/JPQL query. Check entity names, property names, and query structure. Use named parameters or parameter binding to avoid SQL injection and syntax errors.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -34,7 +34,7 @@
       "suggestion": "Use getSingleResult() only when you are certain that exactly one result will be returned. Consider using getResultList().stream().findFirst() or add additional conditions to your query to ensure uniqueness.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -46,7 +46,7 @@
       "suggestion": "Verify entity class names and property names in mappings. Ensure all entities are properly annotated with @Entity and registered with EntityManagerFactory. Check for typos in property names referenced in queries.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -58,7 +58,7 @@
       "suggestion": "Verify property names in queries and mappings. Ensure the property exists in the entity class with proper getter/setter methods. Check for typos in property names.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -70,7 +70,7 @@
       "suggestion": "Ensure entity data satisfies database constraints before persisting. Add validation logic with Bean Validation (JSR 380) annotations like @NotNull, @Size, etc. Handle constraint violations gracefully with proper error messages.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -82,7 +82,7 @@
       "suggestion": "Revisit your locking strategy. Consider using optimistic locking with @Version instead. If pessimistic locking is necessary, implement proper timeout handling and retry logic. Be mindful of the transaction isolation level.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -90,11 +90,11 @@
       "pattern": "org\\.hibernate\\.LazyInitializationException(?:.*?could not initialize proxy.*?|.*?no Session.*?)",
       "type": "LazyInitializationException",
       "description": "Attempted to access a lazily-initialized collection or proxy outside of a session",
-      "root_cause": "hibernate_lazy_initialization",
+      "root_cause": "java_hibernate_lazy_loading",
       "suggestion": "Ensure lazily loaded associations are accessed within an open Hibernate session. Consider using EAGER fetching for associations that are always needed, or fetch them explicitly with JOIN FETCH in your queries. Spring's OpenSessionInViewFilter can help but has its drawbacks.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -106,7 +106,7 @@
       "suggestion": "Implement optimistic locking with @Version fields to detect concurrent modifications. Provide conflict resolution logic or retry mechanisms. Consider using a pessimistic lock for critical operations where conflicts cannot be tolerated.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -118,7 +118,7 @@
       "suggestion": "Validate data before persisting it to the database. Use Bean Validation constraints with appropriate limits (@Size, @Max, etc.). Ensure entity field types match database column types and sizes.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -190,7 +190,7 @@
       "suggestion": "Ensure the session is open before using it. Check session lifecycle management and avoid using sessions after they have been closed. Consider using session-per-request pattern or proper session management.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -202,7 +202,7 @@
       "suggestion": "Ensure the SessionFactory is properly initialized and not closed before use. Check application lifecycle management and avoid closing SessionFactory prematurely.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -214,7 +214,7 @@
       "suggestion": "Check for constraint violations, SQL syntax errors, or data integrity issues. Use explicit flush() calls strategically and handle batch operations properly.",
       "confidence": "medium",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -226,7 +226,7 @@
       "suggestion": "Use merge() instead of persist() for detached entities, or reattach the entity to the current session before persisting. Check entity state management.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -238,7 +238,7 @@
       "suggestion": "Check identifier generation strategy (@GeneratedValue). Ensure sequence or table exists for SEQUENCE/TABLE strategies. Verify database permissions and identifier generator configuration.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -250,7 +250,7 @@
       "suggestion": "Ensure all required dependencies are on the classpath. Check entity class names in configuration. Verify package scanning configuration and classpath setup.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -262,7 +262,7 @@
       "suggestion": "Explicitly configure the database dialect in hibernate.cfg.xml or application.properties. Ensure the database URL is correct and accessible for dialect auto-detection.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -274,7 +274,7 @@
       "suggestion": "Check database permissions for DDL operations. Verify hibernate.hbm2ddl.auto setting. Ensure database user has CREATE/ALTER/DROP privileges if schema management is enabled.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -286,7 +286,7 @@
       "suggestion": "Increase connection pool size, reduce connection timeout, or optimize connection usage. Check for connection leaks and ensure proper session/connection cleanup.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -298,7 +298,7 @@
       "suggestion": "Handle transaction boundaries properly. Check for exceptions that caused rollback. Use @Transactional(rollbackFor) to specify rollback conditions. Implement proper error handling.",
       "confidence": "high",
       "severity": "high",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -310,7 +310,7 @@
       "suggestion": "Check individual operations in the batch for constraint violations or data issues. Consider reducing batch size or handling batch failures gracefully. Use hibernate.order_inserts and hibernate.order_updates for better batching.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -322,7 +322,7 @@
       "suggestion": "Check cache provider configuration and dependencies. Verify cache region settings and ensure cache provider is properly configured in hibernate.cfg.xml.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -334,7 +334,7 @@
       "suggestion": "Verify property names used in Criteria queries. Check entity metamodel and ensure properties exist. Use type-safe Criteria API with metamodel generation.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -346,7 +346,7 @@
       "suggestion": "Check entity validation constraints (@NotNull, @Size, etc.). Validate data before persisting. Handle validation errors gracefully and provide meaningful error messages.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -358,7 +358,7 @@
       "suggestion": "Ensure metamodel generation is enabled and working correctly. Check entity attribute names and metamodel class generation. Verify annotation processor configuration.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -370,7 +370,7 @@
       "suggestion": "Ensure session is open when accessing proxy properties. Use Hibernate.initialize() to force proxy loading. Consider eager fetching for frequently accessed associations.",
       "confidence": "medium",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -382,7 +382,7 @@
       "suggestion": "Enable Hibernate statistics with hibernate.generate_statistics=true. Check performance monitoring configuration and ensure statistics collection is properly configured.",
       "confidence": "low",
       "severity": "low",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -394,7 +394,7 @@
       "suggestion": "Check Envers configuration and audit table setup. Ensure revision entity is properly configured. Verify auditing annotations and audit strategy settings.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -406,7 +406,7 @@
       "suggestion": "Check Hibernate Search configuration and Lucene/Elasticsearch setup. Verify index directory permissions and search provider configuration.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     },
     {
@@ -418,7 +418,7 @@
       "suggestion": "Check spatial data types and functions. Ensure database supports spatial operations. Verify geometry data format and spatial reference system configuration.",
       "confidence": "high",
       "severity": "medium",
-      "category": "hibernate",
+      "category": "framework",
       "framework": "hibernate"
     }
   ]

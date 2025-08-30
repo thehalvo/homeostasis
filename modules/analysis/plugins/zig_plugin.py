@@ -45,7 +45,7 @@ class ZigExceptionHandler:
         # Common Zig error patterns
         self.zig_error_patterns = {
             "syntax_error": [
-                r"error: expected .*?, found",
+                r"error: expected (?!type).*?, found",  # Exclude type-related expectations
                 r"error: invalid token",
                 r"error: unexpected token",
                 r"error: expected expression",
@@ -54,7 +54,7 @@ class ZigExceptionHandler:
                 r"error: unterminated character literal"
             ],
             "type_error": [
-                r"error: expected type '.*?', found '.*?'",
+                r"error: expected type",
                 r"error: type '.*?' cannot represent integer value",
                 r"error: cannot cast '.*?' to '.*?'",
                 r"error: type mismatch",
@@ -198,12 +198,25 @@ class ZigExceptionHandler:
         # Find matching rules
         matches = self._find_matching_rules(message, error_data)
         
-        if matches:
+        # Only update with rule-based matches if we don't have high confidence from patterns
+        if matches and analysis.get("confidence", "low") != "high":
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
+            # Map error type to subcategory
+            error_type = best_match.get("type", "")
+            subcategory_map = {
+                "SyntaxError": "syntax",
+                "TypeError": "type", 
+                "MemoryError": "memory",
+                "UndefinedError": "undefined",
+                "ComptimeError": "comptime",
+                "ImportError": "import"
+            }
+            subcategory = subcategory_map.get(error_type, analysis.get("subcategory", "unknown"))
+            
             analysis.update({
                 "category": best_match.get("category", analysis.get("category", "unknown")),
-                "subcategory": best_match.get("type", analysis.get("subcategory", "unknown")),
+                "subcategory": subcategory,
                 "confidence": best_match.get("confidence", "medium"),
                 "suggested_fix": best_match.get("suggestion", analysis.get("suggested_fix", "")),
                 "root_cause": best_match.get("root_cause", analysis.get("root_cause", "")),
@@ -222,7 +235,7 @@ class ZigExceptionHandler:
         """Analyze error by matching against common patterns."""
         message_lower = message.lower()
         
-        # Check type errors first (more specific)
+        # Check type errors first (more specific) - must be before syntax check
         for pattern in self.zig_error_patterns["type_error"]:
             if re.search(pattern, message, re.IGNORECASE):
                 return {
@@ -235,9 +248,9 @@ class ZigExceptionHandler:
                     "tags": ["zig", "type", "casting"]
                 }
         
-        # Check syntax errors
+        # Check syntax errors - but skip if it looks like a type error
         for pattern in self.zig_error_patterns["syntax_error"]:
-            if re.search(pattern, message, re.IGNORECASE):
+            if re.search(pattern, message, re.IGNORECASE) and "expected type" not in message:
                 return {
                     "category": "zig",
                     "subcategory": "syntax",

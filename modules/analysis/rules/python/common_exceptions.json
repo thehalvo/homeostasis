@@ -271,6 +271,33 @@
       "source": "built_in",
       "rule_type": "error_detection",
       "dependencies": []
+    },
+    {
+      "id": "python_typeerror_concat",
+      "pattern": "TypeError: can only concatenate str \\(not \"(\\w+)\"\\) to str",
+      "type": "TypeError",
+      "description": "Trying to concatenate incompatible types with a string",
+      "root_cause": "type_mismatch_error",
+      "suggestion": "Convert non-string types to string using str() before concatenation",
+      "category": "python",
+      "severity": "medium",
+      "confidence": "high",
+      "tags": [
+        "python",
+        "type",
+        "string"
+      ],
+      "examples": [
+        "TypeError: can only concatenate str (not \"int\") to str",
+        "TypeError: can only concatenate str (not \"float\") to str"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     }
   ]
 }

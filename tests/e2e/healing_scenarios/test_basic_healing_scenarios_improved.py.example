@@ -1,0 +1,196 @@
+"""
+Improved basic healing scenario tests that properly test the Homeostasis framework.
+"""
+import pytest
+import asyncio
+from .improved_test_utilities import (
+    ImprovedTestEnvironment, 
+    HealingScenarioRunner,
+    HealingScenario,
+    MetricsCollector,
+    check_service_healthy,
+    check_error_fixed,
+    check_no_side_effects
+)
+
+class TestImprovedBasicHealingScenarios:
+    """Test basic healing scenarios with proper error injection."""
+    
+    @pytest.fixture
+    def test_environment(self):
+        """Create test environment."""
+        env = ImprovedTestEnvironment()
+        env.setup()
+        yield env
+        env.cleanup()
+        
+    @pytest.fixture
+    def scenario_runner(self, test_environment):
+        """Create scenario runner."""
+        return HealingScenarioRunner(test_environment)
+        
+    @pytest.fixture
+    def metrics_collector(self):
+        """Create metrics collector."""
+        return MetricsCollector()
+        
+    @pytest.mark.asyncio
+    async def test_keyerror_healing(self, test_environment, scenario_runner, metrics_collector):
+        """Test healing of KeyError exceptions."""
+        def trigger_keyerror():
+            test_environment.inject_error("KeyError")
+            test_environment.trigger_error()
+            
+        scenario = HealingScenario(
+            name="KeyError Healing",
+            description="Test healing of dictionary key access errors",
+            error_type="KeyError",
+            target_service="mock_service",
+            error_trigger=trigger_keyerror,
+            validation_checks=[
+                check_service_healthy,
+                check_error_fixed,
+                check_no_side_effects
+            ],
+            expected_fix_type="keyerror_fix"
+        )
+        
+        result = await scenario_runner.run_scenario(scenario)
+        
+        assert result.error_detected, "Error should have been detected"
+        assert result.patch_generated, "Patch should have been generated"
+        assert result.patch_applied, "Patch should have been applied"
+        assert result.success, "Healing should have succeeded"
+        
+        # Verify error is fixed
+        test_environment.disable_error()
+        assert check_error_fixed(), "Error endpoint should work after healing"
+        
+        # Record metrics
+        metrics_collector.record_healing_duration(scenario.name, result.duration)
+        metrics_collector.record_success_rate("KeyError", result.success)
+        
+    @pytest.mark.asyncio
+    async def test_attributeerror_healing(self, test_environment, scenario_runner, metrics_collector):
+        """Test healing of AttributeError exceptions."""
+        def trigger_attributeerror():
+            test_environment.inject_error("AttributeError")
+            test_environment.trigger_error()
+            
+        scenario = HealingScenario(
+            name="AttributeError Healing",
+            description="Test healing of attribute access errors",
+            error_type="AttributeError",
+            target_service="mock_service",
+            error_trigger=trigger_attributeerror,
+            validation_checks=[
+                check_service_healthy,
+                check_error_fixed,
+                check_no_side_effects
+            ],
+            expected_fix_type="attributeerror_fix"
+        )
+        
+        result = await scenario_runner.run_scenario(scenario)
+        
+        assert result.error_detected, "Error should have been detected"
+        assert result.patch_generated, "Patch should have been generated"
+        assert result.patch_applied, "Patch should have been applied"
+        assert result.success, "Healing should have succeeded"
+        
+        # Record metrics
+        metrics_collector.record_healing_duration(scenario.name, result.duration)
+        metrics_collector.record_success_rate("AttributeError", result.success)
+        
+    @pytest.mark.asyncio
+    async def test_typeerror_healing(self, test_environment, scenario_runner, metrics_collector):
+        """Test healing of TypeError exceptions."""
+        def trigger_typeerror():
+            test_environment.inject_error("TypeError")
+            test_environment.trigger_error()
+            
+        scenario = HealingScenario(
+            name="TypeError Healing",
+            description="Test healing of type mismatch errors",
+            error_type="TypeError",
+            target_service="mock_service",
+            error_trigger=trigger_typeerror,
+            validation_checks=[
+                check_service_healthy,
+                check_error_fixed,
+                check_no_side_effects
+            ],
+            expected_fix_type="typeerror_fix"
+        )
+        
+        result = await scenario_runner.run_scenario(scenario)
+        
+        assert result.error_detected, "Error should have been detected"
+        assert result.patch_generated, "Patch should have been generated"
+        assert result.patch_applied, "Patch should have been applied"
+        assert result.success, "Healing should have succeeded"
+        
+        # Record metrics
+        metrics_collector.record_healing_duration(scenario.name, result.duration)
+        metrics_collector.record_success_rate("TypeError", result.success)
+        
+    @pytest.mark.asyncio
+    async def test_multiple_error_healing(self, test_environment, scenario_runner, metrics_collector):
+        """Test healing multiple errors in sequence."""
+        errors_to_test = ["KeyError", "AttributeError", "TypeError"]
+        
+        for error_type in errors_to_test:
+            def trigger_error(et=error_type):
+                test_environment.inject_error(et)
+                test_environment.trigger_error()
+                
+            scenario = HealingScenario(
+                name=f"Multiple Error Healing - {error_type}",
+                description=f"Test healing of {error_type} in sequence",
+                error_type=error_type,
+                target_service="mock_service",
+                error_trigger=lambda: trigger_error(error_type),
+                validation_checks=[
+                    check_service_healthy,
+                    check_error_fixed
+                ],
+                expected_fix_type=f"{error_type.lower()}_fix"
+            )
+            
+            result = await scenario_runner.run_scenario(scenario)
+            
+            assert result.success, f"Healing of {error_type} should have succeeded"
+            
+            # Disable error before next iteration
+            test_environment.disable_error()
+            
+            # Record metrics
+            metrics_collector.record_healing_duration(scenario.name, result.duration)
+            metrics_collector.record_success_rate(error_type, result.success)
+            
+    @pytest.mark.asyncio
+    async def test_healing_performance_metrics(self, test_environment, scenario_runner, metrics_collector):
+        """Test that healing performance metrics are collected."""
+        def trigger_error():
+            test_environment.inject_error("ValueError")
+            test_environment.trigger_error()
+            
+        scenario = HealingScenario(
+            name="Performance Metrics Test",
+            description="Test healing performance metric collection",
+            error_type="ValueError",
+            target_service="mock_service",
+            error_trigger=trigger_error,
+            validation_checks=[check_service_healthy],
+            expected_fix_type="valueerror_fix"
+        )
+        
+        result = await scenario_runner.run_scenario(scenario)
+        
+        assert result.duration > 0, "Duration should be recorded"
+        assert len(result.logs) > 0, "Logs should be recorded"
+        
+        # Get metrics summary
+        summary = metrics_collector.get_summary()
+        assert "average_healing_duration" in summary
+        assert "success_rates" in summary

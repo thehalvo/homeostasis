@@ -155,7 +155,11 @@ class PatchGenerator:
             "invalid_int_conversion": "int_conversion_error.py.template",
             "exception_handling_needed": "try_except_block.py.template",
             "function_needs_improvement": "function_replacement.py.template",
-            "transaction_error": "transaction_error.py.template"
+            "transaction_error": "transaction_error.py.template",
+            "fastapi_async_mismatch": "fastapi_async_fix.py.template",
+            "attribute_access_error": "attribute_error.py.template",
+            "attribute_not_exists": "attribute_error.py.template",
+            "type_mismatch_error": "type_error_fix.py.template"
         }
         
         # Framework detection patterns

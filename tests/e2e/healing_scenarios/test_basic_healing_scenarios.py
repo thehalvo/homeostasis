@@ -214,6 +214,7 @@ async def trigger_error():
     @pytest.mark.asyncio
     async def test_multiple_error_healing(self, test_environment, scenario_runner, metrics_collector):
         """Test healing when multiple errors occur in sequence."""
+        import os
         errors_triggered = []
         
         def trigger_first_error():
@@ -242,27 +243,41 @@ async def trigger_error():
         
         # After first healing, inject a different error
         def trigger_second_error():
-            # Add another endpoint with a different error
-            new_endpoint = '''
+            # Check if we're in mock mode
+            USE_MOCK = os.environ.get('USE_MOCK_TESTS', 'false').lower() == 'true'
+            if USE_MOCK:
+                # In mock mode, just inject the error directly
+                test_environment.inject_error(
+                    error_type="AttributeError",
+                    file_path="app.py",
+                    error_code=""
+                )
+                # Ensure we have a mock app.py file
+                app_path = test_environment.service_path / "app.py"
+                if not app_path.exists():
+                    app_path.write_text("# Mock app.py")
+            else:
+                # Add another endpoint with a different error
+                new_endpoint = '''
 
 @app.get("/error2")
 async def trigger_error2():
     obj = None
     return {"result": obj.missing_attribute}
 '''
-            app_path = test_environment.service_path / "app.py"
-            content = app_path.read_text()
-            app_path.write_text(content + new_endpoint)
-            
-            test_environment.stop_service()
-            test_environment.start_service()
-            
-            # Trigger the new error
-            import requests
-            try:
-                requests.get("http://localhost:8000/error2", timeout=5)
-            except:
-                pass
+                app_path = test_environment.service_path / "app.py"
+                content = app_path.read_text()
+                app_path.write_text(content + new_endpoint)
+                
+                test_environment.stop_service()
+                test_environment.start_service()
+                
+                # Trigger the new error
+                import requests
+                try:
+                    requests.get("http://localhost:8000/error2", timeout=5)
+                except:
+                    pass
             errors_triggered.append("AttributeError")
             
         # Second scenario - AttributeError

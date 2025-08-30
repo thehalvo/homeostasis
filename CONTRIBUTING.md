@@ -79,9 +79,50 @@ All submissions require review:
 
 ## Testing
 
+### Running Tests
+
 - Write tests for all new features and bug fixes
 - Ensure existing tests pass
 - Follow the project's testing patterns
+
+#### Basic Test Execution
+
+Run all tests using:
+```bash
+make test
+```
+
+Or using pytest directly:
+```bash
+pytest tests/
+```
+
+#### Using Mock Infrastructure for Faster Tests
+
+For faster test execution during development, you can use the mock infrastructure:
+
+```bash
+USE_MOCK_TESTS=true make test
+```
+
+This runs tests using simulated services instead of real ones, significantly reducing test time from minutes to seconds. The mock infrastructure:
+- Simulates service startup/shutdown without actual processes
+- Uses in-memory log generation instead of file I/O
+- Provides deterministic test results
+- Eliminates port conflicts and network issues
+
+#### Running Specific Test Suites
+
+```bash
+# Run only unit tests
+pytest tests/unit/
+
+# Run only e2e tests with mock infrastructure
+USE_MOCK_TESTS=true pytest tests/e2e/
+
+# Run a specific test file
+pytest tests/test_orchestrator.py
+```
 
 ## Documentation
 

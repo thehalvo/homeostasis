@@ -256,6 +256,8 @@ class MonitoringLogger:
         }
         
         # Log the exception
+        # Get message from kwargs or use the exception message
+        message = kwargs.get('message', str(e))
         # Remove 'message' from kwargs if it exists to avoid conflict
         filtered_kwargs = {k: v for k, v in kwargs.items() if k != 'message'}
         

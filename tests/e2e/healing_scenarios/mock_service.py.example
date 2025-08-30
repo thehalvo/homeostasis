@@ -1,0 +1,158 @@
+"""
+Mock service for testing healing scenarios.
+This service can trigger specific errors on demand without breaking the entire application.
+"""
+import os
+import json
+from flask import Flask, jsonify, request
+from typing import Dict, Any
+import traceback
+import sys
+
+app = Flask(__name__)
+
+# Global error configuration
+ERROR_CONFIG = {
+    "enabled": False,
+    "error_type": None,
+    "error_details": {}
+}
+
+# Simulated data storage
+DATA_STORE = {
+    "users": [
+        {"id": 1, "name": "Alice"},
+        {"id": 2, "name": "Bob"}
+    ],
+    "shared_state": {"counter": 0}
+}
+
+@app.route("/health")
+def health():
+    """Health check endpoint."""
+    return jsonify({"status": "healthy"})
+
+@app.route("/trigger_error/<error_type>", methods=["POST"])
+def trigger_error(error_type):
+    """Enable a specific error type to be triggered."""
+    ERROR_CONFIG["enabled"] = True
+    ERROR_CONFIG["error_type"] = error_type
+    ERROR_CONFIG["error_details"] = request.json or {}
+    return jsonify({"status": "error_enabled", "type": error_type})
+
+@app.route("/disable_error", methods=["POST"])
+def disable_error():
+    """Disable error triggering."""
+    ERROR_CONFIG["enabled"] = False
+    ERROR_CONFIG["error_type"] = None
+    ERROR_CONFIG["error_details"] = {}
+    return jsonify({"status": "errors_disabled"})
+
+@app.route("/error")
+def error_endpoint():
+    """Endpoint that triggers errors based on configuration."""
+    if ERROR_CONFIG["enabled"]:
+        error_type = ERROR_CONFIG["error_type"]
+        
+        if error_type == "KeyError":
+            # Accessing non-existent key
+            data = {"foo": "bar"}
+            return jsonify({"value": data["missing_key"]})
+            
+        elif error_type == "AttributeError":
+            # Accessing attribute on None
+            obj = None
+            return jsonify({"value": obj.some_attribute})
+            
+        elif error_type == "TypeError":
+            # Type mismatch operation
+            result = "string" + 123  # Can't concatenate string and int
+            return jsonify({"result": result})
+            
+        elif error_type == "NameError":
+            # Using undefined variable
+            return jsonify({"value": undefined_variable})
+            
+        elif error_type == "IndexError":
+            # List index out of bounds
+            items = [1, 2, 3]
+            return jsonify({"value": items[10]})
+            
+        elif error_type == "ZeroDivisionError":
+            # Division by zero
+            result = 10 / 0
+            return jsonify({"result": result})
+            
+        elif error_type == "ValueError":
+            # Invalid value conversion
+            num = int("not_a_number")
+            return jsonify({"number": num})
+            
+        elif error_type == "RuntimeError":
+            # Generic runtime error
+            raise RuntimeError("Something went wrong during execution")
+            
+        elif error_type == "fastapi_async_mismatch":
+            # Simulating FastAPI async/await mismatch
+            # This would normally be: result = await db.execute(...)
+            # But we're simulating the error message
+            raise TypeError("object dict can't be used in 'await' expression")
+            
+        elif error_type == "database_error":
+            # Simulating database connection error
+            raise Exception("Database connection failed: Connection refused")
+            
+        elif error_type == "transaction_error":
+            # Simulating transaction rollback scenario
+            raise Exception("Transaction failed: ROLLBACK due to constraint violation")
+            
+    return jsonify({"status": "no_error"})
+
+@app.route("/users/<int:user_id>")
+def get_user(user_id):
+    """Get user endpoint that can trigger cascading failures."""
+    if ERROR_CONFIG["enabled"] and ERROR_CONFIG["error_type"] == "cascading_failure":
+        # Corrupt shared state
+        DATA_STORE["shared_state"]["counter"] = "corrupted"
+        # Now try to increment it (will fail)
+        DATA_STORE["shared_state"]["counter"] += 1
+        
+    # Normal operation
+    users = DATA_STORE["users"]
+    user = next((u for u in users if u["id"] == user_id), None)
+    if user:
+        return jsonify(user)
+    return jsonify({"error": "User not found"}), 404
+
+@app.route("/api/<path:path>")
+def api_fallback(path):
+    """Fallback for API routes."""
+    if ERROR_CONFIG["enabled"]:
+        return error_endpoint()
+    return jsonify({"error": "Not found"}), 404
+
+@app.errorhandler(Exception)
+def handle_error(e):
+    """Global error handler that logs errors in a format the monitoring system expects."""
+    error_info = {
+        "error_type": type(e).__name__,
+        "error_message": str(e),
+        "traceback": traceback.format_exc(),
+        "endpoint": request.path,
+        "method": request.method
+    }
+    
+    # Log to stderr in a format the monitoring system can parse
+    print(f"ERROR: {json.dumps(error_info)}", file=sys.stderr)
+    
+    # Return error response
+    return jsonify({
+        "error": type(e).__name__,
+        "message": str(e),
+        "details": "An error occurred processing your request"
+    }), 500
+
+if __name__ == "__main__":
+    # Get port from environment or use default
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)

@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+"""
+Example test runner demonstrating how the improved healing tests would work.
+
+This shows how the Homeostasis framework should properly handle errors:
+1. Service runs normally and can handle requests
+2. Errors are injected through API calls, not code modification
+3. Monitoring detects runtime errors from logs
+4. Patches are generated based on error analysis
+5. Patches are tested in parallel environments
+6. Successful patches are deployed via hot-swap
+"""
+
+import asyncio
+import sys
+from pathlib import Path
+
+# Add parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent))
+
+from improved_test_utilities import (
+    ImprovedTestEnvironment,
+    HealingScenarioRunner,
+    HealingScenario,
+    check_service_healthy,
+    check_error_fixed
+)
+
+async def demonstrate_healing():
+    """Demonstrate the improved healing process."""
+    
+    print("=== Homeostasis Self-Healing Demo ===\n")
+    
+    # Set up test environment
+    print("1. Setting up test environment...")
+    env = ImprovedTestEnvironment()
+    env.setup()
+    
+    print(f"   - Service running on port {env.port}")
+    print(f"   - Log file: {env.log_file}")
+    print(f"   - Service URL: {env.service_url}\n")
+    
+    # Verify service is healthy
+    print("2. Verifying service health...")
+    if check_service_healthy():
+        print("   ✓ Service is healthy\n")
+    else:
+        print("   ✗ Service failed to start\n")
+        env.cleanup()
+        return
+        
+    # Create scenario runner
+    runner = HealingScenarioRunner(env)
+    
+    # Test KeyError healing
+    print("3. Testing KeyError healing scenario...")
+    
+    def trigger_keyerror():
+        print("   - Injecting KeyError...")
+        env.inject_error("KeyError")
+        print("   - Triggering error endpoint...")
+        env.trigger_error()
+        
+    scenario = HealingScenario(
+        name="KeyError Demo",
+        description="Demonstrate healing of dictionary key errors",
+        error_type="KeyError",
+        target_service="mock_service",
+        error_trigger=trigger_keyerror,
+        validation_checks=[check_service_healthy, check_error_fixed],
+        expected_fix_type="keyerror_fix"
+    )
+    
+    print("   - Running healing scenario...")
+    result = await runner.run_scenario(scenario)
+    
+    print(f"\n4. Healing Results:")
+    print(f"   - Error detected: {'✓' if result.error_detected else '✗'}")
+    print(f"   - Patch generated: {'✓' if result.patch_generated else '✗'}")
+    print(f"   - Patch applied: {'✓' if result.patch_applied else '✗'}")
+    print(f"   - Tests passed: {'✓' if result.tests_passed else '✗'}")
+    print(f"   - Healing successful: {'✓' if result.success else '✗'}")
+    print(f"   - Duration: {result.duration:.2f}s")
+    
+    print(f"\n5. Scenario Logs:")
+    for log in result.logs:
+        print(f"   - {log}")
+        
+    # Clean up
+    print("\n6. Cleaning up...")
+    env.cleanup()
+    print("   ✓ Test environment cleaned up")
+    
+    print("\n=== Demo Complete ===")
+
+if __name__ == "__main__":
+    # Note: This is just a demonstration of how the tests would work.
+    # In practice, the orchestrator would need to be properly integrated
+    # with the test environment to detect errors and generate patches.
+    
+    print("\nThis demonstration shows the proper architecture for Homeostasis tests:")
+    print("- Services run normally and can be monitored")
+    print("- Errors are injected via API, not code modification")
+    print("- The monitoring system detects runtime errors")
+    print("- Patches are generated and tested in isolation")
+    print("- Successful patches are deployed automatically")
+    print("\nThe current test suite needs to be refactored to follow this pattern.")
+    
+    # Uncomment to run the demo (requires full orchestrator integration)
+    # asyncio.run(demonstrate_healing())

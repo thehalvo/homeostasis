@@ -139,21 +139,37 @@ class FeatureExtractor:
         Returns:
             Classification features
         """
-        error_msg = error_context.error_message.lower()
-        
-        # Basic message features
-        error_message_length = len(error_context.error_message)
-        has_stack_trace = bool(error_context.stack_trace)
-        stack_trace_depth = len(error_context.stack_trace) if error_context.stack_trace else 0
-        
-        # Language and framework features
-        language_type = error_context.language.value
-        framework_detected = bool(error_context.framework)
-        
-        # Error metadata features
-        has_exception_type = bool(error_context.exception_type)
-        has_line_number = bool(error_context.line_number)
-        has_file_path = bool(error_context.file_path)
+        # Handle both dict and ErrorContext object
+        if isinstance(error_context, dict):
+            error_msg = error_context.get('message', '').lower()
+            error_message_length = len(error_context.get('message', ''))
+            has_stack_trace = bool(error_context.get('stack_trace'))
+            stack_trace_depth = len(error_context.get('stack_trace', '')) if error_context.get('stack_trace') else 0
+            
+            # Language and framework features
+            language_type = error_context.get('language', 'unknown')
+            framework_detected = bool(error_context.get('framework'))
+            
+            # Error metadata features
+            has_exception_type = bool(error_context.get('exception_type'))
+            has_line_number = bool(error_context.get('line_number'))
+            has_file_path = bool(error_context.get('file_path'))
+        else:
+            error_msg = error_context.error_message.lower()
+            
+            # Basic message features
+            error_message_length = len(error_context.error_message)
+            has_stack_trace = bool(error_context.stack_trace)
+            stack_trace_depth = len(error_context.stack_trace) if error_context.stack_trace else 0
+            
+            # Language and framework features
+            language_type = error_context.language.value
+            framework_detected = bool(error_context.framework)
+            
+            # Error metadata features
+            has_exception_type = bool(error_context.exception_type)
+            has_line_number = bool(error_context.line_number)
+            has_file_path = bool(error_context.file_path)
         
         # Content-based features
         has_import_error = any(keyword in error_msg for keyword in ['import', 'module', 'package'])
@@ -168,8 +184,12 @@ class FeatureExtractor:
         has_concurrency_keywords = any(keyword in error_msg for keyword in self.concurrency_keywords)
         
         # Environment features
-        has_env_variables = bool(error_context.environment_variables)
-        has_dependency_info = bool(error_context.dependencies)
+        if isinstance(error_context, dict):
+            has_env_variables = bool(error_context.get('environment_variables'))
+            has_dependency_info = bool(error_context.get('dependencies'))
+        else:
+            has_env_variables = bool(getattr(error_context, 'environment_variables', None))
+            has_dependency_info = bool(getattr(error_context, 'dependencies', None))
         
         return ClassificationFeatures(
             error_message_length=error_message_length,
@@ -327,7 +347,11 @@ class RuleBasedClassifier:
             if feature_name == "error_message":
                 # Special handling for error message patterns
                 patterns = condition.get("patterns", [])
-                error_msg = error_context.error_message.lower()
+                # Handle both dict and ErrorContext object
+                if isinstance(error_context, dict):
+                    error_msg = error_context.get('message', '').lower()
+                else:
+                    error_msg = error_context.error_message.lower()
                 match = any(pattern.lower() in error_msg for pattern in patterns)
                 matches.append(match)
             else:
@@ -342,8 +366,13 @@ class RuleBasedClassifier:
                         matches.append(feature_value == expected_value)
                     elif patterns:
                         # Pattern matching for exception types
-                        if feature_name == "has_exception_type" and error_context.exception_type:
-                            match = any(pattern in error_context.exception_type for pattern in patterns)
+                        if feature_name == "has_exception_type":
+                            if isinstance(error_context, dict):
+                                exception_type = error_context.get('exception_type')
+                            else:
+                                exception_type = error_context.exception_type
+                            if exception_type:
+                                match = any(pattern in exception_type for pattern in patterns)
                             matches.append(match)
                         else:
                             matches.append(False)
@@ -559,17 +588,27 @@ class IntelligentClassifier:
     def _get_language_specific_analysis(self, error_context: ErrorContext) -> Optional[Dict[str, Any]]:
         """Get language-specific error analysis."""
         try:
-            language_parser = create_language_parser(error_context.language)
+            # Handle both dict and ErrorContext object
+            if isinstance(error_context, dict):
+                language = error_context.get('language', 'unknown')
+                error_message = error_context.get('message', '')
+                source_code_snippet = error_context.get('source_code_snippet')
+            else:
+                language = error_context.language
+                error_message = error_context.error_message
+                source_code_snippet = error_context.source_code_snippet
+                
+            language_parser = create_language_parser(language)
             if language_parser:
                 # Try different types of analysis
                 syntax_result = language_parser.parse_syntax_error(
-                    error_context.error_message, 
-                    error_context.source_code_snippet
+                    error_message, 
+                    source_code_snippet
                 )
                 
                 compilation_result = language_parser.parse_compilation_error(
-                    error_context.error_message,
-                    error_context.source_code_snippet
+                    error_message,
+                    source_code_snippet
                 )
                 
                 runtime_issues = language_parser.detect_runtime_issues(error_context)
@@ -590,10 +629,20 @@ class IntelligentClassifier:
             return None
         
         try:
+            # Handle both dict and ErrorContext object
+            if isinstance(error_context, dict):
+                source_code_snippet = error_context.get('source_code_snippet')
+                language = error_context.get('language', 'unknown')
+                file_path = error_context.get('file_path')
+            else:
+                source_code_snippet = error_context.source_code_snippet
+                language = error_context.language
+                file_path = error_context.file_path
+                
             return self.compiler_integration.get_detailed_diagnostics(
-                error_context.source_code_snippet,
-                error_context.language,
-                error_context.file_path
+                source_code_snippet,
+                language,
+                file_path
             )
         except Exception as e:
             logger.debug(f"Error getting compiler diagnostics: {e}")
@@ -749,10 +798,18 @@ class IntelligentClassifier:
         
         # Add affected components
         affected_components = []
-        if error_context.file_path:
-            affected_components.append(error_context.file_path)
-        if error_context.service_name:
-            affected_components.append(f"service:{error_context.service_name}")
+        # Handle both dict and ErrorContext object
+        if isinstance(error_context, dict):
+            file_path = error_context.get('file_path')
+            service_name = error_context.get('service_name')
+        else:
+            file_path = error_context.file_path
+            service_name = getattr(error_context, 'service_name', None)
+            
+        if file_path:
+            affected_components.append(file_path)
+        if service_name:
+            affected_components.append(f"service:{service_name}")
         
         classification.affected_components = affected_components
         
@@ -792,8 +849,14 @@ class IntelligentClassifier:
     
     def _determine_root_cause(self, category: ErrorCategory, error_context: ErrorContext) -> str:
         """Determine root cause based on category and context."""
-        if error_context.exception_type:
-            return f"{category.value}_{error_context.exception_type.lower()}"
+        # Handle both dict and ErrorContext object
+        if isinstance(error_context, dict):
+            exception_type = error_context.get('exception_type')
+        else:
+            exception_type = error_context.exception_type
+            
+        if exception_type:
+            return f"{category.value}_{exception_type.lower()}"
         else:
             return f"{category.value}_error"
     

@@ -327,6 +327,34 @@
       "source": "built_in",
       "rule_type": "error_detection",
       "dependencies": []
+    },
+    {
+      "id": "fastapi_async_mismatch_error",
+      "pattern": "TypeError: object .* can't be used in 'await' expression",
+      "type": "TypeError",
+      "description": "Attempting to await a non-async object in FastAPI endpoint",
+      "root_cause": "fastapi_async_mismatch",
+      "suggestion": "Remove the 'await' keyword from non-async operations, or ensure the object being awaited is actually async/awaitable",
+      "category": "fastapi",
+      "severity": "high",
+      "confidence": "high",
+      "tags": [
+        "fastapi",
+        "async",
+        "await",
+        "type-error"
+      ],
+      "examples": [
+        "TypeError: object dict can't be used in 'await' expression",
+        "TypeError: object NoneType can't be used in 'await' expression"
+      ],
+      "metadata": {},
+      "criticality": "medium",
+      "complexity": "moderate",
+      "reliability": "high",
+      "source": "built_in",
+      "rule_type": "error_detection",
+      "dependencies": []
     }
   ]
 }

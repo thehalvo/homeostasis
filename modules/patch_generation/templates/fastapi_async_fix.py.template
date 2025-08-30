@@ -1,0 +1,5 @@
+# FastAPI Async Fix Template
+# Removes await from non-async operations
+
+# Remove await from the non-async call
+{{ variable_name }} = {{ object_name }}.{{ method_name }}({{ arguments }})

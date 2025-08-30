@@ -23,8 +23,9 @@ setup:
 install:
 	pip install -e ".[dev]"
 
+# Run tests (use USE_MOCK_TESTS=true for faster execution with mock infrastructure)
 test:
-	pytest tests/
+	$(VENV)/bin/pytest tests/
 
 test-all:
 	@./run_all_tests_local.sh

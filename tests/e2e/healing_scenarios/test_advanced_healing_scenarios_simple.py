@@ -15,7 +15,7 @@ class TestAdvancedHealingScenariosSimple:
         """Test healing of framework-specific errors (FastAPI)."""
         
         # Mock the components
-        with patch('orchestrator.orchestrator.get_latest_errors') as mock_get_errors, \
+        with patch('modules.monitoring.extractor.extract_errors') as mock_extract_errors, \
              patch('orchestrator.orchestrator.Analyzer') as mock_analyzer_cls, \
              patch('orchestrator.orchestrator.PatchGenerator') as mock_patch_gen_cls:
             
@@ -26,7 +26,7 @@ class TestAdvancedHealingScenariosSimple:
             mock_patch_gen_cls.return_value = mock_patch_gen
             
             # Mock error detection
-            mock_get_errors.return_value = [{
+            mock_extract_errors.return_value = [{
                 "timestamp": "2025-01-01T00:00:00",
                 "service": "test_service", 
                 "level": "ERROR",
@@ -38,7 +38,7 @@ class TestAdvancedHealingScenariosSimple:
             }]
             
             # Mock analysis
-            mock_analyzer.analyze.return_value = [{
+            mock_analyzer.analyze_errors.return_value = [{
                 "error_id": "err_1",
                 "error_type": "TypeError", 
                 "root_cause": "fastapi_async_mismatch",
@@ -48,7 +48,7 @@ class TestAdvancedHealingScenariosSimple:
             }]
             
             # Mock patch generation  
-            mock_patch_gen.generate_patch.return_value = {
+            mock_patch_gen.generate_patch_from_analysis.return_value = {
                 "file_path": "app.py",
                 "old_code": "result = await db.execute()",
                 "new_code": "result = db.execute()",
@@ -65,7 +65,11 @@ class TestAdvancedHealingScenariosSimple:
                 "monitoring": {"log_file": "test.log"},
                 "analysis": {"rule_based": {"enabled": True}},
                 "testing": {"enabled": False},
-                "deployment": {"enabled": False}
+                "deployment": {"enabled": False, "backup_dir": "backups/"},
+                "patch_generation": {
+                    "generated_patches_dir": "patches",
+                    "backup_original_files": True
+                }
             }
             config_path.parent.mkdir(exist_ok=True)
             with open(config_path, 'w') as f:
@@ -98,7 +102,7 @@ class TestAdvancedHealingScenariosSimple:
     async def test_database_error_healing(self):
         """Test healing of database-related errors."""
         
-        with patch('orchestrator.orchestrator.get_latest_errors') as mock_get_errors, \
+        with patch('modules.monitoring.extractor.extract_errors') as mock_extract_errors, \
              patch('orchestrator.orchestrator.Analyzer') as mock_analyzer_cls, \
              patch('orchestrator.orchestrator.PatchGenerator') as mock_patch_gen_cls:
             
@@ -109,7 +113,7 @@ class TestAdvancedHealingScenariosSimple:
             mock_patch_gen_cls.return_value = mock_patch_gen
             
             # Mock database error
-            mock_get_errors.return_value = [{
+            mock_extract_errors.return_value = [{
                 "timestamp": "2025-01-01T00:00:00",
                 "service": "test_service",
                 "level": "ERROR", 
@@ -121,7 +125,7 @@ class TestAdvancedHealingScenariosSimple:
             }]
             
             # Mock analysis
-            mock_analyzer.analyze.return_value = [{
+            mock_analyzer.analyze_errors.return_value = [{
                 "error_id": "err_2",
                 "error_type": "NameError",
                 "root_cause": "undefined_variable", 
@@ -132,7 +136,7 @@ class TestAdvancedHealingScenariosSimple:
             }]
             
             # Mock patch
-            mock_patch_gen.generate_patch.return_value = {
+            mock_patch_gen.generate_patch_from_analysis.return_value = {
                 "file_path": "app.py",
                 "old_code": "async def trigger_error():",
                 "new_code": "async def trigger_error(user_id: int = 1):",
@@ -148,7 +152,11 @@ class TestAdvancedHealingScenariosSimple:
                 "monitoring": {"log_file": "test.log"},
                 "analysis": {"rule_based": {"enabled": True}},
                 "testing": {"enabled": False},
-                "deployment": {"enabled": False}
+                "deployment": {"enabled": False, "backup_dir": "backups/"},
+                "patch_generation": {
+                    "generated_patches_dir": "patches",
+                    "backup_original_files": True
+                }
             }
             config_path.parent.mkdir(exist_ok=True)
             with open(config_path, 'w') as f:
@@ -179,7 +187,7 @@ class TestAdvancedHealingScenariosSimple:
         
         async def run_healing_scenario(error_type, root_cause):
             """Run a single healing scenario."""
-            with patch('orchestrator.orchestrator.get_latest_errors') as mock_get_errors, \
+            with patch('modules.monitoring.extractor.extract_errors') as mock_extract_errors, \
                  patch('orchestrator.orchestrator.Analyzer') as mock_analyzer_cls, \
                  patch('orchestrator.orchestrator.PatchGenerator') as mock_patch_gen_cls:
                 
@@ -189,19 +197,19 @@ class TestAdvancedHealingScenariosSimple:
                 mock_patch_gen_cls.return_value = mock_patch_gen
                 
                 # Mock error 
-                mock_get_errors.return_value = [{
+                mock_extract_errors.return_value = [{
                     "exception_type": error_type,
                     "message": f"{error_type} occurred"
                 }]
                 
                 # Mock analysis
-                mock_analyzer.analyze.return_value = [{
+                mock_analyzer.analyze_errors.return_value = [{
                     "error_type": error_type,
                     "root_cause": root_cause
                 }]
                 
                 # Mock patch
-                mock_patch_gen.generate_patch.return_value = {
+                mock_patch_gen.generate_patch_from_analysis.return_value = {
                     "description": f"Fix for {error_type}"
                 }
                 
@@ -228,7 +236,7 @@ class TestAdvancedHealingScenariosSimple:
     async def test_cascading_failure_healing(self):
         """Test healing of cascading failures across multiple components."""
         
-        with patch('orchestrator.orchestrator.get_latest_errors') as mock_get_errors, \
+        with patch('modules.monitoring.extractor.extract_errors') as mock_extract_errors, \
              patch('orchestrator.orchestrator.Analyzer') as mock_analyzer_cls, \
              patch('orchestrator.orchestrator.PatchGenerator') as mock_patch_gen_cls:
             
@@ -238,7 +246,7 @@ class TestAdvancedHealingScenariosSimple:
             mock_patch_gen_cls.return_value = mock_patch_gen
             
             # Mock cascading errors
-            mock_get_errors.return_value = [
+            mock_extract_errors.return_value = [
                 {
                     "timestamp": "2025-01-01T00:00:00",
                     "service": "test_service",
@@ -260,7 +268,7 @@ class TestAdvancedHealingScenariosSimple:
             ]
             
             # Mock analysis identifying cascading issue
-            mock_analyzer.analyze.return_value = [{
+            mock_analyzer.analyze_errors.return_value = [{
                 "error_type": "KeyError",
                 "root_cause": "cascading_state_corruption",
                 "confidence": 0.85,
@@ -269,7 +277,7 @@ class TestAdvancedHealingScenariosSimple:
             }]
             
             # Mock comprehensive patch
-            mock_patch_gen.generate_patch.return_value = {
+            mock_patch_gen.generate_patch_from_analysis.return_value = {
                 "file_path": "app.py",
                 "patches": [
                     {
@@ -293,7 +301,11 @@ class TestAdvancedHealingScenariosSimple:
                 "monitoring": {"log_file": "test.log"},
                 "analysis": {"rule_based": {"enabled": True}},
                 "testing": {"enabled": False},
-                "deployment": {"enabled": False}
+                "deployment": {"enabled": False, "backup_dir": "backups/"},
+                "patch_generation": {
+                    "generated_patches_dir": "patches",
+                    "backup_original_files": True
+                }
             }
             config_path.parent.mkdir(exist_ok=True)
             with open(config_path, 'w') as f:
@@ -313,6 +325,7 @@ class TestAdvancedHealingScenariosSimple:
                 
                 # Test comprehensive patch
                 patches = orchestrator.generate_patches(analysis_results) 
+                assert len(patches) > 0, "No patches were generated"
                 assert patches[0]["description"] == "Fix cascading failures by initializing shared state"
                 
             finally:

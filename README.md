@@ -356,7 +356,12 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
    - Ensure all template directories exist: `ls modules/patch_generation/templates/`
    - Check if rule matching is working: `ls modules/analysis/rules/`
 
-5. **Platform-specific issues:**
+5. **Tests taking too long to run:**
+   - Use mock infrastructure for faster development: `USE_MOCK_TESTS=true make test`
+   - This avoids starting real services and uses simulated responses
+   - Reduces test execution time from minutes to seconds
+
+6. **Platform-specific issues:**
    - Mac with Apple Silicon (M1/M2/M3): You might need additional dependencies
    - Windows: Adjust path separators and commands in configuration files
 

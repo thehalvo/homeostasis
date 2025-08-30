@@ -1,0 +1,12 @@
+# Type Error Fix Template
+# Fixes type mismatch errors by adding proper type conversions
+
+try:
+    # Convert to appropriate type before operation
+    {{ variable_name }}_converted = str({{ variable_name }}) if isinstance({{ variable_name }}, (int, float)) else {{ variable_name }}
+    {{ result_variable }} = {{ operation }}_converted
+except TypeError as e:
+    # Fallback to safe default
+    {{ result_variable }} = {{ safe_default }}
+    # Log the error for monitoring
+    print(f"TypeError handled: {e}")

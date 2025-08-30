@@ -874,8 +874,6 @@ class JavaScriptLanguagePlugin(LanguagePlugin):
         Returns:
             Generated fix data
         """
-        import sys
-        print(f"DEBUG: generate_fix called with args={args}, kwargs={kwargs}", file=sys.stderr)
         # Handle different calling patterns
         if len(args) >= 2:
             analysis = args[0]
@@ -893,8 +891,9 @@ class JavaScriptLanguagePlugin(LanguagePlugin):
             source_code = context.get("source_code", "")
         
         try:
-            fix = self.patch_generator.generate_fix(error_data, analysis, source_code)
+            fix = self.patch_generator.generate_patch(error_data, analysis, source_code)
         except Exception as e:
+            logger.error(f"Error generating patch: {e}")
             fix = None
         
         if fix:
@@ -1103,24 +1102,6 @@ class JavaScriptLanguagePlugin(LanguagePlugin):
                 "plugin": "javascript"
             }
     
-    def generate_fix(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                    source_code: str) -> Optional[Dict[str, Any]]:
-        """
-        Generate a fix for the JavaScript error.
-        
-        Args:
-            error_data: The JavaScript error data
-            analysis: Analysis results
-            source_code: Source code where the error occurred
-            
-        Returns:
-            Fix information or None if no fix can be generated
-        """
-        try:
-            return self.patch_generator.generate_patch(error_data, analysis, source_code)
-        except Exception as e:
-            logger.error(f"Error generating JavaScript fix: {e}")
-            return None
     
     def get_language_info(self) -> Dict[str, Any]:
         """

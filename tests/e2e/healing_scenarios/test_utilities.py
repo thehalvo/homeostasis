@@ -174,7 +174,7 @@ if __name__ == "__main__":
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
     uvicorn.run(app, host="0.0.0.0", port=port)
 '''
-        service_code = service_code.format(port=self.port)
+        # No formatting needed - port is already in the code
         (self.service_path / "app.py").write_text(service_code)
         
     def _create_test_config(self):

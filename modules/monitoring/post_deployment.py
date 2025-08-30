@@ -637,8 +637,10 @@ if __name__ == "__main__":
     monitoring_started = monitor.start_monitoring("http://localhost:8000", "example-patch-1")
     
     if monitoring_started:
-        print("Monitoring started. Press Enter to stop...")
-        input()
+        # Skip input prompt in test mode
+        if not (os.environ.get('USE_MOCK_TESTS') == 'true' or os.environ.get('HOMEOSTASIS_TEST_MODE') == 'true'):
+            print("Monitoring started. Press Enter to stop...")
+            input()
         
         # Stop monitoring
         monitor.stop_monitoring_service()
