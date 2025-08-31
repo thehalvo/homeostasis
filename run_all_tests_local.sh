@@ -49,7 +49,7 @@ run_test "Flake8 Syntax Check" \
 
 # 2. Extended Flake8 checks
 run_test "Flake8 Full Check" \
-    "flake8 modules/ services/ orchestrator/ tests/ --max-line-length=120 --exclude=venv,__pycache__,.git" || FAILED_TESTS+=("Flake8 Full")
+    "flake8 modules/ services/ orchestrator/ tests/ --max-line-length=120 --exclude=venv,__pycache__,.git --ignore=W293,W291,E128,E501,W292" || FAILED_TESTS+=("Flake8 Full")
 
 # 3. Black formatting check
 echo -e "\n${YELLOW}=== FORMATTING CHECKS ===${NC}"

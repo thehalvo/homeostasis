@@ -10,14 +10,12 @@ This module provides:
 """
 import os
 import json
-import shutil
 import hashlib
 import datetime
 import sqlite3
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Union, Tuple, Callable
+from typing import Dict, List, Any, Optional, Tuple, Callable
 from dataclasses import dataclass, field, asdict
-from collections import defaultdict
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (
@@ -32,8 +30,8 @@ from scipy import stats
 
 # Optional imports for advanced features
 try:
-    import mlflow
-    MLFLOW_AVAILABLE = True
+    pass  # mlflow not actually used
+    MLFLOW_AVAILABLE = False
 except ImportError:
     MLFLOW_AVAILABLE = False
 

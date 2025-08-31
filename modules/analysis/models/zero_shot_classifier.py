@@ -5,18 +5,12 @@ This module implements zero-shot classification capabilities that can handle
 error types not seen during training, using semantic embeddings and
 similarity-based approaches.
 """
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
 import numpy as np
-from typing import Dict, List, Any, Tuple, Optional, Set
-from pathlib import Path
-import json
+from typing import Dict, List, Any, Optional
 import logging
 from dataclasses import dataclass
 from sentence_transformers import SentenceTransformer
-from transformers import pipeline, AutoTokenizer, AutoModel
-from sklearn.metrics.pairwise import cosine_similarity
+from transformers import pipeline
 import faiss
 from collections import defaultdict
 

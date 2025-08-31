@@ -12,10 +12,9 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple, Union, Set
+from typing import Dict, Any, List, Optional, Union
 
 from ..language_plugin_system import LanguagePlugin, register_plugin
-from ..comprehensive_error_detector import ErrorCategory, ErrorSeverity, LanguageType
 
 logger = logging.getLogger(__name__)
 

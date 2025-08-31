@@ -8,12 +8,9 @@ tree analysis.
 import json
 import logging
 import re
-import subprocess
-import semver
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple, Set, Union
+from typing import Dict, Any, List
 from packaging import version as pkg_version
-from packaging.specifiers import SpecifierSet
 
 logger = logging.getLogger(__name__)
 

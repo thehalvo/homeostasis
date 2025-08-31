@@ -7,7 +7,6 @@ training data for the error classification and analysis models.
 import json
 import os
 import re
-import uuid
 import hashlib
 import datetime
 from pathlib import Path

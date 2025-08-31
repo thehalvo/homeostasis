@@ -6,7 +6,7 @@ especially for complex cases where one error leads to others.
 """
 import re
 import logging
-from typing import Dict, List, Set, Optional, Any, Tuple, Union
+from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field
 from collections import defaultdict, deque
 

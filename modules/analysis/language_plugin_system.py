@@ -8,12 +8,10 @@ plugins, as well as a registry for managing them.
 import abc
 import importlib
 import inspect
-import json
 import logging
-import os
 import sys
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Type, Callable, Union, Set, Tuple
+from typing import Dict, Any, List, Optional, Type, Union, Set
 
 logger = logging.getLogger(__name__)
 

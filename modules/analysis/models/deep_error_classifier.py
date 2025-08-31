@@ -9,15 +9,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from typing import Dict, List, Any, Tuple, Optional, Union
+from typing import Dict, List, Any, Tuple, Optional
 from pathlib import Path
-import json
 import logging
 from sklearn.preprocessing import LabelEncoder
 from torch.utils.data import Dataset, DataLoader
 from transformers import AutoTokenizer, AutoModel
 import re
-from collections import defaultdict
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

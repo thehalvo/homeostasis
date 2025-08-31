@@ -4,13 +4,11 @@ This module provides a more comprehensive framework for integrating various
 AI approaches for error analysis, including machine learning models,
 large language models (LLMs), and embedding-based similarity search.
 """
-import json
 import os
-import re
 from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple, Union, Callable
+from typing import Dict, List, Any, Optional, Union
 
 
 class AIModelType(Enum):

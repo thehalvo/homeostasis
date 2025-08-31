@@ -5,22 +5,17 @@ This module provides an orchestrator for handling errors across different progra
 It serves as a bridge between language-specific analyzers and enables cross-language error analysis.
 """
 import logging
-import json
 import uuid
-from typing import Dict, Any, List, Optional, Tuple, Union
-from pathlib import Path
+from typing import Dict, Any, List, Optional, Tuple
 from datetime import datetime
 
 from modules.analysis.analyzer import Analyzer, AnalysisStrategy
 from modules.analysis.javascript_analyzer import JavaScriptAnalyzer
 from modules.analysis.language_adapters import (
     ErrorAdapterFactory, 
-    convert_to_standard_format, 
-    convert_from_standard_format,
     ErrorSchemaValidator
 )
-from modules.analysis.rule_based import RuleBasedAnalyzer
-from modules.analysis.language_plugin_system import get_plugin, get_supported_languages
+from modules.analysis.language_plugin_system import get_plugin
 
 logger = logging.getLogger(__name__)
 

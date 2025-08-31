@@ -8,31 +8,22 @@ This module provides advanced distributed training features:
 - Fault tolerance and checkpointing
 - Support for multiple backends (Dask, Ray, Horovod, PyTorch DDP)
 """
-import os
-import json
 import time
-import pickle
 import logging
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Union, Tuple, Callable
+from typing import Dict, List, Any, Callable
 from dataclasses import dataclass
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import as_completed
 import numpy as np
 
 # Optional distributed computing imports
 try:
-    import dask
-    from dask.distributed import Client, as_completed as dask_completed
-    from dask import delayed
+    from dask.distributed import Client
     DASK_AVAILABLE = True
 except ImportError:
     DASK_AVAILABLE = False
 
 try:
     import ray
-    from ray import remote
-    from ray.train import Trainer
-    from ray.air import session
     RAY_AVAILABLE = True
 except ImportError:
     RAY_AVAILABLE = False
@@ -54,8 +45,8 @@ except ImportError:
     TORCH_AVAILABLE = False
 
 try:
-    from mpi4py import MPI
-    MPI_AVAILABLE = True
+    pass  # MPI not actually used
+    MPI_AVAILABLE = False
 except ImportError:
     MPI_AVAILABLE = False
 

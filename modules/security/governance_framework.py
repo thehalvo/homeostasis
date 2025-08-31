@@ -13,7 +13,7 @@ import json
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional, Tuple, Union, Any
+from typing import Dict, List, Optional, Tuple, Union, Any, TYPE_CHECKING
 from pathlib import Path
 
 from .rbac import get_rbac_manager, RBACManager
@@ -26,8 +26,9 @@ from .compliance_reporting import get_compliance_reporting, ComplianceReportingS
 from .policy_enforcement import get_policy_engine, PolicyEnforcementEngine, PolicyEvaluationContext
 from .identity_providers import get_identity_integration, IdentityProviderIntegration
 from .governance_manager import GovernanceManager
-# Avoid circular import - these will be imported when needed
-# from .regulated_industries import get_regulated_industries, RegulatedIndustriesSupport, RegulatedIndustry
+
+if TYPE_CHECKING:
+    from .regulated_industries import RegulatedIndustry
 
 logger = logging.getLogger(__name__)
 

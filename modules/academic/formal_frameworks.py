@@ -6,19 +6,16 @@ research, teaching, and thesis work in self-healing systems.
 """
 
 import ast
-import json
 import logging
-from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import z3
-from z3 import And, Or, Not, Implies, ForAll, Exists, Solver, sat, unsat
+from z3 import Solver
 
 from ..reliability.formal_verification import (
-    FormalVerifier, VerificationProperty, VerificationResult,
+    VerificationProperty, VerificationResult,
     SystemModel, PropertyType, Z3Verifier
 )
 

@@ -5,11 +5,9 @@ This module provides sophisticated error classification that recognizes error ty
 including syntax, logic, config, environment, concurrency, and security issues.
 """
 
-import json
 import logging
-import numpy as np
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union
+from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
 from enum import Enum
 
@@ -18,8 +16,6 @@ from .comprehensive_error_detector import (
     ErrorCategory, ErrorSeverity, LanguageType
 )
 from .language_parsers import create_language_parser, CompilerIntegration
-from .rule_based import RuleBasedAnalyzer
-from .ml_analyzer import MLAnalyzer, HybridAnalyzer
 
 logger = logging.getLogger(__name__)
 

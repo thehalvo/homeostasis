@@ -7,20 +7,18 @@ and prepare it for LLM-based patch generation and analysis.
 
 import json
 import logging
-import pickle
 import uuid
-import time
 import shutil
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, asdict, field
 from collections import defaultdict
 from enum import Enum
 
 from .comprehensive_error_detector import ErrorContext, ErrorClassification
 from .intelligent_classifier import IntelligentClassifier
-from ..security.llm_security_manager import LLMSecurityManager, create_llm_security_manager
+from ..security.llm_security_manager import create_llm_security_manager
 
 
 class FailureType(Enum):

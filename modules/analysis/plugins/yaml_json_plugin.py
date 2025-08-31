@@ -8,10 +8,8 @@ and common configuration issues across various tools and frameworks.
 import logging
 import re
 import json
-import yaml
-import os
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple, Union, Set
+from typing import Dict, Any, List, Optional
 
 from ..language_plugin_system import LanguagePlugin, register_plugin
 

@@ -5,13 +5,10 @@ This module provides dependency analysis for Swift projects using Swift Package 
 It can detect missing dependencies, version conflicts, and suggest fixes for common
 dependency-related issues.
 """
-import json
 import logging
-import os
 import re
-import subprocess
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple, Set
+from typing import Dict, Any, List, Optional
 
 logger = logging.getLogger(__name__)
 

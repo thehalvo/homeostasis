@@ -7,19 +7,17 @@ including comprehensive error detection, intelligent classification, and LLM con
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any
 
 from .comprehensive_error_detector import (
     ComprehensiveErrorDetector, ErrorContext, ErrorClassification,
-    create_error_context_from_log, analyze_comprehensive_error
+    create_error_context_from_log
 )
 from .language_parsers import create_language_parser, CompilerIntegration
-from .intelligent_classifier import IntelligentClassifier, classify_error_intelligently
-from .llm_context_manager import LLMContextManager, store_error_for_llm
+from .intelligent_classifier import IntelligentClassifier
+from .llm_context_manager import LLMContextManager
 from .mobile_framework_parsers import (
-    UnifiedFrameworkParserFactory, create_framework_parser, analyze_framework_error,
-    # Backward compatibility imports
-    MobileFrameworkParserFactory, create_mobile_framework_parser
+    UnifiedFrameworkParserFactory
 )
 
 logger = logging.getLogger(__name__)

@@ -6,7 +6,7 @@ framework-specific parsers for mobile and cross-platform development.
 """
 
 import logging
-from typing import Dict, List, Optional, Any, Tuple, Union
+from typing import Dict, List, Optional, Any
 from pathlib import Path
 
 from .comprehensive_error_detector import ErrorContext, LanguageType, ErrorCategory
@@ -22,8 +22,7 @@ logger = logging.getLogger(__name__)
 try:
     from .web_framework_parsers import (
         ReactParser, VueParser, AngularParser, SvelteParser, 
-        NextJSParser, EmberParser, WebComponentsParser,
-        create_web_framework_parser
+        NextJSParser, EmberParser, WebComponentsParser
     )
     WEB_FRAMEWORKS_AVAILABLE = True
 except ImportError as e:

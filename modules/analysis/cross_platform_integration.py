@@ -8,10 +8,9 @@ import logging
 import importlib
 import sys
 from pathlib import Path
-from typing import Dict, Any, List, Optional
 
 # Import the plugin registration system
-from .language_plugin_system import plugin_registry, register_plugin
+from .language_plugin_system import plugin_registry
 
 logger = logging.getLogger(__name__)
 

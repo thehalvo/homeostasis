@@ -9,12 +9,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from typing import Dict, List, Any, Tuple, Optional, Set
+from typing import Dict, List, Any, Tuple, Optional
 from pathlib import Path
-import json
 import logging
-from dataclasses import dataclass, field
-from collections import defaultdict
+from dataclasses import dataclass
 from sklearn.preprocessing import LabelEncoder
 from transformers import AutoTokenizer, AutoModel
 import networkx as nx

@@ -7,10 +7,8 @@ HTML Templates, and interoperability with popular frameworks like Lit and Stenci
 """
 import logging
 import re
-import json
-import os
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple, Union, Set
+from typing import Dict, Any, List, Optional
 
 from ..language_plugin_system import LanguagePlugin, register_plugin
 from ..language_adapters import JavaScriptErrorAdapter

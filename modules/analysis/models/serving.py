@@ -9,17 +9,15 @@ This module provides:
 - Monitoring and observability
 - Auto-scaling based on load
 """
-import os
 import json
 import time
 import asyncio
 import threading
 import queue
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Union, Tuple, Callable
+from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, field
-from collections import defaultdict, deque
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+from collections import deque
+from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 import logging
 
@@ -33,9 +31,8 @@ except ImportError:
     FASTAPI_AVAILABLE = False
 
 try:
-    import grpc
-    from concurrent import futures
-    GRPC_AVAILABLE = True
+    pass  # grpc not actually used
+    GRPC_AVAILABLE = False
 except ImportError:
     GRPC_AVAILABLE = False
 
@@ -46,7 +43,6 @@ except ImportError:
     REDIS_AVAILABLE = False
 
 try:
-    import prometheus_client
     from prometheus_client import Counter, Histogram, Gauge
     PROMETHEUS_AVAILABLE = True
 except ImportError:
@@ -54,7 +50,7 @@ except ImportError:
 
 # Import other modules
 from .versioning import ModelVersionControl
-from .code_features import MultiLanguageFeatureExtractor, FeaturePipeline
+from .code_features import MultiLanguageFeatureExtractor
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

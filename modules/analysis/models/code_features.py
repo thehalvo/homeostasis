@@ -13,16 +13,15 @@ import re
 import json
 import hashlib
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Union, Tuple, Set
+from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
 import numpy as np
-from collections import Counter, defaultdict
-import networkx as nx
+from collections import Counter
 
 # Language-specific imports
 try:
-    import tree_sitter
-    TREE_SITTER_AVAILABLE = True
+    pass  # tree_sitter not actually used
+    TREE_SITTER_AVAILABLE = False
 except ImportError:
     TREE_SITTER_AVAILABLE = False
 

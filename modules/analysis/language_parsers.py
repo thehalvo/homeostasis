@@ -6,13 +6,11 @@ additional programming languages including Java, Go, Rust, C#, and more.
 """
 
 import re
-import json
 import logging
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
-from enum import Enum
+from typing import Dict, List, Optional, Any
 
 from .comprehensive_error_detector import (
     LanguageSpecificParser, LanguageType, ErrorCategory, ErrorContext

@@ -12,10 +12,9 @@ import ast
 import json
 import logging
 import subprocess
-import tempfile
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Set
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, asdict
 from collections import defaultdict
 

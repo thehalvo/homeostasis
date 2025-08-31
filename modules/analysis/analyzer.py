@@ -7,17 +7,17 @@ This module provides a comprehensive interface for error analysis, supporting:
 3. LLM-based analysis
 4. Hybrid approaches combining multiple methods
 """
-from typing import Dict, List, Optional, Any, Tuple, Union
+from typing import Dict, List, Optional, Any
 import os
 import logging
 
 from .rule_based import RuleBasedAnalyzer, FASTAPI_ERROR_PATTERNS
 from .ai_stub import (
-    AIAnalyzer, AIModelType, AIModelConfig, 
+    AIAnalyzer, AIModelConfig, 
     get_available_models, AVAILABLE_MODELS, create_ensemble_analyzer
 )
 from .ml_analyzer import (
-    MLAnalyzer, HybridAnalyzer, MLAnalysisMode,
+    MLAnalyzer, HybridAnalyzer,
     get_available_analysis_modes
 )
 

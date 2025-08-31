@@ -8,9 +8,8 @@ NgRx state management, template binding, module loading, and Angular Universal S
 import logging
 import re
 import json
-import os
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple, Union, Set
+from typing import Dict, Any, List, Optional
 
 from ..language_plugin_system import LanguagePlugin, register_plugin
 from ..language_adapters import JavaScriptErrorAdapter

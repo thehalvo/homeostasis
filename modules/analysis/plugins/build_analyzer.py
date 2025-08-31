@@ -8,7 +8,7 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple, Set
+from typing import Dict, Any, Optional
 
 logger = logging.getLogger(__name__)
 

@@ -5,16 +5,14 @@ This module integrates machine learning models with rule-based analysis,
 providing a hybrid approach to error classification and root cause analysis.
 """
 import os
-import json
 import logging
 from enum import Enum
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union
+from typing import Dict, List, Optional, Any, Union
 
 from .rule_based import RuleBasedAnalyzer
 from .rule_confidence import ConfidenceLevel
 from .models.error_classifier import ErrorClassifierModel
-from .ai_stub import AIAnalyzer, AIModelType, AIModelConfig
+from .ai_stub import AIAnalyzer, AIModelType
 
 # Configure logging
 logger = logging.getLogger(__name__)

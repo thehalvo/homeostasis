@@ -9,7 +9,7 @@ import re
 import ast
 import logging
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Set, Tuple
+from typing import Dict, List, Any, Optional
 
 from .rule_based import RuleBasedAnalyzer
 from .rule_config import RuleCategory

@@ -7,20 +7,16 @@ relationships, and semantics to improve error analysis and patch generation.
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Dict, List, Any, Tuple, Optional, Union
-from pathlib import Path
+from typing import Dict, List, Any, Optional
 import numpy as np
 from transformers import (
-    AutoTokenizer, AutoModel, AutoModelForSequenceClassification,
-    RobertaTokenizer, RobertaModel,
+    AutoTokenizer, AutoModel,
     T5ForConditionalGeneration, T5Tokenizer
 )
 from dataclasses import dataclass
-import ast
 import re
 import logging
 from collections import defaultdict
-import json
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

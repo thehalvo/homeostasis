@@ -4,13 +4,11 @@ Error classification model for Homeostasis.
 This module implements a machine learning model for classifying errors into types,
 providing a more flexible and adaptive way to analyze errors beyond rule-based matching.
 """
-import json
 import os
 import re
 import pickle
-import numpy as np
 from pathlib import Path
-from typing import Dict, List, Any, Tuple, Optional, Union
+from typing import Dict, List, Any, Tuple, Optional
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline

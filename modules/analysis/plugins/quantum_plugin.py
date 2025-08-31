@@ -10,7 +10,7 @@ import re
 from typing import Dict, List, Optional, Any
 from ..language_plugin_system import LanguagePlugin
 from ...emerging_tech.quantum_computing import (
-    QuantumErrorMitigator, QuantumFramework, QuantumError
+    QuantumErrorMitigator, QuantumFramework
 )
 
 

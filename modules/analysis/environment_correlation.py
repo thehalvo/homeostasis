@@ -5,12 +5,10 @@ This module identifies relationships between errors and environmental factors,
 helping to detect patterns in when and why errors occur.
 """
 import os
-import re
-import json
 import time
 import logging
 import datetime
-from typing import Dict, List, Set, Optional, Any, Tuple, Union
+from typing import Dict, List, Optional, Any
 from collections import defaultdict, Counter
 from dataclasses import dataclass, field
 

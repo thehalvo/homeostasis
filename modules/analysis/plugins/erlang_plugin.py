@@ -8,9 +8,8 @@ process management, and BEAM VM issues to complement the existing Elixir support
 import logging
 import re
 import json
-import os
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple, Union, Set
+from typing import Dict, Any, List, Optional
 
 from ..language_plugin_system import LanguagePlugin, register_plugin
 

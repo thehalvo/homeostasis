@@ -7,11 +7,9 @@ and assessment tools for teaching self-healing systems at various levels.
 
 import json
 import logging
-from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 

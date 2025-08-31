@@ -4,13 +4,11 @@ APM (Application Performance Monitoring) integration for Homeostasis.
 This module provides integration with popular APM tools to extend the monitoring 
 and analysis capabilities of Homeostasis with external data sources.
 """
-import os
-import json
 import time
 import logging
 import requests
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any, Union, Tuple
+from typing import Dict, List, Optional, Any
 from enum import Enum
 from dataclasses import dataclass, field
 

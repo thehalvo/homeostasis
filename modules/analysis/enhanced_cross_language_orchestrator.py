@@ -7,15 +7,14 @@ adds similarity scoring, and enables more sophisticated cross-language learning.
 """
 import logging
 import json
-import re
 import uuid
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple, Union, Set
+from typing import Dict, Any, List, Optional
 
 from .cross_language_orchestrator import CrossLanguageOrchestrator
-from .language_plugin_system import get_plugin, get_all_plugins, load_all_plugins
+from .language_plugin_system import get_plugin, load_all_plugins
 from .shared_error_schema import (
     SharedErrorSchema,
     normalize_error,

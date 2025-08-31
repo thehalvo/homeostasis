@@ -4,13 +4,11 @@ JavaScript and Node.js Error Analyzer
 This module provides error analysis for JavaScript and Node.js applications,
 leveraging the language-agnostic error schema for cross-language compatibility.
 """
-import re
-import json
 import logging
-from typing import Dict, Any, List, Optional, Tuple, Union
+from typing import Dict, Any, Optional
 from pathlib import Path
 
-from .rule_config import RuleCategory, Rule, RuleLoader
+from .rule_config import RuleLoader
 from .language_adapters import JavaScriptErrorAdapter, ErrorAdapterFactory
 
 logger = logging.getLogger(__name__)

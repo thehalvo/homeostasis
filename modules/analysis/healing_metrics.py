@@ -7,11 +7,9 @@ cross-language effectiveness for self-healing capabilities.
 """
 import json
 import logging
-import os
-import time
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Set, Tuple, Union
+from typing import Dict, Any, Optional, Union
 
 logger = logging.getLogger(__name__)
 
