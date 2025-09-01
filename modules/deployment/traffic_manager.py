@@ -6,11 +6,8 @@ including traffic splitting and service proxying.
 """
 
 import logging
-import os
 import random
-import threading
-import time
-from typing import Dict, List, Optional, Set, Tuple, Union
+from typing import Dict, Optional
 
 from modules.deployment.traffic_manager_hooks import (
     NginxHook,

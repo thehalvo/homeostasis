@@ -8,13 +8,12 @@ SLA types, real-time monitoring, and automated escalation.
 
 import asyncio
 import datetime
-import json
 import logging
 import statistics
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Any, Union, Callable
+from typing import Dict, List, Optional, Any, Callable
 from collections import defaultdict, deque
 
 from modules.monitoring.alert_system import AlertManager

@@ -7,14 +7,13 @@ healing suggestions, and provide risk assessments for code changes.
 
 import os
 import sys
-import json
 import subprocess
 import requests
-from typing import List, Dict, Any, Optional, Tuple, Set
+from typing import List, Dict, Any, Optional
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime
 import re
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 
 # Add the homeostasis modules to the path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))

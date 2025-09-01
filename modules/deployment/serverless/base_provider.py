@@ -6,7 +6,7 @@ This module provides a base class for serverless providers.
 
 import abc
 import logging
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any
 
 logger = logging.getLogger(__name__)
 

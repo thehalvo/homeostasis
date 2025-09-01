@@ -2,7 +2,7 @@
 Enhanced confidence scoring for rule-based error analysis.
 """
 import re
-from typing import Dict, List, Optional, Any, Union, Tuple, Pattern, Set
+from typing import Dict, List, Any, Union
 from dataclasses import dataclass
 from enum import Enum
 

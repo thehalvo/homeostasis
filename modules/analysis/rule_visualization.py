@@ -2,14 +2,10 @@
 """
 Visualization tools for rule coverage and effectiveness statistics.
 """
-import os
 import sys
-import json
 import argparse
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple, Union
-import textwrap
-import math
+from typing import Dict, Any, Optional
 
 # Add parent directory to sys.path
 current_dir = Path(__file__).resolve().parent
@@ -19,10 +15,9 @@ if str(current_dir) not in sys.path:
 try:
     # Try direct import first
     from rule_config import (
-        RuleCategory, RuleLoader, get_all_rule_sets, DEFAULT_RULES_DIR
+        get_all_rule_sets, DEFAULT_RULES_DIR
     )
     from rule_categories import (
-        RuleCriticality, RuleComplexity, RuleReliability, RuleSource, RuleType,
         detect_rule_conflicts, RuleDependency
     )
 except ImportError:
@@ -30,10 +25,9 @@ except ImportError:
         # Try relative import
         sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
         from modules.analysis.rule_config import (
-            RuleCategory, RuleLoader, get_all_rule_sets, DEFAULT_RULES_DIR
+            get_all_rule_sets, DEFAULT_RULES_DIR
         )
         from modules.analysis.rule_categories import (
-            RuleCriticality, RuleComplexity, RuleReliability, RuleSource, RuleType,
             detect_rule_conflicts, RuleDependency
         )
     except ImportError as e:

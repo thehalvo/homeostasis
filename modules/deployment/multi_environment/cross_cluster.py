@@ -8,15 +8,12 @@ container orchestration platforms, and hybrid deployments.
 import asyncio
 import logging
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any, Tuple, Set
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
 from enum import Enum
 from datetime import datetime
-import yaml
-import json
-
 from modules.deployment.multi_environment.hybrid_orchestrator import (
-    Environment, EnvironmentType, HealingContext, HealingPlan, HealingStep
+    HealingContext, HealingPlan
 )
 from modules.deployment.kubernetes.k8s_manager import KubernetesManager
 from modules.monitoring.distributed_monitoring import DistributedMonitor

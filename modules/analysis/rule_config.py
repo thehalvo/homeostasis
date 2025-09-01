@@ -4,10 +4,9 @@ Rule configuration system for extensible rule-based error analysis.
 import json
 import os
 import re
-import yaml
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Union, Pattern
+from typing import Dict, List, Optional, Any, Union
 
 
 class RuleFormat(Enum):

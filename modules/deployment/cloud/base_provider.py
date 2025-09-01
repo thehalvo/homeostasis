@@ -6,7 +6,7 @@ This module provides a base class for cloud providers.
 
 import abc
 import logging
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Any
 
 logger = logging.getLogger(__name__)
 

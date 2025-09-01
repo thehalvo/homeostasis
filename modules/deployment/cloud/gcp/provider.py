@@ -8,8 +8,7 @@ import logging
 import os
 import json
 import subprocess
-import tempfile
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any
 
 from modules.deployment.cloud.base_provider import BaseCloudProvider
 from modules.security.audit import get_audit_logger

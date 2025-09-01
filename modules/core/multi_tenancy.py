@@ -10,22 +10,20 @@ This module provides comprehensive multi-tenancy capabilities:
 - Tenant lifecycle management
 """
 
-import asyncio
 import hashlib
 import json
 import logging
-import os
 import threading
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 import uuid
 
-from modules.monitoring.observability_hooks import get_observability_hooks, OperationType
+from modules.monitoring.observability_hooks import get_observability_hooks
 from modules.security.healing_rate_limiter import HealingRateLimiter
 
 logger = logging.getLogger(__name__)

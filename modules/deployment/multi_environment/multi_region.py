@@ -8,7 +8,6 @@ data consistency, and coordinated healing.
 
 import asyncio
 import logging
-from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Any, Tuple, Set
 from dataclasses import dataclass
 from enum import Enum
@@ -16,11 +15,10 @@ from datetime import datetime, timedelta
 import geopy.distance
 
 from modules.deployment.multi_environment.hybrid_orchestrator import (
-    Environment, EnvironmentType, HealingContext, HealingPlan, HealingStep
+    Environment, HealingContext, HealingPlan, HealingStep
 )
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 from modules.security.audit import AuditLogger
-from modules.security.audit import AuditLogger as SecurityAuditor
 
 
 class RegionStatus(Enum):

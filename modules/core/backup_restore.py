@@ -11,7 +11,6 @@ This module provides enterprise-grade backup and restore capabilities:
 - Tenant-aware backup isolation
 """
 
-import gzip
 import hashlib
 import json
 import logging
@@ -19,13 +18,11 @@ import os
 import shutil
 import tarfile
 import threading
-import time
-from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional
 import uuid
 
 try:
@@ -46,9 +43,7 @@ try:
 except ImportError:
     AZURE_AVAILABLE = False
 
-from modules.core.multi_tenancy import get_current_tenant_id, get_multi_tenancy_manager
 from modules.monitoring.observability_hooks import get_observability_hooks, OperationType
-from modules.security.rollback_manager import BackupSnapshot
 
 logger = logging.getLogger(__name__)
 

@@ -9,10 +9,9 @@ import logging
 import os
 import json
 import yaml
-import tempfile
 import subprocess
 from pathlib import Path
-from typing import Dict, List, Optional, Union, Any
+from typing import Dict, List, Optional, Any
 
 from modules.security.audit import get_audit_logger
 

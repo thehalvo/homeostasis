@@ -8,14 +8,13 @@ enabling coordinated healing actions across hybrid infrastructure.
 import asyncio
 import logging
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any, Union, Tuple
+from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
 from enum import Enum
 from datetime import datetime
 
 from modules.enterprise.orchestration import EnterpriseOrchestrator
 from modules.security.audit import AuditLogger
-from modules.security.audit import AuditLogger as SecurityAuditor
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 
 

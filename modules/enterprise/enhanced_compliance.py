@@ -11,16 +11,15 @@ import datetime
 import hashlib
 import json
 import logging
-import os
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Any, Union
+from typing import Dict, List, Optional, Any
 from collections import defaultdict
 
 from modules.security.compliance_reporting import (
     ComplianceReportingSystem, ComplianceFramework, ComplianceControl,
-    ControlStatus, ComplianceEvidence, ComplianceFinding
+    ControlStatus
 )
 from modules.security.audit import get_audit_logger
 from modules.monitoring.observability_hooks import ObservabilityHooks

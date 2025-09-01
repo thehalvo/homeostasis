@@ -3,26 +3,21 @@
 Command-line interface for rule management and testing.
 """
 import os
-import re
-import sys
 import json
 import argparse
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Union, Set, Type
+from typing import Dict, List, Any, Union
 import traceback
-from enum import Enum
-import textwrap
 
 from .rule_config import (
-    Rule, RuleSet, RuleLoader, RuleCategory, RuleSeverity, RuleConfidence,
-    get_all_rule_sets, get_rules_for_category, DEFAULT_RULES_DIR
+    Rule, RuleSet, RuleLoader, RuleCategory,
+    get_all_rule_sets, DEFAULT_RULES_DIR
 )
 from .rule_categories import (
-    EnhancedRule, RuleCriticality, RuleComplexity, RuleReliability,
-    RuleSource, RuleType, upgrade_rule_to_enhanced, detect_rule_conflicts,
+    EnhancedRule, detect_rule_conflicts,
     RuleDependency
 )
-from .rule_confidence import ContextualRuleAnalyzer, RuleMatch, ConfidenceScorer
+from .rule_confidence import ContextualRuleAnalyzer, ConfidenceScorer
 
 
 class RuleStats:

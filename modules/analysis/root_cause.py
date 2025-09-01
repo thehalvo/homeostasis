@@ -5,11 +5,9 @@ This module provides root cause analysis capabilities for Homeostasis.
 """
 
 import logging
-from typing import Dict, Any, List, Optional, Union, Set
+from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from enum import Enum
-from datetime import datetime
-import json
 
 logger = logging.getLogger(__name__)
 

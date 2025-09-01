@@ -11,7 +11,7 @@ import os
 import shutil
 import subprocess
 import tempfile
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any
 
 from modules.security.audit import get_audit_logger
 

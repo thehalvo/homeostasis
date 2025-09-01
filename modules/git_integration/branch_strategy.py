@@ -8,9 +8,8 @@ branch types and managing healing scope appropriately.
 
 import os
 import sys
-import json
 import subprocess
-from typing import List, Dict, Any, Optional, Set, Tuple
+from typing import List, Dict, Any, Optional, Tuple
 from pathlib import Path
 from datetime import datetime, timedelta
 from enum import Enum

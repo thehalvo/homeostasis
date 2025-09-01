@@ -5,15 +5,12 @@ This module provides a CLI tool for validating healing templates used in the
 Homeostasis framework.
 """
 
-import os
 import json
 import argparse
 import logging
 import re
 import ast
-import subprocess
-import tempfile
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Optional, Any
 from pathlib import Path
 from dataclasses import dataclass, field
 from jinja2 import Environment, TemplateSyntaxError, meta

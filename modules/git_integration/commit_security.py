@@ -10,7 +10,7 @@ import sys
 import json
 import subprocess
 import tempfile
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional
 from pathlib import Path
 from datetime import datetime
 import hashlib

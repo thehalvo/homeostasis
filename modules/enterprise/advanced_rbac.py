@@ -5,15 +5,14 @@ Extends the basic RBAC system with custom roles, hierarchical permissions,
 dynamic role assignment, and attribute-based access control (ABAC) features.
 """
 
-import json
 import logging
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Set, Tuple, Any, Union, Callable
+from typing import Dict, List, Optional, Set, Any, Callable
 
-from modules.security.rbac import RBACManager, PermissionDeniedError
+from modules.security.rbac import RBACManager
 from modules.security.audit import get_audit_logger
 from modules.security.user_management import get_user_management
 

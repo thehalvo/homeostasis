@@ -7,21 +7,13 @@ Supports multiple identity providers (IdPs) and handles the complete SAML authen
 
 import base64
 import datetime
-import hashlib
-import json
 import logging
-import os
 import uuid
-import xml.etree.ElementTree as ET
 from typing import Dict, List, Optional, Tuple, Any, Union
-from urllib.parse import urlencode, quote
+from urllib.parse import urlencode
 from dataclasses import dataclass, field
 
 import xmlsec
-from cryptography import x509
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from lxml import etree
 
 from modules.security.auth import AuthenticationManager, AuthenticationError

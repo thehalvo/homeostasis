@@ -11,7 +11,6 @@ This module provides comprehensive resource management:
 - Real-time usage monitoring and alerts
 """
 
-import asyncio
 import json
 import logging
 import threading
@@ -19,13 +18,12 @@ import time
 from collections import defaultdict, deque
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
-import uuid
+from typing import Any, Dict, List, Optional, Set, Tuple
 
-from modules.core.multi_tenancy import get_current_tenant_id, get_multi_tenancy_manager
+from modules.core.multi_tenancy import get_multi_tenancy_manager
 from modules.monitoring.observability_hooks import get_observability_hooks
 from modules.security.healing_rate_limiter import HealingRateLimiter, HealingRateLimitExceededError
 

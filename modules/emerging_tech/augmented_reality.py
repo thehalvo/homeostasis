@@ -5,10 +5,9 @@ Provides error detection, healing, and resilience for AR/VR applications
 including tracking, rendering, performance, and user experience issues.
 """
 
-import json
 import logging
 import re
-from typing import Dict, List, Optional, Tuple, Any, Set
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
 from enum import Enum
 from datetime import datetime

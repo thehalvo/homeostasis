@@ -9,22 +9,19 @@ and management across environments.
 import asyncio
 import logging
 import json
-import yaml
-import subprocess
 import tempfile
 import shutil
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any, Tuple, Set
+from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
 from enum import Enum
 from datetime import datetime, timezone
 from pathlib import Path
 
 from modules.deployment.multi_environment.hybrid_orchestrator import (
-    Environment, EnvironmentType, HealingContext, HealingPlan, HealingStep
+    Environment, HealingContext, HealingPlan
 )
 from modules.security.audit import AuditLogger
-from modules.security.audit import AuditLogger as SecurityAuditor
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 
 

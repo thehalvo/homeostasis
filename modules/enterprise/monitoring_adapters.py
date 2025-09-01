@@ -10,11 +10,10 @@ import logging
 import time
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Tuple, Callable
+from typing import Dict, List, Optional, Any, Callable
 from dataclasses import dataclass, field
 from enum import Enum
 import requests
-from urllib.parse import urlencode, quote
 
 logger = logging.getLogger(__name__)
 

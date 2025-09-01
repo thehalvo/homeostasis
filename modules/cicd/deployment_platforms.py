@@ -6,10 +6,8 @@ to enable automatic healing during deployment processes.
 """
 
 import os
-import json
 import requests
-from typing import Dict, List, Optional, Any
-from datetime import datetime, timedelta
+from typing import Dict, List, Optional
 import logging
 
 logger = logging.getLogger(__name__)

@@ -6,11 +6,9 @@ healing during CI/CD workflows via orbs and API integration.
 """
 
 import os
-import json
 import yaml
 import requests
-from typing import Dict, List, Optional, Any
-from datetime import datetime, timedelta
+from typing import Dict, List, Optional
 import logging
 
 logger = logging.getLogger(__name__)

@@ -5,14 +5,10 @@ Provides functionality for deploying and managing serverless functions on Azure 
 """
 
 import logging
-import json
-import os
 import subprocess
-import tempfile
-from typing import Dict, List, Optional, Union, Any
+from typing import Dict, List, Optional, Any
 
 from modules.deployment.serverless.base_provider import ServerlessProvider
-from modules.security.audit import get_audit_logger
 
 logger = logging.getLogger(__name__)
 

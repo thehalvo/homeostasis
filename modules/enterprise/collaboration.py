@@ -7,10 +7,8 @@ change approval workflows, team metrics, and integration with collaboration plat
 
 import json
 import logging
-import asyncio
-from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Tuple, Set
+from typing import Dict, List, Optional, Any, Set
 from dataclasses import dataclass, field
 from enum import Enum
 import requests
@@ -332,7 +330,6 @@ class TeamCollaborationHub:
         
         # Simple rotation based on current time
         # In production, this would be more sophisticated
-        import hashlib
         current_hour = datetime.utcnow().hour
         current_day = datetime.utcnow().day
         

@@ -14,11 +14,11 @@ import time
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, Optional
 
 from modules.monitoring.metrics_collector import MetricsCollector
 from modules.monitoring.post_deployment import PostDeploymentMonitor
-from modules.security.audit import get_audit_logger, log_event
+from modules.security.audit import get_audit_logger
 
 logger = logging.getLogger(__name__)
 

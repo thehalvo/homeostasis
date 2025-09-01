@@ -7,14 +7,11 @@ Provides functionality for deploying and managing serverless functions on AWS La
 import json
 import logging
 import os
-import shutil
 import subprocess
 import tempfile
-import time
 import zipfile
 from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Optional, Union, Any
+from typing import Dict, List, Optional, Any
 
 from modules.deployment.serverless.base_provider import ServerlessProvider
 from modules.security.audit import get_audit_logger

@@ -2,7 +2,6 @@
 """
 Setup script for initializing and verifying the rule system.
 """
-import os
 import sys
 import json
 import argparse

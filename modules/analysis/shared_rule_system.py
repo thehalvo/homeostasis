@@ -7,13 +7,11 @@ recognition and fix generation that can work across language boundaries.
 """
 import json
 import logging
-import os
 import re
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Set, Tuple, Union
+from typing import Dict, Any, List, Optional, Tuple, Union
 
 from .shared_error_schema import SharedErrorSchema, normalize_error
-from .language_plugin_system import get_plugin, get_all_plugins
 
 logger = logging.getLogger(__name__)
 

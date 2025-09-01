@@ -7,17 +7,14 @@ automated health checks, data consistency guarantees, and seamless traffic manag
 
 import asyncio
 import datetime
-import json
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional, Set, Tuple, Any, Union
+from typing import Dict, List, Optional, Tuple, Any
 from collections import defaultdict
-import geopy.distance
 
 from modules.deployment.multi_environment.multi_region import (
-    MultiRegionResilienceStrategy, Region, RegionStatus, FailoverStrategy,
-    ConsistencyModel, RegionHealth, FailoverEvent
+    MultiRegionResilienceStrategy, Region, RegionStatus
 )
 from modules.monitoring.alert_system import AlertManager
 from modules.security.audit import get_audit_logger

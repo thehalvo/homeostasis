@@ -7,15 +7,13 @@ two parallel environments and switching traffic between them.
 
 import enum
 import logging
-import os
-import threading
 import time
 from datetime import datetime
-from typing import Dict, List, Optional, Set, Tuple, Union
+from typing import Dict, Optional
 
 from modules.deployment.traffic_manager import get_traffic_splitter
 from modules.monitoring.metrics_collector import MetricsCollector
-from modules.security.audit import get_audit_logger, log_event
+from modules.security.audit import get_audit_logger
 
 logger = logging.getLogger(__name__)
 

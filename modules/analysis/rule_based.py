@@ -1,14 +1,12 @@
 """
 Enhanced rule-based error analysis module.
 """
-import os
-import re
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Set
+from typing import Dict, List, Optional, Any, Union
 
 from .rule_config import (
-    Rule, RuleSet, RuleLoader, RuleCategory, RuleConfidence,
+    Rule, RuleSet, RuleCategory,
     get_all_rule_sets, get_rules_for_category, convert_legacy_patterns,
     DEFAULT_RULES_DIR
 )
@@ -437,7 +435,7 @@ if __name__ == "__main__":
     print(f"\nFastAPI Analyzer: {fastapi_stats['total_rules']} rules loaded")
     
     # Create a custom rule
-    from rule_config import Rule, RuleCategory, RuleSeverity, RuleConfidence
+    from .rule_config import RuleSeverity
     
     custom_rule = Rule(
         pattern=r"PermissionError: \[Errno 13\] Permission denied: '([^']*)'",

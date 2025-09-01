@@ -1,8 +1,8 @@
 """
 Enhanced rule categorization system for error analysis rules.
 """
-from enum import Enum, auto
-from typing import Dict, List, Optional, Any, Union, Set, Type
+from enum import Enum
+from typing import Dict, List, Optional, Any, Union, Set
 from pathlib import Path
 
 from .rule_config import RuleCategory, RuleSeverity, RuleConfidence, Rule
@@ -429,7 +429,7 @@ def upgrade_rules_in_file(file_path: Union[str, Path]) -> None:
         file_path: Path to the rule file
     """
     import json
-    from .rule_config import RuleLoader, RuleSet
+    from .rule_config import RuleLoader
     
     file_path = Path(file_path)
     
@@ -519,8 +519,6 @@ def detect_rule_conflicts(rules: List[Union[Rule, EnhancedRule]]) -> List[Dict[s
 
 if __name__ == "__main__":
     # Example usage
-    import json
-    from pathlib import Path
     
     # Create a sample enhanced rule
     enhanced_rule = EnhancedRule(

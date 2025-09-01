@@ -7,12 +7,11 @@ that can be used to improve healing decisions and track healing patterns.
 
 import os
 import sys
-import json
 import subprocess
 import re
-from typing import List, Dict, Any, Optional, Tuple, Set
+from typing import List, Dict, Any, Optional, Tuple
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime
 from dataclasses import dataclass
 from collections import defaultdict
 

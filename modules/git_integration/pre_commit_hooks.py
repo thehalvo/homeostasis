@@ -12,8 +12,6 @@ import json
 import subprocess
 from typing import List, Dict, Any, Optional, Tuple
 from pathlib import Path
-import tempfile
-import shutil
 
 # Add the homeostasis modules to the path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))

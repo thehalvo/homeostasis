@@ -8,8 +8,7 @@ and Web Components.
 
 import re
 import logging
-from typing import Dict, List, Optional, Any, Tuple, Union
-from pathlib import Path
+from typing import Dict, List, Optional, Any
 
 from .comprehensive_error_detector import ErrorContext, ErrorCategory, LanguageType
 from .language_parsers import LanguageSpecificParser
