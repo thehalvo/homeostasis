@@ -3,12 +3,11 @@ Utility for extracting and analyzing errors from enhanced logs.
 Provides advanced filtering and grouping capabilities.
 """
 import json
-import os
 import re
 from collections import defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Set, Tuple, Callable
+from typing import Dict, List, Optional, Any
 
 # Path to log file
 LOGS_DIR = Path(__file__).parent.parent.parent / "logs"

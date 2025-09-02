@@ -4,14 +4,7 @@ import random
 import time
 from datetime import datetime, timedelta
 from collections import defaultdict
-from unittest.mock import Mock, patch, MagicMock
 import networkx as nx
-
-from modules.reliability.chaos_engineering import (
-    ChaosEngineer,
-    ChaosExperiment,
-    FaultType
-)
 
 
 class TestServiceChaos:

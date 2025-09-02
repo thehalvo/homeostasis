@@ -7,14 +7,6 @@ import threading
 import time
 import random
 import gc
-from unittest.mock import Mock, patch
-from datetime import datetime, timedelta
-
-from modules.reliability.chaos_engineering import (
-    ChaosEngineer,
-    ChaosExperiment,
-    FaultType
-)
 
 
 class TestResourceChaos:

@@ -794,7 +794,7 @@ def estimate_optimal_workers(data_size: int, model_complexity: str = "medium") -
             available_workers = len(client.scheduler_info()['workers'])
             client.close()
             optimal_workers = min(optimal_workers, available_workers)
-        except:
+        except Exception:
             pass
     
     return optimal_workers

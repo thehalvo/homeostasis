@@ -6,14 +6,12 @@ This module provides utilities for:
 2. Monitoring and limiting resource usage
 3. Tracking resource metrics during tests
 """
-import os
 import time
-import signal
 import threading
 import psutil
 import functools
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Callable
+from typing import Dict, Any
 
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent
@@ -191,8 +189,6 @@ class ResourceManager:
             return
             
         try:
-            process = psutil.Process()
-            
             # Get CPU limit
             if "cpu" in resource_limits:
                 cpu_limit = float(resource_limits["cpu"])

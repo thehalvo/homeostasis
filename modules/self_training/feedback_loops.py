@@ -11,7 +11,7 @@ from collections import defaultdict
 from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional
 import numpy as np
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
@@ -21,7 +21,6 @@ from sklearn.metrics import (
 from ..analysis.models.trainer import ModelTrainer, TrainingConfig
 from ..analysis.models.data_collector import ErrorDataCollector
 from ..analysis.models.serving import ModelServer
-from ..monitoring.feedback_loop import FeedbackLoop
 from ..analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
 
 logger = logging.getLogger(__name__)

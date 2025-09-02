@@ -9,7 +9,7 @@ This module provides advanced indentation handling for code generation, includin
 """
 import re
 from pathlib import Path
-from typing import List, Tuple, Optional, Dict, Union
+from typing import Tuple, Optional, Dict
 
 
 def detect_indentation_style(content: str) -> Tuple[str, int]:
@@ -297,9 +297,6 @@ def adjust_indentation_for_context(new_code: str, context_code: str,
     # Detect the context indentation style
     indent_char, indent_size = detect_indentation_style(context_code)
     base_indent = get_block_indentation(context_code)
-    
-    # Create one level deeper indentation for nested code
-    deeper_indent = base_indent + (indent_char * indent_size)
     
     # Normalize the new code's indentation
     normalized = normalize_indentation(new_code)

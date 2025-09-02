@@ -4,7 +4,6 @@ Minimal test for the C# plugin that doesn't require any external dependencies.
 import sys
 import os
 from pathlib import Path
-import json
 
 # Add parent directory to path to import modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -128,12 +127,12 @@ class MinimalCSharpPlugin:
             success = False
             print(f"❌ Round-trip level capitalization: Expected 'Error', got '{csharp_error.get('level')}'")
         else:
-            print(f"✅ Round-trip level capitalization: 'Error'")
+            print("✅ Round-trip level capitalization: 'Error'")
         
         # Check stack trace conversion
         if "stack_trace" in csharp_error and isinstance(csharp_error["stack_trace"], str):
             if "at MyCompany.MyApp.Services.UserService.GetUserProfile" in csharp_error["stack_trace"]:
-                print(f"✅ Round-trip stack trace contains expected method")
+                print("✅ Round-trip stack trace contains expected method")
             else:
                 success = False
                 print(f"❌ Round-trip stack trace missing expected method: {csharp_error['stack_trace'][:100]}")

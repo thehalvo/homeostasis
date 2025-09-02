@@ -12,7 +12,7 @@ import os
 import socket
 import uuid
 from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict
 
 logger = logging.getLogger(__name__)
 

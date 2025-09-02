@@ -1013,7 +1013,7 @@ if __name__ == "__main__":
         dataset_name="test_set"
     )
     
-    print(f"\nEvaluation Results:")
+    print("\nEvaluation Results:")
     print(f"Primary metric ({eval_result.primary_metric}): {eval_result.primary_score:.4f}")
     print(f"Inference time: {eval_result.inference_time_ms:.2f} ms/sample")
     
@@ -1056,7 +1056,7 @@ if __name__ == "__main__":
         y_test
     )
     
-    print(f"\nA/B Test Results:")
+    print("\nA/B Test Results:")
     print(f"Winner: {ab_result['winner']}")
     print(f"Significant: {ab_result['significant']}")
     print(f"p-value: {ab_result['p_value']:.4f}")
@@ -1074,7 +1074,7 @@ if __name__ == "__main__":
         current_production=version.version_id
     )
     
-    print(f"\nDeployment Recommendation:")
+    print("\nDeployment Recommendation:")
     print(f"Recommendation: {recommendation['recommendation']}")
     print(f"Confidence: {recommendation['confidence']}")
     print(f"Reasons: {recommendation['reasons']}")

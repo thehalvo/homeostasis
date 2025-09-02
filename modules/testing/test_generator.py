@@ -9,12 +9,9 @@ This module provides utilities for:
 import os
 import sys
 import re
-import json
 import ast
-import inspect
-import importlib
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Callable
+from typing import Dict, List, Optional, Any
 
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent
@@ -145,7 +142,7 @@ if __name__ == "__main__":
                     # Simple condition evaluation
                     result = eval(condition, {"__builtins__": {}}, context)
                     return if_true if result else if_false
-                except Exception as e:
+                except Exception:
                     self.logger.warning(f"Failed to evaluate condition: {condition}")
                     return if_false
                     
@@ -490,7 +487,6 @@ if __name__ == "__main__":
         
         # Determine output path
         if output_path is None:
-            rel_path = Path(function_details["module_path"].replace(".", os.path.sep))
             output_filename = f"test_{test_name}.py"
             output_path = self.output_dir / output_filename
             
@@ -574,7 +570,6 @@ if __name__ == "__main__":
             error_type = error_info.get("error_type", "Exception")
         else:
             # Try to infer from patch
-            bug_id = patch.get("bug_id")
             patch_code = patch.get("patch_code", "")
             
             # Check common error patterns

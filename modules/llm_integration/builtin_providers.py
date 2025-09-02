@@ -5,7 +5,7 @@ Built-in provider plugins for LLM integration.
 Contains plugin implementations for OpenAI, Anthropic, and OpenRouter.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any
 from .provider_registry import ProviderPlugin, ProviderMetadata, ProviderCapability
 from .provider_abstraction import (
     LLMProviderInterface, OpenAIProvider, AnthropicProvider, OpenRouterProvider

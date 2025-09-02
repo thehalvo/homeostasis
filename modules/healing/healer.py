@@ -5,7 +5,7 @@ This module provides the main healing functionality for Homeostasis.
 """
 
 import logging
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
 from datetime import datetime

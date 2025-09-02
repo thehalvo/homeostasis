@@ -1,11 +1,10 @@
 """
 Utilities for code diff generation and handling multi-line patches.
 """
-import os
 import re
 import difflib
 from pathlib import Path
-from typing import List, Dict, Any, Tuple, Optional, Union
+from typing import Dict, Any, Tuple
 
 def generate_diff(original_code: str, patched_code: str, 
                   filename: str = "code.py", context_lines: int = 3) -> str:
@@ -123,8 +122,6 @@ def apply_diff_to_file(file_path: Path, diff_content: str,
         for hunk in parsed_diff["hunks"]:
             original_start = hunk["original_start"] - 1  # Convert to 0-based index
             original_count = hunk["original_count"]
-            new_start = hunk["new_start"] - 1  # Convert to 0-based index
-            new_count = hunk["new_count"]
             
             if reverse:
                 # For reverse patching, we swap removed and added

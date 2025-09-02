@@ -4,14 +4,11 @@ Cross-language end-to-end healing scenario tests.
 Tests healing workflows across different programming languages and frameworks,
 including polyglot microservices and language-specific error patterns.
 """
-import asyncio
 import json
 import os
-import shutil
 import sys
-import tempfile
 from pathlib import Path
-from typing import Dict, List
+from typing import List
 
 import pytest
 
@@ -23,7 +20,6 @@ from tests.e2e.healing_scenarios.test_utilities import (
     HealingScenario,
     HealingScenarioRunner,
     TestEnvironment,
-    MetricsCollector,
     check_service_healthy,
     check_no_syntax_errors
 )

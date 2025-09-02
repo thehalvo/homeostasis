@@ -8,14 +8,12 @@ and impact analysis for changes.
 """
 
 import ast
-import json
 import logging
 import re
 import networkx as nx
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Set
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
-from collections import defaultdict
 import subprocess
 
 logger = logging.getLogger(__name__)
@@ -774,14 +772,6 @@ class ContextualAnalyzer:
                            all_impacts: List[DependencyNode]) -> List[str]:
         """Find tests affected by changes."""
         affected_tests = []
-        
-        # Direct test files
-        test_patterns = [
-            f"test_{Path(file_path).stem}",
-            f"{Path(file_path).stem}_test",
-            f"test_{entity_name}",
-            f"{entity_name}_test"
-        ]
         
         for impact in all_impacts:
             if 'test' in impact.file_path.lower():

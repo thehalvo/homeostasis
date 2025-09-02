@@ -5,7 +5,7 @@ This module provides health checking functionality for monitoring system health.
 """
 
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
 from datetime import datetime
 from enum import Enum
 

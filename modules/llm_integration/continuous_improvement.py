@@ -11,13 +11,12 @@ import time
 import hashlib
 import logging
 from dataclasses import dataclass, field, asdict
-from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Set, Tuple
+from datetime import datetime
+from typing import Dict, List, Optional, Any, Set
 from pathlib import Path
 from enum import Enum
 import sqlite3
-import numpy as np
-from collections import defaultdict, Counter
+from collections import defaultdict
 
 
 class PatchOutcome(Enum):

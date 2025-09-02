@@ -6,7 +6,6 @@ and metrics collection.
 """
 import asyncio
 import pytest
-import tempfile
 from pathlib import Path
 import os
 
@@ -22,8 +21,7 @@ USE_MOCK_INFRASTRUCTURE = os.environ.get('USE_MOCK_TESTS', 'true').lower() == 't
 if USE_MOCK_INFRASTRUCTURE:
     try:
         from tests.e2e.healing_scenarios.test_infrastructure import (
-            MockServiceEnvironment,
-            MockOrchestrator
+            MockServiceEnvironment
         )
     except ImportError:
         USE_MOCK_INFRASTRUCTURE = False

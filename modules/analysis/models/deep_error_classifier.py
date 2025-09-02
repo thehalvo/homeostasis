@@ -511,7 +511,8 @@ class ErrorPatternRecognizer:
         
         # Extract pattern features for interpretability
         error_text = dataset._extract_text_features(error_data)
-        pattern_features = self.extract_pattern_features(error_text)
+        # TODO: pattern_features could be included in the return dict for enhanced interpretability
+        # pattern_features = self.extract_pattern_features(error_text)
         
         return {
             'error_type': predicted_class,
@@ -704,7 +705,7 @@ def create_synthetic_training_data(num_samples: int = 1000) -> Tuple[List[Dict[s
         
         # Create error data
         error_data = {
-            'timestamp': f'2024-01-{i%30+1:02d}T{i%24:02d}:00:00',
+            'timestamp': f'2024-01-{i % 30 + 1:02d}T{i % 24:02d}:00:00',
             'service': 'example_service',
             'level': 'ERROR',
             'message': message,

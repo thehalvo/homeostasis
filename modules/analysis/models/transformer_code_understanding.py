@@ -679,7 +679,7 @@ if __name__ == "__main__":
         result = pipeline.process_error(error)
         
         # Display results
-        logger.info(f"\nContext Analysis:")
+        logger.info("\nContext Analysis:")
         logger.info(f"  Function: {result['context_analysis']['context']['function']}")
         logger.info(f"  Variables: {result['context_analysis']['context']['variables']}")
         logger.info(f"  Error location confidence: {result['context_analysis']['error_location']['confidence']:.2f}")

@@ -377,7 +377,7 @@ class CrossLanguageOrchestrator:
                 if primary_language != "unknown":
                     try:
                         converted_data = self.convert_error(error_data, primary_language, secondary_language)
-                    except:
+                    except Exception:
                         # If conversion fails, use original data
                         pass
                 
@@ -674,10 +674,10 @@ class CrossLanguageOrchestrator:
         if "error_type" in error_data:
             error_type = error_data["error_type"]
             if error_type and isinstance(error_type, str):
-                if ('java.lang' in error_type or 
-                    'org.springframework' in error_type or
-                    'java.util' in error_type or
-                    'javax.' in error_type):
+                if ('java.lang' in error_type or
+                        'org.springframework' in error_type or
+                        'java.util' in error_type or
+                        'javax.' in error_type):
                     return 'java'
         
         # Check for Go-style errors
@@ -688,9 +688,9 @@ class CrossLanguageOrchestrator:
         if "error" in error_data and isinstance(error_data["error"], str):
             error = error_data["error"]
             # Common Python error patterns
-            python_errors = ["NameError", "AttributeError", "TypeError", "ValueError", 
-                           "SyntaxError", "IndentationError", "ImportError", "KeyError", 
-                           "IndexError", "ZeroDivisionError", "FileNotFoundError"]
+            python_errors = ["NameError", "AttributeError", "TypeError", "ValueError",
+                             "SyntaxError", "IndentationError", "ImportError", "KeyError",
+                             "IndexError", "ZeroDivisionError", "FileNotFoundError"]
             if any(err in error for err in python_errors):
                 return "python"
         
@@ -799,8 +799,8 @@ class CrossLanguageOrchestrator:
         # Compare stack traces if available
         if "stack_trace" in error1 and "stack_trace" in error2:
             # For simplicity, just check if they have the same structure
-            if (isinstance(error1["stack_trace"], list) and 
-                isinstance(error2["stack_trace"], list)):
+            if (isinstance(error1["stack_trace"], list) and
+                    isinstance(error2["stack_trace"], list)):
                 score += 0.2
         
         return score
@@ -1295,10 +1295,11 @@ class CrossLanguageOrchestrator:
         callee_lang = callee.get("language", "unknown")
         
         # Analyze type mismatch
-        caller_expected = caller.get("expected_type", "")
-        caller_passed = caller.get("passed_type", "")
+        # TODO: These variables may be useful for enhanced FFI error analysis
+        # caller_expected = caller.get("expected_type", "")
+        # caller_passed = caller.get("passed_type", "")
         callee_expected = callee.get("expected_type", "")
-        callee_received = callee.get("received", "")
+        # callee_received = callee.get("received", "")
         
         # Determine root cause
         if "type" in error_data.get("error_type", "").lower():
@@ -1534,9 +1535,9 @@ class CrossLanguageOrchestrator:
                 # Check if types match
                 if expected_response.get(missing) == actual_response.get(extra):
                     # Check if names are similar (contains common substring)
-                    if (missing in extra or extra in missing or 
-                        missing.replace('_', '') in extra.replace('_', '') or
-                        extra.replace('_', '') in missing.replace('_', '')):
+                    if (missing in extra or extra in missing or
+                            missing.replace('_', '') in extra.replace('_', '') or
+                            extra.replace('_', '') in missing.replace('_', '')):
                         field_renames.append((missing, extra))
                         break
         
@@ -2321,7 +2322,7 @@ class CrossLanguageOrchestrator:
                     vulnerability_confirmed = True
                 
                 language = step.get("language", "unknown")
-                component = step.get("component", "unknown")
+                # component = step.get("component", "unknown")  # TODO: Use for component-specific fixes
                 
                 # Generate fixes for each language/component
                 if language == "javascript":

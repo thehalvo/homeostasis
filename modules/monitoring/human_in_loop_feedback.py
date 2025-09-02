@@ -6,23 +6,21 @@ configurable review gates, intelligent notifications, escalation paths,
 and comprehensive feedback collection for continuous improvement.
 """
 
-import asyncio
 import json
 import logging
 import smtplib
-import time
 import uuid
 from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional
 
 import requests
 
 from modules.monitoring.logger import MonitoringLogger
-from modules.security.approval import ApprovalManager, ApprovalRequest, ApprovalStatus, ApprovalType
+from modules.security.approval import ApprovalManager, ApprovalStatus, ApprovalType
 from modules.security.audit import get_audit_logger, log_event
 
 logger = logging.getLogger(__name__)
@@ -586,7 +584,7 @@ class HumanInLoopFeedbackSystem:
             self._schedule_escalation(request_id, primary_gate)
         
         self.monitoring_logger.info(
-            f"Review request created",
+            "Review request created",
             request_id=request_id,
             fix_id=fix_id,
             primary_gate=primary_gate.gate_id

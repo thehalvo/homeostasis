@@ -8,7 +8,7 @@ import psutil
 import asyncio
 import os
 import docker
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 class TestPreflightChecks:
@@ -217,6 +217,9 @@ class TestPreflightChecks:
             from modules.reliability.chaos_engineering import ChaosEngineer
             from modules.monitoring.error_collector import ErrorCollector
             from modules.monitoring.metrics_collector import MetricsCollector
+            # Verify modules are importable
+            assert ErrorCollector is not None
+            assert MetricsCollector is not None
         except ImportError as e:
             pytest.fail(f"Required chaos modules not available: {e}")
         

@@ -8,15 +8,14 @@ This module provides a robust template system that supports:
 - Conditional sections based on template variables
 - Indentation preservation and normalization
 """
-import os
 import re
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Set, ClassVar
+from typing import Dict, List, Optional, Any, ClassVar
 
 # Import indentation utilities
 from modules.patch_generation.indent_utils import (
-    normalize_indentation, apply_indentation, preserve_relative_indentation,
+    normalize_indentation, preserve_relative_indentation,
     adjust_indentation_for_context
 )
 

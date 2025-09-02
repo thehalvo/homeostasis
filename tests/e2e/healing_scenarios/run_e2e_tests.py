@@ -7,7 +7,6 @@ Runs all healing scenario tests and generates a comprehensive report.
 import argparse
 import json
 import sys
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -18,7 +17,6 @@ import pytest
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from tests.e2e.healing_scenarios.test_utilities import MetricsCollector
 
 
 class E2ETestRunner:

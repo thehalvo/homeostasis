@@ -798,7 +798,7 @@ if __name__ == "__main__":
         is_cross_language = random.random() < 0.1
         source_language = None
         if is_cross_language:
-            source_candidates = [l for l in languages if l != language]
+            source_candidates = [lang for lang in languages if lang != language]
             source_language = random.choice(source_candidates)
             
             # Create fix data

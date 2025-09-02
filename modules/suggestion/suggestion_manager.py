@@ -12,7 +12,7 @@ import os
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Union, Any
+from typing import Dict, List, Optional, Any
 
 from modules.suggestion.ranking import rank_suggestions
 from modules.patch_generation.patcher import PatchGenerator
@@ -226,8 +226,6 @@ class SuggestionManager:
         try:
             file_path = error_data.get("file_path")
             error_type = error_data.get("error_type")
-            error_message = error_data.get("error_message")
-            line_number = error_data.get("line_number")
             
             if not file_path or not error_type:
                 logger.error(f"Missing required error data for error {error_id}")

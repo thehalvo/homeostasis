@@ -7,12 +7,11 @@ cross-language error handling and fixes.
 """
 import os
 import sys
-import json
 import logging
 import re
 import time
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple, Union, Set
+from typing import Dict, Any, Optional, Tuple, Union
 
 # Add project root to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))

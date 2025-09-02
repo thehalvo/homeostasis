@@ -3,19 +3,14 @@ import asyncio
 import time
 import random
 import psutil
-import threading
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 from datetime import datetime, timedelta
 
 from modules.reliability.chaos_engineering import (
     ChaosEngineer,
     ChaosExperiment,
-    FaultType,
-    ChaosMonkey
+    FaultType
 )
-from modules.monitoring.error_collector import ErrorCollector
-from modules.analysis.root_cause import RootCauseAnalyzer
-from modules.healing.healing_orchestrator import HealingOrchestrator
 
 
 class TestChaosEngineering:

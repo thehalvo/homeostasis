@@ -13,12 +13,9 @@ import sqlite3
 from typing import Dict, List, Tuple, Any, Optional, Callable
 from dataclasses import dataclass, asdict
 from datetime import datetime
-from pathlib import Path
 import threading
-import concurrent.futures
 from contextlib import contextmanager
 import psutil
-import traceback
 import warnings
 
 
@@ -449,7 +446,7 @@ class PerformanceRegressionTester:
             self.tracker.start()
             
             try:
-                result = func()
+                func()
             except Exception as e:
                 raise RuntimeError(f"Benchmark '{test_name}' failed: {e}")
             

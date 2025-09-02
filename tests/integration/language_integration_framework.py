@@ -17,14 +17,11 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Type, Set, Tuple, Union, Callable
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-import pytest
+from typing import Dict, Any, List, Optional, Tuple
+from concurrent.futures import ThreadPoolExecutor
 
 from modules.analysis.language_plugin_system import LanguagePlugin, LanguagePluginRegistry
-from modules.analysis.language_adapters import ErrorAdapterFactory
 from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
-from modules.patch_generation.patcher import PatchGenerator
 from modules.testing.container_manager import ContainerManager
 from modules.monitoring.metrics_collector import MetricsCollector
 from modules.testing.security_scanner import SecurityTestOrchestrator, SecurityScanResult

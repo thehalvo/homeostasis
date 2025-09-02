@@ -9,14 +9,11 @@ and plugin lifecycle management.
 import json
 import logging
 import hashlib
-import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Set, Tuple
-from datetime import datetime
 from enum import Enum
 import semver
 import jsonschema
-import yaml
 
 logger = logging.getLogger(__name__)
 

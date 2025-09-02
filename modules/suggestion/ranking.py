@@ -6,7 +6,6 @@ Provides algorithms for ranking and scoring fix suggestions based on various fac
 
 import logging
 import re
-from typing import Dict, List, Tuple
 
 logger = logging.getLogger(__name__)
 

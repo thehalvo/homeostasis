@@ -17,7 +17,7 @@ import time
 import traceback
 from contextlib import contextmanager
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -43,7 +43,7 @@ except ImportError:
     metrics = None
 
 from modules.monitoring.monitoring_adapters import (
-    Alert, AlertSeverity, Event, Metric, MetricType,
+    AlertSeverity, Event, Metric, MetricType,
     create_monitoring_adapter
 )
 

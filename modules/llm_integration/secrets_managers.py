@@ -7,10 +7,8 @@ to securely store and retrieve API keys.
 """
 
 import os
-import json
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, Any, List
-from pathlib import Path
+from typing import Dict, Optional, List
 
 
 class SecretsManagerError(Exception):

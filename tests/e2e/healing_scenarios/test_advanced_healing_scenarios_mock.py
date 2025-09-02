@@ -5,13 +5,10 @@ Tests framework-specific, database, concurrent, and cascading error healing
 scenarios using simulated services.
 """
 import pytest
-from pathlib import Path
-from unittest.mock import Mock, patch
 import yaml
 
 from tests.e2e.healing_scenarios.test_infrastructure import (
     MockServiceEnvironment,
-    LogSimulator,
     PatchValidator,
     MockOrchestrator
 )

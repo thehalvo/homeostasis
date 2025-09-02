@@ -1,19 +1,16 @@
 """
 Patch generation module for creating code fixes.
 """
-import os
 import re
-import json
 import shutil
-import tempfile
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Set
+from typing import Dict, List, Optional, Any, Tuple
 import uuid
 
 # Import diff utilities
 from modules.patch_generation.diff_utils import (
-    generate_diff, parse_diff, apply_diff_to_file,
-    identify_code_block, extract_code_block, get_code_context
+    generate_diff,
+    identify_code_block, extract_code_block
 )
 
 # Import hierarchical template system
@@ -21,13 +18,13 @@ from modules.patch_generation.template_system import BaseTemplate, TemplateManag
 
 # Import indentation utilities
 from modules.patch_generation.indent_utils import (
-    detect_indentation_style, get_line_indentation, get_block_indentation,
-    normalize_indentation, apply_indentation, preserve_relative_indentation,
-    adjust_indentation_for_context, indent_aware_replace, generate_line_indentation_map
+    get_line_indentation,
+    normalize_indentation,
+    adjust_indentation_for_context, generate_line_indentation_map
 )
 
 # Import LLM patch generator
-from modules.patch_generation.llm_patch_generator import LLMPatchGenerator, create_llm_patch_generator
+from modules.patch_generation.llm_patch_generator import create_llm_patch_generator
 
 # Templates directory
 TEMPLATES_DIR = Path(__file__).parent / "templates"
@@ -548,9 +545,6 @@ class PatchGenerator:
                     focus_line = (start_line + end_line) // 2  # Use middle line as focus
                     expanded_range = identify_code_block(original_content, focus_line)
                     start_line, end_line = expanded_range
-                
-                # Get the original code block
-                original_block = extract_code_block(file_path, (start_line, end_line))
                 
                 # Normalize the patch code to remove any indentation
                 normalized_patch = normalize_indentation("\n".join(code_lines))

@@ -10,7 +10,7 @@ import time
 import traceback
 import uuid
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, Optional
 
 from .logger import MonitoringLogger
 from .extractor import extract_error_context

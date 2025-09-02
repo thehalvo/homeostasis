@@ -5,7 +5,6 @@ This module provides integration with mainframe systems including
 z/OS, z/VM, z/VSE, and AS/400 (IBM i) environments.
 """
 
-import json
 import logging
 import re
 from typing import Dict, List, Optional, Any, Tuple

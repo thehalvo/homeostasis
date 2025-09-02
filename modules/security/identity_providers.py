@@ -755,8 +755,6 @@ class SAML2Handler:
     def complete_auth(self, provider: IdentityProviderConfig,
                      session: AuthenticationSession, callback_data: Dict) -> UserIdentity:
         """Complete SAML2 authentication."""
-        config = provider.config
-        
         # Get SAML response
         saml_response = callback_data.get('SAMLResponse')
         if not saml_response:

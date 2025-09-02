@@ -6,12 +6,11 @@ This module provides utilities for:
 2. Tracking fix history and generating appropriate tests
 3. Integrating with the patch generation system
 """
-import os
 import sys
 import json
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union
+from typing import Dict, List, Optional, Any, Tuple
 
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent
@@ -126,11 +125,6 @@ class RegressionTestGenerator:
         
         # Generate a new test
         self.logger.info(f"Generating regression test for patch {patch_key}")
-        
-        # Define output path
-        patch_id = patch.get("patch_id", "unknown")
-        test_name = f"test_regression_{patch_id}.py"
-        output_path = self.output_dir / test_name
         
         # Generate the test
         test_path = self.test_generator.generate_test_for_patch(patch, error_info)

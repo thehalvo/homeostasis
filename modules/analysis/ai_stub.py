@@ -149,9 +149,8 @@ class StubModel(AIModel):
                 "model_type": "stub"
             }
         
-        # Extract error type and message
+        # Extract error type
         exception_type = error_data.get("exception_type", "Unknown")
-        message = error_data.get("message", "")
         
         # Simulate some basic analysis based on error type
         if "KeyError" in exception_type:
@@ -623,6 +622,7 @@ AVAILABLE_MODELS = {
     "ensemble": AIModelConfig(model_type=AIModelType.ENSEMBLE)
 }
 
+
 def get_available_models() -> List[str]:
     """
     Get a list of available AI models.
@@ -666,6 +666,7 @@ def create_ensemble_analyzer() -> AIAnalyzer:
 
 # Module-level functions for backward compatibility
 _default_analyzer = None
+
 
 def analyze_error(error_data: Dict[str, Any]) -> Dict[str, Any]:
     """

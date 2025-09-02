@@ -3,20 +3,16 @@ FastAPI middleware for enhanced logging of requests and exceptions.
 Provides detailed tracking of requests, responses, and exceptions with rich context.
 """
 import json
-import platform
-import sys
 import time
-import traceback
 import uuid
 from typing import Callable, Dict, Any, List, Optional
 from urllib.parse import parse_qs
 
 from fastapi import FastAPI, Request, Response
-from fastapi.routing import APIRoute
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
 
-from .logger import MonitoringLogger, SYSTEM_INFO
+from .logger import MonitoringLogger
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):

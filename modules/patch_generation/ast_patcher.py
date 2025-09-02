@@ -4,20 +4,14 @@ AST-based patch generation for more precise code fixes.
 This module uses the AST analyzer to generate more accurate and context-aware patches
 by understanding code structure, variable scopes, and function signatures.
 """
-import os
 import re
 import ast
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Set
+from typing import Dict, List, Optional, Any
 
-from modules.patch_generation.ast_analyzer import ASTAnalyzer, VariableInfo, FunctionInfo, ClassInfo
+from modules.patch_generation.ast_analyzer import ASTAnalyzer, VariableInfo, ClassInfo
 from modules.patch_generation.patcher import PatchGenerator
-from modules.patch_generation.template_system import BaseTemplate, TemplateManager
-from modules.patch_generation.indent_utils import (
-    normalize_indentation, apply_indentation, preserve_relative_indentation,
-    adjust_indentation_for_context
-)
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +121,7 @@ class ASTPatcher:
             Patch details if generation is successful, None otherwise
         """
         if not self.analyzer.visitor:
-            logger.debug(f"No visitor - analyzer not initialized")
+            logger.debug("No visitor - analyzer not initialized")
             return None
             
         # Find the containing function to get context
@@ -247,7 +241,6 @@ class ASTPatcher:
         
         if not template:
             # Fall back to regular dictionary check if template not found
-            template_name = "dict_missing_param.py.template"
             return self.patch_generator.generate_multiline_patch(
                 "dict_key_not_exists",
                 Path(self.analyzer.file_path),
@@ -556,31 +549,27 @@ class ASTPatcher:
         if exception_type == 'KeyError' or exception_type == 'IndexError':
             # For key/index errors, return a default value
             if isinstance(node, ast.Subscript):
-                container_name = self._get_node_source(node.value)
-                key_name = self._get_node_source(node.slice)
-                return f"    # Return None or a default value when the key/index is not found\n    return None"
+                return "    # Return None or a default value when the key/index is not found\n    return None"
                 
         elif exception_type == 'ValueError':
             # For value errors, often related to conversions
             if isinstance(node, ast.Call):
                 func_name = self._get_node_source(node.func)
                 if func_name in ('int', 'float', 'complex'):
-                    return f"    # Use a default value when conversion fails\n    return 0"
+                    return "    # Use a default value when conversion fails\n    return 0"
                     
         elif exception_type == 'AttributeError':
             # For attribute errors, provide a dummy attribute
             if isinstance(node, ast.Attribute):
-                obj_name = self._get_node_source(node.value)
-                attr_name = node.attr
-                return f"    # Handle missing attribute\n    return None"
+                return "    # Handle missing attribute\n    return None"
                 
         elif exception_type == 'TypeError':
             # Type errors often involve calling non-callables or wrong argument types
-            return f"    # Handle type mismatch\n    return None"
+            return "    # Handle type mismatch\n    return None"
             
         elif exception_type == 'ZeroDivisionError':
             # Division by zero
-            return f"    # Handle division by zero\n    return float('inf')  # or 0 depending on the context"
+            return "    # Handle division by zero\n    return float('inf')  # or 0 depending on the context"
             
         # Generic recovery action
         if isinstance(node, ast.Return):

@@ -349,7 +349,7 @@ class GovernanceManager:
         # Check if approver has required role
         has_required_role = any(role in policy.required_approver_roles for role in approver.roles)
         if not has_required_role:
-            raise ValueError(f"Approver does not have required role for this patch category")
+            raise ValueError("Approver does not have required role for this patch category")
         
         # Check self-approval policy
         if not policy.allow_self_approval and approver_id == request.requested_by:
@@ -397,7 +397,7 @@ class GovernanceManager:
         
         has_required_role = any(role in policy.required_approver_roles for role in rejector.roles)
         if not has_required_role:
-            raise ValueError(f"User does not have required role to reject this patch")
+            raise ValueError("User does not have required role to reject this patch")
         
         # Reject the request
         request.status = ApprovalStatus.REJECTED

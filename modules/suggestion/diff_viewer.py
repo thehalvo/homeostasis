@@ -7,8 +7,6 @@ Provides utilities for creating and visualizing code diffs for fix suggestions.
 import difflib
 import html
 import logging
-import re
-from typing import Dict, List, Optional, Tuple, Union
 
 logger = logging.getLogger(__name__)
 

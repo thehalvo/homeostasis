@@ -15,7 +15,7 @@ import threading
 import subprocess
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Tuple, Union
+from typing import Dict, List, Optional, Any
 
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent
@@ -601,8 +601,8 @@ class TestEnvironmentCache:
                     
                 # Remove container cache entry if exists
                 if "container_cache_key" in metadata:
-                    container_cache_key = metadata["container_cache_key"]
                     # Note: The container cache manager handles removal internally
+                    pass
             except Exception as e:
                 self.logger.exception(e, message=f"Failed to load metadata for snapshot {snapshot_id}")
         

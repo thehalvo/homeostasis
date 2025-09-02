@@ -996,7 +996,7 @@ class ComprehensiveErrorDetector:
         try:
             import sys
             context['python_version'] = sys.version
-        except:
+        except Exception:
             pass
         
         # Node.js version
@@ -1004,7 +1004,7 @@ class ComprehensiveErrorDetector:
             result = subprocess.run(['node', '--version'], capture_output=True, text=True, timeout=5)
             if result.returncode == 0:
                 context['node_version'] = result.stdout.strip()
-        except:
+        except (subprocess.SubprocessError, FileNotFoundError, OSError):
             pass
         
         # Java version
@@ -1012,7 +1012,7 @@ class ComprehensiveErrorDetector:
             result = subprocess.run(['java', '-version'], capture_output=True, text=True, timeout=5)
             if result.returncode == 0:
                 context['java_version'] = result.stderr.strip()
-        except:
+        except (subprocess.SubprocessError, FileNotFoundError, OSError):
             pass
         
         # Environment variables (selective)
@@ -1515,7 +1515,7 @@ class ComprehensiveErrorDetector:
             
             # Check if errors are related
             if (current.service_name == next_error.service_name or
-                self._are_errors_related(current, next_error)):
+                    self._are_errors_related(current, next_error)):
                 
                 cascading.append({
                     "primary_error": {
@@ -1689,7 +1689,7 @@ if __name__ == "__main__":
     detector = ComprehensiveErrorDetector()
     classification = detector.classify_error(python_error_context)
     
-    print(f"\nPython Error Classification:")
+    print("\nPython Error Classification:")
     print(f"Category: {classification.category.value}")
     print(f"Severity: {classification.severity.value}")
     print(f"Confidence: {classification.confidence:.2f}")
@@ -1709,7 +1709,7 @@ if __name__ == "__main__":
     
     js_classification = detector.classify_error(js_error_context)
     
-    print(f"\nJavaScript Error Classification:")
+    print("\nJavaScript Error Classification:")
     print(f"Category: {js_classification.category.value}")
     print(f"Severity: {js_classification.severity.value}")
     print(f"Confidence: {js_classification.confidence:.2f}")
@@ -1717,7 +1717,7 @@ if __name__ == "__main__":
     print(f"Suggestions: {js_classification.suggestions}")
     
     # Test correlation functionality
-    print(f"\nTesting Error Correlation:")
+    print("\nTesting Error Correlation:")
     error_contexts = [python_error_context, js_error_context]
     correlation = detector.correlate_logs_and_traces(error_contexts)
     

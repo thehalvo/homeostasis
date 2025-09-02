@@ -12,9 +12,7 @@ import logging
 import re
 import time
 from functools import wraps
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
-
-import jwt
+from typing import Dict, Optional, Tuple
 
 from modules.security.auth import AuthenticationError, get_auth_manager
 from modules.security.rbac import PermissionDeniedError, require_permission

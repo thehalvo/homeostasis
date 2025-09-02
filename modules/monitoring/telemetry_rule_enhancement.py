@@ -7,18 +7,14 @@ patch success rates, LLM performance, and feed insights back into the system
 to continuously improve detection, classification, and healing effectiveness.
 """
 
-import asyncio
 import json
 import logging
-import numpy as np
-import pandas as pd
 import statistics
-import time
 import uuid
 from collections import defaultdict, Counter
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List
 
 from modules.monitoring.feedback_loop import FeedbackLoop
 from modules.monitoring.logger import MonitoringLogger
@@ -292,7 +288,7 @@ class LLMPerformanceAnalyzer:
                             'type': 'low_provider_success_rate',
                             'provider': provider,
                             'message': f"Provider {provider} has low success rate: {success_rate*100:.1f}%",
-                            'recommendation': f"Consider reviewing prompts or switching providers for better results"
+                            'recommendation': "Consider reviewing prompts or switching providers for better results"
                         })
                 
                 # Token usage analysis

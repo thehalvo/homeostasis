@@ -13,14 +13,13 @@ import logging
 import sys
 from pathlib import Path
 from datetime import datetime
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 # Add parent directories to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from tests.integration.language_integration_framework import (
     IntegrationTestOrchestrator,
-    IntegrationTestCase,
     IntegrationTestResult
 )
 from tests.integration.language_runners import LANGUAGE_RUNNERS

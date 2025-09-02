@@ -5,11 +5,10 @@ This module focuses specifically on comprehensive audit logging for all healing
 activities, from detection through analysis, patch generation, testing, and deployment.
 """
 
-import json
 import logging
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional
 
 from modules.security.audit import get_audit_logger, log_event, log_fix
 

@@ -10,7 +10,7 @@ import ast
 import re
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Set
+from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
 from collections import Counter, defaultdict
 
@@ -235,8 +235,6 @@ class CodeStyleAnalyzer:
         """
         # First perform JavaScript analysis as baseline
         js_conventions = self._analyze_javascript_style(source_code, file_path)
-        
-        lines = source_code.split('\n')
         
         # TypeScript-specific analysis
         type_annotation_style = self._analyze_typescript_type_annotations(source_code)
@@ -594,7 +592,6 @@ class CodeStyleAnalyzer:
                 operator_spacing['equals_no_space'] += 1
         
         if operator_spacing:
-            total = sum(operator_spacing.values())
             patterns['operator_spacing'] = max(operator_spacing.items(), key=lambda x: x[1])[0]
         
         return patterns
@@ -942,7 +939,7 @@ class BlogPost(models.Model):
 '''
     
     conventions = analyzer.analyze_file_style("test.py", "python", python_code)
-    print(f"Python conventions:")
+    print("Python conventions:")
     print(f"  Indent: {conventions.indent_style} ({conventions.indent_size})")
     print(f"  Quotes: {conventions.quote_style}")
     print(f"  Line length: {conventions.line_length}")

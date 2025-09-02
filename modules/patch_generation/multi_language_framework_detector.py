@@ -8,10 +8,9 @@ to enable LLM-based patch generation across multiple programming languages and f
 
 import json
 import re
-import ast
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Set
+from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
 from enum import Enum
 
@@ -6240,7 +6239,7 @@ export default BlogList;
         source_code=js_code
     )
     
-    print(f"\nSecond test:")
+    print("\nSecond test:")
     print(f"Language: {result2.language.value}")
     print(f"Confidence: {result2.confidence:.2f}")
     print(f"Frameworks: {[f.name for f in result2.frameworks]}")

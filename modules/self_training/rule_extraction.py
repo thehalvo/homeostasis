@@ -4,15 +4,13 @@ This module analyzes successful patches to identify patterns and
 automatically generate new detection and fix rules.
 """
 
-import ast
 import json
 import logging
 import re
-from collections import defaultdict, Counter
+from collections import defaultdict
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
-import difflib
+from typing import Any, Dict, List, Optional, Tuple
 import hashlib
 
 from ..llm_integration.patch_generator import PatchData

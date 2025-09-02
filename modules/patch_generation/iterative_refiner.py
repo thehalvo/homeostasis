@@ -10,12 +10,11 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Callable
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 from enum import Enum
 import subprocess
 import tempfile
-import shutil
 
 from ..llm_integration.provider_abstraction import (
     LLMManager, LLMRequest, LLMMessage

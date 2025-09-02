@@ -6,9 +6,7 @@ and generating patches for common parameter-related issues like missing paramete
 type mismatches, and ordering problems.
 """
 import ast
-import inspect
-import re
-from typing import Dict, List, Optional, Any, Tuple, Union, Set, NamedTuple
+from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -69,7 +67,7 @@ class FunctionCallMatch:
                     parameter_name=f"arg{i}",
                     issue_type="extra_positional",
                     line_number=self.line_number,
-                    suggestion=f"Remove extra positional argument or update function signature"
+                    suggestion="Remove extra positional argument or update function signature"
                 ))
         
         # Match keyword arguments
@@ -95,7 +93,7 @@ class FunctionCallMatch:
                     parameter_name=keyword.arg,
                     issue_type="unknown_keyword",
                     line_number=self.line_number,
-                    suggestion=f"Remove unknown keyword argument or update function signature"
+                    suggestion="Remove unknown keyword argument or update function signature"
                 ))
         
         # Check for missing required parameters

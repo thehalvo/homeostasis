@@ -11,28 +11,25 @@ This module extends the basic LLM patch generator with advanced features:
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 
-from .llm_patch_generator import (
-    LLMPatchGenerator, PatchValidationConfig, TestResult, ValidationResult
-)
+from .llm_patch_generator import LLMPatchGenerator
 from .advanced_code_generator import (
-    AdvancedCodeGenerator, CodeGenerationMode, GenerationResult,
+    CodeGenerationMode, GenerationResult,
     create_advanced_code_generator
 )
 from .contextual_analyzer import (
-    ContextualAnalyzer, ImpactAnalysis, create_contextual_analyzer
+    ImpactAnalysis, create_contextual_analyzer
 )
 from .iterative_refiner import (
-    IterativeRefiner, ValidationFeedback, RefinementHistory,
+    ValidationFeedback, RefinementHistory,
     create_iterative_refiner
 )
 from ..llm_integration.advanced_prompting import (
-    AdvancedPromptManager, PromptingStrategy, PromptExample,
+    PromptExample,
     create_advanced_prompt_manager
 )
-from ..llm_integration.provider_abstraction import LLMManager
 from ..llm_integration.api_key_manager import APIKeyManager
 from ..analysis.llm_context_manager import LLMContextManager
 

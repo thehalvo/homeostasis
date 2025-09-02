@@ -4,17 +4,16 @@ Manages transaction recovery across services written in different languages.
 """
 
 import asyncio
-import json
 import logging
 import uuid
-from typing import Dict, List, Optional, Set, Tuple, Any, Callable
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from enum import Enum, auto
+from enum import Enum
 from abc import ABC, abstractmethod
 
-from .microservice_healer import ServiceInfo, ServiceError
-from .unified_error_taxonomy import UnifiedErrorTaxonomy, ErrorCategory
+from .microservice_healer import ServiceError
+from .unified_error_taxonomy import UnifiedErrorTaxonomy
 
 
 class TransactionState(Enum):

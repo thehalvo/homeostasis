@@ -436,13 +436,13 @@ class ContextualThresholds:
         """Update performance metrics for a threshold group."""
         self.threshold_groups[group_name].append(context_hash)
         
-        stats = self.group_performance[group_name]
-        stats['total'] += 1
+        group_stats = self.group_performance[group_name]
+        group_stats['total'] += 1
         if success:
-            stats['success'] += 1
+            group_stats['success'] += 1
         
         # Calculate success rate
-        stats['success_rate'] = stats['success'] / stats['total']
+        group_stats['success_rate'] = group_stats['success'] / group_stats['total']
     
     def get_group_recommendations(self) -> List[Dict[str, Any]]:
         """Get recommendations for threshold adjustments by group."""

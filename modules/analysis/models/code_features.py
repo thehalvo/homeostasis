@@ -174,7 +174,8 @@ class PythonAnalyzer(LanguageAnalyzer):
             
             # Cognitive complexity
             cognitive = 0
-            nesting_level = 0
+            # TODO: nesting_level may be needed for future cognitive complexity calculations
+            # nesting_level = 0
             
             # Maximum nesting depth
             max_nesting = 0

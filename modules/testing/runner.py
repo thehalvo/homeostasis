@@ -1,12 +1,11 @@
 """
 Test runner module for validating patches.
 """
-import os
 import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union
+from typing import Dict, Optional, Any, Tuple
 
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent

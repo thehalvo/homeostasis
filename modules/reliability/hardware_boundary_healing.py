@@ -8,7 +8,6 @@ including hardware fault detection, firmware recovery, and system-level healing.
 import asyncio
 import json
 import logging
-import struct
 import subprocess
 import time
 from abc import ABC, abstractmethod
@@ -16,7 +15,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 

@@ -6,12 +6,8 @@ which enables more accurate understanding of code structure, variable scopes, an
 signatures to generate better-targeted patches.
 """
 import ast
-import os
-import re
-import sys
-import inspect
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Set, NamedTuple
+from typing import Dict, List, Optional, Any, Tuple, Union, NamedTuple
 from dataclasses import dataclass
 
 

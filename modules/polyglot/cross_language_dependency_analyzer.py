@@ -7,7 +7,7 @@ import asyncio
 import json
 import logging
 import re
-from typing import Dict, List, Optional, Set, Tuple, Any
+from typing import Dict, List, Optional, Set, Any
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -687,13 +687,8 @@ class CrossLanguageDependencyAnalyzer:
         
         # Check API contract versions
         for contract_id, contract in self.dependency_graph.api_contracts.items():
-            consumers = [
-                edge.source_component 
-                for edge in self.dependency_graph.edges 
-                if edge.metadata.get('contract_id') == contract_id
-            ]
-            
             # Would check if consumers expect different versions
+            pass
             
         return mismatches
         

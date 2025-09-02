@@ -6,21 +6,18 @@ Coordinates the self-healing process from error detection to patch deployment.
 """
 import argparse
 import json
-import logging
 import os
 import requests
 import shutil
-import signal
 import subprocess
 import sys
 import threading
 import time
 import uuid
 import yaml
-import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Generator
+from typing import Dict, List, Optional, Any, Tuple
 
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent
@@ -28,14 +25,13 @@ sys.path.insert(0, str(project_root))
 
 # Import modules
 from modules.monitoring.logger import MonitoringLogger
-from modules.monitoring.extractor import get_latest_errors, get_error_summary
+from modules.monitoring.extractor import get_latest_errors
 from modules.monitoring.post_deployment import PostDeploymentMonitor, SuccessRateTracker
 from modules.monitoring.metrics_collector import MetricsCollector
 from modules.monitoring.feedback_loop import FeedbackLoop
 from modules.monitoring.alert_system import AlertManager, AnomalyDetector
 from modules.analysis.analyzer import Analyzer, AnalysisStrategy
 from modules.patch_generation.patcher import PatchGenerator
-from modules.testing.runner import TestRunner
 from modules.testing.container_manager import ContainerManager
 from modules.testing.parallel_runner import ParallelTestRunner
 from modules.testing.regression_generator import RegressionTestGenerator
@@ -47,9 +43,9 @@ from modules.security.approval import (
     get_approval_manager,
     needs_approval
 )
-from modules.security.audit import get_audit_logger, log_event, log_fix
-from modules.deployment.canary import CanaryDeployment, CanaryStatus, get_canary_deployment
-from modules.deployment.blue_green import BlueGreenDeployment, BlueGreenStatus, get_blue_green_deployment
+from modules.security.audit import get_audit_logger, log_fix
+from modules.deployment.canary import CanaryStatus, get_canary_deployment
+from modules.deployment.blue_green import get_blue_green_deployment
 from modules.deployment.traffic_manager import (
     get_traffic_splitter, 
     get_nginx_manager, 
@@ -61,7 +57,7 @@ from modules.deployment.cloud.provider_factory import get_cloud_provider
 from modules.suggestion.suggestion_manager import get_suggestion_manager, SuggestionStatus
 from modules.monitoring.healing_audit import get_healing_auditor, start_healing_session, end_healing_session
 from modules.monitoring.audit_monitor import get_audit_monitor
-from modules.security.healing_rate_limiter import get_healing_rate_limiter, HealingRateLimitExceededError
+from modules.security.healing_rate_limiter import get_healing_rate_limiter
 
 
 class Orchestrator:
@@ -459,7 +455,7 @@ class Orchestrator:
                 
                 # If suggestion interface is enabled, add the suggestion to the suggestion manager
                 if use_suggestion_interface:
-                    self.logger.info(f"Creating fix suggestion for human review")
+                    self.logger.info("Creating fix suggestion for human review")
                     
                     # Create error info dictionary for suggestion manager
                     error_info = {
@@ -479,7 +475,7 @@ class Orchestrator:
                         # Set a flag in the patch to indicate it needs review
                         patch["requires_review"] = True
                         patch["error_id"] = error_id
-                        self.logger.info(f"Patch requires human review")
+                        self.logger.info("Patch requires human review")
                         
                     self.logger.info(f"Generated {len(suggestions)} suggestions for human review")
             else:
@@ -1609,7 +1605,7 @@ class Orchestrator:
             # Clean up old sessions if needed
             self._cleanup_old_sessions()
         except Exception as e:
-            self.logger.exception(e, message=f"Failed to store session information")
+            self.logger.exception(e, message="Failed to store session information")
 
     def _cleanup_old_sessions(self) -> None:
         """
@@ -1747,7 +1743,7 @@ class Orchestrator:
         patches = self.generate_patches_for_known_bugs()
         
         # Apply patches
-        applied_patches = self.apply_patches(patches)
+        self.apply_patches(patches)
         
         # Run tests with our advanced testing features
         tests_passed = self.run_tests(patches)
@@ -2283,7 +2279,7 @@ def main():
                 exit(1)
                 
             if canary_deployment.complete():
-                print(f"Successfully completed canary deployment")
+                print("Successfully completed canary deployment")
                 print(f"Time taken: {(canary_deployment.completion_time - canary_deployment.start_time).total_seconds():.2f} seconds")
                 exit(0)
             else:
@@ -2317,9 +2313,6 @@ def main():
         
         # Generate the report
         try:
-            # Configure the audit monitor with the same config as the orchestrator
-            audit_config = orchestrator.config.get("audit_monitor", {})
-            
             # Generate report
             report = generate_activity_report(args.report_period)
             

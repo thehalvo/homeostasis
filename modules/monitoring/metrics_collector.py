@@ -6,14 +6,13 @@ This module provides utilities for:
 2. Storing and analyzing metric data
 3. Generating reports on fix effectiveness
 """
-import os
 import sys
 import time
 import json
 import statistics
 import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Callable
+from typing import Dict, List, Optional, Any
 
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent

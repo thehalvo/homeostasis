@@ -405,7 +405,7 @@ class UserManagementSystem:
         
         # Check password history
         if self._is_password_in_history(user_id, new_password):
-            raise ValueError(f"Password was used recently. Please choose a different password.")
+            raise ValueError("Password was used recently. Please choose a different password.")
         
         # Update password in auth manager
         # Note: In a real implementation, we'd need to update the auth manager's password

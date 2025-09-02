@@ -14,13 +14,10 @@ It provides command-line options for various report types, formats, and date ran
 
 import argparse
 import csv
-import datetime
 import json
-import os
 import sys
-import time
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Any, Union
+from typing import Dict, List, Any
 
 # Add project root to sys.path
 project_root = Path(__file__).parents[2]

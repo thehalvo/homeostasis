@@ -7,13 +7,11 @@ This module provides a wrapper around Docker functionality to:
 3. Manage container lifecycle
 4. Reuse containers for faster testing
 """
-import os
 import time
 import uuid
 import subprocess
-import json
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, Any, Tuple
 
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent
@@ -320,7 +318,7 @@ class ContainerManager:
         
         try:
             # Copy the files to the container
-            result = subprocess.run(
+            subprocess.run(
                 ["docker", "cp", str(source_path), f"{container_id}:{container_path}"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,

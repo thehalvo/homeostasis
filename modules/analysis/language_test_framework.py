@@ -421,7 +421,8 @@ class LanguageTestRunner:
                     
                     # Convert from standard to target format
                     target_adapter = ErrorAdapterFactory.get_adapter(target_lang)
-                    target_error = target_adapter.from_standard_format(standard_error)
+                    # TODO: Implement cross-language conversion validation
+                    # target_error = target_adapter.from_standard_format(standard_error)
                     
                     # Convert back to source format to verify roundtrip
                     source_adapter = ErrorAdapterFactory.get_adapter(source_lang)
@@ -640,13 +641,13 @@ if __name__ == "__main__":
     cross_lang_results = runner.run_cross_language_tests(suite)
     
     # Print summary
-    print(f"\nTest Summary:")
+    print("\nTest Summary:")
     print(f"  Total tests: {len(results)}")
     print(f"  Passed: {sum(1 for r in results if r.passed)}")
     print(f"  Failed: {sum(1 for r in results if not r.passed)}")
     
     # Print cross-language test summary
-    print(f"\nCross-Language Test Summary:")
+    print("\nCross-Language Test Summary:")
     print(f"  Conversion tests: {len(cross_lang_results['conversion_tests'])}")
     print(f"  Pattern detection tests: {len(cross_lang_results['pattern_detection_tests'])}")
     print(f"  Cross-suggestion tests: {len(cross_lang_results['cross_suggestion_tests'])}")

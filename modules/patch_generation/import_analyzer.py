@@ -6,12 +6,11 @@ gathering context from imported modules to improve patch generation.
 """
 import os
 import sys
-import ast
 import importlib
 import inspect
 import pkgutil
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Set, NamedTuple
+from typing import Dict, List, Optional, Any, Tuple, Set
 from dataclasses import dataclass
 import logging
 

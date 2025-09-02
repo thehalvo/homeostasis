@@ -4,13 +4,12 @@ Knowledge Base for fix suggestions.
 Stores and organizes validated fixes to improve future fix generation.
 """
 
-import datetime
 import json
 import logging
 import os
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Union, Any
+from typing import Dict, List, Optional, Any
 
 logger = logging.getLogger(__name__)
 

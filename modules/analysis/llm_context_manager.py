@@ -72,6 +72,7 @@ class RetryContext:
     provider_fallback_chain: List[str] = field(default_factory=list)
     accumulated_context: Dict[str, Any] = field(default_factory=dict)
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -733,7 +734,7 @@ Return the patch in unified diff format.
         if context.previous_fixes:
             sections.append("\nPREVIOUS SUCCESSFUL FIXES:")
             for fix in context.previous_fixes[:2]:  # Limit to 2 most recent
-                sections.append(f"- Applied patch with success")
+                sections.append("- Applied patch with success")
         
         if context.project_structure:
             sections.append(f"\nPROJECT TYPE: {context.project_structure.get('type', 'Unknown')}")

@@ -11,9 +11,8 @@ import hashlib
 import tempfile
 import shutil
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, Optional, Any
 from datetime import datetime, timedelta
-from enum import Enum
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -21,10 +20,10 @@ import jwt
 import redis
 from sqlalchemy import create_engine, Column, String, Integer, Float, DateTime, Text, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship, Session
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.sql import func
 
-from .plugin_discovery import PluginRegistry, PluginManifest, PluginType
+from .plugin_discovery import PluginRegistry, PluginManifest
 from .plugin_security import PluginSecurityManager, SecurityLevel
 from .plugin_storage import PluginStorage
 
@@ -974,56 +973,9 @@ class MarketplaceAPI:
             'updated_at': plugin.updated_at.isoformat()
         }
     
-    def run(self, host: str = '0.0.0.0', port: int = 5000, debug: bool = False):
+    def run(self, host: str = '127.0.0.1', port: int = 5000, debug: bool = False):
         """Run the API server."""
         self.app.run(host=host, port=port, debug=debug)
-
-
-class PluginStorage:
-    """Handles plugin file storage."""
-    
-    def __init__(self, storage_path: str):
-        """
-        Initialize plugin storage.
-        
-        Args:
-            storage_path: Base path for plugin storage
-        """
-        self.storage_path = Path(storage_path)
-        self.storage_path.mkdir(parents=True, exist_ok=True)
-    
-    def store_plugin(self, plugin_id: str, plugin_dir: Path, package_path: Path):
-        """
-        Store plugin files.
-        
-        Args:
-            plugin_id: Plugin identifier
-            plugin_dir: Extracted plugin directory
-            package_path: Plugin package file
-        """
-        # Create plugin directory
-        plugin_storage = self.storage_path / plugin_id
-        plugin_storage.mkdir(parents=True, exist_ok=True)
-        
-        # Copy extracted files
-        shutil.copytree(plugin_dir, plugin_storage / 'extracted', dirs_exist_ok=True)
-        
-        # Copy package
-        shutil.copy2(package_path, plugin_storage / 'package.tar.gz')
-    
-    def get_plugin_path(self, plugin_id: str) -> Path:
-        """Get path to plugin files."""
-        return self.storage_path / plugin_id / 'extracted'
-    
-    def get_package_path(self, plugin_id: str) -> Path:
-        """Get path to plugin package."""
-        return self.storage_path / plugin_id / 'package.tar.gz'
-    
-    def delete_plugin(self, plugin_id: str):
-        """Delete plugin files."""
-        plugin_storage = self.storage_path / plugin_id
-        if plugin_storage.exists():
-            shutil.rmtree(plugin_storage)
 
 
 if __name__ == "__main__":
@@ -1042,4 +994,4 @@ if __name__ == "__main__":
     
     # Create and run API
     api = MarketplaceAPI(config)
-    api.run(debug=True)
+    api.run(debug=False)

@@ -10,7 +10,7 @@ import click
 from pathlib import Path
 from typing import Optional
 from .ai_integration_bridge import (
-    get_ai_integration_bridge, AICapability, CodeContext, AIAnalysisResult
+    get_ai_integration_bridge, AICapability, CodeContext
 )
 
 

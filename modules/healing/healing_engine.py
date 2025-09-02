@@ -7,7 +7,6 @@ Coordinates healing actions and manages healing strategies.
 import logging
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-import time
 
 from .healer import Healer, HealingResult, HealingStrategy
 

@@ -11,7 +11,7 @@ import traceback
 import uuid
 from datetime import datetime
 from functools import wraps
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, Optional
 
 from .logger import MonitoringLogger
 from .extractor import extract_error_context
@@ -19,7 +19,6 @@ from .extractor import extract_error_context
 # Check if Flask is available
 try:
     from flask import Blueprint, Flask, Request, Response, current_app, g, request
-    from flask.views import MethodView
     from werkzeug.exceptions import HTTPException
     FLASK_AVAILABLE = True
 except ImportError:

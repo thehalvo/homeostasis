@@ -7,7 +7,6 @@ type of defect by leveraging the language understanding capabilities of LLMs
 rather than relying solely on predefined templates.
 """
 
-import ast
 import json
 import logging
 import re
@@ -15,7 +14,7 @@ import uuid
 import subprocess
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Callable
+from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
 from enum import Enum
 
@@ -23,12 +22,10 @@ from ..llm_integration.provider_abstraction import (
     LLMManager, LLMRequest, LLMMessage, LLMError
 )
 from ..llm_integration.api_key_manager import APIKeyManager
-from ..analysis.llm_context_manager import LLMContextManager, LLMContext
-from ..security.llm_security_manager import LLMSecurityManager, create_llm_security_manager
-from .multi_language_framework_detector import (
-    MultiLanguageFrameworkDetector, LanguageType, create_multi_language_detector
-)
-from .code_style_analyzer import CodeStyleAnalyzer, create_code_style_analyzer
+from ..analysis.llm_context_manager import LLMContextManager
+from ..security.llm_security_manager import create_llm_security_manager
+from .multi_language_framework_detector import create_multi_language_detector
+from .code_style_analyzer import create_code_style_analyzer
 
 
 logger = logging.getLogger(__name__)
@@ -1094,7 +1091,7 @@ Provide your response in the following JSON format:
                     package_json = json.load(f)
                     if 'scripts' in package_json and 'test' in package_json['scripts']:
                         return 'npm test'
-            except:
+            except Exception:
                 pass
         
         # Java projects

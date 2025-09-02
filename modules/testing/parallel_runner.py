@@ -4,10 +4,9 @@ Parallel test runner for validating multiple patches concurrently.
 import os
 import sys
 import time
-import json
 import concurrent.futures
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Callable
+from typing import Dict, List, Optional, Any
 
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent

@@ -6,7 +6,6 @@ failures before they occur using machine learning, time series analysis, and
 anomaly detection.
 """
 
-import json
 import logging
 import numpy as np
 from abc import ABC, abstractmethod
@@ -14,9 +13,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
-
-import pandas as pd
+from typing import Any, Dict, List, Optional
 from sklearn.ensemble import IsolationForest, RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 

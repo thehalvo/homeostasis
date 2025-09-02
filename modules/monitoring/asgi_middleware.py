@@ -5,15 +5,13 @@ This module provides ASGI middleware components for integrating with the
 Homeostasis monitoring and self-healing system. It works with ASGI frameworks
 like Starlette, FastAPI, Quart, and others.
 """
-import asyncio
 import json
 import logging
 import time
 import traceback
 import uuid
 from datetime import datetime
-from functools import partial
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, Optional
 
 from .logger import MonitoringLogger
 from .extractor import extract_error_context

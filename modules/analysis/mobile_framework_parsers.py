@@ -239,8 +239,8 @@ class FrameworkDetector:
                 return FrameworkType.FLUTTER
             
             # React Native detection
-            if ((project_path / "package.json").exists() and 
-                (project_path / "metro.config.js").exists()):
+            if ((project_path / "package.json").exists() and
+                    (project_path / "metro.config.js").exists()):
                 return FrameworkType.REACT_NATIVE
             
             # Check package.json for React Native and web frameworks
@@ -298,20 +298,20 @@ class FrameworkDetector:
                             return FrameworkType.CSS
                         elif any("webpack" in script or "rollup" in script or "vite" in script or "build" in script for script in scripts.values()):
                             return FrameworkType.BUILD_SYSTEMS
-                except:
+                except Exception:
                     pass
             
             # Additional mobile framework detection
-            if ((project_path / "AndroidManifest.xml").exists() or 
-                (project_path / "app" / "src" / "main" / "AndroidManifest.xml").exists() or
-                (project_path / "build.gradle").exists()):
+            if ((project_path / "AndroidManifest.xml").exists() or
+                    (project_path / "app" / "src" / "main" / "AndroidManifest.xml").exists() or
+                    (project_path / "build.gradle").exists()):
                 return FrameworkType.JAVA_ANDROID
             
             # Capacitor/Cordova detection
-            if ((project_path / "capacitor.config.ts").exists() or 
-                (project_path / "capacitor.config.js").exists() or
-                (project_path / "config.xml").exists() or
-                (project_path / "ionic.config.json").exists()):
+            if ((project_path / "capacitor.config.ts").exists() or
+                    (project_path / "capacitor.config.js").exists() or
+                    (project_path / "config.xml").exists() or
+                    (project_path / "ionic.config.json").exists()):
                 return FrameworkType.CAPACITOR_CORDOVA
             
             # Web framework-specific file detection
@@ -329,23 +329,23 @@ class FrameworkDetector:
             # CSS framework detection
             if ((project_path / "tailwind.config.js").exists() or 
                 (project_path / "postcss.config.js").exists() or
-                list(project_path.glob("**/*.scss")) or
-                list(project_path.glob("**/*.sass")) or
-                list(project_path.glob("**/*.less"))):
+                    list(project_path.glob("**/*.scss")) or
+                    list(project_path.glob("**/*.sass")) or
+                    list(project_path.glob("**/*.less"))):
                 return FrameworkType.CSS
             
             # Build system detection
             if ((project_path / "webpack.config.js").exists() or
-                (project_path / "rollup.config.js").exists() or
-                (project_path / "vite.config.js").exists() or
-                (project_path / "vite.config.ts").exists() or
-                (project_path / "gulpfile.js").exists() or
-                (project_path / "Gruntfile.js").exists()):
+                    (project_path / "rollup.config.js").exists() or
+                    (project_path / "vite.config.js").exists() or
+                    (project_path / "vite.config.ts").exists() or
+                    (project_path / "gulpfile.js").exists() or
+                    (project_path / "Gruntfile.js").exists()):
                 return FrameworkType.BUILD_SYSTEMS
             
             # Unity detection
-            if ((project_path / "Assets").exists() and 
-                (project_path / "ProjectSettings").exists()):
+            if ((project_path / "Assets").exists() and
+                    (project_path / "ProjectSettings").exists()):
                 return FrameworkType.UNITY
             
             # Xamarin detection
@@ -360,7 +360,7 @@ class FrameworkDetector:
                             content = file.read_text()
                             if "Xamarin" in content:
                                 return FrameworkType.XAMARIN
-                        except:
+                        except Exception:
                             pass
             
         except Exception as e:
@@ -1447,7 +1447,7 @@ if __name__ == "__main__":
     
     # Test comprehensive analysis
     flutter_analysis = factory.analyze_error_with_framework_context(flutter_context)
-    print(f"\nFlutter Analysis:")
+    print("\nFlutter Analysis:")
     print(f"Framework: {flutter_analysis['detected_framework']}")
     print(f"Parser: {flutter_analysis['parser_type']}")
     print(f"Runtime Issues: {len(flutter_analysis.get('runtime_analysis', []))}")
@@ -1461,7 +1461,7 @@ if __name__ == "__main__":
     # Test Java Android analysis
     if ADDITIONAL_MOBILE_FRAMEWORKS_AVAILABLE:
         android_analysis = factory.analyze_error_with_framework_context(android_context)
-        print(f"\nJava Android Analysis:")
+        print("\nJava Android Analysis:")
         print(f"Framework: {android_analysis['detected_framework']}")
         print(f"Parser: {android_analysis['parser_type']}")
         print(f"Runtime Issues: {len(android_analysis.get('runtime_analysis', []))}")
@@ -1473,7 +1473,7 @@ if __name__ == "__main__":
         
         # Test Capacitor/Cordova analysis
         capacitor_analysis = factory.analyze_error_with_framework_context(capacitor_context)
-        print(f"\nCapacitor/Cordova Analysis:")
+        print("\nCapacitor/Cordova Analysis:")
         print(f"Framework: {capacitor_analysis['detected_framework']}")
         print(f"Parser: {capacitor_analysis['parser_type']}")
         print(f"Runtime Issues: {len(capacitor_analysis.get('runtime_analysis', []))}")
@@ -1488,7 +1488,7 @@ if __name__ == "__main__":
     # Test CSS and Build Systems analysis
     if STYLING_BUILD_FRAMEWORKS_AVAILABLE:
         css_analysis = factory.analyze_error_with_framework_context(css_context)
-        print(f"\nCSS Analysis:")
+        print("\nCSS Analysis:")
         print(f"Framework: {css_analysis['detected_framework']}")
         print(f"Parser: {css_analysis['parser_type']}")
         print(f"Runtime Issues: {len(css_analysis.get('runtime_analysis', []))}")
@@ -1500,7 +1500,7 @@ if __name__ == "__main__":
         
         # Test Build Systems analysis
         build_analysis = factory.analyze_error_with_framework_context(build_context)
-        print(f"\nBuild Systems Analysis:")
+        print("\nBuild Systems Analysis:")
         print(f"Framework: {build_analysis['detected_framework']}")
         print(f"Parser: {build_analysis['parser_type']}")
         print(f"Runtime Issues: {len(build_analysis.get('runtime_analysis', []))}")
@@ -1515,7 +1515,7 @@ if __name__ == "__main__":
     # Test C/C++ and Objective-C analysis
     if CORE_LANGUAGE_FRAMEWORKS_AVAILABLE:
         cpp_analysis = factory.analyze_error_with_framework_context(cpp_context)
-        print(f"\nC/C++ Analysis:")
+        print("\nC/C++ Analysis:")
         print(f"Framework: {cpp_analysis['detected_framework']}")
         print(f"Parser: {cpp_analysis['parser_type']}")
         print(f"Runtime Issues: {len(cpp_analysis.get('runtime_analysis', []))}")
@@ -1527,7 +1527,7 @@ if __name__ == "__main__":
         
         # Test Objective-C analysis
         objc_analysis = factory.analyze_error_with_framework_context(objc_context)
-        print(f"\nObjective-C Analysis:")
+        print("\nObjective-C Analysis:")
         print(f"Framework: {objc_analysis['detected_framework']}")
         print(f"Parser: {objc_analysis['parser_type']}")
         print(f"Runtime Issues: {len(objc_analysis.get('runtime_analysis', []))}")

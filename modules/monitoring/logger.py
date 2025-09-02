@@ -8,11 +8,10 @@ import os
 import platform
 import socket
 import sys
-import time
 import traceback
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional
 
 # Create logs directory if it doesn't exist
 LOGS_DIR = Path(__file__).parent.parent.parent / "logs"

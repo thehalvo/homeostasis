@@ -11,13 +11,10 @@ import git
 import hashlib
 import json
 import logging
-import os
-import shutil
-import subprocess
 import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional
 
 from modules.monitoring.logger import MonitoringLogger
 from modules.security.audit import get_audit_logger, log_event
@@ -215,7 +212,7 @@ class ActionPatchHistoryLogger:
         
         # Log to monitoring
         self.monitoring_logger.info(
-            f"LLM interaction logged",
+            "LLM interaction logged",
             action_id=action_id,
             interaction_id=interaction_id,
             provider=provider,
@@ -408,7 +405,7 @@ class ActionPatchHistoryLogger:
         
         # Log to monitoring
         self.monitoring_logger.info(
-            f"Patch application logged",
+            "Patch application logged",
             action_id=action_id,
             patch_id=patch_id,
             patch_app_id=patch_app_id,

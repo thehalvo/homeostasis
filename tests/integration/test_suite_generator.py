@@ -6,10 +6,9 @@ supported by Homeostasis, including framework-specific and cross-language tests.
 """
 
 import json
-import os
 from pathlib import Path
-from typing import Dict, List, Any, Optional
-from dataclasses import dataclass, asdict
+from typing import Dict, List, Any
+from dataclasses import dataclass
 import logging
 
 logger = logging.getLogger(__name__)

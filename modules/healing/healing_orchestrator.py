@@ -5,13 +5,11 @@ Orchestrates complex healing scenarios across multiple services.
 """
 
 import logging
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, Future
-import time
 
 from .healing_engine import HealingEngine
-from .healer import HealingResult, HealingStrategy
 
 logger = logging.getLogger(__name__)
 

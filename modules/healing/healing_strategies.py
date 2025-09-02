@@ -6,8 +6,7 @@ Concrete implementations of healing strategies.
 
 import logging
 import time
-import subprocess
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from datetime import datetime
 
 from .healer import Healer, HealingResult, HealingStrategy

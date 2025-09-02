@@ -9,15 +9,14 @@ system behavior and security posture.
 import datetime
 import json
 import logging
-import os
 import re
 import time
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Any, Iterator
+from typing import Dict, List, Optional, Any
 
-from modules.security.audit import get_audit_logger, log_event
+from modules.security.audit import log_event
 
 # Configure module logger
 logger = logging.getLogger(__name__)

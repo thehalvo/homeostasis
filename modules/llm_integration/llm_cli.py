@@ -6,7 +6,6 @@ CLI interface for LLM integration management.
 import argparse
 import getpass
 import sys
-from typing import Optional
 
 from .api_key_manager import APIKeyManager, KeyValidationError
 from .provider_abstraction import LLMManager

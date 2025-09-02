@@ -5,21 +5,15 @@ Provides helper functions and fixtures for simulating errors, monitoring healing
 processes, and validating successful remediation.
 """
 import asyncio
-import json
-import os
-import random
 import re
 import shutil
-import subprocess
 import sys
 import tempfile
 import time
-import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any, Callable
-from unittest.mock import MagicMock, patch
+from typing import Dict, List, Optional, Any, Callable
 
 import pytest
 import requests

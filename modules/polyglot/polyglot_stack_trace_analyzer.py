@@ -12,7 +12,7 @@ from datetime import datetime
 from enum import Enum
 from abc import ABC, abstractmethod
 
-from .unified_error_taxonomy import UnifiedErrorTaxonomy, ErrorCategory
+from .unified_error_taxonomy import UnifiedErrorTaxonomy
 
 
 class FrameType(Enum):
@@ -483,18 +483,18 @@ class PolyglotStackTraceAnalyzer:
             
         elif format == 'text':
             lines = [
-                f"Correlated Stack Trace Analysis",
-                f"================================",
+                "Correlated Stack Trace Analysis",
+                "================================",
                 f"Correlation ID: {correlated_trace.correlation_id}",
                 f"Services Involved: {correlated_trace.total_services}",
                 f"Languages: {', '.join(correlated_trace.languages_involved)}",
-                f"\nCausality Chain:"
+                "\nCausality Chain:"
             ]
             
             for from_svc, to_svc in correlated_trace.causality_chain:
                 lines.append(f"  {from_svc} -> {to_svc}")
                 
-            lines.append(f"\nRoot Cause:")
+            lines.append("\nRoot Cause:")
             if correlated_trace.root_cause_frame:
                 frame = correlated_trace.root_cause_frame
                 lines.append(

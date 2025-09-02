@@ -144,7 +144,7 @@ class JavaScriptAnalyzer:
             Generic analysis results
         """
         error_type = error_data.get("error_type", "")
-        error_message = error_data.get("message", "")
+        # error_message = error_data.get("message", "")  # TODO: Use for more specific error analysis
         
         # Basic categorization based on error type
         if "SyntaxError" in error_type:
@@ -290,7 +290,7 @@ if __name__ == "__main__":
     analyzer = JavaScriptAnalyzer()
     analysis = analyzer.analyze_error(js_error)
     
-    logger.info(f"JavaScript Error Analysis:")
+    logger.info("JavaScript Error Analysis:")
     logger.info(f"  Rule: {analysis.get('rule_id')}")
     logger.info(f"  Root Cause: {analysis.get('root_cause')}")
     logger.info(f"  Suggestion: {analysis.get('suggestion')}")
@@ -306,19 +306,19 @@ if __name__ == "__main__":
     # Analyze the Node.js error
     analysis = analyzer.analyze_error(nodejs_error)
     
-    logger.info(f"Node.js Error Analysis:")
+    logger.info("Node.js Error Analysis:")
     logger.info(f"  Rule: {analysis.get('rule_id')}")
     logger.info(f"  Root Cause: {analysis.get('root_cause')}")
     logger.info(f"  Suggestion: {analysis.get('suggestion')}")
     
     # Convert between formats
-    logger.info(f"Converting JavaScript error to Python format:")
+    logger.info("Converting JavaScript error to Python format:")
     python_format = convert_error_format(js_error, "javascript", "python")
     logger.info(f"  Python exception_type: {python_format.get('exception_type')}")
     logger.info(f"  Python message: {python_format.get('message')}")
     
     # Convert back
     js_format = convert_error_format(python_format, "python", "javascript")
-    logger.info(f"Converting back to JavaScript format:")
+    logger.info("Converting back to JavaScript format:")
     logger.info(f"  JavaScript name: {js_format.get('name')}")
     logger.info(f"  JavaScript message: {js_format.get('message')}")

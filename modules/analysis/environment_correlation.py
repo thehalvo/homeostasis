@@ -863,10 +863,10 @@ class EnvironmentCorrelator:
         # Sort correlations by strength
         results["correlations"] = sorted(
             results["correlations"],
-            key=lambda x: x.get("correlation_strength", 0) 
-                          if "correlation_strength" in x 
-                          else (x.get("strong_value_correlations", [{}])[0].get("correlation", 0) 
-                                if x.get("strong_value_correlations") else 0),
+            key=lambda x: (x.get("correlation_strength", 0)
+                           if "correlation_strength" in x
+                           else (x.get("strong_value_correlations", [{}])[0].get("correlation", 0)
+                                 if x.get("strong_value_correlations") else 0)),
             reverse=True
         )
         
@@ -1219,6 +1219,6 @@ if __name__ == "__main__":
     for suggestion in suggestions['suggestions']:
         print(f"\n{suggestion['source'].capitalize()} (importance: {suggestion['importance']}):")
         print(f"  Suggested interval: {suggestion['suggested_interval']}")
-        print(f"  Factors to monitor:")
+        print("  Factors to monitor:")
         for factor in suggestion['factors']:
             print(f"  - {factor}")

@@ -16,15 +16,13 @@ import logging
 import re
 import networkx as nx
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Set
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 from enum import Enum
-import subprocess
-import time
 from collections import defaultdict
 
 from ..llm_integration.provider_abstraction import (
-    LLMManager, LLMRequest, LLMMessage, LLMError
+    LLMManager, LLMRequest, LLMMessage
 )
 from ..analysis.llm_context_manager import LLMContextManager
 from ..analysis.models.transformer_code_understanding import TransformerCodeAnalyzer as TransformerCodeUnderstanding
@@ -913,7 +911,6 @@ OUTPUT FORMAT:
         
         # Identify affected functions based on call graph
         if code_context.call_graph:
-            error_line = error_context.get('line_number', 0)
             # Find functions that might be affected
             for func in code_context.function_signatures:
                 if func in code_context.call_graph:

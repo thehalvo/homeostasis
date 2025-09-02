@@ -11,10 +11,9 @@ import logging
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any, Union, Callable, Protocol
+from typing import Dict, List, Optional, Any, Callable, Protocol
 from pathlib import Path
 from enum import Enum
-import json
 
 from ..analysis.code_style_analyzer import CodeStyleAnalyzer
 from ..patch_generation.multi_language_framework_detector import LanguageFrameworkDetector

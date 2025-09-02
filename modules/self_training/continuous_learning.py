@@ -12,11 +12,9 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Deque
+from typing import Any, Dict, List, Optional, Set
 import numpy as np
-from scipy import stats
 
-from ..analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
 from ..monitoring.health_checks import HealthChecker
 from .feedback_loops import MLFeedbackLoop, PredictionFeedback
 from .rule_extraction import RuleExtractor

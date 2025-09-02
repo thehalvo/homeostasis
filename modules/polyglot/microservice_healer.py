@@ -4,18 +4,14 @@ Enables healing of distributed microservices written in different languages.
 """
 
 import asyncio
-import json
 import logging
-from typing import Dict, List, Optional, Set, Tuple, Any
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 
 from ..analysis.language_plugin_system import LanguagePluginRegistry
 from ..analysis.cross_language_orchestrator import CrossLanguageOrchestrator
-from ..monitoring.logger import Logger
-from ..patch_generation.patcher import Patcher
-from ..testing.runner import TestRunner
 
 
 class ServiceCommunicationProtocol(Enum):

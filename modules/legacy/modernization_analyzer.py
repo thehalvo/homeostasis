@@ -5,14 +5,12 @@ This module analyzes legacy codebases and provides recommendations for
 gradual modernization while maintaining system stability.
 """
 
-import json
 import logging
 import re
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 from enum import Enum
 from datetime import datetime
-import ast
 import os
 
 logger = logging.getLogger(__name__)

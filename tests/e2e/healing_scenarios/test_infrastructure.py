@@ -4,18 +4,12 @@ Test infrastructure for simulating service environments and healing scenarios.
 This module provides mock implementations of services, log generation, and patch
 validation to enable testing without requiring real service infrastructure.
 """
-import asyncio
-import json
-import os
 import tempfile
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
-from unittest.mock import Mock, patch
-
-import yaml
+from typing import Any, Dict, List, Optional, Tuple
 
 
 @dataclass

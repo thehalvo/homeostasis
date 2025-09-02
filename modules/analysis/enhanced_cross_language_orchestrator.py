@@ -232,7 +232,8 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
         language = language.lower()
         
         # Convert to standard format for better comparison
-        normalized_error = normalize_error(error_data, language)
+        # TODO: Use normalized_error for better cross-language comparison
+        # normalized_error = normalize_error(error_data, language)
         
         # Find similar errors across languages
         similar_errors = self.find_similar_errors(error_data, language)
@@ -788,5 +789,5 @@ if __name__ == "__main__":
     
     if "avg_analysis_times" in metrics:
         logger.info("  Avg analysis times by language:")
-        for lang, time in metrics['avg_analysis_times'].items():
-            logger.info(f"    {lang}: {time:.3f}s")
+        for lang, avg_time in metrics['avg_analysis_times'].items():
+            logger.info(f"    {lang}: {avg_time:.3f}s")

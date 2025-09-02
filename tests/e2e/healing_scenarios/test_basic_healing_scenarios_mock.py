@@ -5,8 +5,7 @@ Tests fundamental healing workflows including error detection, patch generation,
 testing, and deployment using simulated services and logs.
 """
 import pytest
-from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 import yaml
 
 from tests.e2e.healing_scenarios.test_infrastructure import (

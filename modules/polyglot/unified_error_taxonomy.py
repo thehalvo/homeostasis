@@ -626,7 +626,7 @@ class UnifiedErrorTaxonomy:
                 lines.append(f'### {pattern.name}\n')
                 lines.append(f'- **Category**: {pattern.category.value}\n')
                 lines.append(f'- **Description**: {pattern.description}\n')
-                lines.append(f'- **Common Causes**:\n')
+                lines.append('- **Common Causes**:\n')
                 for cause in pattern.common_causes:
                     lines.append(f'  - {cause}\n')
                 lines.append(f'- **Supported Languages**: {", ".join(pattern.language_specific_manifestations.keys())}\n')

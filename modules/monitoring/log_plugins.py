@@ -5,16 +5,13 @@ This module provides integration with various logging frameworks and services,
 allowing Homeostasis to capture logs from diverse sources and formats.
 """
 import json
-import logging
-import os
 import sys
-import time
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union, Set, Tuple, Callable
+from typing import Any, Dict, List, Optional
 
 # Import the base logger
-from .logger import MonitoringLogger, LOG_FILE, LOGS_DIR
+from .logger import MonitoringLogger, LOG_FILE
 
 try:
     import structlog

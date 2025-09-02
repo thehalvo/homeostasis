@@ -9,9 +9,8 @@ context-aware prompt construction.
 
 import json
 import logging
-import re
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 from enum import Enum
 import hashlib

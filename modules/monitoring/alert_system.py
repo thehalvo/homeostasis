@@ -6,18 +6,16 @@ This module provides utilities for:
 2. Detecting anomalies and unexpected behavior
 3. Sending alerts through various channels
 """
-import os
 import sys
 import time
 import json
 import socket
 import smtplib
-import threading
 import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Callable
+from typing import Dict, List, Any, Callable
 
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent

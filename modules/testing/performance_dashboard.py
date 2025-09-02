@@ -5,10 +5,8 @@ This module provides a web-based dashboard for monitoring performance
 trends and identifying regressions across the Homeostasis framework.
 """
 import sqlite3
-import json
 from datetime import datetime, timedelta
-from typing import Dict, List, Any, Optional
-from pathlib import Path
+from typing import Dict, List, Any
 import statistics
 from flask import Flask, render_template_string, jsonify, request
 

@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 import z3
-from z3 import And, Or, Not, Implies, Solver, sat, unsat, unknown
+from z3 import Not, Solver, sat, unsat
 
 logger = logging.getLogger(__name__)
 
@@ -215,8 +215,6 @@ class ContractVerifier:
         invariants: List[str] = None
     ) -> List[VerificationResult]:
         """Verify function contracts using formal methods."""
-        results = []
-        
         # Extract function parameters and return type
         params = self._extract_parameters(func_ast)
         
@@ -457,8 +455,6 @@ class CriticalSystemVerifier:
                 "reason": "No function found in action code",
                 "verification_results": []
             }
-        
-        func_ast = func_nodes[0]
         
         # Create safety properties
         properties = []

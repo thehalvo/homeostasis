@@ -373,9 +373,9 @@ class AcademicFormalVerificationFramework:
         
         # Add academic insights
         analysis["theoretical_bounds"] = {
-            "worst_case_healing_time": f"O(n^2)",
-            "average_case_healing_time": f"O(n log n)",
-            "space_requirement": f"O(n)"
+            "worst_case_healing_time": "O(n^2)",
+            "average_case_healing_time": "O(n log n)",
+            "space_requirement": "O(n)"
         }
         
         analysis["research_notes"] = [
@@ -414,7 +414,7 @@ class AcademicFormalVerificationFramework:
             "detection_overhead": 0.05,  # 5% overhead
             "analysis_overhead": 0.10,   # 10% overhead
             "patching_overhead": 0.02,   # 2% overhead
-            "verification_overhead": 0.08 # 8% overhead
+            "verification_overhead": 0.08  # 8% overhead
         }
     
     def generate_research_dataset(

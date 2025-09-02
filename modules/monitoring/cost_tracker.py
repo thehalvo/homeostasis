@@ -11,15 +11,14 @@ This module provides:
 import time
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Callable
+from typing import Dict, List, Optional, Any, Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from collections import defaultdict, deque
 import threading
 from enum import Enum
 
 from .logger import MonitoringLogger
-from .llm_metrics import UsageQuota, AlertConfig
 
 
 class BudgetPeriod(Enum):

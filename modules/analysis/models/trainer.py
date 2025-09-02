@@ -205,7 +205,7 @@ class DistributedTrainer:
                 import ray
                 remote_func = ray.remote(train_func)
                 return ray.get(remote_func.remote(*args, **kwargs))
-            except:
+            except Exception:
                 pass
                 
         # Fallback to local training
@@ -563,7 +563,7 @@ class ModelTrainer:
                 import mlflow
                 mlflow.start_run(run_name=model_id)
                 mlflow.log_params(self.config.__dict__)
-            except:
+            except Exception:
                 pass
         
         # Load data
@@ -672,7 +672,7 @@ class ModelTrainer:
                 mlflow.log_metrics(evaluation["metrics"])
                 mlflow.log_artifact(model_path)
                 mlflow.end_run()
-            except:
+            except Exception:
                 pass
         elif self.config.experiment_tracking == "wandb":
             try:
@@ -680,7 +680,7 @@ class ModelTrainer:
                 wandb.log(evaluation["metrics"])
                 wandb.save(model_path)
                 wandb.finish()
-            except:
+            except Exception:
                 pass
         
         logger.info(f"Training completed for model {model_id}")
@@ -866,7 +866,7 @@ if __name__ == "__main__":
             distributed=args.distributed
         )
     
-    print(f"\nTraining completed!")
+    print("\nTraining completed!")
     print(f"Model ID: {result.model_id}")
     print(f"Metrics: {result.metrics}")
     print(f"Model saved to: {result.model_path}")

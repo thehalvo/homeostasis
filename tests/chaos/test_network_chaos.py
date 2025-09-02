@@ -2,18 +2,6 @@ import pytest
 import asyncio
 import random
 import time
-import socket
-import struct
-from unittest.mock import Mock, patch, MagicMock
-from datetime import datetime, timedelta
-import subprocess
-import platform
-
-from modules.reliability.chaos_engineering import (
-    ChaosEngineer,
-    ChaosExperiment,
-    FaultType
-)
 
 
 class TestNetworkChaos:

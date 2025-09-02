@@ -9,7 +9,7 @@ import logging
 import re
 import json
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Union
 
 from ..language_plugin_system import LanguagePlugin, register_plugin
 

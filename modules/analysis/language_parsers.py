@@ -1355,7 +1355,7 @@ if __name__ == "__main__":
     java_parser = JavaParser()
     java_error = "error: cannot find symbol\n  symbol:   variable undefinedVar"
     java_result = java_parser.parse_compilation_error(java_error)
-    print(f"\nJava Compilation Error:")
+    print("\nJava Compilation Error:")
     print(f"Result: {java_result}")
     
     # Test Go parser
@@ -1363,14 +1363,14 @@ if __name__ == "__main__":
     go_error = "panic: runtime error: invalid memory address or nil pointer dereference"
     go_context = ErrorContext(error_message=go_error, language=LanguageType.GO)
     go_issues = go_parser.detect_runtime_issues(go_context)
-    print(f"\nGo Runtime Issues:")
+    print("\nGo Runtime Issues:")
     print(f"Issues: {go_issues}")
     
     # Test Rust parser
     rust_parser = RustParser()
     rust_error = "error[E0425]: cannot find value `undefined_var` in this scope"
     rust_result = rust_parser.parse_compilation_error(rust_error)
-    print(f"\nRust Compilation Error:")
+    print("\nRust Compilation Error:")
     print(f"Result: {rust_result}")
     
     # Test Dart parser
@@ -1378,7 +1378,7 @@ if __name__ == "__main__":
     dart_error = "FlutterError: RenderFlex overflowed by 15 pixels on the right"
     dart_context = ErrorContext(error_message=dart_error, language=LanguageType.DART)
     dart_issues = dart_parser.detect_runtime_issues(dart_context)
-    print(f"\nDart/Flutter Runtime Issues:")
+    print("\nDart/Flutter Runtime Issues:")
     print(f"Issues: {dart_issues}")
     
     # Test React Native parser  
@@ -1386,14 +1386,14 @@ if __name__ == "__main__":
     rn_error = "Element type is invalid: expected a string but received undefined"
     rn_context = ErrorContext(error_message=rn_error, language=LanguageType.JAVASCRIPT)
     rn_issues = rn_parser.detect_runtime_issues(rn_context)
-    print(f"\nReact Native Runtime Issues:")
+    print("\nReact Native Runtime Issues:")
     print(f"Issues: {rn_issues}")
     
     # Test Xamarin parser
     xamarin_parser = XamarinParser()
     xamarin_error = "XA0001: Java.Lang.RuntimeException: Unable to start activity"
     xamarin_result = xamarin_parser.parse_compilation_error(xamarin_error)
-    print(f"\nXamarin Compilation Error:")
+    print("\nXamarin Compilation Error:")
     print(f"Result: {xamarin_result}")
     
     # Test Unity parser
@@ -1401,18 +1401,18 @@ if __name__ == "__main__":
     unity_error = "NullReferenceException: Object reference not set to an instance of an object"
     unity_context = ErrorContext(error_message=unity_error, language=LanguageType.CSHARP)
     unity_issues = unity_parser.detect_runtime_issues(unity_context)
-    print(f"\nUnity Runtime Issues:")
+    print("\nUnity Runtime Issues:")
     print(f"Issues: {unity_issues}")
     
     # Test compiler integration
-    print(f"\nCompiler Integration:")
+    print("\nCompiler Integration:")
     integration = CompilerIntegration()
     print(f"Available compilers: {integration.available_compilers}")
     
     # Test Python code analysis
     python_code = "def test():\n    print(undefined_variable)"
     python_diagnostics = integration.get_detailed_diagnostics(python_code, LanguageType.PYTHON)
-    print(f"\nPython Code Diagnostics:")
+    print("\nPython Code Diagnostics:")
     print(f"Syntax valid: {python_diagnostics.get('syntax_valid')}")
     print(f"Errors: {python_diagnostics.get('compilation_errors', [])}")
     
@@ -1420,6 +1420,6 @@ if __name__ == "__main__":
     if integration.available_compilers.get('dart'):
         dart_code = "void main() { print(undefinedVariable); }"
         dart_diagnostics = integration.get_detailed_diagnostics(dart_code, LanguageType.DART)
-        print(f"\nDart Code Diagnostics:")
+        print("\nDart Code Diagnostics:")
         print(f"Syntax valid: {dart_diagnostics.get('syntax_valid')}")
         print(f"Errors: {dart_diagnostics.get('compilation_errors', [])}")

@@ -1,8 +1,7 @@
 """
 Examples of using the monitoring module.
 """
-from fastapi import FastAPI, HTTPException, Request
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException
 
 from .logger import MonitoringLogger
 from .middleware import add_logging_middleware

@@ -18,10 +18,10 @@ import logging
 import uuid
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional, Set, Tuple, Union, Callable
+from typing import Dict, List, Optional, Callable
 from pathlib import Path
 
-from .approval import ApprovalManager, ApprovalRequest, ApprovalStatus, ApprovalType
+from .approval import ApprovalManager
 from .audit import get_audit_logger
 from .rbac import get_rbac_manager
 from .user_management import get_user_management

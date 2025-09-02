@@ -1800,8 +1800,6 @@ class RegulatedIndustriesSupport:
     
     def _get_industry_compliance_status(self, industry: RegulatedIndustry) -> Dict[str, Any]:
         """Get compliance status for industry."""
-        config = self.industry_configs.get(industry, {})
-        
         # Get relevant compliance frameworks
         frameworks = []
         if industry == RegulatedIndustry.HEALTHCARE:

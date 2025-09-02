@@ -5,15 +5,13 @@ Enhanced prompt template system for LLM integration.
 Provides user-defined prompt engineering templates for specialized or domain-specific code fixes.
 """
 
-import os
 import json
 import yaml
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Union, Set
+from typing import Dict, List, Optional, Any, Set
 from dataclasses import dataclass, field
 from enum import Enum
-import re
 
 from ..patch_generation.template_system import BaseTemplate
 

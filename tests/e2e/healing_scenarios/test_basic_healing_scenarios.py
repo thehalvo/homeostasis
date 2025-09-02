@@ -4,7 +4,6 @@ Basic end-to-end healing scenario tests.
 Tests fundamental healing workflows including error detection, patch generation,
 testing, and deployment.
 """
-import asyncio
 import sys
 from pathlib import Path
 
@@ -16,9 +15,6 @@ sys.path.insert(0, str(project_root))
 
 from tests.e2e.healing_scenarios.test_utilities import (
     HealingScenario,
-    HealingScenarioRunner,
-    TestEnvironment,
-    MetricsCollector,
     check_service_healthy,
     check_error_fixed,
     check_no_syntax_errors
@@ -151,7 +147,7 @@ class TestBasicHealingScenarios:
         
         # Log details for debugging
         if not result.success:
-            print(f"Healing failed. Logs:")
+            print("Healing failed. Logs:")
             for log in result.logs:
                 print(f"  {log}")
                 

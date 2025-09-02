@@ -3607,7 +3607,7 @@ class ClojureErrorAdapter(LanguageAdapter):
             if match:
                 namespace = match.group(1)
                 function = match.group(2)
-                fn_num = match.group(3)
+                # fn_num = match.group(3)  # TODO: Use to distinguish anonymous functions
                 method = match.group(4)
                 file = match.group(5)
                 line_num = int(match.group(6))

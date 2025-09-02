@@ -5,13 +5,10 @@ Tests complex healing workflows including framework-specific errors, concurrent
 healing, cascading failures, and cross-language scenarios.
 """
 import asyncio
-import concurrent.futures
-import json
 import os
 import sys
 import time
 from pathlib import Path
-from typing import List
 
 import pytest
 
@@ -23,7 +20,6 @@ from tests.e2e.healing_scenarios.test_utilities import (
     HealingScenario,
     HealingScenarioRunner,
     TestEnvironment,
-    MetricsCollector,
     check_service_healthy,
     check_error_fixed,
     check_no_syntax_errors

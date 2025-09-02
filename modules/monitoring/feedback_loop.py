@@ -6,14 +6,12 @@ This module provides utilities for:
 2. Generating insights for future fixes
 3. Improving templates and fix strategies based on historical data
 """
-import os
 import sys
 import time
 import json
-import statistics
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union, Callable
+from typing import Dict, List, Optional, Any
 
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent
