@@ -3,7 +3,6 @@ Test cases for quantum computing error mitigation
 """
 
 import unittest
-from unittest.mock import Mock, patch
 from modules.emerging_tech.quantum_computing import (
     QuantumErrorMitigator, QuantumFramework, QuantumErrorType, QuantumError
 )

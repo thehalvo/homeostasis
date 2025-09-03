@@ -121,7 +121,7 @@ class BuildFileAnalyzer:
                             "type": "missing_plugin_version",
                             "description": f"Plugin {plugin_info['groupId']}:{plugin_info['artifactId']} has no version specified",
                             "severity": "low",
-                            "fix_suggestion": f"Add <version>X.Y.Z</version> to the plugin declaration"
+                            "fix_suggestion": "Add <version>X.Y.Z</version> to the plugin declaration"
                         })
                     
                     results["plugins"].append(plugin_info)

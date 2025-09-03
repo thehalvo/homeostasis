@@ -351,7 +351,7 @@ class LanguagePluginRegistry:
                     # Look for LanguagePlugin subclasses in the module
                     for name, obj in inspect.getmembers(module):
                         if (inspect.isclass(obj) and issubclass(obj, LanguagePlugin) and 
-                            obj != LanguagePlugin):
+                                obj != LanguagePlugin):
                             # Register the plugin class
                             try:
                                 self.register_plugin_class(obj)

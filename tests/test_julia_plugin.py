@@ -2,8 +2,6 @@
 Tests for the Julia language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.julia_plugin import (
     JuliaLanguagePlugin, 

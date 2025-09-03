@@ -2,8 +2,6 @@
 Tests for the Zig language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.zig_plugin import (
     ZigLanguagePlugin, 

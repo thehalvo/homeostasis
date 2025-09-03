@@ -2,19 +2,15 @@
 Tests for Cross-Cluster Orchestration
 """
 
-import asyncio
 import pytest
 from datetime import datetime
-from unittest.mock import Mock, AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch, MagicMock
 
 from modules.deployment.multi_environment.cross_cluster import (
     CrossClusterOrchestrator,
-    Cluster,
-    ClusterType,
     ClusterState,
     ServiceMeshType,
     Service,
-    CrossClusterPolicy,
     ClusterHealth,
     KubernetesConnector,
     ServiceMeshController

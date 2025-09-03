@@ -619,7 +619,7 @@ class ZigPatchGenerator:
                     "fixes": [
                         f"Cast value to {expected_type}: @as({expected_type}, value)",
                         f"Change variable type to {found_type}",
-                        f"Convert value to correct type using appropriate functions",
+                        "Convert value to correct type using appropriate functions",
                         "Check if types are compatible or add explicit conversion"
                     ]
                 }

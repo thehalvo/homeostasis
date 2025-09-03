@@ -366,40 +366,40 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
         if "message" in error_data and isinstance(error_data["message"], str):
             message = error_data["message"]
             if ("panicked at" in message or "thread 'main'" in message or 
-                "unwrap()" in message or "Option::unwrap" in message or 
-                ".rs:" in message):
+                    "unwrap()" in message or "Option::unwrap" in message or 
+                    ".rs:" in message):
                 return "rust"
                 
         # Check for PHP-specific patterns
         if "message" in error_data and isinstance(error_data["message"], str):
             message = error_data["message"]
             if ("PHP Notice" in message or "PHP Warning" in message or 
-                "PHP Error" in message or "PHP Fatal error" in message or
-                "Call to undefined method" in message or 
-                "Call to undefined function" in message or
-                "Undefined variable" in message or
-                "Call to a member function" in message or
-                "SQLSTATE[" in message):
+                    "PHP Error" in message or "PHP Fatal error" in message or
+                    "Call to undefined method" in message or 
+                    "Call to undefined function" in message or
+                    "Undefined variable" in message or
+                    "Call to a member function" in message or
+                    "SQLSTATE[" in message):
                 return "php"
             
         # Check for Scala-specific patterns
         if "message" in error_data and isinstance(error_data["message"], str):
             message = error_data["message"]
             if ("scala.MatchError" in message or 
-                "scala.None$.get" in message or
-                "scala.Option" in message or
-                "akka." in message or
-                "play.api." in message or
-                "scala.concurrent.Future" in message):
+                    "scala.None$.get" in message or
+                    "scala.Option" in message or
+                    "akka." in message or
+                    "play.api." in message or
+                    "scala.concurrent.Future" in message):
                 return "scala"
         
         # Check for error_type indicating Scala
         if "error_type" in error_data and isinstance(error_data["error_type"], str):
             error_type = error_data["error_type"]
             if (error_type.startswith("scala.") or 
-                error_type.startswith("akka.") or 
-                error_type.startswith("play.api.") or
-                "MatchError" in error_type):
+                    error_type.startswith("akka.") or 
+                    error_type.startswith("play.api.") or
+                    "MatchError" in error_type):
                 return "scala"
         
         # Check for stack trace patterns

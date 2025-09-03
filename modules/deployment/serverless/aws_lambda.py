@@ -651,7 +651,7 @@ class AWSLambdaProvider(ServerlessProvider):
             
             # If the alias already exists, update it
             if not alias_result["success"] and "ResourceConflictException" in str(alias_result.get("stderr", "")):
-                logger.info(f"Alias 'canary' already exists, updating it")
+                logger.info("Alias 'canary' already exists, updating it")
                 return self.update_canary_percentage(function_name, fix_id, traffic_percentage)
                 
             # Log the canary setup

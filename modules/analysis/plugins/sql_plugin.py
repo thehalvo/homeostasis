@@ -694,8 +694,8 @@ class SQLPatchGenerator:
                 "description": f"Table '{table_name}' does not exist",
                 "fixes": [
                     f"Check if table name '{table_name}' is spelled correctly",
-                    f"Verify table exists in the database: SHOW TABLES or \\dt",
-                    f"Create the table if it doesn't exist",
+                    "Verify table exists in the database: SHOW TABLES or \\dt",
+                    "Create the table if it doesn't exist",
                     "Check if you're connected to the correct database/schema"
                 ]
             }
@@ -854,7 +854,7 @@ class SQLPatchGenerator:
                 "For numeric types, remove non-numeric characters",
                 "Use appropriate conversion functions for your database"
             ],
-            "example": f"-- For PostgreSQL\nSELECT CAST('123' AS INTEGER);\n-- For MySQL\nSELECT CONVERT('123', SIGNED);"
+            "example": "-- For PostgreSQL\nSELECT CAST('123' AS INTEGER);\n-- For MySQL\nSELECT CONVERT('123', SIGNED);"
         }
     
     def _fix_index_constraint(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 

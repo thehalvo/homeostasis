@@ -3,7 +3,6 @@ Tests for the monitoring module.
 """
 import os
 import sys
-import json
 import logging
 import pytest
 from unittest.mock import patch, MagicMock, mock_open

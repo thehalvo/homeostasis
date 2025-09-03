@@ -2,8 +2,6 @@
 Tests for the Haskell language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.haskell_plugin import (
     HaskellLanguagePlugin, 

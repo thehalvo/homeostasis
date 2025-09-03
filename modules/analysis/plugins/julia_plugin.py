@@ -738,7 +738,7 @@ class JuliaPatchGenerator:
                     f"Check spelling of '{var_name}'",
                     f"Import package containing '{var_name}' with using or import",
                     f"Use @isdefined({var_name}) to check if variable exists",
-                    f"Check variable scope in functions and let blocks"
+                    "Check variable scope in functions and let blocks"
                 ]
             }
         

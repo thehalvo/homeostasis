@@ -1,8 +1,5 @@
 """Tests for Angular plugin functionality."""
 import pytest
-import json
-from pathlib import Path
-from unittest.mock import Mock, patch
 
 # Import the Angular plugin
 from modules.analysis.plugins.angular_plugin import (

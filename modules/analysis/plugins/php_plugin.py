@@ -286,7 +286,7 @@ class PHPExceptionHandler:
             "rule_id": "php_generic_error",
             "error_type": error_type or "Error",
             "root_cause": "php_unknown_error",
-            "description": f"Unrecognized PHP error",
+            "description": "Unrecognized PHP error",
             "suggestion": "Review the exception details and stack trace for more information.",
             "confidence": "low",
             "severity": "medium",
@@ -664,7 +664,7 @@ class PHPPatchGenerator:
         elif "model_not_found" in root_cause:
             return "Use find() with a null check or try/catch with findOrFail()."
         else:
-            return f"Apply the suggested fix to resolve the error."
+            return "Apply the suggested fix to resolve the error."
     
     def _generate_undefined_variable_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
         """Generate a code snippet for undefined variable handling in PHP."""

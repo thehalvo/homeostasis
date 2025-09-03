@@ -272,7 +272,7 @@ class RubyExceptionHandler:
             "rule_id": "ruby_generic_error",
             "error_type": error_type or "RuntimeError",
             "root_cause": "ruby_unknown_error",
-            "description": f"Unrecognized Ruby error",
+            "description": "Unrecognized Ruby error",
             "suggestion": "Review the exception details and backtrace for more information.",
             "confidence": "low",
             "severity": "medium",
@@ -805,7 +805,7 @@ class RubyPatchGenerator:
         elif "wrong_arguments" in root_cause:
             return "Check the method signature and provide the correct arguments."
         else:
-            return f"Apply the suggested fix to resolve the error."
+            return "Apply the suggested fix to resolve the error."
     
     def _generate_nil_check_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
         """Generate a code snippet for nil checking in Ruby."""

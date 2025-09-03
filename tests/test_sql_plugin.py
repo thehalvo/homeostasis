@@ -2,8 +2,6 @@
 Tests for the SQL language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.sql_plugin import (
     SQLLanguagePlugin, 

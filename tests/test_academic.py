@@ -3,7 +3,6 @@ Tests for the academic collaboration module.
 """
 
 import unittest
-from unittest.mock import Mock, patch
 from modules.academic import (
     AcademicFormalVerificationFramework,
     ResearchModelChecker,
@@ -14,11 +13,8 @@ from modules.academic import (
     SystemModel,
     VerificationProperty,
     PropertyType,
-    CourseModule,
-    LearningObjective,
     EducationLevel,
-    AssessmentType,
-    AcademicAssessment
+    AssessmentType
 )
 
 

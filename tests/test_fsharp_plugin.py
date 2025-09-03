@@ -2,8 +2,6 @@
 Tests for the F# language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.fsharp_plugin import (
     FSharpLanguagePlugin, 

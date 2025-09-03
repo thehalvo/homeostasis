@@ -462,7 +462,7 @@ if __name__ == "__main__":
     }
     
     analysis = analyzer.analyze_error(permission_error)
-    print(f"\nAnalysis of Permission Error:")
+    print("\nAnalysis of Permission Error:")
     print(f"Rule ID: {analysis.get('rule_id', 'None')}")
     print(f"Category: {analysis.get('category', 'unknown')}")
     print(f"Root Cause: {analysis['root_cause']}")

@@ -7,7 +7,6 @@ pharmaceutical, and telecommunications sectors.
 """
 
 import datetime
-import json
 import pytest
 from unittest.mock import Mock, patch
 
@@ -15,8 +14,7 @@ from modules.security.regulated_industries import (
     RegulatedIndustriesSupport,
     RegulatedIndustry,
     ComplianceRequirement,
-    ValidationLevel,
-    get_regulated_industries
+    ValidationLevel
 )
 
 

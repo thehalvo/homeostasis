@@ -7,17 +7,14 @@ import json
 import os
 import tempfile
 import unittest
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from modules.monitoring.audit_monitor import (
     AuditEvent, 
-    AuditMonitor,
-    get_audit_monitor
+    AuditMonitor
 )
 from modules.monitoring.healing_audit import (
-    HealingActivityAuditor,
-    get_healing_auditor
+    HealingActivityAuditor
 )
 
 

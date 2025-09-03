@@ -1,7 +1,4 @@
 import unittest
-import os
-import json
-from pathlib import Path
 
 from modules.analysis.plugins.ruby_plugin import RubyLanguagePlugin, RubyExceptionHandler, RubyPatchGenerator
 from modules.analysis.language_adapters import RubyErrorAdapter

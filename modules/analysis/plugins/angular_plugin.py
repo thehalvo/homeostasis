@@ -203,7 +203,6 @@ class AngularExceptionHandler:
     
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
-        error_type = error_data.get("error_type", "Error")
         message = error_data.get("message", "").lower()
         
         # Basic categorization based on error patterns
@@ -329,7 +328,6 @@ class AngularExceptionHandler:
             Analysis results with NgRx-specific fixes
         """
         message = error_data.get("message", "").lower()
-        stack_trace = str(error_data.get("stack_trace", "")).lower()
         
         # NgRx specific error patterns
         ngrx_patterns = {
@@ -801,7 +799,7 @@ export class YourComponent {{
             "fix_commands": [
                 f"Import the module containing '{element_name}' component",
                 f"Add '{element_name}' to declarations in current module",
-                f"Check the selector name of the component"
+                "Check the selector name of the component"
             ],
             "fix_code": f"""// Import component module
 import {{ ComponentModule }} from './component.module';
@@ -986,8 +984,6 @@ class AngularLanguagePlugin(LanguagePlugin):
                 standard_error = self.adapter.to_standard_format(error_data)
             else:
                 standard_error = error_data
-            
-            message = standard_error.get("message", "").lower()
             
             # Check if it's a dependency injection error
             if self._is_dependency_injection_error(standard_error):

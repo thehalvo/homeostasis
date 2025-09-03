@@ -3,8 +3,6 @@ Test cases for augmented reality application resilience
 """
 
 import unittest
-from unittest.mock import Mock, patch
-from datetime import datetime
 from modules.emerging_tech.augmented_reality import (
     ARResilienceManager, ARPlatform, ARErrorType, ARError, ARPerformanceMetrics
 )

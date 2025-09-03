@@ -2,8 +2,6 @@
 Tests for the Nim language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.nim_plugin import (
     NimLanguagePlugin, 

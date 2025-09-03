@@ -734,8 +734,8 @@ class MATLABPatchGenerator:
                     f"Define variable '{var_name}' before use",
                     f"Check spelling of '{var_name}'",
                     f"Use exist('{var_name}', 'var') to check if variable exists",
-                    f"Clear and reload workspace if needed",
-                    f"Check variable scope and function workspace"
+                    "Clear and reload workspace if needed",
+                    "Check variable scope and function workspace"
                 ]
             }
         
@@ -749,7 +749,7 @@ class MATLABPatchGenerator:
                 "description": f"Undefined function '{func_name}'",
                 "fixes": [
                     f"Check if function '{func_name}' is on the MATLAB path",
-                    f"Add function directory to path with addpath()",
+                    "Add function directory to path with addpath()",
                     f"Check spelling of '{func_name}'",
                     f"Install required toolbox containing '{func_name}'",
                     f"Use which('{func_name}') to locate function"
@@ -1004,10 +1004,10 @@ class MATLABPatchGenerator:
                 "description": f"Requires {toolbox_name} toolbox",
                 "fixes": [
                     f"Install {toolbox_name} toolbox",
-                    f"Check toolbox license with license('test', 'toolbox_name')",
-                    f"Use ver to check installed toolboxes",
-                    f"Find alternative functions that don't require toolbox",
-                    f"Contact administrator for toolbox access"
+                    "Check toolbox license with license('test', 'toolbox_name')",
+                    "Use ver to check installed toolboxes",
+                    "Find alternative functions that don't require toolbox",
+                    "Contact administrator for toolbox access"
                 ]
             }
         

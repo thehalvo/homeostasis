@@ -4,14 +4,13 @@ import pytest
 import tempfile
 import time
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 from modules.self_training import (
     MLFeedbackLoop,
     PredictionFeedback,
     AnnotationInterface,
     AnnotationType,
-    HumanFeedbackCollector,
     RuleExtractor,
     DeploymentMonitor,
     OutcomeTracker,
@@ -24,9 +23,6 @@ from modules.self_training import (
 )
 from modules.self_training.continuous_learning import FixOutcome
 from modules.llm_integration.patch_generator import PatchData
-from modules.analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
-from modules.monitoring.health_checks import HealthChecker
-from modules.self_training.rule_extraction import RuleEngine
 
 
 class TestSelfTrainingIntegration:

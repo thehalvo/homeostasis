@@ -47,8 +47,8 @@ class PatchData:
     def get_diff(self) -> str:
         """Get a simple diff representation."""
         lines = []
-        lines.append(f"--- Original")
-        lines.append(f"+++ Patched")
+        lines.append("--- Original")
+        lines.append("+++ Patched")
         lines.append(f"@@ Description: {self.description} @@")
         
         # Simple line-by-line diff

@@ -702,7 +702,7 @@ class CommitAnalyzer:
                 scope = directory.split('/')[-1]
         
         # Generate subject line
-        subject = f"fix"
+        subject = "fix"
         if scope:
             subject += f"({scope})"
         

@@ -3,7 +3,6 @@ Tests for patch generator.
 """
 import os
 import sys
-import pytest
 import tempfile
 import shutil
 from pathlib import Path
@@ -12,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from modules.patch_generation.patcher import PatchGenerator, PatchTemplate
-from modules.patch_generation.diff_utils import generate_diff, identify_code_block
+from modules.patch_generation.diff_utils import identify_code_block
 
 
 def test_patch_template_loading():

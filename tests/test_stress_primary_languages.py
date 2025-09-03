@@ -14,10 +14,8 @@ import threading
 import multiprocessing
 import random
 import string
-from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, Any
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
-from unittest.mock import Mock, patch
 
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -94,7 +92,7 @@ class TestHighVolumeProcessing(StressTestBase):
         end_time = time.time()
         duration = end_time - start_time
         
-        print(f"\n=== Sequential High Volume Test ===")
+        print("\n=== Sequential High Volume Test ===")
         print(f"Total errors: {error_count}")
         print(f"Processed: {processed}")
         print(f"Failed: {failed}")
@@ -134,7 +132,7 @@ class TestHighVolumeProcessing(StressTestBase):
         end_time = time.time()
         duration = end_time - start_time
         
-        print(f"\n=== Concurrent High Volume Test ===")
+        print("\n=== Concurrent High Volume Test ===")
         print(f"Total errors: {error_count}")
         print(f"Workers: {max_workers}")
         print(f"Processed: {processed}")
@@ -264,7 +262,7 @@ class TestConcurrencyStress(StressTestBase):
         
         total_processed = sum(len(r) for r in results.values())
         
-        print(f"\n=== Thread Safety Test ===")
+        print("\n=== Thread Safety Test ===")
         print(f"Threads: {num_threads}")
         print(f"Total processed: {total_processed}")
         print(f"Errors found: {len(errors_found)}")
@@ -339,7 +337,7 @@ class TestErrorPatternStress(StressTestBase):
         
         duration = time.time() - start_time
         
-        print(f"\n=== Error Storm Test ===")
+        print("\n=== Error Storm Test ===")
         print(f"Storm size: {storm_size}")
         print(f"Duration: {duration:.2f}s")
         print(f"Unique analyses: {len(unique_analyses)}")
@@ -406,7 +404,7 @@ class TestErrorPatternStress(StressTestBase):
             except Exception:
                 pass  # Expected for malformed data
         
-        print(f"\n=== Malformed Error Test ===")
+        print("\n=== Malformed Error Test ===")
         print(f"Malformed errors: {len(malformed_errors)}")
         print(f"Handled gracefully: {len(malformed_errors) - successful}")
 
@@ -441,7 +439,7 @@ class TestResourceExhaustion(StressTestBase):
         
         duration = time.time() - start_time
         
-        print(f"\n=== CPU Intensive Test ===")
+        print("\n=== CPU Intensive Test ===")
         print(f"Complex errors: {len(complex_errors)}")
         print(f"Duration: {duration:.2f}s")
         
@@ -475,7 +473,7 @@ class TestResourceExhaustion(StressTestBase):
         duration = time.time() - start_time
         total_processed = sum(results)
         
-        print(f"\n=== Parallel Resource Competition Test ===")
+        print("\n=== Parallel Resource Competition Test ===")
         print(f"Processes: {num_processes}")
         print(f"Total processed: {total_processed}")
         print(f"Duration: {duration:.2f}s")

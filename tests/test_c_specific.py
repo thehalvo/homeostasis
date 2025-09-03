@@ -6,11 +6,8 @@ complementing the C++ tests in test_cpp_plugin.py. It covers C89/C99/C11 specifi
 issues, memory management, pointer arithmetic, buffer overflows, and C-specific patterns.
 """
 import pytest
-import json
 import os
 import sys
-from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
 
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))

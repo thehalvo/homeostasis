@@ -2,8 +2,6 @@
 Tests for the Terraform language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.terraform_plugin import (
     TerraformLanguagePlugin, 

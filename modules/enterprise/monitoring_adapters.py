@@ -1528,7 +1528,7 @@ class NewRelicAdapter(MonitoringAdapter):
         """Get alerts from New Relic"""
         try:
             # Use REST API v2 for alerts
-            url = f"https://api.newrelic.com/v2/alerts_violations.json"
+            url = "https://api.newrelic.com/v2/alerts_violations.json"
             
             params = {
                 'only_open': filters.get('only_open', True),

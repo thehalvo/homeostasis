@@ -4,9 +4,7 @@ Tests for the import analyzer module.
 import os
 import unittest
 import tempfile
-from pathlib import Path
 
-from modules.patch_generation.ast_analyzer import ASTAnalyzer
 from modules.patch_generation.import_analyzer import ImportAnalyzer
 
 

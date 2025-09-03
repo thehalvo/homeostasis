@@ -735,7 +735,7 @@ if __name__ == "__main__":
                 print(f"Error preparing LLM prompt: {e}")
     
     # Get engine statistics
-    print(f"\n--- Engine Statistics ---")
+    print("\n--- Engine Statistics ---")
     stats = engine.get_analysis_statistics()
     print(f"Components: {stats['components']}")
     print(f"LLM contexts: {stats['llm_context_stats']['total_contexts']}")

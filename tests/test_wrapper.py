@@ -6,15 +6,11 @@ system, which has dependencies on external libraries like yaml.
 """
 import sys
 import os
-import unittest
-from pathlib import Path
-from unittest.mock import MagicMock
 
 # Add parent directory to path to import modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import the plugin system without requiring analyzer
-from modules.analysis.language_plugin_system import LanguagePlugin, register_plugin
 from modules.analysis.language_adapters import CSharpErrorAdapter
 
 from modules.analysis.plugins.csharp_plugin import CSharpExceptionHandler, CSharpPatchGenerator, CSharpLanguagePlugin

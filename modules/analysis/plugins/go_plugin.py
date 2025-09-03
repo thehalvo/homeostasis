@@ -343,7 +343,7 @@ class GoErrorHandler:
             "rule_id": "go_generic_error",
             "error_type": error_type or "error",
             "root_cause": "go_unknown_error",
-            "description": f"Unrecognized Go error",
+            "description": "Unrecognized Go error",
             "suggestion": "Review error message and stack trace for more details.",
             "confidence": "low",
             "severity": "medium",
@@ -906,7 +906,7 @@ class GoPatchGenerator:
         elif "deadlock" in root_cause:
             return "Review goroutine synchronization patterns to prevent deadlocks."
         else:
-            return f"Apply the suggested fix to resolve the error."
+            return "Apply the suggested fix to resolve the error."
     
     def _generate_nil_check_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
         """Generate a code snippet for nil checking in Go."""

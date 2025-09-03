@@ -3,7 +3,6 @@ Test suite for the security vulnerability scanning framework.
 """
 
 import pytest
-import asyncio
 import json
 import tempfile
 import shutil

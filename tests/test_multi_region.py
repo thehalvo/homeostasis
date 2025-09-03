@@ -5,7 +5,7 @@ Tests for Multi-Region Resilience Strategies
 import asyncio
 import pytest
 from datetime import datetime, timedelta
-from unittest.mock import Mock, AsyncMock, patch
+from unittest.mock import AsyncMock, patch
 
 from modules.deployment.multi_environment.multi_region import (
     MultiRegionResilienceStrategy,

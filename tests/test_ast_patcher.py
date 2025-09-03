@@ -7,7 +7,6 @@ import tempfile
 from pathlib import Path
 
 from modules.patch_generation.patcher import PatchGenerator
-from modules.patch_generation.ast_analyzer import ASTAnalyzer
 from modules.patch_generation.ast_patcher import ASTPatcher
 
 

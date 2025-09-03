@@ -1207,7 +1207,7 @@ class LLMManager:
         recommended_order = self.get_recommended_provider_order()
         if recommended_order:
             self.api_key_manager.set_fallback_order(recommended_order)
-            print(f"✓ Auto-configured fallback order based on current policies")
+            print("✓ Auto-configured fallback order based on current policies")
         else:
             print("⚠️  No providers available for auto-configuration")
     

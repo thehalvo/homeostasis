@@ -140,7 +140,7 @@ class RuleStats:
     
     def print_summary(self) -> None:
         """Print a summary of rule statistics."""
-        print(f"\n===== Rule Statistics =====")
+        print("\n===== Rule Statistics =====")
         print(f"Total Rules: {self.stats['total_rules']}")
         print(f"Enhanced Rules: {self.stats['total_enhanced_rules']}")
         print(f"Rule Sets: {self.stats['total_rule_sets']}")
@@ -392,7 +392,7 @@ class RuleTester:
         passed = sum(1 for r in results if r.passed)
         failed = len(results) - passed
         
-        print(f"\n===== Rule Test Results =====")
+        print("\n===== Rule Test Results =====")
         print(f"Total Tests: {len(results)}")
         print(f"Passed: {passed}")
         print(f"Failed: {failed}")
@@ -491,7 +491,7 @@ class RuleManager:
         Args:
             rule: Rule to print details for
         """
-        print(f"\n===== Rule Details =====")
+        print("\n===== Rule Details =====")
         print(f"ID: {rule.id}")
         print(f"Type: {rule.type}")
         print(f"Pattern: {rule.pattern}")
@@ -745,10 +745,10 @@ class RuleAnalyzer:
         Args:
             analysis: Analysis results from analyze_error
         """
-        print(f"\n===== Error Analysis =====")
+        print("\n===== Error Analysis =====")
         
         if not analysis.get("matched", False):
-            print(f"No matching rule found.")
+            print("No matching rule found.")
             print(f"Confidence: {analysis.get('confidence', 'low')}")
             return
         

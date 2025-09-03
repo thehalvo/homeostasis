@@ -5,10 +5,8 @@ This module tests the Ember plugin's ability to analyze Ember-specific errors,
 generate appropriate fixes, and handle various Ember frameworks and patterns.
 """
 import unittest
-import json
 import sys
 import os
-from pathlib import Path
 
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules'))

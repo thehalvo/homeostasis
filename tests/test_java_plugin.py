@@ -5,11 +5,7 @@ This module contains comprehensive test cases for the Java plugin,
 including error analysis, concurrency issues, Spring/Hibernate framework errors,
 dependency handling, compilation errors, and fix generation.
 """
-import json
-import os
 import pytest
-from pathlib import Path
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.java_plugin import JavaLanguagePlugin, JavaExceptionHandler, JavaPatchGenerator
 from modules.analysis.language_adapters import JavaErrorAdapter

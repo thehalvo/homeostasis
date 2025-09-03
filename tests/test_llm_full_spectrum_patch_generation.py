@@ -76,7 +76,7 @@ function processItems(items) {
         patch = generator.generate_patch_from_analysis(analysis)
         
         if patch:
-            print(f"✓ Generated patch successfully")
+            print("✓ Generated patch successfully")
             print(f"  Patch ID: {patch.get('patch_id', 'N/A')}")
             print(f"  Fix Type: {patch.get('fix_type', 'N/A')}")
             print(f"  Confidence: {patch.get('confidence', 0):.2f}")
@@ -335,7 +335,7 @@ def messy_function( x,y ):
         
         if sample['language'] == 'python':
             formatted = analyzer.format_code_to_style(test_code, conventions, 'python')
-            print(f"Formatted code preview:")
+            print("Formatted code preview:")
             print(formatted[:100] + "..." if len(formatted) > 100 else formatted)
 
 
@@ -387,7 +387,7 @@ def blog_detail(request, post_id):
     patch = generator.generate_patch_from_analysis(analysis)
     
     if patch:
-        print(f"✓ Successfully generated integrated patch")
+        print("✓ Successfully generated integrated patch")
         print(f"  Language: {patch.get('language', 'N/A')}")
         print(f"  Patch Type: {patch.get('patch_type', 'N/A')}")
         print(f"  Fix Type: {patch.get('fix_type', 'N/A')}")
@@ -398,7 +398,7 @@ def blog_detail(request, post_id):
         changes = patch.get('changes', [])
         if changes:
             first_change = changes[0]
-            print(f"  Example Change:")
+            print("  Example Change:")
             print(f"    Lines: {first_change.get('line_start', 'N/A')}-{first_change.get('line_end', 'N/A')}")
             print(f"    Reason: {first_change.get('reason', 'N/A')}")
             new_code = first_change.get('new_code', '')

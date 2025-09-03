@@ -1116,7 +1116,7 @@ if __name__ == "__main__":
     react_error = "Invalid hook call. Hooks can only be called inside the body of a function component"
     react_context = ErrorContext(error_message=react_error, language=LanguageType.JAVASCRIPT)
     react_issues = react_parser.detect_runtime_issues(react_context)
-    print(f"\nReact Runtime Issues:")
+    print("\nReact Runtime Issues:")
     print(f"Issues: {react_issues}")
     
     # Test Vue parser
@@ -1124,7 +1124,7 @@ if __name__ == "__main__":
     vue_error = "[Vue warn]: Property or method \"myProperty\" is not defined on the instance"
     vue_context = ErrorContext(error_message=vue_error, language=LanguageType.JAVASCRIPT)
     vue_issues = vue_parser.detect_runtime_issues(vue_context)
-    print(f"\nVue Runtime Issues:")
+    print("\nVue Runtime Issues:")
     print(f"Issues: {vue_issues}")
     
     # Test Angular parser
@@ -1132,7 +1132,7 @@ if __name__ == "__main__":
     angular_error = "No provider for HttpClient!"
     angular_context = ErrorContext(error_message=angular_error, language=LanguageType.TYPESCRIPT)
     angular_issues = angular_parser.detect_runtime_issues(angular_context)
-    print(f"\nAngular Runtime Issues:")
+    print("\nAngular Runtime Issues:")
     print(f"Issues: {angular_issues}")
     
     # Test Svelte parser
@@ -1140,7 +1140,7 @@ if __name__ == "__main__":
     svelte_error = "'myVariable' is not defined"
     svelte_context = ErrorContext(error_message=svelte_error, language=LanguageType.JAVASCRIPT)
     svelte_issues = svelte_parser.detect_runtime_issues(svelte_context)
-    print(f"\nSvelte Runtime Issues:")
+    print("\nSvelte Runtime Issues:")
     print(f"Issues: {svelte_issues}")
     
     # Test Next.js parser
@@ -1148,7 +1148,7 @@ if __name__ == "__main__":
     nextjs_error = "getStaticProps cannot be used with getServerSideProps"
     nextjs_context = ErrorContext(error_message=nextjs_error, language=LanguageType.JAVASCRIPT)
     nextjs_issues = nextjs_parser.detect_runtime_issues(nextjs_context)
-    print(f"\nNext.js Runtime Issues:")
+    print("\nNext.js Runtime Issues:")
     print(f"Issues: {nextjs_issues}")
     
     # Test Ember parser
@@ -1156,7 +1156,7 @@ if __name__ == "__main__":
     ember_error = "There is no route named 'nonexistent'"
     ember_context = ErrorContext(error_message=ember_error, language=LanguageType.JAVASCRIPT)
     ember_issues = ember_parser.detect_runtime_issues(ember_context)
-    print(f"\nEmber Runtime Issues:")
+    print("\nEmber Runtime Issues:")
     print(f"Issues: {ember_issues}")
     
     # Test Web Components parser
@@ -1164,11 +1164,11 @@ if __name__ == "__main__":
     webcomponents_error = "Failed to construct 'CustomElementRegistry': this name has already been used"
     webcomponents_context = ErrorContext(error_message=webcomponents_error, language=LanguageType.JAVASCRIPT)
     webcomponents_issues = webcomponents_parser.detect_runtime_issues(webcomponents_context)
-    print(f"\nWeb Components Runtime Issues:")
+    print("\nWeb Components Runtime Issues:")
     print(f"Issues: {webcomponents_issues}")
     
     # Test factory function
-    print(f"\nTesting Factory Function:")
+    print("\nTesting Factory Function:")
     for framework in ["react", "vue", "angular", "svelte", "nextjs", "ember", "webcomponents"]:
         parser = create_web_framework_parser(framework)
         print(f"{framework}: {'✓' if parser else '✗'} {type(parser).__name__ if parser else 'None'}")

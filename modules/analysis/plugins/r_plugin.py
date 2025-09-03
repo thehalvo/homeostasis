@@ -800,7 +800,7 @@ class RPatchGenerator:
                     f"Check spelling of '{obj_name}'",
                     f"Ensure '{obj_name}' is defined before use",
                     f"Load required package containing '{obj_name}'",
-                    f"Check workspace with ls() to see available objects",
+                    "Check workspace with ls() to see available objects",
                     f"Use exists('{obj_name}') to check if object exists"
                 ]
             }
@@ -816,7 +816,7 @@ class RPatchGenerator:
                 "fixes": [
                     f"Load required package containing '{func_name}'",
                     f"Check spelling of '{func_name}'",
-                    f"Install missing package with install.packages()",
+                    "Install missing package with install.packages()",
                     f"Check function name with ?{func_name}",
                     f"Use apropos('{func_name}') to find similar functions"
                 ]
@@ -974,10 +974,10 @@ class RPatchGenerator:
                 "description": f"Package '{pkg_name}' not found",
                 "fixes": [
                     f"Install package: install.packages('{pkg_name}')",
-                    f"Check package name spelling",
-                    f"Update package repositories with update.packages()",
+                    "Check package name spelling",
+                    "Update package repositories with update.packages()",
                     f"Check CRAN availability for '{pkg_name}'",
-                    f"Use available.packages() to see available packages"
+                    "Use available.packages() to see available packages"
                 ]
             }
         

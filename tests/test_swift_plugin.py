@@ -6,11 +6,10 @@ including error detection, analysis, and patch generation for various
 Swift error types and frameworks.
 """
 import unittest
-import json
 import tempfile
 import os
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 # Import the Swift plugin and related classes
 import sys

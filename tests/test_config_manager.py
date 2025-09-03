@@ -9,7 +9,7 @@ import yaml
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
-from unittest.mock import Mock, AsyncMock, patch, MagicMock
+from unittest.mock import Mock, AsyncMock, patch
 
 from modules.deployment.multi_environment.config_manager import (
     MultiEnvironmentConfigManager,
@@ -18,8 +18,6 @@ from modules.deployment.multi_environment.config_manager import (
     ConfigType,
     ChangeAction,
     ConfigValue,
-    ConfigChange,
-    ConfigTemplate,
     ConfigDrift,
     LocalConfigProvider,
     SecretManager,

@@ -4,11 +4,8 @@ Test cases for the Kotlin Language Plugin
 This module contains comprehensive tests for Kotlin error detection, analysis,
 and patch generation including Android, coroutines, Compose, Room, and multiplatform scenarios.
 """
-import pytest
-import json
 import sys
 import os
-from pathlib import Path
 
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))

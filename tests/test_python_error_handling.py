@@ -6,11 +6,7 @@ and patch generation including syntax errors, runtime errors, framework-specific
 async/await errors, type hint errors, and performance/security issues.
 """
 import pytest
-import json
-import tempfile
-import ast
-from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import patch
 import sys
 import os
 

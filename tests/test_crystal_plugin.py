@@ -2,8 +2,6 @@
 Tests for the Crystal language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.crystal_plugin import (
     CrystalLanguagePlugin, 

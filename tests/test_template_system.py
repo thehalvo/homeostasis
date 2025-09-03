@@ -1,11 +1,10 @@
 """
 Tests for the hierarchical template system.
 """
-import os
 import unittest
 from pathlib import Path
 
-from modules.patch_generation.template_system import BaseTemplate, TemplateManager
+from modules.patch_generation.template_system import TemplateManager
 from modules.patch_generation.patcher import PatchGenerator
 
 class TemplateSystemTests(unittest.TestCase):

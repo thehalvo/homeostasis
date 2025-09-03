@@ -693,7 +693,7 @@ class ResourceQuotaManager:
                     requested_amount=amount,
                     granted_amount=0,
                     remaining_quota=remaining,
-                    reason=f"Quota exceeded and no burst configured"
+                    reason="Quota exceeded and no burst configured"
                 )
         
         elif quota.enforcement_mode == QuotaEnforcementMode.THROTTLE:

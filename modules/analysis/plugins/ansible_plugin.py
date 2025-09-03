@@ -201,11 +201,9 @@ class AnsibleExceptionHandler:
         Returns:
             Analysis results with categorization and fix suggestions
         """
-        error_type = error_data.get("error_type", "AnsibleError")
         message = error_data.get("message", "")
         task_name = error_data.get("task_name", "")
         module_name = error_data.get("module_name", "")
-        playbook_path = error_data.get("playbook_path", "")
         exit_code = error_data.get("exit_code", 0)
         
         # Detect module if not provided
@@ -275,7 +273,6 @@ class AnsibleExceptionHandler:
     
     def _analyze_by_patterns(self, message: str, module_name: str, task_name: str) -> Dict[str, Any]:
         """Analyze error by matching against common patterns."""
-        message_lower = message.lower()
         
         # Check syntax errors
         for pattern in self.ansible_error_patterns["syntax_error"]:

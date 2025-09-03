@@ -6,8 +6,7 @@ fixes for React-specific errors including hooks, lifecycle, state management,
 JSX, and performance issues.
 """
 import unittest
-import json
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 import sys
 import os
 

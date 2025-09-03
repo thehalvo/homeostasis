@@ -2,8 +2,6 @@
 Tests for the Ansible language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.ansible_plugin import (
     AnsibleLanguagePlugin, 

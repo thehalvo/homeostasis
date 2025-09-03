@@ -4,8 +4,7 @@ Tests for the analysis module.
 import os
 import sys
 import json
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import tempfile
 from pathlib import Path
 
@@ -14,7 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from modules.analysis.analyzer import Analyzer
 from modules.analysis.rule_based import RuleBasedAnalyzer
-from modules.analysis.rule_config import get_all_rule_sets, load_rule_configs, Rule
+from modules.analysis.rule_config import load_rule_configs, Rule
 
 
 def test_analyzer_initialization():

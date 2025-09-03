@@ -7,9 +7,6 @@ analysis, and patch generation for common Next.js errors.
 import os
 import sys
 import unittest
-import json
-from pathlib import Path
-from unittest.mock import patch, MagicMock
 
 # Add the parent directory to the path to import modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))

@@ -7,10 +7,7 @@ and animation error handling.
 """
 
 import pytest
-import json
-import os
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 # Import the CSS plugin components
 from modules.analysis.plugins.css_plugin import (

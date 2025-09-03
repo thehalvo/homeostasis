@@ -492,7 +492,7 @@ class HybridOrchestrator:
     def _convert_to_soap(self, request: Dict[str, Any]) -> str:
         """Convert JSON to SOAP XML."""
         # Simplified SOAP envelope
-        soap = f"""<?xml version="1.0" encoding="UTF-8"?>
+        soap = """<?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
     <soap:Body>
         <ProcessRequest>"""

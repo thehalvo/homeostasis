@@ -2,8 +2,6 @@
 Tests for the MATLAB language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.matlab_plugin import (
     MATLABLanguagePlugin as MatlabLanguagePlugin, 

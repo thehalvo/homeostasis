@@ -863,7 +863,7 @@ class MultiEnvironmentConfigManager:
                     # Add missing configuration
                     change = await self.set_config(
                         key, expected, drift.environment,
-                        reason=f"Drift remediation - adding missing config"
+                        reason="Drift remediation - adding missing config"
                     )
                     results["changes"].append({"key": key, "action": "added", "success": True})
                 
@@ -888,7 +888,7 @@ class MultiEnvironmentConfigManager:
                     # Update mismatched configuration
                     change = await self.set_config(
                         key, expected, drift.environment,
-                        reason=f"Drift remediation - correcting mismatch"
+                        reason="Drift remediation - correcting mismatch"
                     )
                     results["changes"].append({"key": key, "action": "updated", "success": True})
                     

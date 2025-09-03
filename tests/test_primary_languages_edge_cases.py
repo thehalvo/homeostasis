@@ -5,18 +5,14 @@ This module contains comprehensive test cases for unusual, boundary, and
 extreme scenarios that might occur in primary language error handling.
 """
 import pytest
-import json
 import os
 import sys
-from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
-from typing import Dict, List, Any
+from unittest.mock import Mock
 
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules', 'analysis'))
 
 from language_plugin_system import LanguagePluginSystem
-from comprehensive_error_detector import ComprehensiveErrorDetector
 
 
 class TestPythonEdgeCases:
@@ -100,7 +96,7 @@ class TestPythonEdgeCases:
             "error_type": "RecursionError",
             "message": "maximum recursion depth exceeded",
             "stack_trace": [
-                {"function": f"recursive_func", "file": "deep.py", "line": i}
+                {"function": "recursive_func", "file": "deep.py", "line": i}
                 for i in range(1000)  # 1000 levels deep
             ]
         }
@@ -730,7 +726,7 @@ class TestPlatformSpecificEdgeCases:
                 error = {
                     "language": lang,
                     "error_type": "FileSystemError",
-                    "message": f"The system cannot find the path specified",
+                    "message": "The system cannot find the path specified",
                     "path_length": 300,
                     "platform": "Windows",
                     "path": "C:\\" + "very\\long\\" * 50 + "path.txt"

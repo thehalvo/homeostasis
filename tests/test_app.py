@@ -3,7 +3,6 @@ Tests for the example service.
 """
 import sys
 import os
-import pytest
 from fastapi.testclient import TestClient
 
 # Add project root to sys.path

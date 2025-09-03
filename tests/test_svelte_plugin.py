@@ -5,7 +5,6 @@ Tests comprehensive error detection and fixing capabilities for Svelte applicati
 including component reactivity, SvelteKit routing, store management, and transitions.
 """
 import unittest
-import json
 import sys
 from pathlib import Path
 
@@ -485,23 +484,23 @@ if __name__ == "__main__":
     
     # Print summary
     print(f"\n{'='*50}")
-    print(f"Svelte Plugin Test Summary")
+    print("Svelte Plugin Test Summary")
     print(f"{'='*50}")
     print(f"Tests run: {result.testsRun}")
     print(f"Failures: {len(result.failures)}")
     print(f"Errors: {len(result.errors)}")
     
     if result.failures:
-        print(f"\nFailures:")
+        print("\nFailures:")
         for test, traceback in result.failures:
             print(f"- {test}: {traceback}")
     
     if result.errors:
-        print(f"\nErrors:")
+        print("\nErrors:")
         for test, traceback in result.errors:
             print(f"- {test}: {traceback}")
     
     if result.wasSuccessful():
-        print(f"\nAll tests passed! ✅")
+        print("\nAll tests passed! ✅")
     else:
-        print(f"\nSome tests failed! ❌")
+        print("\nSome tests failed! ❌")

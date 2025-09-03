@@ -2,8 +2,6 @@
 Tests for the Dockerfile language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.dockerfile_plugin import (
     DockerfileLanguagePlugin, 

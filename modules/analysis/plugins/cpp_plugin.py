@@ -968,13 +968,13 @@ if (index >= 0 && index < {buffer_size}) {{
             
             # Malloc null check
             elif "malloc" in code_snippet:
-                patch_content = f"""// Add null check after malloc
+                patch_content = """// Add null check after malloc
 char *buffer = malloc(size);
-if (buffer == NULL) {{
+if (buffer == NULL) {
     // Handle allocation failure
     fprintf(stderr, "Error: Memory allocation failed\\n");
     return -1;  // Or appropriate error handling
-}}
+}
 // Safe to use buffer here"""
         
         return {

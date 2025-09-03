@@ -2,8 +2,6 @@
 Tests for the Lua language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.lua_plugin import (
     LuaLanguagePlugin, 

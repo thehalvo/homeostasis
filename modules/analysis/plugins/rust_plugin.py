@@ -248,7 +248,7 @@ class RustErrorHandler:
             "rule_id": "rust_generic_error",
             "error_type": error_type or "Error",
             "root_cause": "rust_unknown_error",
-            "description": f"Unrecognized Rust error",
+            "description": "Unrecognized Rust error",
             "suggestion": "Review error message and stack trace for more details. Consider implementing proper error handling with Result<T, E>.",
             "confidence": "low",
             "severity": "medium",
@@ -524,7 +524,7 @@ class RustPatchGenerator:
         elif "deadlock" in root_cause:
             return "Revise mutex acquisition order or use alternate synchronization patterns."
         else:
-            return f"Apply the suggested fix to resolve the error."
+            return "Apply the suggested fix to resolve the error."
     
     def _generate_unwrap_none_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
         """Generate a code snippet for Option unwrapping in Rust."""

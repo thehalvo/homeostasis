@@ -613,7 +613,7 @@ class BashPatchGenerator:
                 var_name = var_match.group(1)
                 fixes.extend([
                     f"Initialize variable '{var_name}' before use: {var_name}=\"default_value\"",
-                    f"Use parameter expansion with default: ${{var_name:-default_value}}",
+                    f"Use parameter expansion with default: ${{{var_name}:-default_value}}",
                     f"Check if variable is set: [[ -n \"${var_name}\" ]] && echo \"Set\" || echo \"Unset\"",
                     "Add 'set +u' to disable unbound variable checking (not recommended)"
                 ])

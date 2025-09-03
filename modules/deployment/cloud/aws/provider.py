@@ -192,7 +192,7 @@ class AWSProvider(BaseCloudProvider):
             
             if zip_process.returncode != 0:
                 logger.error(f"Failed to create zip file: {zip_process.stderr.decode()}")
-                return {"success": False, "error": f"Failed to create zip file"}
+                return {"success": False, "error": "Failed to create zip file"}
                 
             # Check if function exists
             get_function_result = self._run_aws_cli([

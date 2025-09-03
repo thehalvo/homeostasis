@@ -9,7 +9,6 @@ This module tests the Java Android integration including:
 - Service and background task healing
 """
 import unittest
-from unittest.mock import patch, MagicMock
 import sys
 import os
 

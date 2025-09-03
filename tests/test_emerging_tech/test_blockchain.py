@@ -3,7 +3,6 @@ Test cases for blockchain and distributed ledger healing
 """
 
 import unittest
-from unittest.mock import Mock, patch
 from modules.emerging_tech.blockchain import (
     BlockchainHealer, BlockchainPlatform, BlockchainErrorType, BlockchainError
 )

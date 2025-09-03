@@ -4,7 +4,6 @@ Tests for the HealingRateLimiter class.
 """
 import time
 import unittest
-from typing import Dict
 
 from modules.security.healing_rate_limiter import HealingRateLimiter
 

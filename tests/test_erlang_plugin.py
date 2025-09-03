@@ -2,8 +2,6 @@
 Tests for the Erlang language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.erlang_plugin import (
     ErlangLanguagePlugin, 

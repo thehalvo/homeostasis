@@ -319,10 +319,10 @@ def test_integration(config_file: str):
                     click.echo(f"   ❌ Missing capabilities: {missing}")
             
             if validation_passed:
-                click.echo(f"   ✅ Passed")
+                click.echo("   ✅ Passed")
                 passed += 1
             else:
-                click.echo(f"   ❌ Failed validation")
+                click.echo("   ❌ Failed validation")
                 failed += 1
         
         except Exception as e:

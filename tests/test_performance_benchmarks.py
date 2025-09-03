@@ -7,13 +7,10 @@ plugins, with a focus on primary languages vs fringe languages.
 """
 import pytest
 import time
-import json
 import os
 import sys
 import statistics
-from pathlib import Path
 from typing import Dict, List, Tuple, Any
-from unittest.mock import Mock, patch
 import concurrent.futures
 
 # Add the modules directory to the Python path
@@ -21,7 +18,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from modules.analysis.language_plugin_system import LanguagePluginSystem
 from modules.analysis.comprehensive_error_detector import ComprehensiveErrorDetector
-from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
 
 
 class PerformanceBenchmark:

@@ -4,11 +4,7 @@ Test cases for TypeScript Language Plugin
 This module contains comprehensive tests for the TypeScript plugin,
 including error detection, analysis, and fix generation capabilities.
 """
-import pytest
-import json
 import unittest
-from unittest.mock import Mock, patch, MagicMock
-from pathlib import Path
 import sys
 import os
 

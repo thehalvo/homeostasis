@@ -8,7 +8,6 @@ import pytest
 import json
 import tempfile
 from pathlib import Path
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.javascript_plugin import (
     JavaScriptLanguagePlugin,

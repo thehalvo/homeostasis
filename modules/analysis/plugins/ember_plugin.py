@@ -803,7 +803,7 @@ Router.map(function() {{
 
 // Generate route file: ember generate route {route_name}""",
             "fix_commands": [
-                f"Add route definition to router.js",
+                "Add route definition to router.js",
                 f"Generate route with 'ember generate route {route_name}'",
                 "Implement route model hook if needed",
                 "Create corresponding template file"

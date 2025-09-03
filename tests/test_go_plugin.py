@@ -6,11 +6,8 @@ including compilation errors, runtime panics, goroutine issues,
 channel operations, interface errors, and framework-specific errors.
 """
 import pytest
-import json
 import os
 import sys
-from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
 
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))

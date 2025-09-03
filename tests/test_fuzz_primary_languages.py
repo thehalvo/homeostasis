@@ -7,20 +7,14 @@ vulnerabilities in error parsing and patch generation for primary languages.
 import pytest
 import random
 import string
-import json
 import os
 import sys
-import struct
-from pathlib import Path
-from typing import Dict, Any, List, Optional
-from unittest.mock import Mock, patch
-import itertools
+from typing import Any, Optional
 
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules', 'analysis'))
 
 from language_plugin_system import LanguagePluginSystem
-from comprehensive_error_detector import ComprehensiveErrorDetector
 
 
 class FuzzGenerator:
@@ -417,7 +411,7 @@ class TestConcurrentFuzzing(FuzzGenerator):
         for t in threads:
             t.join()
         
-        print(f"\nConcurrent fuzzing results:")
+        print("\nConcurrent fuzzing results:")
         print(f"Processed: {results['processed']}")
         print(f"Errors: {len(results['errors'])}")
         
@@ -527,4 +521,4 @@ class TestPropertyBasedFuzzing(FuzzGenerator):
 
 if __name__ == "__main__":
     # Run with specific seed for reproducibility
-    pytest.main([__file__, "-v", "-s", f"--tb=short"])
+    pytest.main([__file__, "-v", "-s", "--tb=short"])

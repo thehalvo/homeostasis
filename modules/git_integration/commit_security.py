@@ -148,7 +148,7 @@ class CommitSecurity:
         
         try:
             # Create key generation configuration
-            key_config = f"""
+            key_config = """
 %echo Generating Homeostasis healing key
 Key-Type: RSA
 Key-Length: 4096

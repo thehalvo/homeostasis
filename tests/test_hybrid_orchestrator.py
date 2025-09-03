@@ -2,15 +2,12 @@
 Tests for Hybrid Cloud/On-Premise Healing Coordination
 """
 
-import asyncio
 import pytest
 from datetime import datetime
-from unittest.mock import Mock, AsyncMock, patch
+from unittest.mock import AsyncMock, patch
 
 from modules.deployment.multi_environment.hybrid_orchestrator import (
     HybridCloudOrchestrator,
-    Environment,
-    EnvironmentType,
     HealingContext,
     HealingScope,
     HealingPlan,

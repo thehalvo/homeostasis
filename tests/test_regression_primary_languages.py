@@ -6,18 +6,14 @@ in primary language error handling do not resurface. Each test case represents
 a real bug that was found and fixed in the past.
 """
 import pytest
-import json
 import os
 import sys
-from pathlib import Path
-from typing import Dict, Any
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules', 'analysis'))
 
 from language_plugin_system import LanguagePluginSystem
-from comprehensive_error_detector import ComprehensiveErrorDetector
 
 
 class TestPythonRegressions:

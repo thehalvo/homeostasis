@@ -110,11 +110,11 @@ def cmd_list_keys(args: argparse.Namespace) -> None:
         if args.verbose:
             available_managers = manager.get_available_secrets_managers()
             if available_managers:
-                print(f"\nAvailable External Secrets Managers:")
+                print("\nAvailable External Secrets Managers:")
                 for name, manager_type in available_managers.items():
                     print(f"  • {name.upper()}: {manager_type}")
             else:
-                print(f"\nNo external secrets managers configured")
+                print("\nNo external secrets managers configured")
         
         print("\nKey Storage Options:")
         print("  • Environment variables: HOMEOSTASIS_<PROVIDER>_API_KEY")
@@ -373,14 +373,14 @@ def cmd_provider_status(args: argparse.Namespace) -> None:
         print(f"OpenRouter Unified: {'Enabled' if summary['openrouter_unified'] else 'Disabled'}")
         
         if args.verbose and summary['provider_policies']:
-            print(f"\nProvider Policies:")
+            print("\nProvider Policies:")
             for key, value in summary['provider_policies'].items():
                 print(f"  {key.replace('_', ' ').title()}: {value}")
         
         # Show OpenRouter unified config if enabled
         if summary['openrouter_unified']:
             unified_config = manager.get_openrouter_unified_config()
-            print(f"\nOpenRouter Unified Configuration:")
+            print("\nOpenRouter Unified Configuration:")
             print(f"  Proxy to Anthropic: {'Yes' if unified_config.get('proxy_to_anthropic') else 'No'}")
             print(f"  Proxy to OpenAI: {'Yes' if unified_config.get('proxy_to_openai') else 'No'}")
         

@@ -297,7 +297,7 @@ class CSharpExceptionHandler:
             "rule_id": "csharp_generic_error",
             "error_type": error_type or "Exception",
             "root_cause": "csharp_unknown_error",
-            "description": f"Unrecognized C# error",
+            "description": "Unrecognized C# error",
             "suggestion": "Review the exception details and stack trace for more information.",
             "confidence": "low",
             "severity": "medium",
@@ -742,7 +742,7 @@ class CSharpPatchGenerator:
         elif "task_canceled" in root_cause:
             return "Handle task cancellation properly in async operations."
         else:
-            return f"Apply the suggested fix to resolve the error."
+            return "Apply the suggested fix to resolve the error."
     
     def _generate_null_check_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
         """Generate a code snippet for null checking in C#."""

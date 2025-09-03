@@ -3,9 +3,7 @@ Tests for the Elixir/Erlang plugin functionality.
 """
 import os
 import sys
-import json
 import unittest
-from pathlib import Path
 
 # Add the parent directory to the path so we can import from modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))

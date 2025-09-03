@@ -813,7 +813,7 @@ class TerraformPatchGenerator:
                 "fixes": [
                     f"Define variable '{var_name}' in a .tf file",
                     f"Create variable block: variable \"{var_name}\" {{ type = string }}",
-                    f"Provide value in terraform.tfvars or use -var flag",
+                    "Provide value in terraform.tfvars or use -var flag",
                     "Check variable name spelling"
                 ]
             }
@@ -825,7 +825,7 @@ class TerraformPatchGenerator:
                 "fixes": [
                     f"Set value in terraform.tfvars: {var_name} = \"value\"",
                     f"Use command line: terraform apply -var='{var_name}=value'",
-                    f"Add default value to variable definition",
+                    "Add default value to variable definition",
                     "Set environment variable TF_VAR_" + var_name
                 ]
             }

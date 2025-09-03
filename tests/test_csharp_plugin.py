@@ -7,15 +7,13 @@ patch generation capabilities of the Homeostasis framework.
 import sys
 import os
 import unittest
-import json
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 # Add parent directory to path to import modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from modules.analysis.plugins.csharp_plugin import CSharpLanguagePlugin
-from modules.analysis.language_adapters import CSharpErrorAdapter, convert_to_standard_format
+from modules.analysis.language_adapters import CSharpErrorAdapter
 
 
 class TestCSharpPlugin(unittest.TestCase):

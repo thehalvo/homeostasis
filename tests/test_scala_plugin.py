@@ -5,8 +5,6 @@ This file contains tests for verifying the functionality of the Scala language p
 including error normalization, analysis, and patch generation.
 """
 import sys
-import os
-import json
 import unittest
 from pathlib import Path
 

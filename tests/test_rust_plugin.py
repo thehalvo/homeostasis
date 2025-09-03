@@ -2,9 +2,7 @@
 Tests for the Rust Language Plugin
 """
 import unittest
-import os
 import sys
-import json
 from pathlib import Path
 
 # Add the project root directory to Python path

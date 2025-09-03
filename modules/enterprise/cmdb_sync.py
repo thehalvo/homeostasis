@@ -576,7 +576,7 @@ class ServiceNowCMDB(CMDBSynchronizer):
             response = self._session.post(url, json=data)
             response.raise_for_status()
             
-            logger.info(f"Created relationship in ServiceNow")
+            logger.info("Created relationship in ServiceNow")
             return True
             
         except Exception as e:

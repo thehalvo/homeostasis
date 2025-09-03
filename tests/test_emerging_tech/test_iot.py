@@ -3,8 +3,6 @@ Test cases for IoT and edge device support
 """
 
 import unittest
-from unittest.mock import Mock, patch
-from datetime import datetime, timedelta
 from modules.emerging_tech.iot import (
     IoTDeviceMonitor, IoTPlatform, IoTErrorType, IoTError, DeviceMetrics
 )

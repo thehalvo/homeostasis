@@ -2,23 +2,19 @@
 Tests for Infrastructure as Code Integration
 """
 
-import asyncio
 import pytest
 import json
 import tempfile
-import shutil
 from datetime import datetime, timezone
 from pathlib import Path
-from unittest.mock import Mock, AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch, MagicMock
 
 from modules.deployment.multi_environment.iac_integration import (
     InfrastructureAsCodeIntegration,
     IaCTool,
     ResourceType,
     ChangeType,
-    InfrastructureResource,
     InfrastructureChange,
-    IaCRepository,
     IaCExecution,
     TerraformProvider,
     HelmProvider

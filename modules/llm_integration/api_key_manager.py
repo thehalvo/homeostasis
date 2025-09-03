@@ -821,7 +821,7 @@ class APIKeyManager:
         }
         self._save_provider_config(config)
         
-        print(f"✓ Provider policies updated:")
+        print("✓ Provider policies updated:")
         print(f"  - Cost preference: {cost_preference}")
         print(f"  - Latency preference: {latency_preference}")
         print(f"  - Reliability preference: {reliability_preference}")

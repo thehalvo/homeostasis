@@ -5,7 +5,6 @@ Test script for LLM CLI functionality.
 
 import sys
 import tempfile
-import shutil
 from pathlib import Path
 from unittest import mock
 
@@ -15,7 +14,7 @@ sys.path.insert(0, str(project_root))
 
 def test_api_key_manager():
     """Test the API key manager functionality."""
-    from modules.llm_integration.api_key_manager import APIKeyManager, KeyValidationError
+    from modules.llm_integration.api_key_manager import APIKeyManager
     
     print("Testing API Key Manager...")
     

@@ -1,7 +1,4 @@
 import unittest
-import os
-import json
-from pathlib import Path
 
 from modules.analysis.plugins.php_plugin import PHPLanguagePlugin, PHPExceptionHandler, PHPPatchGenerator
 from modules.analysis.language_adapters import PHPErrorAdapter

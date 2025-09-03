@@ -341,7 +341,7 @@ class KubernetesTrafficManager:
         try:
             # In a real implementation, you would generate and apply Kubernetes resources here
             # For now, just log the changes we would make
-            logger.info(f"Would create Kubernetes canary deployment:")
+            logger.info("Would create Kubernetes canary deployment:")
             logger.info(f"  - Service: {service_name}")
             logger.info(f"  - Deployment ID: {deployment_id}")
             logger.info(f"  - Image: {image}")

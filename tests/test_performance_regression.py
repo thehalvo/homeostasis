@@ -6,12 +6,10 @@ key components of the self-healing system.
 """
 import pytest
 import time
-import json
 import os
 import sys
-from pathlib import Path
-from typing import Dict, List, Any
-from unittest.mock import Mock, patch
+from typing import Dict, Any
+from unittest.mock import Mock
 import tempfile
 
 # Add the modules directory to the Python path

@@ -340,8 +340,8 @@ class FastAPIDependencyAnalyzer:
         anti_patterns = []
         
         # Check for heavy dependencies that should be cached
-        if 'TimeoutError' in error_data.get('exception_type', '') or \
-           'timeout' in error_data.get('message', '').lower():
+        if ('TimeoutError' in error_data.get('exception_type', '') or 
+                'timeout' in error_data.get('message', '').lower()):
             anti_patterns.append({
                 'type': 'heavy_dependency',
                 'message': 'Potentially heavy dependency causing timeouts',

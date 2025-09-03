@@ -2,8 +2,6 @@
 Tests for the PowerShell language plugin.
 """
 import pytest
-import json
-from unittest.mock import Mock, patch
 
 from modules.analysis.plugins.powershell_plugin import (
     PowerShellLanguagePlugin, 
