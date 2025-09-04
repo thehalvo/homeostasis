@@ -478,7 +478,7 @@ Performance impact: O(n²) complexity detected
         """
         
         # This would need custom performance rules
-        result = self.parser.parse(error_string)
+        self.parser.parse(error_string)
         
         # May return None if not matching standard error patterns
         # Real implementation would have performance-specific patterns
@@ -492,7 +492,7 @@ SecurityWarning: Detected SQL injection vulnerability
         """
         
         # This would need custom security rules
-        result = self.parser.parse(error_string)
+        self.parser.parse(error_string)
 
 
 class TestCompilerIntegration:

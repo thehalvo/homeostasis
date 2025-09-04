@@ -19,7 +19,7 @@ def example_logger_usage():
     # Log an exception
     try:
         # Simulate an error
-        result = 1 / 0
+        1 / 0
     except Exception as e:
         logger.exception(e, operation="division", value=0)
 

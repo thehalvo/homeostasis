@@ -283,11 +283,7 @@ class COBOLHealer:
         lines = source_code.split('\n')
         
         # Track program structure
-        in_identification = False
-        in_data = False
         in_procedure = False
-        in_paragraph = False
-        current_paragraph = None
         
         # Common COBOL issues to check
         for i, line in enumerate(lines, 1):
@@ -305,16 +301,10 @@ class COBOLHealer:
             
             # Division tracking
             if "IDENTIFICATION DIVISION" in code_upper:
-                in_identification = True
-                in_data = False
                 in_procedure = False
             elif "DATA DIVISION" in code_upper:
-                in_identification = False
-                in_data = True
                 in_procedure = False
             elif "PROCEDURE DIVISION" in code_upper:
-                in_identification = False
-                in_data = False
                 in_procedure = True
                 
             # Check for missing periods

@@ -254,7 +254,7 @@ async def test_set_config_with_validation(config_manager):
 async def test_secret_encryption(config_manager):
     """Test secret encryption in configuration"""
     # Set encrypted secret in test environment (not production)
-    change = await config_manager.set_config(
+    await config_manager.set_config(
         "database.password",
         "my-secret-password",
         "test",

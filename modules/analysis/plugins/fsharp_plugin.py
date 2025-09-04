@@ -235,7 +235,6 @@ class FSharpExceptionHandler:
         Returns:
             Analysis results with categorization and fix suggestions
         """
-        error_type = error_data.get("error_type", "FSharpError")
         message = error_data.get("message", "")
         file_path = error_data.get("file_path", "")
         line_number = error_data.get("line_number", 0)
@@ -490,7 +489,7 @@ class FSharpExceptionHandler:
         
         # Check for result-related errors (but avoid generic "error" word)
         if ("result" in message_lower or "ok(" in message_lower or 
-            ("error(" in message_lower and "result" in message_lower)):
+                ("error(" in message_lower and "result" in message_lower)):
             return {
                 "category": "fsharp",
                 "subcategory": "result",
@@ -654,7 +653,6 @@ class FSharpPatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        subcategory = analysis.get("subcategory", "")
         
         # Map root causes to patch strategies
         patch_strategies = {

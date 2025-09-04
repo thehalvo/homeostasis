@@ -254,7 +254,6 @@ class ErlangExceptionHandler:
         Returns:
             Analysis results with categorization and fix suggestions
         """
-        error_type = error_data.get("error_type", "ErlangError")
         message = error_data.get("message", "")
         file_path = error_data.get("file_path", "")
         line_number = error_data.get("line_number", 0)
@@ -346,7 +345,6 @@ class ErlangExceptionHandler:
     
     def _analyze_by_patterns(self, message: str, file_path: str) -> Dict[str, Any]:
         """Analyze error by matching against common patterns."""
-        message_lower = message.lower()
         
         # Check for specific error types first
         if "** exception error" in message:
@@ -681,7 +679,6 @@ class ErlangPatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        subcategory = analysis.get("subcategory", "")
         
         # Map root causes to patch strategies
         patch_strategies = {

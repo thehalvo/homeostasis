@@ -499,7 +499,6 @@ class JavaScriptPatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        rule_id = analysis.get("rule_id", "")
         
         # Map root causes to patch strategies
         patch_strategies = {
@@ -958,7 +957,6 @@ class JavaScriptLanguagePlugin(LanguagePlugin):
     def _is_dependency_error(self, error_data: Dict[str, Any]) -> bool:
         """Check if this is a dependency-related error."""
         message = error_data.get("message", "").lower()
-        error_type = error_data.get("error_type", "").lower()
         
         dependency_patterns = [
             "cannot find module",
@@ -996,17 +994,15 @@ class JavaScriptLanguagePlugin(LanguagePlugin):
             "webpack", "rollup", "vite", "parcel", "esbuild", "swc"
         ]
         
-        return any(pattern in message for pattern in bundler_patterns) or \
-               any(pattern in stack_trace for pattern in bundler_patterns)
+        return (any(pattern in message for pattern in bundler_patterns) or 
+                any(pattern in stack_trace for pattern in bundler_patterns))
     
     def _analyze_bundler_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Analyze bundler-specific errors."""
-        message = error_data.get("message", "")
-        
         # Use the existing transpilation analysis for bundler errors
         # since bundlers often involve transpilation
         return self.exception_handler.analyze_transpilation_error(error_data)
-    
+
     def analyze_dependencies(self, project_path: str) -> Dict[str, Any]:
         """
         Analyze project dependencies.
@@ -1100,7 +1096,6 @@ class JavaScriptLanguagePlugin(LanguagePlugin):
                 "error": str(e),
                 "plugin": "javascript"
             }
-    
     
     def get_language_info(self) -> Dict[str, Any]:
         """

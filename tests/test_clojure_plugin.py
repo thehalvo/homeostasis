@@ -280,13 +280,6 @@ class TestClojurePlugin(unittest.TestCase):
             "at java.lang.Thread.run (Thread.java:748)"
         ]
         
-        error_data = {
-            "error_type": "Exception",
-            "message": "Test error",
-            "stack_trace": clojure_stack,
-            "clojure_version": "1.11.1"
-        }
-        
         parsed_frames = self.adapter._parse_clojure_stack_trace(clojure_stack)
         
         # Should parse Clojure frames
@@ -351,6 +344,10 @@ class TestClojurePlugin(unittest.TestCase):
         context = {"source_code": "(defn process [data] (.toString data))"}
         patch = self.plugin.generate_fix(analysis, context)
         # Patch generation might not always succeed, which is acceptable
+        # Verify patch structure if generated
+        if patch:
+            self.assertIsInstance(patch, dict)
+            self.assertIn("fix", patch)
         
         # Step 4: Verify analysis contains useful information
         self.assertGreater(len(analysis["fix_suggestions"]), 0)

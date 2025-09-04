@@ -369,7 +369,6 @@ class ClojurePatchGenerator:
         """
         rule_id = analysis_result.get("rule_id", "")
         category = analysis_result.get("category", "")
-        error_data = analysis_result.get("error_data", {})
         
         # Try to find a specific template for this rule
         template_path = self._find_template(rule_id, category)
@@ -421,7 +420,6 @@ class ClojurePatchGenerator:
     
     def _generate_generic_patch(self, analysis_result: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Generate a generic patch when no template is available."""
-        category = analysis_result.get("category", "")
         error_type = analysis_result.get("error_type", "")
         
         # Generate basic patches for common patterns

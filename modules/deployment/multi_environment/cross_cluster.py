@@ -349,8 +349,12 @@ class ServiceMeshController:
             }
         }
         
+        # Store the resource for later application
+        self._pending_resources = getattr(self, '_pending_resources', [])
+        self._pending_resources.append(virtual_service)
+        
         # In practice, would apply this to the service mesh
-        self.logger.info(f"Configured Istio traffic split for {service.name}")
+        self.logger.info(f"Configured Istio traffic split for {service.name}: {virtual_service['metadata']['name']}")
         return True
     
     async def _configure_linkerd_traffic_split(self, service: Service,
@@ -375,9 +379,13 @@ class ServiceMeshController:
             }
         }
         
-        self.logger.info(f"Configured Linkerd traffic split for {service.name}")
+        # Store the resource for later application
+        self._pending_resources = getattr(self, '_pending_resources', [])
+        self._pending_resources.append(traffic_split_resource)
+        
+        self.logger.info(f"Configured Linkerd traffic split for {service.name}: {traffic_split_resource['metadata']['name']}")
         return True
-    
+
     async def enable_circuit_breaking(self, service: Service,
                                     config: Dict[str, Any]) -> bool:
         """Enable circuit breaking for cross-cluster calls"""
@@ -409,7 +417,11 @@ class ServiceMeshController:
                 }
             }
             
-            self.logger.info(f"Enabled circuit breaking for {service.name}")
+            # Store the resource for later application
+            self._pending_resources = getattr(self, '_pending_resources', [])
+            self._pending_resources.append(destination_rule)
+            
+            self.logger.info(f"Enabled circuit breaking for {service.name}: {destination_rule['metadata']['name']}")
             return True
         
         return False

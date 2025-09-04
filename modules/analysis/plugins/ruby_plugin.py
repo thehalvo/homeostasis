@@ -164,7 +164,6 @@ class RubyExceptionHandler:
             Fallback analysis result
         """
         error_type = error_data.get("error_type", "")
-        message = error_data.get("message", "")
         
         # Try to categorize by common Ruby exception types
         if "NoMethodError" in error_type:

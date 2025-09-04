@@ -435,7 +435,6 @@ class TypeScriptPatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        error_code = analysis.get("error_code", "")
         
         # Map root causes to patch strategies
         patch_strategies = {
@@ -624,7 +623,6 @@ class TypeScriptPatchGenerator:
                             source_code: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
         root_cause = analysis.get("root_cause", "")
-        error_code = analysis.get("error_code", "")
         
         # Map root causes to template names
         template_map = {

@@ -145,7 +145,6 @@ class SQLExceptionHandler:
         Returns:
             Analysis results with categorization and fix suggestions
         """
-        error_type = error_data.get("error_type", "SQLError")
         message = error_data.get("message", "")
         error_code = error_data.get("error_code", "")
         database_type = error_data.get("database_type", "").lower()
@@ -630,11 +629,9 @@ class SQLPatchGenerator:
     def _fix_syntax_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                          query: str) -> Optional[Dict[str, Any]]:
         """Fix SQL syntax errors."""
-        message = error_data.get("message", "")
-        
         # Common syntax fixes
         fixes = []
-        
+
         # Missing commas in SELECT statements
         if "select" in query.lower() and re.search(r'\w+\s+\w+\s+from', query, re.IGNORECASE):
             fixes.append({
@@ -860,11 +857,9 @@ class SQLPatchGenerator:
     def _fix_index_constraint(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                              query: str) -> Optional[Dict[str, Any]]:
         """Fix index constraint violations."""
-        message = error_data.get("message", "")
-        
         return {
             "type": "suggestion",
-            "description": "Resolve index constraint violation due to duplicate values",
+            "description": "Resolve index constraint violation from duplicate values",
             "fix_steps": [
                 "Remove duplicate values from the column before creating the index",
                 "Use a non-unique index if duplicate values are allowed",

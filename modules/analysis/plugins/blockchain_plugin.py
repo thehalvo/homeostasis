@@ -229,7 +229,7 @@ class BlockchainPlugin(LanguagePlugin):
         
         return patterns
     
-    def analyze_error(self, error_message: str, code_context: str,
+    def analyze_error_detailed(self, error_message: str, code_context: str,
                      file_path: str = None) -> Optional[Dict[str, Any]]:
         """Analyze blockchain error and suggest fixes"""
         blockchain_error = self.healer.analyze_blockchain_error(
@@ -252,7 +252,7 @@ class BlockchainPlugin(LanguagePlugin):
             "contract_address": blockchain_error.contract_address
         }
     
-    def generate_fix(self, error_analysis: Dict[str, Any],
+    def generate_fix_code(self, error_analysis: Dict[str, Any],
                     code_context: str) -> Optional[str]:
         """Generate fix code for blockchain error"""
         if not error_analysis or "healing_strategies" not in error_analysis:

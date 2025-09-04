@@ -386,8 +386,6 @@ class SwiftDependencyAnalyzer:
             Analysis results with fix suggestions
         """
         message = error_data.get("message", "")
-        error_type = error_data.get("error_type", "")
-        
         # Check for common dependency error patterns
         if "No such module" in message:
             return self._analyze_missing_module_error(message, project_path)

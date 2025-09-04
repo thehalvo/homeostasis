@@ -201,9 +201,8 @@ class VueExceptionHandler:
     
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
-        error_type = error_data.get("error_type", "Error")
         message = error_data.get("message", "").lower()
-        
+
         # Basic categorization based on error patterns
         if "composition" in message or "setup" in message:
             category = "composition"
@@ -321,7 +320,6 @@ class VueExceptionHandler:
             Analysis results with Vuex-specific fixes
         """
         message = error_data.get("message", "").lower()
-        stack_trace = str(error_data.get("stack_trace", "")).lower()
         
         # Vuex specific error patterns
         vuex_patterns = {
@@ -961,12 +959,10 @@ class VueLanguagePlugin(LanguagePlugin):
             else:
                 standard_error = error_data
             
-            message = standard_error.get("message", "").lower()
-            
             # Check if it's a Composition API error
             if self._is_composition_api_error(standard_error):
                 analysis = self.exception_handler.analyze_composition_api_error(standard_error)
-            
+
             # Check if it's a Vuex error
             elif self._is_vuex_error(standard_error):
                 analysis = self.exception_handler.analyze_vuex_error(standard_error)

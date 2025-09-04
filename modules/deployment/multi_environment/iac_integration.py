@@ -239,8 +239,20 @@ class TerraformProvider(IaCProvider):
                 "resources_created": 0,
                 "resources_updated": 0,
                 "resources_deleted": 0,
-                "outputs": {}
+                "outputs": {},
+                "raw_output": output
             }
+            
+            # Parse terraform output for resource counts
+            if output:
+                lines = output.split('\n')
+                for line in lines:
+                    if 'created' in line.lower():
+                        results["resources_created"] += 1
+                    elif 'updated' in line.lower():
+                        results["resources_updated"] += 1
+                    elif 'destroyed' in line.lower():
+                        results["resources_deleted"] += 1
             
             # Get outputs
             outputs_result = await self._run_command(
@@ -428,7 +440,7 @@ class TerraformProvider(IaCProvider):
 
 class HelmProvider(IaCProvider):
     """Helm charts infrastructure provider"""
-    
+
     def __init__(self):
         self.logger = logging.getLogger(f"{__name__}.Helm")
         self.helm_bin = "helm"
@@ -438,7 +450,11 @@ class HelmProvider(IaCProvider):
         try:
             # Lint the chart
             result = await self._run_command(["lint", str(working_dir)])
-            return True, []
+            # Check if lint passed
+            if result and "error" not in result.lower():
+                return True, []
+            else:
+                return False, [result] if result else ["Lint failed"]
         except Exception as e:
             return False, [str(e)]
     
@@ -456,8 +472,20 @@ class HelmProvider(IaCProvider):
             ])
             
             # Parse dry-run output to identify changes
-            # In practice, would parse the Kubernetes manifests
-            return []
+            changes = []
+            if result:
+                # Basic parsing of dry-run output
+                lines = result.split('\n')
+                for line in lines:
+                    if 'MANIFEST:' in line or 'create' in line.lower():
+                        changes.append(InfrastructureChange(
+                            resource_type="kubernetes",
+                            resource_id=release_name,
+                            action=ChangeAction.CREATE,
+                            before_state={},
+                            after_state={"raw": line}
+                        ))
+            return changes
             
         except Exception as e:
             self.logger.error(f"Plan failed: {e}")

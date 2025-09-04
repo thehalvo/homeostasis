@@ -251,7 +251,8 @@ class BackupRestoreManager:
                         description,
                         tenant_id,
                         destinations,
-                        policy
+                        policy,
+                        start_time
                     )
             else:
                 return self._perform_backup(
@@ -261,7 +262,8 @@ class BackupRestoreManager:
                     description,
                     tenant_id,
                     destinations,
-                    policy
+                    policy,
+                    start_time
                 )
                 
         except Exception as e:
@@ -276,7 +278,8 @@ class BackupRestoreManager:
         description: Optional[str],
         tenant_id: Optional[str],
         destinations: List[BackupDestination],
-        policy: Optional[BackupPolicy]
+        policy: Optional[BackupPolicy],
+        start_time: datetime
     ) -> Optional[BackupMetadata]:
         """Perform the actual backup operation"""
         # Create temporary backup directory
@@ -357,7 +360,7 @@ class BackupRestoreManager:
                     "checksum": self._calculate_checksum(f)
                 } for f in files_to_backup],
                 total_size=total_size,
-                created_at=datetime.utcnow()
+                created_at=start_time
             )
             
             # Save manifest
@@ -379,7 +382,7 @@ class BackupRestoreManager:
             metadata = BackupMetadata(
                 backup_id=backup_id,
                 backup_type=backup_type,
-                timestamp=datetime.utcnow(),
+                timestamp=start_time,
                 tenant_id=tenant_id,
                 description=description,
                 size_bytes=archive_path.stat().st_size,

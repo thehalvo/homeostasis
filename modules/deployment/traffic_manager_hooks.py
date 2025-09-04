@@ -442,15 +442,6 @@ class KubernetesIngressHook:
             elif "extensions/v1beta1" in api_versions:
                 ingress_api_version = "extensions/v1beta1"
                 
-            # Check if Ingress exists
-            get_result = self._run_kubectl([
-                "get", "ingress", name,
-                "--namespace", self.namespace,
-                "--output", "json"
-            ])
-            
-            ingress_exists = get_result.get("success", False) and not get_result.get("simulated", False)
-            
             # For Kubernetes with Istio, we would use VirtualService
             # Check if Istio is available
             istio_available = False

@@ -248,7 +248,6 @@ class FortranHealer:
         if compiler == "gfortran":
             match = self._error_patterns["gfortran_error"].match(error_text.strip())
             if match:
-                filename = match.group(1)
                 line_num = int(match.group(2))
                 col_num = int(match.group(3))
                 severity = match.group(4).lower()
@@ -269,7 +268,6 @@ class FortranHealer:
         elif compiler == "ifort":
             match = self._error_patterns["ifort_error"].match(error_text.strip())
             if match:
-                filename = match.group(1)
                 line_num = int(match.group(2))
                 severity = match.group(3)
                 error_num = match.group(4)
@@ -487,7 +485,6 @@ class FortranHealer:
         
         if error.line_number and 0 < error.line_number <= len(lines):
             error_line_idx = error.line_number - 1
-            error_line = lines[error_line_idx]
             
             # Fix based on error category
             if error.category == "type" and "implicit" in error.message.lower():
@@ -552,7 +549,6 @@ class FortranHealer:
         div_match = re.search(r'(\w+)\s*=\s*([^/]+)/\s*(\w+)', error_line)
         if div_match:
             result_var = div_match.group(1)
-            numerator = div_match.group(2)
             denominator = div_match.group(3)
             
             # Create IF block
@@ -909,7 +905,6 @@ class FortranHealer:
                 do_match = re.match(r'\s*DO\s+(\w+)\s*=\s*1\s*,\s*(\w+)', lines[i], re.IGNORECASE)
                 if do_match:
                     loop_var = do_match.group(1)
-                    upper_bound = do_match.group(2)
                     
                     # Look for array assignment in next lines
                     for j in range(i + 1, min(i + 5, len(lines))):

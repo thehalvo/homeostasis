@@ -108,12 +108,6 @@ class HomeostasisASGIMiddleware:
         # Start timing the request
         start_time = time.time()
         
-        # Store request information for logging
-        method = scope.get("method", "UNKNOWN")
-        headers = dict(scope.get("headers", []))
-        client = scope.get("client", ("unknown", 0))
-        client_addr = f"{client[0]}:{client[1]}" if client else "unknown"
-        
         # Log the incoming request if enabled
         if self.config["LOG_REQUESTS"]:
             await self._log_request(scope, request_id)
@@ -270,10 +264,6 @@ class HomeostasisASGIMiddleware:
             duration: Request duration in seconds
         """
         try:
-            # Get path for context
-            path = scope.get("path", "")
-            method = scope.get("method", "UNKNOWN")
-            
             # Build response data
             response_data = {
                 "request_id": request_id,

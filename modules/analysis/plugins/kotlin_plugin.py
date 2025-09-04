@@ -243,7 +243,6 @@ class KotlinExceptionHandler:
     def _create_fallback_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Create fallback analysis for unmatched errors."""
         error_type = error_data.get("error_type", "Unknown")
-        message = error_data.get("message", "")
         
         # Basic classification based on common Kotlin exceptions
         if "KotlinNullPointerException" in error_type or "NullPointerException" in error_type:

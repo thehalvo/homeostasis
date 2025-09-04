@@ -226,7 +226,6 @@ class NextjsExceptionHandler:
     
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
-        error_type = error_data.get("error_type", "Error")
         message = error_data.get("message", "").lower()
         
         # Basic categorization based on error patterns
@@ -1187,11 +1186,11 @@ class NextjsLanguagePlugin(LanguagePlugin):
             else:
                 standard_error = error_data
             
-            message = standard_error.get("message", "").lower()
-            
             # Check if it's a data fetching error
             if self._is_data_fetching_error(standard_error):
-                analysis = self.exception_handler.analyze_data_fetching_error(standard_error)
+                analysis = self.exception_handler.analyze_data_fetching_error(
+                    standard_error
+                )
             
             # Check if it's an API route error
             elif self._is_api_route_error(standard_error):

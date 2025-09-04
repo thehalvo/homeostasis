@@ -489,7 +489,6 @@ class CostTracker:
         # Calculate trends
         costs = list(daily_costs.values())
         tokens = list(daily_tokens.values())
-        requests = list(daily_requests.values())
         
         if len(costs) > 1:
             cost_trend = (costs[-1] - costs[0]) / len(costs) if costs[0] > 0 else 0

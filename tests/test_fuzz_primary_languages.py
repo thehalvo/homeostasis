@@ -286,7 +286,7 @@ class TestPatchGeneratorFuzzing(FuzzGenerator):
             
             try:
                 if hasattr(plugin, 'generate_fix'):
-                    patch = plugin.generate_fix(
+                    plugin.generate_fix(
                         {"root_cause": scenario["root_cause"], "suggestion": self.random_string()},
                         scenario.get("context", {})
                     )

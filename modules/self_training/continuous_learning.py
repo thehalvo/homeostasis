@@ -446,9 +446,9 @@ class OutcomeTracker:
                     error_stats['success'] += 1
         
         # Calculate success rates
-        for error_type, stats in patterns['error_type_success'].items():
-            if stats['total'] > 0:
-                stats['success_rate'] = stats['success'] / stats['total']
+        for error_type, type_stats in patterns['error_type_success'].items():
+            if type_stats['total'] > 0:
+                type_stats['success_rate'] = type_stats['success'] / type_stats['total']
         
         return patterns
     
@@ -712,10 +712,10 @@ class LearningPipeline:
         
         # Error type insights
         error_success = patterns.get('error_type_success', {})
-        for error_type, stats in error_success.items():
-            if stats.get('total', 0) > 5 and stats.get('success_rate', 0) < 0.5:
+        for error_type, error_stats in error_success.items():
+            if error_stats.get('total', 0) > 5 and error_stats.get('success_rate', 0) < 0.5:
                 insights.append(
-                    f"Low success rate ({stats['success_rate']:.1%}) for {error_type} errors - "
+                    f"Low success rate ({error_stats['success_rate']:.1%}) for {error_type} errors - "
                     f"consider additional training or rule refinement"
                 )
         

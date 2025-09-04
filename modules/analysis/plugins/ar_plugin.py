@@ -218,7 +218,7 @@ class ARPlugin(LanguagePlugin):
         
         # Check for performance issues
         if (re.search(r"Update\s*\(\s*\)", code) and 
-            ("ARRaycast" in code or "Raycast" in code or "planeManager.trackables" in code)):
+                ("ARRaycast" in code or "Raycast" in code or "planeManager.trackables" in code)):
             issues.append({
                 "type": "PerformanceIssue",
                 "description": "Heavy AR operations in Update loop",
@@ -332,7 +332,7 @@ class ARPlugin(LanguagePlugin):
         
         return practices
     
-    def analyze_error(self, error_message: str, code_context: str,
+    def analyze_error_detailed(self, error_message: str, code_context: str,
                      file_path: str = None, 
                      performance_metrics: Optional[Dict] = None) -> Optional[Dict[str, Any]]:
         """Analyze AR error and suggest fixes"""
@@ -373,7 +373,7 @@ class ARPlugin(LanguagePlugin):
             "severity": ar_error.severity
         }
     
-    def generate_fix(self, error_analysis: Dict[str, Any],
+    def generate_fix_code(self, error_analysis: Dict[str, Any],
                     code_context: str) -> Optional[str]:
         """Generate fix code for AR error"""
         if not error_analysis or "healing_strategies" not in error_analysis:

@@ -219,7 +219,6 @@ class EmberExceptionHandler:
     
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
-        error_type = error_data.get("error_type", "Error")
         message = error_data.get("message", "").lower()
         
         # Basic categorization based on error patterns
@@ -1039,7 +1038,6 @@ class EmberLanguagePlugin(LanguagePlugin):
             else:
                 standard_error = error_data
             
-            message = standard_error.get("message", "").lower()
             
             # Check if it's a template error
             if self._is_template_error(standard_error):

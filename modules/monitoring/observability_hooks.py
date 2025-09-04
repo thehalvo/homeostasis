@@ -394,14 +394,6 @@ class ObservabilityHooks:
         if not self.enabled:
             return
         
-        attributes = {
-            "patch.id": patch_id,
-            "patch.file_path": file_path,
-            "patch.type": patch_type,
-            "patch.success": success,
-            "tenant.id": tenant_id
-        }
-        
         # Update metrics
         if self.patches_generated_counter:
             self.patches_generated_counter.add(

@@ -406,7 +406,6 @@ class AndroidJavaExceptionHandler:
     
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
-        error_type = error_data.get("error_type", "Error")
         message = error_data.get("message", "").lower()
         stack_trace = str(error_data.get("stack_trace", "")).lower()
         
@@ -462,7 +461,6 @@ class AndroidJavaExceptionHandler:
             Analysis results with activity-specific fixes
         """
         message = error_data.get("message", "").lower()
-        stack_trace = str(error_data.get("stack_trace", "")).lower()
         
         # Activity lifecycle errors
         if "illegalstateexception" in message and ("activity" in message or "destroyed" in message):
@@ -1556,7 +1554,6 @@ class AndroidJavaLanguagePlugin(LanguagePlugin):
             else:
                 standard_error = error_data
             
-            message = standard_error.get("message", "").lower()
             
             # Check if it's an activity-related error
             if self._is_activity_error(standard_error):

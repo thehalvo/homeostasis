@@ -425,7 +425,7 @@ class HybridOrchestrator:
                 
             return adapted_result
             
-        except Exception as e:
+        except Exception:
             # Record failure
             self.circuit_breakers[system_name].record_failure()
             raise

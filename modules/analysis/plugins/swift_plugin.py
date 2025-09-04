@@ -374,7 +374,6 @@ class SwiftPatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        rule_id = analysis.get("rule_id", "")
         
         # Map root causes to patch strategies
         patch_strategies = {
@@ -400,7 +399,6 @@ class SwiftPatchGenerator:
     def _fix_force_unwrap(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                          source_code: str) -> Optional[Dict[str, Any]]:
         """Fix force unwrapping of nil optionals."""
-        message = error_data.get("message", "")
         stack_trace = error_data.get("stack_trace", [])
         
         # Extract line information
@@ -421,9 +419,6 @@ class SwiftPatchGenerator:
         fixed_line = problem_line
         for match in matches:
             var_name = match.group(1)
-            # Replace force unwrap with guard let
-            guard_replacement = f"guard let {var_name} = {var_name} else {{ return }}"
-            
             # For simple cases, use nil coalescing
             if "return" in problem_line or "=" in problem_line:
                 fixed_line = fixed_line.replace(f"{var_name}!", f"{var_name} ?? defaultValue")
@@ -675,7 +670,6 @@ class SwiftLanguagePlugin(LanguagePlugin):
     def _is_dependency_error(self, error_data: Dict[str, Any]) -> bool:
         """Check if this is a dependency-related error."""
         message = error_data.get("message", "").lower()
-        error_type = error_data.get("error_type", "").lower()
         
         dependency_patterns = [
             "no such module",

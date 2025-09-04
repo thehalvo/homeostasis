@@ -204,7 +204,6 @@ class CSSExceptionHandler:
     
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
-        error_type = error_data.get("error_type", "Error")
         message = error_data.get("message", "").lower()
         
         # For generic CSS syntax errors without specific framework patterns
@@ -341,7 +340,6 @@ class CSSExceptionHandler:
             Analysis results with CSS-in-JS fixes
         """
         message = error_data.get("message", "").lower()
-        stack_trace = str(error_data.get("stack_trace", "")).lower()
         
         # Styled Components specific errors
         if "styled" in message or "styled-components" in message:
@@ -864,7 +862,6 @@ class CSSLanguagePlugin(LanguagePlugin):
             Analysis results
         """
         try:
-            message = error_data.get("message", "").lower()
             
             # Check if it's a layout error first (more specific)
             if self._is_layout_error(error_data):

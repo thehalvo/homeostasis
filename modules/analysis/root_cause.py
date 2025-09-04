@@ -138,7 +138,6 @@ class RootCauseAnalyzer:
         error_type = error_data.get('error_type', '')
         message = error_data.get('message', '')
         stack_trace = error_data.get('stack_trace', [])
-        context = error_data.get('context', {})
         
         # Pattern matching
         for pattern in self.patterns:

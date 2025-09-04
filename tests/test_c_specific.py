@@ -510,22 +510,19 @@ class TestCIntegrationScenarios:
         error_data = {
             "language": "cpp",
             "error_type": "HardwareFault",
-            "message": "Hard fault handler triggered",
+            "error": "Hard fault handler triggered",
             "register_dump": {
                 "PC": "0x08001234",
                 "LR": "0x08005678",
                 "SP": "0x20001000"
             },
-            "mcu": "STM32F4"
+            "mcu": "STM32F4",
+            "line": 100,
+            "file": "main.c"
         }
         
         # Convert to standard format and use handler for proper rule matching
-        standard_error = self.adapter.to_standard_format({
-            "language": "cpp",
-            "error": "Hard fault handler triggered",
-            "line": 100,
-            "file": "main.c"
-        })
+        standard_error = self.adapter.to_standard_format(error_data)
         analysis = self.handler.analyze_exception(standard_error)
         
         assert "hardware" in analysis["root_cause"] or "fault" in analysis["root_cause"] or analysis["root_cause"] in ["cpp_hardware_fault", "cpp_unknown"]

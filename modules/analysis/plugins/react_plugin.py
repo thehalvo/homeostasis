@@ -197,9 +197,8 @@ class ReactExceptionHandler:
     
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
-        error_type = error_data.get("error_type", "Error")
         message = error_data.get("message", "").lower()
-        
+
         # Basic categorization based on error patterns
         if "hook" in message:
             category = "hooks"
@@ -317,10 +316,10 @@ class ReactExceptionHandler:
             Analysis results with state management fixes
         """
         message = error_data.get("message", "").lower()
-        stack_trace = str(error_data.get("stack_trace", "")).lower()
         
         # Redux specific errors (check first since Redux also uses Provider)
-        if "redux" in message or "store" in message or "dispatch" in message or "getstate" in message:
+        if ("redux" in message or "store" in message or 
+            "dispatch" in message or "getstate" in message):
             return self._analyze_redux_error(message, error_data)
         
         # Context specific errors
@@ -781,12 +780,10 @@ class ReactLanguagePlugin(LanguagePlugin):
             else:
                 standard_error = error_data
             
-            message = standard_error.get("message", "").lower()
-            
             # Check if it's a hooks-related error
             if self._is_hooks_error(standard_error):
                 analysis = self.exception_handler.analyze_hooks_error(standard_error)
-            
+
             # Check if it's a state management error
             elif self._is_state_management_error(standard_error):
                 analysis = self.exception_handler.analyze_state_management_error(standard_error)

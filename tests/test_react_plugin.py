@@ -449,10 +449,8 @@ class TestReactRuleLoading(unittest.TestCase):
         hooks_patterns = self.handler.compiled_patterns.get("hooks", [])
         if hooks_patterns:
             hook_message = "Invalid hook call. Hooks can only be called inside"
-            matched = False
             for pattern, rule in hooks_patterns:
                 if pattern.search(hook_message):
-                    matched = True
                     break
             # Note: This test may pass even if no patterns are loaded due to the rule files
             # In a real scenario, we'd want to ensure the files exist and patterns work

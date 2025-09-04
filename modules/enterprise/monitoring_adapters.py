@@ -1354,7 +1354,6 @@ class ElasticAdapter(MonitoringAdapter):
     def _extract_metric_value(self, source: Dict[str, Any]) -> Optional[float]:
         """Extract metric value from various metricbeat structures"""
         # Try common metric locations
-        metricset_name = source.get('metricset', {}).get('name', '')
         
         # System metrics
         if 'system' in source:

@@ -907,7 +907,6 @@ class TelemetryRuleEnhancementSystem:
         
         # Correlate error types with LLM success rates
         error_insights = error_patterns.get('insights', [])
-        llm_insights = llm_performance.get('insights', [])
         rule_insights = rule_performance.get('optimization_suggestions', [])
         
         # Check for correlation between rule performance and error detection

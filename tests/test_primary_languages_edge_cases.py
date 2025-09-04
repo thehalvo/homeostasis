@@ -165,7 +165,6 @@ class TestJavaScriptEdgeCases:
         
         def mock_analyze_error(error_data):
             """Mock analyze_error for JavaScript errors."""
-            error_type = error_data.get("error_type", "")
             message = error_data.get("message", "")
             context = error_data.get("context", "")
             
@@ -397,7 +396,6 @@ class TestCppEdgeCases:
         
         def mock_analyze_error(error_data):
             """Mock analyze_error for C++ errors."""
-            error_type = error_data.get("error_type", "")
             message = error_data.get("message", "")
             
             response = {

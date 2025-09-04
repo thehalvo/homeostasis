@@ -223,7 +223,6 @@ class MATLABExceptionHandler:
         Returns:
             Analysis results with categorization and fix suggestions
         """
-        error_type = error_data.get("error_type", "MATLABError")
         message = error_data.get("message", "")
         file_path = error_data.get("file_path", "")
         line_number = error_data.get("line_number", 0)
@@ -647,7 +646,6 @@ class MATLABPatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        subcategory = analysis.get("subcategory", "")
         
         # Map root causes to patch strategies
         patch_strategies = {
@@ -1196,7 +1194,6 @@ class MATLABPatchGenerator:
                             source_code: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
         root_cause = analysis.get("root_cause", "")
-        subcategory = analysis.get("subcategory", "")
         
         # Map root causes to template names
         template_map = {

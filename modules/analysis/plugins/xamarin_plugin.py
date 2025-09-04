@@ -85,8 +85,8 @@ class XamarinErrorAdapter:
         # Common Xamarin/C# stack trace patterns
         patterns = [
             r'at ([^:]+\.cs):line (\d+)',  # at file.cs:line number
-            r'in ([^:]+\.cs):(\d+)',       # in file.cs:line
-            r'([^:]+\.cs)\((\d+),(\d+)\)', # file.cs(line,column)
+            r'in ([^:]+\.cs):(\d+)',  # in file.cs:line
+            r'([^:]+\.cs)\((\d+),(\d+)\)',  # file.cs(line,column)
         ]
         
         for pattern in patterns:
@@ -1136,12 +1136,11 @@ class XamarinLanguagePlugin(LanguagePlugin):
             else:
                 standard_error = error_data
             
-            message = standard_error.get("message", "").lower()
-            stack_trace = str(standard_error.get("stack_trace", "")).lower()
-            
             # Check if it's a Xamarin.Forms error
             if self._is_forms_error(standard_error):
-                analysis = self.exception_handler.analyze_forms_error(standard_error)
+                analysis = self.exception_handler.analyze_forms_error(
+                    standard_error
+                )
             
             # Check if it's a DependencyService error
             elif self._is_dependency_service_error(standard_error):

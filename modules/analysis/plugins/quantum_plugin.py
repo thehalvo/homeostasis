@@ -10,7 +10,7 @@ import re
 from typing import Dict, List, Optional, Any
 from ..language_plugin_system import LanguagePlugin
 from ...emerging_tech.quantum_computing import (
-    QuantumErrorMitigator, QuantumFramework
+    QuantumErrorMitigator, QuantumFramework, QuantumErrorType, QuantumError
 )
 
 
@@ -205,7 +205,7 @@ class QuantumPlugin(LanguagePlugin):
             "backend_info": quantum_error.backend_info
         }
     
-    def generate_fix(self, error_analysis: Dict[str, Any], 
+    def generate_fix_code(self, error_analysis: Dict[str, Any], 
                     code_context: str) -> Optional[str]:
         """Generate fix code for quantum error"""
         if not error_analysis or "mitigation_strategies" not in error_analysis:
@@ -219,7 +219,6 @@ class QuantumPlugin(LanguagePlugin):
         strategy = strategies[0]
         
         # Create a QuantumError object for the mitigator
-        from modules.emerging_tech.quantum_computing import QuantumErrorType, QuantumError
         quantum_error = QuantumError(
             error_type=QuantumErrorType(error_analysis["error_type"]),
             framework=QuantumFramework(error_analysis["framework"]),

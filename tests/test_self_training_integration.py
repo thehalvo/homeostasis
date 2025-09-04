@@ -198,7 +198,7 @@ class TestSelfTrainingIntegration:
             "metadata": {"fix_id": "fix_3", "success": True}
         }
         
-        new_patterns = rule_extractor.analyze_successful_fix(
+        rule_extractor.analyze_successful_fix(
             similar_fix["error_data"],
             similar_fix["patch"],
             similar_fix["metadata"]

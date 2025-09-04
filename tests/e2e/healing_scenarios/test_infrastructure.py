@@ -208,15 +208,15 @@ class MockServiceEnvironment:
         self.services[name] = service
         return service
     
-    def stop_service(self):
+    def stop_default_service(self):
         """Stop the default test_service."""
         if 'test_service' in self.services:
-            self.stop_service_by_name('test_service')
+            self.stop_service('test_service')
     
-    def start_service(self):
+    def start_default_service(self):
         """Start the default test_service."""
         if 'test_service' in self.services:
-            self.start_service_by_name('test_service')
+            self.start_service('test_service')
     
     def trigger_error(self):
         """Trigger an error in the default test_service."""

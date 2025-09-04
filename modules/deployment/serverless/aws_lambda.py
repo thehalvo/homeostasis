@@ -196,10 +196,6 @@ class AWSLambdaProvider(ServerlessProvider):
             return {"success": False, "error": "Failed to create deployment package"}
             
         try:
-            # Read the deployment package
-            with open(zip_path, "rb") as f:
-                zip_bytes = f.read()
-                
             # Check if the function already exists
             exists_result = self._run_aws_cli(
                 "lambda", "get-function",
@@ -305,10 +301,6 @@ class AWSLambdaProvider(ServerlessProvider):
             return {"success": False, "error": "Failed to create deployment package"}
             
         try:
-            # Read the deployment package
-            with open(zip_path, "rb") as f:
-                zip_bytes = f.read()
-                
             # Update the function code
             code_update_args = [
                 "--function-name", full_function_name,
@@ -499,7 +491,7 @@ class AWSLambdaProvider(ServerlessProvider):
                     since_dt = datetime.fromisoformat(since.replace('Z', '+00:00'))
                     since_ms = int(since_dt.timestamp() * 1000)
                     filter_args.extend(["--start-time", str(since_ms)])
-                except Exception as e:
+                except Exception:
                     logger.warning(f"Invalid timestamp format for 'since': {since}. Using default.")
                     
             # Add any limit parameter

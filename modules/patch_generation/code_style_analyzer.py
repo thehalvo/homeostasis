@@ -822,7 +822,7 @@ class CodeStyleAnalyzer:
             spacing_patterns={},  # Could be aggregated similarly
             import_style={},      # Could be aggregated similarly
             comment_style={},     # Could be aggregated similarly
-            architectural_patterns=[], # Could be aggregated similarly
+            architectural_patterns=[],  # Could be aggregated similarly
             confidence=avg_confidence
         )
 

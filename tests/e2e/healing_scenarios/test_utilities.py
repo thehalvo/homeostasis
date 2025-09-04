@@ -363,7 +363,7 @@ async def trigger_error():
     def trigger_error(self) -> bool:
         """Trigger the error endpoint and return success status."""
         try:
-            response = requests.get(f"http://localhost:{self.port}/error", timeout=5)
+            requests.get(f"http://localhost:{self.port}/error", timeout=5)
             return False  # If we get a response, the error wasn't triggered properly
         except requests.exceptions.RequestException:
             return True  # Error was triggered

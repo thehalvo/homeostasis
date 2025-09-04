@@ -595,7 +595,6 @@ class HomeostasisDebugToolbarPanel:
     This class can be used to integrate Homeostasis with the Django Debug Toolbar.
     """
     
-    title = "Homeostasis"
     template = "homeostasis_debug_panel.html"
     
     def __init__(self, toolbar):

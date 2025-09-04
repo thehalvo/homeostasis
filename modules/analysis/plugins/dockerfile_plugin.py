@@ -240,7 +240,6 @@ class DockerfileExceptionHandler:
         Returns:
             Analysis results with categorization and fix suggestions
         """
-        error_type = error_data.get("error_type", "DockerError")
         message = error_data.get("message", "")
         build_step = error_data.get("build_step", "")
         dockerfile_content = error_data.get("dockerfile_content", "")
@@ -599,7 +598,6 @@ class DockerfilePatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        build_step = analysis.get("build_step", "")
         
         # Map root causes to patch strategies
         patch_strategies = {
@@ -685,7 +683,6 @@ class DockerfilePatchGenerator:
                               dockerfile_content: str) -> Optional[Dict[str, Any]]:
         """Fix Dockerfile instruction errors."""
         message = error_data.get("message", "")
-        build_step = analysis.get("build_step", "")
         
         if "copy failed" in message.lower():
             return {

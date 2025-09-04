@@ -542,8 +542,7 @@ class HumanInLoopFeedbackSystem:
         
         description = self._generate_review_description(context, triggered_gates)
         
-        # Determine reviewers and timeout
-        reviewers = primary_gate.reviewers
+        # Determine timeout
         timeout_seconds = primary_gate.timeout_minutes * 60
         
         # Create approval request

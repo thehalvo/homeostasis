@@ -310,8 +310,6 @@ class YAMLJSONExceptionHandler:
     
     def _analyze_yaml_error(self, message: str, content: str, framework: str) -> Dict[str, Any]:
         """Analyze YAML-specific errors."""
-        message_lower = message.lower()
-        
         # Check for indentation errors
         for pattern in self.yaml_error_patterns["indentation"]:
             if re.search(pattern, message, re.IGNORECASE):
@@ -599,7 +597,6 @@ class YAMLJSONPatchGenerator:
         """
         root_cause = analysis.get("root_cause", "")
         file_type = analysis.get("file_type", "")
-        framework = analysis.get("framework", "")
         
         # Map root causes to patch strategies
         patch_strategies = {
@@ -895,7 +892,6 @@ class YAMLJSONPatchGenerator:
                             content: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
         root_cause = analysis.get("root_cause", "")
-        file_type = analysis.get("file_type", "")
         
         # Map root causes to template names
         template_map = {

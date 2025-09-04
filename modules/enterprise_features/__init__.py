@@ -149,7 +149,6 @@ class EnterpriseFeatures:
         # Check SLA Monitoring
         if self.sla_monitoring:
             status['enabled_features'].append('sla_monitoring')
-            sla_status = self.sla_monitoring.get_sla_status()
             status['component_status']['sla_monitoring'] = {
                 'enabled': True,
                 'active_slas': len(self.sla_monitoring.sla_definitions),

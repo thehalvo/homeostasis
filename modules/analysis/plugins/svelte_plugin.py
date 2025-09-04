@@ -205,9 +205,8 @@ class SvelteExceptionHandler:
     
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
-        error_type = error_data.get("error_type", "Error")
         message = error_data.get("message", "").lower()
-        
+
         # Basic categorization based on error patterns
         if "reactive" in message or "$:" in message:
             category = "reactivity"
@@ -269,8 +268,8 @@ class SvelteExceptionHandler:
         
         # If we got a good match from rules, return it
         if (analysis.get("subcategory") == "reactivity" and 
-            analysis.get("confidence") in ["high", "medium"] and
-            analysis.get("rule_id") != "svelte_generic_handler"):
+                analysis.get("confidence") in ["high", "medium"] and
+                analysis.get("rule_id") != "svelte_generic_handler"):
             return analysis
         
         # Fallback to hardcoded patterns for backward compatibility
@@ -349,7 +348,6 @@ class SvelteExceptionHandler:
             Analysis results with store-specific fixes
         """
         message = error_data.get("message", "").lower()
-        stack_trace = str(error_data.get("stack_trace", "")).lower()
         
         # Store specific error patterns
         store_patterns = {
@@ -990,12 +988,10 @@ class SvelteLanguagePlugin(LanguagePlugin):
             else:
                 standard_error = error_data
             
-            message = standard_error.get("message", "").lower()
-            
             # Check if it's a reactivity error
             if self._is_reactivity_error(standard_error):
                 analysis = self.exception_handler.analyze_reactivity_error(standard_error)
-            
+
             # Check if it's a store error
             elif self._is_store_error(standard_error):
                 analysis = self.exception_handler.analyze_store_error(standard_error)

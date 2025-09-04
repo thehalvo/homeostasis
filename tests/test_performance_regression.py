@@ -306,9 +306,6 @@ items = [
             # Simulate complex analysis
             time.sleep(0.01)  # Simulate processing time
             
-            # Analyze context
-            needs_conversion = "int" in complex_case["error"]["message"]
-            
             # Generate patch
             patch = {
                 "original_line": "total = total + item['price']",
@@ -546,7 +543,7 @@ class TestRegressionReporting:
         
         # The benchmark should raise AssertionError for critical regressions
         with pytest.raises(AssertionError) as exc_info:
-            result = self.tester.benchmark(slow_operation, test_name, iterations=3)
+            self.tester.benchmark(slow_operation, test_name, iterations=3)
         
         # Verify the regression was detected
         assert "Performance regression detected" in str(exc_info.value)

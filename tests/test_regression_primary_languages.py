@@ -325,7 +325,6 @@ class TestJavaRegressions:
         """Mock analyze_error for Java errors."""
         error_type = error_data.get("error_type", "")
         message = error_data.get("message", "")
-        context = error_data.get("context", "")
         
         # Handle lambda type inference
         if error_type == "CompilationError" and "lambda" in message:
@@ -447,7 +446,6 @@ class TestCppRegressions:
     
     def _mock_analyze_error(self, error_data):
         """Mock analyze_error for C++ errors."""
-        error_type = error_data.get("error_type", "")
         message = error_data.get("message", "")
         
         # Handle template dependent name
@@ -567,7 +565,6 @@ class TestGoRegressions:
     
     def _mock_analyze_error(self, error_data):
         """Mock analyze_error for Go errors."""
-        error_type = error_data.get("error_type", "")
         message = error_data.get("message", "")
         
         # Handle interface nil comparison
@@ -807,7 +804,6 @@ class TestFrameworkSpecificRegressions:
         """Mock analyze_error for framework-specific errors."""
         framework = error_data.get("framework", "")
         message = error_data.get("message", "")
-        error_type = error_data.get("error_type", "")
         
         # Django middleware ordering
         if framework == "django" and "middleware" in message.lower():

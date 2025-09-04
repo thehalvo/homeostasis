@@ -703,7 +703,6 @@ class FixImprovement:
             }
             
         # Split by success/failure
-        success_metrics = [m for m in template_metrics if m.get("success", False)]
         failure_metrics = [m for m in template_metrics if not m.get("success", False)]
         
         # Identify common patterns in failures

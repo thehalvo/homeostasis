@@ -172,11 +172,9 @@ class BashExceptionHandler:
         Returns:
             Analysis results with categorization and fix suggestions
         """
-        error_type = error_data.get("error_type", "ShellError")
         message = error_data.get("message", "")
         exit_code = error_data.get("exit_code", 0)
         command = error_data.get("command", "")
-        shell_type = error_data.get("shell_type", "bash")
         
         # Analyze based on error patterns
         analysis = self._analyze_by_patterns(message, exit_code, command)
@@ -211,7 +209,6 @@ class BashExceptionHandler:
     
     def _analyze_by_patterns(self, message: str, exit_code: int, command: str) -> Dict[str, Any]:
         """Analyze error by matching against common patterns."""
-        message_lower = message.lower()
         
         # Check syntax errors
         for pattern in self.error_patterns["syntax_error"]:
@@ -468,7 +465,6 @@ class BashPatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        shell_type = analysis.get("shell_type", "bash")
         
         # Map root causes to patch strategies
         patch_strategies = {
@@ -693,7 +689,6 @@ class BashPatchGenerator:
     def _fix_permission_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                              script_content: str) -> Optional[Dict[str, Any]]:
         """Fix permission-related errors."""
-        message = error_data.get("message", "")
         
         return {
             "type": "suggestion",

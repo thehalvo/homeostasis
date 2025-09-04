@@ -78,10 +78,10 @@ class UnityErrorAdapter:
         
         # Unity stack trace patterns
         patterns = [
-            r'([^:]+\.cs):(\d+)',           # file.cs:line
-            r'at ([^:]+\.cs):(\d+)',        # at file.cs:line
-            r'([^:]+\.cs)\(at line (\d+)\)', # file.cs(at line number)
-            r'UnityEngine\.Debug:Log.*\n.*([^:]+\.cs):(\d+)', # Debug.Log followed by file:line
+            r'([^:]+\.cs):(\d+)',  # file.cs:line
+            r'at ([^:]+\.cs):(\d+)',  # at file.cs:line
+            r'([^:]+\.cs)\(at line (\d+)\)',  # file.cs(at line number)
+            r'UnityEngine\.Debug:Log.*\n.*([^:]+\.cs):(\d+)',  # Debug.Log followed by file:line
         ]
         
         for pattern in patterns:
@@ -1345,12 +1345,11 @@ class UnityLanguagePlugin(LanguagePlugin):
             else:
                 standard_error = error_data
             
-            message = (standard_error.get("message") or "").lower()
-            context = standard_error.get("context", {})
-            
             # Check if it's a mobile build error
             if self._is_mobile_build_error(standard_error):
-                analysis = self.exception_handler.analyze_mobile_build_error(standard_error)
+                analysis = self.exception_handler.analyze_mobile_build_error(
+                    standard_error
+                )
             
             # Check if it's a Unity scripting error
             elif self._is_scripting_error(standard_error):

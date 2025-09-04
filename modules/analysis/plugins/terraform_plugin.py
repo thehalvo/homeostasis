@@ -220,7 +220,6 @@ class TerraformExceptionHandler:
         Returns:
             Analysis results with categorization and fix suggestions
         """
-        error_type = error_data.get("error_type", "TerraformError")
         message = error_data.get("message", "")
         command = error_data.get("command", "")
         exit_code = error_data.get("exit_code", 0)
@@ -312,8 +311,6 @@ class TerraformExceptionHandler:
     
     def _analyze_by_patterns(self, message: str, command: str, provider: str) -> Dict[str, Any]:
         """Analyze error by matching against common patterns."""
-        message_lower = message.lower()
-        
         # Check syntax errors
         for pattern in self.terraform_error_patterns["syntax_error"]:
             if re.search(pattern, message, re.IGNORECASE):
@@ -636,7 +633,6 @@ class TerraformPatchGenerator:
         """
         root_cause = analysis.get("root_cause", "")
         provider = analysis.get("provider", "")
-        command = analysis.get("command", "")
         
         # Map root causes to patch strategies
         patch_strategies = {
@@ -759,7 +755,6 @@ class TerraformPatchGenerator:
                            config_content: str) -> Optional[Dict[str, Any]]:
         """Fix Terraform provider configuration errors."""
         provider = analysis.get("provider", "")
-        message = error_data.get("message", "")
         
         if provider == "aws":
             fixes = [

@@ -518,9 +518,6 @@ class ModernizationAnalyzer:
         
     def _analyze_dependencies(self, components: List[LegacyComponent]):
         """Analyze dependencies between components."""
-        # Build dependency map
-        component_map = {c.name: c for c in components}
-        
         for component in components:
             for interface in component.interfaces:
                 if interface.startswith("CALL:"):
@@ -618,10 +615,8 @@ class ModernizationAnalyzer:
         if component.language in self._technology_mappings:
             mapping = self._technology_mappings[component.language]
             target_tech = mapping["target_languages"][0]
-            patterns = mapping.get("patterns", {})
         else:
             target_tech = "Java"  # Default
-            patterns = {}
             
         # Create phases based on component type
         phases = self._create_phases(component, strategy)

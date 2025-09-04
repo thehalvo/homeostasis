@@ -570,7 +570,7 @@ class SAMLAuthenticationManager:
             if not roles:
                 roles = ['user']  # Default role
             
-            user_id = self.user_management.create_user(
+            self.user_management.create_user(
                 username=username,
                 email=email,
                 roles=roles,

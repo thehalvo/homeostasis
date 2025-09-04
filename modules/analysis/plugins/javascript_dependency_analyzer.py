@@ -113,7 +113,6 @@ class JavaScriptDependencyAnalyzer:
             Analysis results with fix suggestions
         """
         error_message = error_data.get("message", "")
-        error_type = error_data.get("error_type", "")
         
         # Module not found errors
         if "Cannot find module" in error_message:

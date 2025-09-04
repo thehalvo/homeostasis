@@ -530,8 +530,6 @@ async def run_integration_tests(test_dir: Path = None, languages: List[str] = No
 
 if __name__ == "__main__":
     # Run all integration tests
-    import sys
-    
     languages = sys.argv[1:] if len(sys.argv) > 1 else None
     report = asyncio.run(run_integration_tests(languages=languages))
     

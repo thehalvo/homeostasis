@@ -513,7 +513,7 @@ class EnhancedMultiRegionFailover:
             
             # Phase 5: Execute base failover
             for target_region in decision.to_regions:
-                event = await self.base_strategy.failover_orchestrators[
+                await self.base_strategy.failover_orchestrators[
                     list(self.base_strategy.policies.keys())[0]
                 ].execute_failover(
                     decision.from_region,

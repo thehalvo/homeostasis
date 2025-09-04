@@ -322,7 +322,7 @@ class IoTPlugin(LanguagePlugin):
         
         return issues
     
-    def analyze_error(self, error_message: str, code_context: str,
+    def analyze_error_detailed(self, error_message: str, code_context: str,
                      file_path: str = None, device_metrics: Optional[Dict] = None) -> Optional[Dict[str, Any]]:
         """Analyze IoT error and suggest fixes"""
         # Convert metrics dict to DeviceMetrics if provided
@@ -369,7 +369,7 @@ class IoTPlugin(LanguagePlugin):
         
         return result
     
-    def generate_fix(self, error_analysis: Dict[str, Any],
+    def generate_fix_code(self, error_analysis: Dict[str, Any],
                     code_context: str) -> Optional[str]:
         """Generate fix code for IoT error"""
         if not error_analysis or "healing_strategies" not in error_analysis:

@@ -285,9 +285,8 @@ class ReactNativeExceptionHandler:
     
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
-        error_type = error_data.get("error_type", "Error")
         message = error_data.get("message", "").lower()
-        
+
         # Basic categorization based on error patterns
         if "native" in message and "module" in message:
             category = "native_modules"
@@ -929,11 +928,11 @@ class ReactNativeLanguagePlugin(LanguagePlugin):
             else:
                 standard_error = error_data
             
-            message = standard_error.get("message", "").lower()
-            
             # Check if it's a native module error
             if self._is_native_module_error(standard_error):
-                analysis = self.exception_handler.analyze_native_module_error(standard_error)
+                analysis = self.exception_handler.analyze_native_module_error(
+                    standard_error
+                )
             
             # Check if it's a Metro bundler error
             elif self._is_metro_error(standard_error):

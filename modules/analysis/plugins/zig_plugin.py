@@ -232,8 +232,6 @@ class ZigExceptionHandler:
     
     def _analyze_by_patterns(self, message: str, file_path: str) -> Dict[str, Any]:
         """Analyze error by matching against common patterns."""
-        message_lower = message.lower()
-        
         # Check type errors first (more specific) - must be before syntax check
         for pattern in self.zig_error_patterns["type_error"]:
             if re.search(pattern, message, re.IGNORECASE):
@@ -519,7 +517,6 @@ class ZigPatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        subcategory = analysis.get("subcategory", "")
         
         # Map root causes to patch strategies
         patch_strategies = {
@@ -870,7 +867,6 @@ class ZigPatchGenerator:
                             source_code: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
         root_cause = analysis.get("root_cause", "")
-        subcategory = analysis.get("subcategory", "")
         
         # Map root causes to template names
         template_map = {

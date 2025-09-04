@@ -70,7 +70,6 @@ function processItems(items) {
         
         # Create error context
         analysis = test_case['analysis']
-        source_code = test_case['source_code']
         
         # Generate patch
         patch = generator.generate_patch_from_analysis(analysis)
@@ -356,29 +355,6 @@ def test_integration():
         'root_cause': 'null_reference_in_template',
         'confidence': 0.85
     }
-    
-    source_code = '''
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
-from .models import BlogPost
-
-def blog_detail(request, post_id):
-    """Display blog post details."""
-    try:
-        post = BlogPost.objects.get(id=post_id)
-    except BlogPost.DoesNotExist:
-        post = None
-    
-    # Error occurs here when post is None
-    title = post.title.upper()
-    
-    context = {
-        'post': post,
-        'title': title
-    }
-    
-    return render(request, 'blog/detail.html', context)
-'''
     
     print("Testing full integration with Django error...")
     print("Source error: AttributeError on None object")

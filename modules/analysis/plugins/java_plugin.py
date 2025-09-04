@@ -144,7 +144,7 @@ class JavaExceptionHandler:
                     
                     # Special case: IllegalMonitorStateException with deadlock message
                     if (rule.get("id") == "java_illegal_monitor_state" and 
-                        "deadlock" in message.lower()):
+                            "deadlock" in message.lower()):
                         result["severity"] = "critical"
                         result["root_cause"] = "java_deadlock"
                     

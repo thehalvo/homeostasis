@@ -67,7 +67,11 @@ class RExceptionHandler:
                 r"invalid type",
                 r"cannot coerce",
                 r"is not subsettable",
-                r"attempt to apply non-function"
+                r"attempt to apply non-function",
+                r"invalid.*type",
+                r"invalid.*coercion",
+                r"wrong type.*argument",
+                r"non-conformable.*types"
             ],
             "data_error": [
                 r"replacement has.*rows",
@@ -145,14 +149,6 @@ class RExceptionHandler:
                 r"out of memory",
                 r"R.*memory",
                 r"allocation.*failed"
-            ],
-            "type_error": [
-                r"invalid.*type",
-                r"non-numeric argument",
-                r"invalid.*coercion",
-                r"cannot coerce",
-                r"wrong type.*argument",
-                r"non-conformable.*types"
             ]
         }
         
@@ -230,7 +226,6 @@ class RExceptionHandler:
         Returns:
             Analysis results with categorization and fix suggestions
         """
-        error_type = error_data.get("error_type", "RError")
         message = error_data.get("message", "")
         file_path = error_data.get("file_path", "")
         line_number = error_data.get("line_number", 0)
@@ -337,8 +332,6 @@ class RExceptionHandler:
     
     def _analyze_by_patterns(self, message: str, file_path: str) -> Dict[str, Any]:
         """Analyze error by matching against common patterns."""
-        message_lower = message.lower()
-        
         # Check syntax errors
         for pattern in self.r_error_patterns["syntax_error"]:
             if re.search(pattern, message, re.IGNORECASE):
@@ -709,7 +702,6 @@ class RPatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        subcategory = analysis.get("subcategory", "")
         
         # Map root causes to patch strategies
         patch_strategies = {
@@ -1322,7 +1314,6 @@ class RPatchGenerator:
                             source_code: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
         root_cause = analysis.get("root_cause", "")
-        subcategory = analysis.get("subcategory", "")
         
         # Map root causes to template names
         template_map = {

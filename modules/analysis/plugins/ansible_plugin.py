@@ -72,7 +72,10 @@ class AnsibleExceptionHandler:
                 r"template error while templating string",
                 r"jinja2.*error",
                 r"template syntax error",
-                r"expected token.*got"
+                r"expected token.*got",
+                r"TemplateSyntaxError:",
+                r"UndefinedError:",
+                r"unable to locate .* in expected paths"
             ],
             "inventory_error": [
                 r"Could not match supplied host pattern",
@@ -100,12 +103,6 @@ class AnsibleExceptionHandler:
                 r"sudo: no tty present",
                 r"is not in the sudoers file",
                 r"incorrect password attempts"
-            ],
-            "template_error": [
-                r"TemplateSyntaxError:",
-                r"UndefinedError:",
-                r"template error while templating string",
-                r"unable to locate .* in expected paths"
             ]
         }
         

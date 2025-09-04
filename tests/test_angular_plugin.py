@@ -434,6 +434,7 @@ class TestAngularIntegration:
         incomplete_analysis = {"category": "angular"}
         fix = self.plugin.generate_fix(malformed_error, incomplete_analysis, "")
         # Should not crash, may return None
+        assert fix is None or isinstance(fix, dict)
 
 
 if __name__ == "__main__":

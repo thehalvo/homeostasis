@@ -243,7 +243,6 @@ class ServiceNowConnector(ITSMConnector):
             response.raise_for_status()
             
             result = response.json()
-            incident_id = result['result']['sys_id']
             incident_number = result['result']['number']
             
             logger.info(f"Created ServiceNow incident: {incident_number}")
@@ -320,7 +319,6 @@ class ServiceNowConnector(ITSMConnector):
             response.raise_for_status()
             
             result = response.json()
-            change_id = result['result']['sys_id']
             change_number = result['result']['number']
             
             logger.info(f"Created ServiceNow change request: {change_number}")

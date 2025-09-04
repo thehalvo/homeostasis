@@ -448,11 +448,11 @@ class ContextualThresholds:
         """Get recommendations for threshold adjustments by group."""
         recommendations = []
         
-        for group_name, stats in self.group_performance.items():
-            if stats['total'] < 10:
+        for group_name, group_stats in self.group_performance.items():
+            if group_stats['total'] < 10:
                 continue
             
-            success_rate = stats['success_rate']
+            success_rate = group_stats['success_rate']
             
             if success_rate < 0.5:
                 recommendations.append({
@@ -461,7 +461,7 @@ class ContextualThresholds:
                     'reason': f"Low success rate ({success_rate:.1%})",
                     'suggested_adjustment': 0.1
                 })
-            elif success_rate > 0.9 and stats['total'] > 50:
+            elif success_rate > 0.9 and group_stats['total'] > 50:
                 recommendations.append({
                     'group': group_name,
                     'action': 'decrease_thresholds',

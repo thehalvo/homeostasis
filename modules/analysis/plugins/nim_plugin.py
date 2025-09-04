@@ -195,7 +195,6 @@ class NimExceptionHandler:
         Returns:
             Analysis results with categorization and fix suggestions
         """
-        error_type = error_data.get("error_type", "NimError")
         message = error_data.get("message", "")
         file_path = error_data.get("file_path", "")
         line_number = error_data.get("line_number", 0)
@@ -266,8 +265,6 @@ class NimExceptionHandler:
     
     def _analyze_by_patterns(self, message: str, file_path: str) -> Dict[str, Any]:
         """Analyze error by matching against common patterns."""
-        message_lower = message.lower()
-        
         # Check syntax errors
         for pattern in self.nim_error_patterns["syntax_error"]:
             if re.search(pattern, message, re.IGNORECASE):
@@ -590,7 +587,6 @@ class NimPatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        subcategory = analysis.get("subcategory", "")
         
         # Map root causes to patch strategies
         patch_strategies = {
@@ -1057,8 +1053,6 @@ class NimPatchGenerator:
     def _fix_pragma_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
                          source_code: str) -> Optional[Dict[str, Any]]:
         """Fix pragma errors."""
-        message = error_data.get("message", "")
-        
         return {
             "type": "suggestion",
             "description": "Pragma error",
@@ -1074,7 +1068,6 @@ class NimPatchGenerator:
                             source_code: str) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
         root_cause = analysis.get("root_cause", "")
-        subcategory = analysis.get("subcategory", "")
         
         # Map root causes to template names
         template_map = {
