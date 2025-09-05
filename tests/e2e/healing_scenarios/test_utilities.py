@@ -7,7 +7,6 @@ processes, and validating successful remediation.
 import asyncio
 import re
 import shutil
-import sys
 import tempfile
 import time
 from dataclasses import dataclass, field
@@ -18,10 +17,6 @@ from typing import Dict, List, Optional, Any, Callable
 import pytest
 import requests
 import yaml
-
-# Add project root to path
-project_root = Path(__file__).parent.parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from modules.monitoring.logger import MonitoringLogger
 from modules.monitoring.extractor import get_latest_errors
@@ -605,7 +600,7 @@ def check_service_healthy(environment: Optional[TestEnvironment] = None) -> bool
     try:
         response = requests.get(f"http://localhost:{port}/health", timeout=5)
         return response.status_code == 200
-    except:
+    except Exception:
         return False
         
 
@@ -615,7 +610,7 @@ def check_error_fixed(environment: Optional[TestEnvironment] = None) -> bool:
     try:
         response = requests.get(f"http://localhost:{port}/error", timeout=5)
         return response.status_code != 500
-    except:
+    except Exception:
         return True  # If endpoint was removed, consider it fixed
         
 

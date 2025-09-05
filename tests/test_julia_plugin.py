@@ -174,11 +174,11 @@ class TestJuliaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -193,11 +193,11 @@ class TestJuliaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower() or "method" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower() or "method" in type_patch["description"].lower()
     
     def test_generate_bounds_fix(self):
         """Test generation of bounds fixes."""
@@ -212,11 +212,11 @@ class TestJuliaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        bounds_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "bounds" in patch["description"].lower() or "index" in patch["description"].lower()
+        assert bounds_patch is not None
+        assert bounds_patch["type"] == "suggestion"
+        assert "bounds" in bounds_patch["description"].lower() or "index" in bounds_patch["description"].lower()
     
     def test_generate_undefined_fix(self):
         """Test generation of undefined variable fixes."""
@@ -231,11 +231,11 @@ class TestJuliaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        undefined_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "undefined" in patch["description"].lower() or "variable" in patch["description"].lower()
+        assert undefined_patch is not None
+        assert undefined_patch["type"] == "suggestion"
+        assert "undefined" in undefined_patch["description"].lower() or "variable" in undefined_patch["description"].lower()
     
     def test_generate_import_fix(self):
         """Test generation of import fixes."""
@@ -250,11 +250,11 @@ class TestJuliaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        import_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "package" in patch["description"].lower() or "import" in patch["description"].lower()
+        assert import_patch is not None
+        assert import_patch["type"] == "suggestion"
+        assert "package" in import_patch["description"].lower() or "import" in import_patch["description"].lower()
     
     def test_generate_dispatch_fix(self):
         """Test generation of dispatch fixes."""
@@ -269,11 +269,11 @@ class TestJuliaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        dispatch_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "method" in patch["description"].lower() or "dispatch" in patch["description"].lower()
+        assert dispatch_patch is not None
+        assert dispatch_patch["type"] == "suggestion"
+        assert "method" in dispatch_patch["description"].lower() or "dispatch" in dispatch_patch["description"].lower()
     
     def test_generate_macro_fix(self):
         """Test generation of macro fixes."""
@@ -288,11 +288,11 @@ class TestJuliaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        macro_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "macro" in patch["description"].lower()
+        assert macro_patch is not None
+        assert macro_patch["type"] == "suggestion"
+        assert "macro" in macro_patch["description"].lower()
 
 
 class TestJuliaLanguagePlugin:

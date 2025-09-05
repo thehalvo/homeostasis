@@ -174,11 +174,11 @@ class TestMatlabPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_undefined_fix(self):
         """Test generation of undefined variable/function fixes."""
@@ -193,11 +193,11 @@ class TestMatlabPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        undefined_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "undefined" in patch["description"].lower() or "variable" in patch["description"].lower()
+        assert undefined_patch is not None
+        assert undefined_patch["type"] == "suggestion"
+        assert "undefined" in undefined_patch["description"].lower() or "variable" in undefined_patch["description"].lower()
     
     def test_generate_dimension_fix(self):
         """Test generation of dimension mismatch fixes."""
@@ -212,11 +212,11 @@ class TestMatlabPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        dimension_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "dimension" in patch["description"].lower() or "matrix" in patch["description"].lower()
+        assert dimension_patch is not None
+        assert dimension_patch["type"] == "suggestion"
+        assert "dimension" in dimension_patch["description"].lower() or "matrix" in dimension_patch["description"].lower()
     
     def test_generate_index_fix(self):
         """Test generation of index fixes."""
@@ -231,11 +231,11 @@ class TestMatlabPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        index_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "index" in patch["description"].lower()
+        assert index_patch is not None
+        assert index_patch["type"] == "suggestion"
+        assert "index" in index_patch["description"].lower()
     
     def test_generate_file_fix(self):
         """Test generation of file I/O fixes."""
@@ -250,11 +250,11 @@ class TestMatlabPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        file_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "file" in patch["description"].lower()
+        assert file_patch is not None
+        assert file_patch["type"] == "suggestion"
+        assert "file" in file_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -269,11 +269,11 @@ class TestMatlabPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower() or "conversion" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower() or "conversion" in type_patch["description"].lower()
     
     def test_generate_toolbox_fix(self):
         """Test generation of toolbox/license fixes."""
@@ -288,11 +288,11 @@ class TestMatlabPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        toolbox_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "toolbox" in patch["description"].lower() or "license" in patch["description"].lower()
+        assert toolbox_patch is not None
+        assert toolbox_patch["type"] == "suggestion"
+        assert "toolbox" in toolbox_patch["description"].lower() or "license" in toolbox_patch["description"].lower()
 
 
 class TestMatlabLanguagePlugin:

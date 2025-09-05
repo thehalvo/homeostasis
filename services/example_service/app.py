@@ -5,10 +5,6 @@ from typing import List, Optional, Dict
 import uvicorn
 import uuid
 import os
-import sys
-
-# Add project root to sys.path for imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 # Import the monitoring module
 from modules.monitoring.logger import MonitoringLogger
@@ -27,6 +23,8 @@ logger = MonitoringLogger("example_service")
 add_logging_middleware(app, "example_service")
 
 # Add exception handler
+
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     """Global exception handler to log all unhandled exceptions."""

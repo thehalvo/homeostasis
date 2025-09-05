@@ -108,7 +108,7 @@ class PerformanceTracker:
             try:
                 cpu_percent = self.process.cpu_percent(interval=0.1)
                 self.cpu_samples.append(cpu_percent)
-            except:
+            except Exception:
                 pass
             time.sleep(0.1)
 
@@ -374,7 +374,7 @@ class PerformanceRegressionTester:
                 check=True
             )
             return result.stdout.strip()[:8]
-        except:
+        except Exception:
             return "unknown"
     
     def _get_environment(self) -> Dict[str, Any]:

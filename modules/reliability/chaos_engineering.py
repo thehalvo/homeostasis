@@ -752,6 +752,8 @@ def create_resource_chaos_experiment() -> ChaosExperiment:
     )
 
 # Simplified classes for testing compatibility
+
+
 class ChaosExperiment:
     """Simplified chaos experiment for testing."""
     def __init__(self, name, description, hypothesis, fault_type, target_service, 
@@ -796,6 +798,7 @@ class ChaosEngineer:
         class ChaosContext:
             async def __aenter__(self):
                 return self
+            
             async def __aexit__(self, exc_type, exc_val, exc_tb):
                 return False
         return ChaosContext()

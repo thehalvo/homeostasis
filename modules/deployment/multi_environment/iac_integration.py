@@ -571,7 +571,7 @@ class HelmProvider(IaCProvider):
         try:
             await self._run_command(["status", release_name, "-n", namespace])
             return True
-        except:
+        except Exception:
             return False
 
 

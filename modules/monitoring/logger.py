@@ -205,7 +205,7 @@ class MonitoringLogger:
                 for key, value in frame.f_locals.items():
                     # Skip large objects and potentially sensitive data
                     if (key.startswith('__') or 
-                        any(sensitive in key.lower() for sensitive in ['password', 'secret', 'token', 'key', 'credential'])):
+                            any(sensitive in key.lower() for sensitive in ['password', 'secret', 'token', 'key', 'credential'])):
                         continue
                     
                     try:
@@ -225,9 +225,9 @@ class MonitoringLogger:
                 for key, value in frame.f_globals.items():
                     # Skip large objects, modules, functions, and potentially sensitive data
                     if (key.startswith('__') or 
-                        any(sensitive in key.lower() for sensitive in ['password', 'secret', 'token', 'key', 'credential']) or
-                        callable(value) or  # Skip functions
-                        'module' in str(type(value)).lower()):  # Skip modules
+                            any(sensitive in key.lower() for sensitive in ['password', 'secret', 'token', 'key', 'credential']) or
+                            callable(value) or  # Skip functions
+                            'module' in str(type(value)).lower()):  # Skip modules
                         continue
                     
                     try:

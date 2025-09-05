@@ -17,6 +17,7 @@ from modules.security.audit import get_audit_logger
 
 logger = logging.getLogger(__name__)
 
+
 class KubernetesDeployment:
     """
     Manages Kubernetes deployments for Homeostasis.
@@ -795,6 +796,7 @@ spec:
 
 # Singleton instance
 _kubernetes_deployment = None
+
 
 def get_kubernetes_deployment(config: Dict[str, Any] = None) -> KubernetesDeployment:
     """Get or create the singleton KubernetesDeployment instance.

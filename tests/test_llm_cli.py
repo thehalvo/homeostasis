@@ -12,6 +12,7 @@ from unittest import mock
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
+
 def test_api_key_manager():
     """Test the API key manager functionality."""
     from modules.llm_integration.api_key_manager import APIKeyManager

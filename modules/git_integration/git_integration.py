@@ -7,15 +7,11 @@ commit analysis, and commit security.
 """
 
 import os
-import sys
 import json
 import yaml
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 from datetime import datetime
-
-# Add the homeostasis modules to the path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from modules.monitoring.logger import HomeostasisLogger
 from .pre_commit_hooks import PreCommitHooks

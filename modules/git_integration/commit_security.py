@@ -6,7 +6,6 @@ of commit authenticity to maintain a secure audit trail for automated changes.
 """
 
 import os
-import sys
 import json
 import subprocess
 import tempfile
@@ -15,9 +14,6 @@ from pathlib import Path
 from datetime import datetime
 import hashlib
 import hmac
-
-# Add the homeostasis modules to the path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from modules.monitoring.logger import HomeostasisLogger
 

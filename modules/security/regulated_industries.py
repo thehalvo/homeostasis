@@ -2023,6 +2023,7 @@ class RegulatedIndustriesSupport:
 # Singleton instance
 _regulated_industries = None
 
+
 def get_regulated_industries(config: Dict = None) -> RegulatedIndustriesSupport:
     """Get or create the singleton RegulatedIndustriesSupport instance."""
     global _regulated_industries

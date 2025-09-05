@@ -174,11 +174,11 @@ class TestBashPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_command_fix(self):
         """Test generation of command fixes."""
@@ -193,11 +193,11 @@ class TestBashPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        command_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "command" in patch["description"].lower()
+        assert command_patch is not None
+        assert command_patch["type"] == "suggestion"
+        assert "command" in command_patch["description"].lower()
     
     def test_generate_variable_fix(self):
         """Test generation of variable fixes."""
@@ -212,11 +212,11 @@ class TestBashPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        variable_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "variable" in patch["description"].lower()
+        assert variable_patch is not None
+        assert variable_patch["type"] == "suggestion"
+        assert "variable" in variable_patch["description"].lower()
     
     def test_generate_permission_fix(self):
         """Test generation of permission fixes."""
@@ -231,11 +231,11 @@ class TestBashPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        permission_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "permission" in patch["description"].lower() or "chmod" in patch["description"].lower()
+        assert permission_patch is not None
+        assert permission_patch["type"] == "suggestion"
+        assert "permission" in permission_patch["description"].lower() or "chmod" in permission_patch["description"].lower()
     
     def test_generate_file_fix(self):
         """Test generation of file fixes."""
@@ -250,11 +250,11 @@ class TestBashPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        file_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "file" in patch["description"].lower() or "directory" in patch["description"].lower()
+        assert file_patch is not None
+        assert file_patch["type"] == "suggestion"
+        assert "file" in file_patch["description"].lower() or "directory" in file_patch["description"].lower()
     
     def test_generate_expansion_fix(self):
         """Test generation of expansion fixes."""
@@ -269,11 +269,11 @@ class TestBashPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        expansion_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "substitution" in patch["description"].lower() or "expansion" in patch["description"].lower()
+        assert expansion_patch is not None
+        assert expansion_patch["type"] == "suggestion"
+        assert "substitution" in expansion_patch["description"].lower() or "expansion" in expansion_patch["description"].lower()
     
     def test_generate_pipe_fix(self):
         """Test generation of pipe fixes."""
@@ -288,11 +288,11 @@ class TestBashPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        pipe_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "pipe" in patch["description"].lower()
+        assert pipe_patch is not None
+        assert pipe_patch["type"] == "suggestion"
+        assert "pipe" in pipe_patch["description"].lower()
 
 
 class TestBashLanguagePlugin:

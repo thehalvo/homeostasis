@@ -6,15 +6,11 @@ orchestrator, enabling automated testing, validation, and metrics collection for
 cross-language error handling and fixes.
 """
 import os
-import sys
 import logging
 import re
 import time
 from pathlib import Path
 from typing import Dict, Any, Optional, Tuple, Union
-
-# Add project root to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Import orchestrator
 from orchestrator.orchestrator import Orchestrator
@@ -294,8 +290,8 @@ class BackendTestingManager:
                 "cross_fixes": {
                     "total": suite_cross_fixes,
                     "successful": suite_successful_cf,
-                    "success_percentage": (suite_successful_cf / suite_cross_fixes * 100) 
-                                        if suite_cross_fixes > 0 else 0,
+                    "success_percentage": (suite_successful_cf / suite_cross_fixes * 100
+                                           if suite_cross_fixes > 0 else 0),
                     "details": cross_results["cross_suggestion_tests"]
                 },
                 "pattern_detection": {
@@ -314,15 +310,15 @@ class BackendTestingManager:
             "cross_fixes": {
                 "total": total_cross_fixes,
                 "successful": successful_cross_fixes,
-                "success_percentage": (successful_cross_fixes / total_cross_fixes * 100) 
-                                    if total_cross_fixes > 0 else 0
+                "success_percentage": (successful_cross_fixes / total_cross_fixes * 100
+                                       if total_cross_fixes > 0 else 0)
             },
             "execution_time": time.time() - start_time
         }
         
-        logger.info(f"Cross-language summary: " 
-                  f"{successful_conversions}/{total_conversions} successful conversions, "
-                  f"{successful_cross_fixes}/{total_cross_fixes} successful cross-language fixes")
+        logger.info(f"Cross-language summary: "
+                    f"{successful_conversions}/{total_conversions} successful conversions, "
+                    f"{successful_cross_fixes}/{total_cross_fixes} successful cross-language fixes")
         
         return results
     

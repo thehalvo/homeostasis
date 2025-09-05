@@ -1030,9 +1030,9 @@ class SplunkAdapter(MonitoringAdapter):
         # Common dimension fields
         dimension_fields = ['host', 'source', 'sourcetype', 'index']
         
-        for field in dimension_fields:
-            if field in result:
-                dimensions[field] = result[field]
+        for field_name in dimension_fields:
+            if field_name in result:
+                dimensions[field_name] = result[field_name]
         
         # Extract custom dimensions (fields starting with dim_)
         for key, value in result.items():
@@ -1131,9 +1131,9 @@ class ElasticAdapter(MonitoringAdapter):
                 })
             
             # Add additional filters
-            for field, value in query.get('filters', {}).items():
+            for field_name, value in query.get('filters', {}).items():
                 es_query["query"]["bool"]["must"].append({
-                    "match": {field: value}
+                    "match": {field_name: value}
                 })
             
             url = f"{self.base_url}/{index}/_search"
@@ -1240,9 +1240,9 @@ class ElasticAdapter(MonitoringAdapter):
             }
             
             # Add filters
-            for field, value in filters.get('filters', {}).items():
+            for field_name, value in filters.get('filters', {}).items():
                 query["query"]["bool"]["must"].append({
-                    "match": {field: value}
+                    "match": {field_name: value}
                 })
             
             url = f"{self.base_url}/{index}/_search"
@@ -1379,9 +1379,9 @@ class ElasticAdapter(MonitoringAdapter):
         tag_fields = ['host.name', 'service.name', 'environment', 
                      'agent.name', 'cloud.provider', 'cloud.region']
         
-        for field in tag_fields:
+        for field_name in tag_fields:
             value = source
-            for part in field.split('.'):
+            for part in field_name.split('.'):
                 if isinstance(value, dict) and part in value:
                     value = value[part]
                 else:
@@ -1389,7 +1389,7 @@ class ElasticAdapter(MonitoringAdapter):
                     break
             
             if value:
-                tags[field.replace('.', '_')] = str(value)
+                tags[field_name.replace('.', '_')] = str(value)
         
         # Add custom tags if present
         if 'tags' in source:
@@ -1717,9 +1717,9 @@ class NewRelicAdapter(MonitoringAdapter):
         tag_fields = ['appName', 'host', 'entityName', 'entityType', 
                      'environment', 'service', 'cluster']
         
-        for field in tag_fields:
-            if field in result and result[field]:
-                tags[field] = str(result[field])
+        for field_name in tag_fields:
+            if field_name in result and result[field_name]:
+                tags[field_name] = str(result[field_name])
         
         return tags
     

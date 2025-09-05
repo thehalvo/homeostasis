@@ -1094,6 +1094,7 @@ class TelemetryRuleEnhancementSystem:
 # Singleton instance
 _telemetry_system = None
 
+
 def get_telemetry_system(config: Dict[str, Any] = None) -> TelemetryRuleEnhancementSystem:
     """
     Get or create the singleton TelemetryRuleEnhancementSystem instance.

@@ -18,11 +18,11 @@ from typing import List, Dict, Any
 # Add parent directories to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from tests.integration.language_integration_framework import (
+from tests.integration.language_integration_framework import (  # noqa: E402
     IntegrationTestOrchestrator,
     IntegrationTestResult
 )
-from tests.integration.language_runners import LANGUAGE_RUNNERS
+from tests.integration.language_runners import LANGUAGE_RUNNERS  # noqa: E402
 
 # Configure logging
 logging.basicConfig(
@@ -140,7 +140,7 @@ class ComprehensiveTestRunner:
         # Category statistics
         category_stats = {}
         for category, languages in LANGUAGE_CATEGORIES.items():
-            category_languages = [l for l in languages if l in self.results]
+            category_languages = [lang for lang in languages if lang in self.results]
             if category_languages:
                 category_results = []
                 for lang in category_languages:

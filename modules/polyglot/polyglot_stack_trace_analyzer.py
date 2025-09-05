@@ -476,8 +476,8 @@ class PolyglotStackTraceAnalyzer:
                 ],
                 'causality_chain': correlated_trace.causality_chain,
                 'languages': list(correlated_trace.languages_involved),
-                'root_cause': self._frame_to_dict(correlated_trace.root_cause_frame)
-                    if correlated_trace.root_cause_frame else None
+                'root_cause': (self._frame_to_dict(correlated_trace.root_cause_frame)
+                               if correlated_trace.root_cause_frame else None)
             }
             return json.dumps(data, indent=2, default=str)
             

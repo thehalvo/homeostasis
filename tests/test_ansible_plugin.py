@@ -157,11 +157,11 @@ class TestAnsiblePatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "yaml" in patch["description"].lower() or "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "yaml" in syntax_patch["description"].lower() or "syntax" in syntax_patch["description"].lower()
     
     def test_generate_module_fix(self):
         """Test generation of module fixes."""
@@ -176,11 +176,11 @@ class TestAnsiblePatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        module_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "module" in patch["description"].lower()
+        assert module_patch is not None
+        assert module_patch["type"] == "suggestion"
+        assert "module" in module_patch["description"].lower()
     
     def test_generate_variable_fix(self):
         """Test generation of variable fixes."""
@@ -195,11 +195,11 @@ class TestAnsiblePatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        variable_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "variable" in patch["description"].lower()
+        assert variable_patch is not None
+        assert variable_patch["type"] == "suggestion"
+        assert "variable" in variable_patch["description"].lower()
     
     def test_generate_template_fix(self):
         """Test generation of template fixes."""
@@ -214,11 +214,11 @@ class TestAnsiblePatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        template_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "template" in patch["description"].lower() or "jinja" in patch["description"].lower()
+        assert template_patch is not None
+        assert template_patch["type"] == "suggestion"
+        assert "template" in template_patch["description"].lower() or "jinja" in template_patch["description"].lower()
     
     def test_generate_role_fix(self):
         """Test generation of role fixes."""
@@ -233,11 +233,11 @@ class TestAnsiblePatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        role_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "role" in patch["description"].lower()
+        assert role_patch is not None
+        assert role_patch["type"] == "suggestion"
+        assert "role" in role_patch["description"].lower()
 
 
 class TestAnsibleLanguagePlugin:

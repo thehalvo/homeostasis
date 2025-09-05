@@ -24,14 +24,14 @@ import signal
 # Add project root to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from modules.reliability.chaos_engineering import (
+from modules.reliability.chaos_engineering import (  # noqa: E402
     ChaosEngineer,
     ChaosExperiment,
     FaultType,
     ChaosMonkey
 )
-from modules.monitoring.error_collector import ErrorCollector
-from modules.monitoring.metrics_collector import MetricsCollector
+from modules.monitoring.error_collector import ErrorCollector  # noqa: E402
+from modules.monitoring.metrics_collector import MetricsCollector  # noqa: E402
 
 
 class ChaosTestRunner:
@@ -463,8 +463,8 @@ class ChaosTestRunner:
                 'total_experiments': self.experiments_run,
                 'passed': self.experiments_passed,
                 'failed': self.experiments_failed,
-                'success_rate': (self.experiments_passed / self.experiments_run * 100) 
-                               if self.experiments_run > 0 else 0
+                'success_rate': (self.experiments_passed / self.experiments_run * 100
+                                 if self.experiments_run > 0 else 0)
             },
             'configuration': self.config,
             'experiments': []  # Would include detailed results in production

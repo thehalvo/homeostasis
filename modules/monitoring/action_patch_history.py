@@ -797,6 +797,7 @@ class ActionPatchHistoryLogger:
 # Singleton instance
 _action_patch_history_logger = None
 
+
 def get_action_patch_history_logger(config: Dict[str, Any] = None) -> ActionPatchHistoryLogger:
     """
     Get or create the singleton ActionPatchHistoryLogger instance.

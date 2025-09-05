@@ -24,6 +24,7 @@ try:
 except ImportError:
     FLASK_AVAILABLE = False
     # Create dummy classes for type hints
+    
     class Flask:
         pass
     

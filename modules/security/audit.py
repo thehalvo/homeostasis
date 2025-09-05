@@ -349,6 +349,7 @@ class AuditLogger:
 # Singleton instance for app-wide use
 _audit_logger = None
 
+
 def get_audit_logger(config: Dict = None) -> AuditLogger:
     """Get or create the singleton AuditLogger instance.
     
@@ -362,6 +363,7 @@ def get_audit_logger(config: Dict = None) -> AuditLogger:
     if _audit_logger is None:
         _audit_logger = AuditLogger(config)
     return _audit_logger
+
 
 def log_event(event_type: str, user: str = None, details: Dict = None,
               status: str = 'success', severity: str = 'info') -> str:
@@ -385,6 +387,7 @@ def log_event(event_type: str, user: str = None, details: Dict = None,
         severity=severity
     )
 
+
 def log_login(username: str, status: str = 'success',
               source_ip: str = None, details: Dict = None) -> str:
     """Log a login event.
@@ -404,6 +407,7 @@ def log_login(username: str, status: str = 'success',
         source_ip=source_ip,
         details=details
     )
+
 
 def log_fix(fix_id: str, event_type: str, user: str = None,
             status: str = 'success', details: Dict = None) -> str:

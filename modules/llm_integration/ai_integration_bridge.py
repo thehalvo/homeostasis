@@ -650,6 +650,7 @@ class BuiltinContinuousLearningAdapter(ContinuousLearningInterface):
 # Global instance
 _ai_integration_bridge = None
 
+
 def get_ai_integration_bridge() -> AIIntegrationBridge:
     """Get the global AI integration bridge instance."""
     global _ai_integration_bridge

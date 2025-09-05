@@ -25,6 +25,7 @@ try:
 except ImportError:
     DJANGO_AVAILABLE = False
     # Create dummy classes for type hints
+    
     class HttpRequest:
         pass
     

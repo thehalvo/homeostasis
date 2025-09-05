@@ -689,6 +689,7 @@ class ApprovalManager:
 # Singleton instance for app-wide use
 _approval_manager = None
 
+
 def get_approval_manager(config: Dict = None) -> ApprovalManager:
     """Get or create the singleton ApprovalManager instance.
     
@@ -702,6 +703,7 @@ def get_approval_manager(config: Dict = None) -> ApprovalManager:
     if _approval_manager is None:
         _approval_manager = ApprovalManager(config)
     return _approval_manager
+
 
 def create_approval_request(request_type: Union[ApprovalType, str],
                            requester: str, title: str, description: str,
@@ -730,6 +732,7 @@ def create_approval_request(request_type: Union[ApprovalType, str],
         required_approvers=required_approvers,
         expiry=expiry
     )
+
 
 def needs_approval(fix_type: str) -> bool:
     """Check if a fix type requires approval.

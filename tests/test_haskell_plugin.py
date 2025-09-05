@@ -174,11 +174,11 @@ class TestHaskellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -193,11 +193,11 @@ class TestHaskellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower()
     
     def test_generate_pattern_fix(self):
         """Test generation of pattern match fixes."""
@@ -212,11 +212,11 @@ class TestHaskellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        pattern_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "pattern" in patch["description"].lower()
+        assert pattern_patch is not None
+        assert pattern_patch["type"] == "suggestion"
+        assert "pattern" in pattern_patch["description"].lower()
     
     def test_generate_monad_fix(self):
         """Test generation of monad fixes."""
@@ -231,11 +231,11 @@ class TestHaskellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        monad_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "monad" in patch["description"].lower()
+        assert monad_patch is not None
+        assert monad_patch["type"] == "suggestion"
+        assert "monad" in monad_patch["description"].lower()
     
     def test_generate_import_fix(self):
         """Test generation of import fixes."""
@@ -250,11 +250,11 @@ class TestHaskellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        import_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "import" in patch["description"].lower() or "module" in patch["description"].lower()
+        assert import_patch is not None
+        assert import_patch["type"] == "suggestion"
+        assert "import" in import_patch["description"].lower() or "module" in import_patch["description"].lower()
     
     def test_generate_laziness_fix(self):
         """Test generation of laziness fixes."""
@@ -269,11 +269,11 @@ class TestHaskellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        laziness_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "undefined" in patch["description"].lower() or "laziness" in patch["description"].lower()
+        assert laziness_patch is not None
+        assert laziness_patch["type"] == "suggestion"
+        assert "undefined" in laziness_patch["description"].lower() or "laziness" in laziness_patch["description"].lower()
     
     def test_generate_typeclass_fix(self):
         """Test generation of type class fixes."""
@@ -288,11 +288,11 @@ class TestHaskellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        typeclass_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "instance" in patch["description"].lower() or "typeclass" in patch["description"].lower()
+        assert typeclass_patch is not None
+        assert typeclass_patch["type"] == "suggestion"
+        assert "instance" in typeclass_patch["description"].lower() or "typeclass" in typeclass_patch["description"].lower()
 
 
 class TestHaskellLanguagePlugin:

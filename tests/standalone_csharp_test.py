@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 # Reduced version of the CSharpErrorAdapter from language_adapters.py
 # ================================================================================
 
+
 class StandaloneCSharpErrorAdapter:
     """Adapter for C# error formats."""
     
@@ -341,6 +342,7 @@ class StandaloneCSharpErrorAdapter:
 # Test functions
 # ================================================================================
 
+
 def test_error_normalization():
     """Test error normalization from C# format to standard format."""
     print("Testing C# error normalization...")
@@ -409,6 +411,7 @@ def test_error_normalization():
         success = False
     
     return success
+
 
 def test_error_denormalization():
     """Test denormalization from standard format back to C# format."""
@@ -487,6 +490,7 @@ def test_error_denormalization():
     
     return success
 
+
 def test_stack_trace_parsing():
     """Test C# stack trace parsing into structured frames."""
     print("\nTesting C# stack trace parsing...")
@@ -535,6 +539,7 @@ def test_stack_trace_parsing():
         print(f"✅ Lambda frame parsing succeeded: file={lambda_frame.get('file')}, line={lambda_frame.get('line')}")
     
     return success
+
 
 def main():
     """Run all tests."""

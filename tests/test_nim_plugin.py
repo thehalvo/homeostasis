@@ -174,11 +174,11 @@ class TestNimPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "indentation" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "indentation" in syntax_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -193,11 +193,11 @@ class TestNimPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower()
     
     def test_generate_nil_fix(self):
         """Test generation of nil fixes."""
@@ -212,11 +212,11 @@ class TestNimPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        nil_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "nil" in patch["description"].lower()
+        assert nil_patch is not None
+        assert nil_patch["type"] == "suggestion"
+        assert "nil" in nil_patch["description"].lower()
     
     def test_generate_undefined_fix(self):
         """Test generation of undefined identifier fixes."""
@@ -231,11 +231,11 @@ class TestNimPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        undefined_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "identifier" in patch["description"].lower() or "undefined" in patch["description"].lower()
+        assert undefined_patch is not None
+        assert undefined_patch["type"] == "suggestion"
+        assert "identifier" in undefined_patch["description"].lower() or "undefined" in undefined_patch["description"].lower()
     
     def test_generate_pragma_fix(self):
         """Test generation of pragma fixes."""
@@ -250,11 +250,11 @@ class TestNimPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        pragma_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "pragma" in patch["description"].lower()
+        assert pragma_patch is not None
+        assert pragma_patch["type"] == "suggestion"
+        assert "pragma" in pragma_patch["description"].lower()
     
     def test_generate_import_fix(self):
         """Test generation of import fixes."""
@@ -269,11 +269,11 @@ class TestNimPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        import_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "import" in patch["description"].lower() or "module" in patch["description"].lower()
+        assert import_patch is not None
+        assert import_patch["type"] == "suggestion"
+        assert "import" in import_patch["description"].lower() or "module" in import_patch["description"].lower()
     
     def test_generate_compilation_fix(self):
         """Test generation of compilation fixes."""
@@ -288,11 +288,11 @@ class TestNimPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        compilation_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "compilation" in patch["description"].lower() or "internal" in patch["description"].lower()
+        assert compilation_patch is not None
+        assert compilation_patch["type"] == "suggestion"
+        assert "compilation" in compilation_patch["description"].lower() or "internal" in compilation_patch["description"].lower()
 
 
 class TestNimLanguagePlugin:

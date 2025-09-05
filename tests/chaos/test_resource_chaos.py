@@ -34,7 +34,7 @@ class TestResourceChaos:
                     if core_affinity is not None and hasattr(os, 'sched_setaffinity'):
                         try:
                             os.sched_setaffinity(0, {core_affinity})
-                        except:
+                        except Exception:
                             pass  # Not supported on all platforms
                     
                     # More aggressive CPU burn for high utilization

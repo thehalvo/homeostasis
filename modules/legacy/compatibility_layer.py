@@ -259,7 +259,7 @@ class CompatibilityLayer:
         """Check for data type compatibility issues."""
         issues = []
         
-        for field, value in data.items():
+        for field_name, value in data.items():
             # Check for packed decimal fields
             if isinstance(value, bytes) and self._is_packed_decimal(value):
                 issues.append(CompatibilityError(
@@ -322,8 +322,8 @@ class CompatibilityLayer:
         issues = []
         
         if isinstance(data, dict):
-            for field, value in data.items():
-                if self._is_date_field(field, value):
+            for field_name, value in data.items():
+                if self._is_date_field(field_name, value):
                     # Detect date format
                     detected_format = self._detect_date_format(value)
                     
@@ -332,10 +332,10 @@ class CompatibilityLayer:
                             issue_type=CompatibilityIssue.DATE_FORMAT,
                             source_format=detected_format,
                             target_format="iso",
-                            field_name=field,
+                            field_name=field_name,
                             source_value=value,
                             expected_type="date",
-                            message=f"Field {field} uses {detected_format} date format",
+                            message=f"Field {field_name} uses {detected_format} date format",
                             severity="medium",
                             suggested_fix=f"Convert from {detected_format} to ISO format"
                         ))
@@ -461,14 +461,14 @@ class CompatibilityLayer:
                     converted = field_value.decode('cp500')  # IBM EBCDIC
                     data[issue.field_name] = converted
                     return data, f"Converted EBCDIC character set in field {issue.field_name}"
-                except:
+                except (UnicodeDecodeError, AttributeError):
                     # Try other encodings
                     for encoding in ['cp037', 'cp1140', 'latin-1']:
                         try:
                             converted = field_value.decode(encoding)
                             data[issue.field_name] = converted
                             return data, f"Converted {encoding} character set in field {issue.field_name}"
-                        except:
+                        except (UnicodeDecodeError, AttributeError):
                             continue
                             
         return data, "Character set conversion failed"

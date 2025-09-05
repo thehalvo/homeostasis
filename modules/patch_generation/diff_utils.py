@@ -6,6 +6,7 @@ import difflib
 from pathlib import Path
 from typing import Dict, Any, Tuple
 
+
 def generate_diff(original_code: str, patched_code: str, 
                   filename: str = "code.py", context_lines: int = 3) -> str:
     """
@@ -36,6 +37,7 @@ def generate_diff(original_code: str, patched_code: str,
     
     # Join the diff lines into a single string
     return "".join(diff)
+
 
 def parse_diff(diff_content: str) -> Dict[str, Any]:
     """
@@ -93,6 +95,7 @@ def parse_diff(diff_content: str) -> Dict[str, Any]:
                 current_hunk["content"] += "\n" + line
     
     return result
+
 
 def apply_diff_to_file(file_path: Path, diff_content: str, 
                        reverse: bool = False) -> bool:
@@ -155,6 +158,7 @@ def apply_diff_to_file(file_path: Path, diff_content: str,
     except Exception as e:
         print(f"Error applying diff: {e}")
         return False
+
 
 def identify_code_block(code: str, line_number: int) -> Tuple[int, int]:
     """
@@ -250,6 +254,7 @@ def identify_code_block(code: str, line_number: int) -> Tuple[int, int]:
     # Convert back to 1-based line numbers
     return (start_idx + 1, end_idx + 1)
 
+
 def extract_code_block(file_path: Path, line_range: Tuple[int, int]) -> str:
     """
     Extract a code block from a file.
@@ -270,6 +275,7 @@ def extract_code_block(file_path: Path, line_range: Tuple[int, int]) -> str:
     code_block = lines[start_line - 1:end_line]
     
     return "".join(code_block)
+
 
 def get_code_context(file_path: Path, focus_line: int, 
                      context_before: int = 5, context_after: int = 5) -> str:

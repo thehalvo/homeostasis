@@ -595,6 +595,7 @@ class HealingActivityAuditor:
 # Singleton instance for app-wide use
 _healing_auditor = None
 
+
 def get_healing_auditor(config: Dict[str, Any] = None) -> HealingActivityAuditor:
     """
     Get or create the singleton HealingActivityAuditor instance.

@@ -157,11 +157,11 @@ class TestTerraformPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_resource_fix(self):
         """Test generation of resource fixes."""
@@ -176,11 +176,11 @@ class TestTerraformPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        resource_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "resource" in patch["description"].lower()
+        assert resource_patch is not None
+        assert resource_patch["type"] == "suggestion"
+        assert "resource" in resource_patch["description"].lower()
     
     def test_generate_provider_fix(self):
         """Test generation of provider fixes."""
@@ -195,11 +195,11 @@ class TestTerraformPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        provider_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "provider" in patch["description"].lower()
+        assert provider_patch is not None
+        assert provider_patch["type"] == "suggestion"
+        assert "provider" in provider_patch["description"].lower()
     
     def test_generate_variable_fix(self):
         """Test generation of variable fixes."""
@@ -214,11 +214,11 @@ class TestTerraformPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        variable_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "variable" in patch["description"].lower()
+        assert variable_patch is not None
+        assert variable_patch["type"] == "suggestion"
+        assert "variable" in variable_patch["description"].lower()
     
     def test_generate_state_fix(self):
         """Test generation of state fixes."""
@@ -233,11 +233,11 @@ class TestTerraformPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        state_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "state" in patch["description"].lower() or "lock" in patch["description"].lower()
+        assert state_patch is not None
+        assert state_patch["type"] == "suggestion"
+        assert "state" in state_patch["description"].lower() or "lock" in state_patch["description"].lower()
 
 
 class TestTerraformLanguagePlugin:

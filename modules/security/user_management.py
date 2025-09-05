@@ -249,17 +249,17 @@ class UserManagementSystem:
         
         # Update user data
         allowed_user_fields = {'email', 'status', 'roles', 'groups', 'mfa_enabled'}
-        for field, value in updates.items():
-            if field in allowed_user_fields:
-                user[field] = value
+        for update_field, value in updates.items():
+            if update_field in allowed_user_fields:
+                user[update_field] = value
         
         # Update profile data
         if profile:
             profile_fields = {'full_name', 'department', 'job_title', 'phone', 
                             'location', 'timezone', 'language'}
-            for field, value in updates.items():
-                if field in profile_fields and hasattr(profile, field):
-                    setattr(profile, field, value)
+            for update_field, value in updates.items():
+                if update_field in profile_fields and hasattr(profile, update_field):
+                    setattr(profile, update_field, value)
         
         # Re-apply group permissions if groups changed
         if 'groups' in updates:
@@ -879,6 +879,7 @@ class UserManagementSystem:
 
 # Singleton instance
 _user_management = None
+
 
 def get_user_management(config: Dict = None) -> UserManagementSystem:
     """Get or create the singleton UserManagementSystem instance."""

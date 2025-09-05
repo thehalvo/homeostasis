@@ -355,6 +355,7 @@ class AuthenticationManager:
 # Singleton instance for app-wide use
 _auth_manager = None
 
+
 def get_auth_manager(config: Dict = None) -> AuthenticationManager:
     """Get or create the singleton AuthenticationManager instance.
     
@@ -369,6 +370,7 @@ def get_auth_manager(config: Dict = None) -> AuthenticationManager:
         _auth_manager = AuthenticationManager(config)
     return _auth_manager
 
+
 def authenticate(username: str, password: str) -> Optional[Dict]:
     """Authenticate a user.
     
@@ -381,6 +383,7 @@ def authenticate(username: str, password: str) -> Optional[Dict]:
     """
     return get_auth_manager().authenticate(username, password)
 
+
 def generate_token(user_info: Dict) -> Tuple[str, str]:
     """Generate JWT access and refresh tokens.
     
@@ -391,6 +394,7 @@ def generate_token(user_info: Dict) -> Tuple[str, str]:
         Tuple[str, str]: (access_token, refresh_token)
     """
     return get_auth_manager().generate_token(user_info)
+
 
 def verify_token(token: str) -> Dict:
     """Verify a JWT token.

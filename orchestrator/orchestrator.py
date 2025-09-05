@@ -10,7 +10,6 @@ import os
 import requests
 import shutil
 import subprocess
-import sys
 import threading
 import time
 import uuid
@@ -18,10 +17,6 @@ import yaml
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
-
-# Add project root to sys.path
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
 
 # Import modules
 from modules.monitoring.logger import MonitoringLogger

@@ -13,10 +13,10 @@ import subprocess
 from pathlib import Path
 from typing import Dict, Any, Tuple
 
+from modules.monitoring.logger import MonitoringLogger
+
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent
-
-from modules.monitoring.logger import MonitoringLogger
 
 
 class ContainerManager:

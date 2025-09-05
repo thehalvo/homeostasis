@@ -17,10 +17,10 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 
+from modules.monitoring.logger import MonitoringLogger
+
 # Add project root to sys.path
 project_root = Path(__file__).parent.parent.parent
-
-from modules.monitoring.logger import MonitoringLogger
 
 
 class CacheManager:

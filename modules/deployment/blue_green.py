@@ -313,6 +313,7 @@ class BlueGreenDeployment:
 # Singleton instance
 _blue_green_deployment = None
 
+
 def get_blue_green_deployment(config: Dict = None) -> BlueGreenDeployment:
     """Get or create the singleton BlueGreenDeployment instance.
     

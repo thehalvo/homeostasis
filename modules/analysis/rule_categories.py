@@ -36,7 +36,7 @@ class RuleSource(Enum):
     BUILT_IN = "built_in"       # Built-in rule
     COMMUNITY = "community"     # Community-contributed rule
     USER = "user"               # User-defined rule
-    THIRD_PARTY = "third_party" # Third-party rule
+    THIRD_PARTY = "third_party"  # Third-party rule
 
 
 class RuleType(Enum):
@@ -499,7 +499,7 @@ def detect_rule_conflicts(rules: List[Union[Rule, EnhancedRule]]) -> List[Dict[s
             # Check for overlapping patterns (more complex)
             # This is a simplistic check - might produce false positives
             if (rule1.pattern.startswith('^') != rule2.pattern.startswith('^') or
-                rule1.pattern.endswith('$') != rule2.pattern.endswith('$')):
+                    rule1.pattern.endswith('$') != rule2.pattern.endswith('$')):
                 continue  # Different anchoring, less likely to conflict
             
             # Check if one pattern is a subset of another

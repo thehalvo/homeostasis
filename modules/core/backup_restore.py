@@ -1006,7 +1006,7 @@ class BackupRestoreManager:
             else:
                 parent_info = parent_files[relative_path]
                 if (file_path.stat().st_mtime > parent_info['modified'] or
-                    file_path.stat().st_size != parent_info['size']):
+                        file_path.stat().st_size != parent_info['size']):
                     changed_files.append(file_path)
         
         return changed_files
@@ -1137,11 +1137,13 @@ class BackupRestoreManager:
 # Global instance management
 _backup_restore_manager = None
 
+
 def init_backup_restore(config: Dict[str, Any]) -> BackupRestoreManager:
     """Initialize the global backup/restore manager"""
     global _backup_restore_manager
     _backup_restore_manager = BackupRestoreManager(config)
     return _backup_restore_manager
+
 
 def get_backup_restore_manager() -> Optional[BackupRestoreManager]:
     """Get the global backup/restore manager instance"""

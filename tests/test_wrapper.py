@@ -16,6 +16,8 @@ from modules.analysis.language_adapters import CSharpErrorAdapter
 from modules.analysis.plugins.csharp_plugin import CSharpExceptionHandler, CSharpPatchGenerator, CSharpLanguagePlugin
 
 # Run the basic tests
+
+
 def main():
     # Create test instances
     plugin = CSharpLanguagePlugin()

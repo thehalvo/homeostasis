@@ -620,7 +620,7 @@ class EnterpriseGovernanceFramework:
             requester=request.requested_by or 'system',
             title=f"Healing Action: {request.action_type}",
             description=f"Automated fix for {request.error_context.get('error_type', 'error')} "
-                       f"in {request.service_name} ({request.environment})",
+                        f"in {request.service_name} ({request.environment})",
             data={
                 'healing_request_id': request.request_id,
                 'patch_content': request.patch_content,
@@ -782,6 +782,7 @@ class EnterpriseGovernanceFramework:
 
 # Singleton instance
 _governance_framework = None
+
 
 def get_governance_framework(config: Union[Dict, GovernanceConfig] = None) -> EnterpriseGovernanceFramework:
     """Get or create the singleton EnterpriseGovernanceFramework instance."""

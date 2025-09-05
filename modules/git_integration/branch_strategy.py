@@ -7,16 +7,12 @@ branch types and managing healing scope appropriately.
 """
 
 import os
-import sys
 import subprocess
 from typing import List, Dict, Any, Optional, Tuple
 from pathlib import Path
 from datetime import datetime, timedelta
 from enum import Enum
 from dataclasses import dataclass
-
-# Add the homeostasis modules to the path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from modules.monitoring.logger import HomeostasisLogger
 

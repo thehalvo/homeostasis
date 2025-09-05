@@ -174,11 +174,11 @@ class TestCrystalPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] in ["suggestion", "multiple_suggestions"]
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] in ["suggestion", "multiple_suggestions"]
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -193,11 +193,11 @@ class TestCrystalPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower() or "overload" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower() or "overload" in type_patch["description"].lower()
     
     def test_generate_nil_fix(self):
         """Test generation of nil fixes."""
@@ -212,11 +212,11 @@ class TestCrystalPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        nil_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "nil" in patch["description"].lower()
+        assert nil_patch is not None
+        assert nil_patch["type"] == "suggestion"
+        assert "nil" in nil_patch["description"].lower()
     
     def test_generate_compilation_fix(self):
         """Test generation of compilation fixes."""
@@ -231,11 +231,11 @@ class TestCrystalPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        compilation_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "constant" in patch["description"].lower()
+        assert compilation_patch is not None
+        assert compilation_patch["type"] == "suggestion"
+        assert "constant" in compilation_patch["description"].lower()
     
     def test_generate_fiber_fix(self):
         """Test generation of fiber fixes."""
@@ -250,11 +250,11 @@ class TestCrystalPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        fiber_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "fiber" in patch["description"].lower()
+        assert fiber_patch is not None
+        assert fiber_patch["type"] == "suggestion"
+        assert "fiber" in fiber_patch["description"].lower()
     
     def test_generate_method_fix(self):
         """Test generation of method fixes."""
@@ -269,11 +269,11 @@ class TestCrystalPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        method_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "arguments" in patch["description"].lower()
+        assert method_patch is not None
+        assert method_patch["type"] == "suggestion"
+        assert "arguments" in method_patch["description"].lower()
     
     def test_generate_union_fix(self):
         """Test generation of union type fixes."""
@@ -288,11 +288,11 @@ class TestCrystalPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        union_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "union" in patch["description"].lower()
+        assert union_patch is not None
+        assert union_patch["type"] == "suggestion"
+        assert "union" in union_patch["description"].lower()
 
 
 class TestCrystalLanguagePlugin:

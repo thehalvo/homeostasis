@@ -226,6 +226,7 @@ class SecurityConfig:
 # Singleton instance for app-wide use
 _security_config = None
 
+
 def get_security_config(config_path: Optional[str] = None) -> SecurityConfig:
     """Get or create the singleton SecurityConfig instance.
     
@@ -240,6 +241,7 @@ def get_security_config(config_path: Optional[str] = None) -> SecurityConfig:
         _security_config = SecurityConfig(config_path)
     return _security_config
 
+
 def get_config(key: str, default: Any = None) -> Any:
     """Get a configuration value.
     
@@ -252,6 +254,7 @@ def get_config(key: str, default: Any = None) -> Any:
     """
     return get_security_config().get(key, default)
 
+
 def get_all_config() -> Dict:
     """Get the entire configuration.
     
@@ -259,6 +262,7 @@ def get_all_config() -> Dict:
         Dict: Configuration dictionary
     """
     return get_security_config().get_all()
+
 
 def set_config(key: str, value: Any) -> None:
     """Set a configuration value.
@@ -268,6 +272,7 @@ def set_config(key: str, value: Any) -> None:
         value: Configuration value
     """
     get_security_config().set(key, value)
+
 
 def save_config(config_path: str) -> None:
     """Save the configuration to a file.

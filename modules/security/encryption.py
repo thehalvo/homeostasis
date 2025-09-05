@@ -241,6 +241,7 @@ class EncryptionManager:
 # Singleton instance for app-wide use
 _encryption_manager = None
 
+
 def get_encryption_manager(config: Dict = None) -> EncryptionManager:
     """Get or create the singleton EncryptionManager instance.
     
@@ -254,6 +255,7 @@ def get_encryption_manager(config: Dict = None) -> EncryptionManager:
     if _encryption_manager is None:
         _encryption_manager = EncryptionManager(config)
     return _encryption_manager
+
 
 def encrypt(data: Union[str, bytes, Dict]) -> str:
     """Encrypt data.
@@ -269,6 +271,7 @@ def encrypt(data: Union[str, bytes, Dict]) -> str:
     """
     return get_encryption_manager().encrypt(data)
 
+
 def decrypt(encrypted_data: Union[str, bytes]) -> bytes:
     """Decrypt data.
     
@@ -283,6 +286,7 @@ def decrypt(encrypted_data: Union[str, bytes]) -> bytes:
     """
     return get_encryption_manager().decrypt(encrypted_data)
 
+
 def decrypt_to_string(encrypted_data: Union[str, bytes]) -> str:
     """Decrypt to string.
     
@@ -296,6 +300,7 @@ def decrypt_to_string(encrypted_data: Union[str, bytes]) -> str:
         EncryptionError: If decryption fails
     """
     return get_encryption_manager().decrypt_to_string(encrypted_data)
+
 
 def decrypt_to_json(encrypted_data: Union[str, bytes]) -> Dict:
     """Decrypt to JSON.

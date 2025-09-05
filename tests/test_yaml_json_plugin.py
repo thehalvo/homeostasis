@@ -157,11 +157,11 @@ class TestYamlJsonPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        yaml_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "yaml" in patch["description"].lower() or "syntax" in patch["description"].lower()
+        assert yaml_patch is not None
+        assert yaml_patch["type"] == "suggestion"
+        assert "yaml" in yaml_patch["description"].lower() or "syntax" in yaml_patch["description"].lower()
     
     def test_generate_json_syntax_fix(self):
         """Test generation of JSON syntax fixes."""
@@ -176,11 +176,11 @@ class TestYamlJsonPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        json_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "json" in patch["description"].lower() or "quote" in patch["description"].lower()
+        assert json_patch is not None
+        assert json_patch["type"] == "suggestion"
+        assert "json" in json_patch["description"].lower() or "quote" in json_patch["description"].lower()
     
     def test_generate_schema_fix(self):
         """Test generation of schema validation fixes."""
@@ -195,11 +195,11 @@ class TestYamlJsonPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        schema_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "schema" in patch["description"].lower() or "required" in patch["description"].lower()
+        assert schema_patch is not None
+        assert schema_patch["type"] == "suggestion"
+        assert "schema" in schema_patch["description"].lower() or "required" in schema_patch["description"].lower()
     
     def test_generate_indentation_fix(self):
         """Test generation of indentation fixes."""
@@ -214,11 +214,11 @@ class TestYamlJsonPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        indent_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "indent" in patch["description"].lower()
+        assert indent_patch is not None
+        assert indent_patch["type"] == "suggestion"
+        assert "indent" in indent_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -233,11 +233,11 @@ class TestYamlJsonPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower()
 
 
 class TestYamlJsonLanguagePlugin:

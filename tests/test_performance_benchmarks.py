@@ -460,8 +460,8 @@ class TestMemoryUsageComparison(PerformanceBenchmark):
             print(f"{lang}: {memory:.2f} MB")
         
         # Primary languages might use more memory due to more features
-        primary_avg = statistics.mean([results[l] for l in ["python", "javascript", "java"] if l in results])
-        fringe_avg = statistics.mean([results[l] for l in ["zig", "nim", "crystal"] if l in results])
+        primary_avg = statistics.mean([results[lang] for lang in ["python", "javascript", "java"] if lang in results])
+        fringe_avg = statistics.mean([results[lang] for lang in ["zig", "nim", "crystal"] if lang in results])
         
         print(f"\nPrimary avg: {primary_avg:.2f} MB")
         print(f"Fringe avg: {fringe_avg:.2f} MB")

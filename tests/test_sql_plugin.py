@@ -174,11 +174,11 @@ class TestSQLPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] in ["suggestion", "multiple_suggestions"]
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] in ["suggestion", "multiple_suggestions"]
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_constraint_fix(self):
         """Test generation of constraint fixes."""
@@ -193,11 +193,11 @@ class TestSQLPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        constraint_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "constraint" in patch["description"].lower() or "unique" in patch["description"].lower()
+        assert constraint_patch is not None
+        assert constraint_patch["type"] == "suggestion"
+        assert "constraint" in constraint_patch["description"].lower() or "unique" in constraint_patch["description"].lower()
     
     def test_generate_join_fix(self):
         """Test generation of join fixes."""
@@ -212,11 +212,11 @@ class TestSQLPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        join_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "ambiguous" in patch["description"].lower() or "qualify" in patch["description"].lower()
+        assert join_patch is not None
+        assert join_patch["type"] == "suggestion"
+        assert "ambiguous" in join_patch["description"].lower() or "qualify" in join_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -231,11 +231,11 @@ class TestSQLPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower() or "cast" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower() or "cast" in type_patch["description"].lower()
     
     def test_generate_permission_fix(self):
         """Test generation of permission fixes."""
@@ -250,11 +250,11 @@ class TestSQLPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        permission_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "permission" in patch["description"].lower() or "grant" in patch["description"].lower()
+        assert permission_patch is not None
+        assert permission_patch["type"] == "suggestion"
+        assert "permission" in permission_patch["description"].lower() or "grant" in permission_patch["description"].lower()
     
     def test_generate_index_fix(self):
         """Test generation of index fixes."""
@@ -269,11 +269,11 @@ class TestSQLPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        index_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "duplicate" in patch["description"].lower() or "unique" in patch["description"].lower()
+        assert index_patch is not None
+        assert index_patch["type"] == "suggestion"
+        assert "duplicate" in index_patch["description"].lower() or "unique" in index_patch["description"].lower()
     
     def test_generate_connection_fix(self):
         """Test generation of connection fixes."""
@@ -288,11 +288,11 @@ class TestSQLPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        connection_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "connection" in patch["description"].lower() or "database" in patch["description"].lower()
+        assert connection_patch is not None
+        assert connection_patch["type"] == "suggestion"
+        assert "connection" in connection_patch["description"].lower() or "database" in connection_patch["description"].lower()
 
 
 class TestSQLLanguagePlugin:

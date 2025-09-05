@@ -158,11 +158,11 @@ class TestDockerfilePatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "instruction" in patch["description"].lower() or "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "instruction" in syntax_patch["description"].lower() or "syntax" in syntax_patch["description"].lower()
     
     def test_generate_build_fix(self):
         """Test generation of build fixes."""
@@ -177,11 +177,11 @@ class TestDockerfilePatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        build_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "build" in patch["description"].lower()
+        assert build_patch is not None
+        assert build_patch["type"] == "suggestion"
+        assert "build" in build_patch["description"].lower()
     
     def test_generate_layer_fix(self):
         """Test generation of layer optimization fixes."""
@@ -196,11 +196,11 @@ class TestDockerfilePatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        layer_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "layer" in patch["description"].lower() or "run" in patch["description"].lower()
+        assert layer_patch is not None
+        assert layer_patch["type"] == "suggestion"
+        assert "layer" in layer_patch["description"].lower() or "run" in layer_patch["description"].lower()
     
     def test_generate_security_fix(self):
         """Test generation of security fixes."""
@@ -215,11 +215,11 @@ class TestDockerfilePatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        security_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "security" in patch["description"].lower() or "user" in patch["description"].lower()
+        assert security_patch is not None
+        assert security_patch["type"] == "suggestion"
+        assert "security" in security_patch["description"].lower() or "user" in security_patch["description"].lower()
     
     def test_generate_path_fix(self):
         """Test generation of path fixes."""
@@ -234,11 +234,11 @@ class TestDockerfilePatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        path_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "path" in patch["description"].lower() or "copy" in patch["description"].lower()
+        assert path_patch is not None
+        assert path_patch["type"] == "suggestion"
+        assert "path" in path_patch["description"].lower() or "copy" in path_patch["description"].lower()
 
 
 class TestDockerfileLanguagePlugin:

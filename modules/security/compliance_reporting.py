@@ -1147,6 +1147,7 @@ class ComplianceReportingSystem:
 # Singleton instance
 _compliance_reporting = None
 
+
 def get_compliance_reporting(config: Dict = None) -> ComplianceReportingSystem:
     """Get or create the singleton ComplianceReportingSystem instance."""
     global _compliance_reporting

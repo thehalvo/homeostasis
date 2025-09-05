@@ -508,6 +508,7 @@ _nginx_manager = None
 _kubernetes_manager = None
 _cloud_manager = None
 
+
 def get_traffic_splitter(config: Dict = None) -> TrafficSplitter:
     """Get traffic splitter singleton.
     
@@ -521,6 +522,7 @@ def get_traffic_splitter(config: Dict = None) -> TrafficSplitter:
     if _traffic_splitter is None:
         _traffic_splitter = TrafficSplitter(config)
     return _traffic_splitter
+
 
 def get_nginx_manager(config: Dict = None) -> NginxTrafficManager:
     """Get Nginx traffic manager singleton.
@@ -536,6 +538,7 @@ def get_nginx_manager(config: Dict = None) -> NginxTrafficManager:
         _nginx_manager = NginxTrafficManager(config)
     return _nginx_manager
 
+
 def get_kubernetes_manager(config: Dict = None) -> KubernetesTrafficManager:
     """Get Kubernetes traffic manager singleton.
     
@@ -549,6 +552,7 @@ def get_kubernetes_manager(config: Dict = None) -> KubernetesTrafficManager:
     if _kubernetes_manager is None:
         _kubernetes_manager = KubernetesTrafficManager(config)
     return _kubernetes_manager
+
 
 def get_cloud_manager(config: Dict = None) -> CloudTrafficManager:
     """Get cloud traffic manager singleton.

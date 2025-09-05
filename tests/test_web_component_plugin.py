@@ -131,10 +131,10 @@ class TestWebComponentPatchGenerator(unittest.TestCase):
         
         source_code = "class MyElement extends HTMLElement {\n  constructor() {\n    this.foo = 'bar';\n  }\n}"
         
-        patch = self.patch_generator.generate_patch(error_data, analysis, source_code)
+        lifecycle_patch = self.patch_generator.generate_patch(error_data, analysis, source_code)
         
-        self.assertIsNotNone(patch)
-        self.assertIn("suggestion", patch) 
+        self.assertIsNotNone(lifecycle_patch)
+        self.assertIn("suggestion", lifecycle_patch) 
     
     def test_shadow_dom_error_patch(self):
         """Test generating patches for Shadow DOM errors."""
@@ -156,10 +156,10 @@ class TestWebComponentPatchGenerator(unittest.TestCase):
         
         source_code = "class MyElement extends HTMLElement {\n  constructor() {\n    super();\n    this.attachShadow({mode: 'closed'});\n  }\n}"
         
-        patch = self.patch_generator.generate_patch(error_data, analysis, source_code)
+        shadow_patch = self.patch_generator.generate_patch(error_data, analysis, source_code)
         
-        self.assertIsNotNone(patch)
-        self.assertIn("description", patch)
+        self.assertIsNotNone(shadow_patch)
+        self.assertIn("description", shadow_patch)
     
     def test_template_based_patch(self):
         """Test template-based patch generation."""
@@ -180,9 +180,9 @@ class TestWebComponentPatchGenerator(unittest.TestCase):
         
         source_code = "class MyElement extends HTMLElement {\n  constructor() {\n    super();\n    const template = document.querySelector('#my-template');\n    this.appendChild(template);\n  }\n}"
         
-        patch = self.patch_generator._template_based_patch(error_data, analysis, source_code)
+        template_patch = self.patch_generator._template_based_patch(error_data, analysis, source_code)
         
-        self.assertIsNotNone(patch)
+        self.assertIsNotNone(template_patch)
 
 
 class TestWebComponentLanguagePlugin(unittest.TestCase):

@@ -2,14 +2,10 @@
 Tests for the analysis module.
 """
 import os
-import sys
 import json
 from unittest.mock import patch
 import tempfile
 from pathlib import Path
-
-# Add project root to sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from modules.analysis.analyzer import Analyzer
 from modules.analysis.rule_based import RuleBasedAnalyzer

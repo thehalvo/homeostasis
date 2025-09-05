@@ -311,8 +311,8 @@ class ProviderRegistry:
             # Find provider plugin classes
             for name, obj in inspect.getmembers(module):
                 if (inspect.isclass(obj) and 
-                    issubclass(obj, ProviderPlugin) and 
-                    obj != ProviderPlugin):
+                        issubclass(obj, ProviderPlugin) and 
+                        obj != ProviderPlugin):
                     self.register_provider(obj)
                     self.logger.info(f"Loaded provider plugin {name} from {path}")
         
@@ -438,6 +438,7 @@ class ProviderRegistry:
 
 # Global registry instance
 _registry = None
+
 
 def get_provider_registry() -> ProviderRegistry:
     """Get the global provider registry instance."""

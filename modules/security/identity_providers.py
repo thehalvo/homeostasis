@@ -633,9 +633,9 @@ class OAuth2Handler:
     def validate_config(self, config: Dict):
         """Validate OAuth2 configuration."""
         required = ['client_id', 'client_secret', 'authorization_url', 'token_url']
-        for field in required:
-            if field not in config:
-                raise ValueError(f"Missing required OAuth2 config field: {field}")
+        for req_field in required:
+            if req_field not in config:
+                raise ValueError(f"Missing required OAuth2 config field: {req_field}")
     
     def initiate_auth(self, provider: IdentityProviderConfig, 
                      session: AuthenticationSession, scope: List[str] = None) -> Tuple[str, Dict]:
@@ -714,9 +714,9 @@ class SAML2Handler:
     def validate_config(self, config: Dict):
         """Validate SAML2 configuration."""
         required = ['entity_id', 'sso_url', 'x509cert']
-        for field in required:
-            if field not in config:
-                raise ValueError(f"Missing required SAML2 config field: {field}")
+        for req_field in required:
+            if req_field not in config:
+                raise ValueError(f"Missing required SAML2 config field: {req_field}")
     
     def initiate_auth(self, provider: IdentityProviderConfig,
                      session: AuthenticationSession, scope: List[str] = None) -> Tuple[str, Dict]:
@@ -810,9 +810,9 @@ class LDAPHandler:
     def validate_config(self, config: Dict):
         """Validate LDAP configuration."""
         required = ['server_url', 'bind_dn', 'bind_password', 'user_base_dn']
-        for field in required:
-            if field not in config:
-                raise ValueError(f"Missing required LDAP config field: {field}")
+        for req_field in required:
+            if req_field not in config:
+                raise ValueError(f"Missing required LDAP config field: {req_field}")
     
     def authenticate(self, provider: IdentityProviderConfig,
                     username: str, password: str) -> Optional[UserIdentity]:
@@ -877,7 +877,7 @@ class LDAPHandler:
         finally:
             try:
                 conn.unbind()
-            except:
+            except Exception:
                 pass
 
 
@@ -941,6 +941,7 @@ class OIDCHandler(OAuth2Handler):
 
 # Singleton instance
 _identity_integration = None
+
 
 def get_identity_integration(config: Dict = None) -> IdentityProviderIntegration:
     """Get or create the singleton IdentityProviderIntegration instance."""

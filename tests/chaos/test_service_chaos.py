@@ -155,7 +155,7 @@ class TestServiceChaos:
             # Check upstream first
             try:
                 await upstream_breaker.call(lambda: "upstream ok")
-            except:
+            except Exception:
                 # Upstream failed, this service fails too
                 raise Exception("Dependent service failed due to upstream")
             
@@ -206,7 +206,7 @@ class TestServiceChaos:
                 for _ in range(6):
                     try:
                         await breakers['payment'].call(always_fail)
-                    except:
+                    except Exception:
                         pass
             
             await asyncio.sleep(0.01)
@@ -381,7 +381,7 @@ class TestServiceChaos:
                 try:
                     bulkhead['semaphore'].acquire_nowait()
                     acquired = True
-                except:
+                except Exception:
                     acquired = False
                 
                 if not acquired:

@@ -6,15 +6,10 @@ healing, cascading failures, and cross-language scenarios.
 """
 import asyncio
 import os
-import sys
 import time
 from pathlib import Path
 
 import pytest
-
-# Add project root to path
-project_root = Path(__file__).parent.parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from tests.e2e.healing_scenarios.test_utilities import (
     HealingScenario,
@@ -373,7 +368,7 @@ if __name__ == "__main__":
             for _ in range(3):
                 try:
                     requests.get("http://localhost:8000/error", timeout=5)
-                except:
+                except Exception:
                     pass
                     
         scenario = HealingScenario(
@@ -469,7 +464,7 @@ def check_endpoint_healthy(url: str) -> bool:
     try:
         response = requests.get(url, timeout=5)
         return response.status_code == 200
-    except:
+    except Exception:
         return False
         
 

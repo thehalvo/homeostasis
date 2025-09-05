@@ -351,6 +351,7 @@ class KnowledgeBase:
 # Singleton instance
 _knowledge_base = None
 
+
 def get_knowledge_base(storage_dir: Optional[str] = None) -> KnowledgeBase:
     """Get or create the singleton KnowledgeBase.
     

@@ -449,6 +449,7 @@ class HealingRateLimiter:
 # Singleton instance for app-wide use
 _healing_rate_limiter = None
 
+
 def get_healing_rate_limiter(config: Dict = None) -> HealingRateLimiter:
     """Get or create the singleton HealingRateLimiter instance.
     

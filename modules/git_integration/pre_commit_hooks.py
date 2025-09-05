@@ -7,14 +7,10 @@ issues from entering the repository.
 """
 
 import os
-import sys
 import json
 import subprocess
 from typing import List, Dict, Any, Optional, Tuple
 from pathlib import Path
-
-# Add the homeostasis modules to the path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from modules.analysis.rule_based import RuleBasedAnalyzer
 from modules.analysis.language_adapters import LanguageAdapterManager

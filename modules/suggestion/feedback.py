@@ -485,6 +485,7 @@ class FeedbackManager:
 # Singleton instance
 _feedback_manager = None
 
+
 def get_feedback_manager(storage_dir: Optional[str] = None) -> FeedbackManager:
     """Get or create the singleton FeedbackManager.
     

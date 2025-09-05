@@ -1095,6 +1095,7 @@ class PolicyEnforcementEngine:
 # Singleton instance
 _policy_engine = None
 
+
 def get_policy_engine(config: Dict = None) -> PolicyEnforcementEngine:
     """Get or create the singleton PolicyEnforcementEngine instance."""
     global _policy_engine

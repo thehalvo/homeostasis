@@ -174,11 +174,11 @@ class TestErlangPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_function_fix(self):
         """Test generation of function fixes."""
@@ -193,11 +193,11 @@ class TestErlangPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        function_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "function" in patch["description"].lower() or "clause" in patch["description"].lower()
+        assert function_patch is not None
+        assert function_patch["type"] == "suggestion"
+        assert "function" in function_patch["description"].lower() or "clause" in function_patch["description"].lower()
     
     def test_generate_pattern_fix(self):
         """Test generation of pattern match fixes."""
@@ -212,11 +212,11 @@ class TestErlangPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        pattern_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "pattern" in patch["description"].lower() or "case" in patch["description"].lower()
+        assert pattern_patch is not None
+        assert pattern_patch["type"] == "suggestion"
+        assert "pattern" in pattern_patch["description"].lower() or "case" in pattern_patch["description"].lower()
     
     def test_generate_otp_fix(self):
         """Test generation of OTP fixes."""
@@ -231,11 +231,11 @@ class TestErlangPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        otp_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "gen_server" in patch["description"].lower() or "otp" in patch["description"].lower()
+        assert otp_patch is not None
+        assert otp_patch["type"] == "suggestion"
+        assert "gen_server" in otp_patch["description"].lower() or "otp" in otp_patch["description"].lower()
     
     def test_generate_process_fix(self):
         """Test generation of process fixes."""
@@ -250,11 +250,11 @@ class TestErlangPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        process_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "process" in patch["description"].lower() or "exception" in patch["description"].lower()
+        assert process_patch is not None
+        assert process_patch["type"] == "suggestion"
+        assert "process" in process_patch["description"].lower() or "exception" in process_patch["description"].lower()
     
     def test_generate_module_fix(self):
         """Test generation of module fixes."""
@@ -269,11 +269,11 @@ class TestErlangPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        module_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "module" in patch["description"].lower() or "function" in patch["description"].lower()
+        assert module_patch is not None
+        assert module_patch["type"] == "suggestion"
+        assert "module" in module_patch["description"].lower() or "function" in module_patch["description"].lower()
     
     def test_generate_compilation_fix(self):
         """Test generation of compilation fixes."""
@@ -288,11 +288,11 @@ class TestErlangPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        compilation_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "compilation" in patch["description"].lower() or "mismatch" in patch["description"].lower()
+        assert compilation_patch is not None
+        assert compilation_patch["type"] == "suggestion"
+        assert "compilation" in compilation_patch["description"].lower() or "mismatch" in compilation_patch["description"].lower()
 
 
 class TestErlangLanguagePlugin:

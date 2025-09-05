@@ -174,11 +174,11 @@ class TestZigPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "semicolon" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "semicolon" in syntax_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -193,11 +193,11 @@ class TestZigPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower()
     
     def test_generate_memory_fix(self):
         """Test generation of memory fixes."""
@@ -212,11 +212,11 @@ class TestZigPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        memory_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "null" in patch["description"].lower() or "pointer" in patch["description"].lower()
+        assert memory_patch is not None
+        assert memory_patch["type"] == "suggestion"
+        assert "null" in memory_patch["description"].lower() or "pointer" in memory_patch["description"].lower()
     
     def test_generate_undefined_fix(self):
         """Test generation of undefined identifier fixes."""
@@ -231,11 +231,11 @@ class TestZigPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        undefined_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "identifier" in patch["description"].lower() or "undefined" in patch["description"].lower()
+        assert undefined_patch is not None
+        assert undefined_patch["type"] == "suggestion"
+        assert "identifier" in undefined_patch["description"].lower() or "undefined" in undefined_patch["description"].lower()
     
     def test_generate_comptime_fix(self):
         """Test generation of compile-time fixes."""
@@ -250,11 +250,11 @@ class TestZigPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        comptime_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "comptime" in patch["description"].lower() or "constant" in patch["description"].lower()
+        assert comptime_patch is not None
+        assert comptime_patch["type"] == "suggestion"
+        assert "comptime" in comptime_patch["description"].lower() or "constant" in comptime_patch["description"].lower()
     
     def test_generate_import_fix(self):
         """Test generation of import fixes."""
@@ -269,11 +269,11 @@ class TestZigPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        import_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "import" in patch["description"].lower()
+        assert import_patch is not None
+        assert import_patch["type"] == "suggestion"
+        assert "import" in import_patch["description"].lower()
     
     def test_generate_async_fix(self):
         """Test generation of async fixes."""
@@ -288,11 +288,11 @@ class TestZigPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        async_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "async" in patch["description"].lower() or "await" in patch["description"].lower()
+        assert async_patch is not None
+        assert async_patch["type"] == "suggestion"
+        assert "async" in async_patch["description"].lower() or "await" in async_patch["description"].lower()
 
 
 class TestZigLanguagePlugin:

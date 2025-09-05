@@ -7,17 +7,12 @@ This module provides utilities for:
 3. Collecting metrics to evaluate fix success
 """
 import os
-import sys
 import time
 import json
 import threading
 import requests
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Callable
-
-# Add project root to sys.path
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from modules.monitoring.logger import MonitoringLogger
 

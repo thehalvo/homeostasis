@@ -287,7 +287,7 @@ class QuantumErrorMitigator:
         applicable_strategies = []
         for strategy in strategies:
             if (quantum_error.framework.value in strategy["applicable_frameworks"] or 
-                "all" in strategy["applicable_frameworks"]):
+                    "all" in strategy["applicable_frameworks"]):
                 applicable_strategies.append(strategy)
         
         return applicable_strategies

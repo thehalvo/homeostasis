@@ -221,11 +221,11 @@ class TestJavaScriptPatchGenerator:
     return user.id;  // Error line
 }"""
         
-        patch = generator.generate_patch(error_data, analysis, source_code)
+        null_patch = generator.generate_patch(error_data, analysis, source_code)
         
-        assert patch is not None
-        assert patch["type"] == "line_replacement"
-        assert "?." in patch["replacement"] or "&&" in patch["replacement"]
+        assert null_patch is not None
+        assert null_patch["type"] == "line_replacement"
+        assert "?." in null_patch["replacement"] or "&&" in null_patch["replacement"]
     
     def test_fix_not_a_function(self, generator):
         """Test fix generation for 'not a function' errors."""
@@ -245,11 +245,11 @@ class TestJavaScriptPatchGenerator:
     return result;
 }"""
         
-        patch = generator.generate_patch(error_data, analysis, source_code)
+        function_patch = generator.generate_patch(error_data, analysis, source_code)
         
-        assert patch is not None
-        assert patch["type"] == "line_replacement"
-        assert "typeof" in patch["replacement"]
+        assert function_patch is not None
+        assert function_patch["type"] == "line_replacement"
+        assert "typeof" in function_patch["replacement"]
     
     def test_fix_undefined_reference(self, generator):
         """Test fix generation for undefined reference errors."""
@@ -266,11 +266,11 @@ class TestJavaScriptPatchGenerator:
         
         source_code = ""
         
-        patch = generator.generate_patch(error_data, analysis, source_code)
+        undefined_patch = generator.generate_patch(error_data, analysis, source_code)
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "Node.js environment" in patch["description"]
+        assert undefined_patch is not None
+        assert undefined_patch["type"] == "suggestion"
+        assert "Node.js environment" in undefined_patch["description"]
     
     def test_fix_promise_rejection(self, generator):
         """Test fix generation for Promise rejection errors."""
@@ -290,10 +290,10 @@ class TestJavaScriptPatchGenerator:
     return response;
 }"""
         
-        patch = generator.generate_patch(error_data, analysis, source_code)
+        promise_patch = generator.generate_patch(error_data, analysis, source_code)
         
-        assert patch is not None
-        assert ".catch" in patch["replacement"] or patch["type"] == "suggestion"
+        assert promise_patch is not None
+        assert ".catch" in promise_patch["replacement"] or promise_patch["type"] == "suggestion"
 
 
 class TestJavaScriptDependencyAnalyzer:

@@ -347,6 +347,7 @@ class APISecurityManager:
 # Singleton instance for app-wide use
 _api_security_manager = None
 
+
 def get_api_security_manager(config: Dict = None) -> APISecurityManager:
     """Get or create the singleton APISecurityManager instance.
     
@@ -360,6 +361,7 @@ def get_api_security_manager(config: Dict = None) -> APISecurityManager:
     if _api_security_manager is None:
         _api_security_manager = APISecurityManager(config)
     return _api_security_manager
+
 
 def secure_endpoint(permission: str = None, rate_limit: bool = True):
     """Decorator for securing API endpoints.

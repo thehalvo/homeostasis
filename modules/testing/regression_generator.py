@@ -6,15 +6,10 @@ This module provides utilities for:
 2. Tracking fix history and generating appropriate tests
 3. Integrating with the patch generation system
 """
-import sys
 import json
 import time
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
-
-# Add project root to sys.path
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from modules.monitoring.logger import MonitoringLogger
 from modules.testing.test_generator import TestGenerator

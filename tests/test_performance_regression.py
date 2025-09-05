@@ -251,7 +251,7 @@ class TestPatchGenerationPerformance:
                     match = re.search(r"name '(\w+)'", case["error"])
                     var_to_replace = match.group(1) if match else "unknown"
                 
-                patch = {
+                simple_patch = {
                     "language": case["language"],
                     "original": case["context"]["code"],
                     "fixed": case["context"]["code"].replace(
@@ -260,7 +260,7 @@ class TestPatchGenerationPerformance:
                     ),
                     "confidence": 0.8
                 }
-                patches.append(patch)
+                patches.append(simple_patch)
             return patches
         
         result = self.tester.benchmark(
@@ -307,7 +307,7 @@ items = [
             time.sleep(0.01)  # Simulate processing time
             
             # Generate patch
-            patch = {
+            complex_patch = {
                 "original_line": "total = total + item['price']",
                 "fixed_line": "total = total + float(item['price'])",
                 "explanation": "Convert string price to float before addition",
@@ -318,7 +318,7 @@ items = [
                 ]
             }
             
-            return patch
+            return complex_patch
         
         result = self.tester.benchmark(
             generate_complex_patch,

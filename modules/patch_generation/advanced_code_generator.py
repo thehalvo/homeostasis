@@ -578,7 +578,7 @@ OUTPUT FORMAT:
                         module = node.module or ''
                         for alias in node.names:
                             imports[module].append(alias.name)
-            except:
+            except (SyntaxError, ValueError, AttributeError):
                 pass
         
         elif language in ['javascript', 'typescript']:
@@ -612,7 +612,7 @@ OUTPUT FORMAT:
                     content = p.read_text()
                     if target_module in content:
                         related.append(str(p))
-                except:
+                except (IOError, UnicodeDecodeError):
                     pass
         
         return list(set(related))[:10]  # Limit to 10 most relevant
@@ -635,7 +635,7 @@ OUTPUT FORMAT:
                             graph.add_edge(current_function, node.func.id)
                         elif isinstance(node.func, ast.Attribute):
                             graph.add_edge(current_function, node.func.attr)
-            except:
+            except (SyntaxError, ValueError, AttributeError):
                 pass
         
         return graph
@@ -654,7 +654,7 @@ OUTPUT FORMAT:
                             if isinstance(base, ast.Name):
                                 bases.append(base.id)
                         hierarchy[node.name] = bases
-            except:
+            except (SyntaxError, ValueError, AttributeError):
                 pass
         
         return hierarchy
@@ -672,7 +672,7 @@ OUTPUT FORMAT:
                         for arg in node.args.args:
                             args.append(arg.arg)
                         signatures[node.name] = f"({', '.join(args)})"
-            except:
+            except (SyntaxError, ValueError, AttributeError):
                 pass
         
         return signatures
@@ -685,7 +685,7 @@ OUTPUT FORMAT:
             try:
                 tree = ast.parse(source_code)
                 self._analyze_python_scopes(tree, scopes)
-            except:
+            except (SyntaxError, ValueError, AttributeError):
                 pass
         
         return dict(scopes)
@@ -890,7 +890,7 @@ OUTPUT FORMAT:
                                 {'function': f, 'file': code_context.target_file}
                                 for f in path
                             ])
-            except:
+            except (nx.NetworkXError, AttributeError, KeyError):
                 pass
         
         return propagation_paths[:5]  # Limit to 5 paths
@@ -979,7 +979,7 @@ OUTPUT FORMAT:
             
             # Try direct JSON parsing
             return json.loads(response)
-        except:
+        except (json.JSONDecodeError, ValueError, AttributeError):
             # Fallback parsing
             return {
                 'changes': [],

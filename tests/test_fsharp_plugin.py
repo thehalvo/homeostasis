@@ -174,11 +174,11 @@ class TestFSharpPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -193,11 +193,11 @@ class TestFSharpPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower()
     
     def test_generate_pattern_fix(self):
         """Test generation of pattern match fixes."""
@@ -212,11 +212,11 @@ class TestFSharpPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        pattern_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "pattern" in patch["description"].lower()
+        assert pattern_patch is not None
+        assert pattern_patch["type"] == "suggestion"
+        assert "pattern" in pattern_patch["description"].lower()
     
     def test_generate_computation_expression_fix(self):
         """Test generation of computation expression fixes."""
@@ -231,11 +231,11 @@ class TestFSharpPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        computation_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "computation" in patch["description"].lower() or "bind" in patch["description"].lower()
+        assert computation_patch is not None
+        assert computation_patch["type"] == "suggestion"
+        assert "computation" in computation_patch["description"].lower() or "bind" in computation_patch["description"].lower()
     
     def test_generate_union_fix(self):
         """Test generation of discriminated union fixes."""
@@ -250,11 +250,11 @@ class TestFSharpPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        union_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "union" in patch["description"].lower() or "argument" in patch["description"].lower()
+        assert union_patch is not None
+        assert union_patch["type"] == "suggestion"
+        assert "union" in union_patch["description"].lower() or "argument" in union_patch["description"].lower()
     
     def test_generate_import_fix(self):
         """Test generation of import fixes."""
@@ -269,11 +269,11 @@ class TestFSharpPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        import_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "namespace" in patch["description"].lower() or "module" in patch["description"].lower()
+        assert import_patch is not None
+        assert import_patch["type"] == "suggestion"
+        assert "namespace" in import_patch["description"].lower() or "module" in import_patch["description"].lower()
     
     def test_generate_null_reference_fix(self):
         """Test generation of null reference fixes."""
@@ -288,11 +288,11 @@ class TestFSharpPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        null_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "null" in patch["description"].lower() or "reference" in patch["description"].lower()
+        assert null_patch is not None
+        assert null_patch["type"] == "suggestion"
+        assert "null" in null_patch["description"].lower() or "reference" in null_patch["description"].lower()
 
 
 class TestFSharpLanguagePlugin:

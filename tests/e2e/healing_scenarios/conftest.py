@@ -34,12 +34,14 @@ def test_environment():
         # Use mock environment that doesn't require real services
         env = MockServiceEnvironment()
         # Add compatibility methods
+        
         def setup():
             # Create test_service by default
             env.create_service('test_service')
         env.setup = setup
         # Adapt inject_error to handle both signatures
         original_inject_error = env.inject_error
+        
         def inject_error_adapter(error_type, file_path=None, error_code=None, **kwargs):
             # MockServiceEnvironment only needs error_type, message is auto-generated
             if 'service' in kwargs:
@@ -48,6 +50,7 @@ def test_environment():
                 # Assume test_service if not specified
                 return original_inject_error(service='test_service', error_type=error_type)
         env.inject_error = inject_error_adapter
+        
         def start_service():
             if 'test_service' not in env.services:
                 env.create_service('test_service')

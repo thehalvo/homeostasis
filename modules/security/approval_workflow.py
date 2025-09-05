@@ -995,6 +995,7 @@ class ApprovalWorkflowEngine:
 # Singleton instance
 _workflow_engine = None
 
+
 def get_workflow_engine(config: Dict = None) -> ApprovalWorkflowEngine:
     """Get or create the singleton ApprovalWorkflowEngine instance."""
     global _workflow_engine

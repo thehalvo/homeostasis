@@ -887,6 +887,7 @@ class ContinuousImprovementEngine:
 # Global instance
 _improvement_engine = None
 
+
 def get_improvement_engine() -> ContinuousImprovementEngine:
     """Get the global continuous improvement engine instance."""
     global _improvement_engine

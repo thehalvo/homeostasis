@@ -577,6 +577,7 @@ class PromptTemplateManager:
 # Global instance
 _prompt_template_manager = None
 
+
 def get_prompt_template_manager() -> PromptTemplateManager:
     """Get the global prompt template manager instance."""
     global _prompt_template_manager

@@ -174,11 +174,11 @@ class TestLuaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_nil_fix(self):
         """Test generation of nil fixes."""
@@ -193,11 +193,11 @@ class TestLuaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        nil_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "nil" in patch["description"].lower()
+        assert nil_patch is not None
+        assert nil_patch["type"] == "suggestion"
+        assert "nil" in nil_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -212,11 +212,11 @@ class TestLuaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower() or "concatenate" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower() or "concatenate" in type_patch["description"].lower()
     
     def test_generate_function_fix(self):
         """Test generation of function fixes."""
@@ -231,11 +231,11 @@ class TestLuaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        function_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "function" in patch["description"].lower()
+        assert function_patch is not None
+        assert function_patch["type"] == "suggestion"
+        assert "function" in function_patch["description"].lower()
     
     def test_generate_table_fix(self):
         """Test generation of table fixes."""
@@ -250,11 +250,11 @@ class TestLuaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        table_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "table" in patch["description"].lower() or "index" in patch["description"].lower()
+        assert table_patch is not None
+        assert table_patch["type"] == "suggestion"
+        assert "table" in table_patch["description"].lower() or "index" in table_patch["description"].lower()
     
     def test_generate_module_fix(self):
         """Test generation of module fixes."""
@@ -269,11 +269,11 @@ class TestLuaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        module_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "module" in patch["description"].lower() or "require" in patch["description"].lower()
+        assert module_patch is not None
+        assert module_patch["type"] == "suggestion"
+        assert "module" in module_patch["description"].lower() or "require" in module_patch["description"].lower()
     
     def test_generate_arithmetic_fix(self):
         """Test generation of arithmetic fixes."""
@@ -288,11 +288,11 @@ class TestLuaPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        arithmetic_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "arithmetic" in patch["description"].lower() or "tonumber" in patch["description"].lower()
+        assert arithmetic_patch is not None
+        assert arithmetic_patch["type"] == "suggestion"
+        assert "arithmetic" in arithmetic_patch["description"].lower() or "tonumber" in arithmetic_patch["description"].lower()
 
 
 class TestLuaLanguagePlugin:

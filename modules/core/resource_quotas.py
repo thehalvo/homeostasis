@@ -989,11 +989,13 @@ def allocate_resources(
 # Global instance management
 _resource_quota_manager = None
 
+
 def init_resource_quotas(config: Dict[str, Any]) -> ResourceQuotaManager:
     """Initialize the global resource quota manager"""
     global _resource_quota_manager
     _resource_quota_manager = ResourceQuotaManager(config)
     return _resource_quota_manager
+
 
 def get_resource_quota_manager() -> Optional[ResourceQuotaManager]:
     """Get the global resource quota manager instance"""

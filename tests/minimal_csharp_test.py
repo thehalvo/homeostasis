@@ -9,6 +9,8 @@ from pathlib import Path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Basic classes needed from the plugin system
+
+
 class LanguagePlugin:
     def get_language_id(self): pass
     def get_language_name(self): pass
@@ -20,11 +22,15 @@ class LanguagePlugin:
     def get_supported_frameworks(self): pass
 
 # Mock registration function
+
+
 def register_plugin(plugin):
     print(f"Registered plugin: {plugin.get_language_name()}")
 
+
 # Import adapter
 from modules.analysis.language_adapters import CSharpErrorAdapter
+
 
 # Helper function to check if two dictionaries have the same keys and approximately the same values
 def dict_similar(d1, d2, key):
@@ -33,6 +39,8 @@ def dict_similar(d1, d2, key):
 
 # Mock minimal classes needed to test the plugin
 # Create minimal rules directory structure needed for rule loading
+
+
 def setup_test_rules():
     """Ensure rule directories exist."""
     rules_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'modules', 'analysis', 'rules', 'csharp')))
@@ -40,6 +48,8 @@ def setup_test_rules():
         rules_dir.mkdir(parents=True, exist_ok=True)
 
 # Create a minimal plugin implementation
+
+
 class MinimalCSharpPlugin:
     """Minimal C# plugin for testing."""
     

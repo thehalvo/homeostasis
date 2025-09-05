@@ -2,14 +2,9 @@
 Test runner module for validating patches.
 """
 import subprocess
-import sys
 import time
 from pathlib import Path
 from typing import Dict, Optional, Any, Tuple
-
-# Add project root to sys.path
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from modules.monitoring.logger import MonitoringLogger
 

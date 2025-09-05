@@ -287,11 +287,11 @@ class TestGoPatchGenerator:
             "variable": "user"
         }
         
-        patch = self.generator.generate_patch(analysis, error_context)
+        nil_patch = self.generator.generate_patch(analysis, error_context)
         
-        assert patch is not None
-        assert "if user != nil {" in patch["content"]
-        assert patch["type"] == "code_modification"
+        assert nil_patch is not None
+        assert "if user != nil {" in nil_patch["content"]
+        assert nil_patch["type"] == "code_modification"
     
     def test_generate_bounds_check_patch(self):
         """Test generating bounds check patch."""
@@ -308,10 +308,10 @@ class TestGoPatchGenerator:
             "index": "index"
         }
         
-        patch = self.generator.generate_patch(analysis, error_context)
+        bounds_patch = self.generator.generate_patch(analysis, error_context)
         
-        assert patch is not None
-        assert "if index < len(arr)" in patch["content"] or "len(arr) > index" in patch["content"]
+        assert bounds_patch is not None
+        assert "if index < len(arr)" in bounds_patch["content"] or "len(arr) > index" in bounds_patch["content"]
     
     def test_generate_type_assertion_patch(self):
         """Test generating safe type assertion patch."""
@@ -328,11 +328,11 @@ class TestGoPatchGenerator:
             "target_type": "int"
         }
         
-        patch = self.generator.generate_patch(analysis, error_context)
+        type_patch = self.generator.generate_patch(analysis, error_context)
         
-        assert patch is not None
-        assert ", ok :=" in patch["content"]
-        assert "if ok {" in patch["content"] or "if !ok {" in patch["content"]
+        assert type_patch is not None
+        assert ", ok :=" in type_patch["content"]
+        assert "if ok {" in type_patch["content"] or "if !ok {" in type_patch["content"]
     
     def test_generate_mutex_patch(self):
         """Test generating mutex protection patch."""
@@ -348,12 +348,12 @@ class TestGoPatchGenerator:
             "shared_var": "counter"
         }
         
-        patch = self.generator.generate_patch(analysis, error_context)
+        mutex_patch = self.generator.generate_patch(analysis, error_context)
         
-        assert patch is not None
-        assert "sync.Mutex" in patch["imports"] or "sync.RWMutex" in patch["imports"]
-        assert "Lock()" in patch["content"]
-        assert "Unlock()" in patch["content"]
+        assert mutex_patch is not None
+        assert "sync.Mutex" in mutex_patch["imports"] or "sync.RWMutex" in mutex_patch["imports"]
+        assert "Lock()" in mutex_patch["content"]
+        assert "Unlock()" in mutex_patch["content"]
 
 
 class TestGoLanguagePlugin:

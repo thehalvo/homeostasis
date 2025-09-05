@@ -360,7 +360,7 @@ class ModernizationAnalyzer:
                      content: str, language: str) -> Optional[LegacyComponent]:
         """Analyze individual source file."""
         lines = content.split('\n')
-        loc = len([l for l in lines if l.strip() and not l.strip().startswith(('*', 'C', '!', '//'))])
+        loc = len([line for line in lines if line.strip() and not line.strip().startswith(('*', 'C', '!', '//'))])
         
         # Calculate complexity
         complexity = self._calculate_complexity(content, language)
@@ -377,7 +377,7 @@ class ModernizationAnalyzer:
         # Get file modification time
         try:
             mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
-        except:
+        except (OSError, IOError, ValueError):
             mtime = None
             
         return LegacyComponent(
@@ -510,7 +510,7 @@ class ModernizationAnalyzer:
                 debt_score += (procedure_lines / 100) * 0.5
                 
         # Commented code
-        commented_code = len([l for l in lines if re.match(r"^\s*[\*C!]\s*\w+", l)])
+        commented_code = len([line for line in lines if re.match(r"^\s*[\*C!]\s*\w+", line)])
         if commented_code > 50:
             debt_score += (commented_code / 10) * 0.2
             

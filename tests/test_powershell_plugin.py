@@ -174,11 +174,11 @@ class TestPowerShellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] == "suggestion"
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_cmdlet_fix(self):
         """Test generation of cmdlet fixes."""
@@ -193,11 +193,11 @@ class TestPowerShellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        cmdlet_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "cmdlet" in patch["description"].lower()
+        assert cmdlet_patch is not None
+        assert cmdlet_patch["type"] == "suggestion"
+        assert "cmdlet" in cmdlet_patch["description"].lower()
     
     def test_generate_variable_fix(self):
         """Test generation of variable fixes."""
@@ -212,11 +212,11 @@ class TestPowerShellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        variable_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "variable" in patch["description"].lower()
+        assert variable_patch is not None
+        assert variable_patch["type"] == "suggestion"
+        assert "variable" in variable_patch["description"].lower()
     
     def test_generate_permission_fix(self):
         """Test generation of permission fixes."""
@@ -231,11 +231,11 @@ class TestPowerShellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        permission_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "permission" in patch["description"].lower() or "access" in patch["description"].lower()
+        assert permission_patch is not None
+        assert permission_patch["type"] == "suggestion"
+        assert "permission" in permission_patch["description"].lower() or "access" in permission_patch["description"].lower()
     
     def test_generate_module_fix(self):
         """Test generation of module fixes."""
@@ -250,11 +250,11 @@ class TestPowerShellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        module_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "module" in patch["description"].lower() or "import" in patch["description"].lower()
+        assert module_patch is not None
+        assert module_patch["type"] == "suggestion"
+        assert "module" in module_patch["description"].lower() or "import" in module_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -269,11 +269,11 @@ class TestPowerShellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower() or "convert" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower() or "convert" in type_patch["description"].lower()
     
     def test_generate_pipeline_fix(self):
         """Test generation of pipeline fixes."""
@@ -288,11 +288,11 @@ class TestPowerShellPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        pipeline_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "pipeline" in patch["description"].lower() or "parameter" in patch["description"].lower()
+        assert pipeline_patch is not None
+        assert pipeline_patch["type"] == "suggestion"
+        assert "pipeline" in pipeline_patch["description"].lower() or "parameter" in pipeline_patch["description"].lower()
 
 
 class TestPowerShellLanguagePlugin:

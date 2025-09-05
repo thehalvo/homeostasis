@@ -28,6 +28,7 @@ class RuleEngine:
         """Add a rule to the engine."""
         self.rules.append(rule)
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -372,8 +373,8 @@ class RuleExtractor:
         diff = patch_data.get_diff()
         
         # Count added/removed lines
-        added_lines = len([l for l in diff.split('\n') if l.startswith('+')])
-        removed_lines = len([l for l in diff.split('\n') if l.startswith('-')])
+        added_lines = len([line for line in diff.split('\n') if line.startswith('+')])
+        removed_lines = len([line for line in diff.split('\n') if line.startswith('-')])
         
         structure = {
             'added_lines': added_lines,

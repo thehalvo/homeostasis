@@ -6,15 +6,10 @@ including polyglot microservices and language-specific error patterns.
 """
 import json
 import os
-import sys
 from pathlib import Path
 from typing import List
 
 import pytest
-
-# Add project root to path
-project_root = Path(__file__).parent.parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from tests.e2e.healing_scenarios.test_utilities import (
     HealingScenario,
@@ -205,14 +200,17 @@ class TestCrossLanguageHealing:
                 svc = env.create_cross_language_service('test_service', 'javascript', 8000)
                 svc.start()
                 return svc
+            
             def create_go():
                 svc = env.create_cross_language_service('test_service', 'go', 8001)
                 svc.start()
                 return svc
+            
             def create_java():
                 svc = env.create_cross_language_service('test_service', 'java', 8002)
                 svc.start()
                 return svc
+            
             env.create_javascript_service = create_js
             env.create_go_service = create_go
             env.create_java_service = create_java
@@ -507,7 +505,7 @@ def check_service_healthy_on_port(port: int) -> bool:
     try:
         response = requests.get(f"http://localhost:{port}/health", timeout=5)
         return response.status_code == 200
-    except:
+    except Exception:
         return False
         
 
@@ -519,7 +517,7 @@ def check_interservice_communication(services: List[tuple]) -> bool:
         response = requests.get("http://localhost:8000/error", timeout=5)
         # If it returns 200, the error was fixed
         return response.status_code == 200
-    except:
+    except Exception:
         return False
         
 

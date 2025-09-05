@@ -428,11 +428,11 @@ class TestCPatchGeneration:
             "language": "c"
         }
         
-        patch = self.generator.generate_patch(analysis, error_context)
+        null_check_patch = self.generator.generate_patch(analysis, error_context)
         
-        assert patch is not None
-        assert "if (ptr != NULL)" in patch["content"] or "if (ptr)" in patch["content"]
-        assert patch["type"] == "code_modification"
+        assert null_check_patch is not None
+        assert "if (ptr != NULL)" in null_check_patch["content"] or "if (ptr)" in null_check_patch["content"]
+        assert null_check_patch["type"] == "code_modification"
     
     def test_generate_bounds_check_patch_c(self):
         """Test generating bounds check for array access in C."""
@@ -449,10 +449,10 @@ class TestCPatchGeneration:
             "language": "c"
         }
         
-        patch = self.generator.generate_patch(analysis, error_context)
+        bounds_patch = self.generator.generate_patch(analysis, error_context)
         
-        assert patch is not None
-        assert "if (index < 100)" in patch["content"] or "index >= 0 && index < 100" in patch["content"]
+        assert bounds_patch is not None
+        assert "if (index < 100)" in bounds_patch["content"] or "index >= 0 && index < 100" in bounds_patch["content"]
     
     def test_generate_string_safety_patch(self):
         """Test generating safe string operation patch."""
@@ -469,11 +469,11 @@ class TestCPatchGeneration:
             "language": "c"
         }
         
-        patch = self.generator.generate_patch(analysis, error_context)
+        string_patch = self.generator.generate_patch(analysis, error_context)
         
-        assert patch is not None
-        assert "strncpy(dest, src, 255)" in patch["content"] or "strlcpy" in patch["content"]
-        assert "dest[255] = '\\0'" in patch["content"] or "null terminator" in patch["comment"]
+        assert string_patch is not None
+        assert "strncpy(dest, src, 255)" in string_patch["content"] or "strlcpy" in string_patch["content"]
+        assert "dest[255] = '\\0'" in string_patch["content"] or "null terminator" in string_patch["comment"]
     
     def test_generate_malloc_check_patch(self):
         """Test generating malloc NULL check patch."""
@@ -489,11 +489,11 @@ class TestCPatchGeneration:
             "language": "c"
         }
         
-        patch = self.generator.generate_patch(analysis, error_context)
+        malloc_patch = self.generator.generate_patch(analysis, error_context)
         
-        assert patch is not None
-        assert "if (buffer == NULL)" in patch["content"] or "if (!buffer)" in patch["content"]
-        assert "return" in patch["content"] or "error" in patch["content"].lower()
+        assert malloc_patch is not None
+        assert "if (buffer == NULL)" in malloc_patch["content"] or "if (!buffer)" in malloc_patch["content"]
+        assert "return" in malloc_patch["content"] or "error" in malloc_patch["content"].lower()
 
 
 class TestCIntegrationScenarios:

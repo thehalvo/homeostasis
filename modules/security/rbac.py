@@ -331,6 +331,7 @@ class RBACManager:
 # Singleton instance for app-wide use
 _rbac_manager = None
 
+
 def get_rbac_manager(config: Dict = None) -> RBACManager:
     """Get or create the singleton RBACManager instance.
     
@@ -345,6 +346,7 @@ def get_rbac_manager(config: Dict = None) -> RBACManager:
         _rbac_manager = RBACManager(config)
     return _rbac_manager
 
+
 def has_permission(user_info: Dict, permission: str) -> bool:
     """Check if a user has a specific permission.
     
@@ -356,6 +358,7 @@ def has_permission(user_info: Dict, permission: str) -> bool:
         bool: True if user has permission, False otherwise
     """
     return get_rbac_manager().has_permission(user_info, permission)
+
 
 def require_permission(user_info: Dict, permission: str) -> None:
     """Require that a user has a specific permission.

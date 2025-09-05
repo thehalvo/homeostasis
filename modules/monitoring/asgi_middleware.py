@@ -321,7 +321,7 @@ class HomeostasisASGIMiddleware:
             
             # Log performance metrics if enabled
             if (self.config["MONITOR_PERFORMANCE"] and 
-                duration > self.config["SLOW_REQUEST_THRESHOLD"]):
+                    duration > self.config["SLOW_REQUEST_THRESHOLD"]):
                 await self._log_slow_request(scope, request_id, duration)
                 
         except Exception as e:
@@ -718,7 +718,7 @@ class TornadoMonitoringMixin:
         
         # Log performance metrics if enabled
         if (self.homeostasis_config.get("MONITOR_PERFORMANCE", True) and 
-            duration > self.homeostasis_config.get("SLOW_REQUEST_THRESHOLD", 1.0)):
+                duration > self.homeostasis_config.get("SLOW_REQUEST_THRESHOLD", 1.0)):
             self._log_slow_request(duration)
         
         # Log the response if enabled

@@ -580,6 +580,7 @@ spec:
 # Singleton instance
 _istio_integration = None
 
+
 def get_istio_integration(config: Dict[str, Any] = None) -> IstioIntegration:
     """Get or create the singleton IstioIntegration instance.
     

@@ -792,11 +792,13 @@ def track_operation(
 # Global instance management
 _observability_hooks = None
 
+
 def init_observability_hooks(config: Dict[str, Any]) -> ObservabilityHooks:
     """Initialize global observability hooks"""
     global _observability_hooks
     _observability_hooks = ObservabilityHooks(config)
     return _observability_hooks
+
 
 def get_observability_hooks() -> Optional[ObservabilityHooks]:
     """Get the global observability hooks instance"""

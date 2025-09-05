@@ -288,12 +288,12 @@ class TestJavaPatchGenerator:
             "variable_name": "str"
         }
         
-        patch = self.generator.generate_patch(analysis, context)
+        null_patch = self.generator.generate_patch(analysis, context)
         
-        assert patch["language"] == "java"
-        assert patch["root_cause"] == "java_null_pointer"
-        assert "suggestion_code" in patch
-        assert "if (str != null)" in patch["suggestion_code"] or "Optional" in patch["suggestion_code"]
+        assert null_patch["language"] == "java"
+        assert null_patch["root_cause"] == "java_null_pointer"
+        assert "suggestion_code" in null_patch
+        assert "if (str != null)" in null_patch["suggestion_code"] or "Optional" in null_patch["suggestion_code"]
     
     def test_generate_concurrent_collection_patch(self):
         """Test patch generation for concurrent modification."""
@@ -312,10 +312,10 @@ class TestJavaPatchGenerator:
             "collection_type": "ArrayList"
         }
         
-        patch = self.generator.generate_patch(analysis, context)
+        concurrent_patch = self.generator.generate_patch(analysis, context)
         
-        assert patch["language"] == "java"
-        assert "Iterator" in patch["suggestion_code"] or "ConcurrentHashMap" in patch["suggestion_code"]
+        assert concurrent_patch["language"] == "java"
+        assert "Iterator" in concurrent_patch["suggestion_code"] or "ConcurrentHashMap" in concurrent_patch["suggestion_code"]
     
     def test_generate_resource_leak_patch(self):
         """Test patch generation for resource leak issues."""
@@ -335,11 +335,11 @@ class TestJavaPatchGenerator:
             "resource_type": "BufferedReader"
         }
         
-        patch = self.generator.generate_patch(analysis, context)
+        resource_patch = self.generator.generate_patch(analysis, context)
         
-        assert patch["language"] == "java"
-        assert "try (" in patch["suggestion_code"]
-        assert "AutoCloseable" in patch["description"] or "resource" in patch["description"]
+        assert resource_patch["language"] == "java"
+        assert "try (" in resource_patch["suggestion_code"]
+        assert "AutoCloseable" in resource_patch["description"] or "resource" in resource_patch["description"]
 
 
 class TestJavaLanguagePlugin:
@@ -928,8 +928,8 @@ class TestJavaPatchValidation:
         ]
         
         for context in contexts:
-            patch = self.generator.generate_patch(analysis, context)
-            assert patch is not None
+            style_patch = self.generator.generate_patch(analysis, context)
+            assert style_patch is not None
             # Patches should adapt to the code style
     
     def test_patch_handles_complex_expressions(self):
@@ -947,9 +947,9 @@ class TestJavaPatchValidation:
             "variable_name": "user"
         }
         
-        patch = self.generator.generate_patch(analysis, context)
-        assert patch is not None
-        assert "suggestion_code" in patch
+        complex_patch = self.generator.generate_patch(analysis, context)
+        assert complex_patch is not None
+        assert "suggestion_code" in complex_patch
         # Should handle the complex chained expression
 
 

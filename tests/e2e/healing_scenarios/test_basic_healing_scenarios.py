@@ -4,14 +4,9 @@ Basic end-to-end healing scenario tests.
 Tests fundamental healing workflows including error detection, patch generation,
 testing, and deployment.
 """
-import sys
 from pathlib import Path
 
 import pytest
-
-# Add project root to path
-project_root = Path(__file__).parent.parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from tests.e2e.healing_scenarios.test_utilities import (
     HealingScenario,
@@ -272,7 +267,7 @@ async def trigger_error2():
                 import requests
                 try:
                     requests.get("http://localhost:8000/error2", timeout=5)
-                except:
+                except Exception:
                     pass
             errors_triggered.append("AttributeError")
             

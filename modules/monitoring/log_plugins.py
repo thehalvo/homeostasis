@@ -679,6 +679,7 @@ def create_default_plugin_manager(service_name: str = "homeostasis") -> LoggingP
 # Global plugin manager instance
 _plugin_manager = None
 
+
 def get_plugin_manager(service_name: str = "homeostasis") -> LoggingPluginManager:
     """
     Get the global plugin manager instance, creating it if necessary.
@@ -710,21 +711,26 @@ def log(level: str, message: str, **kwargs) -> List[Dict[str, Any]]:
     """
     return get_plugin_manager().log(level, message, **kwargs)
 
+
 def info(message: str, **kwargs) -> List[Dict[str, Any]]:
     """Log an info message with all enabled plugins."""
     return get_plugin_manager().info(message, **kwargs)
+
 
 def warning(message: str, **kwargs) -> List[Dict[str, Any]]:
     """Log a warning message with all enabled plugins."""
     return get_plugin_manager().warning(message, **kwargs)
 
+
 def error(message: str, **kwargs) -> List[Dict[str, Any]]:
     """Log an error message with all enabled plugins."""
     return get_plugin_manager().error(message, **kwargs)
 
+
 def critical(message: str, **kwargs) -> List[Dict[str, Any]]:
     """Log a critical message with all enabled plugins."""
     return get_plugin_manager().critical(message, **kwargs)
+
 
 def exception(e: Exception, **kwargs) -> List[Dict[str, Any]]:
     """Log an exception with all enabled plugins."""

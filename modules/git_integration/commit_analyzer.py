@@ -6,7 +6,6 @@ that can be used to improve healing decisions and track healing patterns.
 """
 
 import os
-import sys
 import subprocess
 import re
 from typing import List, Dict, Any, Optional, Tuple
@@ -14,9 +13,6 @@ from pathlib import Path
 from datetime import datetime
 from dataclasses import dataclass
 from collections import defaultdict
-
-# Add the homeostasis modules to the path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from modules.monitoring.logger import HomeostasisLogger
 

@@ -246,7 +246,7 @@ class CostTracker:
                     threshold_percentage=threshold,
                     alert_type=alert_type,
                     message=f"Budget {budget_id} usage at {usage_percentage:.1f}% "
-                           f"(${current_usage:.4f} of ${budget.amount:.4f})",
+                            f"(${current_usage:.4f} of ${budget.amount:.4f})",
                     timestamp=time.time(),
                     current_usage=current_usage,
                     budget_amount=budget.amount

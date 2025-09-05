@@ -23,7 +23,7 @@ from typing import Dict, List, Any
 project_root = Path(__file__).parents[2]
 sys.path.insert(0, str(project_root))
 
-from modules.monitoring.audit_monitor import (
+from modules.monitoring.audit_monitor import (  # noqa: E402
     get_audit_monitor, 
     generate_activity_report,
     export_audit_data

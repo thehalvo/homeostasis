@@ -253,7 +253,7 @@ class AWSLambdaProvider(ServerlessProvider):
             try:
                 os.remove(zip_path)
                 os.rmdir(os.path.dirname(zip_path))
-            except:
+            except (OSError, IOError):
                 pass
                 
             # Log the deployment
@@ -341,7 +341,7 @@ class AWSLambdaProvider(ServerlessProvider):
             try:
                 os.remove(zip_path)
                 os.rmdir(os.path.dirname(zip_path))
-            except:
+            except (OSError, IOError):
                 pass
                 
             # Log the update
@@ -575,14 +575,14 @@ class AWSLambdaProvider(ServerlessProvider):
             try:
                 with open(response_file, "r") as f:
                     response_data = json.load(f)
-            except:
+            except (IOError, json.JSONDecodeError):
                 response_data = {}
                 
             # Clean up temporary files
             try:
                 os.remove(payload_file)
                 os.remove(response_file)
-            except:
+            except (OSError, IOError):
                 pass
                 
             if not result["success"]:
@@ -883,6 +883,7 @@ class AWSLambdaProvider(ServerlessProvider):
 
 # Singleton instance
 _lambda_provider = None
+
 
 def get_lambda_provider(config: Dict[str, Any] = None) -> AWSLambdaProvider:
     """Get or create the singleton AWSLambdaProvider instance.

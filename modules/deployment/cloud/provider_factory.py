@@ -70,6 +70,7 @@ class CloudProviderFactory:
 # Singleton instance for app-wide use
 _cloud_provider_factory = None
 
+
 def get_cloud_provider(config: Dict[str, Any] = None) -> Optional[BaseCloudProvider]:
     """Get or create cloud provider instance based on configuration.
     

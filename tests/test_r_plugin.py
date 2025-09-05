@@ -174,11 +174,11 @@ class TestRPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        syntax_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] in ["suggestion", "multiple_suggestions"]
-        assert "syntax" in patch["description"].lower()
+        assert syntax_patch is not None
+        assert syntax_patch["type"] in ["suggestion", "multiple_suggestions"]
+        assert "syntax" in syntax_patch["description"].lower()
     
     def test_generate_object_fix(self):
         """Test generation of object not found fixes."""
@@ -193,11 +193,11 @@ class TestRPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        object_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "object" in patch["description"].lower() or "variable" in patch["description"].lower()
+        assert object_patch is not None
+        assert object_patch["type"] == "suggestion"
+        assert "object" in object_patch["description"].lower() or "variable" in object_patch["description"].lower()
     
     def test_generate_function_fix(self):
         """Test generation of function fixes."""
@@ -212,11 +212,11 @@ class TestRPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        function_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "function" in patch["description"].lower()
+        assert function_patch is not None
+        assert function_patch["type"] == "suggestion"
+        assert "function" in function_patch["description"].lower()
     
     def test_generate_type_fix(self):
         """Test generation of type fixes."""
@@ -231,11 +231,11 @@ class TestRPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        type_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "type" in patch["description"].lower() or "numeric" in patch["description"].lower()
+        assert type_patch is not None
+        assert type_patch["type"] == "suggestion"
+        assert "type" in type_patch["description"].lower() or "numeric" in type_patch["description"].lower()
     
     def test_generate_package_fix(self):
         """Test generation of package fixes."""
@@ -250,11 +250,11 @@ class TestRPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        package_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "package" in patch["description"].lower() or "install" in patch["description"].lower()
+        assert package_patch is not None
+        assert package_patch["type"] == "suggestion"
+        assert "package" in package_patch["description"].lower() or "install" in package_patch["description"].lower()
     
     def test_generate_dimension_fix(self):
         """Test generation of dimension fixes."""
@@ -269,11 +269,11 @@ class TestRPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        dimension_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "dimension" in patch["description"].lower()
+        assert dimension_patch is not None
+        assert dimension_patch["type"] == "suggestion"
+        assert "dimension" in dimension_patch["description"].lower()
     
     def test_generate_na_fix(self):
         """Test generation of NA/missing value fixes."""
@@ -288,11 +288,11 @@ class TestRPatchGenerator:
             "confidence": "high"
         }
         
-        patch = self.generator.generate_patch(error_data, analysis, "")
+        na_patch = self.generator.generate_patch(error_data, analysis, "")
         
-        assert patch is not None
-        assert patch["type"] == "suggestion"
-        assert "na" in patch["description"].lower() or "missing" in patch["description"].lower()
+        assert na_patch is not None
+        assert na_patch["type"] == "suggestion"
+        assert "na" in na_patch["description"].lower() or "missing" in na_patch["description"].lower()
 
 
 class TestRLanguagePlugin:

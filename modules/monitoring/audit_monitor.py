@@ -464,6 +464,7 @@ class AuditMonitor:
 # Singleton instance for app-wide use
 _audit_monitor = None
 
+
 def get_audit_monitor(config: Dict[str, Any] = None) -> AuditMonitor:
     """Get or create the singleton AuditMonitor instance.
     

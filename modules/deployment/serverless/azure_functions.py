@@ -225,6 +225,7 @@ class AzureFunctionsProvider(ServerlessProvider):
 # Singleton instance
 _azure_functions_provider = None
 
+
 def get_azure_functions_provider(config: Dict[str, Any] = None) -> AzureFunctionsProvider:
     """Get or create the singleton AzureFunctionsProvider instance.
     

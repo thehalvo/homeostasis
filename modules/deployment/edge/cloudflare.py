@@ -221,7 +221,7 @@ format = "service-worker"
             # Clean up the project directory
             try:
                 shutil.rmtree(project_dir)
-            except:
+            except (OSError, IOError):
                 pass
                 
             # Log the deployment
@@ -287,7 +287,7 @@ format = "service-worker"
                 # Clean up the temporary file
                 try:
                     os.remove(env_file)
-                except:
+                except (OSError, IOError):
                     pass
                     
                 # Log the update
@@ -637,6 +637,7 @@ format = "service-worker"
 
 # Singleton instance
 _cloudflare_provider = None
+
 
 def get_cloudflare_provider(config: Dict[str, Any] = None) -> CloudflareProvider:
     """Get or create the singleton CloudflareProvider instance.

@@ -592,6 +592,7 @@ class CanaryDeployment:
 # Singleton instance for app-wide use
 _canary_deployment = None
 
+
 def get_canary_deployment(config: Dict[str, Any] = None) -> CanaryDeployment:
     """Get or create the singleton CanaryDeployment instance.
     

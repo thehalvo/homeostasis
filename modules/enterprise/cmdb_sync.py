@@ -661,7 +661,7 @@ class ServiceNowCMDB(CMDBSynchronizer):
             if data.get('attributes'):
                 try:
                     attributes = json.loads(data['attributes'])
-                except:
+                except (json.JSONDecodeError, ValueError):
                     pass
             
             # Parse healing config
@@ -669,7 +669,7 @@ class ServiceNowCMDB(CMDBSynchronizer):
             if data.get('u_healing_config'):
                 try:
                     healing_config = json.loads(data['u_healing_config'])
-                except:
+                except (json.JSONDecodeError, ValueError):
                     pass
             
             return CMDBItem(

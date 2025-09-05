@@ -6,7 +6,6 @@ This module provides utilities for:
 2. Detecting anomalies and unexpected behavior
 3. Sending alerts through various channels
 """
-import sys
 import time
 import json
 import socket
@@ -16,10 +15,6 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from pathlib import Path
 from typing import Dict, List, Any, Callable
-
-# Add project root to sys.path
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from modules.monitoring.logger import MonitoringLogger
 

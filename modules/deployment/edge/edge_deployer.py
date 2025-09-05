@@ -419,6 +419,7 @@ class EdgeDeployer:
 # Singleton instance
 _edge_deployer = None
 
+
 def get_edge_deployer(config: Dict[str, Any] = None) -> EdgeDeployer:
     """Get or create the singleton EdgeDeployer instance.
     

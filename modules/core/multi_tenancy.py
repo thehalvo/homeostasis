@@ -295,9 +295,9 @@ class MultiTenancyManager:
             
             # Update allowed fields
             allowed_fields = {'name', 'status', 'tier', 'metadata', 'owner_email'}
-            for field, value in updates.items():
-                if field in allowed_fields:
-                    setattr(tenant, field, value)
+            for field_name, value in updates.items():
+                if field_name in allowed_fields:
+                    setattr(tenant, field_name, value)
             
             # Update quota if tier changed
             if 'tier' in updates and updates['tier'] in self.tier_quotas:
@@ -765,19 +765,23 @@ class MultiTenancyManager:
 # Global instance management
 _multi_tenancy_manager = None
 
+
 def init_multi_tenancy(config: Dict[str, Any]) -> MultiTenancyManager:
     """Initialize the global multi-tenancy manager"""
     global _multi_tenancy_manager
     _multi_tenancy_manager = MultiTenancyManager(config)
     return _multi_tenancy_manager
 
+
 def get_multi_tenancy_manager() -> Optional[MultiTenancyManager]:
     """Get the global multi-tenancy manager instance"""
     return _multi_tenancy_manager
 
+
 def get_current_tenant_id() -> Optional[str]:
     """Get the current tenant ID from context"""
     return TenantContext.get_current_tenant_id()
+
 
 def require_tenant(func: Callable) -> Callable:
     """Decorator to ensure a tenant context is present"""

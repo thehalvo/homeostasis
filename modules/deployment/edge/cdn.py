@@ -362,6 +362,7 @@ class CDNProvider:
 # Singleton instance
 _cdn_provider = None
 
+
 def get_cdn_provider(config: Dict[str, Any] = None) -> CDNProvider:
     """Get or create the singleton CDNProvider instance.
     

@@ -540,6 +540,7 @@ class SuggestionManager:
 # Singleton instance
 _suggestion_manager = None
 
+
 def get_suggestion_manager(storage_dir: Optional[str] = None, 
                           config: Dict[str, Any] = None) -> SuggestionManager:
     """Get or create the singleton SuggestionManager.

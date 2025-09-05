@@ -280,7 +280,7 @@ class ContextualAnalyzer:
                     content = file_path.read_text()
                     if target_module in content:
                         relevant.append(str(file_path))
-                except:
+                except (IOError, UnicodeDecodeError):
                     pass
         
         return list(set(relevant))[:50]  # Limit to 50 files
@@ -569,7 +569,7 @@ class ContextualAnalyzer:
                             'line': content[:content.find(pattern)].count('\n') + 1
                         })
                         break
-            except:
+            except (re.error, AttributeError):
                 pass
         
         # Look for common entry point files
@@ -614,7 +614,7 @@ class ContextualAnalyzer:
                     content = test_file.read_text()
                     test_funcs = re.findall(r'def\s+(test_\w+)', content)
                     coverage['test_functions'].extend(test_funcs)
-                except:
+                except (IOError, UnicodeDecodeError, re.error):
                     pass
         
         # Try to get actual coverage data
@@ -632,7 +632,7 @@ class ContextualAnalyzer:
                         parts = line.split()
                         if len(parts) >= 4 and parts[-1].endswith('%'):
                             coverage['coverage_percentage'] = float(parts[-1][:-1])
-        except:
+        except (subprocess.SubprocessError, ValueError, IndexError):
             pass
         
         return coverage
@@ -700,7 +700,7 @@ class ContextualAnalyzer:
                 content.count('elif ')
             )
             
-        except:
+        except Exception:
             pass
         
         return metrics

@@ -225,6 +225,7 @@ class GCPFunctionsProvider(ServerlessProvider):
 # Singleton instance
 _functions_provider = None
 
+
 def get_functions_provider(config: Dict[str, Any] = None) -> GCPFunctionsProvider:
     """Get or create the singleton GCPFunctionsProvider instance.
     

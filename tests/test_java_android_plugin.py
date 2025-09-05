@@ -231,11 +231,11 @@ class TestJavaAndroidPlugin(unittest.TestCase):
             "framework": "android"
         }
         
-        patch = self.plugin.generate_fix(analysis, context)
+        activity_patch = self.plugin.generate_fix(analysis, context)
         
-        self.assertEqual(patch["language"], "java")
-        self.assertEqual(patch["framework"], "android")
-        self.assertIn("isFinishing", patch["suggestion"])
+        self.assertEqual(activity_patch["language"], "java")
+        self.assertEqual(activity_patch["framework"], "android")
+        self.assertIn("isFinishing", activity_patch["suggestion"])
     
     def test_patch_generation_main_thread_violation(self):
         """Test patch generation for main thread violations."""
@@ -256,10 +256,10 @@ class TestJavaAndroidPlugin(unittest.TestCase):
             "framework": "android"
         }
         
-        patch = self.plugin.generate_fix(analysis, context)
+        thread_patch = self.plugin.generate_fix(analysis, context)
         
-        self.assertEqual(patch["language"], "java")
-        self.assertIn("executor", patch["suggestion"].lower())
+        self.assertEqual(thread_patch["language"], "java")
+        self.assertIn("executor", thread_patch["suggestion"].lower())
     
     def test_supported_frameworks(self):
         """Test that Android is listed as a supported framework."""
@@ -333,7 +333,7 @@ class TestJavaAndroidIntegration(unittest.TestCase):
         
         # Generate a fix
         context = {"framework": "android", "code_snippet": "dialog.show();"}
-        patch = self.plugin.generate_fix(analysis, context)
+        dialog_patch = self.plugin.generate_fix(analysis, context)
         
         # Verify the complete flow
         self.assertEqual(analysis["category"], "android")

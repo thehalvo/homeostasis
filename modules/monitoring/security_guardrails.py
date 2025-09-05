@@ -193,7 +193,7 @@ class PIIDetector:
                     last_name = parts[-1]
                     
                     if (first_name in self.common_first_names or 
-                        last_name in self.common_last_names):
+                            last_name in self.common_last_names):
                         names.append(match)
         
         return names

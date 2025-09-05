@@ -19,7 +19,7 @@ class TestPreflightChecks:
         """Create Docker client if available"""
         try:
             return docker.from_env()
-        except:
+        except Exception:
             return None
     
     def test_system_resources(self):
@@ -208,7 +208,7 @@ class TestPreflightChecks:
                                   capture_output=True, text=True)
             if 'cap_net_admin' not in result.stdout.lower():
                 pytest.skip("CAP_NET_ADMIN capability not available")
-        except:
+        except Exception:
             pass  # capsh might not be available
     
     def test_chaos_module_dependencies(self):
@@ -269,7 +269,7 @@ class TestPreflightChecks:
                     process = psutil.Process(pid)
                     if 'chaos' in process.name().lower():
                         pytest.fail(f"Another chaos test is running (PID: {pid})")
-            except:
+            except Exception:
                 pass
             
             # Remove stale lock

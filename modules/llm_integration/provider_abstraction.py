@@ -1027,7 +1027,8 @@ class LLMManager:
                 try:
                     if enable_retry:
                         # Use retry logic
-                        operation = lambda: provider.complete(request)
+                        def operation():
+                            return provider.complete(request)
                         return self._retry_with_backoff(operation, provider_name)
                     else:
                         # Single attempt
@@ -1046,7 +1047,8 @@ class LLMManager:
                             proxy_provider = self._get_provider(provider_name, use_openrouter_proxy=True)
                             if proxy_provider:
                                 if enable_retry:
-                                    operation = lambda: proxy_provider.complete(request)
+                                    def operation():
+                                        return proxy_provider.complete(request)
                                     return self._retry_with_backoff(operation, f"{provider_name}_proxy")
                                 else:
                                     start_time = time.time()
@@ -1063,7 +1065,8 @@ class LLMManager:
                     proxy_provider = self._get_provider(provider_name, use_openrouter_proxy=True)
                     if proxy_provider:
                         if enable_retry:
-                            operation = lambda: proxy_provider.complete(request)
+                            def operation():
+                                return proxy_provider.complete(request)
                             return self._retry_with_backoff(operation, f"{provider_name}_proxy")
                         else:
                             start_time = time.time()

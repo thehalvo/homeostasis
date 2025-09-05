@@ -7,15 +7,10 @@ This module provides utilities for:
 3. Supporting different test frameworks (pytest, unittest)
 """
 import os
-import sys
 import re
 import ast
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-
-# Add project root to sys.path
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from modules.monitoring.logger import MonitoringLogger
 from modules.analysis.rule_based import RuleBasedAnalyzer

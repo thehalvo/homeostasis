@@ -97,7 +97,7 @@ def calculate_complexity_penalty(suggestion) -> float:
         r'try\s*:',                    # Exception handling
         r'[^a-zA-Z0-9_]and[^a-zA-Z0-9_]|[^a-zA-Z0-9_]or[^a-zA-Z0-9_]',  # Complex boolean logic
         r'\[\s*for\s+.+?\s+in\s+',     # List comprehensions
-        r'\{\s*(.+?)\s*:\s*(.+?)\s+for\s+', # Dict comprehensions
+        r'\{\s*(.+?)\s*:\s*(.+?)\s+for\s+',  # Dict comprehensions
     ]
     
     complexity_score = 0.0

@@ -996,6 +996,7 @@ Please review this request urgently.
 # Singleton instance
 _human_in_loop_system = None
 
+
 def get_human_in_loop_system(config: Dict[str, Any] = None) -> HumanInLoopFeedbackSystem:
     """
     Get or create the singleton HumanInLoopFeedbackSystem instance.

@@ -337,12 +337,12 @@ class TestCPPPatchGenerator:
             "variable_name": "str"
         }
         
-        patch = self.generator.generate_patch(analysis, context)
+        null_ptr_patch = self.generator.generate_patch(analysis, context)
         
-        assert patch["language"] == "cpp"
-        assert patch["root_cause"] == "cpp_segmentation_fault"
-        assert "suggestion_code" in patch
-        assert any(check in patch["suggestion_code"] for check in ["if (str != nullptr)", "if (str)", "if (str != NULL)"])
+        assert null_ptr_patch["language"] == "cpp"
+        assert null_ptr_patch["root_cause"] == "cpp_segmentation_fault"
+        assert "suggestion_code" in null_ptr_patch
+        assert any(check in null_ptr_patch["suggestion_code"] for check in ["if (str != nullptr)", "if (str)", "if (str != NULL)"])
     
     def test_generate_memory_management_patch(self):
         """Test patch generation for memory leak."""
@@ -362,10 +362,10 @@ class TestCPPPatchGenerator:
             "allocation_type": "array"
         }
         
-        patch = self.generator.generate_patch(analysis, context)
+        memory_patch = self.generator.generate_patch(analysis, context)
         
-        assert patch["language"] == "cpp"
-        assert "delete[]" in patch["suggestion_code"] or "unique_ptr" in patch["suggestion_code"]
+        assert memory_patch["language"] == "cpp"
+        assert "delete[]" in memory_patch["suggestion_code"] or "unique_ptr" in memory_patch["suggestion_code"]
     
     def test_generate_bounds_check_patch(self):
         """Test patch generation for array bounds checking."""
@@ -386,11 +386,11 @@ class TestCPPPatchGenerator:
             "index_name": "i"
         }
         
-        patch = self.generator.generate_patch(analysis, context)
+        bounds_patch = self.generator.generate_patch(analysis, context)
         
-        assert patch["language"] == "cpp"
+        assert bounds_patch["language"] == "cpp"
         # Check for bounds checking in either suggestion_code or patch_content
-        patch_text = patch.get("suggestion_code", "") or patch.get("patch_content", "")
+        patch_text = bounds_patch.get("suggestion_code", "") or bounds_patch.get("patch_content", "")
         assert patch_text  # Ensure we have some patch content
         # The patch might be a template or actual bounds check code
         assert any(text in patch_text.lower() for text in ["bounds", "check", "size", "range", "smart pointer", "container"])
@@ -412,11 +412,11 @@ class TestCPPPatchGenerator:
             "shared_variable": "counter"
         }
         
-        patch = self.generator.generate_patch(analysis, context)
+        thread_patch = self.generator.generate_patch(analysis, context)
         
-        assert patch.get("language", "cpp") == "cpp"
+        assert thread_patch.get("language", "cpp") == "cpp"
         # Check that we got a patch with the expected root cause
-        assert patch.get("root_cause") == "cpp_race_condition"
+        assert thread_patch.get("root_cause") == "cpp_race_condition"
         # Check for thread safety content or generic fix (since specific templates might not exist)
         patch_text = patch.get("suggestion_code", "") or patch.get("patch_content", "")
         if not patch_text:
