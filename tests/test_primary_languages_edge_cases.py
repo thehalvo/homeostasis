@@ -4,31 +4,33 @@ Edge case and corner case test coverage for primary languages.
 This module contains comprehensive test cases for unusual, boundary, and
 extreme scenarios that might occur in primary language error handling.
 """
-import pytest
+
 import os
 import sys
 from unittest.mock import Mock
 
+import pytest
+
 # Add the modules directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'modules', 'analysis'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "modules", "analysis"))
 
 from language_plugin_system import LanguagePluginSystem
 
 
 class TestPythonEdgeCases:
     """Edge cases for Python error handling."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.plugin_system = LanguagePluginSystem()
         # Create a mock Python plugin since the built-in one has import issues
         self.plugin = Mock()
-        
+
         def mock_analyze_error(error_data):
             """Mock analyze_error that returns appropriate responses based on error type."""
             error_type = error_data.get("error_type", "")
             message = error_data.get("message", "")
-            
+
             # Default response
             response = {
                 "category": "python",
@@ -36,44 +38,57 @@ class TestPythonEdgeCases:
                 "confidence": "high",
                 "suggestion": "Generic Python error",
                 "severity": "medium",
-                "root_cause": "python_error"
+                "root_cause": "python_error",
             }
-            
+
             # Customize based on error type
             if "codec" in message or "encoding" in message:
-                response.update({
-                    "subcategory": "encoding",
-                    "suggestion": "Check file encoding and ensure it matches the declared encoding"
-                })
+                response.update(
+                    {
+                        "subcategory": "encoding",
+                        "suggestion": "Check file encoding and ensure it matches the declared encoding",
+                    }
+                )
             elif error_type == "RecursionError":
-                response.update({
-                    "subcategory": "recursion",
-                    "suggestion": "Increase recursion limit or refactor to use iteration",
-                    "root_cause": "python_recursion_error"
-                })
-            elif "circular import" in message.lower() or "partially initialized module" in message:
-                response.update({
-                    "subcategory": "import",
-                    "suggestion": "Refactor code to avoid circular imports",
-                    "root_cause": "circular import detected"
-                })
+                response.update(
+                    {
+                        "subcategory": "recursion",
+                        "suggestion": "Increase recursion limit or refactor to use iteration",
+                        "root_cause": "python_recursion_error",
+                    }
+                )
+            elif (
+                "circular import" in message.lower()
+                or "partially initialized module" in message
+            ):
+                response.update(
+                    {
+                        "subcategory": "import",
+                        "suggestion": "Refactor code to avoid circular imports",
+                        "root_cause": "circular import detected",
+                    }
+                )
             elif "metaclass" in message.lower():
-                response.update({
-                    "subcategory": "metaclass",
-                    "suggestion": "Check metaclass implementation",
-                    "root_cause": "metaclass conflict"
-                })
+                response.update(
+                    {
+                        "subcategory": "metaclass",
+                        "suggestion": "Check metaclass implementation",
+                        "root_cause": "metaclass conflict",
+                    }
+                )
             elif "generator" in message.lower():
-                response.update({
-                    "subcategory": "generator",
-                    "suggestion": "Handle generator exceptions properly",
-                    "root_cause": "generator error"
-                })
-                
+                response.update(
+                    {
+                        "subcategory": "generator",
+                        "suggestion": "Handle generator exceptions properly",
+                        "root_cause": "generator error",
+                    }
+                )
+
             return response
-        
+
         self.plugin.analyze_error = Mock(side_effect=mock_analyze_error)
-    
+
     def test_unicode_in_error_messages(self):
         """Test handling of unicode characters in error messages."""
         error_data = {
@@ -82,13 +97,13 @@ class TestPythonEdgeCases:
             "message": "'utf-8' codec can't decode byte 0x80 in position 0: invalid start byte 🐍",
             "file": "文件.py",  # Unicode filename
             "line": 42,
-            "encoding": "utf-8"
+            "encoding": "utf-8",
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert analysis is not None
         assert "encoding" in analysis["suggestion"].lower()
-    
+
     def test_extremely_long_stack_trace(self):
         """Test handling of extremely deep stack traces."""
         error_data = {
@@ -98,14 +113,14 @@ class TestPythonEdgeCases:
             "stack_trace": [
                 {"function": "recursive_func", "file": "deep.py", "line": i}
                 for i in range(1000)  # 1000 levels deep
-            ]
+            ],
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert analysis is not None
         assert analysis["root_cause"] == "python_recursion_error"
         assert "recursion limit" in analysis["suggestion"].lower()
-    
+
     def test_circular_import_with_complex_path(self):
         """Test circular import detection with complex import paths."""
         error_data = {
@@ -116,14 +131,14 @@ class TestPythonEdgeCases:
                 "package.subpackage.module_a",
                 "package.subpackage.module_b",
                 "package.another.module_c",
-                "package.subpackage.module_a"  # Circular
-            ]
+                "package.subpackage.module_a",  # Circular
+            ],
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "circular import" in analysis["root_cause"]
         assert "refactor" in analysis["suggestion"].lower()
-    
+
     def test_metaclass_conflict_error(self):
         """Test metaclass conflict errors."""
         error_data = {
@@ -132,12 +147,12 @@ class TestPythonEdgeCases:
             "message": "metaclass conflict: the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases",
             "file": "meta.py",
             "line": 30,
-            "classes": ["ClassA", "ClassB"]
+            "classes": ["ClassA", "ClassB"],
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "metaclass" in analysis["root_cause"]
-    
+
     def test_generator_exhaustion_error(self):
         """Test generator exhaustion edge case."""
         error_data = {
@@ -146,9 +161,9 @@ class TestPythonEdgeCases:
             "message": "generator already exhausted",
             "file": "gen.py",
             "line": 50,
-            "context": "inside async generator"
+            "context": "inside async generator",
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert analysis is not None
         assert "generator" in analysis["suggestion"].lower()
@@ -156,52 +171,58 @@ class TestPythonEdgeCases:
 
 class TestJavaScriptEdgeCases:
     """Edge cases for JavaScript error handling."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.plugin_system = LanguagePluginSystem()
         # Create a mock JavaScript plugin
         self.plugin = Mock()
-        
+
         def mock_analyze_error(error_data):
             """Mock analyze_error for JavaScript errors."""
             message = error_data.get("message", "")
             context = error_data.get("context", "")
-            
+
             response = {
                 "category": "javascript",
                 "subcategory": "runtime",
                 "confidence": "high",
                 "suggestion": "Generic JavaScript error",
                 "severity": "medium",
-                "root_cause": "javascript_error"
+                "root_cause": "javascript_error",
             }
-            
+
             # Handle async stack traces
             if error_data.get("async_stack_trace"):
                 response["subcategory"] = "async"
-                
+
             if "circular" in message.lower():
-                response.update({
-                    "root_cause": "circular reference detected",
-                    "suggestion": "Use JSON.stringify with a replacer function to handle circular references"
-                })
+                response.update(
+                    {
+                        "root_cause": "circular reference detected",
+                        "suggestion": "Use JSON.stringify with a replacer function to handle circular references",
+                    }
+                )
             elif "Maximum call stack" in message:
                 if "Proxy" in context:
-                    response.update({
-                        "root_cause": "stack overflow",
-                        "suggestion": "Check proxy trap implementation to avoid infinite recursion"
-                    })
+                    response.update(
+                        {
+                            "root_cause": "stack overflow",
+                            "suggestion": "Check proxy trap implementation to avoid infinite recursion",
+                        }
+                    )
                 else:
-                    response.update({
-                        "root_cause": "stack overflow",
-                        "suggestion": "Refactor to use iteration instead of recursion or check for infinite loops"
-                    })
-                
+                    response.update(
+                        {
+                            "root_cause": "stack overflow",
+                            "suggestion": "Refactor to use iteration instead of recursion or check for infinite loops",
+                        }
+                    )
+
             return response
-        
+
         self.plugin.analyze_error = Mock(side_effect=mock_analyze_error)
-    
+
     def test_async_stack_trace_reconstruction(self):
         """Test async/await stack trace reconstruction."""
         error_data = {
@@ -212,14 +233,14 @@ class TestJavaScriptEdgeCases:
                 {"function": "async fetchData", "file": "api.js", "line": 100},
                 {"function": "async processUser", "file": "user.js", "line": 50},
                 {"function": "Promise.then", "file": "<anonymous>"},
-                {"function": "async handleRequest", "file": "handler.js", "line": 25}
-            ]
+                {"function": "async handleRequest", "file": "handler.js", "line": 25},
+            ],
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert analysis is not None
         assert "async" in str(analysis)
-    
+
     def test_circular_reference_in_json(self):
         """Test circular reference in JSON serialization."""
         error_data = {
@@ -228,13 +249,13 @@ class TestJavaScriptEdgeCases:
             "message": "Converting circular structure to JSON",
             "file": "serializer.js",
             "line": 75,
-            "object_path": "obj.parent.child.parent"
+            "object_path": "obj.parent.child.parent",
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "circular" in analysis["root_cause"]
         assert "JSON.stringify" in analysis["suggestion"]
-    
+
     def test_maximum_call_stack_with_tail_recursion(self):
         """Test maximum call stack with tail recursion."""
         error_data = {
@@ -243,13 +264,16 @@ class TestJavaScriptEdgeCases:
             "message": "Maximum call stack size exceeded",
             "optimization": "tail-call-optimization-not-available",
             "browser": "Chrome",
-            "stack_depth": 10473
+            "stack_depth": 10473,
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "stack" in analysis["root_cause"]
-        assert "iteration" in analysis["suggestion"].lower() or "loop" in analysis["suggestion"].lower()
-    
+        assert (
+            "iteration" in analysis["suggestion"].lower()
+            or "loop" in analysis["suggestion"].lower()
+        )
+
     def test_proxy_trap_infinite_recursion(self):
         """Test Proxy trap causing infinite recursion."""
         error_data = {
@@ -258,62 +282,66 @@ class TestJavaScriptEdgeCases:
             "message": "Maximum call stack size exceeded",
             "context": "Proxy get trap",
             "file": "proxy.js",
-            "line": 30
+            "line": 30,
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert analysis is not None
-        assert "proxy" in analysis["suggestion"].lower() or "trap" in analysis["suggestion"].lower()
+        assert (
+            "proxy" in analysis["suggestion"].lower()
+            or "trap" in analysis["suggestion"].lower()
+        )
 
 
 class TestJavaEdgeCases:
     """Edge cases for Java error handling."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.plugin_system = LanguagePluginSystem()
         # Create a mock Java plugin
         self.plugin = Mock()
-        
+
         def mock_analyze_error(error_data):
             """Mock analyze_error for Java errors."""
             error_type = error_data.get("error_type", "")
             message = error_data.get("message", "")
-            
+
             response = {
                 "category": "java",
                 "subcategory": "runtime",
                 "confidence": "high",
                 "suggestion": "Generic Java error",
                 "severity": "medium",
-                "root_cause": "java_error"
+                "root_cause": "java_error",
             }
-            
+
             if "DeadlockException" in error_type or "deadlock" in message.lower():
-                response.update({
-                    "root_cause": "deadlock detected",
-                    "severity": "critical"
-                })
+                response.update(
+                    {"root_cause": "deadlock detected", "severity": "critical"}
+                )
             elif "annotation" in message.lower() or "processor" in message.lower():
                 if "circular" in message.lower() or "depends on itself" in message:
-                    response.update({
-                        "root_cause": "circular annotation dependency"
-                    })
+                    response.update({"root_cause": "circular annotation dependency"})
             elif error_type == "JVMCrash":
-                response.update({
-                    "severity": "critical",
-                    "suggestion": "Check JNI implementation for memory safety issues"
-                })
+                response.update(
+                    {
+                        "severity": "critical",
+                        "suggestion": "Check JNI implementation for memory safety issues",
+                    }
+                )
             elif error_type == "OutOfMemoryError":
                 if "ThreadLocal" in str(error_data.get("heap_dump_analysis", {})):
-                    response.update({
-                        "suggestion": "Ensure ThreadLocal.remove() is called to prevent memory leaks"
-                    })
-            
+                    response.update(
+                        {
+                            "suggestion": "Ensure ThreadLocal.remove() is called to prevent memory leaks"
+                        }
+                    )
+
             return response
-        
+
         self.plugin.analyze_error = Mock(side_effect=mock_analyze_error)
-    
+
     def test_classloader_deadlock(self):
         """Test classloader deadlock scenario."""
         error_data = {
@@ -325,21 +353,21 @@ class TestJavaEdgeCases:
                     "name": "Thread-1",
                     "state": "BLOCKED",
                     "waiting_for": "ClassA",
-                    "holding": "ClassB"
+                    "holding": "ClassB",
                 },
                 {
                     "name": "Thread-2",
                     "state": "BLOCKED",
                     "waiting_for": "ClassB",
-                    "holding": "ClassA"
-                }
-            ]
+                    "holding": "ClassA",
+                },
+            ],
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "deadlock" in analysis["root_cause"]
         assert analysis["severity"] == "critical"
-    
+
     def test_annotation_processor_circular_dependency(self):
         """Test annotation processor circular dependency."""
         error_data = {
@@ -347,12 +375,15 @@ class TestJavaEdgeCases:
             "error_type": "CompilationError",
             "message": "Annotation processor 'com.example.MyProcessor' depends on itself",
             "phase": "annotation-processing",
-            "round": 5
+            "round": 5,
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
-        assert "circular" in analysis["root_cause"] or "annotation" in analysis["root_cause"]
-    
+        assert (
+            "circular" in analysis["root_cause"]
+            or "annotation" in analysis["root_cause"]
+        )
+
     def test_jvm_segfault_in_jni(self):
         """Test JVM segfault in JNI code."""
         error_data = {
@@ -360,13 +391,16 @@ class TestJavaEdgeCases:
             "error_type": "JVMCrash",
             "message": "SIGSEGV (0xb) at pc=0x00007fff5fc01000",
             "problematic_frame": "C  [libsystem.dylib+0x1000]  memcpy+0x10",
-            "jni_method": "Java_com_example_Native_processData"
+            "jni_method": "Java_com_example_Native_processData",
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert analysis["severity"] == "critical"
-        assert "JNI" in analysis["suggestion"] or "native" in analysis["suggestion"].lower()
-    
+        assert (
+            "JNI" in analysis["suggestion"]
+            or "native" in analysis["suggestion"].lower()
+        )
+
     def test_memory_leak_in_threadlocal(self):
         """Test memory leak in ThreadLocal usage."""
         error_data = {
@@ -376,62 +410,73 @@ class TestJavaEdgeCases:
             "heap_dump_analysis": {
                 "suspect": "ThreadLocal",
                 "retained_size": "2.5GB",
-                "instance_count": 1000000
-            }
+                "instance_count": 1000000,
+            },
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "ThreadLocal" in analysis["suggestion"]
-        assert "remove()" in analysis["suggestion"] or "clean" in analysis["suggestion"].lower()
+        assert (
+            "remove()" in analysis["suggestion"]
+            or "clean" in analysis["suggestion"].lower()
+        )
 
 
 class TestCppEdgeCases:
     """Edge cases for C++ error handling."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.plugin_system = LanguagePluginSystem()
         # Create a mock C++ plugin
         self.plugin = Mock()
-        
+
         def mock_analyze_error(error_data):
             """Mock analyze_error for C++ errors."""
             message = error_data.get("message", "")
-            
+
             response = {
                 "category": "cpp",
                 "subcategory": "runtime",
                 "confidence": "high",
                 "suggestion": "Generic C++ error",
                 "severity": "medium",
-                "root_cause": "cpp_error"
+                "root_cause": "cpp_error",
             }
-            
+
             if "template instantiation depth" in message:
-                response.update({
-                    "root_cause": "template recursion limit",
-                    "suggestion": "Consider reducing template depth or increasing compiler limit"
-                })
-            elif "undefined_behavior" in error_data or "undefined behavior" in message.lower():
-                response.update({
-                    "root_cause": "undefined behavior",
-                    "severity": "high"
-                })
+                response.update(
+                    {
+                        "root_cause": "template recursion limit",
+                        "suggestion": "Consider reducing template depth or increasing compiler limit",
+                    }
+                )
+            elif (
+                "undefined_behavior" in error_data
+                or "undefined behavior" in message.lower()
+            ):
+                response.update(
+                    {"root_cause": "undefined behavior", "severity": "high"}
+                )
             elif "coroutine" in message or "promise_type" in message:
-                response.update({
-                    "root_cause": "coroutine promise type error",
-                    "suggestion": "Ensure promise_type is properly defined for coroutine"
-                })
+                response.update(
+                    {
+                        "root_cause": "coroutine promise type error",
+                        "suggestion": "Ensure promise_type is properly defined for coroutine",
+                    }
+                )
             elif "module partition" in message and "circular" in message:
-                response.update({
-                    "root_cause": "circular module dependency",
-                    "suggestion": "Refactor module structure to avoid circular dependencies"
-                })
-            
+                response.update(
+                    {
+                        "root_cause": "circular module dependency",
+                        "suggestion": "Refactor module structure to avoid circular dependencies",
+                    }
+                )
+
             return response
-        
+
         self.plugin.analyze_error = Mock(side_effect=mock_analyze_error)
-    
+
     def test_template_instantiation_recursion_limit(self):
         """Test template instantiation recursion limit."""
         error_data = {
@@ -440,13 +485,13 @@ class TestCppEdgeCases:
             "message": "template instantiation depth exceeds maximum of 900",
             "file": "template_meta.hpp",
             "line": 100,
-            "template_chain": ["Fibonacci<900>", "Fibonacci<899>", "..."]
+            "template_chain": ["Fibonacci<900>", "Fibonacci<899>", "..."],
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "template" in analysis["root_cause"]
         assert "depth" in analysis["suggestion"] or "limit" in analysis["suggestion"]
-    
+
     def test_undefined_behavior_optimization(self):
         """Test undefined behavior eliminated by optimizer."""
         error_data = {
@@ -455,13 +500,13 @@ class TestCppEdgeCases:
             "message": "Segmentation fault",
             "compiler_warning": "assuming signed overflow does not occur",
             "optimization_level": "-O3",
-            "undefined_behavior": "signed integer overflow"
+            "undefined_behavior": "signed integer overflow",
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "undefined behavior" in analysis["root_cause"]
         assert analysis["severity"] == "high"
-    
+
     def test_coroutine_promise_type_mismatch(self):
         """Test C++20 coroutine promise type mismatch."""
         error_data = {
@@ -470,12 +515,15 @@ class TestCppEdgeCases:
             "message": "no member named 'promise_type' in 'std::coroutine_traits'",
             "file": "async.cpp",
             "line": 50,
-            "cpp_version": "c++20"
+            "cpp_version": "c++20",
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
-        assert "coroutine" in analysis["root_cause"] or "promise_type" in analysis["suggestion"]
-    
+        assert (
+            "coroutine" in analysis["root_cause"]
+            or "promise_type" in analysis["suggestion"]
+        )
+
     def test_module_partition_circular_dependency(self):
         """Test C++20 module partition circular dependency."""
         error_data = {
@@ -483,9 +531,9 @@ class TestCppEdgeCases:
             "error_type": "CompilationError",
             "message": "module partition forms circular dependency",
             "modules": ["math:core", "math:advanced", "math:core"],
-            "cpp_version": "c++20"
+            "cpp_version": "c++20",
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "circular" in analysis["root_cause"]
         assert "module" in analysis["suggestion"]
@@ -493,54 +541,62 @@ class TestCppEdgeCases:
 
 class TestGoEdgeCases:
     """Edge cases for Go error handling."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.plugin_system = LanguagePluginSystem()
         # Create a mock Go plugin
         self.plugin = Mock()
-        
+
         def mock_analyze_error(error_data):
             """Mock analyze_error for Go errors."""
             error_type = error_data.get("error_type", "")
             message = error_data.get("message", "")
-            
+
             response = {
                 "category": "go",
                 "subcategory": "runtime",
                 "confidence": "high",
                 "suggestion": "Generic Go error",
                 "severity": "medium",
-                "root_cause": "go_error"
+                "root_cause": "go_error",
             }
-            
+
             if error_type == "CGOPanic":
-                response.update({
-                    "root_cause": "CGO boundary error",
-                    "severity": "critical",
-                    "suggestion": "Check CGO boundaries and ensure proper error handling"
-                })
+                response.update(
+                    {
+                        "root_cause": "CGO boundary error",
+                        "severity": "critical",
+                        "suggestion": "Check CGO boundaries and ensure proper error handling",
+                    }
+                )
             elif error_type == "GoroutineLeak":
-                response.update({
-                    "root_cause": "goroutine leak detected",
-                    "suggestion": "Close channels properly and ensure goroutines can exit"
-                })
+                response.update(
+                    {
+                        "root_cause": "goroutine leak detected",
+                        "suggestion": "Close channels properly and ensure goroutines can exit",
+                    }
+                )
             elif "reflect" in message.lower():
-                response.update({
-                    "root_cause": "reflection error",
-                    "suggestion": "Add nil checks before using reflect.IsValid()"
-                })
+                response.update(
+                    {
+                        "root_cause": "reflection error",
+                        "suggestion": "Add nil checks before using reflect.IsValid()",
+                    }
+                )
             elif "unsafe" in message.lower():
-                response.update({
-                    "root_cause": "unsafe pointer operation",
-                    "severity": "critical",
-                    "suggestion": "Validate unsafe operations carefully"
-                })
-                
+                response.update(
+                    {
+                        "root_cause": "unsafe pointer operation",
+                        "severity": "critical",
+                        "suggestion": "Validate unsafe operations carefully",
+                    }
+                )
+
             return response
-        
+
         self.plugin.analyze_error = Mock(side_effect=mock_analyze_error)
-    
+
     def test_cgo_panic_recovery(self):
         """Test panic recovery across CGO boundary."""
         error_data = {
@@ -549,13 +605,13 @@ class TestGoEdgeCases:
             "message": "panic during CGO call",
             "recovered": False,
             "c_function": "process_data",
-            "signal": "SIGSEGV"
+            "signal": "SIGSEGV",
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "CGO" in analysis["root_cause"] or "cgo" in analysis["root_cause"]
         assert analysis["severity"] == "critical"
-    
+
     def test_goroutine_leak_detection(self):
         """Test goroutine leak with detailed analysis."""
         error_data = {
@@ -567,14 +623,14 @@ class TestGoEdgeCases:
             "stack_analysis": {
                 "blocked_on_channel": 9500,
                 "blocked_on_mutex": 400,
-                "running": 100
-            }
+                "running": 100,
+            },
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "leak" in analysis["root_cause"]
         assert "channel" in analysis["suggestion"] or "close" in analysis["suggestion"]
-    
+
     def test_reflection_panic_with_nil_interface(self):
         """Test reflection panic with nil interface."""
         error_data = {
@@ -583,13 +639,19 @@ class TestGoEdgeCases:
             "message": "reflect: call of reflect.Value.Type on zero Value",
             "file": "reflector.go",
             "line": 75,
-            "operation": "reflect.ValueOf(nil).Type()"
+            "operation": "reflect.ValueOf(nil).Type()",
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
-        assert "reflect" in analysis["root_cause"] or "reflection" in analysis["root_cause"]
-        assert "nil check" in analysis["suggestion"] or "IsValid()" in analysis["suggestion"]
-    
+        assert (
+            "reflect" in analysis["root_cause"]
+            or "reflection" in analysis["root_cause"]
+        )
+        assert (
+            "nil check" in analysis["suggestion"]
+            or "IsValid()" in analysis["suggestion"]
+        )
+
     def test_unsafe_pointer_arithmetic_overflow(self):
         """Test unsafe pointer arithmetic overflow."""
         error_data = {
@@ -599,9 +661,9 @@ class TestGoEdgeCases:
             "file": "unsafe_ops.go",
             "line": 30,
             "pointer_value": "0xc000000000",
-            "offset": "0x7fffffffffffffff"
+            "offset": "0x7fffffffffffffff",
         }
-        
+
         analysis = self.plugin.analyze_error(error_data)
         assert "unsafe" in analysis["root_cause"]
         assert analysis["severity"] == "critical"
@@ -609,35 +671,35 @@ class TestGoEdgeCases:
 
 class TestMultiLanguageEdgeCases:
     """Edge cases involving multiple languages or cross-language scenarios."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.plugin_system = LanguagePluginSystem()
-    
+
     def test_mixed_encoding_in_error_chain(self):
         """Test error chain with mixed character encodings."""
         # This could happen in a polyglot system
         error_chain = [
             {
                 "language": "python",
-                "message": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80"
+                "message": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80",
             },
             {
                 "language": "java",
-                "message": "java.nio.charset.MalformedInputException: Input length = 1"
+                "message": "java.nio.charset.MalformedInputException: Input length = 1",
             },
-            {
-                "language": "javascript",
-                "message": "URIError: URI malformed"
-            }
+            {"language": "javascript", "message": "URIError: URI malformed"},
         ]
-        
+
         for error in error_chain:
             plugin = self.plugin_system.get_plugin(error["language"])
             if plugin:
                 analysis = plugin.analyze_error(error)
-                assert "encoding" in str(analysis).lower() or "decode" in str(analysis).lower()
-    
+                assert (
+                    "encoding" in str(analysis).lower()
+                    or "decode" in str(analysis).lower()
+                )
+
     def test_numeric_overflow_across_languages(self):
         """Test numeric overflow handling in different languages."""
         test_cases = [
@@ -645,62 +707,65 @@ class TestMultiLanguageEdgeCases:
                 "language": "python",
                 "error_type": "OverflowError",
                 "message": "int too large to convert to float",
-                "value": "10**308"
+                "value": "10**308",
             },
             {
                 "language": "java",
                 "error_type": "ArithmeticException",
                 "message": "integer overflow",
-                "value": "Integer.MAX_VALUE + 1"
+                "value": "Integer.MAX_VALUE + 1",
             },
             {
                 "language": "javascript",
                 "error_type": "RangeError",
                 "message": "BigInt too large",
-                "value": "2n ** 1000000n"
+                "value": "2n ** 1000000n",
             },
             {
                 "language": "go",
                 "error_type": "RuntimeError",
                 "message": "integer divide by zero",
-                "operation": "math.MaxInt64 / 0"
-            }
+                "operation": "math.MaxInt64 / 0",
+            },
         ]
-        
+
         for test_case in test_cases:
             plugin = self.plugin_system.get_plugin(test_case["language"])
             if plugin:
                 analysis = plugin.analyze_error(test_case)
                 assert analysis is not None
-                assert "overflow" in str(analysis).lower() or "arithmetic" in str(analysis).lower()
-    
+                assert (
+                    "overflow" in str(analysis).lower()
+                    or "arithmetic" in str(analysis).lower()
+                )
+
     def test_memory_corruption_patterns(self):
         """Test similar memory corruption patterns across languages."""
         corruption_patterns = [
             {
                 "language": "cpp",
                 "pattern": "double-free",
-                "message": "free(): double free detected"
+                "message": "free(): double free detected",
             },
             {
                 "language": "rust",
                 "pattern": "use-after-free",
-                "message": "use of moved value"
+                "message": "use of moved value",
             },
             {
                 "language": "go",
                 "pattern": "data-race",
-                "message": "DATA RACE: concurrent map access"
-            }
+                "message": "DATA RACE: concurrent map access",
+            },
         ]
-        
+
         for pattern in corruption_patterns:
             plugin = self.plugin_system.get_plugin(pattern["language"])
             if plugin:
                 error = {
                     "language": pattern["language"],
                     "error_type": "MemoryError",
-                    "message": pattern["message"]
+                    "message": pattern["message"],
                 }
                 analysis = plugin.analyze_error(error)
                 assert analysis["severity"] in ["high", "critical"]
@@ -708,16 +773,16 @@ class TestMultiLanguageEdgeCases:
 
 class TestPlatformSpecificEdgeCases:
     """Platform-specific edge cases."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.plugin_system = LanguagePluginSystem()
-    
+
     def test_windows_path_length_limit(self):
         """Test Windows path length limit errors."""
         # This affects multiple languages on Windows
         languages = ["python", "java", "csharp"]
-        
+
         for lang in languages:
             plugin = self.plugin_system.get_plugin(lang)
             if plugin:
@@ -727,13 +792,16 @@ class TestPlatformSpecificEdgeCases:
                     "message": "The system cannot find the path specified",
                     "path_length": 300,
                     "platform": "Windows",
-                    "path": "C:\\" + "very\\long\\" * 50 + "path.txt"
+                    "path": "C:\\" + "very\\long\\" * 50 + "path.txt",
                 }
-                
+
                 analysis = plugin.analyze_error(error)
                 assert analysis is not None
-                assert "path" in analysis["suggestion"].lower() or "length" in analysis["suggestion"].lower()
-    
+                assert (
+                    "path" in analysis["suggestion"].lower()
+                    or "length" in analysis["suggestion"].lower()
+                )
+
     def test_linux_file_descriptor_limit(self):
         """Test Linux file descriptor limit errors."""
         error_data = {
@@ -743,24 +811,29 @@ class TestPlatformSpecificEdgeCases:
             "errno": 24,
             "platform": "Linux",
             "open_files": 1024,
-            "ulimit": 1024
+            "ulimit": 1024,
         }
-        
+
         # Create a mock plugin since get_plugin might return None
         plugin = Mock()
-        plugin.analyze_error = Mock(return_value={
-            "category": "python",
-            "subcategory": "resources",
-            "confidence": "high",
-            "suggestion": "Increase file descriptor limit with ulimit -n or close unused files",
-            "severity": "medium",
-            "root_cause": "file_descriptor_limit"
-        })
-        
+        plugin.analyze_error = Mock(
+            return_value={
+                "category": "python",
+                "subcategory": "resources",
+                "confidence": "high",
+                "suggestion": "Increase file descriptor limit with ulimit -n or close unused files",
+                "severity": "medium",
+                "root_cause": "file_descriptor_limit",
+            }
+        )
+
         analysis = plugin.analyze_error(error_data)
-        
-        assert "file descriptor" in analysis["suggestion"] or "ulimit" in analysis["suggestion"]
-    
+
+        assert (
+            "file descriptor" in analysis["suggestion"]
+            or "ulimit" in analysis["suggestion"]
+        )
+
     def test_macos_sandbox_violation(self):
         """Test macOS sandbox violation errors."""
         error_data = {
@@ -768,13 +841,16 @@ class TestPlatformSpecificEdgeCases:
             "error_type": "SandboxViolation",
             "message": "deny file-read-data /private/var/db/receipts",
             "platform": "macOS",
-            "entitlement": "com.apple.security.files.user-selected.read-only"
+            "entitlement": "com.apple.security.files.user-selected.read-only",
         }
-        
+
         plugin = self.plugin_system.get_plugin("swift")
         if plugin:
             analysis = plugin.analyze_error(error_data)
-            assert "sandbox" in str(analysis).lower() or "entitlement" in str(analysis).lower()
+            assert (
+                "sandbox" in str(analysis).lower()
+                or "entitlement" in str(analysis).lower()
+            )
 
 
 if __name__ == "__main__":

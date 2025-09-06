@@ -1,7 +1,11 @@
 import unittest
 
-from modules.analysis.plugins.php_plugin import PHPLanguagePlugin, PHPExceptionHandler, PHPPatchGenerator
 from modules.analysis.language_adapters import PHPErrorAdapter
+from modules.analysis.plugins.php_plugin import (
+    PHPExceptionHandler,
+    PHPLanguagePlugin,
+    PHPPatchGenerator,
+)
 
 
 class TestPHPPlugin(unittest.TestCase):
@@ -16,7 +20,7 @@ class TestPHPPlugin(unittest.TestCase):
         self.assertEqual(self.plugin.get_language_id(), "php")
         self.assertEqual(self.plugin.get_language_name(), "PHP")
         self.assertEqual(self.plugin.get_language_version(), "7.0+")
-        
+
         frameworks = self.plugin.get_supported_frameworks()
         self.assertIn("laravel", frameworks)
         self.assertIn("symfony", frameworks)
@@ -37,23 +41,23 @@ class TestPHPPlugin(unittest.TestCase):
                     "file": "/var/www/html/app/Controllers/UserController.php",
                     "line": 25,
                     "function": "getUserProfile",
-                    "class": "App\\Controllers\\UserController"
+                    "class": "App\\Controllers\\UserController",
                 },
                 {
                     "file": "/var/www/html/routes/web.php",
                     "line": 16,
                     "function": "handle",
-                    "class": "App\\Http\\Kernel"
-                }
+                    "class": "App\\Http\\Kernel",
+                },
             ],
             "php_version": "8.1.0",
             "framework": "Laravel",
-            "framework_version": "9.0.0"
+            "framework_version": "9.0.0",
         }
-        
+
         # Convert to standard format
         standard_error = self.adapter.to_standard_format(php_error)
-        
+
         # Verify standard format
         self.assertEqual(standard_error["language"], "php")
         self.assertEqual(standard_error["error_type"], "ErrorException")
@@ -62,10 +66,10 @@ class TestPHPPlugin(unittest.TestCase):
         self.assertEqual(standard_error["framework"], "Laravel")
         self.assertEqual(standard_error["framework_version"], "9.0.0")
         self.assertIsInstance(standard_error["stack_trace"], list)
-        
+
         # Convert back to PHP format
         php_error_roundtrip = self.adapter.from_standard_format(standard_error)
-        
+
         # Verify roundtrip conversion
         self.assertEqual(php_error_roundtrip["type"], "ErrorException")
         self.assertEqual(php_error_roundtrip["message"], "Undefined variable: user")
@@ -84,13 +88,13 @@ class TestPHPPlugin(unittest.TestCase):
                     "file": "/var/www/html/app/Controllers/UserController.php",
                     "line": 25,
                     "function": "getUserProfile",
-                    "class": "App\\Controllers\\UserController"
+                    "class": "App\\Controllers\\UserController",
                 }
-            ]
+            ],
         }
-        
+
         analysis = self.exception_handler.analyze_error(error_data)
-        
+
         self.assertEqual(analysis["rule_id"], "php_undefined_variable")
         self.assertEqual(analysis["root_cause"], "php_undefined_variable")
         self.assertEqual(analysis["confidence"], "high")
@@ -106,13 +110,13 @@ class TestPHPPlugin(unittest.TestCase):
                     "file": "/var/www/html/app/Controllers/UserController.php",
                     "line": 30,
                     "function": "getUserProfile",
-                    "class": "App\\Controllers\\UserController"
+                    "class": "App\\Controllers\\UserController",
                 }
-            ]
+            ],
         }
-        
+
         analysis = self.exception_handler.analyze_error(error_data)
-        
+
         self.assertEqual(analysis["rule_id"], "php_null_reference")
         self.assertEqual(analysis["root_cause"], "php_null_reference")
         self.assertEqual(analysis["confidence"], "high")
@@ -129,14 +133,14 @@ class TestPHPPlugin(unittest.TestCase):
                     "file": "/var/www/html/app/Controllers/UserController.php",
                     "line": 30,
                     "function": "findOrFail",
-                    "class": "Illuminate\\Database\\Eloquent\\Builder"
+                    "class": "Illuminate\\Database\\Eloquent\\Builder",
                 }
             ],
-            "framework": "laravel"
+            "framework": "laravel",
         }
-        
+
         analysis = self.exception_handler.analyze_error(error_data)
-        
+
         self.assertEqual(analysis["rule_id"], "laravel_model_not_found")
         self.assertEqual(analysis["root_cause"], "laravel_model_not_found")
         self.assertEqual(analysis["confidence"], "high")
@@ -147,20 +151,20 @@ class TestPHPPlugin(unittest.TestCase):
         """Test detection of Symfony ServiceNotFoundException errors"""
         error_data = {
             "error_type": "Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException",
-            "message": "You have requested a non-existent service \"app.custom_service\"",
+            "message": 'You have requested a non-existent service "app.custom_service"',
             "stack_trace": [
                 {
                     "file": "/var/www/html/src/Controller/DefaultController.php",
                     "line": 25,
                     "function": "get",
-                    "class": "Symfony\\Component\\DependencyInjection\\Container"
+                    "class": "Symfony\\Component\\DependencyInjection\\Container",
                 }
             ],
-            "framework": "symfony"
+            "framework": "symfony",
         }
-        
+
         analysis = self.exception_handler.analyze_error(error_data)
-        
+
         self.assertEqual(analysis["rule_id"], "symfony_container_exception")
         self.assertEqual(analysis["root_cause"], "symfony_missing_service")
         self.assertEqual(analysis["confidence"], "high")
@@ -178,17 +182,22 @@ class TestPHPPlugin(unittest.TestCase):
             "error_data": {
                 "error_type": "ErrorException",
                 "message": "Undefined variable: user",
-                "stack_trace": [{"file": "/var/www/html/app/Controllers/UserController.php", "line": 25}]
+                "stack_trace": [
+                    {
+                        "file": "/var/www/html/app/Controllers/UserController.php",
+                        "line": 25,
+                    }
+                ],
             },
-            "match_groups": ("user",)
+            "match_groups": ("user",),
         }
-        
+
         context = {
             "code_snippet": "public function getUserProfile()\n{\n    return $user->profile;\n}"
         }
-        
+
         patch = self.patch_generator.generate_patch(analysis, context)
-        
+
         self.assertEqual(patch["patch_type"], "code")
         self.assertEqual(patch["language"], "php")
         self.assertEqual(patch["root_cause"], "php_undefined_variable")
@@ -206,17 +215,22 @@ class TestPHPPlugin(unittest.TestCase):
             "error_data": {
                 "error_type": "Error",
                 "message": "Call to a member function getProfile() on null",
-                "stack_trace": [{"file": "/var/www/html/app/Controllers/UserController.php", "line": 30}]
+                "stack_trace": [
+                    {
+                        "file": "/var/www/html/app/Controllers/UserController.php",
+                        "line": 30,
+                    }
+                ],
             },
-            "match_groups": ("getProfile",)
+            "match_groups": ("getProfile",),
         }
-        
+
         context = {
             "code_snippet": "public function getUserProfile()\n{\n    return $user->getProfile();\n}"
         }
-        
+
         patch = self.patch_generator.generate_patch(analysis, context)
-        
+
         self.assertEqual(patch["patch_type"], "code")
         self.assertEqual(patch["language"], "php")
         self.assertEqual(patch["root_cause"], "php_null_reference")
@@ -234,18 +248,23 @@ class TestPHPPlugin(unittest.TestCase):
             "error_data": {
                 "error_type": "Illuminate\\Database\\Eloquent\\ModelNotFoundException",
                 "message": "No query results for model [App\\Models\\User] 123",
-                "stack_trace": [{"file": "/var/www/html/app/Controllers/UserController.php", "line": 30}]
+                "stack_trace": [
+                    {
+                        "file": "/var/www/html/app/Controllers/UserController.php",
+                        "line": 30,
+                    }
+                ],
             },
-            "match_groups": ("App\\Models\\User",)
+            "match_groups": ("App\\Models\\User",),
         }
-        
+
         context = {
             "code_snippet": "public function show($id)\n{\n    $user = User::findOrFail($id);\n    return view('users.show', compact('user'));\n}",
-            "framework": "laravel"
+            "framework": "laravel",
         }
-        
+
         patch = self.patch_generator.generate_patch(analysis, context)
-        
+
         self.assertEqual(patch["patch_type"], "code")
         self.assertEqual(patch["language"], "php")
         self.assertEqual(patch["framework"], "laravel")
@@ -269,25 +288,25 @@ class TestPHPPlugin(unittest.TestCase):
                     "file": "/var/www/html/app/Controllers/UserController.php",
                     "line": 25,
                     "function": "getUserProfile",
-                    "class": "App\\Controllers\\UserController"
+                    "class": "App\\Controllers\\UserController",
                 }
             ],
             "php_version": "8.1.0",
             "framework": "Laravel",
-            "framework_version": "9.0.0"
+            "framework_version": "9.0.0",
         }
-        
+
         # Expected context
         context = {
             "code_snippet": "public function getUserProfile()\n{\n    return $user->profile;\n}",
-            "framework": "laravel"
+            "framework": "laravel",
         }
-        
+
         # Test the full flow
         standard_error = self.plugin.normalize_error(php_error)
         analysis = self.plugin.analyze_error(standard_error)
         fix = self.plugin.generate_fix(analysis, context)
-        
+
         # Verify results
         self.assertEqual(analysis["rule_id"], "php_undefined_variable")
         self.assertEqual(analysis["root_cause"], "php_undefined_variable")

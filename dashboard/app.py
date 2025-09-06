@@ -11,6 +11,7 @@ import logging
 import os
 import signal
 import sys
+import tempfile
 import time
 import yaml
 from datetime import datetime, timedelta
@@ -1737,7 +1738,8 @@ class DashboardServer:
                 time_window = data.get('time_window', 86400)
                 filename = data.get('filename', f'llm_metrics_{int(time.time())}.json')
                 
-                output_file = Path(f"/tmp/{filename}")
+                # Use secure temporary directory
+                output_file = Path(tempfile.gettempdir()) / filename
                 self.llm_metrics_collector.export_metrics(output_file, time_window)
                 
                 return jsonify({
@@ -1759,7 +1761,8 @@ class DashboardServer:
                 time_window = data.get('time_window', 86400)
                 filename = data.get('filename', f'llm_security_{int(time.time())}.json')
                 
-                output_file = Path(f"/tmp/{filename}")
+                # Use secure temporary directory
+                output_file = Path(tempfile.gettempdir()) / filename
                 self.security_guardrails.export_security_logs(output_file, time_window)
                 
                 return jsonify({
@@ -1781,7 +1784,8 @@ class DashboardServer:
                 days = data.get('days', 30)
                 filename = data.get('filename', f'llm_costs_{int(time.time())}.json')
                 
-                output_file = Path(f"/tmp/{filename}")
+                # Use secure temporary directory
+                output_file = Path(tempfile.gettempdir()) / filename
                 self.cost_tracker.export_cost_report(output_file, days)
                 
                 return jsonify({

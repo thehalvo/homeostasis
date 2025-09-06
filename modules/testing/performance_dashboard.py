@@ -4,246 +4,277 @@ Performance dashboard for visualizing regression test results.
 This module provides a web-based dashboard for monitoring performance
 trends and identifying regressions across the Homeostasis framework.
 """
+
 import sqlite3
-from datetime import datetime, timedelta
-from typing import Dict, List, Any
 import statistics
-from flask import Flask, render_template_string, jsonify, request
+from datetime import datetime, timedelta
+from typing import Any, Dict, List
+
+from flask import Flask, jsonify, render_template_string, request
 
 
 class PerformanceDashboard:
     """Web dashboard for performance monitoring."""
-    
+
     def __init__(self, db_path: str = "performance_baselines.db"):
         self.db_path = db_path
         self.app = Flask(__name__)
         self._setup_routes()
-    
+
     def _setup_routes(self):
         """Set up Flask routes."""
-        @self.app.route('/')
+
+        @self.app.route("/")
         def index():
             return render_template_string(DASHBOARD_TEMPLATE)
-        
-        @self.app.route('/api/metrics/<test_name>')
+
+        @self.app.route("/api/metrics/<test_name>")
         def get_metrics(test_name: str):
             """Get metrics for a specific test."""
             metrics = self._load_test_metrics(test_name)
             return jsonify(metrics)
-        
-        @self.app.route('/api/tests')
+
+        @self.app.route("/api/tests")
         def get_tests():
             """Get list of all tests."""
             tests = self._get_test_list()
             return jsonify(tests)
-        
-        @self.app.route('/api/summary')
+
+        @self.app.route("/api/summary")
         def get_summary():
             """Get performance summary."""
             summary = self._generate_summary()
             return jsonify(summary)
-        
-        @self.app.route('/api/regressions')
+
+        @self.app.route("/api/regressions")
         def get_regressions():
             """Get recent regressions."""
-            days = int(request.args.get('days', 7))
+            days = int(request.args.get("days", 7))
             regressions = self._detect_recent_regressions(days)
             return jsonify(regressions)
-        
-        @self.app.route('/api/trends/<test_name>')
+
+        @self.app.route("/api/trends/<test_name>")
         def get_trends(test_name: str):
             """Get performance trends for a test."""
-            days = int(request.args.get('days', 30))
+            days = int(request.args.get("days", 30))
             trends = self._calculate_trends(test_name, days)
             return jsonify(trends)
-    
+
     def _load_test_metrics(self, test_name: str, days: int = 30) -> List[Dict]:
         """Load metrics for a specific test."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
+
         since = datetime.now() - timedelta(days=days)
-        
-        cursor.execute("""
+
+        cursor.execute(
+            """
             SELECT duration, memory_delta, cpu_percent, timestamp, git_commit
             FROM metrics
             WHERE name = ? AND timestamp > ?
             ORDER BY timestamp
-        """, (test_name, since.isoformat()))
-        
+        """,
+            (test_name, since.isoformat()),
+        )
+
         metrics = []
         for row in cursor.fetchall():
-            metrics.append({
-                "duration": row[0],
-                "memory": row[1],
-                "cpu": row[2],
-                "timestamp": row[3],
-                "commit": row[4]
-            })
-        
+            metrics.append(
+                {
+                    "duration": row[0],
+                    "memory": row[1],
+                    "cpu": row[2],
+                    "timestamp": row[3],
+                    "commit": row[4],
+                }
+            )
+
         conn.close()
         return metrics
-    
+
     def _get_test_list(self) -> List[Dict]:
         """Get list of all tests with their status."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
-        cursor.execute("""
+
+        cursor.execute(
+            """
             SELECT DISTINCT m.name, b.mean_duration, b.last_updated
             FROM metrics m
             LEFT JOIN baselines b ON m.name = b.name
             ORDER BY m.name
-        """)
-        
+        """
+        )
+
         tests = []
         for row in cursor.fetchall():
-            tests.append({
-                "name": row[0],
-                "has_baseline": row[1] is not None,
-                "baseline_duration": row[1],
-                "last_updated": row[2]
-            })
-        
+            tests.append(
+                {
+                    "name": row[0],
+                    "has_baseline": row[1] is not None,
+                    "baseline_duration": row[1],
+                    "last_updated": row[2],
+                }
+            )
+
         conn.close()
         return tests
-    
+
     def _generate_summary(self) -> Dict[str, Any]:
         """Generate overall performance summary."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
+
         # Get total test count
         cursor.execute("SELECT COUNT(DISTINCT name) FROM metrics")
         total_tests = cursor.fetchone()[0]
-        
+
         # Get recent metrics count
         since = datetime.now() - timedelta(days=1)
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT COUNT(*) FROM metrics WHERE timestamp > ?
-        """, (since.isoformat(),))
+        """,
+            (since.isoformat(),),
+        )
         recent_runs = cursor.fetchone()[0]
-        
+
         # Get baseline coverage
         cursor.execute("SELECT COUNT(*) FROM baselines")
         baseline_count = cursor.fetchone()[0]
-        
+
         # Calculate average performance across all tests
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT AVG(duration), AVG(memory_delta), AVG(cpu_percent)
             FROM metrics
             WHERE timestamp > ?
-        """, (since.isoformat(),))
-        
+        """,
+            (since.isoformat(),),
+        )
+
         row = cursor.fetchone()
         avg_performance = {
             "duration": row[0] or 0,
             "memory": row[1] or 0,
-            "cpu": row[2] or 0
+            "cpu": row[2] or 0,
         }
-        
+
         conn.close()
-        
+
         return {
             "total_tests": total_tests,
             "recent_runs": recent_runs,
-            "baseline_coverage": baseline_count / total_tests * 100 if total_tests > 0 else 0,
+            "baseline_coverage": (
+                baseline_count / total_tests * 100 if total_tests > 0 else 0
+            ),
             "average_performance": avg_performance,
-            "last_update": datetime.now().isoformat()
+            "last_update": datetime.now().isoformat(),
         }
-    
+
     def _detect_recent_regressions(self, days: int = 7) -> List[Dict]:
         """Detect regressions in the past N days."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
+
         since = datetime.now() - timedelta(days=days)
-        
+
         # Get recent metrics with baselines
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT m.name, m.duration, m.timestamp, b.mean_duration, b.std_duration
             FROM metrics m
             JOIN baselines b ON m.name = b.name
             WHERE m.timestamp > ?
             ORDER BY m.timestamp DESC
-        """, (since.isoformat(),))
-        
+        """,
+            (since.isoformat(),),
+        )
+
         regressions = []
         for row in cursor.fetchall():
             name, duration, timestamp, baseline_mean, baseline_std = row
-            
+
             # Check if duration is significantly worse than baseline
             z_score = (duration - baseline_mean) / (baseline_std + 0.001)
-            
+
             if z_score > 2:  # More than 2 standard deviations
                 regression_factor = duration / baseline_mean
-                
+
                 if regression_factor > 1.2:  # At least 20% slower
-                    regressions.append({
-                        "test": name,
-                        "timestamp": timestamp,
-                        "duration": duration,
-                        "baseline": baseline_mean,
-                        "factor": regression_factor,
-                        "severity": "critical" if regression_factor > 1.5 else "warning"
-                    })
-        
+                    regressions.append(
+                        {
+                            "test": name,
+                            "timestamp": timestamp,
+                            "duration": duration,
+                            "baseline": baseline_mean,
+                            "factor": regression_factor,
+                            "severity": (
+                                "critical" if regression_factor > 1.5 else "warning"
+                            ),
+                        }
+                    )
+
         conn.close()
         return regressions
-    
+
     def _calculate_trends(self, test_name: str, days: int = 30) -> Dict[str, Any]:
         """Calculate performance trends for a test."""
         metrics = self._load_test_metrics(test_name, days)
-        
+
         if not metrics:
             return {"error": "No metrics found"}
-        
+
         # Group by day
         daily_stats = {}
         for metric in metrics:
             date = metric["timestamp"][:10]  # YYYY-MM-DD
             if date not in daily_stats:
-                daily_stats[date] = {
-                    "durations": [],
-                    "memories": [],
-                    "cpus": []
-                }
-            
+                daily_stats[date] = {"durations": [], "memories": [], "cpus": []}
+
             daily_stats[date]["durations"].append(metric["duration"])
             daily_stats[date]["memories"].append(metric["memory"])
             daily_stats[date]["cpus"].append(metric["cpu"])
-        
+
         # Calculate daily averages
         trend_data = []
         for date, stats in sorted(daily_stats.items()):
-            trend_data.append({
-                "date": date,
-                "duration": statistics.mean(stats["durations"]),
-                "memory": statistics.mean(stats["memories"]),
-                "cpu": statistics.mean(stats["cpus"]),
-                "samples": len(stats["durations"])
-            })
-        
+            trend_data.append(
+                {
+                    "date": date,
+                    "duration": statistics.mean(stats["durations"]),
+                    "memory": statistics.mean(stats["memories"]),
+                    "cpu": statistics.mean(stats["cpus"]),
+                    "samples": len(stats["durations"]),
+                }
+            )
+
         # Calculate trend line (simple linear regression)
         if len(trend_data) > 1:
             x_values = list(range(len(trend_data)))
             y_values = [d["duration"] for d in trend_data]
-            
+
             n = len(x_values)
             x_mean = sum(x_values) / n
             y_mean = sum(y_values) / n
-            
-            numerator = sum((x - x_mean) * (y - y_mean) for x, y in zip(x_values, y_values))
+
+            numerator = sum(
+                (x - x_mean) * (y - y_mean) for x, y in zip(x_values, y_values)
+            )
             denominator = sum((x - x_mean) ** 2 for x in x_values)
-            
+
             if denominator != 0:
                 slope = numerator / denominator
-                trend = "improving" if slope < -0.001 else "degrading" if slope > 0.001 else "stable"
+                trend = (
+                    "improving"
+                    if slope < -0.001
+                    else "degrading" if slope > 0.001 else "stable"
+                )
             else:
                 trend = "stable"
         else:
             trend = "insufficient_data"
-        
+
         return {
             "test_name": test_name,
             "trend": trend,
@@ -252,12 +283,16 @@ class PerformanceDashboard:
                 "min_duration": min(m["duration"] for m in metrics),
                 "max_duration": max(m["duration"] for m in metrics),
                 "avg_duration": statistics.mean(m["duration"] for m in metrics),
-                "std_duration": statistics.stdev(m["duration"] for m in metrics) if len(metrics) > 1 else 0
-            }
+                "std_duration": (
+                    statistics.stdev(m["duration"] for m in metrics)
+                    if len(metrics) > 1
+                    else 0
+                ),
+            },
         }
-    
-    def run(self, host: str = '0.0.0.0', port: int = 5000, debug: bool = False):
-        """Run the dashboard server."""
+
+    def run(self, host: str = "127.0.0.1", port: int = 5000, debug: bool = False):
+        """Run the dashboard server with secure defaults."""
         self.app.run(host=host, port=port, debug=debug)
 
 

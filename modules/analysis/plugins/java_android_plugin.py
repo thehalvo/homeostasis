@@ -5,14 +5,15 @@ This plugin enables Homeostasis to analyze and fix errors in Android Java applic
 It provides comprehensive error handling for Android-specific Java errors including
 Activities, Services, ContentProviders, BroadcastReceivers, Fragments, Views, and SDK APIs.
 """
+
+import json
 import logging
 import re
-import json
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List, Optional
 
-from ..language_plugin_system import LanguagePlugin, register_plugin
 from ..language_adapters import JavaErrorAdapter
+from ..language_plugin_system import LanguagePlugin, register_plugin
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +21,11 @@ logger = logging.getLogger(__name__)
 class AndroidJavaExceptionHandler:
     """
     Handles Android Java-specific exceptions with comprehensive error detection and classification.
-    
+
     This class provides logic for categorizing Android Java component errors, lifecycle issues,
     memory problems, permission issues, and platform-specific challenges.
     """
-    
+
     def __init__(self):
         """Initialize the Android Java exception handler."""
         self.rule_categories = {
@@ -48,70 +49,80 @@ class AndroidJavaExceptionHandler:
             "sdk": "Android SDK and API level compatibility errors",
             "proguard": "ProGuard and code obfuscation errors",
             "hardware": "Hardware access and sensor errors",
-            "media": "Media playback and camera errors"
+            "media": "Media playback and camera errors",
         }
-        
+
         # Load rules from different categories
         self.rules = self._load_rules()
-        
+
         # Pre-compile regex patterns for better performance
         self._compile_patterns()
-    
+
     def _load_rules(self) -> Dict[str, List[Dict[str, Any]]]:
         """Load Android Java error rules from rule files."""
         rules = {}
         rules_dir = Path(__file__).parent.parent / "rules" / "java_android"
         java_rules_dir = Path(__file__).parent.parent / "rules" / "java"
-        
+
         try:
             # Create rules directory if it doesn't exist
             rules_dir.mkdir(parents=True, exist_ok=True)
-            
+
             # Load Android rules from java directory first
             android_rules_path = java_rules_dir / "android_errors.json"
             if android_rules_path.exists():
-                with open(android_rules_path, 'r') as f:
+                with open(android_rules_path, "r") as f:
                     android_data = json.load(f)
                     rules["android"] = android_data.get("rules", [])
-                    logger.info(f"Loaded {len(rules['android'])} Android rules from java directory")
-            
+                    logger.info(
+                        f"Loaded {len(rules['android'])} Android rules from java directory"
+                    )
+
             # Load common Android Java rules
             common_rules_path = rules_dir / "java_android_common_errors.json"
             if common_rules_path.exists():
-                with open(common_rules_path, 'r') as f:
+                with open(common_rules_path, "r") as f:
                     common_data = json.load(f)
                     rules["common"] = common_data.get("rules", [])
-                    logger.info(f"Loaded {len(rules['common'])} common Android Java rules")
+                    logger.info(
+                        f"Loaded {len(rules['common'])} common Android Java rules"
+                    )
             else:
                 rules["common"] = self._create_default_rules()
                 self._save_default_rules(common_rules_path, rules["common"])
-            
+
             # Load activity-specific rules
             activity_rules_path = rules_dir / "java_android_activity_errors.json"
             if activity_rules_path.exists():
-                with open(activity_rules_path, 'r') as f:
+                with open(activity_rules_path, "r") as f:
                     activity_data = json.load(f)
                     rules["activity"] = activity_data.get("rules", [])
-                    logger.info(f"Loaded {len(rules['activity'])} Android activity rules")
+                    logger.info(
+                        f"Loaded {len(rules['activity'])} Android activity rules"
+                    )
             else:
                 rules["activity"] = []
-            
+
             # Load memory-specific rules
             memory_rules_path = rules_dir / "java_android_memory_errors.json"
             if memory_rules_path.exists():
-                with open(memory_rules_path, 'r') as f:
+                with open(memory_rules_path, "r") as f:
                     memory_data = json.load(f)
                     rules["memory"] = memory_data.get("rules", [])
                     logger.info(f"Loaded {len(rules['memory'])} Android memory rules")
             else:
                 rules["memory"] = []
-                    
+
         except Exception as e:
             logger.error(f"Error loading Android Java rules: {e}")
-            rules = {"common": self._create_default_rules(), "activity": [], "memory": []}
-        
+            rules = {
+                "common": self._create_default_rules(),
+                "activity": [],
+                "memory": [],
+            }
+
         return rules
-    
+
     def _create_default_rules(self) -> List[Dict[str, Any]]:
         """Create default Android Java error rules."""
         return [
@@ -125,7 +136,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Declare the activity in AndroidManifest.xml or check the intent action",
                 "tags": ["android", "activity", "manifest", "intent"],
-                "reliability": "high"
+                "reliability": "high",
             },
             {
                 "id": "permission_denied",
@@ -137,7 +148,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Add required permission to AndroidManifest.xml and request runtime permissions",
                 "tags": ["android", "permissions", "security", "manifest"],
-                "reliability": "high"
+                "reliability": "high",
             },
             {
                 "id": "out_of_memory",
@@ -149,7 +160,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "critical",
                 "suggestion": "Optimize memory usage, reduce bitmap sizes, implement proper lifecycle management",
                 "tags": ["android", "memory", "performance", "lifecycle"],
-                "reliability": "high"
+                "reliability": "high",
             },
             {
                 "id": "illegal_state_activity",
@@ -161,7 +172,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Check activity lifecycle state before performing UI operations",
                 "tags": ["android", "activity", "lifecycle", "state"],
-                "reliability": "high"
+                "reliability": "high",
             },
             {
                 "id": "fragment_not_attached",
@@ -173,7 +184,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Check if fragment is attached before accessing activity or context",
                 "tags": ["android", "fragment", "lifecycle", "activity"],
-                "reliability": "high"
+                "reliability": "high",
             },
             {
                 "id": "view_not_found",
@@ -185,7 +196,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Check view ID exists in layout and setContentView is called",
                 "tags": ["android", "view", "layout", "ui"],
-                "reliability": "medium"
+                "reliability": "medium",
             },
             {
                 "id": "network_on_main_thread",
@@ -197,7 +208,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Move network operations to background thread using AsyncTask or other mechanisms",
                 "tags": ["android", "networking", "threading", "main-thread"],
-                "reliability": "high"
+                "reliability": "high",
             },
             {
                 "id": "resource_not_found",
@@ -209,7 +220,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Check resource exists in appropriate density/configuration folder",
                 "tags": ["android", "resources", "configuration", "assets"],
-                "reliability": "high"
+                "reliability": "high",
             },
             {
                 "id": "api_compatibility_issue",
@@ -221,7 +232,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Check minimum SDK version and use Build.VERSION.SDK_INT for API compatibility",
                 "tags": ["android", "api", "compatibility", "sdk"],
-                "reliability": "high"
+                "reliability": "high",
             },
             {
                 "id": "background_limit_violation",
@@ -233,7 +244,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Use foreground service or WorkManager for background operations on Android O+",
                 "tags": ["android", "service", "background", "api26"],
-                "reliability": "high"
+                "reliability": "high",
             },
             {
                 "id": "activity_lifecycle_violation",
@@ -245,7 +256,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Check if (!isDestroyed() && !isFinishing()) before UI operations",
                 "tags": ["android", "activity", "lifecycle", "state"],
-                "reliability": "high"
+                "reliability": "high",
             },
             {
                 "id": "view_not_found_npe",
@@ -257,7 +268,7 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Check view ID exists in layout and setContentView is called before findViewById",
                 "tags": ["android", "view", "layout", "null"],
-                "reliability": "high"
+                "reliability": "high",
             },
             {
                 "id": "bad_token_exception",
@@ -269,22 +280,22 @@ class AndroidJavaExceptionHandler:
                 "severity": "error",
                 "suggestion": "Check activity context is valid and not null when showing dialogs or windows. Use valid context/token for window operations",
                 "tags": ["android", "window", "dialog", "token"],
-                "reliability": "high"
-            }
+                "reliability": "high",
+            },
         ]
-    
+
     def _save_default_rules(self, file_path: Path, rules: List[Dict[str, Any]]):
         """Save default rules to file."""
         try:
-            with open(file_path, 'w') as f:
+            with open(file_path, "w") as f:
                 json.dump({"rules": rules}, f, indent=2)
         except Exception as e:
             logger.error(f"Error saving default Android Java rules: {e}")
-    
+
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
         self.compiled_patterns = {}
-        
+
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
             for rule in rule_list:
@@ -294,35 +305,37 @@ class AndroidJavaExceptionHandler:
                         compiled = re.compile(pattern, re.IGNORECASE | re.MULTILINE)
                         self.compiled_patterns[category].append((compiled, rule))
                 except re.error as e:
-                    logger.warning(f"Invalid regex pattern in Android Java rule {rule.get('id', 'unknown')}: {e}")
-    
+                    logger.warning(
+                        f"Invalid regex pattern in Android Java rule {rule.get('id', 'unknown')}: {e}"
+                    )
+
     def analyze_exception(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze an Android Java exception and determine its type and potential fixes.
-        
+
         Args:
             error_data: Android Java error data in standard format
-            
+
         Returns:
             Analysis results with categorization and fix suggestions
         """
         error_type = error_data.get("error_type", "Error")
         message = error_data.get("message", "")
         stack_trace = error_data.get("stack_trace", [])
-        
+
         # Convert stack trace to string for pattern matching
         stack_str = ""
         if isinstance(stack_trace, list):
             stack_str = "\n".join([str(frame) for frame in stack_trace])
         elif isinstance(stack_trace, str):
             stack_str = stack_trace
-        
+
         # Combine error info for analysis
         full_error_text = f"{error_type}: {message}\n{stack_str}"
-        
+
         # Find matching rules
         matches = self._find_matching_rules(full_error_text, error_data)
-        
+
         if matches:
             # Use the best match (highest confidence)
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
@@ -337,60 +350,70 @@ class AndroidJavaExceptionHandler:
                 "rule_id": best_match.get("id", ""),
                 "tags": best_match.get("tags", []),
                 "fix_commands": best_match.get("fix_commands", []),
-                "all_matches": matches
+                "all_matches": matches,
             }
-        
+
         # If no rules matched, provide generic analysis
         return self._generic_analysis(error_data)
-    
-    def _find_matching_rules(self, error_text: str, error_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+
+    def _find_matching_rules(
+        self, error_text: str, error_data: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Find all rules that match the given error."""
         matches = []
-        
+
         for category, patterns in self.compiled_patterns.items():
             for compiled_pattern, rule in patterns:
                 match = compiled_pattern.search(error_text)
                 if match:
                     # Calculate confidence score based on match quality
-                    confidence_score = self._calculate_confidence(match, rule, error_data)
-                    
+                    confidence_score = self._calculate_confidence(
+                        match, rule, error_data
+                    )
+
                     match_info = rule.copy()
                     match_info["confidence_score"] = confidence_score
-                    match_info["match_groups"] = match.groups() if match.groups() else []
+                    match_info["match_groups"] = (
+                        match.groups() if match.groups() else []
+                    )
                     matches.append(match_info)
-        
+
         return matches
-    
-    def _calculate_confidence(self, match: re.Match, rule: Dict[str, Any], 
-                             error_data: Dict[str, Any]) -> float:
+
+    def _calculate_confidence(
+        self, match: re.Match, rule: Dict[str, Any], error_data: Dict[str, Any]
+    ) -> float:
         """Calculate confidence score for a rule match."""
         base_confidence = 0.5
-        
+
         # Boost confidence for Android-specific patterns
         message = error_data.get("message", "").lower()
         stack_trace = str(error_data.get("stack_trace", "")).lower()
-        
-        if any(term in message or term in stack_trace for term in ["android", "activity", "fragment", "service"]):
+
+        if any(
+            term in message or term in stack_trace
+            for term in ["android", "activity", "fragment", "service"]
+        ):
             base_confidence += 0.3
-        
+
         # Boost confidence based on rule reliability
         reliability = rule.get("reliability", "medium")
         reliability_boost = {"high": 0.2, "medium": 0.1, "low": 0.0}
         base_confidence += reliability_boost.get(reliability, 0.0)
-        
+
         # Boost confidence for rules with specific tags that match context
         rule_tags = set(rule.get("tags", []))
         context_tags = set()
-        
+
         # Infer context from error data
         framework = error_data.get("framework", "").lower()
         if "android" in framework:
             context_tags.add("android")
-        
+
         # Check for Android package indicators in stack trace
         if "android." in stack_trace or "androidx." in stack_trace:
             context_tags.add("android")
-        
+
         # Check for specific Android components
         if "activity" in stack_trace:
             context_tags.add("activity")
@@ -398,17 +421,17 @@ class AndroidJavaExceptionHandler:
             context_tags.add("fragment")
         if "service" in stack_trace:
             context_tags.add("service")
-        
+
         if context_tags & rule_tags:
             base_confidence += 0.1
-        
+
         return min(base_confidence, 1.0)
-    
+
     def _generic_analysis(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """Provide generic analysis for unmatched errors."""
         message = error_data.get("message", "").lower()
         stack_trace = str(error_data.get("stack_trace", "")).lower()
-        
+
         # Basic categorization based on error patterns
         if "activity" in message or "activity" in stack_trace:
             category = "activity"
@@ -421,7 +444,9 @@ class AndroidJavaExceptionHandler:
             suggestion = "Check app permissions and runtime permission requests"
         elif "memory" in message or "outofmemory" in message:
             category = "memory"
-            suggestion = "Optimize memory usage and implement proper resource management"
+            suggestion = (
+                "Optimize memory usage and implement proper resource management"
+            )
         elif "view" in message or "layout" in message:
             category = "view"
             suggestion = "Check view hierarchy and layout inflation"
@@ -437,7 +462,7 @@ class AndroidJavaExceptionHandler:
         else:
             category = "unknown"
             suggestion = "Review Android component implementation and lifecycle"
-        
+
         return {
             "category": "android",
             "subcategory": category,
@@ -447,23 +472,25 @@ class AndroidJavaExceptionHandler:
             "root_cause": f"android_{category}_error",
             "severity": "medium",
             "rule_id": "android_java_generic_handler",
-            "tags": ["android", "java", "generic", category]
+            "tags": ["android", "java", "generic", category],
         }
-    
+
     def analyze_activity_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze Android Activity specific errors.
-        
+
         Args:
             error_data: Error data with activity-related issues
-            
+
         Returns:
             Analysis results with activity-specific fixes
         """
         message = error_data.get("message", "").lower()
-        
+
         # Activity lifecycle errors
-        if "illegalstateexception" in message and ("activity" in message or "destroyed" in message):
+        if "illegalstateexception" in message and (
+            "activity" in message or "destroyed" in message
+        ):
             return {
                 "category": "android",
                 "subcategory": "activity",
@@ -477,12 +504,15 @@ class AndroidJavaExceptionHandler:
                     "Check if (!isDestroyed() && !isFinishing()) before UI operations",
                     "Move long-running operations to background services",
                     "Use lifecycle-aware components",
-                    "Handle configuration changes properly"
-                ]
+                    "Handle configuration changes properly",
+                ],
             }
-        
+
         # Activity not found errors
-        if "activitynotfoundexception" in message or "unable to find explicit activity" in message:
+        if (
+            "activitynotfoundexception" in message
+            or "unable to find explicit activity" in message
+        ):
             return {
                 "category": "android",
                 "subcategory": "activity",
@@ -491,11 +521,14 @@ class AndroidJavaExceptionHandler:
                 "suggestion": "Declare activity in AndroidManifest.xml or check intent",
                 "root_cause": "activity_not_declared",
                 "severity": "error",
-                "tags": ["android", "activity", "manifest", "intent"]
+                "tags": ["android", "activity", "manifest", "intent"],
             }
-        
+
         # Activity launch errors
-        if "android.util.androidruntimeexception" in message and "calling startactivity" in message:
+        if (
+            "android.util.androidruntimeexception" in message
+            and "calling startactivity" in message
+        ):
             return {
                 "category": "android",
                 "subcategory": "activity",
@@ -504,9 +537,9 @@ class AndroidJavaExceptionHandler:
                 "suggestion": "Check intent validity and activity declaration",
                 "root_cause": "activity_launch_error",
                 "severity": "error",
-                "tags": ["android", "activity", "intent"]
+                "tags": ["android", "activity", "intent"],
             }
-        
+
         # Generic activity error
         return {
             "category": "android",
@@ -516,21 +549,21 @@ class AndroidJavaExceptionHandler:
             "suggestion": "Check activity implementation and lifecycle management",
             "root_cause": "activity_error",
             "severity": "warning",
-            "tags": ["android", "activity"]
+            "tags": ["android", "activity"],
         }
-    
+
     def analyze_memory_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze Android memory management errors.
-        
+
         Args:
             error_data: Error data with memory issues
-            
+
         Returns:
             Analysis results with memory-specific fixes
         """
         message = error_data.get("message", "").lower()
-        
+
         # OutOfMemoryError
         if "outofmemoryerror" in message:
             if "bitmap" in message:
@@ -548,8 +581,8 @@ class AndroidJavaExceptionHandler:
                         "Implement LRU cache for bitmaps",
                         "Recycle bitmaps when no longer needed",
                         "Use Glide or Picasso for image loading",
-                        "Enable largeHeap in manifest if absolutely necessary"
-                    ]
+                        "Enable largeHeap in manifest if absolutely necessary",
+                    ],
                 }
             else:
                 return {
@@ -560,9 +593,9 @@ class AndroidJavaExceptionHandler:
                     "suggestion": "Analyze memory usage and implement proper resource management",
                     "root_cause": "general_out_of_memory",
                     "severity": "critical",
-                    "tags": ["android", "memory", "performance"]
+                    "tags": ["android", "memory", "performance"],
                 }
-        
+
         # GC overhead limit exceeded
         if "gc overhead limit exceeded" in message:
             return {
@@ -573,9 +606,9 @@ class AndroidJavaExceptionHandler:
                 "suggestion": "Reduce memory allocations and optimize garbage collection",
                 "root_cause": "gc_overhead_limit",
                 "severity": "critical",
-                "tags": ["android", "memory", "gc", "performance"]
+                "tags": ["android", "memory", "gc", "performance"],
             }
-        
+
         # Generic memory error
         return {
             "category": "android",
@@ -585,51 +618,57 @@ class AndroidJavaExceptionHandler:
             "suggestion": "Implement proper memory management practices",
             "root_cause": "memory_management_error",
             "severity": "error",
-            "tags": ["android", "memory"]
+            "tags": ["android", "memory"],
         }
 
 
 class AndroidJavaPatchGenerator:
     """
     Generates patches for Android Java errors based on analysis results.
-    
+
     This class creates code fixes for common Android Java issues using templates
     and heuristics specific to Android development patterns and best practices.
     """
-    
+
     def __init__(self):
         """Initialize the Android Java patch generator."""
-        self.template_dir = Path(__file__).parent.parent / "patch_generation" / "templates"
+        self.template_dir = (
+            Path(__file__).parent.parent / "patch_generation" / "templates"
+        )
         self.android_java_template_dir = self.template_dir / "java_android"
-        
+
         # Ensure template directory exists
         self.android_java_template_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Load patch templates
         self.templates = self._load_templates()
-        
+
         # Create default templates if they don't exist
         self._create_default_templates()
-    
+
     def _load_templates(self) -> Dict[str, str]:
         """Load Android Java patch templates."""
         templates = {}
-        
+
         if not self.android_java_template_dir.exists():
-            logger.warning(f"Android Java templates directory not found: {self.android_java_template_dir}")
+            logger.warning(
+                f"Android Java templates directory not found: {self.android_java_template_dir}"
+            )
             return templates
-        
+
         for template_file in self.android_java_template_dir.glob("*.java.template"):
             try:
-                with open(template_file, 'r') as f:
-                    template_name = template_file.stem.replace('.java', '')
+                with open(template_file, "r") as f:
+                    template_name = template_file.stem.replace(".java", "")
                     templates[template_name] = f.read()
                     logger.debug(f"Loaded Android Java template: {template_name}")
             except Exception as e:
-                logger.error(f"Error loading Android Java template {template_file}: {e}")
-        
+                logger.error(
+                    f"Error loading Android Java template {template_file}: {e}"
+                )
+
         return templates
-    
+
     def _create_default_templates(self):
         """Create default Android Java templates if they don't exist."""
         default_templates = {
@@ -1067,34 +1106,39 @@ public class SafeViewHelper {
         }
     }
 }
-"""
+""",
         }
-        
+
         for template_name, template_content in default_templates.items():
             template_path = self.android_java_template_dir / template_name
             if not template_path.exists():
                 try:
-                    with open(template_path, 'w') as f:
+                    with open(template_path, "w") as f:
                         f.write(template_content)
-                    logger.debug(f"Created default Android Java template: {template_name}")
+                    logger.debug(
+                        f"Created default Android Java template: {template_name}"
+                    )
                 except Exception as e:
-                    logger.error(f"Error creating default Android Java template {template_name}: {e}")
-    
-    def generate_patch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                      source_code: str) -> Optional[Dict[str, Any]]:
+                    logger.error(
+                        f"Error creating default Android Java template {template_name}: {e}"
+                    )
+
+    def generate_patch(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """
         Generate a patch for the Android Java error.
-        
+
         Args:
             error_data: The Android Java error data
             analysis: Analysis results from AndroidJavaExceptionHandler
             source_code: The source code where the error occurred
-            
+
         Returns:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        
+
         # Map root causes to patch strategies
         patch_strategies = {
             "activity_not_found": self._fix_activity_not_found,
@@ -1110,21 +1154,24 @@ public class SafeViewHelper {
             "java_android_main_thread_violation": self._fix_network_main_thread,
             "android_resource_not_found": self._fix_resource_not_found,
             "java_android_bad_token": self._fix_bad_token,
-            "android_unknown_error": self._fix_generic_error
+            "android_unknown_error": self._fix_generic_error,
         }
-        
+
         strategy = patch_strategies.get(root_cause)
         if strategy:
             try:
                 return strategy(error_data, analysis, source_code)
             except Exception as e:
-                logger.error(f"Error generating Android Java patch for {root_cause}: {e}")
-        
+                logger.error(
+                    f"Error generating Android Java patch for {root_cause}: {e}"
+                )
+
         # Try to use templates if no specific strategy matches
         return self._template_based_patch(error_data, analysis, source_code)
-    
-    def _fix_activity_not_found(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                               source_code: str) -> Optional[Dict[str, Any]]:
+
+    def _fix_activity_not_found(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """Fix activity not found errors."""
         return {
             "type": "suggestion",
@@ -1133,7 +1180,7 @@ public class SafeViewHelper {
                 "Add activity to AndroidManifest.xml inside <application> tag",
                 "Check intent action and category are correct",
                 "Verify activity class name and package",
-                "Ensure exported=true if launching from external apps"
+                "Ensure exported=true if launching from external apps",
             ],
             "code_example": """
 <!-- Add to AndroidManifest.xml -->
@@ -1150,11 +1197,12 @@ public class SafeViewHelper {
         <category android:name="android.intent.category.DEFAULT" />
     </intent-filter>
 </activity>
-"""
+""",
         }
-    
-    def _fix_permission_denied(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                              source_code: str) -> Optional[Dict[str, Any]]:
+
+    def _fix_permission_denied(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """Fix permission denied errors."""
         return {
             "type": "suggestion",
@@ -1163,7 +1211,7 @@ public class SafeViewHelper {
                 "Add permission to AndroidManifest.xml",
                 "Check for runtime permissions on API 23+",
                 "Request permissions before using protected features",
-                "Handle permission denial gracefully"
+                "Handle permission denial gracefully",
             ],
             "template": "permission_handling",
             "code_example": """
@@ -1176,11 +1224,12 @@ if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
     ActivityCompat.requestPermissions(this, 
         new String[]{Manifest.permission.CAMERA}, REQUEST_CODE);
 }
-"""
+""",
         }
-    
-    def _fix_out_of_memory(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                          source_code: str) -> Optional[Dict[str, Any]]:
+
+    def _fix_out_of_memory(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """Fix out of memory errors."""
         return {
             "type": "suggestion",
@@ -1190,7 +1239,7 @@ if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 "Implement LRU cache for images",
                 "Use weak references for activity references",
                 "Recycle bitmaps when no longer needed",
-                "Profile memory usage with Android Studio"
+                "Profile memory usage with Android Studio",
             ],
             "template": "memory_optimization",
             "code_example": """
@@ -1201,11 +1250,12 @@ Bitmap bitmap = BitmapFactory.decodeFile(path, options);
 
 // Use LRU cache
 LruCache<String, Bitmap> cache = new LruCache<>(cacheSize);
-"""
+""",
         }
-    
-    def _fix_activity_lifecycle(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                               source_code: str) -> Optional[Dict[str, Any]]:
+
+    def _fix_activity_lifecycle(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """Fix activity lifecycle violations."""
         return {
             "type": "suggestion",
@@ -1214,13 +1264,14 @@ LruCache<String, Bitmap> cache = new LruCache<>(cacheSize);
                 "Check if (!isDestroyed() && !isFinishing()) before UI operations",
                 "Use commitAllowingStateLoss() for fragment transactions",
                 "Move background operations to services",
-                "Implement proper activity lifecycle awareness"
+                "Implement proper activity lifecycle awareness",
             ],
-            "template": "activity_lifecycle_safe"
+            "template": "activity_lifecycle_safe",
         }
-    
-    def _fix_fragment_lifecycle(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                               source_code: str) -> Optional[Dict[str, Any]]:
+
+    def _fix_fragment_lifecycle(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """Fix fragment lifecycle issues."""
         return {
             "type": "suggestion",
@@ -1229,13 +1280,14 @@ LruCache<String, Bitmap> cache = new LruCache<>(cacheSize);
                 "Check isAdded() before using fragment",
                 "Use getContext() with null checks",
                 "Avoid storing activity references in fragments",
-                "Use lifecycle-aware components"
+                "Use lifecycle-aware components",
             ],
-            "template": "fragment_lifecycle_safe"
+            "template": "fragment_lifecycle_safe",
         }
-    
-    def _fix_view_not_found(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                           source_code: str) -> Optional[Dict[str, Any]]:
+
+    def _fix_view_not_found(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """Fix view not found errors."""
         return {
             "type": "suggestion",
@@ -1244,13 +1296,14 @@ LruCache<String, Bitmap> cache = new LruCache<>(cacheSize);
                 "Check view ID exists in layout file",
                 "Ensure setContentView() is called before findViewById()",
                 "Verify correct layout is inflated",
-                "Add null checks after findViewById()"
+                "Add null checks after findViewById()",
             ],
-            "template": "safe_view_operations"
+            "template": "safe_view_operations",
         }
-    
-    def _fix_network_main_thread(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                                source_code: str) -> Optional[Dict[str, Any]]:
+
+    def _fix_network_main_thread(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """Fix network on main thread errors."""
         return {
             "type": "suggestion",
@@ -1259,13 +1312,14 @@ LruCache<String, Bitmap> cache = new LruCache<>(cacheSize);
                 "Use AsyncTask, ExecutorService, or networking library",
                 "Never perform network operations on main thread",
                 "Use callbacks to update UI from background thread",
-                "Consider using Retrofit or OkHttp for networking"
+                "Consider using Retrofit or OkHttp for networking",
             ],
-            "template": "background_threading"
+            "template": "background_threading",
         }
-    
-    def _fix_resource_not_found(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                               source_code: str) -> Optional[Dict[str, Any]]:
+
+    def _fix_resource_not_found(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """Fix resource not found errors."""
         return {
             "type": "suggestion",
@@ -1274,12 +1328,13 @@ LruCache<String, Bitmap> cache = new LruCache<>(cacheSize);
                 "Verify resource exists in res/ folder",
                 "Check resource naming follows conventions",
                 "Ensure resource is in correct density folder",
-                "Add try-catch around resource access"
-            ]
+                "Add try-catch around resource access",
+            ],
         }
-    
-    def _fix_bad_token(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                      source_code: str) -> Optional[Dict[str, Any]]:
+
+    def _fix_bad_token(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """Fix bad token errors."""
         return {
             "type": "suggestion",
@@ -1288,7 +1343,7 @@ LruCache<String, Bitmap> cache = new LruCache<>(cacheSize);
                 "Check activity/context is valid before showing dialogs",
                 "Use getApplicationContext() for non-UI operations",
                 "Pass valid activity context/token to dialogs and windows",
-                "Check if (!isFinishing() && !isDestroyed()) before showing dialogs"
+                "Check if (!isFinishing() && !isDestroyed()) before showing dialogs",
             ],
             "code_example": """
 // Safe dialog showing
@@ -1304,40 +1359,42 @@ if (!isFinishing() && !isDestroyed()) {
 DialogFragment dialogFragment = new MyDialogFragment();
 dialogFragment.show(getSupportFragmentManager(), "dialog");
 """,
-            "suggestion": "Check activity/context is valid before showing dialogs. Pass valid activity context/token to dialogs and windows"
+            "suggestion": "Check activity/context is valid before showing dialogs. Pass valid activity context/token to dialogs and windows",
         }
-    
-    def _fix_generic_error(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                          source_code: str) -> Optional[Dict[str, Any]]:
+
+    def _fix_generic_error(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """Fix generic Android errors."""
         # Use error_data from analysis if not passed directly
         if not error_data.get("error_type") and analysis.get("error_data"):
             error_data = analysis["error_data"]
-            
+
         error_type = error_data.get("error_type", "")
         message = error_data.get("message", "")
-        
+
         # Check if it contains token-related keywords
         if "token" in message.lower() or "BadTokenException" in error_type:
             return self._fix_bad_token(error_data, analysis, source_code)
-        
+
         return {
-            "type": "suggestion", 
+            "type": "suggestion",
             "description": "General Android error handling",
             "fix_commands": [
                 "Check Android lifecycle and component state",
                 "Verify context validity",
                 "Review Android best practices",
-                "Add proper error handling"
+                "Add proper error handling",
             ],
-            "suggestion": "Check Android lifecycle and component state. Verify context validity"
+            "suggestion": "Check Android lifecycle and component state. Verify context validity",
         }
-    
-    def _template_based_patch(self, error_data: Dict[str, Any], analysis: Dict[str, Any], 
-                            source_code: str) -> Optional[Dict[str, Any]]:
+
+    def _template_based_patch(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
+    ) -> Optional[Dict[str, Any]]:
         """Generate patch using templates."""
         root_cause = analysis.get("root_cause", "")
-        
+
         # Map root causes to template names
         template_map = {
             "activity_lifecycle_violation": "activity_lifecycle_safe",
@@ -1345,104 +1402,113 @@ dialogFragment.show(getSupportFragmentManager(), "dialog");
             "android_permission_denied": "permission_handling",
             "android_out_of_memory": "memory_optimization",
             "network_on_main_thread": "background_threading",
-            "view_not_found": "safe_view_operations"
+            "view_not_found": "safe_view_operations",
         }
-        
+
         template_name = template_map.get(root_cause)
         if template_name and template_name in self.templates:
             template = self.templates[template_name]
-            
+
             return {
                 "type": "template",
                 "template": template,
-                "description": f"Applied Android Java template fix for {root_cause}"
+                "description": f"Applied Android Java template fix for {root_cause}",
             }
-        
+
         return None
 
 
 class AndroidJavaLanguagePlugin(LanguagePlugin):
     """
     Main Android Java framework plugin for Homeostasis.
-    
+
     This plugin orchestrates Android Java error analysis and patch generation,
     supporting Android-specific Java development patterns and best practices.
     """
-    
+
     VERSION = "1.0.0"
     AUTHOR = "Homeostasis Team"
-    
+
     def __init__(self):
         """Initialize the Android Java language plugin."""
         self.language = "java_android"
         self.supported_extensions = {".java", ".kt", ".xml"}
         self.supported_frameworks = [
-            "android", "androidx", "android.support", "android-sdk"
+            "android",
+            "androidx",
+            "android.support",
+            "android-sdk",
         ]
-        
+
         # Initialize components
         self.adapter = JavaErrorAdapter()
         self.exception_handler = AndroidJavaExceptionHandler()
         self.patch_generator = AndroidJavaPatchGenerator()
-        
+
         logger.info("Android Java framework plugin initialized")
-    
+
     def get_language_id(self) -> str:
         """Get the unique identifier for this language."""
         return "java_android"
-    
+
     def get_language_name(self) -> str:
         """Get the human-readable name of the framework."""
         return "Java Android"
-    
+
     def get_language_version(self) -> str:
         """Get the version of the framework supported by this plugin."""
         return "API 16+"
-    
+
     def get_supported_frameworks(self) -> List[str]:
         """Get the list of frameworks supported by this language plugin."""
         return self.supported_frameworks
-    
+
     def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Normalize Android error data to standard format.
-        
+
         Args:
             error_data: Raw Android error data
-            
+
         Returns:
             Normalized error data
         """
         # Map common field names to standard format
         normalized = {
             "language": "java",
-            "error_type": error_data.get("exception_class", error_data.get("error_type", "")),
+            "error_type": error_data.get(
+                "exception_class", error_data.get("error_type", "")
+            ),
             "message": error_data.get("message", ""),
             "stack_trace": [],
-            "framework": error_data.get("platform", error_data.get("framework", "android"))
+            "framework": error_data.get(
+                "platform", error_data.get("framework", "android")
+            ),
         }
-        
+
         # Convert stacktrace string to list
         stacktrace = error_data.get("stacktrace", error_data.get("stack_trace", ""))
         if isinstance(stacktrace, str):
-            normalized["stack_trace"] = [line.strip() for line in stacktrace.split('\n') if line.strip()]
+            normalized["stack_trace"] = [
+                line.strip() for line in stacktrace.split("\n") if line.strip()
+            ]
         elif isinstance(stacktrace, list):
             normalized["stack_trace"] = stacktrace
-            
+
         # Copy over other fields
         for key, value in error_data.items():
             if key not in normalized and value is not None:
                 normalized[key] = value
-                
+
         return normalized
-    
+
     def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
         """
         Convert standard format error data back to Android-specific format.
-        
+
         Args:
             standard_error: Error data in the standard format
-            
+
         Returns:
             Error data in the Android-specific format
         """
@@ -1451,30 +1517,30 @@ class AndroidJavaLanguagePlugin(LanguagePlugin):
             "exception_class": standard_error.get("error_type", ""),
             "message": standard_error.get("message", ""),
             "stacktrace": "",
-            "platform": standard_error.get("framework", "android")
+            "platform": standard_error.get("framework", "android"),
         }
-        
+
         # Convert stack trace list to string
         stack_trace = standard_error.get("stack_trace", [])
         if isinstance(stack_trace, list):
             android_error["stacktrace"] = "\n".join(stack_trace)
         elif isinstance(stack_trace, str):
             android_error["stacktrace"] = stack_trace
-            
+
         # Copy over other fields
         for key, value in standard_error.items():
             if key not in android_error and value is not None:
                 android_error[key] = value
-                
+
         return android_error
-    
+
     def can_handle(self, error_data: Dict[str, Any]) -> bool:
         """
         Check if this plugin can handle the given error.
-        
+
         Args:
             error_data: Error data to check
-            
+
         Returns:
             True if this plugin can handle the error, False otherwise
         """
@@ -1482,11 +1548,11 @@ class AndroidJavaLanguagePlugin(LanguagePlugin):
         framework = error_data.get("framework", "").lower()
         if "android" in framework:
             return True
-        
+
         # Check error message for Android-specific patterns
         message = error_data.get("message", "").lower()
         stack_trace = str(error_data.get("stack_trace", "")).lower()
-        
+
         android_patterns = [
             r"android\.",
             r"androidx\.",
@@ -1504,17 +1570,17 @@ class AndroidJavaLanguagePlugin(LanguagePlugin):
             r"android\.widget\.",
             r"com\.android\.",
             r"dalvik\.",
-            r"art\."
+            r"art\.",
         ]
-        
+
         for pattern in android_patterns:
             if re.search(pattern, message + stack_trace):
                 return True
-        
+
         # Check project structure for Android indicators
         context = error_data.get("context", {})
         project_files = context.get("project_files", [])
-        
+
         android_project_indicators = [
             "androidmanifest.xml",
             "build.gradle",
@@ -1522,28 +1588,33 @@ class AndroidJavaLanguagePlugin(LanguagePlugin):
             "res/layout/",
             "res/values/",
             "proguard-rules.pro",
-            "gradle.properties"
+            "gradle.properties",
         ]
-        
+
         project_files_str = " ".join(project_files).lower()
-        if any(indicator in project_files_str for indicator in android_project_indicators):
+        if any(
+            indicator in project_files_str for indicator in android_project_indicators
+        ):
             return True
-        
+
         # Check dependencies for Android SDK
         dependencies = context.get("dependencies", [])
         android_dependencies = ["com.android.", "androidx.", "android.support."]
-        if any(any(android_dep in dep for android_dep in android_dependencies) for dep in dependencies):
+        if any(
+            any(android_dep in dep for android_dep in android_dependencies)
+            for dep in dependencies
+        ):
             return True
-        
+
         return False
-    
+
     def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze an Android Java error.
-        
+
         Args:
             error_data: Android Java error data
-            
+
         Returns:
             Analysis results
         """
@@ -1553,27 +1624,26 @@ class AndroidJavaLanguagePlugin(LanguagePlugin):
                 standard_error = self.adapter.to_standard_format(error_data)
             else:
                 standard_error = error_data
-            
-            
+
             # Check if it's an activity-related error
             if self._is_activity_error(standard_error):
                 analysis = self.exception_handler.analyze_activity_error(standard_error)
-            
+
             # Check if it's a memory-related error
             elif self._is_memory_error(standard_error):
                 analysis = self.exception_handler.analyze_memory_error(standard_error)
-            
+
             # Default Android Java error analysis
             else:
                 analysis = self.exception_handler.analyze_exception(standard_error)
-            
+
             # Add plugin metadata
             analysis["plugin"] = "java_android"
             analysis["language"] = "java_android"
             analysis["plugin_version"] = self.VERSION
-            
+
             return analysis
-            
+
         except Exception as e:
             logger.error(f"Error analyzing Android Java error: {e}")
             return {
@@ -1582,64 +1652,64 @@ class AndroidJavaLanguagePlugin(LanguagePlugin):
                 "confidence": "low",
                 "suggested_fix": "Unable to analyze Android Java error",
                 "error": str(e),
-                "plugin": "java_android"
+                "plugin": "java_android",
             }
-    
+
     def _is_activity_error(self, error_data: Dict[str, Any]) -> bool:
         """Check if this is an activity related error."""
         message = error_data.get("message", "").lower()
         stack_trace = str(error_data.get("stack_trace", "")).lower()
-        
+
         activity_patterns = [
             "activity",
             "activitynotfoundexception",
             "illegalstateexception",
             "destroyed",
-            "finishing"
+            "finishing",
         ]
-        
-        return any(pattern in message or pattern in stack_trace for pattern in activity_patterns)
-    
+
+        return any(
+            pattern in message or pattern in stack_trace
+            for pattern in activity_patterns
+        )
+
     def _is_memory_error(self, error_data: Dict[str, Any]) -> bool:
         """Check if this is a memory related error."""
         message = error_data.get("message", "").lower()
-        
-        memory_patterns = [
-            "outofmemoryerror",
-            "memory",
-            "gc overhead limit",
-            "bitmap"
-        ]
-        
+
+        memory_patterns = ["outofmemoryerror", "memory", "gc overhead limit", "bitmap"]
+
         return any(pattern in message for pattern in memory_patterns)
-    
+
     def generate_fix(self, *args, **kwargs) -> Optional[Dict[str, Any]]:
         """
         Generate a fix for the Android Java error.
-        
+
         This method handles both interface signatures:
         - generate_fix(analysis, context) - from tests
         - generate_fix(error_data, analysis, source_code) - from language plugin interface
-        
+
         Returns:
             Fix information or None if no fix can be generated
         """
         try:
             # Handle test interface: generate_fix(analysis, context)
-            if len(args) == 2 and 'source_code' not in kwargs:
+            if len(args) == 2 and "source_code" not in kwargs:
                 analysis = args[0]
                 context = args[1]
                 error_data = analysis.get("error_data", {})
                 source_code = context.get("code_snippet", "")
-                
+
                 # Generate the patch
-                patch = self.patch_generator.generate_patch(error_data, analysis, source_code)
-                
+                patch = self.patch_generator.generate_patch(
+                    error_data, analysis, source_code
+                )
+
                 # Add expected fields for tests
                 if patch:
                     patch["language"] = "java"
                     patch["framework"] = "android"
-                    
+
                     # Map the patch content to expected fields
                     if "description" in patch:
                         patch["suggestion"] = patch["description"]
@@ -1647,24 +1717,28 @@ class AndroidJavaLanguagePlugin(LanguagePlugin):
                         patch["suggestion"] = "\n".join(patch["fix_commands"])
                     elif "code_example" in patch:
                         patch["suggestion"] = patch["code_example"]
-                        
+
                 return patch
-                
+
             # Handle standard interface: generate_fix(error_data, analysis, source_code)
             else:
-                error_data = args[0] if len(args) > 0 else kwargs.get('error_data', {})
-                analysis = args[1] if len(args) > 1 else kwargs.get('analysis', {})
-                source_code = args[2] if len(args) > 2 else kwargs.get('source_code', '')
-                return self.patch_generator.generate_patch(error_data, analysis, source_code)
-                
+                error_data = args[0] if len(args) > 0 else kwargs.get("error_data", {})
+                analysis = args[1] if len(args) > 1 else kwargs.get("analysis", {})
+                source_code = (
+                    args[2] if len(args) > 2 else kwargs.get("source_code", "")
+                )
+                return self.patch_generator.generate_patch(
+                    error_data, analysis, source_code
+                )
+
         except Exception as e:
             logger.error(f"Error generating Android Java fix: {e}")
             return None
-    
+
     def get_language_info(self) -> Dict[str, Any]:
         """
         Get information about this language plugin.
-        
+
         Returns:
             Language plugin information
         """
@@ -1686,9 +1760,9 @@ class AndroidJavaLanguagePlugin(LanguagePlugin):
                 "Gradle build and dependency error handling",
                 "Android SDK and API compatibility checking",
                 "Resource management and configuration error fixes",
-                "ProGuard and code obfuscation issue resolution"
+                "ProGuard and code obfuscation issue resolution",
             ],
-            "environments": ["android", "mobile", "dalvik", "art"]
+            "environments": ["android", "mobile", "dalvik", "art"],
         }
 
 

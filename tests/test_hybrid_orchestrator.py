@@ -2,18 +2,19 @@
 Tests for Hybrid Cloud/On-Premise Healing Coordination
 """
 
-import pytest
 from datetime import datetime
 from unittest.mock import AsyncMock, patch
 
+import pytest
+
 from modules.deployment.multi_environment.hybrid_orchestrator import (
-    HybridCloudOrchestrator,
-    HealingContext,
-    HealingScope,
-    HealingPlan,
-    HealingStep,
     CloudConnector,
-    OnPremiseConnector
+    HealingContext,
+    HealingPlan,
+    HealingScope,
+    HealingStep,
+    HybridCloudOrchestrator,
+    OnPremiseConnector,
 )
 
 
@@ -27,29 +28,17 @@ def mock_config():
                 "name": "Production AWS",
                 "type": "cloud_aws",
                 "region": "us-east-1",
-                "connection": {
-                    "access_key": "mock_key",
-                    "secret_key": "mock_secret"
-                },
+                "connection": {"access_key": "mock_key", "secret_key": "mock_secret"},
                 "capabilities": ["auto_scaling", "load_balancing"],
-                "metadata": {
-                    "tags": ["production"],
-                    "dependency_level": 1
-                }
+                "metadata": {"tags": ["production"], "dependency_level": 1},
             },
             {
                 "id": "prod-onprem",
                 "name": "Production On-Premise",
                 "type": "on_premise",
-                "connection": {
-                    "host": "192.168.1.100",
-                    "port": 22
-                },
+                "connection": {"host": "192.168.1.100", "port": 22},
                 "capabilities": ["high_performance"],
-                "metadata": {
-                    "tags": ["production"],
-                    "dependency_level": 0
-                }
+                "metadata": {"tags": ["production"], "dependency_level": 0},
             },
             {
                 "id": "dev-gcp",
@@ -58,14 +47,11 @@ def mock_config():
                 "region": "us-central1",
                 "connection": {
                     "project_id": "test-project",
-                    "credentials": "mock_creds"
+                    "credentials": "mock_creds",
                 },
                 "capabilities": ["auto_scaling"],
-                "metadata": {
-                    "tags": ["development"],
-                    "dependency_level": 2
-                }
-            }
+                "metadata": {"tags": ["development"], "dependency_level": 2},
+            },
         ]
     }
 
@@ -73,8 +59,12 @@ def mock_config():
 @pytest.fixture
 def orchestrator(mock_config):
     """Create orchestrator instance for testing"""
-    with patch('modules.deployment.multi_environment.hybrid_orchestrator.DistributedMonitor'):
-        with patch('modules.deployment.multi_environment.hybrid_orchestrator.SecurityAuditor'):
+    with patch(
+        "modules.deployment.multi_environment.hybrid_orchestrator.DistributedMonitor"
+    ):
+        with patch(
+            "modules.deployment.multi_environment.hybrid_orchestrator.SecurityAuditor"
+        ):
             return HybridCloudOrchestrator(mock_config)
 
 
@@ -85,13 +75,15 @@ async def test_initialization(orchestrator):
     for connector in orchestrator.connectors.values():
         connector.connect = AsyncMock(return_value=True)
         connector.get_health_status = AsyncMock(return_value={"status": "healthy"})
-    
+
     result = await orchestrator.initialize()
     assert result is True
-    
+
     # Verify all environments were initialized
     assert len(orchestrator.environments) == 3
-    assert all(env.health_status == "healthy" for env in orchestrator.environments.values())
+    assert all(
+        env.health_status == "healthy" for env in orchestrator.environments.values()
+    )
 
 
 @pytest.mark.asyncio
@@ -102,23 +94,23 @@ async def test_detect_cross_environment_issue(orchestrator):
         connector.connect = AsyncMock(return_value=True)
         connector.get_health_status = AsyncMock(return_value={"status": "healthy"})
     await orchestrator.initialize()
-    
+
     # Mock the analysis methods
-    orchestrator._analyze_error_impact = AsyncMock(return_value=[
-        orchestrator.environments["prod-onprem"]
-    ])
+    orchestrator._analyze_error_impact = AsyncMock(
+        return_value=[orchestrator.environments["prod-onprem"]]
+    )
     orchestrator._are_environments_connected = AsyncMock(return_value=True)
-    
+
     error_data = {
         "error_id": "err-123",
         "environment_id": "prod-aws",
         "type": "service_unavailable",
         "severity": 2,
-        "service_dependencies": ["auth-service", "data-service"]
+        "service_dependencies": ["auth-service", "data-service"],
     }
-    
+
     context = await orchestrator.detect_cross_environment_issue(error_data)
-    
+
     assert context is not None
     assert context.error_id == "err-123"
     assert context.source_environment.id == "prod-aws"
@@ -136,23 +128,23 @@ async def test_create_healing_plan(orchestrator):
         source_environment=orchestrator.environments["prod-aws"],
         affected_environments=[
             orchestrator.environments["prod-aws"],
-            orchestrator.environments["prod-onprem"]
+            orchestrator.environments["prod-onprem"],
         ],
         scope=HealingScope.CROSS_ENVIRONMENT,
         dependencies=["service-a", "service-b"],
         constraints={"require_approval": True},
         priority=1,
-        timestamp=datetime.utcnow()
+        timestamp=datetime.utcnow(),
     )
-    
+
     patch_data = {
         "type": "code_fix",
         "file": "app.py",
-        "changes": [{"line": 10, "content": "fixed_code()"}]
+        "changes": [{"line": 10, "content": "fixed_code()"}],
     }
-    
+
     plan = await orchestrator.create_healing_plan(context, patch_data)
-    
+
     assert plan is not None
     assert plan.context == context
     assert len(plan.steps) > 0
@@ -174,9 +166,9 @@ async def test_execute_healing_plan_success(orchestrator):
         dependencies=[],
         constraints={},
         priority=5,
-        timestamp=datetime.utcnow()
+        timestamp=datetime.utcnow(),
     )
-    
+
     steps = [
         HealingStep(
             step_id="apply_prod-aws",
@@ -186,7 +178,7 @@ async def test_execute_healing_plan_success(orchestrator):
             dependencies=[],
             timeout=60,
             can_fail=False,
-            rollback_action="revert_patch"
+            rollback_action="revert_patch",
         ),
         HealingStep(
             step_id="verify_prod-aws",
@@ -196,10 +188,10 @@ async def test_execute_healing_plan_success(orchestrator):
             dependencies=["apply_prod-aws"],
             timeout=30,
             can_fail=False,
-            rollback_action=None
-        )
+            rollback_action=None,
+        ),
     ]
-    
+
     plan = HealingPlan(
         plan_id="test-plan-1",
         context=context,
@@ -207,24 +199,26 @@ async def test_execute_healing_plan_success(orchestrator):
         rollback_steps=[],
         approval_required=False,
         estimated_duration=90,
-        risk_score=0.3
+        risk_score=0.3,
     )
-    
+
     orchestrator.active_plans[plan.plan_id] = plan
-    
+
     # Mock connector responses
     connector = orchestrator.connectors["prod-aws"]
-    connector.execute_action = AsyncMock(return_value={"status": "success", "result": {}})
-    
+    connector.execute_action = AsyncMock(
+        return_value={"status": "success", "result": {}}
+    )
+
     # Mock auditor
     orchestrator.auditor.log_event = AsyncMock()
-    
+
     result = await orchestrator.execute_healing_plan(plan)
-    
+
     assert result["status"] == "success"
     assert result["plan_id"] == plan.plan_id
     assert len(result["results"]) == 2
-    
+
     # Verify auditor was called
     assert orchestrator.auditor.log_event.call_count >= 2
 
@@ -241,9 +235,9 @@ async def test_execute_healing_plan_with_rollback(orchestrator):
         dependencies=[],
         constraints={},
         priority=5,
-        timestamp=datetime.utcnow()
+        timestamp=datetime.utcnow(),
     )
-    
+
     steps = [
         HealingStep(
             step_id="apply_prod-aws",
@@ -253,10 +247,10 @@ async def test_execute_healing_plan_with_rollback(orchestrator):
             dependencies=[],
             timeout=60,
             can_fail=False,
-            rollback_action="revert_patch"
+            rollback_action="revert_patch",
         )
     ]
-    
+
     rollback_steps = [
         HealingStep(
             step_id="rollback_apply_prod-aws",
@@ -266,10 +260,10 @@ async def test_execute_healing_plan_with_rollback(orchestrator):
             dependencies=[],
             timeout=30,
             can_fail=False,
-            rollback_action=None
+            rollback_action=None,
         )
     ]
-    
+
     plan = HealingPlan(
         plan_id="test-plan-2",
         context=context,
@@ -277,22 +271,24 @@ async def test_execute_healing_plan_with_rollback(orchestrator):
         rollback_steps=rollback_steps,
         approval_required=False,
         estimated_duration=60,
-        risk_score=0.3
+        risk_score=0.3,
     )
-    
+
     orchestrator.active_plans[plan.plan_id] = plan
-    
+
     # Mock connector to fail on apply, succeed on rollback
     connector = orchestrator.connectors["prod-aws"]
-    connector.execute_action = AsyncMock(side_effect=[
-        {"status": "failed", "error": "patch failed"},
-        {"status": "success", "result": {}}
-    ])
-    
+    connector.execute_action = AsyncMock(
+        side_effect=[
+            {"status": "failed", "error": "patch failed"},
+            {"status": "success", "result": {}},
+        ]
+    )
+
     orchestrator.auditor.log_event = AsyncMock()
-    
+
     result = await orchestrator.execute_healing_plan(plan)
-    
+
     assert result["status"] == "failed"
     assert "rollback_results" in result
     assert len(result["rollback_results"]) == 1
@@ -305,13 +301,11 @@ async def test_get_cross_environment_view(orchestrator):
     # Initialize environments
     for connector in orchestrator.connectors.values():
         connector.connect = AsyncMock(return_value=True)
-        connector.get_health_status = AsyncMock(return_value={
-            "status": "healthy",
-            "services": {},
-            "metrics": {}
-        })
+        connector.get_health_status = AsyncMock(
+            return_value={"status": "healthy", "services": {}, "metrics": {}}
+        )
     await orchestrator.initialize()
-    
+
     # Add an active healing plan
     env = orchestrator.environments["prod-aws"]
     context = HealingContext(
@@ -322,9 +316,9 @@ async def test_get_cross_environment_view(orchestrator):
         dependencies=[],
         constraints={},
         priority=3,
-        timestamp=datetime.utcnow()
+        timestamp=datetime.utcnow(),
     )
-    
+
     plan = HealingPlan(
         plan_id="test-plan-3",
         context=context,
@@ -332,13 +326,13 @@ async def test_get_cross_environment_view(orchestrator):
         rollback_steps=[],
         approval_required=False,
         estimated_duration=60,
-        risk_score=0.4
+        risk_score=0.4,
     )
-    
+
     orchestrator.active_plans[plan.plan_id] = plan
-    
+
     view = await orchestrator.get_cross_environment_view()
-    
+
     assert len(view["environments"]) == 3
     assert view["health_summary"]["healthy"] == 3
     assert len(view["active_healings"]) == 1
@@ -349,19 +343,19 @@ async def test_get_cross_environment_view(orchestrator):
 async def test_cloud_connector():
     """Test cloud connector functionality"""
     connector = CloudConnector("aws")
-    
+
     # Test connection
     result = await connector.connect({"access_key": "test", "secret_key": "test"})
     assert result is True
-    
+
     # Test health status
     health = await connector.get_health_status()
     assert health["status"] == "healthy"
-    
+
     # Test execute action
     result = await connector.execute_action("apply_patch", {"patch": "data"})
     assert result["status"] == "success"
-    
+
     # Test rollback
     result = await connector.rollback_action("apply_patch", {"patch": "data"})
     assert result is True
@@ -371,19 +365,19 @@ async def test_cloud_connector():
 async def test_onpremise_connector():
     """Test on-premise connector functionality"""
     connector = OnPremiseConnector()
-    
+
     # Test connection
     result = await connector.connect({"host": "192.168.1.1", "port": 22})
     assert result is True
-    
+
     # Test health status
     health = await connector.get_health_status()
     assert health["status"] == "healthy"
-    
+
     # Test execute action
     result = await connector.execute_action("apply_patch", {"patch": "data"})
     assert result["status"] == "success"
-    
+
     # Test rollback
     result = await connector.rollback_action("apply_patch", {"patch": "data"})
     assert result is True
@@ -393,11 +387,11 @@ def test_environment_ordering(orchestrator):
     """Test environment dependency ordering"""
     envs = list(orchestrator.environments.values())
     ordered = orchestrator._order_environments_by_dependency(envs)
-    
+
     # Verify ordering by dependency level
     assert ordered[0].id == "prod-onprem"  # level 0
-    assert ordered[1].id == "prod-aws"     # level 1
-    assert ordered[2].id == "dev-gcp"      # level 2
+    assert ordered[1].id == "prod-aws"  # level 1
+    assert ordered[2].id == "dev-gcp"  # level 2
 
 
 def test_risk_score_calculation(orchestrator):
@@ -407,19 +401,30 @@ def test_risk_score_calculation(orchestrator):
         source_environment=orchestrator.environments["prod-aws"],
         affected_environments=[
             orchestrator.environments["prod-aws"],
-            orchestrator.environments["prod-onprem"]
+            orchestrator.environments["prod-onprem"],
         ],
         scope=HealingScope.CROSS_ENVIRONMENT,
         dependencies=[],
         constraints={},
         priority=1,
-        timestamp=datetime.utcnow()
+        timestamp=datetime.utcnow(),
     )
-    
-    steps = [HealingStep("s1", orchestrator.environments["prod-aws"], "action", {}, [], 60, False, None)] * 5
-    
+
+    steps = [
+        HealingStep(
+            "s1",
+            orchestrator.environments["prod-aws"],
+            "action",
+            {},
+            [],
+            60,
+            False,
+            None,
+        )
+    ] * 5
+
     risk_score = orchestrator._calculate_risk_score(context, steps)
-    
+
     # Base risk (0.3) + cross-env (0.2) + 2 prod envs (0.2) + 5 steps (0.1)
     assert risk_score == pytest.approx(0.8, rel=0.01)
 
@@ -427,14 +432,14 @@ def test_risk_score_calculation(orchestrator):
 def test_duration_estimation(orchestrator):
     """Test healing duration estimation"""
     env = orchestrator.environments["prod-aws"]
-    
+
     # Parallel steps
     steps = [
         HealingStep("s1", env, "action1", {}, [], 100, False, None),
         HealingStep("s2", env, "action2", {}, [], 150, False, None),
-        HealingStep("s3", env, "action3", {}, ["s1", "s2"], 50, False, None)
+        HealingStep("s3", env, "action3", {}, ["s1", "s2"], 50, False, None),
     ]
-    
+
     duration = orchestrator._estimate_duration(steps)
     # Max of parallel (150) + sequential (50) = 200
     assert duration == 200

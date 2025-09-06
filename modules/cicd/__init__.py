@@ -12,16 +12,16 @@ Supported platforms:
 - Deployment platforms (Vercel, Netlify, etc.)
 """
 
+from .circleci import CircleCIIntegration
+from .deployment_platforms import DeploymentPlatformIntegration
 from .github_actions import GitHubActionsIntegration
 from .gitlab_ci import GitLabCIIntegration
 from .jenkins import JenkinsIntegration
-from .circleci import CircleCIIntegration
-from .deployment_platforms import DeploymentPlatformIntegration
 
 __all__ = [
-    'GitHubActionsIntegration',
-    'GitLabCIIntegration', 
-    'JenkinsIntegration',
-    'CircleCIIntegration',
-    'DeploymentPlatformIntegration'
+    "GitHubActionsIntegration",
+    "GitLabCIIntegration",
+    "JenkinsIntegration",
+    "CircleCIIntegration",
+    "DeploymentPlatformIntegration",
 ]

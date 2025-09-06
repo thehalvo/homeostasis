@@ -9,6 +9,4 @@ This package provides integration with Microsoft Azure for deploying fixes to:
 
 from modules.deployment.cloud.azure.provider import AzureProvider
 
-__all__ = [
-    "AzureProvider"
-]
+__all__ = ["AzureProvider"]

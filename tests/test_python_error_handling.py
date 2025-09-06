@@ -5,26 +5,31 @@ This module contains comprehensive test cases for Python error detection, analys
 and patch generation including syntax errors, runtime errors, framework-specific errors,
 async/await errors, type hint errors, and performance/security issues.
 """
-import pytest
-from unittest.mock import patch
-import sys
+
 import os
+import sys
+from unittest.mock import patch
+
+import pytest
 
 # Add the modules directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from modules.analysis.comprehensive_error_detector import PythonParser, ComprehensiveErrorDetector
-from modules.analysis.language_parsers import CompilerIntegration
+from modules.analysis.comprehensive_error_detector import (
+    ComprehensiveErrorDetector,
+    PythonParser,
+)
 from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
+from modules.analysis.language_parsers import CompilerIntegration
 
 
 class TestPythonParser:
     """Test cases for Python parser in comprehensive error detector."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.parser = PythonParser()
-    
+
     def test_parse_syntax_error_invalid_syntax(self):
         """Test parsing of invalid syntax errors."""
         error_string = """
@@ -33,9 +38,9 @@ class TestPythonParser:
          ^
 SyntaxError: invalid syntax
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "SyntaxError"
         assert result["error_message"] == "invalid syntax"
@@ -43,7 +48,7 @@ SyntaxError: invalid syntax
         assert result["line"] == 5
         assert result["category"] == "SYNTAX"
         assert "Use '==' for comparison" in result["suggestion"]
-    
+
     def test_parse_indentation_error(self):
         """Test parsing of indentation errors."""
         error_string = """
@@ -52,9 +57,9 @@ SyntaxError: invalid syntax
     ^
 IndentationError: expected an indented block
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "IndentationError"
         assert result["error_message"] == "expected an indented block"
@@ -62,7 +67,7 @@ IndentationError: expected an indented block
         assert result["line"] == 3
         assert result["category"] == "SYNTAX"
         assert "proper indentation" in result["suggestion"].lower()
-    
+
     def test_parse_tab_error(self):
         """Test parsing of tab/space mixing errors."""
         error_string = """
@@ -71,14 +76,14 @@ IndentationError: expected an indented block
                  ^
 TabError: inconsistent use of tabs and spaces in indentation
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "TabError"
         assert result["category"] == "SYNTAX"
         assert "Convert all indentation" in result["suggestion"]
-    
+
     def test_parse_name_error(self):
         """Test parsing of name errors."""
         error_string = """
@@ -87,15 +92,15 @@ Traceback (most recent call last):
     print(undefined_variable)
 NameError: name 'undefined_variable' is not defined
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "NameError"
         assert result["error_message"] == "name 'undefined_variable' is not defined"
         assert result["category"] == "LOGIC"
         assert "Define 'undefined_variable'" in result["suggestion"]
-    
+
     def test_parse_attribute_error(self):
         """Test parsing of attribute errors."""
         error_string = """
@@ -104,14 +109,14 @@ Traceback (most recent call last):
     result = obj.nonexistent_method()
 AttributeError: 'MyClass' object has no attribute 'nonexistent_method'
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "AttributeError"
         assert result["category"] == "LOGIC"
         assert "Check available attributes" in result["suggestion"]
-    
+
     def test_parse_key_error(self):
         """Test parsing of key errors."""
         error_string = """
@@ -120,15 +125,15 @@ Traceback (most recent call last):
     return data['missing_key']
 KeyError: 'missing_key'
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "KeyError"
         assert result["error_message"] == "'missing_key'"
         assert result["category"] == "LOGIC"
         assert "Check if key exists" in result["suggestion"]
-    
+
     def test_parse_index_error(self):
         """Test parsing of index errors."""
         error_string = """
@@ -137,14 +142,14 @@ Traceback (most recent call last):
     return items[10]
 IndexError: list index out of range
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "IndexError"
         assert result["category"] == "LOGIC"
         assert "Check list length" in result["suggestion"]
-    
+
     def test_parse_type_error_not_callable(self):
         """Test parsing of type errors for non-callable objects."""
         error_string = """
@@ -153,14 +158,14 @@ Traceback (most recent call last):
     result = my_list()
 TypeError: 'list' object is not callable
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "TypeError"
         assert result["category"] == "LOGIC"
         assert "Remove parentheses" in result["suggestion"]
-    
+
     def test_parse_value_error(self):
         """Test parsing of value errors."""
         error_string = """
@@ -169,14 +174,14 @@ Traceback (most recent call last):
     num = int('abc')
 ValueError: invalid literal for int() with base 10: 'abc'
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "ValueError"
         assert result["category"] == "LOGIC"
         assert "Validate input" in result["suggestion"]
-    
+
     def test_parse_zero_division_error(self):
         """Test parsing of zero division errors."""
         error_string = """
@@ -185,14 +190,14 @@ Traceback (most recent call last):
     result = 10 / 0
 ZeroDivisionError: division by zero
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "ZeroDivisionError"
         assert result["category"] == "LOGIC"
         assert "Check for zero" in result["suggestion"]
-    
+
     def test_parse_import_error(self):
         """Test parsing of import errors."""
         error_string = """
@@ -201,14 +206,14 @@ Traceback (most recent call last):
     import nonexistent_module
 ImportError: No module named 'nonexistent_module'
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "ImportError"
         assert result["category"] == "DEPENDENCY"
         assert "Install the module" in result["suggestion"]
-    
+
     def test_parse_module_not_found_error(self):
         """Test parsing of module not found errors."""
         error_string = """
@@ -217,13 +222,13 @@ Traceback (most recent call last):
     from package import missing_module
 ModuleNotFoundError: No module named 'package.missing_module'
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "ModuleNotFoundError"
         assert result["category"] == "DEPENDENCY"
-    
+
     def test_parse_file_not_found_error(self):
         """Test parsing of file not found errors."""
         error_string = """
@@ -232,14 +237,14 @@ Traceback (most recent call last):
     with open('missing.txt', 'r') as f:
 FileNotFoundError: [Errno 2] No such file or directory: 'missing.txt'
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "FileNotFoundError"
         assert result["category"] == "FILESYSTEM"
         assert "Check if file exists" in result["suggestion"]
-    
+
     def test_parse_recursion_error(self):
         """Test parsing of recursion errors."""
         error_string = """
@@ -249,14 +254,14 @@ Traceback (most recent call last):
   [Previous line repeated 996 more times]
 RecursionError: maximum recursion depth exceeded
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "RecursionError"
         assert result["category"] == "LOGIC"
         assert "base case" in result["suggestion"].lower()
-    
+
     def test_parse_memory_error(self):
         """Test parsing of memory errors."""
         error_string = """
@@ -265,13 +270,13 @@ Traceback (most recent call last):
     large_list = [0] * (10**10)
 MemoryError
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "MemoryError"
         assert result["category"] == "RESOURCES"
-    
+
     def test_parse_overflow_error(self):
         """Test parsing of overflow errors."""
         error_string = """
@@ -280,13 +285,13 @@ Traceback (most recent call last):
     result = 10 ** 10000000
 OverflowError: (34, 'Numerical result out of range')
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "OverflowError"
         assert result["category"] == "LOGIC"
-    
+
     def test_parse_unmatched_parentheses(self):
         """Test parsing of unmatched parentheses syntax error."""
         error_string = """
@@ -295,14 +300,14 @@ OverflowError: (34, 'Numerical result out of range')
                  ^
 SyntaxError: unexpected EOF while parsing
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "SyntaxError"
         assert result["error_message"] == "unexpected EOF while parsing"
         assert "unmatched parentheses" in result["suggestion"].lower()
-    
+
     def test_parse_syntax_with_ast_validation(self):
         """Test syntax validation using AST when source code is available."""
         error_string = """
@@ -311,40 +316,42 @@ SyntaxError: unexpected EOF while parsing
              ^
 SyntaxError: unexpected EOF while parsing
         """
-        
+
         # Mock source code context
         source_code = """
 def func(
     # Missing closing parenthesis
 """
-        
+
         result = self.parser.parse(error_string, context={"source_code": source_code})
-        
+
         assert result is not None
         assert result["error_type"] == "SyntaxError"
         assert result["ast_validation_performed"] is True
-    
+
     def test_parse_unknown_error_format(self):
         """Test parsing of unknown error format returns None."""
         error_string = "Some random text that is not an error"
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is None
 
 
 class TestPythonErrorDetection:
     """Test cases for Python error detection in comprehensive error detector."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.detector = ComprehensiveErrorDetector()
-    
-    @patch('modules.analysis.comprehensive_error_detector.ComprehensiveErrorDetector._load_rules')
+
+    @patch(
+        "modules.analysis.comprehensive_error_detector.ComprehensiveErrorDetector._load_rules"
+    )
     def test_detect_python_syntax_error(self, mock_load_rules):
         """Test detection of Python syntax errors."""
         mock_load_rules.return_value = {}
-        
+
         error_data = {
             "error": """
   File "test.py", line 5
@@ -352,21 +359,23 @@ class TestPythonErrorDetection:
          ^
 SyntaxError: invalid syntax
             """,
-            "language": "python"
+            "language": "python",
         }
-        
+
         result = self.detector.detect_error(error_data)
-        
+
         assert result is not None
         assert result["language"] == "python"
         assert result["error_type"] == "SyntaxError"
         assert result["category"] == "SYNTAX"
-    
-    @patch('modules.analysis.comprehensive_error_detector.ComprehensiveErrorDetector._load_rules')
+
+    @patch(
+        "modules.analysis.comprehensive_error_detector.ComprehensiveErrorDetector._load_rules"
+    )
     def test_detect_python_runtime_error(self, mock_load_rules):
         """Test detection of Python runtime errors."""
         mock_load_rules.return_value = {}
-        
+
         error_data = {
             "error": """
 Traceback (most recent call last):
@@ -374,11 +383,11 @@ Traceback (most recent call last):
     print(undefined_var)
 NameError: name 'undefined_var' is not defined
             """,
-            "language": "python"
+            "language": "python",
         }
-        
+
         result = self.detector.detect_error(error_data)
-        
+
         assert result is not None
         assert result["language"] == "python"
         assert result["error_type"] == "NameError"
@@ -387,11 +396,11 @@ NameError: name 'undefined_var' is not defined
 
 class TestPythonFrameworkErrors:
     """Test cases for Python framework-specific error handling."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.parser = PythonParser()
-    
+
     def test_parse_django_error(self):
         """Test parsing of Django-specific errors."""
         error_string = """
@@ -402,13 +411,13 @@ Traceback (most recent call last):
     return getattr(self.get_queryset(), name)(*args, **kwargs)
 django.core.exceptions.ObjectDoesNotExist: User matching query does not exist.
         """
-        
+
         # This would need Django-specific rules loaded
         result = self.parser.parse(error_string)
-        
+
         # Basic parsing should still work
         assert result is not None
-    
+
     def test_parse_flask_error(self):
         """Test parsing of Flask-specific errors."""
         error_string = """
@@ -419,11 +428,11 @@ Traceback (most recent call last):
     ctx.app.jinja_env.get_or_select_template(template_name_or_list)
 jinja2.exceptions.TemplateNotFound: missing.html
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
-    
+
     def test_parse_asyncio_error(self):
         """Test parsing of asyncio-specific errors."""
         error_string = """
@@ -432,9 +441,9 @@ Traceback (most recent call last):
     await asyncio.gather(*tasks)
 RuntimeError: This event loop is already running
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "RuntimeError"
         assert "event loop" in result["error_message"]
@@ -442,11 +451,11 @@ RuntimeError: This event loop is already running
 
 class TestPythonTypeHintErrors:
     """Test cases for Python type hint related errors."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.parser = PythonParser()
-    
+
     def test_parse_type_hint_error(self):
         """Test parsing of type hint related errors."""
         error_string = """
@@ -455,20 +464,20 @@ Traceback (most recent call last):
     result: List[str] = process_data(123)
 TypeError: 'int' object is not iterable
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "TypeError"
 
 
 class TestPythonPerformanceAndSecurity:
     """Test cases for Python performance and security error patterns."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.parser = PythonParser()
-    
+
     def test_parse_performance_warning(self):
         """Test parsing of performance-related issues."""
         # Performance issues typically come as warnings or custom exceptions
@@ -476,13 +485,13 @@ class TestPythonPerformanceAndSecurity:
 Warning: Detected inefficient list comprehension in nested loop at line 50
 Performance impact: O(n²) complexity detected
         """
-        
+
         # This would need custom performance rules
         self.parser.parse(error_string)
-        
+
         # May return None if not matching standard error patterns
         # Real implementation would have performance-specific patterns
-    
+
     def test_parse_security_issue(self):
         """Test parsing of security-related issues."""
         error_string = """
@@ -490,39 +499,39 @@ SecurityWarning: Detected SQL injection vulnerability
   File "db_handler.py", line 35, in query_user
     cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")
         """
-        
+
         # This would need custom security rules
         self.parser.parse(error_string)
 
 
 class TestCompilerIntegration:
     """Test cases for Python compiler integration."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.compiler = CompilerIntegration()
-    
+
     def test_analyze_python_syntax(self):
         """Test Python syntax analysis using AST."""
-        code = '''
+        code = """
 def hello():
     print("Hello, World!")
-'''
-        
+"""
+
         result = self.compiler.analyze_python_code(code, "test.py")
-        
+
         assert result["success"] is True
         assert len(result["errors"]) == 0
-    
+
     def test_analyze_python_syntax_error(self):
         """Test Python syntax error detection using AST."""
-        code = '''
+        code = """
 def hello(:  # Missing parameter name
     print("Hello, World!")
-'''
-        
+"""
+
         result = self.compiler.analyze_python_code(code, "test.py")
-        
+
         assert result["success"] is False
         assert len(result["errors"]) > 0
         assert result["errors"][0]["type"] == "SyntaxError"
@@ -530,27 +539,27 @@ def hello(:  # Missing parameter name
 
 class TestCrossLanguageOrchestratorPython:
     """Test cases for Python handling in cross-language orchestrator."""
-    
+
     def setup_method(self, method):
         """Set up test fixtures."""
         self.orchestrator = CrossLanguageOrchestrator()
-    
+
     def test_python_language_detection(self):
         """Test Python language detection in orchestrator."""
         # Test explicit language
         error_data = {"language": "python", "error": "SyntaxError"}
         language = self.orchestrator._detect_language(error_data)
         assert language == "python"
-        
+
         # Test file extension
         error_data = {"file": "test.py", "error": "NameError"}
         language = self.orchestrator._detect_language(error_data)
         assert language == "python"
-        
+
         # Test error pattern
         error_data = {
             "error": "NameError: name 'x' is not defined",
-            "stack_trace": ["  File 'test.py', line 10"]
+            "stack_trace": ["  File 'test.py', line 10"],
         }
         language = self.orchestrator._detect_language(error_data)
         assert language == "python"
@@ -558,11 +567,11 @@ class TestCrossLanguageOrchestratorPython:
 
 class TestPythonEdgeCases:
     """Test cases for Python edge cases and corner cases."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.parser = PythonParser()
-    
+
     def test_parse_multiline_error_message(self):
         """Test parsing of errors with multiline messages."""
         error_string = """
@@ -574,13 +583,13 @@ ValueError: Invalid data format:
   - Field 'age' must be positive
   - Field 'email' is not a valid email address
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "ValueError"
         assert "Invalid data format" in result["error_message"]
-    
+
     def test_parse_chained_exceptions(self):
         """Test parsing of chained exceptions (Python 3+)."""
         error_string = """
@@ -596,12 +605,12 @@ Traceback (most recent call last):
     processed = process_data(raw_input)
 DataProcessingError: Failed to process input data
         """
-        
+
         # Parser should handle the most recent exception
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
-    
+
     def test_parse_unicode_in_error(self):
         """Test parsing of errors containing unicode characters."""
         error_string = """
@@ -610,30 +619,30 @@ Traceback (most recent call last):
     print(message)
 UnicodeEncodeError: 'ascii' codec can't encode character '\\u2019' in position 10
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "UnicodeEncodeError"
-    
+
     def test_parse_very_long_stack_trace(self):
         """Test parsing of errors with very long stack traces."""
         stack_frames = []
         for i in range(50):
             stack_frames.append(f"  File 'module{i}.py', line {i*10}, in func{i}")
             stack_frames.append(f"    do_something_{i}()")
-        
+
         error_string = f"""
 Traceback (most recent call last):
 {chr(10).join(stack_frames)}
 RuntimeError: Maximum call stack exceeded
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "RuntimeError"
-    
+
     def test_parse_error_with_no_file_info(self):
         """Test parsing of errors without file information."""
         error_string = """
@@ -641,9 +650,9 @@ Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 NameError: name 'x' is not defined
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "NameError"
         assert result["file"] == "<stdin>"
@@ -651,11 +660,11 @@ NameError: name 'x' is not defined
 
 class TestPythonAsyncErrors:
     """Test cases for Python async/await specific errors."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.parser = PythonParser()
-    
+
     def test_parse_async_syntax_error(self):
         """Test parsing of async syntax errors."""
         error_string = """
@@ -664,13 +673,13 @@ class TestPythonAsyncErrors:
              ^
 SyntaxError: 'await' outside async function
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert result["error_type"] == "SyntaxError"
         assert "'await' outside async function" in result["error_message"]
-    
+
     def test_parse_asyncio_timeout_error(self):
         """Test parsing of asyncio timeout errors."""
         error_string = """
@@ -679,20 +688,20 @@ Traceback (most recent call last):
     result = await asyncio.wait_for(fetch_data(), timeout=5.0)
 asyncio.exceptions.TimeoutError
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert "TimeoutError" in result["error_type"]
 
 
 class TestPythonPatchSuggestions:
     """Test cases for Python error patch suggestions."""
-    
+
     def setup_method(self):
         """Set up test fixtures."""
         self.parser = PythonParser()
-    
+
     def test_suggestion_for_assignment_in_condition(self):
         """Test suggestion for assignment in condition."""
         error_string = """
@@ -701,12 +710,12 @@ class TestPythonPatchSuggestions:
          ^
 SyntaxError: invalid syntax
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert "Use '==' for comparison" in result["suggestion"]
-    
+
     def test_suggestion_for_missing_colon(self):
         """Test suggestion for missing colon."""
         error_string = """
@@ -715,12 +724,12 @@ SyntaxError: invalid syntax
             ^
 SyntaxError: invalid syntax
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         # Parser should suggest adding a colon
-    
+
     def test_suggestion_for_undefined_variable(self):
         """Test suggestion for undefined variable."""
         error_string = """
@@ -729,9 +738,9 @@ Traceback (most recent call last):
     print(undeclared_var)
 NameError: name 'undeclared_var' is not defined
         """
-        
+
         result = self.parser.parse(error_string)
-        
+
         assert result is not None
         assert "Define 'undeclared_var'" in result["suggestion"]
 

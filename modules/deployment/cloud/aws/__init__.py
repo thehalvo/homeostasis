@@ -9,6 +9,4 @@ This package provides AWS integration for deploying fixes to:
 
 from modules.deployment.cloud.aws.provider import AWSProvider
 
-__all__ = [
-    "AWSProvider"
-]
+__all__ = ["AWSProvider"]

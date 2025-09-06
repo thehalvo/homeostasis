@@ -8,6 +8,7 @@ with the Universal Self-Healing Standard.
 import abc
 import json
 import logging
+import tempfile
 from datetime import datetime
 from typing import Dict, Any, List, Optional, Callable
 from uuid import uuid4
@@ -563,7 +564,9 @@ class ServerlessUSHSAdapter(abc.ABC):
     def _prepare_source(self, patch: Dict[str, Any]) -> str:
         """Prepare source code with patch applied."""
         # Implementation would apply patch to source
-        return f"/tmp/patched-{patch.get('id')}"
+        # Use secure temporary directory
+        temp_dir = tempfile.gettempdir()
+        return f"{temp_dir}/patched-{patch.get('id')}"
     
     def _deploy_canary(self, function_name: str, source_path: str, strategy: Dict[str, Any]) -> Dict[str, Any]:
         """Deploy using canary strategy."""

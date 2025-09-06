@@ -19,12 +19,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from improved_test_utilities import (
-    ImprovedTestEnvironment,
-    HealingScenarioRunner,
     HealingScenario,
+    HealingScenarioRunner,
+    ImprovedTestEnvironment,
+    check_error_fixed,
     check_service_healthy,
-    check_error_fixed
 )
+
 
 async def demonstrate_healing():
     """Demonstrate the improved healing process."""

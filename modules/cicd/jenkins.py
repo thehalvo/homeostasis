@@ -4,175 +4,183 @@ Jenkins Integration for Homeostasis
 This module provides integration with Jenkins to enable automatic
 healing during build pipelines.
 """
+
 # flake8: noqa: E999
 
-import os
-import json
-import requests
-from typing import Dict, List, Optional, Any
-from urllib.parse import urljoin
 import base64
+import json
 import logging
+import os
+from typing import Any, Dict, List, Optional
+from urllib.parse import urljoin
+
+import requests
 
 logger = logging.getLogger(__name__)
 
 
 class JenkinsIntegration:
     """Integration with Jenkins for automated healing"""
-    
-    def __init__(self, jenkins_url: Optional[str] = None, username: Optional[str] = None, 
-                 api_token: Optional[str] = None):
+
+    def __init__(
+        self,
+        jenkins_url: Optional[str] = None,
+        username: Optional[str] = None,
+        api_token: Optional[str] = None,
+    ):
         """
         Initialize Jenkins integration
-        
+
         Args:
             jenkins_url: Jenkins server URL
             username: Jenkins username
             api_token: Jenkins API token
         """
-        self.jenkins_url = (jenkins_url or os.getenv('JENKINS_URL', '')).rstrip('/')
-        self.username = username or os.getenv('JENKINS_USERNAME')
-        self.api_token = api_token or os.getenv('JENKINS_API_TOKEN')
-        
+        self.jenkins_url = (jenkins_url or os.getenv("JENKINS_URL", "")).rstrip("/")
+        self.username = username or os.getenv("JENKINS_USERNAME")
+        self.api_token = api_token or os.getenv("JENKINS_API_TOKEN")
+
         if not self.jenkins_url:
             raise ValueError("Jenkins URL required (set JENKINS_URL env var)")
         if not self.username or not self.api_token:
-            raise ValueError("Jenkins credentials required (set JENKINS_USERNAME and JENKINS_API_TOKEN env vars)")
-        
+            raise ValueError(
+                "Jenkins credentials required (set JENKINS_USERNAME and JENKINS_API_TOKEN env vars)"
+            )
+
         # Create basic auth header
         credentials = f"{self.username}:{self.api_token}"
         encoded_credentials = base64.b64encode(credentials.encode()).decode()
-        
+
         self.headers = {
-            'Authorization': f'Basic {encoded_credentials}',
-            'Content-Type': 'application/json'
+            "Authorization": f"Basic {encoded_credentials}",
+            "Content-Type": "application/json",
         }
-    
+
     def get_job_info(self, job_name: str) -> Dict:
         """
         Get information about a Jenkins job
-        
+
         Args:
             job_name: Name of the Jenkins job
-            
+
         Returns:
             Job information
         """
-        url = urljoin(self.jenkins_url, f'/job/{job_name}/api/json')
-        
-        response = requests.get(url, headers=self.headers)
+        url = urljoin(self.jenkins_url, f"/job/{job_name}/api/json")
+
+        response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
-        
+
         return response.json()
-    
+
     def get_build_info(self, job_name: str, build_number: int) -> Dict:
         """
         Get information about a specific build
-        
+
         Args:
             job_name: Name of the Jenkins job
             build_number: Build number
-            
+
         Returns:
             Build information
         """
-        url = urljoin(self.jenkins_url, f'/job/{job_name}/{build_number}/api/json')
-        
-        response = requests.get(url, headers=self.headers)
+        url = urljoin(self.jenkins_url, f"/job/{job_name}/{build_number}/api/json")
+
+        response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
-        
+
         return response.json()
-    
+
     def get_console_log(self, job_name: str, build_number: int) -> str:
         """
         Get console log for a build
-        
+
         Args:
             job_name: Name of the Jenkins job
             build_number: Build number
-            
+
         Returns:
             Console log content
         """
-        url = urljoin(self.jenkins_url, f'/job/{job_name}/{build_number}/consoleText')
-        
-        response = requests.get(url, headers=self.headers)
+        url = urljoin(self.jenkins_url, f"/job/{job_name}/{build_number}/consoleText")
+
+        response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
-        
+
         return response.text
-    
+
     def get_failed_builds(self, job_name: str, count: int = 10) -> List[Dict]:
         """
         Get recent failed builds for a job
-        
+
         Args:
             job_name: Name of the Jenkins job
             count: Number of builds to check
-            
+
         Returns:
             List of failed build information
         """
         job_info = self.get_job_info(job_name)
-        builds = job_info.get('builds', [])
-        
+        builds = job_info.get("builds", [])
+
         failed_builds = []
         for build in builds[:count]:
-            build_info = self.get_build_info(job_name, build['number'])
-            if build_info.get('result') == 'FAILURE':
+            build_info = self.get_build_info(job_name, build["number"])
+            if build_info.get("result") == "FAILURE":
                 failed_builds.append(build_info)
-        
+
         return failed_builds
-    
+
     def analyze_build_failure(self, job_name: str, build_number: int) -> Dict:
         """
         Analyze a failed build to identify healing opportunities
-        
+
         Args:
             job_name: Name of the Jenkins job
             build_number: Failed build number
-            
+
         Returns:
             Analysis results with potential fixes
         """
         build_info = self.get_build_info(job_name, build_number)
         console_log = self.get_console_log(job_name, build_number)
-        
+
         analysis = {
-            'job_name': job_name,
-            'build_number': build_number,
-            'build_url': build_info.get('url'),
-            'duration': build_info.get('duration'),
-            'timestamp': build_info.get('timestamp'),
-            'error_patterns': [],
-            'suggested_fixes': [],
-            'healing_opportunities': []
+            "job_name": job_name,
+            "build_number": build_number,
+            "build_url": build_info.get("url"),
+            "duration": build_info.get("duration"),
+            "timestamp": build_info.get("timestamp"),
+            "error_patterns": [],
+            "suggested_fixes": [],
+            "healing_opportunities": [],
         }
-        
+
         # Extract error patterns from console log
-        analysis['error_patterns'] = self._extract_error_patterns(console_log)
-        
+        analysis["error_patterns"] = self._extract_error_patterns(console_log)
+
         # Generate healing suggestions
-        analysis['suggested_fixes'] = self._generate_healing_suggestions(analysis)
-        
+        analysis["suggested_fixes"] = self._generate_healing_suggestions(analysis)
+
         return analysis
-    
-    def create_healing_pipeline(self, template_type: str = 'basic') -> str:
+
+    def create_healing_pipeline(self, template_type: str = "basic") -> str:
         """
         Create a Jenkins pipeline script for automated healing
-        
+
         Args:
             template_type: Type of healing pipeline (basic, advanced)
-            
+
         Returns:
             Groovy pipeline script
         """
-        if template_type == 'basic':
+        if template_type == "basic":
             return self._create_basic_healing_pipeline()
-        elif template_type == 'advanced':
+        elif template_type == "advanced":
             return self._create_advanced_healing_pipeline()
         else:
             raise ValueError(f"Unknown template type: {template_type}")
-    
+
     def _create_basic_healing_pipeline(self) -> str:
         """Create basic healing Jenkins pipeline"""
         pipeline = '''pipeline {
@@ -275,7 +283,7 @@ class JenkinsIntegration:
                 script {
                     echo "Committing healing changes"
                     
-                    sh '''
+                    sh """
                         git config user.email "jenkins@homeostasis.bot"
                         git config user.name "Jenkins Homeostasis Bot"
                         
@@ -286,7 +294,7 @@ class JenkinsIntegration:
                         else
                             echo "No changes to commit"
                         fi
-                    '''
+                    """
                 }
             }
         }
@@ -306,7 +314,7 @@ class JenkinsIntegration:
 }
 '''  # noqa: E999
         return pipeline.strip()
-    
+
     def _create_advanced_healing_pipeline(self) -> str:
         """Create advanced healing Jenkins pipeline"""
         pipeline = '''
@@ -331,10 +339,10 @@ pipeline {
             steps {
                 script {
                     echo "Setting up advanced Homeostasis healing pipeline"
-                    sh '''
+                    sh """
                         python -m pip install --upgrade pip
                         pip install homeostasis[jenkins] requests
-                    '''
+                    """
                 }
             }
         }
@@ -376,11 +384,11 @@ pipeline {
                 always {
                     script {
                         // Merge analysis results
-                        sh '''
+                        sh """
                             homeostasis merge-analysis \\
                                 --inputs current-analysis.json historical-analysis.json \\
                                 --output combined-analysis.json
-                        '''
+                        """
                         
                         def analysis = readJSON file: 'combined-analysis.json'
                         env.HEALING_NEEDED = analysis.healing_recommended
@@ -452,7 +460,7 @@ pipeline {
                     """
                     
                     // Create a review branch
-                    sh '''
+                    sh """
                         git checkout -b "homeostasis/review-${BUILD_NUMBER}"
                         
                         homeostasis apply-suggestions \\
@@ -462,7 +470,7 @@ pipeline {
                         git add .
                         git commit -m "Homeostasis: Suggested fixes for manual review (Build #${BUILD_NUMBER})"
                         git push origin "homeostasis/review-${BUILD_NUMBER}"
-                    '''
+                    """
                     
                     env.REVIEW_BRANCH = "homeostasis/review-${BUILD_NUMBER}"
                 }
@@ -478,7 +486,7 @@ pipeline {
                     steps {
                         script {
                             echo "Running unit tests"
-                            sh '''
+                            sh """
                                 if [ -f "package.json" ]; then
                                     npm install && npm run test:unit
                                 elif [ -f "requirements.txt" ]; then
@@ -488,7 +496,7 @@ pipeline {
                                 elif [ -f "build.gradle" ]; then
                                     ./gradlew test
                                 fi
-                            '''
+                            """
                         }
                     }
                 }
@@ -497,7 +505,7 @@ pipeline {
                     steps {
                         script {
                             echo "Running integration tests"
-                            sh '''
+                            sh """
                                 if [ -f "package.json" ]; then
                                     npm run test:integration || true
                                 elif [ -f "requirements.txt" ]; then
@@ -507,7 +515,7 @@ pipeline {
                                 elif [ -f "build.gradle" ]; then
                                     ./gradlew integrationTest || true
                                 fi
-                            '''
+                            """
                         }
                     }
                 }
@@ -516,11 +524,11 @@ pipeline {
                     steps {
                         script {
                             echo "Running security scan on fixed code"
-                            sh '''
+                            sh """
                                 homeostasis security-scan \\
                                     --path . \\
                                     --output security-scan.json || true
-                            '''
+                            """
                         }
                     }
                 }
@@ -546,7 +554,7 @@ pipeline {
                 script {
                     echo "Deploying healing fix"
                     
-                    sh '''
+                    sh """
                         git config user.email "jenkins@homeostasis.bot"
                         git config user.name "Jenkins Homeostasis Bot"
                         
@@ -560,7 +568,7 @@ pipeline {
                             
                             git push origin main
                         fi
-                    '''
+                    """
                 }
             }
         }
@@ -614,20 +622,22 @@ Homeostasis Healing Results:
 }
 '''
         return pipeline.strip()
-    
-    def create_job(self, job_name: str, pipeline_script: str, description: str = "") -> bool:
+
+    def create_job(
+        self, job_name: str, pipeline_script: str, description: str = ""
+    ) -> bool:
         """
         Create a new Jenkins job with the healing pipeline
-        
+
         Args:
             job_name: Name for the new job
             pipeline_script: Pipeline script content
             description: Job description
-            
+
         Returns:
             True if job was created successfully
         """
-        job_config = f'''<?xml version='1.1' encoding='UTF-8'?>
+        job_config = f"""<?xml version='1.1' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.40">
   <description>{description}</description>
   <keepDependencies>false</keepDependencies>
@@ -647,162 +657,171 @@ Homeostasis Healing Results:
   </definition>
   <triggers/>
   <disabled>false</disabled>
-</flow-definition>'''
-        
-        url = urljoin(self.jenkins_url, f'/createItem?name={job_name}')
-        headers = {**self.headers, 'Content-Type': 'application/xml'}
-        
-        response = requests.post(url, headers=headers, data=job_config)
-        
+</flow-definition>"""
+
+        url = urljoin(self.jenkins_url, f"/createItem?name={job_name}")
+        headers = {**self.headers, "Content-Type": "application/xml"}
+
+        response = requests.post(url, headers=headers, data=job_config, timeout=30)
+
         if response.status_code == 200:
             logger.info(f"Jenkins job '{job_name}' created successfully")
             return True
         else:
             logger.error(f"Failed to create Jenkins job '{job_name}': {response.text}")
             return False
-    
-    def trigger_healing_job(self, healing_job_name: str, failed_job_name: str, 
-                           failed_build_number: int) -> Dict:
+
+    def trigger_healing_job(
+        self, healing_job_name: str, failed_job_name: str, failed_build_number: int
+    ) -> Dict:
         """
         Trigger a healing job for a failed build
-        
+
         Args:
             healing_job_name: Name of the healing job to trigger
             failed_job_name: Name of the job that failed
             failed_build_number: Build number that failed
-            
+
         Returns:
             Trigger response information
         """
         params = {
-            'FAILED_JOB_NAME': failed_job_name,
-            'FAILED_BUILD_NUMBER': str(failed_build_number)
+            "FAILED_JOB_NAME": failed_job_name,
+            "FAILED_BUILD_NUMBER": str(failed_build_number),
         }
-        
-        url = urljoin(self.jenkins_url, f'/job/{healing_job_name}/buildWithParameters')
-        
-        response = requests.post(url, headers=self.headers, data=params)
-        
+
+        url = urljoin(self.jenkins_url, f"/job/{healing_job_name}/buildWithParameters")
+
+        response = requests.post(url, headers=self.headers, data=params, timeout=30)
+
         if response.status_code == 201:
             return {
-                'success': True,
-                'queue_url': response.headers.get('Location'),
-                'message': f'Healing job triggered for {failed_job_name} #{failed_build_number}'
+                "success": True,
+                "queue_url": response.headers.get("Location"),
+                "message": f"Healing job triggered for {failed_job_name} #{failed_build_number}",
             }
         else:
             return {
-                'success': False,
-                'error': response.text,
-                'message': f'Failed to trigger healing job'
+                "success": False,
+                "error": response.text,
+                "message": f"Failed to trigger healing job",
             }
-    
+
     def _extract_error_patterns(self, log: str) -> List[str]:
         """Extract common error patterns from build logs"""
         patterns = []
-        
+
         # Common failure patterns
         error_indicators = [
-            'BUILD FAILED',
-            'COMPILATION ERROR',
-            'Error:',
-            'Exception:',
-            'FAILED:',
-            'AssertionError',
-            'ModuleNotFoundError',
-            'ImportError',
-            'SyntaxError',
-            'TypeError',
-            'exit code 1',
-            'Permission denied',
-            'Connection refused',
-            'Timeout',
-            'No such file or directory'
+            "BUILD FAILED",
+            "COMPILATION ERROR",
+            "Error:",
+            "Exception:",
+            "FAILED:",
+            "AssertionError",
+            "ModuleNotFoundError",
+            "ImportError",
+            "SyntaxError",
+            "TypeError",
+            "exit code 1",
+            "Permission denied",
+            "Connection refused",
+            "Timeout",
+            "No such file or directory",
         ]
-        
-        for line in log.split('\n'):
+
+        for line in log.split("\n"):
             for indicator in error_indicators:
                 if indicator in line:
                     patterns.append(line.strip())
                     break
-        
+
         return list(set(patterns))  # Remove duplicates
-    
+
     def _generate_healing_suggestions(self, analysis: Dict) -> List[Dict]:
         """Generate healing suggestions based on analysis"""
         suggestions = []
-        
-        for pattern in analysis.get('error_patterns', []):
-            if 'ModuleNotFoundError' in pattern or 'ImportError' in pattern:
-                suggestions.append({
-                    'type': 'dependency',
-                    'description': 'Missing dependency detected',
-                    'fix': 'Add missing dependency to requirements or package file',
-                    'confidence': 0.9,
-                    'pattern': pattern
-                })
-            elif 'COMPILATION ERROR' in pattern:
-                suggestions.append({
-                    'type': 'compilation',
-                    'description': 'Code compilation error',
-                    'fix': 'Fix syntax or type errors in source code',
-                    'confidence': 0.8,
-                    'pattern': pattern
-                })
-            elif 'Permission denied' in pattern:
-                suggestions.append({
-                    'type': 'permissions',
-                    'description': 'File permission error',
-                    'fix': 'Add chmod commands or fix file permissions',
-                    'confidence': 0.8,
-                    'pattern': pattern
-                })
-            elif 'BUILD FAILED' in pattern:
-                suggestions.append({
-                    'type': 'build',
-                    'description': 'Build process failure',
-                    'fix': 'Review build configuration and dependencies',
-                    'confidence': 0.6,
-                    'pattern': pattern
-                })
-        
+
+        for pattern in analysis.get("error_patterns", []):
+            if "ModuleNotFoundError" in pattern or "ImportError" in pattern:
+                suggestions.append(
+                    {
+                        "type": "dependency",
+                        "description": "Missing dependency detected",
+                        "fix": "Add missing dependency to requirements or package file",
+                        "confidence": 0.9,
+                        "pattern": pattern,
+                    }
+                )
+            elif "COMPILATION ERROR" in pattern:
+                suggestions.append(
+                    {
+                        "type": "compilation",
+                        "description": "Code compilation error",
+                        "fix": "Fix syntax or type errors in source code",
+                        "confidence": 0.8,
+                        "pattern": pattern,
+                    }
+                )
+            elif "Permission denied" in pattern:
+                suggestions.append(
+                    {
+                        "type": "permissions",
+                        "description": "File permission error",
+                        "fix": "Add chmod commands or fix file permissions",
+                        "confidence": 0.8,
+                        "pattern": pattern,
+                    }
+                )
+            elif "BUILD FAILED" in pattern:
+                suggestions.append(
+                    {
+                        "type": "build",
+                        "description": "Build process failure",
+                        "fix": "Review build configuration and dependencies",
+                        "confidence": 0.6,
+                        "pattern": pattern,
+                    }
+                )
+
         return suggestions
-    
+
     def setup_jenkins_integration(self, create_jobs: bool = True) -> Dict:
         """
         Set up complete Jenkins integration
-        
+
         Args:
             create_jobs: Whether to create healing jobs
-            
+
         Returns:
             Setup status information
         """
         result = {
-            'basic_job_created': False,
-            'advanced_job_created': False,
-            'integration_complete': False
+            "basic_job_created": False,
+            "advanced_job_created": False,
+            "integration_complete": False,
         }
-        
+
         if create_jobs:
             # Create basic healing job
-            basic_pipeline = self.create_healing_pipeline('basic')
+            basic_pipeline = self.create_healing_pipeline("basic")
             basic_created = self.create_job(
-                'homeostasis-healing-basic',
+                "homeostasis-healing-basic",
                 basic_pipeline,
-                'Basic Homeostasis healing pipeline for automatic fixes'
+                "Basic Homeostasis healing pipeline for automatic fixes",
             )
-            result['basic_job_created'] = basic_created
-            
+            result["basic_job_created"] = basic_created
+
             # Create advanced healing job
-            advanced_pipeline = self.create_healing_pipeline('advanced')
+            advanced_pipeline = self.create_healing_pipeline("advanced")
             advanced_created = self.create_job(
-                'homeostasis-healing-advanced',
+                "homeostasis-healing-advanced",
                 advanced_pipeline,
-                'Advanced Homeostasis healing pipeline with deep analysis'
+                "Advanced Homeostasis healing pipeline with deep analysis",
             )
-            result['advanced_job_created'] = advanced_created
-            
+            result["advanced_job_created"] = advanced_created
+
             logger.info("Jenkins integration jobs created")
-        
-        result['integration_complete'] = True
+
+        result["integration_complete"] = True
         return result

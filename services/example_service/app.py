@@ -1,10 +1,11 @@
+import os
+import uuid
+from typing import Dict, List, Optional
+
+import uvicorn
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict
-import uvicorn
-import uuid
-import os
 
 # Import the monitoring module
 from modules.monitoring.logger import MonitoringLogger
@@ -33,6 +34,7 @@ async def global_exception_handler(request: Request, exc: Exception):
         status_code=500,
         content={"detail": "Internal Server Error"},
     )
+
 
 # In-memory database for demonstration
 todo_db: Dict[str, Dict] = {}
@@ -81,7 +83,7 @@ async def get_todos(
     todos = list(todo_db.values())
     # BUG #4: Incorrect slice indexing that could lead to index errors
     # Should check bounds before slicing
-    return todos[skip:skip + limit]
+    return todos[skip : skip + limit]
 
 
 @app.post("/todos", response_model=TodoItem, status_code=201)
@@ -110,14 +112,14 @@ async def update_todo(todo_id: str, todo: TodoUpdate):
     """Update a todo item."""
     if todo_id not in todo_db:
         raise HTTPException(status_code=404, detail="Todo item not found")
-    
+
     stored_todo = todo_db[todo_id]
     # Fixed BUG #3: Use exclude_unset=True to only update provided fields
     update_data = todo.dict(exclude_unset=True)
-    
+
     for field, value in update_data.items():
         stored_todo[field] = value
-    
+
     return stored_todo
 
 
@@ -126,18 +128,20 @@ async def delete_todo(todo_id: str):
     """Delete a todo item."""
     if todo_id not in todo_db:
         raise HTTPException(status_code=404, detail="Todo item not found")
-    
+
     del todo_db[todo_id]
     return None
 
 
 if __name__ == "__main__":
     # For local development
-    # BUG #5: Potential error in port value conversion 
+    # BUG #5: Potential error in port value conversion
     # Should handle ValueError if PORT env var contains non-integer value
     try:
         port = int(os.environ.get("PORT", 8000))
     except ValueError:
         port = 8000
-    
-    uvicorn.run("app:app", host="0.0.0.0", port=port, reload=True)
+
+    # Use configurable host from environment variable with secure default
+    host = os.environ.get("HOST", "127.0.0.1")
+    uvicorn.run("app:app", host=host, port=port, reload=True)

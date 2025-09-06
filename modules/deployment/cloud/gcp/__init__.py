@@ -9,6 +9,4 @@ This package provides integration with Google Cloud Platform for deploying fixes
 
 from modules.deployment.cloud.gcp.provider import GCPProvider
 
-__all__ = [
-    "GCPProvider"
-]
+__all__ = ["GCPProvider"]

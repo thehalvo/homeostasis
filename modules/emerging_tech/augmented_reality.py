@@ -7,31 +7,33 @@ including tracking, rendering, performance, and user experience issues.
 
 import logging
 import re
-from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
-from enum import Enum
 from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
 
 class ARPlatform(Enum):
     """Supported AR/VR platforms and frameworks"""
-    ARCORE = "arcore"           # Google ARCore
-    ARKIT = "arkit"             # Apple ARKit
-    UNITY_AR = "unity_ar"       # Unity AR Foundation
-    UNREAL_AR = "unreal_ar"     # Unreal Engine AR
-    WEBXR = "webxr"             # WebXR API
-    VUFORIA = "vuforia"         # Vuforia SDK
-    OPENXR = "openxr"           # OpenXR Standard
-    HOLOLENS = "hololens"       # Microsoft HoloLens
-    OCULUS = "oculus"           # Meta Quest/Oculus
-    MAGIC_LEAP = "magic_leap"   # Magic Leap
+
+    ARCORE = "arcore"  # Google ARCore
+    ARKIT = "arkit"  # Apple ARKit
+    UNITY_AR = "unity_ar"  # Unity AR Foundation
+    UNREAL_AR = "unreal_ar"  # Unreal Engine AR
+    WEBXR = "webxr"  # WebXR API
+    VUFORIA = "vuforia"  # Vuforia SDK
+    OPENXR = "openxr"  # OpenXR Standard
+    HOLOLENS = "hololens"  # Microsoft HoloLens
+    OCULUS = "oculus"  # Meta Quest/Oculus
+    MAGIC_LEAP = "magic_leap"  # Magic Leap
     UNKNOWN = "unknown"
 
 
 class ARErrorType(Enum):
     """Types of AR/VR application errors"""
+
     TRACKING_LOST = "tracking_lost"
     RENDERING_ERROR = "rendering_error"
     PERFORMANCE_DEGRADATION = "performance_degradation"
@@ -51,6 +53,7 @@ class ARErrorType(Enum):
 @dataclass
 class ARError:
     """Represents an AR/VR application error"""
+
     error_type: ARErrorType
     platform: ARPlatform
     description: str
@@ -67,6 +70,7 @@ class ARError:
 @dataclass
 class ARPerformanceMetrics:
     """AR application performance metrics"""
+
     fps: float
     frame_time_ms: float
     cpu_usage: float
@@ -81,14 +85,14 @@ class ARPerformanceMetrics:
 
 class ARResilienceManager:
     """Handles AR/VR application resilience and error recovery"""
-    
+
     def __init__(self):
         self.error_patterns = self._load_error_patterns()
         self.healing_strategies = self._load_healing_strategies()
         self.platform_detectors = self._initialize_platform_detectors()
         self.performance_thresholds = self._initialize_performance_thresholds()
         self.comfort_parameters = self._initialize_comfort_parameters()
-    
+
     def _load_error_patterns(self) -> Dict[str, List[Dict]]:
         """Load AR error patterns for different platforms"""
         return {
@@ -97,83 +101,83 @@ class ARResilienceManager:
                     "pattern": r"TrackingState.*PAUSED|Tracking.*lost",
                     "type": ARErrorType.TRACKING_LOST,
                     "description": "ARCore tracking lost",
-                    "fix": "Show tracking recovery UI and guide user"
+                    "fix": "Show tracking recovery UI and guide user",
                 },
                 {
                     "pattern": r"Insufficient.*features|Not.*enough.*feature.*points",
                     "type": ARErrorType.TRACKING_LOST,
                     "description": "Insufficient visual features for tracking",
-                    "fix": "Guide user to better lit area with more texture"
+                    "fix": "Guide user to better lit area with more texture",
                 },
                 {
                     "pattern": r"Cloud.*anchor.*failed|Anchor.*hosting.*error",
                     "type": ARErrorType.CLOUD_ANCHOR_ERROR,
                     "description": "Cloud anchor operation failed",
-                    "fix": "Retry with better network or fallback to local anchor"
-                }
+                    "fix": "Retry with better network or fallback to local anchor",
+                },
             ],
             "arkit": [
                 {
                     "pattern": r"ARSession.*interrupted|session.*was.*interrupted",
                     "type": ARErrorType.TRACKING_LOST,
                     "description": "ARKit session interrupted",
-                    "fix": "Resume session and restore anchors"
+                    "fix": "Resume session and restore anchors",
                 },
                 {
                     "pattern": r"worldTrackingFailed|configuration.*unsupported",
                     "type": ARErrorType.TRACKING_LOST,
                     "description": "World tracking failed",
-                    "fix": "Fallback to simpler tracking configuration"
+                    "fix": "Fallback to simpler tracking configuration",
                 },
                 {
                     "pattern": r"insufficientFeatures|limitedTracking",
                     "type": ARErrorType.TRACKING_LOST,
                     "description": "Limited tracking due to insufficient features",
-                    "fix": "Show visual guidance for better tracking"
-                }
+                    "fix": "Show visual guidance for better tracking",
+                },
             ],
             "unity_ar": [
                 {
                     "pattern": r"XR.*Subsystem.*failed|AR.*Session.*failed.*start",
                     "type": ARErrorType.TRACKING_LOST,
                     "description": "Unity AR subsystem failure",
-                    "fix": "Restart AR session with fallback configuration"
+                    "fix": "Restart AR session with fallback configuration",
                 },
                 {
                     "pattern": r"Plane.*detection.*timeout|No.*planes.*detected",
                     "type": ARErrorType.PLANE_DETECTION_FAILURE,
                     "description": "Plane detection failed",
-                    "fix": "Guide user to scan flat surfaces"
+                    "fix": "Guide user to scan flat surfaces",
                 },
                 {
                     "pattern": r"Performance.*warning|FPS.*dropped|Frame.*budget.*exceeded",
                     "type": ARErrorType.PERFORMANCE_DEGRADATION,
                     "description": "Performance degradation detected",
-                    "fix": "Reduce rendering quality or object count"
-                }
+                    "fix": "Reduce rendering quality or object count",
+                },
             ],
             "webxr": [
                 {
                     "pattern": r"XRSession.*ended|immersive.*session.*lost",
                     "type": ARErrorType.TRACKING_LOST,
                     "description": "WebXR session ended unexpectedly",
-                    "fix": "Request new immersive session"
+                    "fix": "Request new immersive session",
                 },
                 {
                     "pattern": r"WebGL.*context.*lost|GPU.*process.*crashed",
                     "type": ARErrorType.RENDERING_ERROR,
                     "description": "WebGL context lost",
-                    "fix": "Restore WebGL context and reload assets"
+                    "fix": "Restore WebGL context and reload assets",
                 },
                 {
                     "pattern": r"Permission.*denied|getUserMedia.*failed",
                     "type": ARErrorType.CALIBRATION_ERROR,
                     "description": "Camera permission denied",
-                    "fix": "Request camera permissions"
-                }
-            ]
+                    "fix": "Request camera permissions",
+                },
+            ],
         }
-    
+
     def _load_healing_strategies(self) -> Dict[ARErrorType, List[Dict]]:
         """Load healing strategies for different error types"""
         return {
@@ -182,91 +186,91 @@ class ARResilienceManager:
                     "name": "tracking_recovery_ui",
                     "description": "Show UI guidance for tracking recovery",
                     "applicable_platforms": ["all"],
-                    "implementation": "Display visual hints and instructions"
+                    "implementation": "Display visual hints and instructions",
                 },
                 {
                     "name": "relocalization",
                     "description": "Attempt to relocalize using saved map",
                     "applicable_platforms": ["arcore", "arkit", "hololens"],
-                    "implementation": "Use persistent cloud anchors or saved world map"
+                    "implementation": "Use persistent cloud anchors or saved world map",
                 },
                 {
                     "name": "fallback_tracking",
                     "description": "Switch to simpler tracking mode",
                     "applicable_platforms": ["all"],
-                    "implementation": "Use rotation-only or 3DOF tracking"
-                }
+                    "implementation": "Use rotation-only or 3DOF tracking",
+                },
             ],
             ARErrorType.PERFORMANCE_DEGRADATION: [
                 {
                     "name": "dynamic_lod",
                     "description": "Adjust level of detail dynamically",
                     "applicable_platforms": ["all"],
-                    "implementation": "Reduce polygon count based on performance"
+                    "implementation": "Reduce polygon count based on performance",
                 },
                 {
                     "name": "render_scale_adjustment",
                     "description": "Dynamically adjust render resolution",
                     "applicable_platforms": ["all"],
-                    "implementation": "Lower resolution when performance drops"
+                    "implementation": "Lower resolution when performance drops",
                 },
                 {
                     "name": "occlusion_culling",
                     "description": "Aggressive occlusion culling",
                     "applicable_platforms": ["all"],
-                    "implementation": "Hide objects not in view frustum"
-                }
+                    "implementation": "Hide objects not in view frustum",
+                },
             ],
             ARErrorType.MOTION_SICKNESS_RISK: [
                 {
                     "name": "comfort_mode",
                     "description": "Enable comfort settings",
                     "applicable_platforms": ["all"],
-                    "implementation": "Add vignetting, reduce FOV, stabilize horizon"
+                    "implementation": "Add vignetting, reduce FOV, stabilize horizon",
                 },
                 {
                     "name": "motion_smoothing",
                     "description": "Smooth sudden movements",
                     "applicable_platforms": ["all"],
-                    "implementation": "Apply motion damping and prediction"
+                    "implementation": "Apply motion damping and prediction",
                 },
                 {
                     "name": "teleportation",
                     "description": "Replace smooth locomotion with teleportation",
                     "applicable_platforms": ["vr"],
-                    "implementation": "Use blink or fade transitions"
-                }
+                    "implementation": "Use blink or fade transitions",
+                },
             ],
             ARErrorType.THERMAL_THROTTLING: [
                 {
                     "name": "thermal_management",
                     "description": "Reduce workload to manage temperature",
                     "applicable_platforms": ["mobile"],
-                    "implementation": "Lower quality settings when device is hot"
+                    "implementation": "Lower quality settings when device is hot",
                 },
                 {
                     "name": "frame_rate_limiting",
                     "description": "Cap frame rate to reduce heat",
                     "applicable_platforms": ["all"],
-                    "implementation": "Limit to 30fps when thermal throttling detected"
-                }
+                    "implementation": "Limit to 30fps when thermal throttling detected",
+                },
             ],
             ARErrorType.ANCHOR_DRIFT: [
                 {
                     "name": "anchor_update",
                     "description": "Periodically update anchor positions",
                     "applicable_platforms": ["all"],
-                    "implementation": "Recalculate anchor positions based on tracking"
+                    "implementation": "Recalculate anchor positions based on tracking",
                 },
                 {
                     "name": "multi_anchor_fusion",
                     "description": "Use multiple anchors for stability",
                     "applicable_platforms": ["all"],
-                    "implementation": "Average positions from multiple nearby anchors"
-                }
-            ]
+                    "implementation": "Average positions from multiple nearby anchors",
+                },
+            ],
         }
-    
+
     def _initialize_platform_detectors(self) -> Dict[ARPlatform, Dict]:
         """Initialize platform-specific detectors"""
         return {
@@ -274,33 +278,55 @@ class ARResilienceManager:
                 "imports": ["com.google.ar.core", "Google.XR.ARCoreExtensions"],
                 "classes": ["Session", "Frame", "Anchor", "Trackable"],
                 "file_extensions": [".java", ".kt", ".cs"],
-                "keywords": ["ArCore", "CloudAnchor", "AugmentedImage"]
+                "keywords": ["ArCore", "CloudAnchor", "AugmentedImage"],
             },
             ARPlatform.ARKIT: {
                 "imports": ["ARKit", "RealityKit"],
                 "classes": ["ARSession", "ARWorldTrackingConfiguration", "ARAnchor"],
                 "file_extensions": [".swift", ".m"],
-                "keywords": ["ARKit", "ARWorldMap", "ARFaceTracking"]
+                "keywords": ["ARKit", "ARWorldMap", "ARFaceTracking"],
             },
             ARPlatform.UNITY_AR: {
-                "imports": ["UnityEngine.XR.ARFoundation", "Unity.XR.ARSubsystems", "UnityEngine"],
-                "classes": ["ARSession", "ARSessionOrigin", "ARRaycastManager", "ARRaycastHit"],
+                "imports": [
+                    "UnityEngine.XR.ARFoundation",
+                    "Unity.XR.ARSubsystems",
+                    "UnityEngine",
+                ],
+                "classes": [
+                    "ARSession",
+                    "ARSessionOrigin",
+                    "ARRaycastManager",
+                    "ARRaycastHit",
+                ],
                 "file_extensions": [".cs"],
-                "keywords": ["ARFoundation", "XROrigin", "ARPlaneManager", "raycastManager", "planeManager", "trackables", "MonoBehaviour"]
+                "keywords": [
+                    "ARFoundation",
+                    "XROrigin",
+                    "ARPlaneManager",
+                    "raycastManager",
+                    "planeManager",
+                    "trackables",
+                    "MonoBehaviour",
+                ],
             },
             ARPlatform.WEBXR: {
                 "imports": ["webxr", "three.js", "aframe"],
-                "keywords": ["navigator.xr", "XRSession", "requestSession", "immersive-ar"],
+                "keywords": [
+                    "navigator.xr",
+                    "XRSession",
+                    "requestSession",
+                    "immersive-ar",
+                ],
                 "file_extensions": [".js", ".ts"],
-                "apis": ["requestAnimationFrame", "XRFrame", "XRReferenceSpace"]
+                "apis": ["requestAnimationFrame", "XRFrame", "XRReferenceSpace"],
             },
             ARPlatform.HOLOLENS: {
                 "imports": ["Windows.UI.Input.Spatial", "Microsoft.MixedReality"],
                 "classes": ["SpatialInteractionManager", "HolographicFrame"],
-                "keywords": ["HoloLens", "MixedReality", "SpatialMapping"]
-            }
+                "keywords": ["HoloLens", "MixedReality", "SpatialMapping"],
+            },
         }
-    
+
     def _initialize_performance_thresholds(self) -> Dict[str, Dict[str, float]]:
         """Initialize performance thresholds for different platforms"""
         return {
@@ -312,7 +338,7 @@ class ARResilienceManager:
                 "max_gpu_usage": 0.85,
                 "max_memory_usage": 0.75,
                 "max_thermal_state": "nominal",
-                "min_tracking_quality": 0.7
+                "min_tracking_quality": 0.7,
             },
             "standalone_vr": {
                 "min_fps": 72,
@@ -321,7 +347,7 @@ class ARResilienceManager:
                 "max_motion_to_photon_ms": 20,
                 "max_cpu_usage": 0.85,
                 "max_gpu_usage": 0.90,
-                "max_memory_usage": 0.80
+                "max_memory_usage": 0.80,
             },
             "pc_vr": {
                 "min_fps": 90,
@@ -329,10 +355,10 @@ class ARResilienceManager:
                 "max_frame_time_ms": 8.3,
                 "max_motion_to_photon_ms": 15,
                 "max_cpu_usage": 0.90,
-                "max_gpu_usage": 0.95
-            }
+                "max_gpu_usage": 0.95,
+            },
         }
-    
+
     def _initialize_comfort_parameters(self) -> Dict[str, Any]:
         """Initialize comfort parameters to prevent motion sickness"""
         return {
@@ -343,61 +369,71 @@ class ARResilienceManager:
             "smooth_locomotion_speed": 3.0,  # m/s
             "teleport_fade_duration": 0.3,  # seconds
             "horizon_lock_strength": 0.8,
-            "motion_blur_threshold": 90  # degrees/second
+            "motion_blur_threshold": 90,  # degrees/second
         }
-    
+
     def detect_platform(self, code_content: str, file_path: str) -> ARPlatform:
         """Detect which AR platform is being used"""
         platform_scores = {}
-        
+
         for platform, detector in self.platform_detectors.items():
             score = 0
-            
+
             # Check imports (highest weight)
             for import_pattern in detector.get("imports", []):
                 if import_pattern in code_content:
                     score += 5
-            
+
             # Check class names
             for class_name in detector.get("classes", []):
-                if re.search(r'\b' + re.escape(class_name) + r'\b', code_content):
+                if re.search(r"\b" + re.escape(class_name) + r"\b", code_content):
                     score += 2
-            
+
             # Check keywords
             for keyword in detector.get("keywords", []):
                 if keyword in code_content:
                     score += 1
-            
+
             # Check file extension
-            if file_path and any(file_path.endswith(ext) for ext in detector.get("file_extensions", [])):
+            if file_path and any(
+                file_path.endswith(ext) for ext in detector.get("file_extensions", [])
+            ):
                 score += 2
-            
+
             platform_scores[platform] = score
-        
+
         # Return the platform with highest score if it's above threshold
         best_platform = max(platform_scores, key=platform_scores.get)
         if platform_scores[best_platform] >= 4:
             return best_platform
-        
+
         return ARPlatform.UNKNOWN
-    
-    def analyze_ar_error(self, error_message: str, code_content: str,
-                        file_path: str, performance_metrics: Optional[ARPerformanceMetrics] = None) -> Optional[ARError]:
+
+    def analyze_ar_error(
+        self,
+        error_message: str,
+        code_content: str,
+        file_path: str,
+        performance_metrics: Optional[ARPerformanceMetrics] = None,
+    ) -> Optional[ARError]:
         """Analyze error and determine AR-specific issues"""
         platform = self.detect_platform(code_content, file_path)
-        
+
         # Check performance metrics first if provided
         if performance_metrics:
-            perf_error = self._check_performance_issues(platform if platform != ARPlatform.UNKNOWN else ARPlatform.ARCORE, performance_metrics)
+            perf_error = self._check_performance_issues(
+                platform if platform != ARPlatform.UNKNOWN else ARPlatform.ARCORE,
+                performance_metrics,
+            )
             if perf_error:
                 return perf_error
-        
+
         if platform == ARPlatform.UNKNOWN:
             return self._check_generic_ar_errors(error_message, performance_metrics)
-        
+
         # Check platform-specific patterns
         platform_patterns = self.error_patterns.get(platform.value, [])
-        
+
         for pattern_info in platform_patterns:
             if re.search(pattern_info["pattern"], error_message, re.IGNORECASE):
                 return ARError(
@@ -406,13 +442,16 @@ class ARResilienceManager:
                     description=pattern_info["description"],
                     suggested_fix=pattern_info.get("fix"),
                     confidence=0.9,
-                    timestamp=datetime.now()
+                    timestamp=datetime.now(),
                 )
-        
+
         return self._check_generic_ar_errors(error_message, performance_metrics)
-    
-    def _check_generic_ar_errors(self, error_message: str,
-                                performance_metrics: Optional[ARPerformanceMetrics] = None) -> Optional[ARError]:
+
+    def _check_generic_ar_errors(
+        self,
+        error_message: str,
+        performance_metrics: Optional[ARPerformanceMetrics] = None,
+    ) -> Optional[ARError]:
         """Check for generic AR errors"""
         generic_patterns = {
             r"tracking.*lost|lost.*tracking|tracking.*failed": ARErrorType.TRACKING_LOST,
@@ -424,9 +463,9 @@ class ARResilienceManager:
             r"occlusion.*error|depth.*fail": ARErrorType.OCCLUSION_ERROR,
             r"motion.*sick|nausea|dizzy|comfort": ARErrorType.MOTION_SICKNESS_RISK,
             r"memory.*pressure|low.*memory": ARErrorType.MEMORY_PRESSURE,
-            r"thermal.*throttl|overheat|temperature.*high": ARErrorType.THERMAL_THROTTLING
+            r"thermal.*throttl|overheat|temperature.*high": ARErrorType.THERMAL_THROTTLING,
         }
-        
+
         for pattern, error_type in generic_patterns.items():
             if re.search(pattern, error_message, re.IGNORECASE):
                 return ARError(
@@ -434,13 +473,14 @@ class ARResilienceManager:
                     platform=ARPlatform.UNKNOWN,
                     description=f"Generic {error_type.value} detected",
                     confidence=0.7,
-                    timestamp=datetime.now()
+                    timestamp=datetime.now(),
                 )
-        
+
         return None
-    
-    def _check_performance_issues(self, platform: ARPlatform,
-                                 metrics: ARPerformanceMetrics) -> Optional[ARError]:
+
+    def _check_performance_issues(
+        self, platform: ARPlatform, metrics: ARPerformanceMetrics
+    ) -> Optional[ARError]:
         """Check for performance-related issues"""
         # Determine threshold category
         if platform in [ARPlatform.ARCORE, ARPlatform.ARKIT, ARPlatform.WEBXR]:
@@ -449,7 +489,7 @@ class ARResilienceManager:
             thresholds = self.performance_thresholds["standalone_vr"]
         else:
             thresholds = self.performance_thresholds["pc_vr"]
-        
+
         # Check FPS
         if metrics.fps < thresholds["min_fps"]:
             return ARError(
@@ -460,9 +500,9 @@ class ARResilienceManager:
                 suggested_fix="Reduce rendering quality or optimize scene",
                 severity="high",
                 confidence=0.95,
-                timestamp=datetime.now()
+                timestamp=datetime.now(),
             )
-        
+
         # Check thermal state
         if metrics.thermal_state in ["serious", "critical"]:
             return ARError(
@@ -473,12 +513,15 @@ class ARResilienceManager:
                 suggested_fix="Reduce workload to prevent overheating",
                 severity="critical",
                 confidence=0.9,
-                timestamp=datetime.now()
+                timestamp=datetime.now(),
             )
-        
+
         # Check motion-to-photon latency for VR
-        if metrics.motion_to_photon_latency_ms and \
-           metrics.motion_to_photon_latency_ms > thresholds.get("max_motion_to_photon_ms", 20):
+        if (
+            metrics.motion_to_photon_latency_ms
+            and metrics.motion_to_photon_latency_ms
+            > thresholds.get("max_motion_to_photon_ms", 20)
+        ):
             return ARError(
                 error_type=ARErrorType.MOTION_SICKNESS_RISK,
                 platform=platform,
@@ -487,25 +530,26 @@ class ARResilienceManager:
                 suggested_fix="Optimize render pipeline to reduce latency",
                 severity="high",
                 confidence=0.85,
-                timestamp=datetime.now()
+                timestamp=datetime.now(),
             )
-        
+
         return None
-    
+
     def suggest_healing(self, ar_error: ARError) -> List[Dict[str, Any]]:
         """Suggest healing strategies for AR error"""
         strategies = self.healing_strategies.get(ar_error.error_type, [])
-        
+
         applicable_strategies = []
         for strategy in strategies:
             platforms = strategy["applicable_platforms"]
             if ar_error.platform.value in platforms or "all" in platforms:
                 applicable_strategies.append(strategy)
-        
+
         return applicable_strategies
-    
-    def generate_healing_code(self, ar_error: ARError,
-                            strategy: Dict[str, Any]) -> Optional[str]:
+
+    def generate_healing_code(
+        self, ar_error: ARError, strategy: Dict[str, Any]
+    ) -> Optional[str]:
         """Generate code for implementing healing strategy"""
         if ar_error.platform == ARPlatform.ARCORE:
             return self._generate_arcore_healing(ar_error, strategy)
@@ -515,14 +559,15 @@ class ARResilienceManager:
             return self._generate_unity_healing(ar_error, strategy)
         elif ar_error.platform == ARPlatform.WEBXR:
             return self._generate_webxr_healing(ar_error, strategy)
-        
+
         return self._generate_generic_ar_healing(ar_error, strategy)
-    
-    def _generate_arcore_healing(self, error: ARError,
-                                strategy: Dict[str, Any]) -> Optional[str]:
+
+    def _generate_arcore_healing(
+        self, error: ARError, strategy: Dict[str, Any]
+    ) -> Optional[str]:
         """Generate ARCore-specific healing code"""
         healing_templates = {
-            "tracking_recovery_ui": '''
+            "tracking_recovery_ui": """
 // ARCore tracking recovery UI
 private void showTrackingRecoveryUI(TrackingFailureReason reason) {
     runOnUiThread(() -> {
@@ -569,8 +614,8 @@ private void updateTrackingState(Frame frame) {
         onTrackingRecovered();
     }
 }
-''',
-            "relocalization": '''
+""",
+            "relocalization": """
 // ARCore relocalization using Cloud Anchors
 private void attemptRelocalization() {
     if (savedCloudAnchorId != null) {
@@ -620,8 +665,8 @@ private void restoreLocalAnchors() {
         }
     }
 }
-''',
-            "dynamic_lod": '''
+""",
+            "dynamic_lod": """
 // Dynamic Level of Detail for ARCore
 public class DynamicLODManager {
     private static final int HIGH_POLY_THRESHOLD = 60;
@@ -660,17 +705,18 @@ public class DynamicLODManager {
         updateTextureScale(textureScale);
     }
 }
-'''
+""",
         }
-        
+
         strategy_name = strategy.get("name")
         return healing_templates.get(strategy_name)
-    
-    def _generate_arkit_healing(self, error: ARError,
-                              strategy: Dict[str, Any]) -> Optional[str]:
+
+    def _generate_arkit_healing(
+        self, error: ARError, strategy: Dict[str, Any]
+    ) -> Optional[str]:
         """Generate ARKit-specific healing code"""
         healing_templates = {
-            "tracking_recovery_ui": '''
+            "tracking_recovery_ui": """
 // ARKit tracking recovery UI
 class TrackingStateManager {
     weak var coachingOverlay: ARCoachingOverlayView?
@@ -724,8 +770,8 @@ class TrackingStateManager {
         showTrackingUI(message: message, icon: icon)
     }
 }
-''',
-            "relocalization": '''
+""",
+            "relocalization": """
 // ARKit relocalization using world map
 class WorldMapManager {
     private var worldMapData: Data?
@@ -778,8 +824,8 @@ class WorldMapManager {
         session?.run(configuration, options: [.resetTracking, .removeExistingAnchors])
     }
 }
-''',
-            "fallback_tracking": '''
+""",
+            "fallback_tracking": """
 // ARKit fallback tracking modes
 class FallbackTrackingManager {
     enum TrackingMode {
@@ -834,17 +880,18 @@ class FallbackTrackingManager {
         currentMode = .imageTracking
     }
 }
-'''
+""",
         }
-        
+
         strategy_name = strategy.get("name")
         return healing_templates.get(strategy_name)
-    
-    def _generate_unity_healing(self, error: ARError,
-                              strategy: Dict[str, Any]) -> Optional[str]:
+
+    def _generate_unity_healing(
+        self, error: ARError, strategy: Dict[str, Any]
+    ) -> Optional[str]:
         """Generate Unity AR-specific healing code"""
         healing_templates = {
-            "tracking_recovery_ui": '''
+            "tracking_recovery_ui": """
 // Unity AR Foundation tracking recovery UI
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
@@ -914,8 +961,8 @@ public class TrackingRecoveryUI : MonoBehaviour
         trackingLostPanel.SetActive(false);
     }
 }
-''',
-            "dynamic_lod": '''
+""",
+            "dynamic_lod": """
 // Unity AR dynamic LOD system
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -1013,8 +1060,8 @@ public class ARDynamicLOD : MonoBehaviour
         SetLOD(currentLODIndex - 1);
     }
 }
-''',
-            "render_scale_adjustment": '''
+""",
+            "render_scale_adjustment": """
 // Unity AR render scale adjustment
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
@@ -1078,17 +1125,18 @@ public class AdaptiveRenderScale : MonoBehaviour
         }
     }
 }
-'''
+""",
         }
-        
+
         strategy_name = strategy.get("name")
         return healing_templates.get(strategy_name)
-    
-    def _generate_webxr_healing(self, error: ARError,
-                               strategy: Dict[str, Any]) -> Optional[str]:
+
+    def _generate_webxr_healing(
+        self, error: ARError, strategy: Dict[str, Any]
+    ) -> Optional[str]:
         """Generate WebXR-specific healing code"""
         healing_templates = {
-            "tracking_recovery_ui": '''
+            "tracking_recovery_ui": """
 // WebXR tracking recovery UI
 class XRTrackingRecovery {
     constructor(scene, camera) {
@@ -1170,8 +1218,8 @@ class XRTrackingRecovery {
         }
     }
 }
-''',
-            "fallback_tracking": '''
+""",
+            "fallback_tracking": """
 // WebXR fallback tracking modes
 class XRFallbackTracking {
     constructor(renderer) {
@@ -1273,8 +1321,8 @@ class XRFallbackTracking {
         }
     }
 }
-''',
-            "comfort_mode": '''
+""",
+            "comfort_mode": """
 // WebXR comfort mode for motion sickness prevention
 class XRComfortMode {
     constructor(scene, camera) {
@@ -1416,17 +1464,18 @@ class XRComfortMode {
         }, 100);
     }
 }
-'''
+""",
         }
-        
+
         strategy_name = strategy.get("name")
         return healing_templates.get(strategy_name)
-    
-    def _generate_generic_ar_healing(self, error: ARError,
-                                   strategy: Dict[str, Any]) -> Optional[str]:
+
+    def _generate_generic_ar_healing(
+        self, error: ARError, strategy: Dict[str, Any]
+    ) -> Optional[str]:
         """Generate generic AR healing code"""
         healing_templates = {
-            "motion_smoothing": '''
+            "motion_smoothing": """
 // Generic motion smoothing for AR/VR
 class MotionSmoothingFilter {
     constructor(smoothingFactor = 0.1) {
@@ -1503,8 +1552,8 @@ class MotionSmoothingFilter {
         return recent.clone().add(velocity.multiplyScalar(deltaTime));
     }
 }
-''',
-            "thermal_management": '''
+""",
+            "thermal_management": """
 // Generic thermal management for AR devices
 class ThermalManager {
     constructor() {
@@ -1606,8 +1655,8 @@ class ThermalManager {
         console.log(`Thermal management: Switched to ${this.currentLevel} quality`);
     }
 }
-''',
-            "anchor_update": '''
+""",
+            "anchor_update": """
 // Generic anchor stabilization for AR
 class AnchorStabilizer {
     constructor() {
@@ -1733,20 +1782,16 @@ class AnchorStabilizer {
         return null;
     }
 }
-'''
+""",
         }
-        
+
         strategy_name = strategy.get("name")
         return healing_templates.get(strategy_name)
-    
+
     def analyze_performance(self, metrics: ARPerformanceMetrics) -> Dict[str, Any]:
         """Analyze AR application performance"""
-        analysis = {
-            "overall_status": "healthy",
-            "issues": [],
-            "recommendations": []
-        }
-        
+        analysis = {"overall_status": "healthy", "issues": [], "recommendations": []}
+
         # Determine platform category
         if metrics.motion_to_photon_latency_ms is not None:
             category = "pc_vr"
@@ -1754,75 +1799,99 @@ class AnchorStabilizer {
             category = "mobile_ar"
         else:
             category = "standalone_vr"
-        
+
         thresholds = self.performance_thresholds[category]
-        
+
         # Check FPS
         if metrics.fps < thresholds["min_fps"]:
             analysis["issues"].append(f"Low FPS: {metrics.fps}")
             analysis["overall_status"] = "critical"
-            analysis["recommendations"].append("Reduce scene complexity or rendering quality")
-        
+            analysis["recommendations"].append(
+                "Reduce scene complexity or rendering quality"
+            )
+
         # Check frame time
         if metrics.frame_time_ms > thresholds["max_frame_time_ms"]:
             analysis["issues"].append(f"High frame time: {metrics.frame_time_ms}ms")
             analysis["recommendations"].append("Optimize render pipeline")
-        
+
         # Check thermal state
         if metrics.thermal_state in ["serious", "critical"]:
             analysis["issues"].append(f"Thermal throttling: {metrics.thermal_state}")
-            analysis["overall_status"] = "warning" if analysis["overall_status"] == "healthy" else analysis["overall_status"]
-            analysis["recommendations"].append("Reduce quality settings to manage temperature")
-        
+            analysis["overall_status"] = (
+                "warning"
+                if analysis["overall_status"] == "healthy"
+                else analysis["overall_status"]
+            )
+            analysis["recommendations"].append(
+                "Reduce quality settings to manage temperature"
+            )
+
         # Check motion-to-photon latency
-        if metrics.motion_to_photon_latency_ms and \
-           metrics.motion_to_photon_latency_ms > thresholds.get("max_motion_to_photon_ms", 20):
-            analysis["issues"].append(f"High latency: {metrics.motion_to_photon_latency_ms}ms")
-            analysis["recommendations"].append("Optimize tracking and rendering pipeline")
-        
+        if (
+            metrics.motion_to_photon_latency_ms
+            and metrics.motion_to_photon_latency_ms
+            > thresholds.get("max_motion_to_photon_ms", 20)
+        ):
+            analysis["issues"].append(
+                f"High latency: {metrics.motion_to_photon_latency_ms}ms"
+            )
+            analysis["recommendations"].append(
+                "Optimize tracking and rendering pipeline"
+            )
+
         return analysis
-    
+
     def check_comfort_violations(self, motion_data: Dict[str, float]) -> List[str]:
         """Check for comfort violations that might cause motion sickness"""
         violations = []
         comfort = self.comfort_parameters
-        
+
         if motion_data.get("angular_velocity", 0) > comfort["max_angular_velocity"]:
             violations.append("Excessive rotation speed")
-        
-        if motion_data.get("linear_acceleration", 0) > comfort["max_linear_acceleration"]:
+
+        if (
+            motion_data.get("linear_acceleration", 0)
+            > comfort["max_linear_acceleration"]
+        ):
             violations.append("High acceleration detected")
-        
+
         if motion_data.get("fov", 90) < comfort["min_fov_comfort"]:
             violations.append("Field of view too narrow")
-        
+
         return violations
-    
-    def generate_platform_config(self, platform: ARPlatform,
-                               device_capabilities: Dict[str, Any]) -> Dict[str, Any]:
+
+    def generate_platform_config(
+        self, platform: ARPlatform, device_capabilities: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Generate optimized AR configuration for platform"""
         config = {
             "platform": platform.value,
             "generated_at": datetime.now().isoformat(),
-            "settings": {}
+            "settings": {},
         }
-        
+
         if platform in [ARPlatform.ARCORE, ARPlatform.ARKIT]:
             config["settings"] = {
                 "plane_detection": device_capabilities.get("supports_planes", True),
                 "light_estimation": device_capabilities.get("supports_lighting", True),
                 "cloud_anchors": device_capabilities.get("has_internet", True),
                 "image_tracking": device_capabilities.get("cpu_score", 50) > 40,
-                "face_tracking": platform == ARPlatform.ARKIT and device_capabilities.get("has_truedepth", False),
-                "max_tracked_images": 4 if device_capabilities.get("ram_gb", 2) >= 4 else 1
+                "face_tracking": platform == ARPlatform.ARKIT
+                and device_capabilities.get("has_truedepth", False),
+                "max_tracked_images": (
+                    4 if device_capabilities.get("ram_gb", 2) >= 4 else 1
+                ),
             }
-        
+
         elif platform == ARPlatform.WEBXR:
             config["settings"] = {
                 "required_features": ["local-floor"],
                 "optional_features": ["bounded-floor", "anchors", "hit-test"],
-                "framebuffer_scale": 1.0 if device_capabilities.get("gpu_tier", 1) >= 2 else 0.75,
-                "antialiasing": device_capabilities.get("gpu_tier", 1) >= 2
+                "framebuffer_scale": (
+                    1.0 if device_capabilities.get("gpu_tier", 1) >= 2 else 0.75
+                ),
+                "antialiasing": device_capabilities.get("gpu_tier", 1) >= 2,
             }
-        
+
         return config

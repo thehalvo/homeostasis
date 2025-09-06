@@ -5,14 +5,15 @@ This plugin enables Homeostasis to analyze and fix errors in C# applications.
 It provides error handling for C# exception patterns and supports ASP.NET Core,
 Entity Framework, and other .NET frameworks.
 """
+
+import json
 import logging
 import re
-import json
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
-from ..language_plugin_system import LanguagePlugin, register_plugin
 from ..language_adapters import CSharpErrorAdapter
+from ..language_plugin_system import LanguagePlugin, register_plugin
 
 logger = logging.getLogger(__name__)
 
@@ -20,12 +21,12 @@ logger = logging.getLogger(__name__)
 class CSharpExceptionHandler:
     """
     Handles C# exceptions with pattern-based error detection and classification.
-    
+
     This class provides logic for categorizing C# exceptions based on their type,
     message, and stack trace patterns. It supports both standard .NET exceptions and
     framework-specific exceptions.
     """
-    
+
     def __init__(self):
         """Initialize the C# exception handler."""
         self.rule_categories = {
@@ -39,53 +40,59 @@ class CSharpExceptionHandler:
             "network": "Network and service exceptions",
             "concurrency": "Concurrency and threading exceptions",
             "serialization": "Serialization and data conversion exceptions",
-            "security": "Security and authentication exceptions"
+            "security": "Security and authentication exceptions",
         }
-        
+
         # Load rules from different categories
         self.rules = self._load_all_rules()
-        
+
         # Initialize caches for performance
         self.pattern_cache = {}  # Compiled regex patterns
         self.rule_match_cache = {}  # Previous rule matches
-    
+
     def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze a C# exception to determine its root cause and suggest potential fixes.
-        
+
         Args:
             error_data: C# error data in standard format
-            
+
         Returns:
             Analysis result with root cause, description, and fix suggestions
         """
         error_type = error_data.get("error_type", "")
         message = error_data.get("message", "")
         stack_trace = error_data.get("stack_trace", [])
-        
+
         # Create a consolidated text for pattern matching
         match_text = self._create_match_text(error_type, message, stack_trace)
-        
+
         # Try to match against known rules
         for rule in self.rules:
             pattern = rule.get("pattern", "")
             if not pattern:
                 continue
-            
+
             # Skip rules that don't apply to this category of exception
             if rule.get("applies_to") and error_type:
                 applies_to_patterns = rule.get("applies_to")
-                if not any(re.search(pattern, error_type) for pattern in applies_to_patterns):
+                if not any(
+                    re.search(pattern, error_type) for pattern in applies_to_patterns
+                ):
                     continue
-            
+
             # Get or compile the regex pattern
             if pattern not in self.pattern_cache:
                 try:
-                    self.pattern_cache[pattern] = re.compile(pattern, re.IGNORECASE | re.DOTALL)
+                    self.pattern_cache[pattern] = re.compile(
+                        pattern, re.IGNORECASE | re.DOTALL
+                    )
                 except Exception as e:
-                    logger.warning(f"Invalid pattern in rule {rule.get('id', 'unknown')}: {e}")
+                    logger.warning(
+                        f"Invalid pattern in rule {rule.get('id', 'unknown')}: {e}"
+                    )
                     continue
-            
+
             # Try to match the pattern
             try:
                 match = self.pattern_cache[pattern].search(match_text)
@@ -102,34 +109,36 @@ class CSharpExceptionHandler:
                         "severity": rule.get("severity", "medium"),
                         "category": rule.get("category", "csharp"),
                         "match_groups": match.groups() if match.groups() else tuple(),
-                        "framework": rule.get("framework", "")
+                        "framework": rule.get("framework", ""),
                     }
-                    
+
                     # Cache the result for this error signature
                     error_signature = f"{error_type}:{message[:100]}"
                     self.rule_match_cache[error_signature] = result
-                    
+
                     return result
             except Exception as e:
                 logger.warning(f"Error applying rule {rule.get('id', 'unknown')}: {e}")
-        
+
         # If no rule matched, try the fallback handlers
         return self._handle_fallback(error_data)
-    
-    def _create_match_text(self, error_type: str, message: str, stack_trace: List) -> str:
+
+    def _create_match_text(
+        self, error_type: str, message: str, stack_trace: List
+    ) -> str:
         """
         Create a consolidated text for pattern matching from error components.
-        
+
         Args:
             error_type: Exception type
             message: Error message
             stack_trace: Stack trace frames
-            
+
         Returns:
             Consolidated text for pattern matching
         """
         match_text = f"{error_type}: {message}"
-        
+
         # Add stack trace information if available
         if stack_trace:
             if isinstance(stack_trace, list):
@@ -143,25 +152,27 @@ class CSharpExceptionHandler:
                             file_path = frame.get("file", "<unknown>")
                             line_num = frame.get("line", "?")
                             method = frame.get("function", "<unknown>")
-                            
-                            trace_lines.append(f"   at {method} in {file_path}:line {line_num}")
-                    
+
+                            trace_lines.append(
+                                f"   at {method} in {file_path}:line {line_num}"
+                            )
+
                     match_text += "\n" + "\n".join(trace_lines)
-        
+
         return match_text
-    
+
     def _handle_fallback(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Handle exceptions that didn't match any specific rule.
-        
+
         Args:
             error_data: C# error data in standard format
-            
+
         Returns:
             Fallback analysis result
         """
         error_type = error_data.get("error_type", "")
-        
+
         # Try to categorize by common C# exception types
         if "NullReferenceException" in error_type:
             return {
@@ -175,7 +186,7 @@ class CSharpExceptionHandler:
                 "severity": "medium",
                 "category": "core",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": "",
             }
         elif "ArgumentNullException" in error_type:
             return {
@@ -189,7 +200,7 @@ class CSharpExceptionHandler:
                 "severity": "medium",
                 "category": "core",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": "",
             }
         elif "ArgumentException" in error_type:
             return {
@@ -203,7 +214,7 @@ class CSharpExceptionHandler:
                 "severity": "medium",
                 "category": "core",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": "",
             }
         elif "InvalidOperationException" in error_type:
             return {
@@ -217,7 +228,7 @@ class CSharpExceptionHandler:
                 "severity": "medium",
                 "category": "core",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": "",
             }
         elif "IndexOutOfRangeException" in error_type:
             return {
@@ -231,7 +242,7 @@ class CSharpExceptionHandler:
                 "severity": "medium",
                 "category": "core",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": "",
             }
         elif "KeyNotFoundException" in error_type:
             return {
@@ -245,7 +256,7 @@ class CSharpExceptionHandler:
                 "severity": "medium",
                 "category": "core",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": "",
             }
         elif "FormatException" in error_type:
             return {
@@ -259,9 +270,12 @@ class CSharpExceptionHandler:
                 "severity": "medium",
                 "category": "core",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": "",
             }
-        elif "DbUpdateException" in error_type or "DbUpdateConcurrencyException" in error_type:
+        elif (
+            "DbUpdateException" in error_type
+            or "DbUpdateConcurrencyException" in error_type
+        ):
             return {
                 "error_data": error_data,
                 "rule_id": "ef_db_update_exception",
@@ -273,9 +287,12 @@ class CSharpExceptionHandler:
                 "severity": "high",
                 "category": "entityframework",
                 "match_groups": tuple(),
-                "framework": "entityframework"
+                "framework": "entityframework",
             }
-        elif "TaskCanceledException" in error_type or "OperationCanceledException" in error_type:
+        elif (
+            "TaskCanceledException" in error_type
+            or "OperationCanceledException" in error_type
+        ):
             return {
                 "error_data": error_data,
                 "rule_id": "csharp_task_canceled",
@@ -287,9 +304,9 @@ class CSharpExceptionHandler:
                 "severity": "medium",
                 "category": "async",
                 "match_groups": tuple(),
-                "framework": ""
+                "framework": "",
             }
-        
+
         # Generic fallback for unknown exceptions
         return {
             "error_data": error_data,
@@ -302,34 +319,34 @@ class CSharpExceptionHandler:
             "severity": "medium",
             "category": "core",
             "match_groups": tuple(),
-            "framework": ""
+            "framework": "",
         }
-    
+
     def _load_all_rules(self) -> List[Dict[str, Any]]:
         """
         Load C# exception rules from all categories.
-        
+
         Returns:
             Combined list of rule definitions
         """
         all_rules = []
-        
+
         # Core C# exceptions (always included)
         all_rules.extend(self._load_core_csharp_rules())
-        
+
         # Load additional rules from files if available
         rules_dir = Path(__file__).parent.parent / "rules" / "csharp"
         if rules_dir.exists():
             for rule_file in rules_dir.glob("*.json"):
                 try:
-                    with open(rule_file, 'r') as f:
+                    with open(rule_file, "r") as f:
                         data = json.load(f)
                         all_rules.extend(data.get("rules", []))
                 except Exception as e:
                     logger.warning(f"Error loading rules from {rule_file}: {e}")
-        
+
         return all_rules
-    
+
     def _load_core_csharp_rules(self) -> List[Dict[str, Any]]:
         """Load rules for core C# exceptions."""
         return [
@@ -342,7 +359,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Use null-conditional operators (?.), null-coalescing operators (??), or add explicit null checks before accessing properties or methods.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "csharp_argument_null",
@@ -353,7 +370,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Ensure that the specified parameter is not null before passing it to methods. Consider using the null-coalescing operator (??) or providing default values.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "csharp_argument_out_of_range",
@@ -364,7 +381,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Verify that the argument value falls within the expected range. Add validation before calling methods with this parameter.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "csharp_format_exception",
@@ -375,7 +392,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Use TryParse methods instead of direct parsing. Validate string format before conversion.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "csharp_invalid_cast",
@@ -386,7 +403,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Use 'is' or 'as' operators to safely check and convert types. Verify object types before casting.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "csharp_io_file_not_found",
@@ -397,7 +414,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Verify file paths before attempting operations. Use File.Exists() to check if files exist before accessing them.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "io"
+                "category": "io",
             },
             {
                 "id": "csharp_directory_not_found",
@@ -408,7 +425,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Verify directory paths before attempting operations. Use Directory.Exists() to check if directories exist before accessing them.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "io"
+                "category": "io",
             },
             {
                 "id": "csharp_unauthorized_access",
@@ -419,7 +436,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Check file/directory permissions. Run the application with appropriate privileges or request only necessary access rights.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "security"
+                "category": "security",
             },
             {
                 "id": "csharp_timeout_exception",
@@ -430,7 +447,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Increase timeout values, optimize the operation, or implement asynchronous processing with longer timeouts.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "network"
+                "category": "network",
             },
             {
                 "id": "csharp_index_out_of_range",
@@ -441,7 +458,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Check array bounds before accessing elements. Use array.Length to validate indexes.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "csharp_key_not_found",
@@ -452,7 +469,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Use TryGetValue or ContainsKey to check if a key exists before accessing it.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "csharp_object_disposed",
@@ -463,7 +480,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Check if objects are disposed before using them. Consider restructuring code to ensure proper object lifecycle management.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "csharp_task_canceled",
@@ -474,7 +491,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Handle cancellation appropriately. Check if cancellation is expected or provide fallback behavior.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "async"
+                "category": "async",
             },
             {
                 "id": "csharp_aggregate_exception",
@@ -485,7 +502,7 @@ class CSharpExceptionHandler:
                 "suggestion": "Examine InnerExceptions property to identify and handle specific exceptions. Use Task.Wait and ContinueWith with proper exception handling.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "async"
+                "category": "async",
             },
             {
                 "id": "aspnet_route_not_found",
@@ -497,7 +514,7 @@ class CSharpExceptionHandler:
                 "confidence": "high",
                 "severity": "medium",
                 "category": "aspnetcore",
-                "framework": "aspnetcore"
+                "framework": "aspnetcore",
             },
             {
                 "id": "aspnet_model_validation",
@@ -509,7 +526,7 @@ class CSharpExceptionHandler:
                 "confidence": "high",
                 "severity": "medium",
                 "category": "aspnetcore",
-                "framework": "aspnetcore"
+                "framework": "aspnetcore",
             },
             {
                 "id": "ef_db_update_exception",
@@ -521,7 +538,7 @@ class CSharpExceptionHandler:
                 "confidence": "high",
                 "severity": "high",
                 "category": "entityframework",
-                "framework": "entityframework"
+                "framework": "entityframework",
             },
             {
                 "id": "ef_db_concurrency_exception",
@@ -533,7 +550,7 @@ class CSharpExceptionHandler:
                 "confidence": "high",
                 "severity": "high",
                 "category": "entityframework",
-                "framework": "entityframework"
+                "framework": "entityframework",
             },
             {
                 "id": "di_service_not_registered",
@@ -545,7 +562,7 @@ class CSharpExceptionHandler:
                 "confidence": "high",
                 "severity": "medium",
                 "category": "dependency",
-                "framework": "aspnetcore"
+                "framework": "aspnetcore",
             },
             {
                 "id": "azure_storage_exception",
@@ -557,41 +574,45 @@ class CSharpExceptionHandler:
                 "confidence": "high",
                 "severity": "high",
                 "category": "azure",
-                "framework": "azure"
-            }
+                "framework": "azure",
+            },
         ]
 
 
 class CSharpPatchGenerator:
     """
     Generates patch solutions for C# exceptions.
-    
+
     This class provides capabilities to generate code fixes for common C# errors,
     using templates and contextual information about the exception.
     """
-    
+
     def __init__(self):
         """Initialize the C# patch generator."""
-        self.templates_dir = Path(__file__).parent.parent / "patch_generation" / "templates" / "csharp"
+        self.templates_dir = (
+            Path(__file__).parent.parent / "patch_generation" / "templates" / "csharp"
+        )
         self.templates_dir.mkdir(exist_ok=True, parents=True)
-        
+
         # Cache for loaded templates
         self.template_cache = {}
-    
-    def generate_patch(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+
+    def generate_patch(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a patch for a C# error based on analysis.
-        
+
         Args:
             analysis: Error analysis containing root cause and other details
             context: Additional context about the error, including code snippets
-            
+
         Returns:
             Patch data including patch type, code, and application instructions
         """
         root_cause = analysis.get("root_cause", "unknown")
         rule_id = analysis.get("rule_id", "unknown")
-        
+
         # Basic patch result structure
         patch_result = {
             "patch_id": f"csharp_{rule_id}",
@@ -601,78 +622,99 @@ class CSharpPatchGenerator:
             "suggestion": analysis.get("suggestion", "No suggestion available"),
             "confidence": analysis.get("confidence", "low"),
             "severity": analysis.get("severity", "medium"),
-            "root_cause": root_cause
+            "root_cause": root_cause,
         }
-        
+
         # Try to find a specific template for this root cause
         template_name = f"{root_cause}.cs.template"
         template_path = self.templates_dir / template_name
-        
+
         code_snippet = context.get("code_snippet", "")
         stack_frames = analysis.get("error_data", {}).get("stack_trace", [])
-        
+
         # If we have a template and enough context, generate actual code
         if template_path.exists() and (code_snippet or stack_frames):
             try:
                 template_content = self._load_template(template_path)
-                
+
                 # Extract variable names and contextual information
                 variables = self._extract_variables(analysis, context)
-                
+
                 # Apply template with variables
                 patch_code = self._apply_template(template_content, variables)
-                
+
                 # Update patch result with actual code
-                patch_result.update({
-                    "patch_type": "code",
-                    "patch_code": patch_code,
-                    "application_point": self._determine_application_point(analysis, context),
-                    "instructions": self._generate_instructions(analysis, patch_code)
-                })
-                
+                patch_result.update(
+                    {
+                        "patch_type": "code",
+                        "patch_code": patch_code,
+                        "application_point": self._determine_application_point(
+                            analysis, context
+                        ),
+                        "instructions": self._generate_instructions(
+                            analysis, patch_code
+                        ),
+                    }
+                )
+
                 # Increase confidence for code patches
                 if patch_result["confidence"] == "low":
                     patch_result["confidence"] = "medium"
             except Exception as e:
                 logger.warning(f"Error generating patch for {root_cause}: {e}")
-        
+
         # If we don't have a specific template, return a suggestion-based patch
         if "patch_code" not in patch_result:
             # Generate code suggestions based on the root cause
             if root_cause == "csharp_null_reference":
-                patch_result["suggestion_code"] = self._generate_null_check_suggestion(analysis, context)
+                patch_result["suggestion_code"] = self._generate_null_check_suggestion(
+                    analysis, context
+                )
             elif root_cause == "csharp_argument_null":
-                patch_result["suggestion_code"] = self._generate_argument_null_suggestion(analysis, context)
-            elif root_cause == "ef_db_update_failed" or root_cause == "ef_concurrency_conflict":
-                patch_result["suggestion_code"] = self._generate_ef_exception_suggestion(analysis, context)
+                patch_result["suggestion_code"] = (
+                    self._generate_argument_null_suggestion(analysis, context)
+                )
+            elif (
+                root_cause == "ef_db_update_failed"
+                or root_cause == "ef_concurrency_conflict"
+            ):
+                patch_result["suggestion_code"] = (
+                    self._generate_ef_exception_suggestion(analysis, context)
+                )
             elif root_cause == "csharp_index_out_of_range":
-                patch_result["suggestion_code"] = self._generate_index_check_suggestion(analysis, context)
+                patch_result["suggestion_code"] = self._generate_index_check_suggestion(
+                    analysis, context
+                )
             elif root_cause == "csharp_task_canceled":
-                patch_result["suggestion_code"] = self._generate_task_cancellation_suggestion(analysis, context)
-        
+                patch_result["suggestion_code"] = (
+                    self._generate_task_cancellation_suggestion(analysis, context)
+                )
+
         return patch_result
-    
+
     def _load_template(self, template_path: Path) -> str:
         """Load a template from the filesystem or cache."""
         path_str = str(template_path)
         if path_str not in self.template_cache:
             if template_path.exists():
-                with open(template_path, 'r') as f:
+                with open(template_path, "r") as f:
                     self.template_cache[path_str] = f.read()
             else:
                 raise FileNotFoundError(f"Template not found: {template_path}")
-        
+
         return self.template_cache[path_str]
-    
-    def _extract_variables(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, str]:
+
+    def _extract_variables(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, str]:
         """Extract variables from analysis and context for template substitution."""
         variables = {}
-        
+
         # Extract basic information
         error_data = analysis.get("error_data", {})
         variables["ERROR_TYPE"] = error_data.get("error_type", "")
         variables["ERROR_MESSAGE"] = error_data.get("message", "")
-        
+
         # Extract information from stack trace
         stack_trace = error_data.get("stack_trace", [])
         if stack_trace and isinstance(stack_trace, list):
@@ -685,17 +727,17 @@ class CSharpPatchGenerator:
                     variables["METHOD"] = top_frame.get("function", "")
                     variables["NAMESPACE"] = top_frame.get("namespace", "")
                     variables["CLASS"] = top_frame.get("class", "")
-        
+
         # Extract variables from context
         variables["CODE_SNIPPET"] = context.get("code_snippet", "")
-        
+
         # Extract match groups from the rule match
         match_groups = analysis.get("match_groups", ())
         for i, group in enumerate(match_groups):
             variables[f"MATCH_{i+1}"] = str(group)
-        
+
         return variables
-    
+
     def _apply_template(self, template: str, variables: Dict[str, str]) -> str:
         """Apply variables to a template."""
         result = template
@@ -703,35 +745,39 @@ class CSharpPatchGenerator:
             placeholder = f"${{{key}}}"
             result = result.replace(placeholder, value)
         return result
-    
-    def _determine_application_point(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+
+    def _determine_application_point(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Determine where to apply the patch."""
         error_data = analysis.get("error_data", {})
         stack_trace = error_data.get("stack_trace", [])
-        
+
         application_point = {
             "type": "suggestion",
-            "description": "Review the code based on the suggestion"
+            "description": "Review the code based on the suggestion",
         }
-        
+
         if stack_trace and isinstance(stack_trace, list):
             if isinstance(stack_trace[0], dict):
                 # We have structured stack trace, extract file and line
                 top_frame = stack_trace[0]
-                application_point.update({
-                    "type": "line",
-                    "file": top_frame.get("file", ""),
-                    "line": top_frame.get("line", 0),
-                    "method": top_frame.get("function", ""),
-                    "class": top_frame.get("class", "")
-                })
-        
+                application_point.update(
+                    {
+                        "type": "line",
+                        "file": top_frame.get("file", ""),
+                        "line": top_frame.get("line", 0),
+                        "method": top_frame.get("function", ""),
+                        "class": top_frame.get("class", ""),
+                    }
+                )
+
         return application_point
-    
+
     def _generate_instructions(self, analysis: Dict[str, Any], patch_code: str) -> str:
         """Generate human-readable instructions for applying the patch."""
         root_cause = analysis.get("root_cause", "unknown")
-        
+
         if "null_reference" in root_cause or "argument_null" in root_cause:
             return "Add null checks before accessing objects or method parameters."
         elif "index_out_of_range" in root_cause:
@@ -742,8 +788,10 @@ class CSharpPatchGenerator:
             return "Handle task cancellation properly in async operations."
         else:
             return "Apply the suggested fix to resolve the error."
-    
-    def _generate_null_check_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+
+    def _generate_null_check_suggestion(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> str:
         """Generate a code snippet for null checking in C#."""
         return """// Option 1: Use null-conditional operator (?.)
 var result = obj?.Property?.Method();
@@ -773,13 +821,15 @@ public void ProcessObject(MyClass obj)
     obj.Process();
 }
 """
-    
-    def _generate_argument_null_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+
+    def _generate_argument_null_suggestion(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> str:
         """Generate a code snippet for handling ArgumentNullException."""
         param = ""
         if analysis.get("match_groups") and len(analysis.get("match_groups")) > 0:
             param = analysis.get("match_groups")[0]
-        
+
         return f"""// Option 1: Add guard clause at the beginning of the method
 public void MyMethod({param} value)
 {{
@@ -823,8 +873,10 @@ public bool TryGetValue(out {param} value)
     return false;
 }}
 """
-    
-    def _generate_ef_exception_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+
+    def _generate_ef_exception_suggestion(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> str:
         """Generate a code snippet for handling Entity Framework exceptions."""
         return """// Option 1: Basic try-catch with logging
 try
@@ -908,7 +960,9 @@ catch (Exception ex)
 }
 """
 
-    def _generate_index_check_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+    def _generate_index_check_suggestion(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> str:
         """Generate a code snippet for handling index range issues."""
         return """// Option 1: Check index before accessing
 if (index >= 0 && index < array.Length)
@@ -948,7 +1002,9 @@ catch (IndexOutOfRangeException)
 }
 """
 
-    def _generate_task_cancellation_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+    def _generate_task_cancellation_suggestion(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> str:
         """Generate a code snippet for handling task cancellation."""
         return """// Option 1: Handle cancellation in async method
 public async Task<Result> ProcessAsync(CancellationToken cancellationToken = default)
@@ -1016,39 +1072,39 @@ public async Task<Result> ProcessWithTimeoutAsync()
 class CSharpLanguagePlugin(LanguagePlugin):
     """
     C# language plugin for Homeostasis.
-    
+
     Provides comprehensive error analysis and fix generation for C# applications,
     including support for ASP.NET Core, Entity Framework, and Azure services.
     """
-    
+
     VERSION = "0.1.0"
     AUTHOR = "Homeostasis Contributors"
-    
+
     def __init__(self):
         """Initialize the C# language plugin."""
         self.adapter = CSharpErrorAdapter()
         self.exception_handler = CSharpExceptionHandler()
         self.patch_generator = CSharpPatchGenerator()
-    
+
     def get_language_id(self) -> str:
         """Get the language identifier."""
         return "csharp"
-    
+
     def get_language_name(self) -> str:
         """Get the language name."""
         return "C#"
-    
+
     def get_language_version(self) -> str:
         """Get the language version."""
         return "7.0+"
-    
+
     def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze a C# error.
-        
+
         Args:
             error_data: C# error data
-            
+
         Returns:
             Analysis results
         """
@@ -1057,55 +1113,64 @@ class CSharpLanguagePlugin(LanguagePlugin):
             standard_error = self.normalize_error(error_data)
         else:
             standard_error = error_data
-        
+
         # Use the exception handler to analyze the error
         return self.exception_handler.analyze_error(standard_error)
-    
+
     def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Normalize a C# error to the standard format.
-        
+
         Args:
             error_data: C# error data
-            
+
         Returns:
             Error data in the standard format
         """
         return self.adapter.to_standard_format(error_data)
-    
+
     def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
         """
         Convert standard format error data to C# format.
-        
+
         Args:
             standard_error: Error data in the standard format
-            
+
         Returns:
             Error data in the C# format
         """
         return self.adapter.from_standard_format(standard_error)
-    
-    def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+
+    def generate_fix(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a fix for a C# error.
-        
+
         Args:
             analysis: Error analysis
             context: Additional context for fix generation
-            
+
         Returns:
             Generated fix data
         """
         return self.patch_generator.generate_patch(analysis, context)
-    
+
     def get_supported_frameworks(self) -> List[str]:
         """
         Get the list of frameworks supported by this language plugin.
-        
+
         Returns:
             List of supported framework identifiers
         """
-        return ["aspnetcore", "entityframework", "azure", "netstandard", "netframework", "netcore"]
+        return [
+            "aspnetcore",
+            "entityframework",
+            "azure",
+            "netstandard",
+            "netframework",
+            "netcore",
+        ]
 
 
 # Register this plugin

@@ -5,14 +5,15 @@ This plugin enables Homeostasis to analyze and fix errors in Java applications.
 It provides comprehensive exception handling for standard Java errors and
 framework-specific issues including Spring, Jakarta EE, Hibernate, and Android.
 """
+
+import json
 import logging
 import re
-import json
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
-from ..language_plugin_system import LanguagePlugin, register_plugin
 from ..language_adapters import JavaErrorAdapter
+from ..language_plugin_system import LanguagePlugin, register_plugin
 
 logger = logging.getLogger(__name__)
 
@@ -20,12 +21,12 @@ logger = logging.getLogger(__name__)
 class JavaExceptionHandler:
     """
     Handles Java exceptions with a robust error detection and classification system.
-    
+
     This class provides logic for categorizing Java exceptions based on their type,
     message, and stack trace patterns. It supports both standard Java exceptions and
     framework-specific exceptions.
     """
-    
+
     def __init__(self):
         """Initialize the Java exception handler."""
         self.rule_categories = {
@@ -43,64 +44,74 @@ class JavaExceptionHandler:
             "security": "Security-related exceptions",
             "xml": "XML processing exceptions",
             "json": "JSON processing exceptions",
-            "network": "Network and remote communication exceptions"
+            "network": "Network and remote communication exceptions",
         }
-        
+
         # Load rules from different categories
         self.rules = self._load_all_rules()
-        
+
         # Initialize caches for performance
         self.pattern_cache = {}  # Compiled regex patterns
         self.rule_match_cache = {}  # Previous rule matches
-    
+
     def analyze_exception(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze a Java exception to determine its root cause and suggest potential fixes.
-        
+
         Args:
             error_data: Java error data in standard format
-            
+
         Returns:
             Analysis result with root cause, description, and fix suggestions
         """
         error_type = error_data.get("error_type", "")
         message = error_data.get("message", "")
         stack_trace = error_data.get("stack_trace", [])
-        
+
         # Create a consolidated text for pattern matching
         match_text = self._create_match_text(error_type, message, stack_trace)
-        
+
         # Get framework from error data (if provided)
         framework = error_data.get("framework", "").lower()
-        
+
         # Sort rules to prioritize framework-specific rules
         sorted_rules = self.rules
         if framework:
             # Put framework-specific rules first
-            framework_rules = [r for r in self.rules if r.get("framework", "").lower() == framework]
-            other_rules = [r for r in self.rules if r.get("framework", "").lower() != framework]
+            framework_rules = [
+                r for r in self.rules if r.get("framework", "").lower() == framework
+            ]
+            other_rules = [
+                r for r in self.rules if r.get("framework", "").lower() != framework
+            ]
             sorted_rules = framework_rules + other_rules
-        
+
         # Try to match against known rules
         for rule in sorted_rules:
             pattern = rule.get("pattern", "")
             if not pattern:
                 continue
-            
+
             # Skip rules that don't apply to this category of exception
             if rule.get("applies_to") and error_type:
                 applies_to_patterns = rule.get("applies_to")
-                if not any(re.search(pattern, error_type) for pattern in applies_to_patterns):
+                if not any(
+                    re.search(pattern, error_type) for pattern in applies_to_patterns
+                ):
                     continue
-            
+
             # Get or compile the regex pattern
             if pattern not in self.pattern_cache:
                 try:
-                    self.pattern_cache[pattern] = re.compile(pattern, re.IGNORECASE | re.DOTALL)
+                    self.pattern_cache[pattern] = re.compile(
+                        pattern, re.IGNORECASE | re.DOTALL
+                    )
                 except Exception as e:
-                    logger.warning(f"Invalid pattern in rule {rule.get('id', 'unknown')}: {e}")
+                    logger.warning(
+                        f"Invalid pattern in rule {rule.get('id', 'unknown')}: {e}"
+                    )
                     continue
-            
+
             # Try to match the pattern
             try:
                 match = self.pattern_cache[pattern].search(match_text)
@@ -117,13 +128,13 @@ class JavaExceptionHandler:
                         "severity": rule.get("severity", "medium"),
                         "category": rule.get("category", "java"),
                         "match_groups": match.groups() if match.groups() else tuple(),
-                        "framework": rule.get("framework", "")
+                        "framework": rule.get("framework", ""),
                     }
-                    
+
                     # Add tags if present in rule
                     if "tags" in rule:
                         result["tags"] = rule["tags"]
-                    
+
                     # Check for stream/lambda context in stack trace
                     tags = result.get("tags", [])
                     for frame in stack_trace:
@@ -135,44 +146,58 @@ class JavaExceptionHandler:
                                 if "lambda" not in tags:
                                     tags.append("lambda")
                             # Check for stream operations
-                            if "stream" in class_name or any(stream_method in func_name for stream_method in ["map", "filter", "flatmap", "reduce", "collect", "foreach"]):
+                            if "stream" in class_name or any(
+                                stream_method in func_name
+                                for stream_method in [
+                                    "map",
+                                    "filter",
+                                    "flatmap",
+                                    "reduce",
+                                    "collect",
+                                    "foreach",
+                                ]
+                            ):
                                 if "stream" not in tags:
                                     tags.append("stream")
-                    
+
                     if tags:
                         result["tags"] = tags
-                    
+
                     # Special case: IllegalMonitorStateException with deadlock message
-                    if (rule.get("id") == "java_illegal_monitor_state" and 
-                            "deadlock" in message.lower()):
+                    if (
+                        rule.get("id") == "java_illegal_monitor_state"
+                        and "deadlock" in message.lower()
+                    ):
                         result["severity"] = "critical"
                         result["root_cause"] = "java_deadlock"
-                    
+
                     # Cache the result for this error signature
                     error_signature = f"{error_type}:{message[:100]}"
                     self.rule_match_cache[error_signature] = result
-                    
+
                     return result
             except Exception as e:
                 logger.warning(f"Error applying rule {rule.get('id', 'unknown')}: {e}")
-        
+
         # If no rule matched, try the fallback handlers
         return self._handle_fallback(error_data)
-    
-    def _create_match_text(self, error_type: str, message: str, stack_trace: List) -> str:
+
+    def _create_match_text(
+        self, error_type: str, message: str, stack_trace: List
+    ) -> str:
         """
         Create a consolidated text for pattern matching from error components.
-        
+
         Args:
             error_type: Exception type
             message: Error message
             stack_trace: Stack trace frames
-            
+
         Returns:
             Consolidated text for pattern matching
         """
         match_text = f"{error_type}: {message}"
-        
+
         # Add stack trace information if available
         if stack_trace:
             if isinstance(stack_trace, list):
@@ -186,23 +211,23 @@ class JavaExceptionHandler:
                             line = f"at {frame.get('package', '')}.{frame.get('class', '')}."
                             line += f"{frame.get('function', '')}({frame.get('file', '')}:{frame.get('line', '?')})"
                             trace_lines.append(line)
-                    
+
                     match_text += "\n" + "\n".join(trace_lines)
-        
+
         return match_text
-    
+
     def _handle_fallback(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Handle exceptions that didn't match any specific rule.
-        
+
         Args:
             error_data: Java error data in standard format
-            
+
         Returns:
             Fallback analysis result
         """
         error_type = error_data.get("error_type", "")
-        
+
         # Check for common Java exception types and apply basic categorization
         if "NullPointerException" in error_type:
             result = {
@@ -216,9 +241,9 @@ class JavaExceptionHandler:
                 "severity": "high",
                 "category": "runtime",
                 "match_groups": tuple(),
-                "framework": error_data.get("framework", "")
+                "framework": error_data.get("framework", ""),
             }
-            
+
             # Check if this is a stream/lambda related NPE
             stack_trace = error_data.get("stack_trace", [])
             tags = []
@@ -230,15 +255,27 @@ class JavaExceptionHandler:
                     if "lambda$" in func_name or "lambda" in func_name:
                         tags.append("lambda")
                     # Check for stream operations
-                    if "stream" in class_name or any(stream_method in func_name for stream_method in ["map", "filter", "flatmap", "reduce", "collect", "foreach"]):
+                    if "stream" in class_name or any(
+                        stream_method in func_name
+                        for stream_method in [
+                            "map",
+                            "filter",
+                            "flatmap",
+                            "reduce",
+                            "collect",
+                            "foreach",
+                        ]
+                    ):
                         tags.append("stream")
-            
+
             if tags:
                 result["tags"] = list(set(tags))  # Remove duplicates
                 # Enhance suggestion for stream/lambda context
                 if "stream" in tags:
-                    result["suggestion"] += " In stream operations, use filter(Objects::nonNull) to remove null values before processing."
-            
+                    result[
+                        "suggestion"
+                    ] += " In stream operations, use filter(Objects::nonNull) to remove null values before processing."
+
             return result
         elif "ClassCastException" in error_type:
             return {
@@ -252,9 +289,12 @@ class JavaExceptionHandler:
                 "severity": "medium",
                 "category": "runtime",
                 "match_groups": tuple(),
-                "framework": error_data.get("framework", "")
+                "framework": error_data.get("framework", ""),
             }
-        elif "ArrayIndexOutOfBoundsException" in error_type or "IndexOutOfBoundsException" in error_type:
+        elif (
+            "ArrayIndexOutOfBoundsException" in error_type
+            or "IndexOutOfBoundsException" in error_type
+        ):
             return {
                 "error_data": error_data,
                 "rule_id": "java_index_out_of_bounds",
@@ -266,7 +306,7 @@ class JavaExceptionHandler:
                 "severity": "medium",
                 "category": "core",
                 "match_groups": tuple(),
-                "framework": error_data.get("framework", "")
+                "framework": error_data.get("framework", ""),
             }
         elif "IllegalArgumentException" in error_type:
             return {
@@ -280,7 +320,7 @@ class JavaExceptionHandler:
                 "severity": "medium",
                 "category": "core",
                 "match_groups": tuple(),
-                "framework": error_data.get("framework", "")
+                "framework": error_data.get("framework", ""),
             }
         elif "UnsupportedOperationException" in error_type:
             return {
@@ -294,7 +334,7 @@ class JavaExceptionHandler:
                 "severity": "medium",
                 "category": "collections",
                 "match_groups": tuple(),
-                "framework": error_data.get("framework", "")
+                "framework": error_data.get("framework", ""),
             }
         elif "InstantiationException" in error_type:
             return {
@@ -308,7 +348,7 @@ class JavaExceptionHandler:
                 "severity": "high",
                 "category": "runtime",
                 "match_groups": tuple(),
-                "framework": error_data.get("framework", "")
+                "framework": error_data.get("framework", ""),
             }
         elif "SecurityException" in error_type:
             return {
@@ -322,9 +362,9 @@ class JavaExceptionHandler:
                 "severity": "high",
                 "category": "security",
                 "match_groups": tuple(),
-                "framework": error_data.get("framework", "")
+                "framework": error_data.get("framework", ""),
             }
-        
+
         # Generic fallback for unknown exceptions
         return {
             "error_data": error_data,
@@ -337,21 +377,21 @@ class JavaExceptionHandler:
             "severity": "medium",
             "category": "java",
             "match_groups": tuple(),
-            "framework": error_data.get("framework", "")
+            "framework": error_data.get("framework", ""),
         }
-    
+
     def _load_all_rules(self) -> List[Dict[str, Any]]:
         """
         Load Java error rules from all categories.
-        
+
         Returns:
             Combined list of rule definitions
         """
         all_rules = []
-        
+
         # Core Java exceptions (always included)
         all_rules.extend(self._load_core_java_rules())
-        
+
         # Load additional rules for other categories
         all_rules.extend(self._load_collection_rules())
         all_rules.extend(self._load_stream_rules())
@@ -360,15 +400,15 @@ class JavaExceptionHandler:
         all_rules.extend(self._load_io_rules())
         all_rules.extend(self._load_concurrency_rules())
         all_rules.extend(self._load_jdbc_rules())
-        
+
         # Framework-specific rules
         all_rules.extend(self._load_spring_rules())
         all_rules.extend(self._load_hibernate_rules())
         all_rules.extend(self._load_android_rules())
         # all_rules.extend(self._load_jakarta_rules())
-        
+
         return all_rules
-    
+
     def _load_core_java_rules(self) -> List[Dict[str, Any]]:
         """Load rules for core Java exceptions."""
         return [
@@ -381,7 +421,7 @@ class JavaExceptionHandler:
                 "suggestion": "Add null checks before accessing objects or methods. Consider using Optional<T> for values that might be null.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "runtime"
+                "category": "runtime",
             },
             {
                 "id": "java_class_cast",
@@ -392,7 +432,7 @@ class JavaExceptionHandler:
                 "suggestion": "Verify object types before casting using instanceof checks. Consider using generics to ensure type safety at compile time.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "runtime"
+                "category": "runtime",
             },
             {
                 "id": "java_array_index",
@@ -403,7 +443,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check array bounds before accessing elements. Use array.length to ensure the index is valid.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "java_string_index",
@@ -414,7 +454,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check string length before accessing characters. Use string.length() to ensure the index is valid.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "java_illegal_argument",
@@ -425,7 +465,7 @@ class JavaExceptionHandler:
                 "suggestion": "Validate input arguments before passing them to methods. Add precondition checks with descriptive error messages.",
                 "confidence": "medium",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "java_illegal_state",
@@ -436,7 +476,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check object state before performing operations. Ensure operations are called in the correct sequence.",
                 "confidence": "medium",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "java_unsupported_operation",
@@ -447,7 +487,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check if the object supports the operation before calling it. Common with immutable collections or views.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "java_number_format",
@@ -458,7 +498,7 @@ class JavaExceptionHandler:
                 "suggestion": "Ensure the string represents a valid number before parsing. Use try-catch blocks for parse operations and provide default values.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "java_arithmetic",
@@ -469,7 +509,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check for division by zero and other invalid arithmetic operations. Consider using BigDecimal for precise decimal calculations.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "java_class_not_found",
@@ -480,7 +520,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check classpath configuration and ensure the class is available. Verify package names and class names for typos.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "java_no_such_method",
@@ -491,7 +531,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check method name, parameters, and accessibility. Ensure the method exists in the class you're calling.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "java_no_such_field",
@@ -502,7 +542,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check field name and accessibility. Ensure the field exists in the class you're accessing.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "java_out_of_memory",
@@ -513,7 +553,7 @@ class JavaExceptionHandler:
                 "suggestion": "Increase JVM heap size (-Xmx), optimize memory usage, check for memory leaks using a profiler, or implement object pooling for large objects.",
                 "confidence": "high",
                 "severity": "critical",
-                "category": "resources"
+                "category": "resources",
             },
             {
                 "id": "java_stack_overflow",
@@ -524,7 +564,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check for infinite recursion and ensure proper termination conditions. Consider rewriting recursive algorithms iteratively.",
                 "confidence": "high",
                 "severity": "critical",
-                "category": "resources"
+                "category": "resources",
             },
             {
                 "id": "java_security_exception",
@@ -535,7 +575,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check security policy and permissions. Grant necessary permissions in security policy file or disable security manager if appropriate.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "security"
+                "category": "security",
             },
             {
                 "id": "java_compilation_error",
@@ -546,7 +586,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check that all required imports are present and class/method names are spelled correctly. Ensure all dependencies are properly declared in your build configuration.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "compilation"
+                "category": "compilation",
             },
             {
                 "id": "java_class_format",
@@ -557,7 +597,7 @@ class JavaExceptionHandler:
                 "suggestion": "Ensure compatible Java versions between compilation and runtime. Rebuild the application with the correct Java version.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "core"
+                "category": "core",
             },
             {
                 "id": "java_assertion",
@@ -568,10 +608,10 @@ class JavaExceptionHandler:
                 "suggestion": "Fix the condition that caused the assertion to fail. Assertions typically indicate programming errors or invalid assumptions.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "core"
-            }
+                "category": "core",
+            },
         ]
-    
+
     def _load_collection_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Java collection framework exceptions."""
         return [
@@ -585,7 +625,7 @@ class JavaExceptionHandler:
                 "confidence": "high",
                 "severity": "high",
                 "category": "concurrency",
-                "tags": ["concurrency", "collections"]
+                "tags": ["concurrency", "collections"],
             },
             {
                 "id": "java_no_such_element",
@@ -596,7 +636,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check if an element exists before accessing it. Use methods like containsKey() for maps or isEmpty() for collections.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "collections"
+                "category": "collections",
             },
             {
                 "id": "java_empty_stack",
@@ -607,7 +647,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check if the stack is empty with isEmpty() before calling pop() or peek()",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "collections"
+                "category": "collections",
             },
             {
                 "id": "java_map_missing_key",
@@ -618,22 +658,24 @@ class JavaExceptionHandler:
                 "suggestion": "Use containsKey() to check if a key exists before calling get(), or use getOrDefault() to provide a fallback value",
                 "confidence": "medium",
                 "severity": "medium",
-                "category": "collections"
-            }
+                "category": "collections",
+            },
         ]
-    
+
     def _load_stream_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Java Stream API and lambda expressions."""
-        rules_file = Path(__file__).parent.parent / "rules" / "java" / "java_streams_errors.json"
-        
+        rules_file = (
+            Path(__file__).parent.parent / "rules" / "java" / "java_streams_errors.json"
+        )
+
         if rules_file.exists():
             try:
-                with open(rules_file, 'r') as f:
+                with open(rules_file, "r") as f:
                     rules_data = json.load(f)
                     return rules_data.get("rules", [])
             except Exception as e:
                 logger.warning(f"Error loading Java stream rules: {e}")
-        
+
         # Fallback rules if file not found
         return [
             {
@@ -646,31 +688,41 @@ class JavaExceptionHandler:
                 "confidence": "high",
                 "severity": "high",
                 "category": "runtime",
-                "tags": ["stream"]
+                "tags": ["stream"],
             }
         ]
-    
+
     def _load_generics_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Java generics and type system errors."""
-        rules_file = Path(__file__).parent.parent / "rules" / "java" / "java_generics_errors.json"
-        
+        rules_file = (
+            Path(__file__).parent.parent
+            / "rules"
+            / "java"
+            / "java_generics_errors.json"
+        )
+
         if rules_file.exists():
             try:
-                with open(rules_file, 'r') as f:
+                with open(rules_file, "r") as f:
                     rules_data = json.load(f)
                     return rules_data.get("rules", [])
             except Exception as e:
                 logger.warning(f"Error loading Java generics rules: {e}")
-        
+
         return []
-    
+
     def _load_reflection_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Java reflection errors."""
-        rules_file = Path(__file__).parent.parent / "rules" / "java" / "java_reflection_errors.json"
-        
+        rules_file = (
+            Path(__file__).parent.parent
+            / "rules"
+            / "java"
+            / "java_reflection_errors.json"
+        )
+
         if rules_file.exists():
             try:
-                with open(rules_file, 'r') as f:
+                with open(rules_file, "r") as f:
                     rules_data = json.load(f)
                     rules = rules_data.get("rules", [])
                     # Update category for reflection rules to be security when appropriate
@@ -682,9 +734,9 @@ class JavaExceptionHandler:
                     return rules
             except Exception as e:
                 logger.warning(f"Error loading Java reflection rules: {e}")
-        
+
         return []
-    
+
     def _load_io_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Java I/O exceptions."""
         return [
@@ -697,7 +749,7 @@ class JavaExceptionHandler:
                 "suggestion": "Implement appropriate error handling for I/O operations, including closing resources in finally blocks or using try-with-resources",
                 "confidence": "medium",
                 "severity": "medium",
-                "category": "io"
+                "category": "io",
             },
             {
                 "id": "java_file_not_found",
@@ -708,7 +760,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check file paths and permissions. Use File.exists() to verify file existence before opening.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "io"
+                "category": "io",
             },
             {
                 "id": "java_eof",
@@ -719,7 +771,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check if the input stream has sufficient data before reading. Handle unexpected end-of-file conditions gracefully.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "io"
+                "category": "io",
             },
             {
                 "id": "java_socket_timeout",
@@ -730,7 +782,7 @@ class JavaExceptionHandler:
                 "suggestion": "Increase socket timeout, implement retry mechanisms, or add fallback strategies for network operations",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "io"
+                "category": "io",
             },
             {
                 "id": "java_socket_connection",
@@ -741,7 +793,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check network connectivity, server availability, and firewall settings. Implement proper connection error handling and retry logic.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "io"
+                "category": "io",
             },
             {
                 "id": "java_malformed_url",
@@ -752,22 +804,24 @@ class JavaExceptionHandler:
                 "suggestion": "Validate URL format before creating URL objects. Ensure all URL components are properly encoded.",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "io"
-            }
+                "category": "io",
+            },
         ]
-    
+
     def _load_concurrency_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Java concurrency exceptions."""
-        rules_file = Path(__file__).parent.parent / "rules" / "java" / "concurrency_errors.json"
-        
+        rules_file = (
+            Path(__file__).parent.parent / "rules" / "java" / "concurrency_errors.json"
+        )
+
         if rules_file.exists():
             try:
-                with open(rules_file, 'r') as f:
+                with open(rules_file, "r") as f:
                     data = json.load(f)
                     return data.get("rules", [])
             except Exception as e:
                 logger.error(f"Error loading concurrency rules from {rules_file}: {e}")
-        
+
         # Fallback to built-in rules if file doesn't exist or can't be loaded
         return [
             {
@@ -779,7 +833,7 @@ class JavaExceptionHandler:
                 "suggestion": "Handle InterruptedException properly by either restoring the interrupt status or propagating the exception",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "concurrency"
+                "category": "concurrency",
             },
             {
                 "id": "java_deadlock",
@@ -790,7 +844,7 @@ class JavaExceptionHandler:
                 "suggestion": "Avoid nested synchronized blocks, always acquire locks in the same order across threads, use tryLock with timeout, or use higher-level concurrency utilities",
                 "confidence": "medium",
                 "severity": "critical",
-                "category": "concurrency"
+                "category": "concurrency",
             },
             {
                 "id": "java_illegal_monitor_state",
@@ -801,7 +855,7 @@ class JavaExceptionHandler:
                 "suggestion": "Ensure wait(), notify(), and notifyAll() are called within synchronized blocks on the same object",
                 "confidence": "high",
                 "severity": "critical",
-                "category": "concurrency"
+                "category": "concurrency",
             },
             {
                 "id": "java_thread_death",
@@ -812,7 +866,7 @@ class JavaExceptionHandler:
                 "suggestion": "Avoid using Thread.stop() as it is unsafe and deprecated. Use interruption or other cooperative cancellation mechanisms.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "concurrency"
+                "category": "concurrency",
             },
             {
                 "id": "java_execution_exception",
@@ -823,7 +877,7 @@ class JavaExceptionHandler:
                 "suggestion": "Examine the cause of the ExecutionException to find the actual error that occurred during task execution",
                 "confidence": "medium",
                 "severity": "high",
-                "category": "concurrency"
+                "category": "concurrency",
             },
             {
                 "id": "java_timeout_exception",
@@ -834,7 +888,7 @@ class JavaExceptionHandler:
                 "suggestion": "Increase timeout duration, optimize the operation for better performance, or handle timeouts gracefully",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "concurrency"
+                "category": "concurrency",
             },
             {
                 "id": "java_rejected_execution",
@@ -845,7 +899,7 @@ class JavaExceptionHandler:
                 "suggestion": "Configure an appropriate RejectedExecutionHandler, increase executor queue size, or implement back pressure mechanisms",
                 "confidence": "high",
                 "severity": "high",
-                "category": "concurrency"
+                "category": "concurrency",
             },
             {
                 "id": "java_concurrent_modification",
@@ -857,7 +911,7 @@ class JavaExceptionHandler:
                 "confidence": "high",
                 "severity": "high",
                 "category": "concurrency",
-                "tags": ["concurrency", "collections"]
+                "tags": ["concurrency", "collections"],
             },
             {
                 "id": "java_race_condition",
@@ -868,10 +922,10 @@ class JavaExceptionHandler:
                 "suggestion": "Protect shared state access with synchronized blocks, java.util.concurrent.locks, or use thread-safe data structures. Consider using atomic variables (AtomicInteger, AtomicReference) for simple cases, or volatile for visibility.",
                 "confidence": "medium",
                 "severity": "high",
-                "category": "concurrency"
-            }
+                "category": "concurrency",
+            },
         ]
-    
+
     def _load_jdbc_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Java JDBC and database exceptions."""
         return [
@@ -884,7 +938,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check database connection, SQL syntax, and implement proper exception handling. Consider using a connection pool for better resource management.",
                 "confidence": "medium",
                 "severity": "high",
-                "category": "jdbc"
+                "category": "jdbc",
             },
             {
                 "id": "java_sql_syntax",
@@ -895,7 +949,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check SQL query syntax. Use prepared statements to avoid syntax and injection issues.",
                 "confidence": "high",
                 "severity": "high",
-                "category": "jdbc"
+                "category": "jdbc",
             },
             {
                 "id": "java_sql_duplicate_key",
@@ -906,7 +960,7 @@ class JavaExceptionHandler:
                 "suggestion": "Check for existing records before inserting or use INSERT ... ON DUPLICATE KEY UPDATE syntax",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "jdbc"
+                "category": "jdbc",
             },
             {
                 "id": "java_sql_column_not_found",
@@ -917,7 +971,7 @@ class JavaExceptionHandler:
                 "suggestion": "Verify column names in queries against the actual database schema",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "jdbc"
+                "category": "jdbc",
             },
             {
                 "id": "java_sql_data_truncation",
@@ -928,7 +982,7 @@ class JavaExceptionHandler:
                 "suggestion": "Increase column size to accommodate data or validate data length before inserting/updating",
                 "confidence": "high",
                 "severity": "medium",
-                "category": "jdbc"
+                "category": "jdbc",
             },
             {
                 "id": "java_sql_connection_timeout",
@@ -939,22 +993,24 @@ class JavaExceptionHandler:
                 "suggestion": "Check database availability, connection settings, and implement connection retry logic",
                 "confidence": "medium",
                 "severity": "high",
-                "category": "jdbc"
-            }
+                "category": "jdbc",
+            },
         ]
-        
+
     def _load_spring_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Spring Framework and Spring Boot exceptions."""
-        rules_file = Path(__file__).parent.parent / "rules" / "java" / "spring_boot_errors.json"
-        
+        rules_file = (
+            Path(__file__).parent.parent / "rules" / "java" / "spring_boot_errors.json"
+        )
+
         if rules_file.exists():
             try:
-                with open(rules_file, 'r') as f:
+                with open(rules_file, "r") as f:
                     data = json.load(f)
                     return data.get("rules", [])
             except Exception as e:
                 logger.error(f"Error loading Spring rules from {rules_file}: {e}")
-        
+
         # Fallback to built-in rules if file doesn't exist or can't be loaded
         return [
             {
@@ -968,7 +1024,7 @@ class JavaExceptionHandler:
                 "severity": "high",
                 "category": "spring",
                 "framework": "spring",
-                "tags": ["bean", "configuration", "initialization"]
+                "tags": ["bean", "configuration", "initialization"],
             },
             {
                 "id": "spring_autowired_failure",
@@ -980,7 +1036,7 @@ class JavaExceptionHandler:
                 "confidence": "high",
                 "severity": "high",
                 "category": "spring",
-                "framework": "spring"
+                "framework": "spring",
             },
             {
                 "id": "spring_circular_dependency",
@@ -992,7 +1048,7 @@ class JavaExceptionHandler:
                 "confidence": "high",
                 "severity": "high",
                 "category": "spring",
-                "framework": "spring"
+                "framework": "spring",
             },
             {
                 "id": "spring_security_access_denied",
@@ -1004,7 +1060,7 @@ class JavaExceptionHandler:
                 "confidence": "high",
                 "severity": "high",
                 "category": "spring",
-                "framework": "spring"
+                "framework": "spring",
             },
             {
                 "id": "spring_request_method_not_supported",
@@ -1016,22 +1072,27 @@ class JavaExceptionHandler:
                 "confidence": "high",
                 "severity": "medium",
                 "category": "spring",
-                "framework": "spring"
-            }
+                "framework": "spring",
+            },
         ]
-    
+
     def _load_hibernate_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Hibernate and JPA exceptions."""
-        rules_file = Path(__file__).parent.parent / "rules" / "hibernate" / "hibernate_errors.json"
-        
+        rules_file = (
+            Path(__file__).parent.parent
+            / "rules"
+            / "hibernate"
+            / "hibernate_errors.json"
+        )
+
         if rules_file.exists():
             try:
-                with open(rules_file, 'r') as f:
+                with open(rules_file, "r") as f:
                     data = json.load(f)
                     return data.get("rules", [])
             except Exception as e:
                 logger.error(f"Error loading Hibernate rules from {rules_file}: {e}")
-        
+
         # Fallback to built-in rules if file doesn't exist or can't be loaded
         return [
             {
@@ -1044,22 +1105,24 @@ class JavaExceptionHandler:
                 "confidence": "high",
                 "severity": "high",
                 "category": "framework",
-                "framework": "hibernate"
+                "framework": "hibernate",
             }
         ]
-    
+
     def _load_android_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Android platform exceptions."""
-        rules_file = Path(__file__).parent.parent / "rules" / "java" / "android_errors.json"
-        
+        rules_file = (
+            Path(__file__).parent.parent / "rules" / "java" / "android_errors.json"
+        )
+
         if rules_file.exists():
             try:
-                with open(rules_file, 'r') as f:
+                with open(rules_file, "r") as f:
                     data = json.load(f)
                     return data.get("rules", [])
             except Exception as e:
                 logger.error(f"Error loading Android rules from {rules_file}: {e}")
-        
+
         # Fallback to empty list if file doesn't exist or can't be loaded
         logger.warning(f"Android rules file not found at {rules_file}")
         return []
@@ -1068,116 +1131,141 @@ class JavaExceptionHandler:
 class JavaPatchGenerator:
     """
     Generates patch solutions for Java exceptions.
-    
+
     This class provides capabilities to generate code fixes for common Java errors,
     using templates and contextual information about the exception.
     """
-    
+
     def __init__(self):
         """Initialize the Java patch generator."""
-        self.templates_dir = Path(__file__).parent.parent / "patch_generation" / "templates" / "java"
+        self.templates_dir = (
+            Path(__file__).parent.parent / "patch_generation" / "templates" / "java"
+        )
         self.templates_dir.mkdir(exist_ok=True, parents=True)
-        
+
         # Cache for loaded templates
         self.template_cache = {}
-    
-    def generate_patch(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+
+    def generate_patch(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a patch for a Java error based on analysis.
-        
+
         Args:
             analysis: Error analysis containing root cause and other details
             context: Additional context about the error, including code snippets
-            
+
         Returns:
             Patch data including patch type, code, and application instructions
         """
         root_cause = analysis.get("root_cause", "unknown")
         rule_id = analysis.get("rule_id", "unknown")
-        
+
         # Basic patch result structure
         patch_result = {
             "patch_id": f"java_{rule_id}",
             "patch_type": "suggestion",
             "language": "java",
             "framework": context.get("framework", ""),
-            "description": analysis.get("description", analysis.get("error_data", {}).get("message", "Java error fix")),
+            "description": analysis.get(
+                "description",
+                analysis.get("error_data", {}).get("message", "Java error fix"),
+            ),
             "suggestion": analysis.get("suggestion", "No suggestion available"),
             "confidence": analysis.get("confidence", "low"),
             "severity": analysis.get("severity", "medium"),
-            "root_cause": root_cause
+            "root_cause": root_cause,
         }
-        
+
         # Try to find a specific template for this root cause
         template_name = f"{root_cause}.java.template"
         template_path = self.templates_dir / template_name
-        
+
         code_snippet = context.get("code_snippet", "")
         stack_frames = analysis.get("error_data", {}).get("stack_trace", [])
-        
+
         # If we have a template and enough context, generate actual code
         if template_path.exists() and (code_snippet or stack_frames):
             try:
                 template_content = self._load_template(template_path)
-                
+
                 # Extract variable names and contextual information
                 variables = self._extract_variables(analysis, context)
-                
+
                 # Apply template with variables
                 patch_code = self._apply_template(template_content, variables)
-                
+
                 # Update patch result with actual code
-                patch_result.update({
-                    "patch_type": "code",
-                    "patch_code": patch_code,
-                    "suggestion_code": patch_code,  # Add suggestion_code for compatibility
-                    "application_point": self._determine_application_point(analysis, context),
-                    "instructions": self._generate_instructions(analysis, patch_code)
-                })
-                
+                patch_result.update(
+                    {
+                        "patch_type": "code",
+                        "patch_code": patch_code,
+                        "suggestion_code": patch_code,  # Add suggestion_code for compatibility
+                        "application_point": self._determine_application_point(
+                            analysis, context
+                        ),
+                        "instructions": self._generate_instructions(
+                            analysis, patch_code
+                        ),
+                    }
+                )
+
                 # Increase confidence for code patches
                 if patch_result["confidence"] == "low":
                     patch_result["confidence"] = "medium"
             except Exception as e:
                 logger.warning(f"Error generating patch for {root_cause}: {e}")
-        
+
         # If we don't have a specific template, return a suggestion-based patch
         if "patch_code" not in patch_result:
             # Enhance the suggestion based on the rule
             if root_cause == "java_null_pointer":
-                patch_result["suggestion_code"] = self._generate_null_check_suggestion(analysis, context)
+                patch_result["suggestion_code"] = self._generate_null_check_suggestion(
+                    analysis, context
+                )
             elif root_cause == "java_index_out_of_bounds":
-                patch_result["suggestion_code"] = self._generate_bounds_check_suggestion(analysis, context)
+                patch_result["suggestion_code"] = (
+                    self._generate_bounds_check_suggestion(analysis, context)
+                )
             elif root_cause == "java_concurrent_modification":
-                patch_result["suggestion_code"] = self._generate_concurrent_modification_suggestion(analysis, context)
+                patch_result["suggestion_code"] = (
+                    self._generate_concurrent_modification_suggestion(analysis, context)
+                )
             elif root_cause == "java_resource_leak":
-                patch_result["suggestion_code"] = self._generate_resource_leak_suggestion(analysis, context)
+                patch_result["suggestion_code"] = (
+                    self._generate_resource_leak_suggestion(analysis, context)
+                )
                 # Always update description for resource leaks to ensure it contains expected keywords
-                patch_result["description"] = "Resource leak detected - use try-with-resources or ensure proper cleanup of AutoCloseable resources"
-        
+                patch_result["description"] = (
+                    "Resource leak detected - use try-with-resources or ensure proper cleanup of AutoCloseable resources"
+                )
+
         return patch_result
-    
+
     def _load_template(self, template_path: Path) -> str:
         """Load a template from the filesystem or cache."""
         path_str = str(template_path)
         if path_str not in self.template_cache:
             if template_path.exists():
-                with open(template_path, 'r') as f:
+                with open(template_path, "r") as f:
                     self.template_cache[path_str] = f.read()
             else:
                 raise FileNotFoundError(f"Template not found: {template_path}")
-        
+
         return self.template_cache[path_str]
-    
-    def _extract_variables(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, str]:
+
+    def _extract_variables(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, str]:
         """Extract variables from analysis and context for template substitution."""
         variables = {}
-        
+
         # Extract basic information
         error_data = analysis.get("error_data", {})
         variables["ERROR_TYPE"] = error_data.get("error_type", "Exception")
         variables["ERROR_MESSAGE"] = error_data.get("message", "Unknown error")
-        
+
         # Extract information from stack trace
         stack_trace = error_data.get("stack_trace", [])
         if stack_trace and isinstance(stack_trace, list):
@@ -1190,19 +1278,19 @@ class JavaPatchGenerator:
                     variables["FILE_NAME"] = top_frame.get("file", "")
                     variables["LINE_NUMBER"] = str(top_frame.get("line", ""))
                     variables["PACKAGE_NAME"] = top_frame.get("package", "")
-        
+
         # Extract variables from context
         variables["CODE_SNIPPET"] = context.get("code_snippet", "")
         variables["METHOD_PARAMS"] = context.get("method_params", "")
         variables["CLASS_IMPORTS"] = context.get("imports", "")
         variables["EXCEPTION_VAR"] = "e"  # Default exception variable name
-        
+
         # Additional variables based on error type
         if "java_null_pointer" in analysis.get("root_cause", ""):
             variables["NULL_CHECK_VAR"] = self._extract_null_variable(analysis, context)
-        
+
         return variables
-    
+
     def _apply_template(self, template: str, variables: Dict[str, str]) -> str:
         """Apply variables to a template."""
         result = template
@@ -1210,81 +1298,96 @@ class JavaPatchGenerator:
             placeholder = f"${{{key}}}"
             result = result.replace(placeholder, value)
         return result
-    
-    def _determine_application_point(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+
+    def _determine_application_point(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Determine where to apply the patch."""
         error_data = analysis.get("error_data", {})
         stack_trace = error_data.get("stack_trace", [])
-        
+
         application_point = {
             "type": "suggestion",
-            "description": "Review the code based on the suggestion"
+            "description": "Review the code based on the suggestion",
         }
-        
+
         if stack_trace and isinstance(stack_trace, list):
             if isinstance(stack_trace[0], dict):
                 # We have structured stack trace, extract file and line
                 top_frame = stack_trace[0]
-                application_point.update({
-                    "type": "line",
-                    "file": top_frame.get("file", ""),
-                    "line": top_frame.get("line", 0),
-                    "class": top_frame.get("class", ""),
-                    "method": top_frame.get("function", "")
-                })
-        
+                application_point.update(
+                    {
+                        "type": "line",
+                        "file": top_frame.get("file", ""),
+                        "line": top_frame.get("line", 0),
+                        "class": top_frame.get("class", ""),
+                        "method": top_frame.get("function", ""),
+                    }
+                )
+
         return application_point
-    
+
     def _generate_instructions(self, analysis: Dict[str, Any], patch_code: str) -> str:
         """Generate human-readable instructions for applying the patch."""
         root_cause = analysis.get("root_cause", "unknown")
-        
+
         if "null_pointer" in root_cause:
-            return ("Add null checks before accessing the variable. " 
-                   f"Consider implementing this fix: {patch_code}")
+            return (
+                "Add null checks before accessing the variable. "
+                f"Consider implementing this fix: {patch_code}"
+            )
         elif "index_out_of_bounds" in root_cause:
-            return ("Validate indices before accessing arrays or collections. " 
-                   f"Implement bounds checking as shown: {patch_code}")
+            return (
+                "Validate indices before accessing arrays or collections. "
+                f"Implement bounds checking as shown: {patch_code}"
+            )
         elif "concurrent_modification" in root_cause:
-            return ("Modify your collection iteration approach to avoid concurrent modification. " 
-                   f"Use the provided solution: {patch_code}")
+            return (
+                "Modify your collection iteration approach to avoid concurrent modification. "
+                f"Use the provided solution: {patch_code}"
+            )
         else:
             return f"Apply the following fix to address the issue: {patch_code}"
-    
-    def _extract_null_variable(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+
+    def _extract_null_variable(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> str:
         """Extract the likely null variable from an NPE."""
         # Check if variable_name is provided in context
         if "variable_name" in context:
             return context["variable_name"]
-        
+
         message = analysis.get("error_data", {}).get("message", "")
-        
+
         # Common NPE message patterns
         if "trying to access" in message and "of a null object" in message:
-            # Android-style NPE 
+            # Android-style NPE
             parts = message.split("trying to access")
             if len(parts) > 1:
                 parts = parts[1].split("of a null")
                 if len(parts) > 0:
                     return parts[0].strip()
-        
+
         # Java 14+ helpful NPE message: "Cannot invoke "String.length()" because "str" is null"
         if "because" in message and "is null" in message:
             parts = message.split("because")
             if len(parts) > 1:
                 # Extract the variable name in quotes
                 import re
+
                 match = re.search(r'"([^"]+)"', parts[1])
                 if match:
                     return match.group(1)
-        
+
         # Default fallback
         return "object"
-    
-    def _generate_null_check_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+
+    def _generate_null_check_suggestion(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> str:
         """Generate a code snippet for null checking."""
         var_name = self._extract_null_variable(analysis, context)
-        
+
         return f"""// Add null check before accessing {var_name}
 if ({var_name} == null) {{
     // Handle null case - either return early, throw custom exception, or provide default
@@ -1294,8 +1397,10 @@ if ({var_name} == null) {{
 }}
 // Then proceed with original code that uses {var_name}
 """
-    
-    def _generate_bounds_check_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+
+    def _generate_bounds_check_suggestion(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> str:
         """Generate a code snippet for bounds checking."""
         return """// Add bounds check before accessing array/collection elements
 if (index >= 0 && index < array.length) {
@@ -1308,8 +1413,10 @@ if (index >= 0 && index < array.length) {
     // Use a default value instead
 }
 """
-    
-    def _generate_concurrent_modification_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+
+    def _generate_concurrent_modification_suggestion(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> str:
         """Generate a code snippet for avoiding concurrent modification."""
         return """// Option 1: Use CopyOnWriteArrayList for thread safety
 List<Type> threadSafeList = new CopyOnWriteArrayList<>(originalList);
@@ -1332,8 +1439,10 @@ while (iterator.hasNext()) {
     }
 }
 """
-    
-    def _generate_resource_leak_suggestion(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> str:
+
+    def _generate_resource_leak_suggestion(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> str:
         """Generate a code snippet for proper resource handling."""
         resource_type = context.get("resource_type", "AutoCloseable")
         return f"""// Use try-with-resources to ensure proper resource cleanup
@@ -1365,39 +1474,39 @@ try {{
 class JavaLanguagePlugin(LanguagePlugin):
     """
     Java language plugin for Homeostasis.
-    
+
     Provides comprehensive error analysis and fix generation for Java applications,
     including support for Spring, Jakarta EE, Hibernate, and Android frameworks.
     """
-    
+
     VERSION = "0.2.0"
     AUTHOR = "Homeostasis Contributors"
-    
+
     def __init__(self):
         """Initialize the Java language plugin."""
         self.adapter = JavaErrorAdapter()
         self.exception_handler = JavaExceptionHandler()
         self.patch_generator = JavaPatchGenerator()
-    
+
     def get_language_id(self) -> str:
         """Get the language identifier."""
         return "java"
-    
+
     def get_language_name(self) -> str:
         """Get the language name."""
         return "Java"
-    
+
     def get_language_version(self) -> str:
         """Get the language version."""
         return "8+"
-    
+
     def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze a Java error.
-        
+
         Args:
             error_data: Java error data
-            
+
         Returns:
             Analysis results
         """
@@ -1406,70 +1515,81 @@ class JavaLanguagePlugin(LanguagePlugin):
             standard_error = self.normalize_error(error_data)
         else:
             standard_error = error_data
-        
+
         # Use the exception handler to analyze the error
         return self.exception_handler.analyze_exception(standard_error)
-    
+
     def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Normalize a Java error to the standard format.
-        
+
         Args:
             error_data: Java error data
-            
+
         Returns:
             Error data in the standard format
         """
         return self.adapter.to_standard_format(error_data)
-    
+
     def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
         """
         Convert standard format error data to Java format.
-        
+
         Args:
             standard_error: Error data in the standard format
-            
+
         Returns:
             Error data in the Java format
         """
         return self.adapter.from_standard_format(standard_error)
-    
-    def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+
+    def generate_fix(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a fix for a Java error.
-        
+
         Args:
             analysis: Error analysis
             context: Additional context for fix generation
-            
+
         Returns:
             Generated fix data
         """
         return self.patch_generator.generate_patch(analysis, context)
-    
+
     def get_supported_frameworks(self) -> List[str]:
         """
         Get the list of frameworks supported by this language plugin.
-        
+
         Returns:
             List of supported framework identifiers
         """
-        return ["spring", "spring-boot", "struts", "play", "jakarta", "hibernate", "android", "base"]
-    
+        return [
+            "spring",
+            "spring-boot",
+            "struts",
+            "play",
+            "jakarta",
+            "hibernate",
+            "android",
+            "base",
+        ]
+
     def can_handle(self, error_data: Dict[str, Any]) -> bool:
         """
         Check if this plugin can handle the given error.
-        
+
         Args:
             error_data: Error data to check
-            
+
         Returns:
             True if the plugin can handle the error, False otherwise
         """
         # Check if language is explicitly set to Java
         if error_data.get("language", "").lower() == "java":
             return True
-        
+
         # Check if error_type contains Java patterns
         error_type = error_data.get("error_type", "")
         if error_type:
@@ -1487,12 +1607,12 @@ class JavaLanguagePlugin(LanguagePlugin):
                 return True
             if error_type.startswith("com.android."):
                 return True
-        
+
         # Check if file extension is Java
         file_path = error_data.get("file", "")
         if file_path and file_path.endswith(".java"):
             return True
-        
+
         # Check stack trace for Java patterns
         stack_trace = error_data.get("stack_trace", error_data.get("stacktrace", []))
         if stack_trace:
@@ -1509,7 +1629,7 @@ class JavaLanguagePlugin(LanguagePlugin):
                     elif isinstance(frame, str):
                         if ".java:" in frame or "at " in frame:
                             return True
-        
+
         # Check for Java-specific error patterns in message
         message = error_data.get("message", "")
         if message:
@@ -1522,12 +1642,12 @@ class JavaLanguagePlugin(LanguagePlugin):
                 "at org.",
                 ".java:",
                 "ClassNotFoundException",
-                "NoClassDefFoundError"
+                "NoClassDefFoundError",
             ]
             for pattern in java_patterns:
                 if pattern in message:
                     return True
-        
+
         return False
 
 

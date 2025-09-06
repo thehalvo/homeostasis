@@ -5,44 +5,46 @@ This module provides formal verification frameworks and educational resources
 for academic institutions and researchers studying self-healing systems.
 """
 
-from .formal_frameworks import (
-    AcademicFormalVerificationFramework,
-    ResearchModelChecker,
-    ThesisVerificationTools,
-    ProofAssistantInterface,
-    ResearchFocus,
-    ResearchProblem,
-    ProofStructure,
-    AcademicVerificationResult,
-    create_workshop_materials as create_formal_workshop_materials,
-    generate_course_syllabus
-)
-
 # Import from reliability module
 from ..reliability.formal_verification import (
+    PropertyType,
     SystemModel,
     VerificationProperty,
-    PropertyType
 )
-
 from .curriculum import (
-    SelfHealingCurriculum,
-    CourseModule,
-    LearningPath,
     AcademicAssessment,
-    EducationLevel,
     AssessmentType,
+    CourseModule,
+    EducationLevel,
     LearningObjective,
-    generate_interactive_exercise,
-    create_workshop_materials,
+    LearningPath,
+    SelfHealingCurriculum,
     create_course_website_template,
-    create_research_project_ideas
+    create_research_project_ideas,
+    create_workshop_materials,
+    generate_interactive_exercise,
+)
+from .formal_frameworks import (
+    AcademicFormalVerificationFramework,
+    AcademicVerificationResult,
+    ProofAssistantInterface,
+    ProofStructure,
+    ResearchFocus,
+    ResearchModelChecker,
+    ResearchProblem,
+    ThesisVerificationTools,
+)
+from .formal_frameworks import (
+    create_workshop_materials as create_formal_workshop_materials,
+)
+from .formal_frameworks import (
+    generate_course_syllabus,
 )
 
 __all__ = [
     # Formal verification
     "AcademicFormalVerificationFramework",
-    "ResearchModelChecker", 
+    "ResearchModelChecker",
     "ThesisVerificationTools",
     "ProofAssistantInterface",
     "ResearchFocus",
@@ -66,5 +68,5 @@ __all__ = [
     "create_course_website_template",
     "create_research_project_ideas",
     "create_formal_workshop_materials",
-    "generate_course_syllabus"
+    "generate_course_syllabus",
 ]

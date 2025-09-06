@@ -446,7 +446,10 @@ class ComplianceTestRunner:
         
     def _generate_junit_report(self, path: Path):
         """Generate JUnit XML report"""
-        from xml.etree import ElementTree as ET
+        try:
+            from defusedxml import ElementTree as ET
+        except ImportError:
+            from xml.etree import ElementTree as ET
         
         testsuites = ET.Element('testsuites')
         testsuite = ET.SubElement(testsuites, 'testsuite', {
