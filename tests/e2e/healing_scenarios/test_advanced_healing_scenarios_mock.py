@@ -234,7 +234,7 @@ NameError: name 'user_id' is not defined"""
             mock_environment.inject_error(
                 service="resilient_service",
                 error_type="TimeoutError",
-                message=f"Request timeout {i+1}",
+                message=f"Request timeout {i + 1}",
                 file_path="service/client.py",
                 line_number=80,
             )
@@ -321,6 +321,9 @@ MemoryError: Unable to allocate memory"""
             has_thread_safety = any(
                 pattern in patch_code for pattern in thread_safe_patterns
             )
+            
+            # Verify that thread safety mechanisms were added
+            assert has_thread_safety, "Patch should include thread safety mechanisms"
 
             # For this mock, we'll accept any patch as valid
             test_results = mock_orchestrator.test_patches(patches)

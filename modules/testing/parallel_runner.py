@@ -11,6 +11,9 @@ from typing import Any, Dict, List, Optional
 from modules.monitoring.logger import MonitoringLogger
 from modules.testing.container_manager import ContainerManager
 
+# Define project root
+project_root = Path(__file__).parent.parent.parent
+
 
 class ParallelTestRunner:
     """

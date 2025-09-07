@@ -487,14 +487,14 @@ class CausalChainAnalyzer:
         type_patterns = {}
         for sequence in error_type_sequences:
             for i in range(len(sequence) - 1):
-                pattern = f"{sequence[i]} → {sequence[i+1]}"
+                pattern = f"{sequence[i]} → {sequence[i + 1]}"
                 type_patterns[pattern] = type_patterns.get(pattern, 0) + 1
 
         # Count occurrences of root cause patterns
         cause_patterns = {}
         for sequence in error_cause_sequences:
             for i in range(len(sequence) - 1):
-                pattern = f"{sequence[i]} → {sequence[i+1]}"
+                pattern = f"{sequence[i]} → {sequence[i + 1]}"
                 cause_patterns[pattern] = cause_patterns.get(pattern, 0) + 1
 
         return {
@@ -654,7 +654,7 @@ if __name__ == "__main__":
     # Print each chain
     print("\nCausal Chains:")
     for i, chain in enumerate(result["causal_chains"]):
-        print(f"\nChain {i+1}:")
+        print(f"\nChain {i + 1}:")
         print(f"Root: {chain['root_type']} - {chain['root_cause']}")
         print(f"Length: {chain['chain_length']} levels, {chain['node_count']} nodes")
 

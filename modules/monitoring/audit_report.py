@@ -60,7 +60,7 @@ def format_table(data: List[List[Any]], headers: List[str]) -> str:
     # Build header row
     header_row = "|"
     for i, header in enumerate(headers):
-        header_row += f" {header:{col_widths[i]-2}} |"
+        header_row += f" {header:{col_widths[i] - 2}} |"
 
     # Build result
     result = [separator, header_row, separator]
@@ -70,7 +70,7 @@ def format_table(data: List[List[Any]], headers: List[str]) -> str:
         data_row = "|"
         for i, cell in enumerate(row):
             if i < len(col_widths):
-                data_row += f" {str(cell):{col_widths[i]-2}} |"
+                data_row += f" {str(cell):{col_widths[i] - 2}} |"
         result.append(data_row)
 
     # Add bottom separator

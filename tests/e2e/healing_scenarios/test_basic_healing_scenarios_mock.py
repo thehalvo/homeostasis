@@ -190,8 +190,8 @@ class TestBasicHealingScenariosMock:
         assert len(patches) == 3
 
         # Validate all patches
-        for patch in patches:
-            valid, _ = PatchValidator.validate_patch_structure(patch)
+        for p in patches:
+            valid, _ = PatchValidator.validate_patch_structure(p)
             assert valid
 
         # Deploy all patches
@@ -248,6 +248,10 @@ class TestBasicHealingScenariosMock:
         patches = mock_orchestrator.generate_patches(analysis_results)
         test_results = mock_orchestrator.test_patches(patches)
         deployed = mock_orchestrator.deploy_patches(patches)
+
+        # Verify test and deployment results
+        assert all(test_results.values()), "All patch tests should pass"
+        assert deployed, "Patches should be successfully deployed"
 
         end_time = time.time()
         duration = end_time - start_time

@@ -560,4 +560,4 @@ DASHBOARD_TEMPLATE = """
 if __name__ == "__main__":
     # Run the dashboard
     dashboard = PerformanceDashboard()
-    dashboard.run(debug=True)
+    dashboard.run(debug=False)

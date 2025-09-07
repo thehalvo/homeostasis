@@ -18,6 +18,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from modules.deployment.multi_environment.config_manager import ChangeAction
 from modules.deployment.multi_environment.hybrid_orchestrator import (
     Environment,
     HealingContext,

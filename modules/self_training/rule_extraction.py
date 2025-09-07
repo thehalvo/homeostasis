@@ -639,7 +639,7 @@ class PatternAnalyzer:
 
             # Count co-occurrences
             for i, p1 in enumerate(fix_patterns):
-                for p2 in fix_patterns[i + 1 :]:
+                for p2 in fix_patterns[i + 1:]:
                     key = tuple(sorted([p1.pattern_id, p2.pattern_id]))
                     pattern_pairs[key] += 1
 

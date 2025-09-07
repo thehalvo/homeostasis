@@ -345,8 +345,8 @@ class TestJavaAndroidIntegration(unittest.TestCase):
 
         # Verify the complete flow
         self.assertEqual(analysis["category"], "android")
-        self.assertEqual(patch["language"], "java")
-        self.assertIn("token", patch["suggestion"].lower())
+        self.assertEqual(dialog_patch["language"], "java")
+        self.assertIn("token", dialog_patch["suggestion"].lower())
 
 
 if __name__ == "__main__":

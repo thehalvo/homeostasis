@@ -23,6 +23,9 @@ from modules.monitoring.extractor import get_latest_errors
 from modules.monitoring.logger import MonitoringLogger
 from orchestrator.orchestrator import Orchestrator
 
+# Define project root
+project_root = Path(__file__).parent.parent.parent.parent
+
 
 @dataclass
 class HealingScenario:

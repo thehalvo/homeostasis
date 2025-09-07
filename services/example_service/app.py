@@ -83,7 +83,7 @@ async def get_todos(
     todos = list(todo_db.values())
     # BUG #4: Incorrect slice indexing that could lead to index errors
     # Should check bounds before slicing
-    return todos[skip : skip + limit]
+    return todos[skip:skip + limit]
 
 
 @app.post("/todos", response_model=TodoItem, status_code=201)

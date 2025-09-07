@@ -224,8 +224,8 @@ async def trigger_error():
         for i, (env, runner) in enumerate(zip(environments, runners)):
             error_types = ["KeyError", "AttributeError", "TypeError"]
             scenario = HealingScenario(
-                name=f"Concurrent Scenario {i+1}",
-                description=f"Concurrent healing test {i+1}",
+                name=f"Concurrent Scenario {i + 1}",
+                description=f"Concurrent healing test {i + 1}",
                 error_type=error_types[i],
                 target_service="test_service",
                 error_trigger=create_trigger(env, error_types[i]),

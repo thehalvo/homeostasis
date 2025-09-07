@@ -473,7 +473,8 @@ class OutcomeTracker:
         affected_files: List[str],
     ) -> float:
         """Predict the likelihood of fix success based on historical data."""
-        features = {
+        # TODO: Use features for more sophisticated prediction model
+        _ = {  # features
             "error_type": error_type,
             "fix_type": fix_type,
             "confidence": confidence,

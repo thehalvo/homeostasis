@@ -493,10 +493,10 @@ class TestCPPPatchGenerator:
         # Check that we got a patch with the expected root cause
         assert thread_patch.get("root_cause") == "cpp_race_condition"
         # Check for thread safety content or generic fix (since specific templates might not exist)
-        patch_text = patch.get("suggestion_code", "") or patch.get("patch_content", "")
+        patch_text = thread_patch.get("suggestion_code", "") or thread_patch.get("patch_content", "")
         if not patch_text:
-            patch_text = str(patch.get("explanation", "")) + str(
-                patch.get("content", "")
+            patch_text = str(thread_patch.get("explanation", "")) + str(
+                thread_patch.get("content", "")
             )
         assert patch_text  # Ensure we have some content
         # Accept either specific thread safety keywords or generic fix

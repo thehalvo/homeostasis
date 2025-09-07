@@ -62,10 +62,10 @@ Usage:
 import collections
 import logging
 import time
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from datetime import datetime
+from typing import Any, Dict, Tuple
 
-from modules.security.audit import get_audit_logger, log_event
+from modules.security.audit import log_event
 
 logger = logging.getLogger(__name__)
 

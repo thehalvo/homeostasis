@@ -293,7 +293,6 @@ class EnvironmentCollector:
         # Check for network connectivity
         try:
             import socket
-            import urllib.request
 
             # Hostname
             hostname = socket.gethostname()
@@ -1301,7 +1300,7 @@ if __name__ == "__main__":
         print("\nTop Correlations:")
         for i, correlation in enumerate(analysis["correlations"][:5]):
             print(
-                f"\n{i+1}. {correlation['error_type']} correlates with {correlation['factor']}"
+                f"\n{i + 1}. {correlation['error_type']} correlates with {correlation['factor']}"
             )
 
             if correlation["type"] == "numeric":
@@ -1324,11 +1323,11 @@ if __name__ == "__main__":
         print("\nError Patterns:")
         for i, pattern in enumerate(analysis["error_patterns"][:3]):
             print(
-                f"\n{i+1}. {pattern['error_type']} ({pattern['occurrences']} occurrences)"
+                f"\n{i + 1}. {pattern['error_type']} ({pattern['occurrences']} occurrences)"
             )
 
             for j, combo in enumerate(pattern["factor_combinations"][:3]):
-                print(f"   Pattern {j+1} (confidence: {combo['confidence']:.2f}):")
+                print(f"   Pattern {j + 1} (confidence: {combo['confidence']:.2f}):")
                 for factor in combo["factors"]:
                     print(f"   - {factor['name']}: {factor['value']}")
 

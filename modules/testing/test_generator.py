@@ -16,6 +16,9 @@ from typing import Any, Dict, List, Optional
 from modules.analysis.rule_based import RuleBasedAnalyzer
 from modules.monitoring.logger import MonitoringLogger
 
+# Define project root
+project_root = Path(__file__).parent.parent.parent
+
 
 class TestGenerator:
     """
@@ -137,10 +140,53 @@ if __name__ == "__main__":
                 if_true = match.group(2)
                 if_false = match.group(3)
 
-                # Evaluate the condition
+                # Evaluate the condition safely
                 try:
-                    # Simple condition evaluation
-                    result = eval(condition, {"__builtins__": {}}, context)
+                    import ast
+                    
+                    # Parse the condition
+                    tree = ast.parse(condition, mode='eval')
+                    
+                    # Simple safe evaluator for basic conditions
+                    def safe_eval_node(node):
+                        if isinstance(node, ast.Name):
+                            return context.get(node.id, None)
+                        elif isinstance(node, ast.Constant):
+                            return node.value
+                        elif isinstance(node, ast.Num):  # For older Python versions
+                            return node.n
+                        elif isinstance(node, ast.Str):  # For older Python versions
+                            return node.s
+                        elif isinstance(node, ast.Compare):
+                            left = safe_eval_node(node.left)
+                            if len(node.ops) == 1 and len(node.comparators) == 1:
+                                op = node.ops[0]
+                                right = safe_eval_node(node.comparators[0])
+                                if isinstance(op, ast.Eq):
+                                    return left == right
+                                elif isinstance(op, ast.NotEq):
+                                    return left != right
+                                elif isinstance(op, ast.Lt):
+                                    return left < right
+                                elif isinstance(op, ast.LtE):
+                                    return left <= right
+                                elif isinstance(op, ast.Gt):
+                                    return left > right
+                                elif isinstance(op, ast.GtE):
+                                    return left >= right
+                        elif isinstance(node, ast.BoolOp):
+                            values = [safe_eval_node(v) for v in node.values]
+                            if isinstance(node.op, ast.And):
+                                return all(values)
+                            elif isinstance(node.op, ast.Or):
+                                return any(values)
+                        elif isinstance(node, ast.UnaryOp):
+                            operand = safe_eval_node(node.operand)
+                            if isinstance(node.op, ast.Not):
+                                return not operand
+                        return False
+                    
+                    result = safe_eval_node(tree.body)
                     return if_true if result else if_false
                 except Exception:
                     self.logger.warning(f"Failed to evaluate condition: {condition}")
@@ -238,7 +284,7 @@ if __name__ == "__main__":
 
                     # Get function body
                     body_lines = []
-                    for line in code.splitlines()[node.lineno : node.end_lineno]:
+                    for line in code.splitlines()[node.lineno:node.end_lineno]:
                         body_lines.append(line)
 
                     # Get module path for imports

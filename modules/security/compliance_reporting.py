@@ -21,10 +21,10 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 from .approval_workflow import get_workflow_engine
-from .audit import AuditLogger, get_audit_logger
+from .audit import get_audit_logger
 from .rbac import get_rbac_manager
 from .user_management import get_user_management
 

@@ -455,7 +455,7 @@ class RootCauseAnalyzer:
             group = [error1]
             grouped_indices.add(i)
 
-            for j, error2 in enumerate(errors[i + 1 :], i + 1):
+            for j, error2 in enumerate(errors[i + 1:], i + 1):
                 if j in grouped_indices:
                     continue
 

@@ -16,6 +16,9 @@ from typing import Any, Dict, List, Optional
 from modules.monitoring.logger import MonitoringLogger
 from modules.monitoring.metrics_collector import MetricsCollector
 
+# Define project root
+project_root = Path(__file__).parent.parent.parent
+
 
 class FeedbackLoop:
     """

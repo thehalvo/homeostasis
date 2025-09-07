@@ -5,7 +5,6 @@ This module analyzes Git commit messages and metadata to extract context
 that can be used to improve healing decisions and track healing patterns.
 """
 
-import os
 import re
 import subprocess
 from collections import defaultdict

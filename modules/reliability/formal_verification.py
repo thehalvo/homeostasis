@@ -183,8 +183,105 @@ class Z3Verifier(FormalVerifier):
                 elif var_type == "real":
                     z3_vars[name] = z3.Real(name)
 
-            # Evaluate formula in context of Z3 variables
-            return eval(formula, {"__builtins__": {}}, z3_vars)
+            # Parse formula using AST to avoid eval security risks
+            import ast
+            
+            # Parse the formula into an AST
+            tree = ast.parse(formula, mode='eval')
+            
+            # Create a safe evaluator
+            def safe_eval_node(node):
+                if isinstance(node, ast.Name):
+                    if node.id in z3_vars:
+                        return z3_vars[node.id]
+                    else:
+                        raise ValueError(f"Unknown variable: {node.id}")
+                elif isinstance(node, ast.BinOp):
+                    left = safe_eval_node(node.left)
+                    right = safe_eval_node(node.right)
+                    if isinstance(node.op, ast.Add):
+                        return left + right
+                    elif isinstance(node.op, ast.Sub):
+                        return left - right
+                    elif isinstance(node.op, ast.Mult):
+                        return left * right
+                    elif isinstance(node.op, ast.Div):
+                        return left / right
+                    elif isinstance(node.op, ast.Lt):
+                        return left < right
+                    elif isinstance(node.op, ast.Gt):
+                        return left > right
+                    elif isinstance(node.op, ast.LtE):
+                        return left <= right
+                    elif isinstance(node.op, ast.GtE):
+                        return left >= right
+                    elif isinstance(node.op, ast.Eq):
+                        return left == right
+                    elif isinstance(node.op, ast.NotEq):
+                        return left != right
+                elif isinstance(node, ast.BoolOp):
+                    values = [safe_eval_node(v) for v in node.values]
+                    if isinstance(node.op, ast.And):
+                        result = values[0]
+                        for v in values[1:]:
+                            result = z3.And(result, v)
+                        return result
+                    elif isinstance(node.op, ast.Or):
+                        result = values[0]
+                        for v in values[1:]:
+                            result = z3.Or(result, v)
+                        return result
+                elif isinstance(node, ast.UnaryOp):
+                    operand = safe_eval_node(node.operand)
+                    if isinstance(node.op, ast.Not):
+                        return z3.Not(operand)
+                    elif isinstance(node.op, ast.USub):
+                        return -operand
+                elif isinstance(node, ast.Constant):
+                    return node.value
+                elif isinstance(node, ast.Num):  # For older Python versions
+                    return node.n
+                elif isinstance(node, ast.Call):
+                    if isinstance(node.func, ast.Name) and node.func.id in ['And', 'Or', 'Not']:
+                        args = [safe_eval_node(arg) for arg in node.args]
+                        if node.func.id == 'And':
+                            return z3.And(*args)
+                        elif node.func.id == 'Or':
+                            return z3.Or(*args)
+                        elif node.func.id == 'Not':
+                            return z3.Not(args[0])
+                    else:
+                        raise ValueError(f"Unsupported function: {ast.unparse(node.func) if hasattr(ast, 'unparse') else node.func}")
+                elif isinstance(node, ast.Compare):
+                    left = safe_eval_node(node.left)
+                    comparators = [safe_eval_node(c) for c in node.comparators]
+                    result = None
+                    for i, (op, right) in enumerate(zip(node.ops, comparators)):
+                        if isinstance(op, ast.Lt):
+                            comp = left < right
+                        elif isinstance(op, ast.Gt):
+                            comp = left > right
+                        elif isinstance(op, ast.LtE):
+                            comp = left <= right
+                        elif isinstance(op, ast.GtE):
+                            comp = left >= right
+                        elif isinstance(op, ast.Eq):
+                            comp = left == right
+                        elif isinstance(op, ast.NotEq):
+                            comp = left != right
+                        else:
+                            raise ValueError("Unsupported comparison operator")
+                        
+                        if result is None:
+                            result = comp
+                        else:
+                            result = z3.And(result, comp)
+                        left = right
+                    return result
+                else:
+                    raise ValueError(f"Unsupported AST node type: {type(node).__name__}")
+            
+            return safe_eval_node(tree.body)
         except Exception as e:
             logger.error(f"Failed to parse formula: {e}")
             raise

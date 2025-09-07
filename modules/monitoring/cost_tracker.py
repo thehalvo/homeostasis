@@ -396,7 +396,7 @@ class CostTracker:
 
             self.logger.info(
                 f"Recorded cost: ${cost:.4f} for {provider}/{model} "
-                f"({tokens} tokens, ${cost/tokens:.6f} per token)"
+                f"({tokens} tokens, ${cost / tokens:.6f} per token)"
             )
 
             return True

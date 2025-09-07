@@ -6,6 +6,7 @@ including comprehensive error detection, intelligent classification, and LLM con
 """
 
 import logging
+import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -744,7 +745,7 @@ if __name__ == "__main__":
 
     # Test each error type
     for i, test_error_log in enumerate(test_error_logs):
-        print(f"\n--- Test Case {i+1}: {test_error_log['service']} ---")
+        print(f"\n--- Test Case {i + 1}: {test_error_log['service']} ---")
 
         # Perform analysis
         result = engine.analyze_error_comprehensive(test_error_log)

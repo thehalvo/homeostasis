@@ -530,7 +530,7 @@ class PatchGenerator:
 
                     # Replace the lines in the file
                     new_lines = lines.copy()
-                    new_lines[line_range[0] - 1 : line_range[1]] = (
+                    new_lines[line_range[0] - 1:line_range[1]] = (
                         formatted_code.splitlines()
                     )
                     new_content = "\n".join(new_lines)
@@ -578,7 +578,7 @@ class PatchGenerator:
                 # Extract context for indentation analysis
                 context_start = max(1, start_line - 5)
                 context_end = min(len(lines), end_line + 5)
-                context_block = "\n".join(lines[context_start - 1 : context_end])
+                context_block = "\n".join(lines[context_start - 1:context_end])
 
                 # Apply context-aware indentation to the patch code
                 formatted_code = adjust_indentation_for_context(
@@ -589,7 +589,7 @@ class PatchGenerator:
 
                 # Apply the patch by replacing the entire block
                 new_lines = lines.copy()
-                new_lines[start_line - 1 : end_line] = formatted_code.splitlines()
+                new_lines[start_line - 1:end_line] = formatted_code.splitlines()
                 new_content = "\n".join(new_lines)
 
                 # Write the modified content back to the file
@@ -689,7 +689,7 @@ class PatchGenerator:
                 new_code = change.get("new_code", "").split("\n")
 
                 if 0 <= start_line < len(lines):
-                    lines[start_line : end_line + 1] = new_code
+                    lines[start_line:end_line + 1] = new_code
 
             # Write modified content
             backup_path = target_file.with_suffix(target_file.suffix + ".bak")

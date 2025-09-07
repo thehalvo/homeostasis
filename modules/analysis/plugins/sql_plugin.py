@@ -805,7 +805,7 @@ class SQLPatchGenerator:
                 "fixes": [
                     f"Check if column name '{column_name}' is spelled correctly",
                     "Verify column exists in the table: DESCRIBE table_name or \\d table_name",
-                    f"Add the column if it doesn't exist: ALTER TABLE table_name ADD COLUMN {column_name} datatype",
+                    "Add the column if it doesn't exist: ALTER TABLE table_name ADD COLUMN column_name datatype",
                     "Check if you're using the correct table alias",
                 ],
             }
@@ -920,12 +920,12 @@ class SQLPatchGenerator:
             "type": "suggestion",
             "description": f"Qualify the ambiguous column '{column_name}' with a table alias",
             "fix_steps": [
-                f"Add table aliases to your query (e.g., SELECT t1.{column_name} FROM table1 t1)",
-                f"Prefix the column with the correct table name (e.g., table1.{column_name})",
+                "Add table aliases to your query (e.g., SELECT t1.column_name FROM table1 t1)",
+                "Prefix the column with the correct table name (e.g., table1.column_name)",
                 "If using joins, ensure all columns are qualified with their respective table aliases",
                 "Consider using AS clause for column aliases to avoid conflicts",
             ],
-            "example": f"SELECT t1.{column_name}, t2.other_column\nFROM table1 t1\nJOIN table2 t2 ON t1.id = t2.id",
+            "example": "SELECT t1.column_name, t2.other_column\nFROM table1 t1\nJOIN table2 t2 ON t1.id = t2.id",
         }
 
     def _fix_type_mismatch(

@@ -485,7 +485,7 @@ OUTPUT FORMAT:
             new_lines = change.get("new_code", "").split("\n")
 
             # Apply change
-            lines[start : end + 1] = new_lines
+            lines[start:end + 1] = new_lines
 
         return "\n".join(lines)
 
@@ -497,9 +497,13 @@ OUTPUT FORMAT:
         modified_command = test_command.replace(original_file, patched_file)
 
         try:
+            # Parse command into list for safer execution
+            import shlex
+            cmd_list = shlex.split(modified_command)
+            
             result = subprocess.run(
-                modified_command,
-                shell=True,
+                cmd_list,
+                shell=False,
                 capture_output=True,
                 text=True,
                 timeout=self.test_timeout,

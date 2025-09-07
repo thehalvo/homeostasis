@@ -6,7 +6,6 @@ the Git branch context, applying different healing approaches for different
 branch types and managing healing scope appropriately.
 """
 
-import os
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timedelta

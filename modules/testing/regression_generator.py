@@ -15,6 +15,9 @@ from typing import Any, Dict, List, Optional, Tuple
 from modules.monitoring.logger import MonitoringLogger
 from modules.testing.test_generator import TestGenerator
 
+# Define project root
+project_root = Path(__file__).parent.parent.parent
+
 
 class RegressionTestGenerator:
     """
@@ -219,11 +222,15 @@ class RegressionTestGenerator:
 
         # Run the tests
         import subprocess
+        import shlex
 
         try:
+            # Parse command into list for safer execution
+            cmd_list = shlex.split(cmd)
+            
             result = subprocess.run(
-                cmd,
-                shell=True,
+                cmd_list,
+                shell=False,
                 cwd=project_root,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,

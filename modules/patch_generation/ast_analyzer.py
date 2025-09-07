@@ -569,8 +569,12 @@ class CodeVisitor(ast.NodeVisitor):
             return dict(zip(keys, values))
         elif isinstance(node, ast.Name):
             # For simple names, just return the identifier as a string
-            if node.id in ("True", "False", "None"):
-                return eval(node.id)
+            if node.id == "True":
+                return True
+            elif node.id == "False":
+                return False
+            elif node.id == "None":
+                return None
             return node.id
         return None
 
@@ -791,7 +795,7 @@ class ASTAnalyzer:
         if end_line > len(lines):
             end_line = len(lines)
 
-        return "\n".join(lines[start_line - 1 : end_line])
+        return "\n".join(lines[start_line - 1:end_line])
 
     def find_nodes_at_line(self, line_number: int) -> List[ast.AST]:
         """

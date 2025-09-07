@@ -111,9 +111,6 @@ def secure_torch_load(filepath: str, map_location=None, expected_hash: Optional[
     
     # Fall back to restricted unpickling
     with open(filepath, 'rb') as f:
-        # Create our restricted unpickler
-        unpickler = RestrictedUnpickler(f)
-        
         # Override the default unpickler used by torch.load
         original_unpickler = pickle.Unpickler
         try:
@@ -812,8 +809,8 @@ def demonstrate_hierarchical_classification():
 
     # Classify each error
     for i, error in enumerate(test_errors):
-        logger.info(f"\n{'='*60}")
-        logger.info(f"Classifying error {i+1}/{len(test_errors)}")
+        logger.info(f"\n{'=' * 60}")
+        logger.info(f"Classifying error {i + 1}/{len(test_errors)}")
 
         # Perform classification
         results = pipeline.classify(error)

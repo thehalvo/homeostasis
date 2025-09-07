@@ -551,7 +551,7 @@ class FortranHealer:
             ]
 
             # Replace original line with IF block
-            lines[error_idx : error_idx + 1] = check_lines
+            lines[error_idx:error_idx + 1] = check_lines
             return "\n".join(lines)
 
         return None
@@ -580,7 +580,7 @@ class FortranHealer:
                 " " * indent + "END IF",
             ]
 
-            lines[error_idx : error_idx + 1] = check_lines
+            lines[error_idx:error_idx + 1] = check_lines
             return "\n".join(lines)
 
         return None

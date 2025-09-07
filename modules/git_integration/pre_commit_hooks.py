@@ -9,6 +9,7 @@ issues from entering the repository.
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -84,8 +85,9 @@ class PreCommitHooks:
             with open(hook_path, "w") as f:
                 f.write(hook_script)
 
-            # Make hook executable
-            os.chmod(hook_path, 0o755)
+            # Make hook executable with restrictive permissions
+            # Only owner can read, write, and execute
+            os.chmod(hook_path, 0o700)
 
             # Create pre-commit configuration
             self._create_hook_config()

@@ -686,7 +686,7 @@ class PrometheusAdapter(MonitoringAdapter):
             url = f"{pushgateway_url}/metrics/job/{job_name}"
 
             response = requests.post(
-                url, data=metric_line, headers={"Content-Type": "text/plain"}
+                url, data=metric_line, headers={"Content-Type": "text/plain"}, timeout=30
             )
             response.raise_for_status()
 
@@ -1497,12 +1497,20 @@ class NewRelicAdapter(MonitoringAdapter):
             if not nrql:
                 # Build basic query
                 metric_name = query.get("metric_name", "*")
+                # Validate metric name to prevent injection
+                if not metric_name.replace("_", "").replace(".", "").replace("-", "").isalnum() and metric_name != "*":
+                    raise ValueError(f"Invalid metric name: {metric_name}")
                 nrql = f"SELECT average({metric_name}) FROM Metric"
 
                 # Add WHERE clauses
                 where_clauses = []
                 for k, v in query.get("where", {}).items():
-                    where_clauses.append(f"{k} = '{v}'")
+                    # Validate field name
+                    if not k.replace("_", "").replace(".", "").isalnum():
+                        raise ValueError(f"Invalid field name: {k}")
+                    # Escape single quotes in values
+                    escaped_value = str(v).replace("'", "''")
+                    where_clauses.append(f"{k} = '{escaped_value}'")
 
                 if where_clauses:
                     nrql += f" WHERE {' AND '.join(where_clauses)}"
@@ -1515,7 +1523,7 @@ class NewRelicAdapter(MonitoringAdapter):
                 "query": f"""
                 {{
                     actor {{
-                        account(id: {self.account_id}) {{
+                        account(id: {int(self.account_id)}) {{
                             nrql(query: "{nrql}") {{
                                 results
                             }}
@@ -1565,7 +1573,7 @@ class NewRelicAdapter(MonitoringAdapter):
 
             headers = {"X-Api-Key": self.api_key, "Content-Type": "application/json"}
 
-            response = requests.get(url, params=params, headers=headers)
+            response = requests.get(url, params=params, headers=headers, timeout=30)
             response.raise_for_status()
 
             data = response.json()
@@ -1606,18 +1614,23 @@ class NewRelicAdapter(MonitoringAdapter):
         """Get events from New Relic"""
         try:
             # Query events using NRQL
+            # Validate timestamps
+            start_ts = int(start_time.timestamp() * 1000)
+            end_ts = int(end_time.timestamp() * 1000)
+            batch_size = int(self.batch_size)
+            
             nrql = f"""
             SELECT * FROM Transaction, SystemSample, ProcessSample 
-            WHERE timestamp >= {int(start_time.timestamp() * 1000)} 
-            AND timestamp <= {int(end_time.timestamp() * 1000)}
-            LIMIT {self.batch_size}
+            WHERE timestamp >= {start_ts} 
+            AND timestamp <= {end_ts}
+            LIMIT {batch_size}
             """
 
             gql_query = {
                 "query": f"""
                 {{
                     actor {{
-                        account(id: {self.account_id}) {{
+                        account(id: {int(self.account_id)}) {{
                             nrql(query: "{nrql}") {{
                                 results
                             }}
@@ -1674,7 +1687,7 @@ class NewRelicAdapter(MonitoringAdapter):
 
             headers = {"Api-Key": self.api_key, "Content-Type": "application/json"}
 
-            response = requests.post(url, json=data, headers=headers)
+            response = requests.post(url, json=data, headers=headers, timeout=30)
             response.raise_for_status()
 
             return True
@@ -1703,7 +1716,7 @@ class NewRelicAdapter(MonitoringAdapter):
 
             headers = {"X-Insert-Key": self.api_key, "Content-Type": "application/json"}
 
-            response = requests.post(url, json=data, headers=headers)
+            response = requests.post(url, json=data, headers=headers, timeout=30)
             response.raise_for_status()
 
             return True
@@ -1730,7 +1743,7 @@ class NewRelicAdapter(MonitoringAdapter):
 
             headers = {"X-Api-Key": self.api_key, "Content-Type": "application/json"}
 
-            response = requests.post(url, json=data, headers=headers)
+            response = requests.post(url, json=data, headers=headers, timeout=30)
             response.raise_for_status()
 
             return True

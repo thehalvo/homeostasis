@@ -13,7 +13,6 @@ import socket
 import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from pathlib import Path
 from typing import Any, Callable, Dict, List
 
 import requests
@@ -236,6 +235,7 @@ class AlertManager:
                 slack_config["webhook_url"],
                 json=payload,
                 headers={"Content-Type": "application/json"},
+                timeout=30,
             )
 
             if response.status_code != 200:
@@ -274,6 +274,7 @@ class AlertManager:
                 webhook_config["url"],
                 json=payload,
                 headers={"Content-Type": "application/json"},
+                timeout=30,
             )
 
             if response.status_code >= 400:

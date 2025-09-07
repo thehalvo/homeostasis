@@ -525,9 +525,9 @@ class PatchValidator:
         errors = []
         required_fields = ["file_path", "description"]
 
-        for field in required_fields:
-            if field not in patch:
-                errors.append(f"Missing required field: {field}")
+        for req_field in required_fields:
+            if req_field not in patch:
+                errors.append(f"Missing required field: {req_field}")
 
         # Check for either old_code/new_code or patches array
         if "old_code" not in patch and "patches" not in patch:

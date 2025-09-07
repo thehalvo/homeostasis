@@ -651,7 +651,7 @@ class PHPPatchGenerator:
         # Extract match groups from the rule match
         match_groups = analysis.get("match_groups", ())
         for i, group in enumerate(match_groups):
-            variables[f"MATCH_{i+1}"] = str(group)
+            variables[f"MATCH_{i + 1}"] = str(group)
 
         # Extract common variables based on error type
         if analysis.get("root_cause") == "php_undefined_variable" and match_groups:

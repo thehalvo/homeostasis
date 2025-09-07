@@ -667,7 +667,7 @@ class YAMLJSONPatchGenerator:
             Patch information or None if no patch can be generated
         """
         root_cause = analysis.get("root_cause", "")
-        file_type = analysis.get("file_type", "")
+        framework = analysis.get("framework", "generic")
 
         # Map root causes to patch strategies
         patch_strategies = {

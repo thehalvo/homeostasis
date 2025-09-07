@@ -424,6 +424,8 @@ class TestServiceChaos:
                     return result
                 except Exception as e:
                     self.metrics[bulkhead_name]["failed"] += 1
+                    # Log the error for debugging
+                    logger.error(f"Bulkhead {bulkhead_name} operation failed: {str(e)}")
                     raise
                 finally:
                     bulkhead["active"] -= 1
@@ -795,14 +797,17 @@ class CircuitBreaker:
             async with self._lock:
                 self.failure_count += 1
                 self._last_failure_time = datetime.now()
+                self._last_error = str(e)  # Store the error for monitoring
 
                 if self.state == "half-open":
                     self.state = "open"
                     self.success_count = 0
+                    logger.warning(f"Circuit breaker opened from half-open state: {str(e)}")
 
                 elif self.state == "closed":
                     if self.failure_count >= self.failure_threshold:
                         self.state = "open"
+                        logger.warning(f"Circuit breaker opened after {self.failure_count} failures: {str(e)}")
 
             raise
 

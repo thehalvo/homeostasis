@@ -7,12 +7,11 @@ traditional ML approaches.
 """
 
 import hashlib
-import json
 import logging
 import pickle
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Set
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -120,9 +119,6 @@ def secure_torch_load(filepath: str, map_location=None, expected_hash: Optional[
     
     # Fall back to restricted unpickler for checkpoints with non-tensor data
     with open(filepath, 'rb') as f:
-        # Use our restricted unpickler
-        unpickler = RestrictedUnpickler(f)
-        
         # Override the default unpickler used by torch.load
         original_unpickler = pickle.Unpickler
         try:
@@ -612,7 +608,7 @@ class ErrorPatternRecognizer:
             train_accuracies.append(accuracy)
 
             logger.info(
-                f"Epoch {epoch+1}/{epochs} - Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}"
+                f"Epoch {epoch + 1}/{epochs} - Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}"
             )
 
         return {

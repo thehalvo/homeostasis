@@ -235,7 +235,7 @@ class NotificationManager:
 
             # Add metadata to message if provided
             if metadata:
-                message += f"\n\nAdditional Information:\n"
+                message += "\n\nAdditional Information:\n"
                 for key, value in metadata.items():
                     message += f"- {key}: {value}\n"
 

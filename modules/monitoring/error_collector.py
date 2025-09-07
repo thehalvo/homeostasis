@@ -297,7 +297,7 @@ class ErrorCollector:
             # Check if we have a burst
             window_size = i - window_start + 1
             if window_size >= threshold:
-                burst_errors = errors[window_start : i + 1]
+                burst_errors = errors[window_start:i + 1]
                 bursts.append(
                     {
                         "start_time": burst_errors[0]["collected_at"],

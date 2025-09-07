@@ -18,6 +18,9 @@ import requests
 
 from modules.monitoring.logger import MonitoringLogger
 
+# Define project root
+project_root = Path(__file__).parent.parent.parent
+
 
 class PostDeploymentMonitor:
     """

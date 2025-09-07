@@ -9,6 +9,9 @@ from typing import Any, Dict, Optional, Tuple
 
 from modules.monitoring.logger import MonitoringLogger
 
+# Define project root
+project_root = Path(__file__).parent.parent.parent
+
 
 class TestRunner:
     """
@@ -47,9 +50,14 @@ class TestRunner:
 
         try:
             # Run the tests
+            import shlex
+            
+            # Parse command into list for safer execution
+            cmd_list = shlex.split(test_command)
+            
             result = subprocess.run(
-                test_command,
-                shell=True,
+                cmd_list,
+                shell=False,
                 cwd=working_dir,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,

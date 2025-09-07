@@ -5,8 +5,6 @@ Tests fundamental healing workflows including error detection, patch generation,
 testing, and deployment.
 """
 
-from pathlib import Path
-
 import pytest
 
 from tests.e2e.healing_scenarios.test_utilities import (

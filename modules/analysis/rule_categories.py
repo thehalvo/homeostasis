@@ -508,7 +508,7 @@ def detect_rule_conflicts(
 
     # Check for duplicate patterns
     for i, rule1 in enumerate(rules):
-        for j, rule2 in enumerate(rules[i + 1 :], i + 1):
+        for j, rule2 in enumerate(rules[i + 1:], i + 1):
             # Check for exact pattern matches
             if rule1.pattern == rule2.pattern:
                 conflicts.append(

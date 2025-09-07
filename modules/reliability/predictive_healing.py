@@ -350,7 +350,7 @@ class TimeSeriesPredictor(PredictiveModel):
 
             # Create sliding windows
             for i in range(len(data) - self.window_size):
-                window = data[i : i + self.window_size]
+                window = data[i:i + self.window_size]
                 target = data[i + self.window_size]
 
                 # Extract features from window

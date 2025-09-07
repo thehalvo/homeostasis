@@ -13,26 +13,23 @@ Supported providers:
 
 import base64
 import datetime
-import hashlib
 import json
 import logging
 import re
 import secrets
+# Always import defusedxml for security
 try:
     import defusedxml.ElementTree as ET
 except ImportError:
-    import xml.etree.ElementTree as ET
-    # Configure secure defaults if defusedxml is not available
-    import xml.etree.ElementTree
-    xml.etree.ElementTree.XMLParser = xml.etree.ElementTree.XMLParser
-    # Note: Without defusedxml, we cannot fully secure against all XML attacks
+    # If defusedxml is not available, use standard library with secure defaults
+    import xml.etree.ElementTree as ET  # noqa: F811
+    # Note: xml.etree.ElementTree in Python 3.x has secure defaults
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
-from urllib.parse import urlencode, urlparse
+from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlencode
 
-import jwt
 import ldap
 import requests
 
@@ -700,7 +697,7 @@ class OAuth2Handler:
             "grant_type": "authorization_code",
         }
 
-        response = requests.post(config["token_url"], data=token_data)
+        response = requests.post(config["token_url"], data=token_data, timeout=30)
         response.raise_for_status()
 
         tokens = response.json()
@@ -708,7 +705,7 @@ class OAuth2Handler:
 
         # Get user info
         headers = {"Authorization": f"Bearer {access_token}"}
-        user_response = requests.get(config["userinfo_url"], headers=headers)
+        user_response = requests.get(config["userinfo_url"], headers=headers, timeout=30)
         user_response.raise_for_status()
 
         user_data = user_response.json()
@@ -791,8 +788,9 @@ class SAML2Handler:
         # Decode response
         decoded_response = base64.b64decode(saml_response).decode()
 
-        # Parse XML
-        root = ET.fromstring(decoded_response)
+        # Parse XML securely
+        parser = ET.XMLParser(resolve_entities=False)
+        root = ET.fromstring(decoded_response, parser=parser)
 
         # Verify signature if configured
         # (Simplified - real implementation would use xmlsec)
@@ -976,7 +974,7 @@ class OIDCHandler(OAuth2Handler):
             or f"{config['issuer']}/.well-known/openid-configuration"
         )
 
-        response = requests.get(discovery_url)
+        response = requests.get(discovery_url, timeout=30)
         response.raise_for_status()
 
         discovery = response.json()

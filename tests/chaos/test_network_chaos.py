@@ -147,7 +147,9 @@ class TestNetworkChaos:
 
         # Send 100 packets
         for i in range(100):
-            result = reorderer.send_packet(f"data_{i}")
+            packet = f"data_{i}"
+            sent_packets.append(packet)
+            result = reorderer.send_packet(packet)
             if result:
                 received_packets.extend(result)
 
@@ -156,6 +158,11 @@ class TestNetworkChaos:
             result = reorderer.send_packet("flush")
             if result:
                 received_packets.extend(result)
+
+        # Verify all sent packets were received (excluding flush packets)
+        received_data = [p["data"] for p in received_packets if p["data"] != "flush"]
+        assert set(sent_packets) == set(received_data)
+        assert len(sent_packets) == len(received_data)
 
         # Analyze reordering
         out_of_order_count = 0

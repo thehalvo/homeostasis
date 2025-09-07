@@ -180,6 +180,7 @@ class BashExceptionHandler:
         message = error_data.get("message", "")
         exit_code = error_data.get("exit_code", 0)
         command = error_data.get("command", "")
+        shell_type = error_data.get("shell_type", error_data.get("shell", "bash"))
 
         # Analyze based on error patterns
         analysis = self._analyze_by_patterns(message, exit_code, command)

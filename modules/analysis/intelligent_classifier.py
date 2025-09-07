@@ -1154,7 +1154,7 @@ if __name__ == "__main__":
     classifier = IntelligentClassifier()
 
     for i, context in enumerate(test_contexts):
-        print(f"\nTest Case {i+1}:")
+        print(f"\nTest Case {i + 1}:")
         print(f"Error: {context.error_message}")
 
         # Test different strategies

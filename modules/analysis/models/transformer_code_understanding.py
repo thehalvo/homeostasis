@@ -35,6 +35,7 @@ SECURE_MODEL_REVISIONS = {
     "Salesforce/codet5-small": "e1a7fc1dc96e0cf0e0fafab7f8aae07c7de2b2c9",
 }
 
+
 def get_secure_revision(model_name: str) -> Optional[str]:
     """Get secure revision for a model name, returns None if not in whitelist."""
     return SECURE_MODEL_REVISIONS.get(model_name)
@@ -737,8 +738,8 @@ if __name__ == "__main__":
     test_errors = create_test_samples()
 
     for i, error in enumerate(test_errors):
-        logger.info(f"\n{'='*50}")
-        logger.info(f"Processing error {i+1}/{len(test_errors)}")
+        logger.info(f"\n{'=' * 50}")
+        logger.info(f"Processing error {i + 1}/{len(test_errors)}")
         logger.info(f"Error type: {error['exception_type']}")
         logger.info(f"Message: {error['message']}")
 

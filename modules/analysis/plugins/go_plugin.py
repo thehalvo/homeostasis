@@ -893,7 +893,7 @@ class GoPatchGenerator:
         # Extract match groups from the rule match
         match_groups = analysis.get("match_groups", ())
         for i, group in enumerate(match_groups):
-            variables[f"MATCH_{i+1}"] = str(group)
+            variables[f"MATCH_{i + 1}"] = str(group)
 
         return variables
 

@@ -316,6 +316,7 @@ class TestResourceChaos:
                 churn_samples.append(
                     {
                         "rss_mb": current_memory,
+                        "memory_delta_mb": current_memory - churn_start_memory,
                         "allocation_count": len(pressure.allocations),
                     }
                 )
@@ -450,6 +451,9 @@ class TestResourceChaos:
                         if random.random() < read_ratio:
                             # Read operation
                             data = f.read(io_size)
+                            # Verify read completed successfully
+                            if len(data) != io_size and f.tell() < file_size:
+                                raise IOError(f"Incomplete read: expected {io_size}, got {len(data)}")
                         else:
                             # Write operation
                             f.write(os.urandom(io_size))

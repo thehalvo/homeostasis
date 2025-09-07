@@ -697,7 +697,7 @@ Provide your response in the following JSON format:
                     "line_end": -1,
                     "original_code": "",
                     "new_code": code_block.strip(),
-                    "reason": f"Code block {i+1} from LLM response",
+                    "reason": f"Code block {i + 1} from LLM response",
                 }
             )
 
@@ -962,7 +962,7 @@ Provide your response in the following JSON format:
                 end_line = len(lines) - 1
 
             # Apply the change
-            lines[start_line : end_line + 1] = new_code
+            lines[start_line:end_line + 1] = new_code
 
         return "\n".join(lines)
 
@@ -1079,9 +1079,14 @@ Provide your response in the following JSON format:
         Returns:
             Completed process
         """
+        import shlex
+        
+        # Parse command into list for safer execution
+        cmd_list = shlex.split(command)
+        
         return subprocess.run(
-            command,
-            shell=True,
+            cmd_list,
+            shell=False,
             capture_output=True,
             text=True,
             cwd=working_dir,

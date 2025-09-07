@@ -4,7 +4,6 @@ This module provides interfaces for developers to review and annotate
 healing actions, creating high-quality training data for model improvement.
 """
 
-import hashlib
 import json
 import logging
 import time
@@ -14,7 +13,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional
 
 from ..analysis.models.data_collector import ErrorDataCollector
 from ..llm_integration.patch_generator import PatchData

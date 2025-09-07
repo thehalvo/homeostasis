@@ -625,7 +625,7 @@ class JavaErrorAdapter(LanguageAdapter):
                 if match:
                     error_type = match.group(1)
                     # Extract the actual message (if any) after the exception type
-                    remaining = message[match.end() :]
+                    remaining = message[match.end():]
                     if remaining.startswith(": "):
                         actual_message = remaining[2:].split("\n")[0].strip()
                         if actual_message:
@@ -2195,7 +2195,7 @@ class CSharpErrorAdapter(LanguageAdapter):
                             namespace = ""
                             class_name = lambda_parts[0]
                         # Include everything after the class as the method
-                        method = ".".join(parts[real_class_idx + 1 :])
+                        method = ".".join(parts[real_class_idx + 1:])
                     else:
                         # Fall back to standard parsing
                         if len(parts) >= 3:

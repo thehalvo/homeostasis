@@ -694,8 +694,8 @@ def demonstrate_zero_shot_classification():
     ]
 
     for i, error in enumerate(test_errors):
-        logger.info(f"\n{'='*60}")
-        logger.info(f"Classifying unseen error {i+1}/{len(test_errors)}")
+        logger.info(f"\n{'=' * 60}")
+        logger.info(f"Classifying unseen error {i + 1}/{len(test_errors)}")
         logger.info(f"Error: {error['exception_type']}: {error['message']}")
 
         # Classify
@@ -705,7 +705,7 @@ def demonstrate_zero_shot_classification():
         logger.info("\nClassification Results:")
         for j, pred in enumerate(results["predictions"]):
             logger.info(
-                f"{j+1}. {pred['class']} (score: {pred['score']:.3f}, "
+                f"{j + 1}. {pred['class']} (score: {pred['score']:.3f}, "
                 f"confidence: {pred['confidence']:.3f})"
             )
             logger.info(f"   Description: {pred['description']}")

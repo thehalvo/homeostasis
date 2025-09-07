@@ -147,7 +147,10 @@ class TestPreflightChecks:
 
         missing_tools = []
         for tool, description in required_tools.items():
-            if os.system(f"which {tool} > /dev/null 2>&1") != 0:
+            import subprocess
+            try:
+                subprocess.run(["which", tool], capture_output=True, check=True)
+            except subprocess.CalledProcessError:
                 missing_tools.append(f"{tool} ({description})")
 
         if missing_tools:
@@ -216,17 +219,24 @@ class TestPreflightChecks:
             )
 
         # Store baselines for chaos tests
-        with open("/tmp/chaos_baseline.txt", "w") as f:
+        import tempfile
+        baseline_fd, baseline_path = tempfile.mkstemp(suffix="_chaos_baseline.txt")
+        with os.fdopen(baseline_fd, "w") as f:
             f.write(f"cpu_baseline={avg_cpu}\n")
             f.write(f"memory_baseline={avg_memory}\n")
             f.write(f"timestamp={datetime.now().isoformat()}\n")
+        # Store baseline path for cleanup
+        self.baseline_path = baseline_path
 
     def test_permissions(self):
         """Check for required permissions"""
         # Check if running as root (required for some chaos operations)
         if os.geteuid() != 0:
             # Check sudo availability
-            if os.system("sudo -n true > /dev/null 2>&1") != 0:
+            import subprocess
+            try:
+                subprocess.run(["sudo", "-n", "true"], capture_output=True, check=True)
+            except subprocess.CalledProcessError:
                 pytest.skip("Not running as root and sudo not available")
 
         # Check CAP_NET_ADMIN capability (for network chaos)
@@ -266,16 +276,28 @@ class TestPreflightChecks:
         cleanup_performed = []
 
         # Clean up stress-ng processes
-        if os.system("pkill -f stress-ng > /dev/null 2>&1") == 0:
+        import subprocess
+        try:
+            subprocess.run(["pkill", "-f", "stress-ng"], capture_output=True, check=True)
             cleanup_performed.append("Killed lingering stress-ng processes")
+        except subprocess.CalledProcessError:
+            pass  # No stress-ng processes to kill
 
         # Clean up traffic control rules
         if os.geteuid() == 0:
-            if os.system("tc qdisc del dev lo root > /dev/null 2>&1") == 0:
+            import subprocess
+            try:
+                subprocess.run(["tc", "qdisc", "del", "dev", "lo", "root"], capture_output=True, check=True)
                 cleanup_performed.append("Removed traffic control rules")
+            except subprocess.CalledProcessError:
+                pass  # No traffic control rules to remove
 
         # Clean up temporary files
-        chaos_temp_files = ["/tmp/chaos_baseline.txt", "/tmp/chaos_runner.lock"]
+        import tempfile
+        chaos_temp_files = [
+            os.path.join(tempfile.gettempdir(), "chaos_baseline.txt"),
+            os.path.join(tempfile.gettempdir(), "chaos_runner.lock")
+        ]
         for file_path in chaos_temp_files:
             if os.path.exists(file_path):
                 os.remove(file_path)
@@ -286,7 +308,8 @@ class TestPreflightChecks:
 
     def test_concurrent_test_check(self):
         """Ensure no other chaos tests are running"""
-        lock_file = "/tmp/chaos_runner.lock"
+        import tempfile
+        lock_file = os.path.join(tempfile.gettempdir(), "chaos_runner.lock")
 
         if os.path.exists(lock_file):
             # Check if lock is stale

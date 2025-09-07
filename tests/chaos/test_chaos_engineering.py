@@ -215,8 +215,9 @@ class TestChaosEngineering:
 
             # Simulate for enough iterations to show significant growth
             for i in range(20):  # 20 iterations
-                # Simulate memory growth - use a higher rate for testing
-                simulated_memory_mb += 10  # 10MB per iteration = 200MB total
+                # Simulate memory growth based on configured leak rate
+                # Each iteration represents 0.1 seconds of simulation time
+                simulated_memory_mb += mb_per_second * 0.1
                 memory_samples.append(simulated_memory_mb)
 
                 # Simulate some allocation (small amount)
@@ -543,15 +544,18 @@ class TestChaosEngineering:
         async def monitor_degradation():
             """Monitor for performance degradation"""
             nonlocal degradation_detected, detection_time
-            baseline_latency = 50
+            baseline_latency = experiment.parameters["initial_latency_ms"]
             detection_threshold = baseline_latency * 3  # 3x baseline
 
             start_time = time.time()
             for i in range(20):  # Just 20 iterations instead of 3 minutes
-                # Simulate gradually increasing latency
-                elapsed = i * 0.1  # Simulate 0.1s per iteration
+                # Simulate gradually increasing latency based on experiment parameters
+                elapsed = time.time() - start_time
                 progress = i / 10  # Ramp over 10 iterations
-                current_latency = 50 + (950 * min(progress, 1.0))
+                current_latency = (
+                    experiment.parameters["initial_latency_ms"]
+                    + (experiment.parameters["final_latency_ms"] - experiment.parameters["initial_latency_ms"]) * min(progress, 1.0)
+                )
 
                 latency_samples.append(
                     {"timestamp": elapsed, "latency": current_latency}

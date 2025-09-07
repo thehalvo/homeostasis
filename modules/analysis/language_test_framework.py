@@ -424,8 +424,12 @@ class LanguageTestRunner:
 
                     # Convert from standard to target format
                     target_adapter = ErrorAdapterFactory.get_adapter(target_lang)
-                    # TODO: Implement cross-language conversion validation
-                    # target_error = target_adapter.from_standard_format(standard_error)
+                    target_error = target_adapter.from_standard_format(standard_error)
+                    
+                    # Validate cross-language conversion
+                    assert target_error is not None, f"Failed to convert to {target_lang}"
+                    assert "error_type" in target_error, "Missing error_type in converted error"
+                    assert "message" in target_error, "Missing message in converted error"
 
                     # Convert back to source format to verify roundtrip
                     source_adapter = ErrorAdapterFactory.get_adapter(source_lang)

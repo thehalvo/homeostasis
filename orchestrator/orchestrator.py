@@ -65,6 +65,9 @@ from modules.testing.container_manager import ContainerManager
 from modules.testing.parallel_runner import ParallelTestRunner
 from modules.testing.regression_generator import RegressionTestGenerator
 
+# Define project root
+project_root = Path(__file__).parent.parent
+
 
 class Orchestrator:
     """
@@ -466,7 +469,7 @@ class Orchestrator:
         # Log analysis results
         for i, result in enumerate(analysis_results):
             self.logger.info(
-                f"Analysis result {i+1}/{len(analysis_results)}: {result['root_cause']}",
+                f"Analysis result {i + 1}/{len(analysis_results)}: {result['root_cause']}",
                 confidence=result["confidence"],
             )
 

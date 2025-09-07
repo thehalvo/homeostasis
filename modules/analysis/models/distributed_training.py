@@ -109,8 +109,8 @@ class DistributedDataLoader:
         )
 
         # Get local data shard
-        self.local_data = data[self.start_idx : self.end_idx]
-        self.local_labels = labels[self.start_idx : self.end_idx]
+        self.local_data = data[self.start_idx:self.end_idx]
+        self.local_labels = labels[self.start_idx:self.end_idx]
         self.local_samples = len(self.local_data)
 
         logger.info(
