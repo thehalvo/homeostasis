@@ -963,13 +963,11 @@ def main() -> None:
                     rule_data = json.load(f)
             else:
                 # Ensure required fields are provided
-                if (
-                    not args.pattern
-                    or not args.type
-                    or not args.description
-                    or not args.root_cause
-                    or not args.suggestion
-                ):
+                if (not args.pattern or
+                        not args.type or
+                        not args.description or
+                        not args.root_cause or
+                        not args.suggestion):
                     print(
                         "Error: Missing required fields. Use --input or provide --pattern, --type, --description, --root-cause, and --suggestion."
                     )

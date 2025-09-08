@@ -279,11 +279,9 @@ class SvelteExceptionHandler:
         analysis = self.analyze_exception(error_data)
 
         # If we got a good match from rules, return it
-        if (
-            analysis.get("subcategory") == "reactivity"
-            and analysis.get("confidence") in ["high", "medium"]
-            and analysis.get("rule_id") != "svelte_generic_handler"
-        ):
+        if (analysis.get("subcategory") == "reactivity" and
+                analysis.get("confidence") in ["high", "medium"] and
+                analysis.get("rule_id") != "svelte_generic_handler"):
             return analysis
 
         # Fallback to hardcoded patterns for backward compatibility

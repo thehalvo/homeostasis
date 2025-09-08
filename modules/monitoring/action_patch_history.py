@@ -290,9 +290,9 @@ class ActionPatchHistoryLogger:
 
         # Generate and store diff if both contents are provided
         if (
-            self.include_file_diffs
-            and old_content is not None
-            and new_content is not None
+            self.include_file_diffs and
+            old_content is not None and
+            new_content is not None
         ):
             diff = list(
                 difflib.unified_diff(
@@ -829,9 +829,9 @@ class ActionPatchHistoryLogger:
 
             for key, value in updates.items():
                 if (
-                    append_lists
-                    and key in action_record
-                    and isinstance(action_record[key], list)
+                    append_lists and
+                    key in action_record and
+                    isinstance(action_record[key], list)
                 ):
                     if isinstance(value, list):
                         action_record[key].extend(value)

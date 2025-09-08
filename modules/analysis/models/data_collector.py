@@ -456,11 +456,9 @@ class ErrorDataCollector:
 
                     if error_id and label:
                         # Use the most recent label for each error
-                        if (
-                            error_id not in labels_by_error_id
-                            or label_entry.get("timestamp", "")
-                            > labels_by_error_id[error_id][1]
-                        ):
+                        if (error_id not in labels_by_error_id or
+                                label_entry.get("timestamp", "") >
+                                labels_by_error_id[error_id][1]):
                             labels_by_error_id[error_id] = (
                                 label,
                                 label_entry.get("timestamp", ""),

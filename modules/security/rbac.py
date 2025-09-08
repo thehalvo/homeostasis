@@ -6,7 +6,7 @@ and functionality in production environments.
 """
 
 import logging
-from typing import Dict, List, Optional, Set, Union
+from typing import Dict, List, Optional, Set
 
 logger = logging.getLogger(__name__)
 

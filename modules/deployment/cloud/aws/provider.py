@@ -114,11 +114,9 @@ class AWSProvider(BaseCloudProvider):
 
             # Try to parse JSON output if possible
             try:
-                if (
-                    stdout
-                    and stdout.strip().startswith("{")
-                    or stdout.strip().startswith("[")
-                ):
+                if (stdout and
+                        (stdout.strip().startswith("{") or
+                         stdout.strip().startswith("[")):
                     result = json.loads(stdout)
                 else:
                     result = {"output": stdout}
@@ -479,11 +477,9 @@ class AWSProvider(BaseCloudProvider):
 
             services = get_service_result.get("services", [])
 
-            if (
-                services
-                and services[0].get("status") != "INACTIVE"
-                and not get_service_result.get("simulated", False)
-            ):
+            if (services and
+                    services[0].get("status") != "INACTIVE" and
+                    not get_service_result.get("simulated", False)):
                 # Update existing service
                 logger.info(f"Updating existing ECS service: {service_identifier}")
                 update_service_result = self._run_aws_cli(

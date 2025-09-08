@@ -290,12 +290,10 @@ class EnhancedRule(Rule):
         }
 
         # Calculate weighted average
-        weighted_score = (
-            weights["severity"] * severity_score
-            + weights["confidence"] * confidence_score
-            + weights["criticality"] * criticality_score
-            + weights["reliability"] * reliability_score
-        )
+        weighted_score = (weights["severity"] * severity_score +
+                          weights["confidence"] * confidence_score +
+                          weights["criticality"] * criticality_score +
+                          weights["reliability"] * reliability_score)
 
         return weighted_score
 
@@ -532,10 +530,8 @@ def detect_rule_conflicts(
             pattern1_simplified = rule1.pattern.replace("\\", "").replace(".*", "")
             pattern2_simplified = rule2.pattern.replace("\\", "").replace(".*", "")
 
-            if (
-                pattern1_simplified in pattern2_simplified
-                or pattern2_simplified in pattern1_simplified
-            ):
+            if (pattern1_simplified in pattern2_simplified or
+                    pattern2_simplified in pattern1_simplified):
                 conflicts.append(
                     {
                         "rule1": rule1.id,

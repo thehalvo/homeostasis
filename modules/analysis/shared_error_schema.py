@@ -151,12 +151,10 @@ class SharedErrorSchema:
         # Check for Scala-specific patterns in error type
         if "error_type" in error_data:
             error_type = str(error_data["error_type"])
-            if (
-                error_type.startswith("scala.")
-                or error_type.startswith("akka.")
-                or error_type.startswith("play.api.")
-                or "MatchError" in error_type
-            ):
+            if (error_type.startswith("scala.") or
+                    error_type.startswith("akka.") or
+                    error_type.startswith("play.api.") or
+                    "MatchError" in error_type):
                 return "scala"
 
         return "unknown"

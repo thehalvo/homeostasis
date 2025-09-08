@@ -1183,9 +1183,8 @@ class CompilerIntegration:
             ):
                 diagnostics.update(self._analyze_typescript_code(source_code))
             elif language == LanguageType.DART and (
-                self.available_compilers.get("dart")
-                or self.available_compilers.get("flutter")
-            ):
+                    self.available_compilers.get("dart") or
+                    self.available_compilers.get("flutter")):
                 diagnostics.update(self._analyze_dart_code(source_code))
             elif language == LanguageType.PYTHON:
                 diagnostics.update(self._analyze_python_code(source_code))

@@ -60,9 +60,9 @@ def parse_diff(diff_content: str) -> Dict[str, Any]:
 
     # Check if we have a valid diff
     if (
-        len(lines) < 2
-        or not lines[0].startswith("--- ")
-        or not lines[1].startswith("+++ ")
+        len(lines) < 2 or
+        not lines[0].startswith("--- ") or
+        not lines[1].startswith("+++ ")
     ):
         return result
 

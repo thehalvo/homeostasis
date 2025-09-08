@@ -82,8 +82,8 @@ class ComponentMetrics:
                 self.request_rate,
                 self.error_rate,
                 self.response_time_p95,
-            ]
-            + list(self.custom_metrics.values())
+            ] +
+            list(self.custom_metrics.values())
         )
 
 
@@ -359,9 +359,9 @@ class TimeSeriesPredictor(PredictiveModel):
 
                 # Target is whether failure occurred
                 failure_occurred = any(
-                    event.get("component_id") == component_id
-                    and event.get("timestamp") >= target.timestamp
-                    and event.get("timestamp") < target.timestamp + timedelta(hours=1)
+                    event.get("component_id") == component_id and
+                    event.get("timestamp") >= target.timestamp and
+                    event.get("timestamp") < target.timestamp + timedelta(hours=1)
                     for event in failure_events
                 )
                 y.append(1.0 if failure_occurred else 0.0)
@@ -830,6 +830,6 @@ def analyze_critical_component(
         "recommendations": [r.to_dict() for r in recommendations],
         "auto_healing_available": len(
             [r for r in recommendations if r.risk_level == "low"]
-        )
-        > 0,
+        ) >
+        0,
     }

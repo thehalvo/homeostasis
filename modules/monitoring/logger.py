@@ -259,8 +259,8 @@ class MonitoringLogger:
                 for key, value in frame.f_globals.items():
                     # Skip large objects, modules, functions, and potentially sensitive data
                     if (
-                        key.startswith("__")
-                        or any(
+                        key.startswith("__") or
+                        any(
                             sensitive in key.lower()
                             for sensitive in [
                                 "password",
@@ -269,9 +269,9 @@ class MonitoringLogger:
                                 "key",
                                 "credential",
                             ]
-                        )
-                        or callable(value)  # Skip functions
-                        or "module" in str(type(value)).lower()
+                        ) or
+                        callable(value) or  # Skip functions
+                        "module" in str(type(value)).lower()
                     ):  # Skip modules
                         continue
 

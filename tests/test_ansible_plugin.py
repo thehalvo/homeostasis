@@ -163,8 +163,8 @@ class TestAnsiblePatchGenerator:
         assert syntax_patch is not None
         assert syntax_patch["type"] == "suggestion"
         assert (
-            "yaml" in syntax_patch["description"].lower()
-            or "syntax" in syntax_patch["description"].lower()
+            "yaml" in syntax_patch["description"].lower() or
+            "syntax" in syntax_patch["description"].lower()
         )
 
     def test_generate_module_fix(self):
@@ -223,8 +223,8 @@ class TestAnsiblePatchGenerator:
         assert template_patch is not None
         assert template_patch["type"] == "suggestion"
         assert (
-            "template" in template_patch["description"].lower()
-            or "jinja" in template_patch["description"].lower()
+            "template" in template_patch["description"].lower() or
+            "jinja" in template_patch["description"].lower()
         )
 
     def test_generate_role_fix(self):

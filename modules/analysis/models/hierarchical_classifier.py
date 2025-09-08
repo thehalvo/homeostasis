@@ -491,10 +491,8 @@ class HierarchicalClassificationPipeline:
                 parts.append(f"Traceback: {tb}")
 
         # Add code context
-        if (
-            "error_details" in error_data
-            and "detailed_frames" in error_data["error_details"]
-        ):
+        if ("error_details" in error_data and
+                "detailed_frames" in error_data["error_details"]):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
                 last_frame = frames[-1]

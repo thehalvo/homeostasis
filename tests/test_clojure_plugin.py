@@ -198,9 +198,9 @@ class TestClojurePlugin(unittest.TestCase):
         # Check that suggestions mention arity-related fixes or function arguments
         suggestions_text = " ".join(analysis["fix_suggestions"])
         self.assertTrue(
-            "arity" in suggestions_text.lower()
-            or "argument" in suggestions_text.lower()
-            or "function" in suggestions_text.lower()
+            "arity" in suggestions_text.lower() or
+            "argument" in suggestions_text.lower() or
+            "function" in suggestions_text.lower()
         )
 
     def test_class_cast_analysis(self):

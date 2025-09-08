@@ -313,8 +313,8 @@ class PromptTemplateManager:
             if framework and template.metadata.framework != framework:
                 continue
             if (
-                complexity_level
-                and template.metadata.complexity_level != complexity_level
+                complexity_level and
+                template.metadata.complexity_level != complexity_level
             ):
                 continue
             if tag and tag not in template.metadata.tags:

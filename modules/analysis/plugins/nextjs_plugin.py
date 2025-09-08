@@ -255,11 +255,9 @@ class NextjsExceptionHandler:
         message = error_data.get("message", "").lower()
 
         # Basic categorization based on error patterns
-        if (
-            "getstaticprops" in message
-            or "getserversideprops" in message
-            or "getstaticpaths" in message
-        ):
+        if ("getstaticprops" in message or
+                "getserversideprops" in message or
+                "getstaticpaths" in message):
             category = "data_fetching"
             suggestion = "Check Next.js data fetching methods and their return values"
         elif "api" in message or "/api/" in message:
@@ -1318,11 +1316,9 @@ class NextjsLanguagePlugin(LanguagePlugin):
         ]
 
         # Check if file path contains API route patterns
-        if (
-            "/api/" in file_path
-            or "/pages/api/" in file_path
-            or "/app/api/" in file_path
-        ):
+        if ("/api/" in file_path or
+                "/pages/api/" in file_path or
+                "/app/api/" in file_path):
             return True
 
         return any(

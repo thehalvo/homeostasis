@@ -241,12 +241,12 @@ class RegionHealthMonitor:
             return {}
 
         return {
-            "average_availability": sum(h.availability for h in recent_health)
-            / len(recent_health),
-            "average_latency": sum(h.latency_ms for h in recent_health)
-            / len(recent_health),
-            "average_error_rate": sum(h.error_rate for h in recent_health)
-            / len(recent_health),
+            "average_availability": sum(h.availability for h in recent_health) /
+                                   len(recent_health),
+            "average_latency": sum(h.latency_ms for h in recent_health) /
+                               len(recent_health),
+            "average_error_rate": sum(h.error_rate for h in recent_health) /
+                                 len(recent_health),
             "status_counts": self._count_statuses(recent_health),
             "trend": self._calculate_trend(recent_health),
         }
@@ -592,10 +592,8 @@ class MultiRegionResilienceStrategy:
             if health.status != RegionStatus.HEALTHY:
                 continue
 
-            if (
-                policy.geo_restrictions
-                and health.region_id not in policy.geo_restrictions
-            ):
+            if (policy.geo_restrictions and
+                    health.region_id not in policy.geo_restrictions):
                 continue
 
             # Score based on availability and capacity

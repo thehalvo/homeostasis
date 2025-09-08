@@ -6,7 +6,7 @@ Provides validators for ensuring security standards are met for various inputs.
 
 import ipaddress
 import re
-from typing import Dict, Optional, Pattern, Tuple, Union
+from typing import Dict, Optional, Tuple
 
 # Regular expressions for validation
 EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")

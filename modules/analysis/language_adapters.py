@@ -1087,11 +1087,9 @@ class GoErrorAdapter(LanguageAdapter):
         # Add additional Go-specific data
         go_specific = {}
         for key, value in error_data.items():
-            if (
-                key not in standard_error
-                and key not in ["stack_trace", "request", "context"]
-                and not key.startswith("_")
-            ):
+            if (key not in standard_error and
+                    key not in ["stack_trace", "request", "context"] and
+                    not key.startswith("_")):
                 go_specific[key] = value
 
         if go_specific:
@@ -2361,47 +2359,30 @@ class ErrorAdapterFactory:
             return "ruby"
         elif "rust_version" in error_data or "is_panic" in error_data:
             return "rust"
-        elif (
-            "dotnet_version" in error_data
-            or "exception_type" in error_data
-            and error_data["exception_type"].startswith("System.")
-        ):
+        elif ("dotnet_version" in error_data or
+              ("exception_type" in error_data and
+               error_data["exception_type"].startswith("System."))):
             return "csharp"
-        elif (
-            "php_version" in error_data
-            or "backtrace" in error_data
-            and any(
-                isinstance(frame, dict)
-                and "file" in frame
-                and ".php" in frame.get("file", "")
-                for frame in error_data["backtrace"][:10]
-                if isinstance(frame, dict)
-            )
-        ):
+        elif ("php_version" in error_data or
+              ("backtrace" in error_data and
+               any(isinstance(frame, dict) and
+                   "file" in frame and
+                   ".php" in frame.get("file", "")
+                   for frame in error_data["backtrace"][:10]
+                   if isinstance(frame, dict)))):
             return "php"
-        elif (
-            "kotlin_version" in error_data
-            or "android" in error_data
-            or (
-                "error_type" in error_data
-                and "KotlinNullPointerException" in error_data["error_type"]
-            )
-            or (
-                "stack_trace" in error_data
-                and isinstance(error_data["stack_trace"], (str, list))
-                and any(
-                    (
-                        ".kt:" in str(frame)
-                        or "kotlinx.coroutines" in str(frame)
-                        or "kotlin." in str(frame)
-                    )
-                    for frame in (
-                        error_data["stack_trace"]
-                        if isinstance(error_data["stack_trace"], list)
-                        else [error_data["stack_trace"]]
-                    )
-                )
-            )
+        elif ("kotlin_version" in error_data or
+              "android" in error_data or
+              ("error_type" in error_data and
+               "KotlinNullPointerException" in error_data["error_type"]) or
+              ("stack_trace" in error_data and
+                isinstance(error_data["stack_trace"], (str, list)) and
+                any((".kt:" in str(frame) or
+                     "kotlinx.coroutines" in str(frame) or
+                     "kotlin." in str(frame))
+                    for frame in (error_data["stack_trace"]
+                                  if isinstance(error_data["stack_trace"], list)
+                                  else [error_data["stack_trace"]])))
         ):
             return "kotlin"
 
@@ -2442,25 +2423,20 @@ class ErrorAdapterFactory:
                 if isinstance(line, str)
             ):
                 return "ruby"
-            elif (
-                isinstance(error_data["backtrace"], str)
-                and ".rb:" in error_data["backtrace"]
-            ):
+            elif (isinstance(error_data["backtrace"], str) and
+                  ".rb:" in error_data["backtrace"]):
                 return "ruby"
             # Check for Rust backtrace format
             elif isinstance(error_data["backtrace"], str) and (
-                ".rs:" in error_data["backtrace"]
-                or any(
-                    pattern in error_data["backtrace"]
-                    for pattern in ["panicked at", "thread", "rust_panic"]
-                )
-            ):
+                    ".rs:" in error_data["backtrace"] or
+                    any(pattern in error_data["backtrace"]
+                        for pattern in ["panicked at", "thread", "rust_panic"])):
                 return "rust"
             elif isinstance(error_data["backtrace"], list) and any(
-                isinstance(line, str)
-                and (re.search(r"\.rs:\d+", line) or "::{{closure}}" in line)
-                for line in error_data["backtrace"][:10]
-                if isinstance(line, str)
+                    isinstance(line, str) and
+                    (re.search(r"\.rs:\d+", line) or "::{{closure}}" in line)
+                    for line in error_data["backtrace"][:10]
+                    if isinstance(line, str)
             ):
                 return "rust"
             elif isinstance(error_data["backtrace"], list) and any(
@@ -2713,11 +2689,9 @@ class PHPErrorAdapter(LanguageAdapter):
                     php_error["trace"] = self._convert_frames_to_php_trace(stack_trace)
 
                     # Extract file and line from the first frame
-                    if (
-                        stack_trace
-                        and "file" in stack_trace[0]
-                        and "line" in stack_trace[0]
-                    ):
+                    if (stack_trace and
+                            "file" in stack_trace[0] and
+                            "line" in stack_trace[0]):
                         php_error["file"] = stack_trace[0]["file"]
                         php_error["line"] = stack_trace[0]["line"]
 
@@ -3054,11 +3028,9 @@ class ScalaErrorAdapter(LanguageAdapter):
         # Add additional Scala-specific data
         scala_specific = {}
         for key, value in error_data.items():
-            if (
-                key not in standard_error
-                and key not in ["stack_trace", "request", "context"]
-                and not key.startswith("_")
-            ):
+            if (key not in standard_error and
+                    key not in ["stack_trace", "request", "context"] and
+                    not key.startswith("_")):
                 scala_specific[key] = value
 
         if scala_specific:
@@ -3354,11 +3326,9 @@ class ElixirErrorAdapter(LanguageAdapter):
         # Add additional Elixir-specific data
         elixir_specific = {}
         for key, value in error_data.items():
-            if (
-                key not in standard_error
-                and key not in ["stacktrace", "request", "context"]
-                and not key.startswith("_")
-            ):
+            if (key not in standard_error and
+                    key not in ["stacktrace", "request", "context"] and
+                    not key.startswith("_")):
                 elixir_specific[key] = value
 
         if elixir_specific:
@@ -3690,11 +3660,9 @@ class ClojureErrorAdapter(LanguageAdapter):
         # Add additional Clojure-specific data
         clojure_specific = {}
         for key, value in error_data.items():
-            if (
-                key not in standard_error
-                and key not in ["stack_trace", "request", "context"]
-                and not key.startswith("_")
-            ):
+            if (key not in standard_error and
+                    key not in ["stack_trace", "request", "context"] and
+                    not key.startswith("_")):
                 clojure_specific[key] = value
 
         if clojure_specific:

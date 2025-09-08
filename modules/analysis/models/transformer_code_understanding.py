@@ -298,10 +298,8 @@ class TransformerCodeAnalyzer:
     def _extract_code_from_error(self, error_data: Dict[str, Any]) -> str:
         """Extract code snippet from error data."""
         # Try to get code from detailed frames
-        if (
-            "error_details" in error_data
-            and "detailed_frames" in error_data["error_details"]
-        ):
+        if ("error_details" in error_data and
+                "detailed_frames" in error_data["error_details"]):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
                 # Get code from the last frame
@@ -318,11 +316,9 @@ class TransformerCodeAnalyzer:
                 # Look for code lines in traceback
                 code_lines = []
                 for line in tb:
-                    if (
-                        line.strip()
-                        and not line.startswith("Traceback")
-                        and not line.startswith("File")
-                    ):
+                    if (line.strip() and
+                            not line.startswith("Traceback") and
+                            not line.startswith("File")):
                         code_lines.append(line.strip())
                 if code_lines:
                     return "\n".join(code_lines)
@@ -331,10 +327,8 @@ class TransformerCodeAnalyzer:
 
     def _get_error_line(self, error_data: Dict[str, Any]) -> Optional[int]:
         """Extract error line number from error data."""
-        if (
-            "error_details" in error_data
-            and "detailed_frames" in error_data["error_details"]
-        ):
+        if ("error_details" in error_data and
+                "detailed_frames" in error_data["error_details"]):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
                 return frames[-1].get("line")
@@ -528,10 +522,8 @@ class CodeT5Analyzer:
 
     def _extract_relevant_code(self, error_data: Dict[str, Any]) -> str:
         """Extract relevant code from error data."""
-        if (
-            "error_details" in error_data
-            and "detailed_frames" in error_data["error_details"]
-        ):
+        if ("error_details" in error_data and
+                "detailed_frames" in error_data["error_details"]):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
                 last_frame = frames[-1]

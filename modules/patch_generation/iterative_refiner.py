@@ -735,9 +735,9 @@ OUTPUT FORMAT:
     def _is_validation_successful(self, validation_results: Dict[str, Any]) -> bool:
         """Check if validation is successful."""
         return (
-            validation_results.get("tests_passed", False)
-            and validation_results.get("no_errors", False)
-            and validation_results.get("semantic_preserved", True)
+            validation_results.get("tests_passed", False) and
+            validation_results.get("no_errors", False) and
+            validation_results.get("semantic_preserved", True)
         )
 
     def _has_converged(self, improvement_metrics: Dict[str, float]) -> bool:
@@ -869,15 +869,15 @@ OUTPUT FORMAT:
         if overall_improvement > 0.5:
             self.strategy_weights[strategy] = min(
                 1.0,
-                self.strategy_weights[strategy]
-                + self.learning_rate * overall_improvement,
+                self.strategy_weights[strategy] +
+                self.learning_rate * overall_improvement,
             )
         elif overall_improvement < 0:
             # Decrease weight for unsuccessful strategies
             self.strategy_weights[strategy] = max(
                 0.1,
-                self.strategy_weights[strategy]
-                - self.learning_rate * abs(overall_improvement),
+                self.strategy_weights[strategy] -
+                self.learning_rate * abs(overall_improvement),
             )
 
         # Normalize weights

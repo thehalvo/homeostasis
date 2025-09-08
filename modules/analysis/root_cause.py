@@ -269,8 +269,8 @@ class RootCauseAnalyzer:
             type=pattern["type"],
             description=pattern["description"],
             confidence=0.8,
-            evidence=[error_data.get("message", "")]
-            + error_data.get("stack_trace", [])[:3],
+            evidence=[error_data.get("message", "")] +
+                     error_data.get("stack_trace", [])[:3],
             fix_suggestions=pattern.get("suggestions", []),
         )
 
@@ -479,13 +479,10 @@ class RootCauseAnalyzer:
             True if similar
         """
         # Simple similarity check
-        return (
-            error1.get("error_type") == error2.get("error_type")
-            and self._similarity_score(
-                error1.get("message", ""), error2.get("message", "")
-            )
-            > 0.8
-        )
+        return (error1.get("error_type") == error2.get("error_type") and
+                self._similarity_score(
+                    error1.get("message", ""), error2.get("message", "")
+                ) > 0.8)
 
     def _similarity_score(self, text1: str, text2: str) -> float:
         """

@@ -61,10 +61,10 @@ class BackendTestingManager:
         # Set up test directory
         if test_dir is None:
             test_dir = (
-                Path(os.path.dirname(os.path.abspath(__file__)))
-                / ".."
-                / "tests"
-                / "test_cases"
+                Path(os.path.dirname(os.path.abspath(__file__))) /
+                ".." /
+                "tests" /
+                "test_cases"
             )
         self.test_dir = Path(test_dir)
         self.test_dir.mkdir(exist_ok=True, parents=True)
@@ -546,20 +546,20 @@ class BackendTestingManager:
 
         metrics["cross_language"]["conversions"]["success_rate"] = (
             (
-                metrics["cross_language"]["conversions"]["successful"]
-                / metrics["cross_language"]["conversions"]["total"]
-            )
-            * 100
+                metrics["cross_language"]["conversions"]["successful"] /
+                metrics["cross_language"]["conversions"]["total"]
+            ) *
+            100
             if metrics["cross_language"]["conversions"]["total"] > 0
             else 0
         )
 
         metrics["cross_language"]["fixes"]["success_rate"] = (
             (
-                metrics["cross_language"]["fixes"]["successful"]
-                / metrics["cross_language"]["fixes"]["total"]
-            )
-            * 100
+                metrics["cross_language"]["fixes"]["successful"] /
+                metrics["cross_language"]["fixes"]["total"]
+            ) *
+            100
             if metrics["cross_language"]["fixes"]["total"] > 0
             else 0
         )

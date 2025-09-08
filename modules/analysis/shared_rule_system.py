@@ -421,7 +421,7 @@ class SharedRuleRegistry:
             # Replace placeholders in suggestion with match groups
             if match_groups:
                 for i, group in enumerate(match_groups):
-                    placeholder = f"${{{i+1}}}"
+                    placeholder = f"${{{i + 1}}}"
                     suggestion = suggestion.replace(placeholder, str(group))
 
             results.append(

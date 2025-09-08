@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from ..security.security_config import SecurityConfig, get_security_config
 
@@ -533,8 +533,8 @@ class RollbackManager:
         validation_results = {
             "files_restored": len(rollback_op.files_restored),
             "files_expected": len(snapshot.file_paths),
-            "all_files_restored": len(rollback_op.files_restored)
-            == len(snapshot.file_paths),
+            "all_files_restored": len(rollback_op.files_restored) ==
+            len(snapshot.file_paths),
             "validation_timestamp": datetime.now().isoformat(),
         }
 

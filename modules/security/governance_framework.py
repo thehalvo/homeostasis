@@ -616,15 +616,15 @@ class EnterpriseGovernanceFramework:
             # Simplified check - in practice would be more sophisticated
             if framework == ComplianceFramework.HIPAA:
                 if (
-                    "patient" in request.patch_content.lower()
-                    or "medical" in request.patch_content.lower()
+                    "patient" in request.patch_content.lower() or
+                    "medical" in request.patch_content.lower()
                 ):
                     compliance_issues.append("HIPAA: Potential PHI exposure in patch")
 
             elif framework == ComplianceFramework.PCI_DSS:
                 if (
-                    "card" in request.patch_content.lower()
-                    or "payment" in request.patch_content.lower()
+                    "card" in request.patch_content.lower() or
+                    "payment" in request.patch_content.lower()
                 ):
                     compliance_issues.append(
                         "PCI-DSS: Potential cardholder data handling"
@@ -678,8 +678,8 @@ class EnterpriseGovernanceFramework:
         """Determine if approval is required."""
         # Always require approval for production if configured
         if (
-            self.config.require_approval_for_production
-            and request.environment == "production"
+            self.config.require_approval_for_production and
+            request.environment == "production"
         ):
             return True
 
@@ -714,8 +714,8 @@ class EnterpriseGovernanceFramework:
 
         # Select workflow template based on risk and environment
         if (
-            request.environment == "production"
-            and request.risk_assessment.get("level") == "high"
+            request.environment == "production" and
+            request.risk_assessment.get("level") == "high"
         ):
             template_name = "Security Patch Workflow"
         elif request.environment == "production":

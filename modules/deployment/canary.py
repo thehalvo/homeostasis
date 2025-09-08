@@ -283,8 +283,8 @@ class CanaryDeployment:
                 details={
                     "service_name": self.service_name,
                     "fix_id": self.fix_id,
-                    "previous_percentage": self.current_percentage
-                    - self.percentage_increment,
+                    "previous_percentage": self.current_percentage -
+                                           self.percentage_increment,
                     "current_percentage": self.current_percentage,
                     "metrics": {
                         "error_rate": self.current_metrics.error_rate,

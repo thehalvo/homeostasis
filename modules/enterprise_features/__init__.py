@@ -394,8 +394,8 @@ class EnterpriseFeatures:
                     "active_monitors": active_monitors,
                 }
                 if (
-                    active_monitors == 0
-                    and len(self.enhanced_compliance.monitoring_rules) > 0
+                    active_monitors == 0 and
+                    len(self.enhanced_compliance.monitoring_rules) > 0
                 ):
                     health["issues"].append(
                         "Compliance monitoring rules defined but not running"
@@ -429,8 +429,8 @@ class EnterpriseFeatures:
                 # Check region health
                 dashboard = self.enhanced_multi_region.get_failover_dashboard()
                 unhealthy_regions = (
-                    dashboard["total_regions_count"]
-                    - dashboard["healthy_regions_count"]
+                    dashboard["total_regions_count"] -
+                    dashboard["healthy_regions_count"]
                 )
                 health["components"]["enhanced_multi_region"] = {
                     "status": "degraded" if unhealthy_regions > 0 else "healthy",

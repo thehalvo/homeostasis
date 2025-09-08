@@ -98,9 +98,9 @@ class ChaosTestRunner:
 
         for key, value in user.items():
             if (
-                key in result
-                and isinstance(result[key], dict)
-                and isinstance(value, dict)
+                key in result and
+                isinstance(result[key], dict) and
+                isinstance(value, dict)
             ):
                 result[key] = self._merge_configs(result[key], value)
             else:

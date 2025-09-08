@@ -43,12 +43,10 @@ class RuleMatch:
             "pattern_quality": 0.15,
         }
 
-        score = (
-            weights["context"] * self.context_score
-            + weights["specificity"] * self.specificity_score
-            + weights["strength"] * self.strength_score
-            + weights["pattern_quality"] * self.pattern_quality_score
-        )
+        score = (weights["context"] * self.context_score +
+                 weights["specificity"] * self.specificity_score +
+                 weights["strength"] * self.strength_score +
+                 weights["pattern_quality"] * self.pattern_quality_score)
 
         return score
 
@@ -123,10 +121,8 @@ class ConfidenceScorer:
         score = 0.7  # Default medium-high score
 
         # If there's a type match between rule and error
-        if (
-            "exception_type" in error_context
-            and error_context["exception_type"] == rule.type
-        ):
+        if ("exception_type" in error_context and
+                error_context["exception_type"] == rule.type):
             score += 0.2
 
         # If there's a frame/line context that can help verify

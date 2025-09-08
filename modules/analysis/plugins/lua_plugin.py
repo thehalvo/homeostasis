@@ -213,10 +213,8 @@ class LuaExceptionHandler:
                 analysis.update(concept_analysis)
 
         # Find matching rules only if we haven't already categorized well
-        if (
-            analysis.get("confidence") == "low"
-            or analysis.get("subcategory") == "unknown"
-        ):
+        if (analysis.get("confidence") == "low" or
+                analysis.get("subcategory") == "unknown"):
             matches = self._find_matching_rules(message, error_data)
 
             if matches:

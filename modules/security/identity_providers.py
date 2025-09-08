@@ -171,8 +171,8 @@ class IdentityProviderIntegration:
             name=name,
             type=type,
             config=config,
-            attribute_mapping=attribute_mapping
-            or self._get_default_attribute_mapping(type),
+            attribute_mapping=attribute_mapping or
+            self._get_default_attribute_mapping(type),
         )
 
         # Validate configuration
@@ -970,8 +970,8 @@ class OIDCHandler(OAuth2Handler):
     def _discover_endpoints(self, config: Dict):
         """Discover OIDC endpoints from discovery URL."""
         discovery_url = (
-            config.get("discovery_url")
-            or f"{config['issuer']}/.well-known/openid-configuration"
+            config.get("discovery_url") or
+            f"{config['issuer']}/.well-known/openid-configuration"
         )
 
         response = requests.get(discovery_url, timeout=30)

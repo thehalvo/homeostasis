@@ -608,7 +608,7 @@ if __name__ == "__main__":
 
     # Print some rule information
     for i, rule in enumerate(loaded_python_rules.rules[:3]):
-        print(f"\nRule {i+1}:")
+        print(f"\nRule {i + 1}:")
         print(f"  ID: {rule.id}")
         print(f"  Type: {rule.type}")
         print(f"  Pattern: {rule.pattern}")

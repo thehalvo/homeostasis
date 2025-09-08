@@ -225,8 +225,8 @@ class TestPolyglotApplicationErrors:
 
         assert "datetime" in analysis["root_cause"]
         assert (
-            "ISO format" in analysis["producer_fix"]["suggestion"]
-            or "timestamp" in analysis["producer_fix"]["suggestion"]
+            "ISO format" in analysis["producer_fix"]["suggestion"] or
+            "timestamp" in analysis["producer_fix"]["suggestion"]
         )
 
     def test_shared_memory_concurrency_error(self):
@@ -261,8 +261,8 @@ class TestPolyglotApplicationErrors:
 
         assert "synchronization" in analysis["root_cause"]
         assert (
-            "mutex" in analysis["fixes"]["cpp"]["suggestion"]
-            or "semaphore" in analysis["fixes"]["cpp"]["suggestion"]
+            "mutex" in analysis["fixes"]["cpp"]["suggestion"] or
+            "semaphore" in analysis["fixes"]["cpp"]["suggestion"]
         )
 
 
@@ -294,8 +294,8 @@ class TestLanguageInteroperability:
 
         assert "type conversion" in analysis["root_cause"]
         assert (
-            "encode" in analysis["caller_fix"]["suggestion"]
-            or "bytes" in analysis["caller_fix"]["suggestion"]
+            "encode" in analysis["caller_fix"]["suggestion"] or
+            "bytes" in analysis["caller_fix"]["suggestion"]
         )
 
     def test_grpc_schema_mismatch(self):
@@ -478,8 +478,8 @@ class TestCrossLanguagePerformance:
 
         assert analysis["bottleneck"] == "java_deserialize"
         assert (
-            "binary format" in analysis["suggestion"]
-            or "protobuf" in analysis["suggestion"]
+            "binary format" in analysis["suggestion"] or
+            "protobuf" in analysis["suggestion"]
         )
 
     def test_memory_leak_across_ffi(self):

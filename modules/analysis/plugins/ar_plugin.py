@@ -236,9 +236,9 @@ class ARPlugin(LanguagePlugin):
 
         # Check for performance issues
         if re.search(r"Update\s*\(\s*\)", code) and (
-            "ARRaycast" in code
-            or "Raycast" in code
-            or "planeManager.trackables" in code
+            "ARRaycast" in code or
+            "Raycast" in code or
+            "planeManager.trackables" in code
         ):
             issues.append(
                 {
@@ -362,8 +362,8 @@ class ARPlugin(LanguagePlugin):
                 r"smooth.*locomotion|continuous.*movement|UpdateMovement.*position.*\+=",
                 code,
                 re.IGNORECASE,
-            )
-            or ("transform.position +=" in code and "moveDirection" in code)
+            ) or
+            ("transform.position +=" in code and "moveDirection" in code)
         ) and not re.search(
             r"comfort|vignette|tunnel.*vision", code_without_comments, re.IGNORECASE
         ):

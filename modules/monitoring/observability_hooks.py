@@ -621,8 +621,8 @@ class ObservabilityHooks:
     ):
         """Record successful operation metrics"""
         if (
-            self.healing_duration_histogram
-            and operation_type == OperationType.HEALING_CYCLE
+            self.healing_duration_histogram and
+            operation_type == OperationType.HEALING_CYCLE
         ):
             self.healing_duration_histogram.record(
                 duration_ms, attributes={"operation": operation_name}

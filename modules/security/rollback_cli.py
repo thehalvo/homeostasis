@@ -8,12 +8,9 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import List, Optional
 
 from .rollback_manager import (
-    RollbackManager,
     RollbackTrigger,
-    SecurityMonitoringConfig,
     create_rollback_manager,
 )
 

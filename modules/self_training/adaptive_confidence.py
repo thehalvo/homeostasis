@@ -11,13 +11,11 @@ from collections import defaultdict, deque
 from dataclasses import asdict, dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Deque, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-from scipy import stats
 
-from ..analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
-from .continuous_learning import FixOutcome, OutcomeTracker
+from .continuous_learning import FixOutcome
 
 logger = logging.getLogger(__name__)
 

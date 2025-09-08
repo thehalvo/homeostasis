@@ -402,14 +402,12 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
         duration = self._estimate_duration(steps)
 
         # Determine if approval is required
-        approval_required = (
-            risk_score > 0.7
-            or context.constraints.get("require_approval", False)
-            or any(
-                "production" in env.metadata.get("tags", [])
-                for env in context.affected_environments
-            )
-        )
+        approval_required = (risk_score > 0.7 or
+                             context.constraints.get("require_approval", False) or
+                             any(
+                                 "production" in env.metadata.get("tags", [])
+                                 for env in context.affected_environments
+                             ))
 
         plan = HealingPlan(
             plan_id=f"plan_{context.error_id}_{datetime.utcnow().timestamp()}",

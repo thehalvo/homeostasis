@@ -271,8 +271,8 @@ class PIIDetector:
                     last_name = parts[-1]
 
                     if (
-                        first_name in self.common_first_names
-                        or last_name in self.common_last_names
+                        first_name in self.common_first_names or
+                        last_name in self.common_last_names
                     ):
                         names.append(match)
 
@@ -865,8 +865,8 @@ class SecurityGuardrails:
 
                 # Handle quarantine for strict mode
                 if (
-                    self.security_level == SecurityLevel.STRICT
-                    and violation.severity in ["high", "critical"]
+                    self.security_level == SecurityLevel.STRICT and
+                    violation.severity in ["high", "critical"]
                 ):
                     self.quarantine_hashes.add(content_hash)
 

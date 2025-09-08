@@ -55,8 +55,8 @@ class TemplateValidator:
 
     def __init__(self, templates_dir: Optional[Path] = None):
         self.templates_dir = (
-            templates_dir
-            or Path(__file__).parent.parent / "patch_generation" / "templates"
+            templates_dir or
+            Path(__file__).parent.parent / "patch_generation" / "templates"
         )
         self.jinja_env = Environment(autoescape=True)
         self.language_validators = {

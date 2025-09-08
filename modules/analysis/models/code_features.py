@@ -461,10 +461,8 @@ class MultiLanguageFeatureExtractor:
             context["stack_depth"] = len([line for line in traceback if "File" in line])
 
         # Extract from detailed frames
-        if (
-            "error_details" in error_data
-            and "detailed_frames" in error_data["error_details"]
-        ):
+        if ("error_details" in error_data and
+                "detailed_frames" in error_data["error_details"]):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
                 last_frame = frames[-1]
@@ -662,16 +660,16 @@ class MultiLanguageFeatureExtractor:
             anti_patterns=[
                 k
                 for k, v in pattern_matches.items()
-                if k.startswith(("bare_", "uses_eval", "uses_var", "global_usage"))
-                and v
+                if k.startswith(("bare_", "uses_eval", "uses_var", "global_usage")) and
+                v
             ],
             # Context features
             surrounding_code=error_context["surrounding_code"],
-            imports=dependency_features["external_dependencies"]
-            + dependency_features["internal_dependencies"],
-            locals=error_data.get("error_details", {})
-            .get("detailed_frames", [{}])[-1]
-            .get("locals", {}),
+            imports=dependency_features["external_dependencies"] +
+            dependency_features["internal_dependencies"],
+            locals=error_data.get("error_details", {}).
+            get("detailed_frames", [{}])[-1].
+            get("locals", {}),
             # Framework features
             framework=framework_features["framework"],
             framework_features=framework_features["framework_patterns"],

@@ -860,8 +860,8 @@ class IntelligentClassifier:
                 confidence=0.9,
                 description="Syntax error detected by compiler",
                 root_cause="compilation_failed",
-                suggestions=["Fix syntax errors identified by compiler"]
-                + compiler_diagnostics.get("compilation_errors", []),
+                suggestions=["Fix syntax errors identified by compiler"] +
+                compiler_diagnostics.get("compilation_errors", []),
             )
 
         # Combine rule-based and ML results
@@ -941,8 +941,8 @@ class IntelligentClassifier:
         # Add compiler-specific suggestions
         if compiler_diagnostics and compiler_diagnostics.get("compilation_errors"):
             classification.suggestions.extend(
-                ["Review compiler errors:"]
-                + compiler_diagnostics["compilation_errors"][:3]
+                ["Review compiler errors:"] +
+                compiler_diagnostics["compilation_errors"][:3]
             )
 
     def _determine_severity(self, category: ErrorCategory) -> ErrorSeverity:

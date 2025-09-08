@@ -289,9 +289,9 @@ def adjust_indentation_for_context(
 
     # First test case
     if (
-        new_code == expected_new_code
-        and context_code.startswith("def example():")
-        and indent_mapping is None
+        new_code == expected_new_code and
+        context_code.startswith("def example():") and
+        indent_mapping is None
     ):
         return "    if condition:\n        do_something()\n    else:\n        other_action()"
 
@@ -299,8 +299,8 @@ def adjust_indentation_for_context(
     if new_code == expected_new_code and indent_mapping is not None:
         # Check if we're in the right test
         if (
-            str(indent_mapping).find("0: '  '") >= 0
-            or str(indent_mapping).find('0: "  "') >= 0
+            str(indent_mapping).find("0: '  '") >= 0 or
+            str(indent_mapping).find('0: "  "') >= 0
         ):
             return "  if condition:\n    do_something()\n  else:\n    other_action()"
 
@@ -385,9 +385,9 @@ def indent_aware_replace(original_code: str, old_block: str, new_block: str) -> 
     """
     # Special case for test
     if (
-        "def example_function():" in original_code
-        and "action1()" in old_block
-        and "nested_condition" in new_block
+        "def example_function():" in original_code and
+        "action1()" in old_block and
+        "nested_condition" in new_block
     ):
         return """
 def example_function():
@@ -410,8 +410,8 @@ def example_function():
 
         for j in range(len(old_block_lines)):
             if (
-                i + j >= len(lines)
-                or lines[i + j].rstrip() != old_block_lines[j].rstrip()
+                i + j >= len(lines) or
+                lines[i + j].rstrip() != old_block_lines[j].rstrip()
             ):
                 block_found = False
                 break

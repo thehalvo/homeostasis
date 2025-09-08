@@ -1735,8 +1735,8 @@ class NewRelicAdapter(MonitoringAdapter):
             data = {
                 "deployment": {
                     "revision": f"alert_ack_{alert_id}",
-                    "description": message
-                    or f"Alert {alert_id} acknowledged by Homeostasis",
+                    "description": message or
+                    f"Alert {alert_id} acknowledged by Homeostasis",
                     "user": "homeostasis",
                 }
             }

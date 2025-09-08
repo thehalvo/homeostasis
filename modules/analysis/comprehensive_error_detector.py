@@ -319,10 +319,8 @@ class PythonParser(LanguageSpecificParser):
                         suggestion = "Use proper indentation - Python uses 4 spaces by convention. Check that all blocks are properly indented."
                     elif "TabError" in error_type:
                         suggestion = "Convert all indentation to either tabs or spaces (spaces recommended). Do not mix tabs and spaces."
-                    elif (
-                        "unmatched" in error_message
-                        or "unexpected EOF" in error_message
-                    ):
+                    elif ("unmatched" in error_message or
+                          "unexpected EOF" in error_message):
                         suggestion = "Check for unmatched parentheses, brackets, or braces. Every opening symbol needs a closing match."
 
                 elif error_type in ["ImportError", "ModuleNotFoundError"]:
@@ -1709,10 +1707,8 @@ class ComprehensiveErrorDetector:
             next_error = sorted_contexts[i + 1]
 
             # Check if errors are related
-            if (
-                current.service_name == next_error.service_name
-                or self._are_errors_related(current, next_error)
-            ):
+            if (current.service_name == next_error.service_name or
+                    self._are_errors_related(current, next_error)):
 
                 cascading.append(
                     {

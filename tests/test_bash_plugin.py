@@ -228,8 +228,8 @@ class TestBashPatchGenerator:
         assert permission_patch is not None
         assert permission_patch["type"] == "suggestion"
         assert (
-            "permission" in permission_patch["description"].lower()
-            or "chmod" in permission_patch["description"].lower()
+            "permission" in permission_patch["description"].lower() or
+            "chmod" in permission_patch["description"].lower()
         )
 
     def test_generate_file_fix(self):
@@ -247,8 +247,8 @@ class TestBashPatchGenerator:
         assert file_patch is not None
         assert file_patch["type"] == "suggestion"
         assert (
-            "file" in file_patch["description"].lower()
-            or "directory" in file_patch["description"].lower()
+            "file" in file_patch["description"].lower() or
+            "directory" in file_patch["description"].lower()
         )
 
     def test_generate_expansion_fix(self):
@@ -266,8 +266,8 @@ class TestBashPatchGenerator:
         assert expansion_patch is not None
         assert expansion_patch["type"] == "suggestion"
         assert (
-            "substitution" in expansion_patch["description"].lower()
-            or "expansion" in expansion_patch["description"].lower()
+            "substitution" in expansion_patch["description"].lower() or
+            "expansion" in expansion_patch["description"].lower()
         )
 
     def test_generate_pipe_fix(self):

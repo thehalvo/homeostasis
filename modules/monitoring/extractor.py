@@ -115,8 +115,8 @@ def extract_errors(
                     )
 
                     if not (
-                        error_type in exception_types
-                        or error_details_type in exception_types
+                        error_type in exception_types or
+                        error_details_type in exception_types
                     ):
                         continue
 

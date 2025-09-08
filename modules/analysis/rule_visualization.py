@@ -325,12 +325,10 @@ class RuleVisualizer:
         for category, count in sorted(
             by_category.items(), key=lambda x: x[1], reverse=True
         ):
-            result += (
-                ASCIIBar.generate_horizontal_bar_with_label(
+            result += (ASCIIBar.generate_horizontal_bar_with_label(
                     category, count, max_value, width
-                )
-                + "\n"
-            )
+                ) +
+                "\n")
 
         return result
 
@@ -354,12 +352,10 @@ class RuleVisualizer:
 
         for severity in ordered_severities:
             if severity in by_severity:
-                result += (
-                    ASCIIBar.generate_horizontal_bar_with_label(
+                result += (ASCIIBar.generate_horizontal_bar_with_label(
                         severity, by_severity[severity], max_value, width
-                    )
-                    + "\n"
-                )
+                    ) +
+                    "\n")
 
         # Stacked bar representation
         result += "\nSeverity Distribution (Stacked):\n"
@@ -399,12 +395,10 @@ class RuleVisualizer:
         result = f"Top {top_n} Tags:\n\n"
 
         for tag, count in top_tags:
-            result += (
-                ASCIIBar.generate_horizontal_bar_with_label(
+            result += (ASCIIBar.generate_horizontal_bar_with_label(
                     tag, count, max_value, width
-                )
-                + "\n"
-            )
+                ) +
+                "\n")
 
         return result
 
@@ -426,12 +420,10 @@ class RuleVisualizer:
         result = "Example Coverage:\n\n"
 
         # Basic coverage bar
-        result += (
-            ASCIIBar.generate_horizontal_bar_with_label(
+        result += (ASCIIBar.generate_horizontal_bar_with_label(
                 "Coverage", rules_with_examples, total_rules, width
-            )
-            + "\n\n"
-        )
+            ) +
+            "\n\n")
 
         # Add summary
         result += f"Rules with examples: {rules_with_examples}/{total_rules} ({coverage_percentage:.1f}%)\n"
@@ -531,12 +523,10 @@ class RuleVisualizer:
 
             for criticality in ordered_criticalities:
                 if criticality in by_criticality:
-                    result += (
-                        ASCIIBar.generate_horizontal_bar_with_label(
+                    result += (ASCIIBar.generate_horizontal_bar_with_label(
                             criticality, by_criticality[criticality], max_value, width
-                        )
-                        + "\n"
-                    )
+                        ) +
+                        "\n")
 
             result += "\n\n"
 
@@ -549,12 +539,10 @@ class RuleVisualizer:
 
             for complexity in ordered_complexities:
                 if complexity in by_complexity:
-                    result += (
-                        ASCIIBar.generate_horizontal_bar_with_label(
+                    result += (ASCIIBar.generate_horizontal_bar_with_label(
                             complexity, by_complexity[complexity], max_value, width
-                        )
-                        + "\n"
-                    )
+                        ) +
+                        "\n")
 
             result += "\n\n"
 
@@ -567,12 +555,10 @@ class RuleVisualizer:
 
             for reliability in ordered_reliabilities:
                 if reliability in by_reliability:
-                    result += (
-                        ASCIIBar.generate_horizontal_bar_with_label(
+                    result += (ASCIIBar.generate_horizontal_bar_with_label(
                             reliability, by_reliability[reliability], max_value, width
-                        )
-                        + "\n"
-                    )
+                        ) +
+                        "\n")
 
             result += "\n\n"
 
@@ -1162,14 +1148,12 @@ def main() -> None:
     visualizer = RuleVisualizer()
 
     # Generate requested visualizations
-    if (
-        args.text
-        or args.category
-        or args.severity
-        or args.tags
-        or args.examples
-        or args.dependencies
-    ):
+    if (args.text or
+            args.category or
+            args.severity or
+            args.tags or
+            args.examples or
+            args.dependencies):
         # Show specific visualizations if requested
         if args.category:
             print(visualizer.visualize_category_distribution(args.width))

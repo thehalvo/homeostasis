@@ -404,9 +404,9 @@ class PatchGenerator:
 
         # If not found and it's a legacy template name, try the legacy templates
         if (
-            not template
-            and ":" not in template_name
-            and template_name in self.templates
+            not template and
+            ":" not in template_name and
+            template_name in self.templates
         ):
             template = self.templates[template_name]
         elif not template:

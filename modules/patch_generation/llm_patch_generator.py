@@ -1283,9 +1283,9 @@ Provide your response in the following JSON format:
 
                         # If retry is enabled and we have more attempts, update context with failure info
                         if (
-                            self.validation_config.retry_on_test_failure
-                            and attempt
-                            < self.validation_config.max_validation_attempts - 1
+                            self.validation_config.retry_on_test_failure and
+                            attempt <
+                            self.validation_config.max_validation_attempts - 1
                         ):
                             # Update error context with validation failure information
                             error_context = (

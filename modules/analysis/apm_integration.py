@@ -879,8 +879,8 @@ class ElasticAPMIntegration(APMIntegration):
                     {
                         "range": {
                             "transaction.duration.us": {
-                                "gte": filter_params["duration_min"]
-                                * 1000  # Convert to microseconds
+                                "gte": filter_params["duration_min"] *
+                                1000  # Convert to microseconds
                             }
                         }
                     }
@@ -1228,10 +1228,8 @@ class APMDataCollector:
 
                 # Extract stack trace
                 stack_trace = []
-                if (
-                    "exception" in error_info
-                    and "stacktrace" in error_info["exception"]
-                ):
+                if ("exception" in error_info and
+                        "stacktrace" in error_info["exception"]):
                     stack_frames = error_info["exception"]["stacktrace"]
                     for frame in stack_frames:
                         frame_str = f"  File \"{frame.get('filename', '')}\", line {frame.get('lineno', '')}, in {frame.get('function', '')}"
@@ -1239,10 +1237,8 @@ class APMDataCollector:
 
                 # Extract detailed frames
                 detailed_frames = []
-                if (
-                    "exception" in error_info
-                    and "stacktrace" in error_info["exception"]
-                ):
+                if ("exception" in error_info and
+                        "stacktrace" in error_info["exception"]):
                     stack_frames = error_info["exception"]["stacktrace"]
                     for frame in stack_frames:
                         detailed_frames.append(
@@ -1302,40 +1298,32 @@ class APMDataCollector:
         for item in error_items:
             if isinstance(item, dict):
                 # Extract meaningful fields
-                timestamp = (
-                    item.get("timestamp")
-                    or item.get("date")
-                    or item.get("time")
-                    or item.get("startTime")
-                    or item.get("eventTime")
-                    or ""
-                )
+                timestamp = (item.get("timestamp") or
+                           item.get("date") or
+                           item.get("time") or
+                           item.get("startTime") or
+                           item.get("eventTime") or
+                           "")
 
-                service = (
-                    item.get("service")
-                    or item.get("serviceName")
-                    or item.get("application")
-                    or item.get("appName")
-                    or item.get("entityName")
-                    or ""
-                )
+                service = (item.get("service") or
+                         item.get("serviceName") or
+                         item.get("application") or
+                         item.get("appName") or
+                         item.get("entityName") or
+                         "")
 
-                message = (
-                    item.get("message")
-                    or item.get("errorMessage")
-                    or item.get("text")
-                    or item.get("title")
-                    or item.get("description")
-                    or ""
-                )
+                message = (item.get("message") or
+                         item.get("errorMessage") or
+                         item.get("text") or
+                         item.get("title") or
+                         item.get("description") or
+                         "")
 
-                exception_type = (
-                    item.get("exceptionType")
-                    or item.get("errorType")
-                    or item.get("type")
-                    or item.get("exception")
-                    or ""
-                )
+                exception_type = (item.get("exceptionType") or
+                                item.get("errorType") or
+                                item.get("type") or
+                                item.get("exception") or
+                                "")
 
                 error = {
                     "timestamp": timestamp,

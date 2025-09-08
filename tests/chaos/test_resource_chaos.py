@@ -380,8 +380,8 @@ class TestResourceChaos:
             assert "random" in pattern_data and "sequential" in pattern_data
         else:
             assert (
-                pattern_data["random"]["allocation_time"]
-                > pattern_data["sequential"]["allocation_time"] * 0.8
+                pattern_data["random"]["allocation_time"] >
+                pattern_data["sequential"]["allocation_time"] * 0.8
             )
 
     @pytest.mark.asyncio
@@ -568,9 +568,9 @@ class TestResourceChaos:
                 with self.lock:
                     # Check if resources available
                     if (
-                        self.resources["cpu_tokens"] >= cpu_tokens
-                        and self.resources["memory_mb"] >= memory_mb
-                        and self.resources["io_bandwidth_mbps"] >= io_mbps
+                        self.resources["cpu_tokens"] >= cpu_tokens and
+                        self.resources["memory_mb"] >= memory_mb and
+                        self.resources["io_bandwidth_mbps"] >= io_mbps
                     ):
 
                         # Allocate resources

@@ -925,10 +925,8 @@ class ObjCLanguagePlugin(LanguagePlugin):
             )
 
         # Platform-specific recommendations
-        if (
-            error_analysis.get("additional_context", {}).get("detected_platform")
-            == "iOS"
-        ):
+        if (error_analysis.get("additional_context", {}).get("detected_platform") ==
+                "iOS"):
             recommendations.extend(
                 [
                     "Follow iOS Human Interface Guidelines",

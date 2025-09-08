@@ -108,13 +108,11 @@ class EffectivenessCalculator:
     def add_metric(self, metric: HealingMetrics):
         """Add a new healing metric"""
         # Calculate derived metrics
-        metric.total_time = (
-            metric.time_to_detect
-            + metric.time_to_analyze
-            + metric.time_to_generate_patch
-            + metric.time_to_test
-            + metric.time_to_apply
-        )
+        metric.total_time = (metric.time_to_detect +
+                             metric.time_to_analyze +
+                             metric.time_to_generate_patch +
+                             metric.time_to_test +
+                             metric.time_to_apply)
 
         if metric.patches_tested > 0:
             metric.test_pass_rate = metric.patches_applied / metric.patches_tested
@@ -509,8 +507,8 @@ Generated at: {report.generated_at}
             "period2": {"start": period2_start, "end": period2_end, "metrics": report2},
             "changes": {
                 "success_rate_change": report2.success_rate - report1.success_rate,
-                "average_time_change": report2.average_healing_time
-                - report1.average_healing_time,
+                "average_time_change": report2.average_healing_time -
+                                       report1.average_healing_time,
                 "rollback_rate_change": report2.rollback_rate - report1.rollback_rate,
             },
         }
@@ -525,9 +523,9 @@ Generated at: {report.generated_at}
         similar_metrics = [
             m
             for m in self.metrics
-            if m.error_type == error_type
-            and m.language == language
-            and abs(m.complexity_score - complexity) < 0.2
+            if m.error_type == error_type and
+            m.language == language and
+            abs(m.complexity_score - complexity) < 0.2
         ]
 
         if not similar_metrics:

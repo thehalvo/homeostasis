@@ -122,10 +122,8 @@ class FastAPIDependencyVisitor(ast.NodeVisitor):
 
             # Check for more complex annotations like Annotated[Type, Query(), etc.]
             if arg.annotation and isinstance(arg.annotation, ast.Subscript):
-                if (
-                    isinstance(arg.annotation.value, ast.Name)
-                    and arg.annotation.value.id == "Annotated"
-                ):
+                if (isinstance(arg.annotation.value, ast.Name) and
+                        arg.annotation.value.id == "Annotated"):
                     return True
 
         # Functions with no decorators that have parameters might be dependencies
@@ -139,11 +137,9 @@ class FastAPIDependencyVisitor(ast.NodeVisitor):
         for arg in node.args.args:
             if arg.annotation:
                 # Check for Annotated[Type, Depends(...)]
-                if (
-                    isinstance(arg.annotation, ast.Subscript)
-                    and isinstance(arg.annotation.value, ast.Name)
-                    and arg.annotation.value.id == "Annotated"
-                ):
+                if (isinstance(arg.annotation, ast.Subscript) and
+                        isinstance(arg.annotation.value, ast.Name) and
+                        arg.annotation.value.id == "Annotated"):
                     # Extract Depends from slice
                     if isinstance(arg.annotation.slice, ast.Tuple):
                         for elt in arg.annotation.slice.elts[
@@ -156,11 +152,9 @@ class FastAPIDependencyVisitor(ast.NodeVisitor):
 
     def _is_depends_call(self, node):
         """Check if an AST node is a Depends() call."""
-        if (
-            isinstance(node, ast.Call)
-            and isinstance(node.func, ast.Name)
-            and node.func.id == "Depends"
-        ):
+        if (isinstance(node, ast.Call) and
+                isinstance(node.func, ast.Name) and
+                node.func.id == "Depends"):
             return True
         return False
 
@@ -208,11 +202,9 @@ class FastAPIDependencyVisitor(ast.NodeVisitor):
 
     def _is_async(self, node):
         """Check if a function is async."""
-        return (
-            isinstance(node, ast.AsyncFunctionDef)
-            or hasattr(node, "is_async")
-            and node.is_async
-        )
+        return (isinstance(node, ast.AsyncFunctionDef) or
+                hasattr(node, "is_async") and
+                node.is_async)
 
 
 class FastAPIDependencyAnalyzer:
@@ -387,10 +379,8 @@ class FastAPIDependencyAnalyzer:
         anti_patterns = []
 
         # Check for heavy dependencies that should be cached
-        if (
-            "TimeoutError" in error_data.get("exception_type", "")
-            or "timeout" in error_data.get("message", "").lower()
-        ):
+        if ("TimeoutError" in error_data.get("exception_type", "") or
+                "timeout" in error_data.get("message", "").lower()):
             anti_patterns.append(
                 {
                     "type": "heavy_dependency",
@@ -401,9 +391,8 @@ class FastAPIDependencyAnalyzer:
 
         # Check for mixing async/sync in dependencies
         if "asyncio" in " ".join(error_data.get("traceback", [])) and (
-            "yield" in " ".join(error_data.get("traceback", []))
-            or "await" in " ".join(error_data.get("traceback", []))
-        ):
+                "yield" in " ".join(error_data.get("traceback", [])) or
+                "await" in " ".join(error_data.get("traceback", []))):
             anti_patterns.append(
                 {
                     "type": "async_sync_mixing",

@@ -272,9 +272,9 @@ class MockServiceEnvironment:
             for injected in self._injected_errors:
                 # Check if this error already has a log by matching service, message, and file_path
                 has_log = any(
-                    log.get("service") == injected["service"]
-                    and log.get("message") == injected["message"]
-                    and log.get("file_path") == injected["file_path"]
+                    log.get("service") == injected["service"] and
+                    log.get("message") == injected["message"] and
+                    log.get("file_path") == injected["file_path"]
                     for log in error_logs
                 )
                 if not has_log:
@@ -414,16 +414,16 @@ class LogSimulator:
 KeyError: 'user_data'""",
             },
             "AttributeError": {
-                "message": custom_message
-                or "AttributeError: 'NoneType' object has no attribute 'items'",
+                "message": custom_message or
+                "AttributeError: 'NoneType' object has no attribute 'items'",
                 "stack_trace": f"""Traceback (most recent call last):
   File "{file_path}", line {line_number}, in handle_response
     for key, value in response.items():
 AttributeError: 'NoneType' object has no attribute 'items'""",
             },
             "TypeError": {
-                "message": custom_message
-                or "TypeError: object dict can't be used in 'await' expression",
+                "message": custom_message or
+                "TypeError: object dict can't be used in 'await' expression",
                 "stack_trace": f"""Traceback (most recent call last):
   File "{file_path}", line {line_number}, in async_handler
     result = await db.execute(query)
@@ -567,8 +567,8 @@ class PatchValidator:
                     "except TypeError",
                     "await",
                 ]
-            )
-            or "await" not in code,  # Fix for async/await type errors
+            ) or
+            "await" not in code,  # Fix for async/await type errors
             "NameError": lambda code: any(
                 pattern in code
                 for pattern in ["def ", "global ", "nonlocal ", "import ", "from "]

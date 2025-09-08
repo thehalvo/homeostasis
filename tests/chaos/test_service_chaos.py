@@ -130,8 +130,8 @@ class TestServiceChaos:
         # Verify circuit opened
         assert breakers["payment"].state == "open"
         assert (
-            sum(1 for r in payment_results if "Circuit breaker is open" in str(r[1]))
-            > 0
+            sum(1 for r in payment_results if "Circuit breaker is open" in str(r[1])) >
+            0
         )
 
         # Test 2: Half-open state behavior
@@ -763,8 +763,8 @@ class CircuitBreaker:
             if self.state == "open":
                 # Check if timeout has passed
                 if (
-                    self._last_failure_time
-                    and datetime.now() - self._last_failure_time > self.timeout
+                    self._last_failure_time and
+                    datetime.now() - self._last_failure_time > self.timeout
                 ):
                     self.state = "half-open"
                     self.half_open_calls = 0

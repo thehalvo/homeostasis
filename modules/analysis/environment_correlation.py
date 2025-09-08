@@ -897,10 +897,8 @@ class EnvironmentCorrelator:
 
                         # Simple z-score-like measure
                         if len(set(numeric_all)) > 1:
-                            all_std = (
-                                sum((x - all_avg) ** 2 for x in numeric_all)
-                                / len(numeric_all)
-                            ) ** 0.5
+                            all_std = (sum((x - all_avg) ** 2 for x in numeric_all) /
+                                     len(numeric_all)) ** 0.5
 
                             if all_std > 0:
                                 z_score = (error_avg - all_avg) / all_std
@@ -1042,11 +1040,9 @@ class EnvironmentCorrelator:
             Dictionary with monitoring suggestions
         """
         # Run correlation analysis if not enough data
-        if (
-            not self.error_occurrences
-            or sum(len(occurrences) for occurrences in self.error_occurrences.values())
-            < 5
-        ):
+        if (not self.error_occurrences or
+                sum(len(occurrences) for occurrences in self.error_occurrences.values()) <
+                5):
             return {
                 "error": "Not enough error data for monitoring suggestions",
                 "min_required": 5,

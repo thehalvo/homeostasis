@@ -360,8 +360,8 @@ class TestAdvancedHealingScenariosSimple:
                 patches = orchestrator.generate_patches(analysis_results)
                 assert len(patches) > 0, "No patches were generated"
                 assert (
-                    patches[0]["description"]
-                    == "Fix cascading failures by initializing shared state"
+                    patches[0]["description"] ==
+                    "Fix cascading failures by initializing shared state"
                 )
 
             finally:

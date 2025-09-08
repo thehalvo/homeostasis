@@ -574,8 +574,8 @@ class FortranHealer:
                 " " * indent + f"    {index_expr} <= UBOUND({array_name},1)) THEN",
                 error_line,
                 " " * indent + "ELSE",
-                " " * indent
-                + f"  PRINT *, 'Array index out of bounds for {array_name}'",
+                " " * indent +
+                f"  PRINT *, 'Array index out of bounds for {array_name}'",
                 " " * indent + "  STOP",
                 " " * indent + "END IF",
             ]

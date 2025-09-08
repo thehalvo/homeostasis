@@ -300,10 +300,8 @@ class MATLABExceptionHandler:
                 }
 
         # Check for specific undefined errors
-        if (
-            "undefined function or variable" in message_lower
-            or "undefined variable" in message_lower
-        ):
+        if ("undefined function or variable" in message_lower or
+                "undefined variable" in message_lower):
             return {
                 "category": "matlab",
                 "subcategory": "undefined",
@@ -851,10 +849,8 @@ class MATLABPatchGenerator:
                 ],
             }
 
-        if (
-            "array indices" in message.lower()
-            and "positive integers" in message.lower()
-        ):
+        if ("array indices" in message.lower() and
+                "positive integers" in message.lower()):
             return {
                 "type": "suggestion",
                 "description": "Array indices must be positive integers",

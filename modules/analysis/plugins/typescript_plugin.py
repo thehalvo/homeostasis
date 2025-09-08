@@ -145,10 +145,8 @@ class TypeScriptExceptionHandler:
             ):
                 identifier = best_match["match_groups"][0]
                 suggestion = f"Cannot find name '{identifier}' - check if the identifier is declared, imported correctly, or install missing type definitions"
-            elif (
-                best_match.get("error_code") == "TS2322"
-                and len(best_match.get("match_groups", [])) >= 2
-            ):
+            elif (best_match.get("error_code") == "TS2322" and
+                    len(best_match.get("match_groups", [])) >= 2):
                 source_type = best_match["match_groups"][0]
                 target_type = best_match["match_groups"][1]
                 suggestion = f"Type '{source_type}' is not assignable to type '{target_type}' - fix type compatibility"
