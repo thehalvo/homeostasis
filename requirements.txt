@@ -9,7 +9,7 @@ requests==2.32.4
 loguru==0.7.2
 
 # Testing
-pytest==7.4.3
+pytest==8.4.2
 httpx==0.25.1
 
 # Development
