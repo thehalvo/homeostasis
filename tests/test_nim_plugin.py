@@ -4,11 +4,9 @@ Tests for the Nim language plugin.
 
 import pytest
 
-from modules.analysis.plugins.nim_plugin import (
-    NimExceptionHandler,
-    NimLanguagePlugin,
-    NimPatchGenerator,
-)
+from modules.analysis.plugins.nim_plugin import (NimExceptionHandler,
+                                                 NimLanguagePlugin,
+                                                 NimPatchGenerator)
 
 
 class TestNimExceptionHandler:

@@ -25,40 +25,60 @@ class RestrictedUnpickler(pickle.Unpickler):
     Restricted unpickler that only allows specific safe classes.
     This prevents arbitrary code execution during unpickling.
     """
-    
+
     ALLOWED_MODULES = {
-        'numpy', 'numpy.core.multiarray', 'numpy.core.numeric',
-        'sklearn', 'sklearn.ensemble', 'sklearn.tree', 'sklearn.linear_model',
-        'sklearn.naive_bayes', 'sklearn.svm', 'sklearn.neighbors',
-        'sklearn.preprocessing', 'sklearn.preprocessing._label',
-        'sklearn.feature_extraction', 'sklearn.feature_extraction.text',
-        'sklearn.pipeline', 'sklearn.ensemble._forest',
-        'collections', 'builtins', 'scipy', 'scipy.sparse'
+        "numpy",
+        "numpy.core.multiarray",
+        "numpy.core.numeric",
+        "sklearn",
+        "sklearn.ensemble",
+        "sklearn.tree",
+        "sklearn.linear_model",
+        "sklearn.naive_bayes",
+        "sklearn.svm",
+        "sklearn.neighbors",
+        "sklearn.preprocessing",
+        "sklearn.preprocessing._label",
+        "sklearn.feature_extraction",
+        "sklearn.feature_extraction.text",
+        "sklearn.pipeline",
+        "sklearn.ensemble._forest",
+        "collections",
+        "builtins",
+        "scipy",
+        "scipy.sparse",
     }
-    
+
     ALLOWED_NAMES = {
-        ('builtins', 'slice'), ('builtins', 'range'), ('builtins', 'tuple'),
-        ('builtins', 'list'), ('builtins', 'dict'), ('builtins', 'set'),
-        ('builtins', 'frozenset'), ('builtins', 'bytearray'),
-        ('collections', 'OrderedDict'), ('numpy', 'ndarray'),
-        ('numpy.core.multiarray', 'scalar'), ('numpy', 'dtype'),
-        ('sklearn.preprocessing._label', 'LabelEncoder'),
-        ('sklearn.ensemble._forest', 'RandomForestClassifier'),
-        ('sklearn.feature_extraction.text', 'TfidfVectorizer'),
-        ('sklearn.pipeline', 'Pipeline'),
-        ('scipy.sparse._csr', 'csr_matrix'),
-        ('scipy.sparse._csc', 'csc_matrix')
+        ("builtins", "slice"),
+        ("builtins", "range"),
+        ("builtins", "tuple"),
+        ("builtins", "list"),
+        ("builtins", "dict"),
+        ("builtins", "set"),
+        ("builtins", "frozenset"),
+        ("builtins", "bytearray"),
+        ("collections", "OrderedDict"),
+        ("numpy", "ndarray"),
+        ("numpy.core.multiarray", "scalar"),
+        ("numpy", "dtype"),
+        ("sklearn.preprocessing._label", "LabelEncoder"),
+        ("sklearn.ensemble._forest", "RandomForestClassifier"),
+        ("sklearn.feature_extraction.text", "TfidfVectorizer"),
+        ("sklearn.pipeline", "Pipeline"),
+        ("scipy.sparse._csr", "csr_matrix"),
+        ("scipy.sparse._csc", "csc_matrix"),
     }
-    
+
     def find_class(self, module, name):
         # Check if module.name combination is explicitly allowed
         if (module, name) in self.ALLOWED_NAMES:
             return super().find_class(module, name)
-        
+
         # Check if module is in allowed modules
         if any(module.startswith(allowed) for allowed in self.ALLOWED_MODULES):
             return super().find_class(module, name)
-        
+
         # Reject everything else
         raise pickle.UnpicklingError(
             f"Attempting to unpickle unsafe class {module}.{name}. "
@@ -69,17 +89,17 @@ class RestrictedUnpickler(pickle.Unpickler):
 def secure_pickle_load(filepath: str):
     """
     Securely load a pickled model with protection against arbitrary code execution.
-    
+
     Args:
         filepath: Path to the pickle file
-    
+
     Returns:
         Loaded object
-        
+
     Raises:
         pickle.UnpicklingError: If unsafe classes are detected
     """
-    with open(filepath, 'rb') as f:
+    with open(filepath, "rb") as f:
         unpickler = RestrictedUnpickler(f)
         return unpickler.load()
 
@@ -186,8 +206,10 @@ class ErrorClassificationFeatures:
             traceback = traceback.split("\n")
 
         detailed_frames = []
-        if ("error_details" in error_data and
-                "detailed_frames" in error_data["error_details"]):
+        if (
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
+        ):
             detailed_frames = error_data["error_details"]["detailed_frames"]
 
         file_paths = []
@@ -240,8 +262,10 @@ class ErrorClassificationFeatures:
 
         # Get local variables if available
         local_vars = []
-        if ("error_details" in error_data and
-                "detailed_frames" in error_data["error_details"]):
+        if (
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
+        ):
             for frame in error_data["error_details"]["detailed_frames"]:
                 if "locals" in frame:
                     local_vars.extend(list(frame["locals"].keys()))

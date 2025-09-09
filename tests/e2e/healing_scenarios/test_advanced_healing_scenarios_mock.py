@@ -9,10 +9,7 @@ import pytest
 import yaml
 
 from tests.e2e.healing_scenarios.test_infrastructure import (
-    MockOrchestrator,
-    MockServiceEnvironment,
-    PatchValidator,
-)
+    MockOrchestrator, MockServiceEnvironment, PatchValidator)
 
 
 class TestAdvancedHealingScenariosMock:
@@ -321,7 +318,7 @@ MemoryError: Unable to allocate memory"""
             has_thread_safety = any(
                 pattern in patch_code for pattern in thread_safe_patterns
             )
-            
+
             # Verify that thread safety mechanisms were added
             assert has_thread_safety, "Patch should include thread safety mechanisms"
 

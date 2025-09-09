@@ -13,10 +13,10 @@ from typing import Any, Optional
 
 import pytest
 
+from modules.analysis.language_plugin_system import LanguagePluginSystem
+
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "modules", "analysis"))
-
-from language_plugin_system import LanguagePluginSystem
 
 
 class FuzzGenerator:

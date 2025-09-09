@@ -148,6 +148,7 @@ class TestPreflightChecks:
         missing_tools = []
         for tool, description in required_tools.items():
             import subprocess
+
             try:
                 subprocess.run(["which", tool], capture_output=True, check=True)
             except subprocess.CalledProcessError:
@@ -220,6 +221,7 @@ class TestPreflightChecks:
 
         # Store baselines for chaos tests
         import tempfile
+
         baseline_fd, baseline_path = tempfile.mkstemp(suffix="_chaos_baseline.txt")
         with os.fdopen(baseline_fd, "w") as f:
             f.write(f"cpu_baseline={avg_cpu}\n")
@@ -234,6 +236,7 @@ class TestPreflightChecks:
         if os.geteuid() != 0:
             # Check sudo availability
             import subprocess
+
             try:
                 subprocess.run(["sudo", "-n", "true"], capture_output=True, check=True)
             except subprocess.CalledProcessError:
@@ -277,8 +280,11 @@ class TestPreflightChecks:
 
         # Clean up stress-ng processes
         import subprocess
+
         try:
-            subprocess.run(["pkill", "-f", "stress-ng"], capture_output=True, check=True)
+            subprocess.run(
+                ["pkill", "-f", "stress-ng"], capture_output=True, check=True
+            )
             cleanup_performed.append("Killed lingering stress-ng processes")
         except subprocess.CalledProcessError:
             pass  # No stress-ng processes to kill
@@ -286,17 +292,23 @@ class TestPreflightChecks:
         # Clean up traffic control rules
         if os.geteuid() == 0:
             import subprocess
+
             try:
-                subprocess.run(["tc", "qdisc", "del", "dev", "lo", "root"], capture_output=True, check=True)
+                subprocess.run(
+                    ["tc", "qdisc", "del", "dev", "lo", "root"],
+                    capture_output=True,
+                    check=True,
+                )
                 cleanup_performed.append("Removed traffic control rules")
             except subprocess.CalledProcessError:
                 pass  # No traffic control rules to remove
 
         # Clean up temporary files
         import tempfile
+
         chaos_temp_files = [
             os.path.join(tempfile.gettempdir(), "chaos_baseline.txt"),
-            os.path.join(tempfile.gettempdir(), "chaos_runner.lock")
+            os.path.join(tempfile.gettempdir(), "chaos_runner.lock"),
         ]
         for file_path in chaos_temp_files:
             if os.path.exists(file_path):
@@ -309,6 +321,7 @@ class TestPreflightChecks:
     def test_concurrent_test_check(self):
         """Ensure no other chaos tests are running"""
         import tempfile
+
         lock_file = os.path.join(tempfile.gettempdir(), "chaos_runner.lock")
 
         if os.path.exists(lock_file):

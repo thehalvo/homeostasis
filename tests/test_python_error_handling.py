@@ -12,15 +12,14 @@ from unittest.mock import patch
 
 import pytest
 
+from modules.analysis.comprehensive_error_detector import (
+    ComprehensiveErrorDetector, PythonParser)
+from modules.analysis.cross_language_orchestrator import \
+    CrossLanguageOrchestrator
+from modules.analysis.language_parsers import CompilerIntegration
+
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
-from modules.analysis.comprehensive_error_detector import (
-    ComprehensiveErrorDetector,
-    PythonParser,
-)
-from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
-from modules.analysis.language_parsers import CompilerIntegration
 
 
 class TestPythonParser:
@@ -629,7 +628,7 @@ UnicodeEncodeError: 'ascii' codec can't encode character '\\u2019' in position 1
         """Test parsing of errors with very long stack traces."""
         stack_frames = []
         for i in range(50):
-            stack_frames.append(f"  File 'module{i}.py', line {i*10}, in func{i}")
+            stack_frames.append(f"  File 'module{i}.py', line {i * 10}, in func{i}")
             stack_frames.append(f"    do_something_{i}()")
 
         error_string = f"""

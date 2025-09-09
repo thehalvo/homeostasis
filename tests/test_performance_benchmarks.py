@@ -15,11 +15,12 @@ from typing import Any, Dict, List, Tuple
 
 import pytest
 
+from modules.analysis.comprehensive_error_detector import \
+    ComprehensiveErrorDetector
+from modules.analysis.language_plugin_system import LanguagePluginSystem
+
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
-from modules.analysis.comprehensive_error_detector import ComprehensiveErrorDetector
-from modules.analysis.language_plugin_system import LanguagePluginSystem
 
 
 class PerformanceBenchmark:
@@ -161,9 +162,9 @@ class TestLanguageDetectionPerformance(PerformanceBenchmark):
         )
 
         print("\n=== Language Detection Performance ===")
-        print(f"Primary languages avg: {primary_avg*1000:.2f}ms")
-        print(f"Fringe languages avg: {fringe_avg*1000:.2f}ms")
-        print(f"Performance ratio: {fringe_avg/primary_avg:.2f}x")
+        print(f"Primary languages avg: {primary_avg * 1000:.2f}ms")
+        print(f"Fringe languages avg: {fringe_avg * 1000:.2f}ms")
+        print(f"Performance ratio: {fringe_avg / primary_avg:.2f}x")
 
         # Primary languages should generally be faster due to optimization
         assert primary_avg < fringe_avg * 1.5  # Allow up to 50% slower for fringe
@@ -250,7 +251,7 @@ class TestErrorAnalysisPerformance(PerformanceBenchmark):
         print("\n=== Error Analysis Performance ===")
         for lang, result in results.items():
             print(
-                f"{lang}: {result['mean']*1000:.2f}ms (±{result['stdev']*1000:.2f}ms)"
+                f"{lang}: {result['mean'] * 1000:.2f}ms (±{result['stdev'] * 1000:.2f}ms)"
             )
 
         # Complex errors (primary languages) should still be processed efficiently
@@ -338,7 +339,7 @@ class TestPatchGenerationPerformance(PerformanceBenchmark):
         print("\n=== Patch Generation Performance ===")
         for lang, result in results.items():
             print(
-                f"{lang}: {result['mean']*1000:.2f}ms (±{result['stdev']*1000:.2f}ms)"
+                f"{lang}: {result['mean'] * 1000:.2f}ms (±{result['stdev'] * 1000:.2f}ms)"
             )
 
         # Patch generation should be fast
@@ -596,7 +597,7 @@ class TestRuleMatchingPerformance(PerformanceBenchmark):
         print("\n=== Rule Matching Performance ===")
         for lang, result in results.items():
             print(
-                f"{lang}: {result['mean']*1000:.2f}ms for {len(self.rule_test_cases[lang])} rules"
+                f"{lang}: {result['mean'] * 1000:.2f}ms for {len(self.rule_test_cases[lang])} rules"
             )
 
         # Rule matching should scale well
@@ -631,8 +632,10 @@ class TestScalabilityBenchmark(PerformanceBenchmark):
             results[volume] = exec_time
 
         print("\n=== Scalability Analysis ===")
-        for volume, time in results.items():
-            print(f"{volume} errors: {time:.3f}s ({time/volume*1000:.2f}ms per error)")
+        for volume, exec_time in results.items():
+            print(
+                f"{volume} errors: {exec_time:.3f}s ({exec_time / volume * 1000:.2f}ms per error)"
+            )
 
         # Check linear scalability
         time_per_error = [results[v] / v for v in volumes]

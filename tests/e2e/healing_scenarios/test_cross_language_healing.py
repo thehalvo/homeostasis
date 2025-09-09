@@ -12,13 +12,11 @@ from typing import List
 
 import pytest
 
-from tests.e2e.healing_scenarios.test_utilities import (
-    HealingScenario,
-    HealingScenarioRunner,
-    TestEnvironment,
-    check_no_syntax_errors,
-    check_service_healthy,
-)
+from tests.e2e.healing_scenarios.test_utilities import (HealingScenario,
+                                                        HealingScenarioRunner,
+                                                        TestEnvironment,
+                                                        check_no_syntax_errors,
+                                                        check_service_healthy)
 
 
 class CrossLanguageTestEnvironment(TestEnvironment):
@@ -199,10 +197,10 @@ class TestCrossLanguageHealing:
 
         if USE_MOCK_INFRASTRUCTURE:
             # Use the fixture test_environment and adapt it for cross-language
-            from tests.e2e.healing_scenarios.test_infrastructure import (
-                MockServiceEnvironment,
-            )
-            from tests.e2e.healing_scenarios.test_utilities import HealingResult
+            from tests.e2e.healing_scenarios.test_infrastructure import \
+                MockServiceEnvironment
+            from tests.e2e.healing_scenarios.test_utilities import \
+                HealingResult
 
             env = MockServiceEnvironment()
 
@@ -407,10 +405,10 @@ if __name__ == "__main__":
         )
 
         if USE_MOCK_INFRASTRUCTURE:
-            from tests.e2e.healing_scenarios.test_infrastructure import (
-                MockServiceEnvironment,
-            )
-            from tests.e2e.healing_scenarios.test_utilities import HealingResult
+            from tests.e2e.healing_scenarios.test_infrastructure import \
+                MockServiceEnvironment
+            from tests.e2e.healing_scenarios.test_utilities import \
+                HealingResult
 
             env = MockServiceEnvironment()
             env.setup = lambda: env.create_service("test_service")

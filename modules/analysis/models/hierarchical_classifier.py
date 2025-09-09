@@ -31,40 +31,62 @@ class RestrictedUnpickler(pickle.Unpickler):
     Restricted unpickler that only allows specific safe classes.
     This prevents arbitrary code execution during unpickling.
     """
-    
+
     ALLOWED_MODULES = {
-        'numpy', 'numpy.core.multiarray', 'numpy.core.numeric',
-        'torch', 'torch._utils', 'torch.nn', 'torch.nn.parameter',
-        'torch.nn.modules', 'torch.nn.functional',
-        'sklearn.preprocessing._label', 'sklearn.preprocessing',
-        'collections', 'builtins', 'networkx', 'networkx.classes.graph'
+        "numpy",
+        "numpy.core.multiarray",
+        "numpy.core.numeric",
+        "torch",
+        "torch._utils",
+        "torch.nn",
+        "torch.nn.parameter",
+        "torch.nn.modules",
+        "torch.nn.functional",
+        "sklearn.preprocessing._label",
+        "sklearn.preprocessing",
+        "collections",
+        "builtins",
+        "networkx",
+        "networkx.classes.graph",
     }
-    
+
     ALLOWED_NAMES = {
-        ('builtins', 'slice'), ('builtins', 'range'), ('builtins', 'tuple'),
-        ('builtins', 'list'), ('builtins', 'dict'), ('builtins', 'set'),
-        ('builtins', 'frozenset'), ('builtins', 'bytearray'),
-        ('collections', 'OrderedDict'), ('numpy', 'ndarray'),
-        ('numpy.core.multiarray', 'scalar'), ('numpy', 'dtype'),
-        ('torch._utils', '_rebuild_tensor_v2'),
-        ('torch', 'FloatStorage'), ('torch', 'DoubleStorage'),
-        ('torch', 'HalfStorage'), ('torch', 'LongStorage'),
-        ('torch', 'IntStorage'), ('torch', 'ShortStorage'),
-        ('torch', 'CharStorage'), ('torch', 'ByteStorage'),
-        ('torch', 'BoolStorage'), ('torch.nn.parameter', 'Parameter'),
-        ('sklearn.preprocessing._label', 'LabelEncoder'),
-        ('networkx.classes.graph', 'Graph')
+        ("builtins", "slice"),
+        ("builtins", "range"),
+        ("builtins", "tuple"),
+        ("builtins", "list"),
+        ("builtins", "dict"),
+        ("builtins", "set"),
+        ("builtins", "frozenset"),
+        ("builtins", "bytearray"),
+        ("collections", "OrderedDict"),
+        ("numpy", "ndarray"),
+        ("numpy.core.multiarray", "scalar"),
+        ("numpy", "dtype"),
+        ("torch._utils", "_rebuild_tensor_v2"),
+        ("torch", "FloatStorage"),
+        ("torch", "DoubleStorage"),
+        ("torch", "HalfStorage"),
+        ("torch", "LongStorage"),
+        ("torch", "IntStorage"),
+        ("torch", "ShortStorage"),
+        ("torch", "CharStorage"),
+        ("torch", "ByteStorage"),
+        ("torch", "BoolStorage"),
+        ("torch.nn.parameter", "Parameter"),
+        ("sklearn.preprocessing._label", "LabelEncoder"),
+        ("networkx.classes.graph", "Graph"),
     }
-    
+
     def find_class(self, module, name):
         # Check if module.name combination is explicitly allowed
         if (module, name) in self.ALLOWED_NAMES:
             return super().find_class(module, name)
-        
+
         # Check if module is in allowed modules
         if any(module.startswith(allowed) for allowed in self.ALLOWED_MODULES):
             return super().find_class(module, name)
-        
+
         # Reject everything else
         raise pickle.UnpicklingError(
             f"Attempting to unpickle unsafe class {module}.{name}. "
@@ -72,18 +94,20 @@ class RestrictedUnpickler(pickle.Unpickler):
         )
 
 
-def secure_torch_load(filepath: str, map_location=None, expected_hash: Optional[str] = None):
+def secure_torch_load(
+    filepath: str, map_location=None, expected_hash: Optional[str] = None
+):
     """
     Securely load a PyTorch checkpoint with protection against arbitrary code execution.
-    
+
     Args:
         filepath: Path to the checkpoint file
         map_location: Device mapping for torch.load
         expected_hash: Expected SHA256 hash of the file (optional but recommended)
-    
+
     Returns:
         Loaded checkpoint data
-        
+
     Raises:
         ValueError: If file hash doesn't match expected hash
         RuntimeError: If loading fails
@@ -94,23 +118,23 @@ def secure_torch_load(filepath: str, map_location=None, expected_hash: Optional[
         with open(filepath, "rb") as f:
             for byte_block in iter(lambda: f.read(4096), b""):
                 sha256_hash.update(byte_block)
-        
+
         actual_hash = sha256_hash.hexdigest()
         if actual_hash != expected_hash:
             raise ValueError(
                 f"File hash mismatch! Expected: {expected_hash}, "
                 f"Actual: {actual_hash}. File may have been tampered with."
             )
-    
+
     # First, try loading with weights_only=True (safest option)
     try:
-        with open(filepath, 'rb') as f:
+        with open(filepath, "rb") as f:
             return torch.load(f, map_location=map_location, weights_only=True)
     except Exception as e:
         logger.info(f"weights_only load failed, using restricted unpickler: {str(e)}")
-    
+
     # Fall back to restricted unpickling
-    with open(filepath, 'rb') as f:
+    with open(filepath, "rb") as f:
         # Override the default unpickler used by torch.load
         original_unpickler = pickle.Unpickler
         try:
@@ -308,7 +332,7 @@ class HierarchicalErrorClassifier(nn.Module):
         # Use specific revision for security and reproducibility
         self.encoder = AutoModel.from_pretrained(
             "microsoft/codebert-base",
-            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30"
+            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30",
         )
 
         # Hierarchical attention
@@ -411,7 +435,7 @@ class HierarchicalClassificationPipeline:
         # Use specific revision for security and reproducibility
         self.tokenizer = AutoTokenizer.from_pretrained(
             "microsoft/codebert-base",
-            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30"
+            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30",
         )
         self.model = HierarchicalErrorClassifier(self.taxonomy).to(self.device)
 
@@ -491,8 +515,10 @@ class HierarchicalClassificationPipeline:
                 parts.append(f"Traceback: {tb}")
 
         # Add code context
-        if ("error_details" in error_data and
-                "detailed_frames" in error_data["error_details"]):
+        if (
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
+        ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
                 last_frame = frames[-1]

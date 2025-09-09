@@ -768,9 +768,9 @@ Provide each change as a separate, clearly labeled section."""
             return
 
         # Create cache key
-        context_hash = hashlib.md5(
+        context_hash = hashlib.sha256(
             json.dumps(context, sort_keys=True).encode()
-        ).hexdigest()[:8]
+        ).hexdigest()[:16]
 
         cache_entry = {
             "task_type": task_type,

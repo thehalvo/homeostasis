@@ -14,21 +14,22 @@ from unittest.mock import Mock
 
 import pytest
 
-# Add the modules directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
-from modules.analysis.comprehensive_error_detector import ComprehensiveErrorDetector
-from modules.analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
+from modules.analysis.comprehensive_error_detector import \
+    ComprehensiveErrorDetector
+from modules.analysis.healing_metrics import \
+    HealingMetricsCollector as HealingMetrics
 from modules.analysis.language_plugin_system import LanguagePluginSystem
 from modules.analysis.llm_context_manager import LLMContextManager
 from modules.deployment.canary import CanaryDeployment as CanaryDeployer
 from modules.llm_integration.provider_abstraction import LLMManager
-from modules.patch_generation.advanced_code_generator import AdvancedCodeGenerator
+from modules.patch_generation.advanced_code_generator import \
+    AdvancedCodeGenerator
 from modules.testing.performance_regression import (
-    PerformanceRegressionDetector,
-    PerformanceRegressionTester,
-    performance_test,
-)
+    PerformanceRegressionDetector, PerformanceRegressionTester,
+    performance_test)
+
+# Add the modules directory to the Python path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 
 class TestCoreComponentPerformance:
@@ -171,7 +172,7 @@ class TestCoreComponentPerformance:
         for i in range(1000):
             sample_metrics.append(
                 {
-                    "timestamp": f"2024-01-{i%30+1:02d}T{i%24:02d}:00:00",
+                    "timestamp": f"2024-01-{i % 30 + 1:02d}T{i % 24:02d}:00:00",
                     "language": ["python", "javascript", "java"][i % 3],
                     "error_type": f"Error{i % 10}",
                     "healing_time": 0.1 + (i % 100) / 1000,

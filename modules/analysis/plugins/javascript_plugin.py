@@ -248,9 +248,11 @@ class JavaScriptExceptionHandler:
             return self._analyze_babel_error(message, error_data)
 
         # TypeScript errors
-        if ("typescript" in message.lower() or
-                "tsc" in message.lower() or
-                error_type.startswith("TS")):
+        if (
+            "typescript" in message.lower()
+            or "tsc" in message.lower()
+            or error_type.startswith("TS")
+        ):
             return self._analyze_typescript_error(message, error_data)
 
         # Webpack errors
@@ -721,8 +723,10 @@ class JavaScriptPatchGenerator:
 
         # Check if it's a Promise chain
         if ".then(" in problem_line and ".catch(" not in problem_line:
-            fixed_line = (problem_line.rstrip() +
-                          ".catch(error => console.error('Promise rejected:', error));")
+            fixed_line = (
+                problem_line.rstrip()
+                + ".catch(error => console.error('Promise rejected:', error));"
+            )
 
             return {
                 "type": "line_replacement",
@@ -1062,9 +1066,11 @@ class JavaScriptLanguagePlugin(LanguagePlugin):
             "parcel",
         ]
 
-        return (any(pattern in message for pattern in transpilation_patterns) or
-                any(pattern in stack_trace for pattern in transpilation_patterns) or
-                error_type.startswith("TS"))
+        return (
+            any(pattern in message for pattern in transpilation_patterns)
+            or any(pattern in stack_trace for pattern in transpilation_patterns)
+            or error_type.startswith("TS")
+        )
 
     def _is_bundler_error(self, error_data: Dict[str, Any]) -> bool:
         """Check if this is a bundler-related error."""

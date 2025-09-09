@@ -9,11 +9,11 @@ import sys
 import unittest
 from pathlib import Path
 
-# Add the project root to the Python path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from modules.analysis.language_adapters import ScalaErrorAdapter
 from modules.analysis.plugins.scala_plugin import ScalaLanguagePlugin
+
+# Add the project root to the Python path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 class TestScalaPlugin(unittest.TestCase):

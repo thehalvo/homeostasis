@@ -20,12 +20,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ..analysis.llm_context_manager import LLMContextManager
 from ..llm_integration.api_key_manager import APIKeyManager
-from ..llm_integration.provider_abstraction import (
-    LLMError,
-    LLMManager,
-    LLMMessage,
-    LLMRequest,
-)
+from ..llm_integration.provider_abstraction import (LLMError, LLMManager,
+                                                    LLMMessage, LLMRequest)
 from ..security.llm_security_manager import create_llm_security_manager
 from .code_style_analyzer import create_code_style_analyzer
 from .multi_language_framework_detector import create_multi_language_detector
@@ -962,7 +958,7 @@ Provide your response in the following JSON format:
                 end_line = len(lines) - 1
 
             # Apply the change
-            lines[start_line:end_line + 1] = new_code
+            lines[start_line : end_line + 1] = new_code
 
         return "\n".join(lines)
 
@@ -1080,10 +1076,10 @@ Provide your response in the following JSON format:
             Completed process
         """
         import shlex
-        
+
         # Parse command into list for safer execution
         cmd_list = shlex.split(command)
-        
+
         return subprocess.run(
             cmd_list,
             shell=False,
@@ -1283,9 +1279,9 @@ Provide your response in the following JSON format:
 
                         # If retry is enabled and we have more attempts, update context with failure info
                         if (
-                            self.validation_config.retry_on_test_failure and
-                            attempt <
-                            self.validation_config.max_validation_attempts - 1
+                            self.validation_config.retry_on_test_failure
+                            and attempt
+                            < self.validation_config.max_validation_attempts - 1
                         ):
                             # Update error context with validation failure information
                             error_context = (

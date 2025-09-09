@@ -156,8 +156,8 @@ class SecurityConfig:
 
         # Validate token expiry
         if (
-            not isinstance(self.config.get("token_expiry", 0), int) or
-            self.config.get("token_expiry", 0) <= 0
+            not isinstance(self.config.get("token_expiry", 0), int)
+            or self.config.get("token_expiry", 0) <= 0
         ):
             raise SecurityConfigError(
                 "Invalid token expiry, must be a positive integer"
@@ -165,8 +165,8 @@ class SecurityConfig:
 
         # Validate refresh token expiry
         if (
-            not isinstance(self.config.get("refresh_token_expiry", 0), int) or
-            self.config.get("refresh_token_expiry", 0) <= 0
+            not isinstance(self.config.get("refresh_token_expiry", 0), int)
+            or self.config.get("refresh_token_expiry", 0) <= 0
         ):
             raise SecurityConfigError(
                 "Invalid refresh token expiry, must be a positive integer"

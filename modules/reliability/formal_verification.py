@@ -185,10 +185,10 @@ class Z3Verifier(FormalVerifier):
 
             # Parse formula using AST to avoid eval security risks
             import ast
-            
+
             # Parse the formula into an AST
-            tree = ast.parse(formula, mode='eval')
-            
+            tree = ast.parse(formula, mode="eval")
+
             # Create a safe evaluator
             def safe_eval_node(node):
                 if isinstance(node, ast.Name):
@@ -242,16 +242,22 @@ class Z3Verifier(FormalVerifier):
                 elif isinstance(node, ast.Num):  # For older Python versions
                     return node.n
                 elif isinstance(node, ast.Call):
-                    if isinstance(node.func, ast.Name) and node.func.id in ['And', 'Or', 'Not']:
+                    if isinstance(node.func, ast.Name) and node.func.id in [
+                        "And",
+                        "Or",
+                        "Not",
+                    ]:
                         args = [safe_eval_node(arg) for arg in node.args]
-                        if node.func.id == 'And':
+                        if node.func.id == "And":
                             return z3.And(*args)
-                        elif node.func.id == 'Or':
+                        elif node.func.id == "Or":
                             return z3.Or(*args)
-                        elif node.func.id == 'Not':
+                        elif node.func.id == "Not":
                             return z3.Not(args[0])
                     else:
-                        raise ValueError(f"Unsupported function: {ast.unparse(node.func) if hasattr(ast, 'unparse') else node.func}")
+                        raise ValueError(
+                            f"Unsupported function: {ast.unparse(node.func) if hasattr(ast, 'unparse') else node.func}"
+                        )
                 elif isinstance(node, ast.Compare):
                     left = safe_eval_node(node.left)
                     comparators = [safe_eval_node(c) for c in node.comparators]
@@ -271,7 +277,7 @@ class Z3Verifier(FormalVerifier):
                             comp = left != right
                         else:
                             raise ValueError("Unsupported comparison operator")
-                        
+
                         if result is None:
                             result = comp
                         else:
@@ -279,8 +285,10 @@ class Z3Verifier(FormalVerifier):
                         left = right
                     return result
                 else:
-                    raise ValueError(f"Unsupported AST node type: {type(node).__name__}")
-            
+                    raise ValueError(
+                        f"Unsupported AST node type: {type(node).__name__}"
+                    )
+
             return safe_eval_node(tree.body)
         except Exception as e:
             logger.error(f"Failed to parse formula: {e}")

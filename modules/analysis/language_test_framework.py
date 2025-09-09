@@ -14,7 +14,8 @@ from typing import Any, Dict, List, Optional, Union
 
 from .cross_language_orchestrator import CrossLanguageOrchestrator
 from .language_adapters import ErrorAdapterFactory, convert_to_standard_format
-from .language_plugin_system import LanguagePlugin, get_plugin, load_all_plugins
+from .language_plugin_system import (LanguagePlugin, get_plugin,
+                                     load_all_plugins)
 
 logger = logging.getLogger(__name__)
 
@@ -425,11 +426,17 @@ class LanguageTestRunner:
                     # Convert from standard to target format
                     target_adapter = ErrorAdapterFactory.get_adapter(target_lang)
                     target_error = target_adapter.from_standard_format(standard_error)
-                    
+
                     # Validate cross-language conversion
-                    assert target_error is not None, f"Failed to convert to {target_lang}"
-                    assert "error_type" in target_error, "Missing error_type in converted error"
-                    assert "message" in target_error, "Missing message in converted error"
+                    assert (
+                        target_error is not None
+                    ), f"Failed to convert to {target_lang}"
+                    assert (
+                        "error_type" in target_error
+                    ), "Missing error_type in converted error"
+                    assert (
+                        "message" in target_error
+                    ), "Missing message in converted error"
 
                     # Convert back to source format to verify roundtrip
                     source_adapter = ErrorAdapterFactory.get_adapter(source_lang)
@@ -441,10 +448,14 @@ class LanguageTestRunner:
                     preserved = True
                     error_message = None
 
-                    if ("error_type" in test_case.error_data and
-                            "error_type" in roundtrip_error):
-                        if (test_case.error_data["error_type"] !=
-                                roundtrip_error["error_type"]):
+                    if (
+                        "error_type" in test_case.error_data
+                        and "error_type" in roundtrip_error
+                    ):
+                        if (
+                            test_case.error_data["error_type"]
+                            != roundtrip_error["error_type"]
+                        ):
                             preserved = False
                             error_message = f"Error type changed: {test_case.error_data['error_type']} -> {roundtrip_error['error_type']}"
 

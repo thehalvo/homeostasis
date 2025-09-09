@@ -8,11 +8,11 @@ import sys
 import tempfile
 from pathlib import Path
 
-# Add project root to sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 from modules.patch_generation.diff_utils import identify_code_block
 from modules.patch_generation.patcher import PatchGenerator, PatchTemplate
+
+# Add project root to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 def test_patch_template_loading():

@@ -332,7 +332,7 @@ class EnvironmentCollector:
             try:
                 # Use a short timeout and validate the URL scheme
                 start_time = time.time()
-                
+
                 # Use a well-known public DNS server (Google DNS) for connectivity check
                 # This is safer than opening URLs
                 test_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -340,9 +340,9 @@ class EnvironmentCollector:
                 # Try to connect to Google's public DNS on port 53
                 result = test_socket.connect_ex(("8.8.8.8", 53))
                 test_socket.close()
-                
+
                 response_time = time.time() - start_time
-                
+
                 if result == 0:
                     factors["network.internet_connectivity"] = EnvironmentalFactor(
                         name="Internet Connectivity",
@@ -350,7 +350,10 @@ class EnvironmentCollector:
                         source="network",
                         importance=0.8,
                         description="Internet connectivity status",
-                        metadata={"response_time": response_time, "method": "dns_socket"},
+                        metadata={
+                            "response_time": response_time,
+                            "method": "dns_socket",
+                        },
                     )
                 else:
                     raise socket.error("Connection failed")
@@ -897,8 +900,10 @@ class EnvironmentCorrelator:
 
                         # Simple z-score-like measure
                         if len(set(numeric_all)) > 1:
-                            all_std = (sum((x - all_avg) ** 2 for x in numeric_all) /
-                                     len(numeric_all)) ** 0.5
+                            all_std = (
+                                sum((x - all_avg) ** 2 for x in numeric_all)
+                                / len(numeric_all)
+                            ) ** 0.5
 
                             if all_std > 0:
                                 z_score = (error_avg - all_avg) / all_std
@@ -1040,9 +1045,11 @@ class EnvironmentCorrelator:
             Dictionary with monitoring suggestions
         """
         # Run correlation analysis if not enough data
-        if (not self.error_occurrences or
-                sum(len(occurrences) for occurrences in self.error_occurrences.values()) <
-                5):
+        if (
+            not self.error_occurrences
+            or sum(len(occurrences) for occurrences in self.error_occurrences.values())
+            < 5
+        ):
             return {
                 "error": "Not enough error data for monitoring suggestions",
                 "min_required": 5,

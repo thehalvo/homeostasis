@@ -940,10 +940,12 @@ class VueLanguagePlugin(LanguagePlugin):
             return True
 
         # Check for Vue Router patterns
-        if ("router" in message or
-                "route" in message or
-                "navigation" in message or
-                ("location" in message and "path" in message)):
+        if (
+            "router" in message
+            or "route" in message
+            or "navigation" in message
+            or ("location" in message and "path" in message)
+        ):
             return True
 
         vue_patterns = [

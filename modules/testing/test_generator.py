@@ -143,10 +143,10 @@ if __name__ == "__main__":
                 # Evaluate the condition safely
                 try:
                     import ast
-                    
+
                     # Parse the condition
-                    tree = ast.parse(condition, mode='eval')
-                    
+                    tree = ast.parse(condition, mode="eval")
+
                     # Simple safe evaluator for basic conditions
                     def safe_eval_node(node):
                         if isinstance(node, ast.Name):
@@ -185,7 +185,7 @@ if __name__ == "__main__":
                             if isinstance(node.op, ast.Not):
                                 return not operand
                         return False
-                    
+
                     result = safe_eval_node(tree.body)
                     return if_true if result else if_false
                 except Exception:
@@ -284,7 +284,7 @@ if __name__ == "__main__":
 
                     # Get function body
                     body_lines = []
-                    for line in code.splitlines()[node.lineno:node.end_lineno]:
+                    for line in code.splitlines()[node.lineno : node.end_lineno]:
                         body_lines.append(line)
 
                     # Get module path for imports

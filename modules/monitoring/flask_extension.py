@@ -19,7 +19,8 @@ from .logger import MonitoringLogger
 
 # Check if Flask is available
 try:
-    from flask import Blueprint, Flask, Request, Response, current_app, g, request
+    from flask import (Blueprint, Flask, Request, Response, current_app, g,
+                       request)
     from werkzeug.exceptions import HTTPException
 
     FLASK_AVAILABLE = True
@@ -230,8 +231,8 @@ class Homeostasis:
 
                 # Log performance metrics if enabled
                 if (
-                    self.config["MONITOR_PERFORMANCE"] and
-                    duration > self.config["SLOW_REQUEST_THRESHOLD"]
+                    self.config["MONITOR_PERFORMANCE"]
+                    and duration > self.config["SLOW_REQUEST_THRESHOLD"]
                 ):
                     self._log_slow_request(request, duration)
 
@@ -796,9 +797,9 @@ def monitor(
                 # Include arguments if enabled
                 if include_args:
                     if (
-                        len(args) > 0 and
-                        hasattr(args[0], "__class__") and
-                        args[0].__class__.__name__ == "MethodView"
+                        len(args) > 0
+                        and hasattr(args[0], "__class__")
+                        and args[0].__class__.__name__ == "MethodView"
                     ):
                         # Skip 'self' for MethodViews
                         context["args"] = args[1:] if len(args) > 1 else []

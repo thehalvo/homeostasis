@@ -68,11 +68,9 @@ def test_api_key_manager():
 
 def test_provider_abstraction():
     """Test the provider abstraction layer."""
-    from modules.llm_integration.provider_abstraction import (
-        LLMMessage,
-        LLMRequest,
-        ProviderFactory,
-    )
+    from modules.llm_integration.provider_abstraction import (LLMMessage,
+                                                              LLMRequest,
+                                                              ProviderFactory)
 
     print("Testing Provider Abstraction...")
 

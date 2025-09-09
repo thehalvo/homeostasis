@@ -65,7 +65,7 @@ class PatchData:
 
         # Handle extra lines
         if len(original_lines) > len(patched_lines):
-            for line in original_lines[len(patched_lines):]:
+            for line in original_lines[len(patched_lines) :]:
                 lines.append(f"- {line}")
         elif len(patched_lines) > len(original_lines):
             for line in patched_lines[len(original_lines)]:

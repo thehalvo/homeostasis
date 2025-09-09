@@ -686,7 +686,10 @@ class PrometheusAdapter(MonitoringAdapter):
             url = f"{pushgateway_url}/metrics/job/{job_name}"
 
             response = requests.post(
-                url, data=metric_line, headers={"Content-Type": "text/plain"}, timeout=30
+                url,
+                data=metric_line,
+                headers={"Content-Type": "text/plain"},
+                timeout=30,
             )
             response.raise_for_status()
 
@@ -1498,7 +1501,13 @@ class NewRelicAdapter(MonitoringAdapter):
                 # Build basic query
                 metric_name = query.get("metric_name", "*")
                 # Validate metric name to prevent injection
-                if not metric_name.replace("_", "").replace(".", "").replace("-", "").isalnum() and metric_name != "*":
+                if (
+                    not metric_name.replace("_", "")
+                    .replace(".", "")
+                    .replace("-", "")
+                    .isalnum()
+                    and metric_name != "*"
+                ):
                     raise ValueError(f"Invalid metric name: {metric_name}")
                 nrql = f"SELECT average({metric_name}) FROM Metric"
 
@@ -1618,7 +1627,7 @@ class NewRelicAdapter(MonitoringAdapter):
             start_ts = int(start_time.timestamp() * 1000)
             end_ts = int(end_time.timestamp() * 1000)
             batch_size = int(self.batch_size)
-            
+
             nrql = f"""
             SELECT * FROM Transaction, SystemSample, ProcessSample 
             WHERE timestamp >= {start_ts} 
@@ -1735,8 +1744,8 @@ class NewRelicAdapter(MonitoringAdapter):
             data = {
                 "deployment": {
                     "revision": f"alert_ack_{alert_id}",
-                    "description": message or
-                    f"Alert {alert_id} acknowledged by Homeostasis",
+                    "description": message
+                    or f"Alert {alert_id} acknowledged by Homeostasis",
                     "user": "homeostasis",
                 }
             }

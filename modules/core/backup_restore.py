@@ -46,10 +46,8 @@ try:
 except ImportError:
     AZURE_AVAILABLE = False
 
-from modules.monitoring.observability_hooks import (
-    OperationType,
-    get_observability_hooks,
-)
+from modules.monitoring.observability_hooks import (OperationType,
+                                                    get_observability_hooks)
 
 logger = logging.getLogger(__name__)
 
@@ -217,27 +215,32 @@ class BackupRestoreManager:
         """
         Check if a tar member path is safe to extract.
         Prevents directory traversal attacks.
-        
+
         Args:
             member_name: Name of the tar member
             target_path: Target extraction directory
-            
+
         Returns:
             True if path is safe, False otherwise
         """
         # Resolve the target path
         target_path = target_path.resolve()
-        
+
         # Get the absolute path that would be extracted
         extracted_path = (target_path / member_name).resolve()
-        
+
         # Check if it's within the target directory
         return extracted_path.is_relative_to(target_path)
 
-    def _safe_extract(self, tar: tarfile.TarFile, target_path: Path, members: Optional[List[str]] = None):
+    def _safe_extract(
+        self,
+        tar: tarfile.TarFile,
+        target_path: Path,
+        members: Optional[List[str]] = None,
+    ):
         """
         Safely extract tar members with path validation.
-        
+
         Args:
             tar: Open tarfile object
             target_path: Target extraction directory
@@ -247,19 +250,23 @@ class BackupRestoreManager:
             # Check if this member should be extracted
             if members and member.name not in members:
                 continue
-                
+
             # Validate member path
             if not self._is_safe_path(member.name, target_path):
                 logger.warning(f"Skipping unsafe path in tar: {member.name}")
                 continue
-                
+
             # Additional security checks
             if member.islnk() or member.issym():
                 # Check symlink target
-                if hasattr(member, 'linkname') and not self._is_safe_path(member.linkname, target_path):
-                    logger.warning(f"Skipping unsafe symlink: {member.name} -> {member.linkname}")
+                if hasattr(member, "linkname") and not self._is_safe_path(
+                    member.linkname, target_path
+                ):
+                    logger.warning(
+                        f"Skipping unsafe symlink: {member.name} -> {member.linkname}"
+                    )
                     continue
-            
+
             # Extract the member
             tar.extract(member, path=target_path)
 
@@ -923,10 +930,12 @@ class BackupRestoreManager:
 
             if destination == BackupDestination.LOCAL:
                 # Local storage
-                source_path = (self.local_backup_path /
-                               (tenant_id or "default") /
-                               backup_id /
-                               archive_name)
+                source_path = (
+                    self.local_backup_path
+                    / (tenant_id or "default")
+                    / backup_id
+                    / archive_name
+                )
                 if source_path.exists():
                     shutil.copy2(source_path, target_path)
                     return target_path
@@ -1049,8 +1058,8 @@ class BackupRestoreManager:
         full_backups = [
             b
             for b in self._backup_index.values()
-            if b.backup_type == BackupType.FULL and
-            (not tenant_id or b.tenant_id == tenant_id)
+            if b.backup_type == BackupType.FULL
+            and (not tenant_id or b.tenant_id == tenant_id)
         ]
 
         if full_backups:
@@ -1090,8 +1099,10 @@ class BackupRestoreManager:
                 changed_files.append(file_path)
             else:
                 parent_info = parent_files[relative_path]
-                if (file_path.stat().st_mtime > parent_info["modified"] or
-                        file_path.stat().st_size != parent_info["size"]):
+                if (
+                    file_path.stat().st_mtime > parent_info["modified"]
+                    or file_path.stat().st_size != parent_info["size"]
+                ):
                     changed_files.append(file_path)
 
         return changed_files

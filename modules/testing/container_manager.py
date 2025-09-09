@@ -85,7 +85,7 @@ class ContainerManager:
         req_path = project_root / "requirements.txt"
         if req_path.exists():
             with open(req_path, "rb") as f:
-                return hashlib.md5(f.read(), usedforsecurity=False).hexdigest()
+                return hashlib.sha256(f.read()).hexdigest()
         return "no_requirements"
 
     def create_container(

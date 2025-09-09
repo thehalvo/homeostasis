@@ -224,8 +224,8 @@ class ImportAnalyzer:
 
         # Check if it's a standard library module
         if (
-            module_name in self.stdlib_modules or
-            module_name.split(".")[0] in self.stdlib_modules
+            module_name in self.stdlib_modules
+            or module_name.split(".")[0] in self.stdlib_modules
         ):
             context.is_stdlib = True
 
@@ -468,9 +468,9 @@ class ImportAnalyzer:
         # Get variables that are used but not defined in the current scope
         for name, var_info in variables.items():
             if (
-                var_info.usages and
-                not var_info.assignments and
-                not var_info.is_parameter
+                var_info.usages
+                and not var_info.assignments
+                and not var_info.is_parameter
             ):
                 # This variable is used but not defined or imported, might need an import
                 if not var_info.is_imported:

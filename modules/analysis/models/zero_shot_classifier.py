@@ -75,8 +75,10 @@ class SemanticErrorEmbedder:
             text_parts.append(f"Message: {error_data['message']}")
 
         # Add code context if available
-        if ("error_details" in error_data and
-                "detailed_frames" in error_data["error_details"]):
+        if (
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
+        ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames and "code" in frames[-1]:
                 text_parts.append(f"Code: {frames[-1]['code']}")
@@ -452,8 +454,10 @@ class ZeroShotErrorClassifier:
         if "message" in error_data:
             parts.append(error_data["message"])
 
-        if ("error_details" in error_data and
-                "detailed_frames" in error_data["error_details"]):
+        if (
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
+        ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames and "code" in frames[-1]:
                 parts.append(f"in code: {frames[-1]['code']}")

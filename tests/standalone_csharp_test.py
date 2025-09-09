@@ -568,8 +568,8 @@ def test_stack_trace_parsing():
     # Check lambda frame
     lambda_frame = frames[3]
     if (
-        lambda_frame.get("file") != "D:\\Projects\\MyApp\\Services\\DataService.cs" or
-        lambda_frame.get("line") != 87
+        lambda_frame.get("file") != "D:\\Projects\\MyApp\\Services\\DataService.cs"
+        or lambda_frame.get("line") != 87
     ):
         print(f"❌ Lambda frame parsing failed: {lambda_frame}")
         success = False

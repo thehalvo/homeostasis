@@ -11,7 +11,8 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from modules.patch_generation.ast_analyzer import ASTAnalyzer, ClassInfo, VariableInfo
+from modules.patch_generation.ast_analyzer import (ASTAnalyzer, ClassInfo,
+                                                   VariableInfo)
 from modules.patch_generation.patcher import PatchGenerator
 
 logger = logging.getLogger(__name__)
@@ -150,9 +151,9 @@ class ASTPatcher:
         for node in ast.walk(containing_function.node):
             for child in ast.iter_child_nodes(node):
                 if any(
-                    child is n or
-                    hasattr(child, "body") and
-                    any(b is n for b in child.body)
+                    child is n
+                    or hasattr(child, "body")
+                    and any(b is n for b in child.body)
                     for n in nodes_at_line
                 ):
                     parent_node = node
@@ -825,6 +826,7 @@ except Exception as e:
 
     # Write the test code to a temporary file
     import tempfile
+
     test_file = Path(tempfile.gettempdir()) / "test_ast_patcher.py"
     with open(test_file, "w") as f:
         f.write(test_code)

@@ -286,8 +286,10 @@ class FSharpExceptionHandler:
                 subcategory = "union"
             elif "type mismatch" in message.lower() or "expecting a" in message.lower():
                 subcategory = "type"
-            elif ("pattern match" in message.lower() or
-                    "incomplete pattern" in message.lower()):
+            elif (
+                "pattern match" in message.lower()
+                or "incomplete pattern" in message.lower()
+            ):
                 subcategory = "pattern"
             elif "computation expression" in message.lower():
                 subcategory = "computation"
@@ -487,10 +489,10 @@ class FSharpExceptionHandler:
 
         # Check for option-related errors (but avoid generic "some" word in message)
         if "option" in message_lower or (
-            "some(" in message_lower or
-            "none(" in message_lower or
-            "some " in message_lower and
-            "value" in message_lower
+            "some(" in message_lower
+            or "none(" in message_lower
+            or "some " in message_lower
+            and "value" in message_lower
         ):
             return {
                 "category": "fsharp",
@@ -503,9 +505,11 @@ class FSharpExceptionHandler:
             }
 
         # Check for result-related errors (but avoid generic "error" word)
-        if ("result" in message_lower or
-                "ok(" in message_lower or
-                ("error(" in message_lower and "result" in message_lower)):
+        if (
+            "result" in message_lower
+            or "ok(" in message_lower
+            or ("error(" in message_lower and "result" in message_lower)
+        ):
             return {
                 "category": "fsharp",
                 "subcategory": "result",
@@ -603,9 +607,11 @@ class FSharpExceptionHandler:
 
         # Boost confidence for file extension matches
         file_path = error_data.get("file_path", "")
-        if (file_path.endswith(".fs") or
-                file_path.endswith(".fsx") or
-                file_path.endswith(".fsi")):
+        if (
+            file_path.endswith(".fs")
+            or file_path.endswith(".fsx")
+            or file_path.endswith(".fsi")
+        ):
             base_confidence += 0.2
 
         # Boost confidence based on rule reliability

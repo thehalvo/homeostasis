@@ -15,34 +15,22 @@ if str(current_dir) not in sys.path:
 
 try:
     # Try direct import first
-    from rule_categories import (
-        RuleDependency,
-        detect_rule_conflicts,
-        upgrade_rule_to_enhanced,
-    )
+    from rule_categories import (RuleDependency, detect_rule_conflicts,
+                                 upgrade_rule_to_enhanced)
     from rule_confidence import ContextualRuleAnalyzer
-    from rule_config import (
-        DEFAULT_RULES_DIR,
-        RuleCategory,
-        RuleLoader,
-        get_all_rule_sets,
-    )
+    from rule_config import (DEFAULT_RULES_DIR, RuleCategory, RuleLoader,
+                             get_all_rule_sets)
 except ImportError:
     try:
         # Try relative import
         sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-        from modules.analysis.rule_categories import (
-            RuleDependency,
-            detect_rule_conflicts,
-            upgrade_rule_to_enhanced,
-        )
+        from modules.analysis.rule_categories import (RuleDependency,
+                                                      detect_rule_conflicts,
+                                                      upgrade_rule_to_enhanced)
         from modules.analysis.rule_confidence import ContextualRuleAnalyzer
-        from modules.analysis.rule_config import (
-            DEFAULT_RULES_DIR,
-            RuleCategory,
-            RuleLoader,
-            get_all_rule_sets,
-        )
+        from modules.analysis.rule_config import (DEFAULT_RULES_DIR,
+                                                  RuleCategory, RuleLoader,
+                                                  get_all_rule_sets)
     except ImportError as e:
         print(f"Error importing required modules: {e}")
         print("\nDependency problem detected. Try installing required packages:")

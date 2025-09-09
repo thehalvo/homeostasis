@@ -11,12 +11,8 @@ from typing import Optional
 
 import click
 
-from .continuous_improvement import (
-    FeedbackType,
-    PatchFeedback,
-    PatchOutcome,
-    get_improvement_engine,
-)
+from .continuous_improvement import (FeedbackType, PatchFeedback, PatchOutcome,
+                                     get_improvement_engine)
 
 
 @click.group(name="improve")

@@ -4,11 +4,9 @@ Tests for the Lua language plugin.
 
 import pytest
 
-from modules.analysis.plugins.lua_plugin import (
-    LuaExceptionHandler,
-    LuaLanguagePlugin,
-    LuaPatchGenerator,
-)
+from modules.analysis.plugins.lua_plugin import (LuaExceptionHandler,
+                                                 LuaLanguagePlugin,
+                                                 LuaPatchGenerator)
 
 
 class TestLuaExceptionHandler:

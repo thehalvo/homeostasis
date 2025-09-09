@@ -26,9 +26,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 from modules.core.multi_tenancy import get_multi_tenancy_manager
 from modules.monitoring.observability_hooks import get_observability_hooks
 from modules.security.healing_rate_limiter import (
-    HealingRateLimiter,
-    HealingRateLimitExceededError,
-)
+    HealingRateLimiter, HealingRateLimitExceededError)
 
 logger = logging.getLogger(__name__)
 
@@ -541,12 +539,15 @@ class ResourceQuotaManager:
                         "average_usage": avg_usage,
                         "peak_usage": max_usage,
                         "utilization_percent": (
-                            (avg_usage /
-                             self._get_current_limit(
-                                 entity_id, level, resource_type
-                             ) *
-                             100)
-                            if self._get_current_limit(entity_id, level, resource_type) > 0
+                            (
+                                avg_usage
+                                / self._get_current_limit(
+                                    entity_id, level, resource_type
+                                )
+                                * 100
+                            )
+                            if self._get_current_limit(entity_id, level, resource_type)
+                            > 0
                             else 0
                         ),
                     }
@@ -665,8 +666,10 @@ class ResourceQuotaManager:
                 now = datetime.utcnow()
 
                 # Reset burst if window expired
-                if (usage.burst_start and
-                        (now - usage.burst_start).seconds > quota.burst_duration_seconds):
+                if (
+                    usage.burst_start
+                    and (now - usage.burst_start).seconds > quota.burst_duration_seconds
+                ):
                     usage.burst_usage = 0
                     usage.burst_start = None
 

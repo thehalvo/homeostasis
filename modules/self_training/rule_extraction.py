@@ -13,7 +13,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from ..analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
+from ..analysis.healing_metrics import \
+    HealingMetricsCollector as HealingMetrics
 from ..analysis.rule_config import Rule, RuleConfidence
 from ..llm_integration.patch_generator import PatchData
 
@@ -129,7 +130,12 @@ class RuleExtractor:
     ) -> List[ExtractedPattern]:
         """Analyze a successful fix to extract patterns."""
         fix_id = fix_metadata.get(
-            "fix_id", str(hashlib.md5(f"{error_data}{patch_data}".encode(), usedforsecurity=False).hexdigest())
+            "fix_id",
+            str(
+                hashlib.sha256(
+                    f"{error_data}{patch_data}".encode()
+                ).hexdigest()
+            ),
         )
 
         # Store fix history
@@ -183,7 +189,9 @@ class RuleExtractor:
             error_pattern = self._generalize_error_message(error_message)
             if error_pattern:
                 pattern = ExtractedPattern(
-                    pattern_id=hashlib.md5(error_pattern.encode(), usedforsecurity=False).hexdigest()[:8],
+                    pattern_id=hashlib.sha256(
+                        error_pattern.encode()
+                    ).hexdigest()[:16],
                     pattern_type="error_detection",
                     description=f"Error pattern: {error_pattern[:50]}...",
                     source_examples=[],
@@ -198,7 +206,9 @@ class RuleExtractor:
             trace_patterns = self._extract_stack_trace_patterns(stack_trace)
             for tp in trace_patterns:
                 pattern = ExtractedPattern(
-                    pattern_id=hashlib.md5(tp.encode(), usedforsecurity=False).hexdigest()[:8],
+                    pattern_id=hashlib.sha256(
+                        tp.encode()
+                    ).hexdigest()[:16],
                     pattern_type="error_detection",
                     description=f"Stack trace pattern: {tp[:50]}...",
                     source_examples=[],
@@ -232,7 +242,9 @@ class RuleExtractor:
             transform = self._identify_code_transform(before_code, after_code)
             if transform:
                 pattern = ExtractedPattern(
-                    pattern_id=hashlib.md5(str(transform).encode(), usedforsecurity=False).hexdigest()[:8],
+                    pattern_id=hashlib.sha256(
+                        str(transform).encode()
+                    ).hexdigest()[:16],
                     pattern_type="code_transform",
                     description=transform["description"],
                     source_examples=[],
@@ -262,7 +274,9 @@ class RuleExtractor:
 
             if template:
                 pattern = ExtractedPattern(
-                    pattern_id=hashlib.md5(template.encode(), usedforsecurity=False).hexdigest()[:8],
+                    pattern_id=hashlib.sha256(
+                        template.encode()
+                    ).hexdigest()[:16],
                     pattern_type="fix_template",
                     description=fix_structure["description"],
                     source_examples=[],
@@ -364,15 +378,15 @@ class RuleExtractor:
                 # Check if the transformation could explain the change
                 # This is a simplified check - in reality we'd need more sophisticated analysis
                 if (
-                    transform["name"] == "null_check_addition" and
-                    "if" in after_text and
-                    "null" in after_text
+                    transform["name"] == "null_check_addition"
+                    and "if" in after_text
+                    and "null" in after_text
                 ):
                     return transform
                 elif (
-                    transform["name"] == "try_catch_wrapper" and
-                    "try" in after_text and
-                    "catch" in after_text
+                    transform["name"] == "try_catch_wrapper"
+                    and "try" in after_text
+                    and "catch" in after_text
                 ):
                     return transform
                 elif transform["name"] == "bounds_check" and "length" in after_text:
@@ -639,7 +653,7 @@ class PatternAnalyzer:
 
             # Count co-occurrences
             for i, p1 in enumerate(fix_patterns):
-                for p2 in fix_patterns[i + 1:]:
+                for p2 in fix_patterns[i + 1 :]:
                     key = tuple(sorted([p1.pattern_id, p2.pattern_id]))
                     pattern_pairs[key] += 1
 
@@ -740,8 +754,8 @@ class AutomatedRuleGenerator:
             return Rule(
                 rule_id=f"composite_{pattern1_id}_{pattern2_id}",
                 name=f"Composite: {pattern1.description} + {pattern2.description}",
-                confidence_score=min(pattern1.confidence, pattern2.confidence) *
-                correlation,
+                confidence_score=min(pattern1.confidence, pattern2.confidence)
+                * correlation,
                 auto_generated=True,
                 metadata={
                     "correlation": correlation,

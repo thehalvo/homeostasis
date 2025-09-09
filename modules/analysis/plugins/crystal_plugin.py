@@ -242,8 +242,10 @@ class CrystalExceptionHandler:
             best_match = max(matches, key=lambda x: x.get("confidence_score", 0))
 
             # Only update if we don't already have a high confidence nil subcategory
-            if not (analysis.get("subcategory") == "nil" and
-                    analysis.get("confidence") == "high"):
+            if not (
+                analysis.get("subcategory") == "nil"
+                and analysis.get("confidence") == "high"
+            ):
                 analysis.update(
                     {
                         "category": best_match.get(

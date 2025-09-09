@@ -5,13 +5,8 @@ Test cases for IoT and edge device support
 import unittest
 
 from modules.analysis.plugins.iot_plugin import IoTPlugin
-from modules.emerging_tech.iot import (
-    DeviceMetrics,
-    IoTDeviceMonitor,
-    IoTError,
-    IoTErrorType,
-    IoTPlatform,
-)
+from modules.emerging_tech.iot import (DeviceMetrics, IoTDeviceMonitor,
+                                       IoTError, IoTErrorType, IoTPlatform)
 
 
 class TestIoTDeviceMonitor(unittest.TestCase):

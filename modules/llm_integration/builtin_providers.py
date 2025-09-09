@@ -7,13 +7,10 @@ Contains plugin implementations for OpenAI, Anthropic, and OpenRouter.
 
 from typing import Any, Dict
 
-from .provider_abstraction import (
-    AnthropicProvider,
-    LLMProviderInterface,
-    OpenAIProvider,
-    OpenRouterProvider,
-)
-from .provider_registry import ProviderCapability, ProviderMetadata, ProviderPlugin
+from .provider_abstraction import (AnthropicProvider, LLMProviderInterface,
+                                   OpenAIProvider, OpenRouterProvider)
+from .provider_registry import (ProviderCapability, ProviderMetadata,
+                                ProviderPlugin)
 
 
 class OpenAIPlugin(ProviderPlugin):

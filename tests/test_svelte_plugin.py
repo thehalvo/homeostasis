@@ -9,14 +9,12 @@ import sys
 import unittest
 from pathlib import Path
 
+from modules.analysis.plugins.svelte_plugin import (SvelteExceptionHandler,
+                                                    SvelteLanguagePlugin,
+                                                    SveltePatchGenerator)
+
 # Add the modules directory to the path
 sys.path.insert(0, str(Path(__file__).parent.parent / "modules"))
-
-from analysis.plugins.svelte_plugin import (
-    SvelteExceptionHandler,
-    SvelteLanguagePlugin,
-    SveltePatchGenerator,
-)
 
 
 class TestSvelteLanguagePlugin(unittest.TestCase):
@@ -448,9 +446,9 @@ if __name__ == "__main__":
     result = runner.run(test_suite)
 
     # Print summary
-    print(f"\n{'='*50}")
+    print(f"\n{'=' * 50}")
     print("Svelte Plugin Test Summary")
-    print(f"{'='*50}")
+    print(f"{'=' * 50}")
     print(f"Tests run: {result.testsRun}")
     print(f"Failures: {len(result.failures)}")
     print(f"Errors: {len(result.errors)}")

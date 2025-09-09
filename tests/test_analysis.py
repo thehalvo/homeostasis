@@ -228,8 +228,8 @@ def test_rule_based_analyzer_analyze_error():
         assert result["rule_id"] == "key_error_rule"
         assert result["confidence"] == "high"
         assert (
-            "Check if" in result["suggestion"] and
-            "key exists before accessing" in result["suggestion"]
+            "Check if" in result["suggestion"]
+            and "key exists before accessing" in result["suggestion"]
         )
 
 

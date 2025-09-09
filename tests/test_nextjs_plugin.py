@@ -9,14 +9,12 @@ import os
 import sys
 import unittest
 
+from modules.analysis.plugins.nextjs_plugin import (NextjsExceptionHandler,
+                                                    NextjsLanguagePlugin,
+                                                    NextjsPatchGenerator)
+
 # Add the parent directory to the path to import modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from modules.analysis.plugins.nextjs_plugin import (
-    NextjsExceptionHandler,
-    NextjsLanguagePlugin,
-    NextjsPatchGenerator,
-)
 
 
 class TestNextjsPlugin(unittest.TestCase):

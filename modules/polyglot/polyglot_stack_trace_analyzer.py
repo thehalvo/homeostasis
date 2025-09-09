@@ -182,8 +182,8 @@ class PolyglotStackTraceAnalyzer:
             trace_id = hints.get("trace_id")
             if trace_id:
                 return (
-                    trace1.metadata.get("trace_id") == trace_id and
-                    trace2.metadata.get("trace_id") == trace_id
+                    trace1.metadata.get("trace_id") == trace_id
+                    and trace2.metadata.get("trace_id") == trace_id
                 )
 
         # Check for error propagation patterns
@@ -229,8 +229,8 @@ class PolyglotStackTraceAnalyzer:
         for frame1 in trace1.frames:
             for frame2 in trace2.frames:
                 if (
-                    frame1.function_name == frame2.function_name and
-                    frame1.module_name == frame2.module_name
+                    frame1.function_name == frame2.function_name
+                    and frame1.module_name == frame2.module_name
                 ):
                     common.append((frame1, frame2))
 

@@ -7,11 +7,10 @@ import sys
 
 from fastapi.testclient import TestClient
 
+from services.example_service.app import app
+
 # Add project root to sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-# Import the app
-from services.example_service.app import app
 
 # Create test client
 client = TestClient(app)

@@ -202,8 +202,10 @@ class MLAnalyzer:
         }
 
         # Determine primary result based on confidence
-        if (ml_confidence >= self.ml_confidence_threshold and
-                ml_confidence > rule_confidence):
+        if (
+            ml_confidence >= self.ml_confidence_threshold
+            and ml_confidence > rule_confidence
+        ):
             # Use ML result as primary
             combined.update(
                 {
@@ -422,9 +424,11 @@ class HybridAnalyzer:
             ml_confidence = 0.0
 
         # If both rule and ML confidence are high, skip LLM analysis
-        if (max(rule_confidence, ml_confidence) >= 0.7 or
-                not self.use_llm or
-                not self.llm_analyzer):
+        if (
+            max(rule_confidence, ml_confidence) >= 0.7
+            or not self.use_llm
+            or not self.llm_analyzer
+        ):
             # Add source information
             ml_result["sources"] = ["rule_based", "ml"]
             return ml_result

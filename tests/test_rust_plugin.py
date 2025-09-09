@@ -6,15 +6,13 @@ import sys
 import unittest
 from pathlib import Path
 
+from modules.analysis.language_adapters import RustErrorAdapter
+from modules.analysis.plugins.rust_plugin import (RustErrorHandler,
+                                                  RustLanguagePlugin,
+                                                  RustPatchGenerator)
+
 # Add the project root directory to Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from modules.analysis.language_adapters import RustErrorAdapter
-from modules.analysis.plugins.rust_plugin import (
-    RustErrorHandler,
-    RustLanguagePlugin,
-    RustPatchGenerator,
-)
 
 
 class TestRustPlugin(unittest.TestCase):

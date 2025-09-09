@@ -3,11 +3,9 @@
 import pytest
 
 # Import the Angular plugin
-from modules.analysis.plugins.angular_plugin import (
-    AngularExceptionHandler,
-    AngularLanguagePlugin,
-    AngularPatchGenerator,
-)
+from modules.analysis.plugins.angular_plugin import (AngularExceptionHandler,
+                                                     AngularLanguagePlugin,
+                                                     AngularPatchGenerator)
 
 
 class TestAngularLanguagePlugin:
@@ -372,8 +370,8 @@ class TestAngularIntegration:
         fix = self.plugin.generate_fix(error_data, analysis, source_code)
         assert fix is not None
         assert (
-            "HttpClient" in fix["description"] or
-            "provider" in fix["description"].lower()
+            "HttpClient" in fix["description"]
+            or "provider" in fix["description"].lower()
         )
 
     def test_end_to_end_ngrx_workflow(self):

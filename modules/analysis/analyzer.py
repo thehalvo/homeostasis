@@ -12,14 +12,10 @@ import logging
 import os
 from typing import Any, Dict, List, Optional
 
-from .ai_stub import (
-    AVAILABLE_MODELS,
-    AIAnalyzer,
-    AIModelConfig,
-    create_ensemble_analyzer,
-    get_available_models,
-)
-from .ml_analyzer import HybridAnalyzer, MLAnalyzer, get_available_analysis_modes
+from .ai_stub import (AVAILABLE_MODELS, AIAnalyzer, AIModelConfig,
+                      create_ensemble_analyzer, get_available_models)
+from .ml_analyzer import (HybridAnalyzer, MLAnalyzer,
+                          get_available_analysis_modes)
 from .rule_based import FASTAPI_ERROR_PATTERNS, RuleBasedAnalyzer
 
 # Configure logging
@@ -191,9 +187,11 @@ class Analyzer:
         # Apply the selected strategy
         if self.strategy == AnalysisStrategy.AI_FALLBACK:
             # Use AI analysis only when rule-based confidence is low
-            if (rule_confidence_str == "low" and
-                    ai_analysis and
-                    ai_confidence_score > 0.3):
+            if (
+                rule_confidence_str == "low"
+                and ai_analysis
+                and ai_confidence_score > 0.3
+            ):
                 return {
                     **ai_analysis,
                     "rule_analysis": rule_analysis,
@@ -224,8 +222,10 @@ class Analyzer:
                     "confidence_score": rule_confidence_score,
                 }
 
-        elif (self.strategy == AnalysisStrategy.AI_ENHANCED or
-                self.strategy == AnalysisStrategy.ENSEMBLE):
+        elif (
+            self.strategy == AnalysisStrategy.AI_ENHANCED
+            or self.strategy == AnalysisStrategy.ENSEMBLE
+        ):
             # Combine both analyses, using the more detailed information from each
             # For example, use rule-based root cause but AI descriptions and suggestions
             combined = {

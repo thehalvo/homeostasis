@@ -103,8 +103,10 @@ class CausalChainAnalyzer:
                 variables["missing_key"] = match.group(1)
 
         # Extract from locals in detailed frames
-        if ("error_details" in error_data and
-                "detailed_frames" in error_data["error_details"]):
+        if (
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
+        ):
             for frame in error_data["error_details"]["detailed_frames"]:
                 if "locals" in frame:
                     for var_name, var_value in frame["locals"].items():
@@ -269,8 +271,10 @@ class CausalChainAnalyzer:
         ]
 
         for pattern in error_chain_patterns:
-            if (node1.error_type == pattern["cause"] and
-                    node2.error_type == pattern["effect"]):
+            if (
+                node1.error_type == pattern["cause"]
+                and node2.error_type == pattern["effect"]
+            ):
                 if pattern["confidence"] > causality_confidence:
                     causality_confidence = pattern["confidence"]
                     reason = pattern["reason"]

@@ -12,12 +12,12 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from dashboard.app import DashboardServer
+from modules.llm_integration.api_key_manager import APIKeyManager
+
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
-from dashboard.app import DashboardServer
-from modules.llm_integration.api_key_manager import APIKeyManager
 
 
 class TestDashboardLLMIntegration(unittest.TestCase):

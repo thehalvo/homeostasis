@@ -7,59 +7,54 @@ and manage a complete university course.
 
 import json
 from datetime import datetime, timedelta
-from modules.academic import (
-    SelfHealingCurriculum,
-    CourseModule,
-    LearningObjective,
-    AcademicAssessment,
-    EducationLevel,
-    AssessmentType,
-    generate_interactive_exercise,
-    create_workshop_materials
-)
+
+from modules.academic import (AcademicAssessment, AssessmentType, CourseModule,
+                              EducationLevel, LearningObjective,
+                              SelfHealingCurriculum, create_workshop_materials,
+                              generate_interactive_exercise)
 
 
 def create_custom_course():
     """Create a custom 10-week course on self-healing systems."""
     curriculum = SelfHealingCurriculum()
-    
+
     # Get existing modules
     intro_module = curriculum.get_module("SH101")
     detection_module = curriculum.get_module("SH102")
     healing_module = curriculum.get_module("SH103")
-    
+
     # Create custom syllabus
     print("=== Creating Custom Course: CS 495 - Self-Healing Systems ===\n")
-    
+
     # Generate syllabus for first module
     syllabus = curriculum.generate_syllabus(intro_module)
-    
+
     print("Course Information:")
     print(f"- Code: {syllabus['course_code']}")
     print(f"- Title: {syllabus['course_title']}")
     print(f"- Credits: {syllabus['credit_hours']}")
     print(f"- Prerequisites: {', '.join(syllabus['prerequisites']) or 'None'}")
-    
+
     print("\nLearning Objectives:")
-    for obj in syllabus['learning_objectives']:
+    for obj in syllabus["learning_objectives"]:
         print(f"- {obj['description']} (Bloom: {obj['bloom_level']})")
-    
+
     print("\nWeekly Schedule:")
-    for week in syllabus['schedule'][:3]:  # Show first 3 weeks
+    for week in syllabus["schedule"][:3]:  # Show first 3 weeks
         print(f"\nWeek {week['week']}:")
         print(f"  Topics: {', '.join(week['topics'])}")
-        if week['activities']:
+        if week["activities"]:
             print(f"  Activities: {week['activities'][0]['title']}")
-    
+
     return curriculum
 
 
 def create_assignments():
     """Create assignments for the course."""
     curriculum = SelfHealingCurriculum()
-    
+
     print("\n=== Creating Course Assignments ===\n")
-    
+
     # Assignment 1: Conceptual Understanding
     assignment1 = {
         "title": "Self-Healing Systems Analysis",
@@ -72,28 +67,28 @@ def create_assignments():
             "Identify self-healing components",
             "Analyze detection mechanisms",
             "Evaluate healing strategies",
-            "Discuss limitations and improvements"
+            "Discuss limitations and improvements",
         ],
         "deliverables": [
             "5-page analysis paper",
             "System architecture diagram",
-            "Comparison table of healing approaches"
+            "Comparison table of healing approaches",
         ],
         "grading_rubric": {
             "Technical accuracy": 30,
             "Analysis depth": 30,
             "Writing quality": 20,
             "Diagrams/visuals": 10,
-            "Citations": 10
-        }
+            "Citations": 10,
+        },
     }
-    
+
     print(f"Assignment 1: {assignment1['title']}")
     print(f"Due: Week {assignment1['due_week']}")
     print("Requirements:")
-    for req in assignment1['requirements'][:3]:
+    for req in assignment1["requirements"][:3]:
         print(f"  - {req}")
-    
+
     # Assignment 2: Implementation
     assignment2 = {
         "title": "Build a Self-Healing Component",
@@ -132,39 +127,38 @@ class SelfHealingWebService:
             "Create healing rules with confidence scores",
             "Add logging and monitoring",
             "Include automated tests",
-            "Document healing strategies"
-        ]
+            "Document healing strategies",
+        ],
     }
-    
+
     print(f"\nAssignment 2: {assignment2['title']}")
     print(f"Due: Week {assignment2['due_week']}")
     print("Starter code provided: Yes")
     print("Key requirements:")
-    for req in assignment2['requirements'][:3]:
+    for req in assignment2["requirements"][:3]:
         print(f"  - {req}")
-    
+
     # Create interactive exercise
     print("\n=== Creating Interactive Exercise ===\n")
-    
+
     exercise = generate_interactive_exercise(
-        topic="error_detection",
-        difficulty="medium"
+        topic="error_detection", difficulty="medium"
     )
-    
+
     print(f"Exercise: {exercise['title']}")
     print(f"Description: {exercise['description']}")
     print("\nStarter code:")
-    print(exercise['starter_code'][:200] + "...")
+    print(exercise["starter_code"][:200] + "...")
     print(f"\nTest cases: {len(exercise['test_cases'])}")
     print(f"Hints available: {len(exercise['hints'])}")
-    
+
     return [assignment1, assignment2]
 
 
 def create_lab_sessions():
     """Create lab sessions for hands-on learning."""
     print("\n=== Creating Lab Sessions ===\n")
-    
+
     labs = [
         {
             "week": 2,
@@ -174,18 +168,18 @@ def create_lab_sessions():
                 "Install and configure Prometheus",
                 "Set up log aggregation with ELK stack",
                 "Create custom metrics and alerts",
-                "Build a monitoring dashboard"
+                "Build a monitoring dashboard",
             ],
             "materials": [
                 "Docker containers for services",
                 "Sample application with bugs",
-                "Monitoring configuration templates"
+                "Monitoring configuration templates",
             ],
             "deliverables": [
                 "Working monitoring setup",
                 "Custom dashboard screenshot",
-                "Alert configuration file"
-            ]
+                "Alert configuration file",
+            ],
         },
         {
             "week": 4,
@@ -195,7 +189,7 @@ def create_lab_sessions():
                 "Parse and analyze log files",
                 "Implement pattern matching for errors",
                 "Create anomaly detection algorithms",
-                "Test detection accuracy"
+                "Test detection accuracy",
             ],
             "starter_code": """
 import re
@@ -222,8 +216,8 @@ class ErrorDetector:
             "challenges": [
                 "Handle multi-line stack traces",
                 "Detect cascading errors",
-                "Implement severity classification"
-            ]
+                "Implement severity classification",
+            ],
         },
         {
             "week": 7,
@@ -233,32 +227,32 @@ class ErrorDetector:
                 "Design healing strategies",
                 "Implement automated fixes",
                 "Test healing effectiveness",
-                "Add safety checks"
+                "Add safety checks",
             ],
             "scenarios": [
                 "Database connection pool exhaustion",
                 "Memory leak in web service",
                 "Deadlock in concurrent system",
-                "Configuration drift"
-            ]
-        }
+                "Configuration drift",
+            ],
+        },
     ]
-    
+
     for i, lab in enumerate(labs):
         print(f"Lab {i+1}: {lab['title']}")
         print(f"Week: {lab['week']}, Duration: {lab['duration']} minutes")
         print("Objectives:")
-        for obj in lab['objectives'][:2]:
+        for obj in lab["objectives"][:2]:
             print(f"  - {obj}")
         print()
-    
+
     return labs
 
 
 def create_final_project():
     """Create final project specification."""
     print("\n=== Final Project Specification ===\n")
-    
+
     project = {
         "title": "Design and Implement a Self-Healing System",
         "duration": "4 weeks",
@@ -274,106 +268,108 @@ def create_final_project():
                 "Architecture diagram with components",
                 "Error taxonomy and detection strategy",
                 "Healing rule design and priorities",
-                "Formal specification of properties"
+                "Formal specification of properties",
             ],
             "implementation": [
                 "Working prototype with 5+ healing rules",
                 "Monitoring and alerting integration",
                 "Automated testing suite",
-                "Performance benchmarks"
+                "Performance benchmarks",
             ],
             "verification": [
                 "Formal model of system behavior",
                 "Verification of safety properties",
                 "Proof of healing termination",
-                "Analysis of edge cases"
+                "Analysis of edge cases",
             ],
             "documentation": [
                 "Technical design document (10 pages)",
                 "User guide and API documentation",
                 "Test results and analysis",
-                "Future improvements roadmap"
+                "Future improvements roadmap",
             ],
             "presentation": [
                 "20-minute class presentation",
                 "Live demonstration",
                 "Q&A session",
-                "Peer evaluation"
-            ]
+                "Peer evaluation",
+            ],
         },
         "project_ideas": [
             "Self-healing microservices platform",
             "Autonomous database optimization system",
             "Self-repairing distributed cache",
             "Resilient IoT device network",
-            "Self-healing CI/CD pipeline"
+            "Self-healing CI/CD pipeline",
         ],
         "grading": {
             "Design quality": 25,
             "Implementation": 35,
             "Verification": 20,
             "Documentation": 10,
-            "Presentation": 10
-        }
+            "Presentation": 10,
+        },
     }
-    
+
     print(f"Project: {project['title']}")
     print(f"Duration: {project['duration']}")
     print(f"Points: {project['points']}")
-    
+
     print("\nProject Ideas:")
-    for idea in project['project_ideas']:
+    for idea in project["project_ideas"]:
         print(f"  - {idea}")
-    
+
     print("\nGrading Breakdown:")
-    for category, weight in project['grading'].items():
+    for category, weight in project["grading"].items():
         print(f"  - {category}: {weight}%")
-    
+
     return project
 
 
 def create_workshop():
     """Create a workshop for faculty development."""
     print("\n=== Creating Faculty Workshop ===\n")
-    
+
     workshop = create_workshop_materials(
         topic="Teaching Self-Healing Systems with Formal Methods"
     )
-    
+
     print(f"Workshop: {workshop['title']}")
     print(f"Duration: {workshop['duration']}")
-    
+
     print("\nWorkshop Outline:")
-    for module in workshop['outline']:
+    for module in workshop["outline"]:
         print(f"\n{module['module']} ({module['duration']}):")
-        for topic in module['topics']:
+        for topic in module["topics"]:
             print(f"  - {topic}")
-    
+
     print("\nHands-on Exercises:")
-    for exercise in workshop['exercises']:
-        print(f"  - {exercise['title']} ({exercise['difficulty']}, {exercise['estimated_time']})")
-    
+    for exercise in workshop["exercises"]:
+        print(
+            f"  - {exercise['title']} ({exercise['difficulty']}, {exercise['estimated_time']})"
+        )
+
     return workshop
 
 
 def generate_course_calendar():
     """Generate a detailed course calendar."""
     print("\n=== Course Calendar ===\n")
-    
+
     start_date = datetime(2024, 9, 1)  # Fall semester
     calendar = []
-    
+
     for week in range(1, 11):
-        week_start = start_date + timedelta(weeks=week-1)
+        week_start = start_date + timedelta(weeks=week - 1)
         week_data = {
             "week": week,
             "dates": f"{week_start.strftime('%b %d')} - {(week_start + timedelta(days=4)).strftime('%b %d')}",
             "topics": [],
             "assignments": [],
             "labs": [],
-            "readings": []
+            "readings": [],
         }
-        
+
         # Add content based on week
         if week <= 3:
             week_data["topics"] = ["Introduction", "Error Detection"]
@@ -386,65 +382,65 @@ def generate_course_calendar():
             week_data["assignments"] = ["Implementation Project Due"]
         else:
             week_data["topics"] = ["Final Projects", "Presentations"]
-        
+
         calendar.append(week_data)
-    
+
     # Print first few weeks
     for week_data in calendar[:4]:
         print(f"Week {week_data['week']} ({week_data['dates']}):")
-        if week_data['topics']:
+        if week_data["topics"]:
             print(f"  Topics: {', '.join(week_data['topics'])}")
-        if week_data['labs']:
+        if week_data["labs"]:
             print(f"  Labs: {', '.join(week_data['labs'])}")
-        if week_data['assignments']:
+        if week_data["assignments"]:
             print(f"  Due: {', '.join(week_data['assignments'])}")
         print()
-    
+
     return calendar
 
 
 def main():
     """Run the course creation example."""
     print("=== University Course Creation Example ===\n")
-    
+
     # Create custom course
     curriculum = create_custom_course()
-    
+
     # Create assignments
     assignments = create_assignments()
-    
+
     # Create lab sessions
     labs = create_lab_sessions()
-    
+
     # Create final project
     project = create_final_project()
-    
+
     # Create faculty workshop
     workshop = create_workshop()
-    
+
     # Generate course calendar
     calendar = generate_course_calendar()
-    
+
     # Export course materials
     print("\n=== Exporting Course Materials ===")
-    
+
     course_package = {
         "course_info": {
             "code": "CS 495",
             "title": "Self-Healing Systems",
             "semester": "Fall 2024",
-            "credits": 3
+            "credits": 3,
         },
         "modules": ["SH101", "SH102", "SH103"],
         "assignments": assignments,
         "labs": labs,
         "final_project": project,
-        "calendar": calendar
+        "calendar": calendar,
     }
-    
+
     with open("course_package.json", "w") as f:
         json.dump(course_package, f, indent=2, default=str)
-    
+
     print("\n✓ Course package exported to course_package.json")
     print("\nCourse creation complete!")
     print("\nNext steps:")

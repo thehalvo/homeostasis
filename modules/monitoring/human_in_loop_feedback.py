@@ -20,7 +20,8 @@ from typing import Any, Dict, List, Optional
 import requests
 
 from modules.monitoring.logger import MonitoringLogger
-from modules.security.approval import ApprovalManager, ApprovalStatus, ApprovalType
+from modules.security.approval import (ApprovalManager, ApprovalStatus,
+                                       ApprovalType)
 from modules.security.audit import get_audit_logger, log_event
 
 logger = logging.getLogger(__name__)
@@ -302,7 +303,9 @@ class NotificationManager:
                 recipient_message = slack_message.copy()
                 recipient_message["channel"] = recipient
 
-                response = requests.post(webhook_url, json=recipient_message, timeout=10)
+                response = requests.post(
+                    webhook_url, json=recipient_message, timeout=10
+                )
                 if response.status_code == 200:
                     success_count += 1
 

@@ -9,7 +9,7 @@ import abc
 import json
 import logging
 from datetime import datetime
-from typing import Dict, Any, List, Optional, Callable, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 from uuid import uuid4
 
 logger = logging.getLogger(__name__)

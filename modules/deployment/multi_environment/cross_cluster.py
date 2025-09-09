@@ -15,9 +15,7 @@ from typing import Any, Dict, List, Optional
 
 from modules.deployment.kubernetes.k8s_manager import KubernetesManager
 from modules.deployment.multi_environment.hybrid_orchestrator import (
-    HealingContext,
-    HealingPlan,
-)
+    HealingContext, HealingPlan)
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 
 
@@ -780,8 +778,8 @@ class CrossClusterOrchestrator:
         affected_services = [
             service
             for service in self.services.values()
-            if failed_cluster_id in service.replicas and
-            service.replicas[failed_cluster_id] > 0
+            if failed_cluster_id in service.replicas
+            and service.replicas[failed_cluster_id] > 0
         ]
 
         if not affected_services:

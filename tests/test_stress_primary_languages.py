@@ -14,17 +14,20 @@ import string
 import sys
 import threading
 import time
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
+from concurrent.futures import (ProcessPoolExecutor, ThreadPoolExecutor,
+                                as_completed)
 from typing import Any, Dict
 
 import pytest
 
+from modules.analysis.comprehensive_error_detector import \
+    ComprehensiveErrorDetector
+from modules.analysis.cross_language_orchestrator import \
+    CrossLanguageOrchestrator
+from modules.analysis.language_plugin_system import LanguagePluginSystem
+
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
-from modules.analysis.comprehensive_error_detector import ComprehensiveErrorDetector
-from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
-from modules.analysis.language_plugin_system import LanguagePluginSystem
 
 
 class StressTestBase:
@@ -115,7 +118,7 @@ class TestHighVolumeProcessing(StressTestBase):
         print(f"Processed: {processed}")
         print(f"Failed: {failed}")
         print(f"Duration: {duration:.2f}s")
-        print(f"Rate: {processed/duration:.2f} errors/second")
+        print(f"Rate: {processed / duration:.2f} errors/second")
 
         # Assert performance requirements
         assert processed > error_count * 0.95  # At least 95% success rate
@@ -169,7 +172,7 @@ class TestHighVolumeProcessing(StressTestBase):
         print(f"Processed: {processed}")
         print(f"Failed: {failed}")
         print(f"Duration: {duration:.2f}s")
-        print(f"Rate: {processed/duration:.2f} errors/second")
+        print(f"Rate: {processed / duration:.2f} errors/second")
 
         assert processed > error_count * 0.95
         assert duration < error_count * 0.005  # Faster with concurrency
@@ -393,8 +396,8 @@ class TestErrorPatternStress(StressTestBase):
                 "id": f"cascade_{i}",
                 "language": languages[i % len(languages)],
                 "error_type": "CascadeError",
-                "message": f"Error {i} caused by error {i-1}",
-                "caused_by": f"cascade_{i-1}" if i > 0 else None,
+                "message": f"Error {i} caused by error {i - 1}",
+                "caused_by": f"cascade_{i - 1}" if i > 0 else None,
                 "file": f"cascade_{i}.py",
                 "line": i * 10,
             }
@@ -530,7 +533,7 @@ class TestResourceExhaustion(StressTestBase):
         print(f"Processes: {num_processes}")
         print(f"Total processed: {total_processed}")
         print(f"Duration: {duration:.2f}s")
-        print(f"Rate: {total_processed/duration:.2f} errors/second")
+        print(f"Rate: {total_processed / duration:.2f} errors/second")
 
         assert total_processed > num_processes * errors_per_process * 0.9
 

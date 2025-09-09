@@ -21,20 +21,12 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 import joblib
 import numpy as np
 import optuna  # For advanced hyperparameter optimization
-from sklearn.metrics import (
-    accuracy_score,
-    classification_report,
-    confusion_matrix,
-    mean_absolute_error,
-    mean_squared_error,
-    precision_recall_fscore_support,
-)
-from sklearn.model_selection import (
-    GridSearchCV,
-    RandomizedSearchCV,
-    cross_val_score,
-    train_test_split,
-)
+from sklearn.metrics import (accuracy_score, classification_report,
+                             confusion_matrix, mean_absolute_error,
+                             mean_squared_error,
+                             precision_recall_fscore_support)
+from sklearn.model_selection import (GridSearchCV, RandomizedSearchCV,
+                                     cross_val_score, train_test_split)
 from sklearn.pipeline import Pipeline
 
 # Configure logging
@@ -265,9 +257,9 @@ class ModelTrainer:
     def _generate_model_id(self) -> str:
         """Generate a unique model ID."""
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        config_hash = hashlib.md5(
+        config_hash = hashlib.sha256(
             json.dumps(self.config.__dict__, sort_keys=True).encode()
-        ).hexdigest()[:8]
+        ).hexdigest()[:16]
         return f"{self.config.model_name}_{timestamp}_{config_hash}"
 
     def _load_data(self) -> Tuple[np.ndarray, np.ndarray]:
@@ -332,10 +324,8 @@ class ModelTrainer:
         # Import models based on type
         if self.config.model_type == "classifier":
             from lightgbm import LGBMClassifier
-            from sklearn.ensemble import (
-                GradientBoostingClassifier,
-                RandomForestClassifier,
-            )
+            from sklearn.ensemble import (GradientBoostingClassifier,
+                                          RandomForestClassifier)
             from sklearn.neural_network import MLPClassifier
             from sklearn.svm import SVC
             from xgboost import XGBClassifier
@@ -350,10 +340,8 @@ class ModelTrainer:
             }
         elif self.config.model_type == "regressor":
             from lightgbm import LGBMRegressor
-            from sklearn.ensemble import (
-                GradientBoostingRegressor,
-                RandomForestRegressor,
-            )
+            from sklearn.ensemble import (GradientBoostingRegressor,
+                                          RandomForestRegressor)
             from sklearn.neural_network import MLPRegressor
             from sklearn.svm import SVR
             from xgboost import XGBRegressor
@@ -782,8 +770,8 @@ class EnsembleTrainer(ModelTrainer):
                 n_jobs=self.config.n_jobs,
                 cv_folds=self.config.cv_folds,
                 optimization_method=self.config.optimization_method,
-                optimization_trials=self.config.optimization_trials //
-                len(self.config.ensemble_models),
+                optimization_trials=self.config.optimization_trials
+                // len(self.config.ensemble_models),
                 distributed=self.config.distributed,
                 distributed_backend=self.config.distributed_backend,
                 experiment_tracking="none",  # Track only ensemble

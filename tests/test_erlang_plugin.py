@@ -4,11 +4,9 @@ Tests for the Erlang language plugin.
 
 import pytest
 
-from modules.analysis.plugins.erlang_plugin import (
-    ErlangExceptionHandler,
-    ErlangLanguagePlugin,
-    ErlangPatchGenerator,
-)
+from modules.analysis.plugins.erlang_plugin import (ErlangExceptionHandler,
+                                                    ErlangLanguagePlugin,
+                                                    ErlangPatchGenerator)
 
 
 class TestErlangExceptionHandler:

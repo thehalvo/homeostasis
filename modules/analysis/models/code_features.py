@@ -394,12 +394,10 @@ class MultiLanguageFeatureExtractor:
                 # Use specific revision for security and reproducibility
                 model_revision = "1b2e0bfe5003709471fb6e04c0943470cf4a5b30"
                 self.tokenizer = AutoTokenizer.from_pretrained(
-                    "microsoft/codebert-base",
-                    revision=model_revision
+                    "microsoft/codebert-base", revision=model_revision
                 )
                 self.semantic_model = AutoModel.from_pretrained(
-                    "microsoft/codebert-base",
-                    revision=model_revision
+                    "microsoft/codebert-base", revision=model_revision
                 )
                 self.semantic_model.eval()
             except Exception as e:
@@ -461,8 +459,10 @@ class MultiLanguageFeatureExtractor:
             context["stack_depth"] = len([line for line in traceback if "File" in line])
 
         # Extract from detailed frames
-        if ("error_details" in error_data and
-                "detailed_frames" in error_data["error_details"]):
+        if (
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
+        ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
                 last_frame = frames[-1]
@@ -660,16 +660,16 @@ class MultiLanguageFeatureExtractor:
             anti_patterns=[
                 k
                 for k, v in pattern_matches.items()
-                if k.startswith(("bare_", "uses_eval", "uses_var", "global_usage")) and
-                v
+                if k.startswith(("bare_", "uses_eval", "uses_var", "global_usage"))
+                and v
             ],
             # Context features
             surrounding_code=error_context["surrounding_code"],
-            imports=dependency_features["external_dependencies"] +
-            dependency_features["internal_dependencies"],
-            locals=error_data.get("error_details", {}).
-            get("detailed_frames", [{}])[-1].
-            get("locals", {}),
+            imports=dependency_features["external_dependencies"]
+            + dependency_features["internal_dependencies"],
+            locals=error_data.get("error_details", {})
+            .get("detailed_frames", [{}])[-1]
+            .get("locals", {}),
             # Framework features
             framework=framework_features["framework"],
             framework_features=framework_features["framework_patterns"],
@@ -837,7 +837,7 @@ class FeaturePipeline:
             ),
         ]
         key_string = "|".join(key_components)
-        return hashlib.md5(key_string.encode(), usedforsecurity=False).hexdigest()
+        return hashlib.sha256(key_string.encode()).hexdigest()
 
     def save_feature_metadata(self, output_path: str):
         """Save feature metadata for interpretation."""

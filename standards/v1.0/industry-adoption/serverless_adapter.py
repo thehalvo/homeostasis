@@ -10,11 +10,12 @@ import json
 import logging
 import tempfile
 from datetime import datetime
-from typing import Dict, Any, List, Optional, Callable
+from typing import Any, Callable, Dict, List, Optional
 from uuid import uuid4
 
 from modules.deployment.serverless.base_provider import ServerlessProvider
-from modules.deployment.serverless.provider_factory import get_serverless_provider
+from modules.deployment.serverless.provider_factory import \
+    get_serverless_provider
 
 logger = logging.getLogger(__name__)
 

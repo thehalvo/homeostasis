@@ -402,9 +402,8 @@ class GCPProvider(BaseCloudProvider):
                 return get_credentials_result
 
             # Now we can use kubectl
-            from modules.deployment.kubernetes.kubernetes_deployment import (
-                KubernetesDeployment,
-            )
+            from modules.deployment.kubernetes.kubernetes_deployment import \
+                KubernetesDeployment
 
             # Create Kubernetes deployment
             k8s_deployment = KubernetesDeployment(
@@ -611,9 +610,8 @@ class GCPProvider(BaseCloudProvider):
                 return get_credentials_result
 
             # Now we can use kubectl
-            from modules.deployment.kubernetes.kubernetes_deployment import (
-                KubernetesDeployment,
-            )
+            from modules.deployment.kubernetes.kubernetes_deployment import \
+                KubernetesDeployment
 
             # Create Kubernetes deployment
             k8s_deployment = KubernetesDeployment({"namespace": namespace})
@@ -792,9 +790,8 @@ class GCPProvider(BaseCloudProvider):
                     return get_credentials_result
 
                 # Now we can use kubectl
-                from modules.deployment.kubernetes.kubernetes_deployment import (
-                    KubernetesDeployment,
-                )
+                from modules.deployment.kubernetes.kubernetes_deployment import \
+                    KubernetesDeployment
 
                 # Create Kubernetes deployment
                 k8s_deployment = KubernetesDeployment({"namespace": namespace})

@@ -4,11 +4,9 @@ Tests for the Haskell language plugin.
 
 import pytest
 
-from modules.analysis.plugins.haskell_plugin import (
-    HaskellExceptionHandler,
-    HaskellLanguagePlugin,
-    HaskellPatchGenerator,
-)
+from modules.analysis.plugins.haskell_plugin import (HaskellExceptionHandler,
+                                                     HaskellLanguagePlugin,
+                                                     HaskellPatchGenerator)
 
 
 class TestHaskellExceptionHandler:

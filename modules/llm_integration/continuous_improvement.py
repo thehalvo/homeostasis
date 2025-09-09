@@ -520,8 +520,8 @@ class ContinuousImprovementEngine:
     def _generate_pattern_id(self, pattern_type: str, data: Any) -> str:
         """Generate a unique pattern ID."""
         data_str = json.dumps(data, sort_keys=True)
-        hash_obj = hashlib.md5(f"{pattern_type}:{data_str}".encode())
-        return f"{pattern_type}_{hash_obj.hexdigest()[:8]}"
+        hash_obj = hashlib.sha256(f"{pattern_type}:{data_str}".encode())
+        return f"{pattern_type}_{hash_obj.hexdigest()[:16]}"
 
     def _store_patterns(self, patterns: List[LearningPattern]) -> None:
         """Store patterns in the database."""

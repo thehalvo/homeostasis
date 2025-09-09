@@ -9,11 +9,9 @@ dependency handling, compilation errors, and fix generation.
 import pytest
 
 from modules.analysis.language_adapters import JavaErrorAdapter
-from modules.analysis.plugins.java_plugin import (
-    JavaExceptionHandler,
-    JavaLanguagePlugin,
-    JavaPatchGenerator,
-)
+from modules.analysis.plugins.java_plugin import (JavaExceptionHandler,
+                                                  JavaLanguagePlugin,
+                                                  JavaPatchGenerator)
 
 
 class TestJavaErrorAdapter:

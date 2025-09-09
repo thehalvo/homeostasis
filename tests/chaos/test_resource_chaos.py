@@ -380,8 +380,8 @@ class TestResourceChaos:
             assert "random" in pattern_data and "sequential" in pattern_data
         else:
             assert (
-                pattern_data["random"]["allocation_time"] >
-                pattern_data["sequential"]["allocation_time"] * 0.8
+                pattern_data["random"]["allocation_time"]
+                > pattern_data["sequential"]["allocation_time"] * 0.8
             )
 
     @pytest.mark.asyncio
@@ -453,7 +453,9 @@ class TestResourceChaos:
                             data = f.read(io_size)
                             # Verify read completed successfully
                             if len(data) != io_size and f.tell() < file_size:
-                                raise IOError(f"Incomplete read: expected {io_size}, got {len(data)}")
+                                raise IOError(
+                                    f"Incomplete read: expected {io_size}, got {len(data)}"
+                                )
                         else:
                             # Write operation
                             f.write(os.urandom(io_size))
@@ -568,9 +570,9 @@ class TestResourceChaos:
                 with self.lock:
                     # Check if resources available
                     if (
-                        self.resources["cpu_tokens"] >= cpu_tokens and
-                        self.resources["memory_mb"] >= memory_mb and
-                        self.resources["io_bandwidth_mbps"] >= io_mbps
+                        self.resources["cpu_tokens"] >= cpu_tokens
+                        and self.resources["memory_mb"] >= memory_mb
+                        and self.resources["io_bandwidth_mbps"] >= io_mbps
                     ):
 
                         # Allocate resources

@@ -24,21 +24,11 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from scipy import stats
-from sklearn.metrics import (
-    accuracy_score,
-    classification_report,
-    cohen_kappa_score,
-    confusion_matrix,
-    f1_score,
-    log_loss,
-    matthews_corrcoef,
-    mean_absolute_error,
-    mean_squared_error,
-    precision_score,
-    r2_score,
-    recall_score,
-    roc_auc_score,
-)
+from sklearn.metrics import (accuracy_score, classification_report,
+                             cohen_kappa_score, confusion_matrix, f1_score,
+                             log_loss, matthews_corrcoef, mean_absolute_error,
+                             mean_squared_error, precision_score, r2_score,
+                             recall_score, roc_auc_score)
 
 # Optional imports for advanced features
 try:
@@ -60,40 +50,62 @@ class RestrictedUnpickler(pickle.Unpickler):
     Restricted unpickler that only allows specific safe classes.
     This prevents arbitrary code execution during unpickling.
     """
-    
+
     ALLOWED_MODULES = {
-        'numpy', 'numpy.core.multiarray', 'numpy.core.numeric',
-        'sklearn', 'sklearn.ensemble', 'sklearn.tree', 'sklearn.linear_model',
-        'sklearn.naive_bayes', 'sklearn.svm', 'sklearn.neighbors',
-        'sklearn.preprocessing', 'sklearn.preprocessing._label',
-        'sklearn.feature_extraction', 'sklearn.feature_extraction.text',
-        'sklearn.pipeline', 'joblib', 'joblib.numpy_pickle',
-        'collections', 'builtins', 'pandas', 'pandas.core',
-        'scipy', 'scipy.sparse'
+        "numpy",
+        "numpy.core.multiarray",
+        "numpy.core.numeric",
+        "sklearn",
+        "sklearn.ensemble",
+        "sklearn.tree",
+        "sklearn.linear_model",
+        "sklearn.naive_bayes",
+        "sklearn.svm",
+        "sklearn.neighbors",
+        "sklearn.preprocessing",
+        "sklearn.preprocessing._label",
+        "sklearn.feature_extraction",
+        "sklearn.feature_extraction.text",
+        "sklearn.pipeline",
+        "joblib",
+        "joblib.numpy_pickle",
+        "collections",
+        "builtins",
+        "pandas",
+        "pandas.core",
+        "scipy",
+        "scipy.sparse",
     }
-    
+
     ALLOWED_NAMES = {
-        ('builtins', 'slice'), ('builtins', 'range'), ('builtins', 'tuple'),
-        ('builtins', 'list'), ('builtins', 'dict'), ('builtins', 'set'),
-        ('builtins', 'frozenset'), ('builtins', 'bytearray'),
-        ('collections', 'OrderedDict'), ('numpy', 'ndarray'),
-        ('numpy.core.multiarray', 'scalar'), ('numpy', 'dtype'),
-        ('sklearn.preprocessing._label', 'LabelEncoder'),
-        ('pandas.core.frame', 'DataFrame'),
-        ('pandas.core.series', 'Series'),
-        ('scipy.sparse._csr', 'csr_matrix'),
-        ('scipy.sparse._csc', 'csc_matrix')
+        ("builtins", "slice"),
+        ("builtins", "range"),
+        ("builtins", "tuple"),
+        ("builtins", "list"),
+        ("builtins", "dict"),
+        ("builtins", "set"),
+        ("builtins", "frozenset"),
+        ("builtins", "bytearray"),
+        ("collections", "OrderedDict"),
+        ("numpy", "ndarray"),
+        ("numpy.core.multiarray", "scalar"),
+        ("numpy", "dtype"),
+        ("sklearn.preprocessing._label", "LabelEncoder"),
+        ("pandas.core.frame", "DataFrame"),
+        ("pandas.core.series", "Series"),
+        ("scipy.sparse._csr", "csr_matrix"),
+        ("scipy.sparse._csc", "csc_matrix"),
     }
-    
+
     def find_class(self, module, name):
         # Check if module.name combination is explicitly allowed
         if (module, name) in self.ALLOWED_NAMES:
             return super().find_class(module, name)
-        
+
         # Check if module is in allowed modules
         if any(module.startswith(allowed) for allowed in self.ALLOWED_MODULES):
             return super().find_class(module, name)
-        
+
         # Reject everything else
         raise pickle.UnpicklingError(
             f"Attempting to unpickle unsafe class {module}.{name}. "
@@ -104,17 +116,17 @@ class RestrictedUnpickler(pickle.Unpickler):
 def secure_pickle_load(filepath: str):
     """
     Securely load a pickled model with protection against arbitrary code execution.
-    
+
     Args:
         filepath: Path to the pickle file
-    
+
     Returns:
         Loaded object
-        
+
     Raises:
         pickle.UnpicklingError: If unsafe classes are detected
     """
-    with open(filepath, 'rb') as f:
+    with open(filepath, "rb") as f:
         unpickler = RestrictedUnpickler(f)
         return unpickler.load()
 
@@ -250,7 +262,9 @@ class ModelVersionControl:
     def _generate_version_id(self, model_name: str) -> str:
         """Generate a unique version ID."""
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        random_suffix = hashlib.md5(os.urandom(16), usedforsecurity=False).hexdigest()[:8]
+        random_suffix = hashlib.sha256(os.urandom(16)).hexdigest()[
+            :16
+        ]
         return f"{model_name}_{timestamp}_{random_suffix}"
 
     def commit_model(
@@ -930,9 +944,11 @@ class ModelEvaluator:
             eval_result = self.evaluate_model(version_id, X_test, y_test, dataset_name)
 
             # Extract key metrics
-            metrics = (eval_result.classification_metrics or
-                       eval_result.regression_metrics or
-                       {})
+            metrics = (
+                eval_result.classification_metrics
+                or eval_result.regression_metrics
+                or {}
+            )
 
             row = {
                 "version_id": version_id,
@@ -1007,9 +1023,10 @@ class ModelEvaluator:
             "winner": winner,
             "improvement": float(abs(eval_b.primary_score - eval_a.primary_score)),
             "improvement_pct": float(
-                (eval_b.primary_score - eval_a.primary_score) /
-                eval_a.primary_score *
-                100),
+                (eval_b.primary_score - eval_a.primary_score)
+                / eval_a.primary_score
+                * 100
+            ),
         }
 
         return result

@@ -582,23 +582,23 @@ class PolicyEnforcementEngine:
             if policy.scope == PolicyScope.GLOBAL:
                 applicable.append(policy)
             elif (
-                policy.scope == PolicyScope.ENVIRONMENT and
-                policy.metadata.get("environment") == context.environment
+                policy.scope == PolicyScope.ENVIRONMENT
+                and policy.metadata.get("environment") == context.environment
             ):
                 applicable.append(policy)
             elif (
-                policy.scope == PolicyScope.SERVICE and
-                policy.metadata.get("service") == context.service_name
+                policy.scope == PolicyScope.SERVICE
+                and policy.metadata.get("service") == context.service_name
             ):
                 applicable.append(policy)
             elif (
-                policy.scope == PolicyScope.LANGUAGE and
-                policy.metadata.get("language") == context.language
+                policy.scope == PolicyScope.LANGUAGE
+                and policy.metadata.get("language") == context.language
             ):
                 applicable.append(policy)
             elif (
-                policy.scope == PolicyScope.ERROR_TYPE and
-                policy.metadata.get("error_type") == context.error_type
+                policy.scope == PolicyScope.ERROR_TYPE
+                and policy.metadata.get("error_type") == context.error_type
             ):
                 applicable.append(policy)
 
@@ -692,9 +692,9 @@ class PolicyEnforcementEngine:
     ) -> bool:
         """Evaluate equals condition."""
         if (
-            isinstance(field_value, str) and
-            isinstance(condition_value, str) and
-            not case_sensitive
+            isinstance(field_value, str)
+            and isinstance(condition_value, str)
+            and not case_sensitive
         ):
             return field_value.lower() == condition_value.lower()
         return field_value == condition_value

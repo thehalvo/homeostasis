@@ -11,12 +11,12 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-# Add project root to sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 from modules.monitoring.extractor import get_error_summary, get_latest_errors
 from modules.monitoring.logger import MonitoringLogger
 from modules.monitoring.middleware import add_logging_middleware
+
+# Add project root to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 def test_monitoring_logger_initialization():

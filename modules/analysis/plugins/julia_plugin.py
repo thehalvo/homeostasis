@@ -502,10 +502,12 @@ class JuliaExceptionHandler:
             }
 
         # Check for UndefVarError
-        if (any(
+        if (
+            any(
                 keyword in message_lower for keyword in ["undefvarerror", "not defined"]
-            ) and
-                "@" not in message):
+            )
+            and "@" not in message
+        ):
             return {
                 "category": "julia",
                 "subcategory": "undefined",

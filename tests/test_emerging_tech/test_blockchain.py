@@ -5,12 +5,10 @@ Test cases for blockchain and distributed ledger healing
 import unittest
 
 from modules.analysis.plugins.blockchain_plugin import BlockchainPlugin
-from modules.emerging_tech.blockchain import (
-    BlockchainError,
-    BlockchainErrorType,
-    BlockchainHealer,
-    BlockchainPlatform,
-)
+from modules.emerging_tech.blockchain import (BlockchainError,
+                                              BlockchainErrorType,
+                                              BlockchainHealer,
+                                              BlockchainPlatform)
 
 
 class TestBlockchainHealer(unittest.TestCase):

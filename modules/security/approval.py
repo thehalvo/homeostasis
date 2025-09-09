@@ -178,8 +178,8 @@ class ApprovalRequest:
             bool: True if approved, False otherwise
         """
         return (
-            len(self.approvals) >= self.required_approvers or
-            self.status == ApprovalStatus.APPROVED
+            len(self.approvals) >= self.required_approvers
+            or self.status == ApprovalStatus.APPROVED
         )
 
     def is_rejected(self) -> bool:

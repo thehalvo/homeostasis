@@ -8,15 +8,17 @@ different versions, protocols, and data formats in heterogeneous environments.
 import json
 import logging
 import re
+
 # Always import defusedxml for security
 try:
     import defusedxml.ElementTree as ET
 except ImportError:
     # If defusedxml is not available, use standard library with secure defaults
     import xml.etree.ElementTree as ET
+
     # Disable external entity processing
-    if hasattr(xml.etree, 'XMLParse'):
-        xml.etree.XMLParse.XMLParser.SetFeature('resolve-entities', False)
+    if hasattr(xml.etree, "XMLParse"):
+        xml.etree.XMLParse.XMLParser.SetFeature("resolve-entities", False)
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
@@ -823,20 +825,20 @@ class CompatibilityLayer:
         # Customer ID
         if len(copybook_data) >= offset + 10:
             result["customer_id"] = self._convert_fixed_string(
-                copybook_data[offset:offset + 10]
+                copybook_data[offset : offset + 10]
             )
             offset += 10
 
         # Name
         if len(copybook_data) >= offset + 30:
             result["name"] = self._convert_fixed_string(
-                copybook_data[offset:offset + 30]
+                copybook_data[offset : offset + 30]
             )
             offset += 30
 
         # Balance (packed decimal)
         if len(copybook_data) >= offset + 5:
-            packed_balance = copybook_data[offset:offset + 5]
+            packed_balance = copybook_data[offset : offset + 5]
             if self._is_packed_decimal(packed_balance):
                 result["balance"] = self._convert_packed_decimal(packed_balance) / 100
             offset += 5

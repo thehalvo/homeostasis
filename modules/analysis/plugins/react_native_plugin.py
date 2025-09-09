@@ -897,9 +897,11 @@ class ReactNativeLanguagePlugin(LanguagePlugin):
         """
         # Check if framework is explicitly set
         framework = error_data.get("framework", "").lower()
-        if ("react-native" in framework or
-                "react native" in framework or
-                "expo" in framework):
+        if (
+            "react-native" in framework
+            or "react native" in framework
+            or "expo" in framework
+        ):
             return True
 
         # Check runtime environment

@@ -4,11 +4,9 @@ Tests for the Zig language plugin.
 
 import pytest
 
-from modules.analysis.plugins.zig_plugin import (
-    ZigExceptionHandler,
-    ZigLanguagePlugin,
-    ZigPatchGenerator,
-)
+from modules.analysis.plugins.zig_plugin import (ZigExceptionHandler,
+                                                 ZigLanguagePlugin,
+                                                 ZigPatchGenerator)
 
 
 class TestZigExceptionHandler:

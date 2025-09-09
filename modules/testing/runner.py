@@ -51,10 +51,10 @@ class TestRunner:
         try:
             # Run the tests
             import shlex
-            
+
             # Parse command into list for safer execution
             cmd_list = shlex.split(test_command)
-            
+
             result = subprocess.run(
                 cmd_list,
                 shell=False,

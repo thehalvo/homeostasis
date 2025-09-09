@@ -157,7 +157,8 @@ class LLMContext:
         if isinstance(data.get("error_classification"), dict):
             classification_data = data["error_classification"]
             # Handle enum conversions
-            from .comprehensive_error_detector import ErrorCategory, ErrorSeverity
+            from .comprehensive_error_detector import (ErrorCategory,
+                                                       ErrorSeverity)
 
             if "category" in classification_data:
                 classification_data["category"] = ErrorCategory(

@@ -260,8 +260,10 @@ class KotlinExceptionHandler:
         error_type = error_data.get("error_type", "Unknown")
 
         # Basic classification based on common Kotlin exceptions
-        if ("KotlinNullPointerException" in error_type or
-                "NullPointerException" in error_type):
+        if (
+            "KotlinNullPointerException" in error_type
+            or "NullPointerException" in error_type
+        ):
             return {
                 "error_data": error_data,
                 "rule_id": "kotlin_null_pointer_fallback",

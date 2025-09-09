@@ -583,9 +583,11 @@ class SwiftPatchGenerator:
         first_frame = stack_trace[0]
 
         # If it's a dictionary with file/line info, return it directly
-        if (isinstance(first_frame, dict) and
-                "file" in first_frame and
-                "line" in first_frame):
+        if (
+            isinstance(first_frame, dict)
+            and "file" in first_frame
+            and "line" in first_frame
+        ):
             return {
                 "file": first_frame.get("file", ""),
                 "line": first_frame.get("line", 0),

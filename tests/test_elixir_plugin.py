@@ -6,11 +6,11 @@ import os
 import sys
 import unittest
 
-# Add the parent directory to the path so we can import from modules
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 from modules.analysis.language_adapters import ElixirErrorAdapter
 from modules.analysis.plugins.elixir_plugin import ElixirLanguagePlugin
+
+# Add the parent directory to the path so we can import from modules
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 class TestElixirPlugin(unittest.TestCase):

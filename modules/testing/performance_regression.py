@@ -574,8 +574,8 @@ class PerformanceRegressionTester:
         # Report critical regressions
         for regression in regressions:
             if (
-                regression.is_regression and
-                regression.details.get("severity") == "critical"
+                regression.is_regression
+                and regression.details.get("severity") == "critical"
             ):
                 self._report_regression(regression)
 

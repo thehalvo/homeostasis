@@ -166,7 +166,7 @@ class DependencyVulnerabilityScanner(SecurityScanner):
     def _generate_scan_id(self) -> str:
         """Generate unique scan ID."""
         timestamp = datetime.now().isoformat()
-        return hashlib.sha256(f"{self.name}:{timestamp}".encode()).hexdigest()[:12]
+        return hashlib.sha256(f"{self.name}:{timestamp}".encode()).hexdigest()[:24]
 
     def _has_dependencies(self, target_path: Path, scanner_type: str) -> bool:
         """Check if target has dependencies for given scanner type."""
@@ -563,7 +563,7 @@ class StaticCodeSecurityScanner(SecurityScanner):
     def _generate_scan_id(self) -> str:
         """Generate unique scan ID."""
         timestamp = datetime.now().isoformat()
-        return hashlib.sha256(f"{self.name}:{timestamp}".encode()).hexdigest()[:12]
+        return hashlib.sha256(f"{self.name}:{timestamp}".encode()).hexdigest()[:24]
 
     async def _scan_python_code(self, file_path: Path) -> List[SecurityVulnerability]:
         """Scan Python code using bandit."""
@@ -861,7 +861,7 @@ class StaticCodeSecurityScanner(SecurityScanner):
                         for pattern, description in password_patterns:
                             if re.search(pattern, line, re.IGNORECASE):
                                 vulnerability = SecurityVulnerability(
-                                    id=f"hardcoded-{hashlib.md5(line.encode(), usedforsecurity=False).hexdigest()[:8]}",
+                                    id=f"hardcoded-{hashlib.sha256(line.encode()).hexdigest()[:16]}",
                                     severity="high",
                                     category="code",
                                     title=description,
@@ -986,7 +986,7 @@ class ContainerSecurityScanner(SecurityScanner):
     def _generate_scan_id(self) -> str:
         """Generate unique scan ID."""
         timestamp = datetime.now().isoformat()
-        return hashlib.sha256(f"{self.name}:{timestamp}".encode()).hexdigest()[:12]
+        return hashlib.sha256(f"{self.name}:{timestamp}".encode()).hexdigest()[:24]
 
     async def _scan_dockerfiles(self, target_path: Path) -> List[SecurityVulnerability]:
         """Scan Dockerfiles using hadolint."""
@@ -1166,7 +1166,7 @@ class IaCSecurityScanner(SecurityScanner):
     def _generate_scan_id(self) -> str:
         """Generate unique scan ID."""
         timestamp = datetime.now().isoformat()
-        return hashlib.sha256(f"{self.name}:{timestamp}".encode()).hexdigest()[:12]
+        return hashlib.sha256(f"{self.name}:{timestamp}".encode()).hexdigest()[:24]
 
     def _has_iac_files(self, target_path: Path, scanner_type: str) -> bool:
         """Check if target has IaC files for given scanner."""

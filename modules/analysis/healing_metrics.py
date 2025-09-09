@@ -101,9 +101,10 @@ class HealingMetricsCollector:
 
         # Calculate success rate
         self.metrics["global"]["healing_success_rate"] = (
-            self.metrics["global"]["successful_healing"] /
-            self.metrics["global"]["healing_attempts"] *
-            100)
+            self.metrics["global"]["successful_healing"]
+            / self.metrics["global"]["healing_attempts"]
+            * 100
+        )
 
         # Update timing metrics
         self._update_timing_metrics(timings)
@@ -131,8 +132,9 @@ class HealingMetricsCollector:
         # Update timing for this language
         total_time = sum(timings.values())
         lang_metrics["avg_healing_time"] = (
-            lang_metrics["avg_healing_time"] * (lang_metrics["attempts"] - 1) +
-            total_time) / lang_metrics["attempts"]
+            lang_metrics["avg_healing_time"] * (lang_metrics["attempts"] - 1)
+            + total_time
+        ) / lang_metrics["attempts"]
 
         # Update metrics by error type
         if error_type not in lang_metrics["by_error_type"]:
@@ -194,9 +196,10 @@ class HealingMetricsCollector:
                 self.metrics["cross_language"]["successful"] += 1
 
             self.metrics["cross_language"]["success_rate"] = (
-                self.metrics["cross_language"]["successful"] /
-                self.metrics["cross_language"]["attempts"] *
-                100)
+                self.metrics["cross_language"]["successful"]
+                / self.metrics["cross_language"]["attempts"]
+                * 100
+            )
 
             # Track by source and target language pair
             pair_key = f"{source_language}->{language}"
@@ -240,8 +243,10 @@ class HealingMetricsCollector:
         else:
             self.metrics["regression"]["repeat_errors"] += 1
 
-        total_errors = (self.metrics["regression"]["prevented_errors"] +
-                       self.metrics["regression"]["repeat_errors"])
+        total_errors = (
+            self.metrics["regression"]["prevented_errors"]
+            + self.metrics["regression"]["repeat_errors"]
+        )
 
         self.metrics["regression"]["prevention_rate"] = (
             self.metrics["regression"]["prevented_errors"] / total_errors * 100
@@ -754,9 +759,11 @@ def track_healing_event(
     is_cross_language = False
     source_language = None
 
-    if (fix_data and
-            fix_data.get("used_cross_language") and
-            "source_languages" in fix_data):
+    if (
+        fix_data
+        and fix_data.get("used_cross_language")
+        and "source_languages" in fix_data
+    ):
         is_cross_language = True
         # Use the first source language if multiple are provided
         source_languages = fix_data["source_languages"]

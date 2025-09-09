@@ -784,8 +784,8 @@ spec:
                     "fix_id": fix_id,
                     "image": image,
                     "namespace": self.namespace,
-                    "success": deployment_result["success"] and
-                              service_result["success"],
+                    "success": deployment_result["success"]
+                    and service_result["success"],
                     "host": host if host else "none",
                 },
             )
@@ -829,8 +829,8 @@ spec:
                     "service_name": service_name,
                     "fix_id": fix_id,
                     "namespace": self.namespace,
-                    "success": deployment_result["success"] and
-                              service_result["success"],
+                    "success": deployment_result["success"]
+                    and service_result["success"],
                 },
             )
         except Exception as e:

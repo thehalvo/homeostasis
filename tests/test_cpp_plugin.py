@@ -11,15 +11,13 @@ import sys
 
 import pytest
 
+from modules.analysis.cpp_adapter import CPPErrorAdapter
+from modules.analysis.plugins.cpp_plugin import (CPPExceptionHandler,
+                                                 CPPLanguagePlugin,
+                                                 CPPPatchGenerator)
+
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
-from modules.analysis.cpp_adapter import CPPErrorAdapter
-from modules.analysis.plugins.cpp_plugin import (
-    CPPExceptionHandler,
-    CPPLanguagePlugin,
-    CPPPatchGenerator,
-)
 
 
 class TestCPPErrorAdapter:
@@ -46,8 +44,8 @@ class TestCPPErrorAdapter:
         assert standard_error["language"] == "cpp"
         assert standard_error["error_type"] == "CompilationError"
         assert (
-            standard_error["message"] ==
-            "error: 'vector' was not declared in this scope"
+            standard_error["message"]
+            == "error: 'vector' was not declared in this scope"
         )
         assert standard_error["file"] == "main.cpp"
         assert standard_error["line"] == 15
@@ -204,9 +202,9 @@ class TestCPPExceptionHandler:
         ]
         assert analysis["category"] in ["linking", "compilation", "memory", "unknown"]
         assert (
-            "implement" in analysis["suggestion"].lower() or
-            "link" in analysis["suggestion"].lower() or
-            "define" in analysis["suggestion"].lower()
+            "implement" in analysis["suggestion"].lower()
+            or "link" in analysis["suggestion"].lower()
+            or "define" in analysis["suggestion"].lower()
         )
 
     def test_analyze_memory_leak(self):
@@ -255,16 +253,16 @@ class TestCPPExceptionHandler:
         analysis = self.handler.analyze_exception(error_data)
 
         assert (
-            "template" in analysis["root_cause"] or
-            analysis["root_cause"] == "cpp_unknown"
+            "template" in analysis["root_cause"]
+            or analysis["root_cause"] == "cpp_unknown"
         )
         assert analysis["category"] in ["templates", "compilation", "unknown"]
         suggestion = analysis.get("suggestion", "").lower()
         assert (
-            suggestion == "" or
-            "type" in suggestion or
-            "template" in suggestion or
-            "check" in suggestion
+            suggestion == ""
+            or "type" in suggestion
+            or "template" in suggestion
+            or "check" in suggestion
         )
 
     def test_analyze_stl_error(self):
@@ -280,9 +278,9 @@ class TestCPPExceptionHandler:
         analysis = self.handler.analyze_exception(error_data)
 
         assert (
-            "stl" in analysis["root_cause"] or
-            "range" in analysis["root_cause"] or
-            analysis["root_cause"] == "cpp_unknown"
+            "stl" in analysis["root_cause"]
+            or "range" in analysis["root_cause"]
+            or analysis["root_cause"] == "cpp_unknown"
         )
         assert analysis["category"] in ["stl", "runtime", "memory", "unknown"]
         suggestion = analysis.get("suggestion", "").lower()
@@ -305,9 +303,9 @@ class TestCPPExceptionHandler:
         analysis = self.handler.analyze_exception(error_data)
 
         assert (
-            "race" in analysis["root_cause"] or
-            "thread" in analysis["root_cause"] or
-            analysis["root_cause"] == "cpp_unknown"
+            "race" in analysis["root_cause"]
+            or "thread" in analysis["root_cause"]
+            or analysis["root_cause"] == "cpp_unknown"
         )
         assert analysis["category"] in ["threading", "runtime", "c", "unknown"]
         assert analysis["severity"] in ["high", "medium", "critical"]
@@ -334,8 +332,8 @@ class TestCPPExceptionHandler:
         assert analysis["category"] == "memory"
         assert analysis["severity"] == "critical"
         assert (
-            "once" in analysis["suggestion"].lower() or
-            "smart" in analysis["suggestion"].lower()
+            "once" in analysis["suggestion"].lower()
+            or "smart" in analysis["suggestion"].lower()
         )
 
     def test_analyze_stack_overflow(self):
@@ -356,8 +354,8 @@ class TestCPPExceptionHandler:
         assert analysis["root_cause"] == "cpp_stack_overflow"
         assert analysis["category"] == "memory"
         assert (
-            "recursion" in analysis["suggestion"].lower() or
-            "base case" in analysis["suggestion"].lower()
+            "recursion" in analysis["suggestion"].lower()
+            or "base case" in analysis["suggestion"].lower()
         )
 
     def test_fallback_analysis(self):
@@ -431,8 +429,8 @@ class TestCPPPatchGenerator:
 
         assert memory_patch["language"] == "cpp"
         assert (
-            "delete[]" in memory_patch["suggestion_code"] or
-            "unique_ptr" in memory_patch["suggestion_code"]
+            "delete[]" in memory_patch["suggestion_code"]
+            or "unique_ptr" in memory_patch["suggestion_code"]
         )
 
     def test_generate_bounds_check_patch(self):
@@ -493,7 +491,9 @@ class TestCPPPatchGenerator:
         # Check that we got a patch with the expected root cause
         assert thread_patch.get("root_cause") == "cpp_race_condition"
         # Check for thread safety content or generic fix (since specific templates might not exist)
-        patch_text = thread_patch.get("suggestion_code", "") or thread_patch.get("patch_content", "")
+        patch_text = thread_patch.get("suggestion_code", "") or thread_patch.get(
+            "patch_content", ""
+        )
         if not patch_text:
             patch_text = str(thread_patch.get("explanation", "")) + str(
                 thread_patch.get("content", "")
@@ -583,8 +583,8 @@ class TestCPPLanguagePlugin:
 
         assert analysis is not None
         assert (
-            analysis.get("plugin", "cpp") == "cpp" or
-            analysis.get("language", "cpp") == "cpp"
+            analysis.get("plugin", "cpp") == "cpp"
+            or analysis.get("language", "cpp") == "cpp"
         )
         # Check for relevant suggestions
         suggestion = analysis.get("suggestion", "").lower()
@@ -633,9 +633,9 @@ class TestCPPLanguagePlugin:
         assert fix.get("plugin", "cpp") == "cpp" or fix.get("language", "cpp") == "cpp"
         # Check for fix content in various possible fields
         fix_content = (
-            fix.get("suggestion_code", "") or
-            fix.get("patch_content", "") or
-            fix.get("content", "")
+            fix.get("suggestion_code", "")
+            or fix.get("patch_content", "")
+            or fix.get("content", "")
         )
         assert fix_content  # Ensure we have some fix content
         # The fix might suggest including iostream or using std namespace
@@ -757,9 +757,9 @@ class TestCPPFrameworkErrors:
 
         # Check that STL-related issues are handled
         assert (
-            "stl" in analysis.get("root_cause", "unknown") or
-            "range" in analysis.get("root_cause", "unknown") or
-            analysis.get("category") in ["stl", "runtime", "unknown"]
+            "stl" in analysis.get("root_cause", "unknown")
+            or "range" in analysis.get("root_cause", "unknown")
+            or analysis.get("category") in ["stl", "runtime", "unknown"]
         )
         suggestion = analysis.get("suggestion", "").lower()
         assert suggestion == "" or any(
@@ -869,8 +869,8 @@ class TestCPPMemoryDebugging:
 
         assert analysis["category"] == "memory"
         assert (
-            "bounds" in analysis["suggestion"].lower() or
-            "size" in analysis["suggestion"].lower()
+            "bounds" in analysis["suggestion"].lower()
+            or "size" in analysis["suggestion"].lower()
         )
 
     def test_addresssanitizer_heap_use_after_free(self):
@@ -947,8 +947,8 @@ class TestCPPIntegration:
         fix = self.plugin.generate_fix(analysis, context)
         assert fix is not None
         assert (
-            "delete[]" in fix["suggestion_code"] or
-            "unique_ptr" in fix["suggestion_code"]
+            "delete[]" in fix["suggestion_code"]
+            or "unique_ptr" in fix["suggestion_code"]
         )
 
     def test_end_to_end_segfault_analysis(self):
@@ -1010,8 +1010,8 @@ class TestCPPBuildSystemErrors:
         assert "cmake" in analysis["root_cause"].lower()
         assert analysis["category"] == "cmake"
         assert (
-            "find_package" in analysis["suggestion"] or
-            "path" in analysis["suggestion"].lower()
+            "find_package" in analysis["suggestion"]
+            or "path" in analysis["suggestion"].lower()
         )
 
     def test_makefile_error(self):
@@ -1026,8 +1026,8 @@ class TestCPPBuildSystemErrors:
 
         assert "makefile" in analysis["category"]
         assert (
-            "rule" in analysis["suggestion"].lower() or
-            "target" in analysis["suggestion"].lower()
+            "rule" in analysis["suggestion"].lower()
+            or "target" in analysis["suggestion"].lower()
         )
 
 

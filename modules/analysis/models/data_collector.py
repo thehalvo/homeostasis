@@ -242,7 +242,9 @@ class ErrorDataCollector:
 
         # Create a hash from the components
         hash_input = "|".join(filter(None, components))
-        hash_value = hashlib.md5(hash_input.encode("utf-8"), usedforsecurity=False).hexdigest()
+        hash_value = hashlib.sha256(
+            hash_input.encode("utf-8")
+        ).hexdigest()
 
         # Combine with a timestamp to ensure uniqueness
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
@@ -456,9 +458,11 @@ class ErrorDataCollector:
 
                     if error_id and label:
                         # Use the most recent label for each error
-                        if (error_id not in labels_by_error_id or
-                                label_entry.get("timestamp", "") >
-                                labels_by_error_id[error_id][1]):
+                        if (
+                            error_id not in labels_by_error_id
+                            or label_entry.get("timestamp", "")
+                            > labels_by_error_id[error_id][1]
+                        ):
                             labels_by_error_id[error_id] = (
                                 label,
                                 label_entry.get("timestamp", ""),

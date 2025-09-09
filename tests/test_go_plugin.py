@@ -11,15 +11,14 @@ import sys
 
 import pytest
 
+from modules.analysis.language_adapters import GoErrorAdapter
+from modules.analysis.plugins.go_plugin import \
+    GoErrorHandler as GoExceptionHandler
+from modules.analysis.plugins.go_plugin import (GoLanguagePlugin,
+                                                GoPatchGenerator)
+
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
-from modules.analysis.language_adapters import GoErrorAdapter
-from modules.analysis.plugins.go_plugin import GoErrorHandler as GoExceptionHandler
-from modules.analysis.plugins.go_plugin import (
-    GoLanguagePlugin,
-    GoPatchGenerator,
-)
 
 
 class TestGoErrorAdapter:

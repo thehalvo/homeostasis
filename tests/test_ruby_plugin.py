@@ -1,11 +1,9 @@
 import unittest
 
 from modules.analysis.language_adapters import RubyErrorAdapter
-from modules.analysis.plugins.ruby_plugin import (
-    RubyExceptionHandler,
-    RubyLanguagePlugin,
-    RubyPatchGenerator,
-)
+from modules.analysis.plugins.ruby_plugin import (RubyExceptionHandler,
+                                                  RubyLanguagePlugin,
+                                                  RubyPatchGenerator)
 
 
 class TestRubyPlugin(unittest.TestCase):

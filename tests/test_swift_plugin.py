@@ -7,7 +7,6 @@ Swift error types and frameworks.
 """
 
 import os
-
 # Import the Swift plugin and related classes
 import sys
 import tempfile
@@ -15,14 +14,13 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+from modules.analysis.plugins.swift_dependency_analyzer import \
+    SwiftDependencyAnalyzer
+from modules.analysis.plugins.swift_plugin import (SwiftExceptionHandler,
+                                                   SwiftLanguagePlugin,
+                                                   SwiftPatchGenerator)
 
-from modules.analysis.plugins.swift_dependency_analyzer import SwiftDependencyAnalyzer
-from modules.analysis.plugins.swift_plugin import (
-    SwiftExceptionHandler,
-    SwiftLanguagePlugin,
-    SwiftPatchGenerator,
-)
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 
 class TestSwiftExceptionHandler(unittest.TestCase):

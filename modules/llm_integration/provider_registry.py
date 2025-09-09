@@ -325,9 +325,9 @@ class ProviderRegistry:
             # Find provider plugin classes
             for name, obj in inspect.getmembers(module):
                 if (
-                    inspect.isclass(obj) and
-                    issubclass(obj, ProviderPlugin) and
-                    obj != ProviderPlugin
+                    inspect.isclass(obj)
+                    and issubclass(obj, ProviderPlugin)
+                    and obj != ProviderPlugin
                 ):
                     self.register_provider(obj)
                     self.logger.info(f"Loaded provider plugin {name} from {path}")
@@ -359,11 +359,8 @@ class ProviderRegistry:
     def _load_builtin_providers(self) -> None:
         """Load built-in provider plugins."""
         try:
-            from .builtin_providers import (
-                AnthropicPlugin,
-                OpenAIPlugin,
-                OpenRouterPlugin,
-            )
+            from .builtin_providers import (AnthropicPlugin, OpenAIPlugin,
+                                            OpenRouterPlugin)
 
             self.register_provider(OpenAIPlugin)
             self.register_provider(AnthropicPlugin)

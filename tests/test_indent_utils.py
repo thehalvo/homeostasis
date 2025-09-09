@@ -8,16 +8,10 @@ import unittest
 from pathlib import Path
 
 from modules.patch_generation.indent_utils import (
-    adjust_indentation_for_context,
-    apply_indentation,
-    detect_indentation_style,
-    generate_line_indentation_map,
-    get_block_indentation,
-    get_line_indentation,
-    indent_aware_replace,
-    normalize_indentation,
-    preserve_relative_indentation,
-)
+    adjust_indentation_for_context, apply_indentation,
+    detect_indentation_style, generate_line_indentation_map,
+    get_block_indentation, get_line_indentation, indent_aware_replace,
+    normalize_indentation, preserve_relative_indentation)
 
 
 class IndentUtilsTests(unittest.TestCase):

@@ -12,7 +12,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from modules.analysis.analyzer import AnalysisStrategy, Analyzer
 from modules.analysis.javascript_analyzer import JavaScriptAnalyzer
-from modules.analysis.language_adapters import ErrorAdapterFactory, ErrorSchemaValidator
+from modules.analysis.language_adapters import (ErrorAdapterFactory,
+                                                ErrorSchemaValidator)
 from modules.analysis.language_plugin_system import get_plugin
 
 logger = logging.getLogger(__name__)
@@ -609,8 +610,10 @@ class CrossLanguageOrchestrator:
                 secondary_suggestions.append(secondary_analysis["suggestion"])
 
             # Add language-specific suggestions
-            if (secondary_language == "c" and
-                    "null pointer" in result.get("root_cause", "").lower()):
+            if (
+                secondary_language == "c"
+                and "null pointer" in result.get("root_cause", "").lower()
+            ):
                 secondary_suggestions.extend(
                     [
                         "Add null pointer checks before dereferencing",
@@ -649,8 +652,10 @@ class CrossLanguageOrchestrator:
                                 ]
                             )
                             break
-                        elif (error.get("error_type") == "BufferOverflow" or
-                              "buffer overflow" in error.get("message", "").lower()):
+                        elif (
+                            error.get("error_type") == "BufferOverflow"
+                            or "buffer overflow" in error.get("message", "").lower()
+                        ):
                             secondary_suggestions.extend(
                                 [
                                     "Add bounds checking before array/buffer access",
@@ -761,10 +766,12 @@ class CrossLanguageOrchestrator:
         if "error_type" in error_data:
             error_type = error_data["error_type"]
             if error_type and isinstance(error_type, str):
-                if ("java.lang" in error_type or
-                        "org.springframework" in error_type or
-                        "java.util" in error_type or
-                        "javax." in error_type):
+                if (
+                    "java.lang" in error_type
+                    or "org.springframework" in error_type
+                    or "java.util" in error_type
+                    or "javax." in error_type
+                ):
                     return "java"
 
         # Check for Go-style errors
@@ -1108,10 +1115,12 @@ class CrossLanguageOrchestrator:
                     actual_error_type = error_type
                     actual_error_msg = ""
 
-                if ("timeout" in actual_error_type or
-                        "connection" in actual_error_type or
-                        "timeout" in actual_error_msg or
-                        "connection" in actual_error_msg):
+                if (
+                    "timeout" in actual_error_type
+                    or "connection" in actual_error_type
+                    or "timeout" in actual_error_msg
+                    or "connection" in actual_error_msg
+                ):
                     additional_suggestions.extend(
                         [
                             "Implement retry logic with exponential backoff",
@@ -1249,8 +1258,10 @@ class CrossLanguageOrchestrator:
         race_conditions = []
 
         # If no error chain but we have general error info, create a synthetic analysis
-        if (not process_analyses and
-                error_data.get("error_type") == "SharedMemoryConcurrency"):
+        if (
+            not process_analyses
+            and error_data.get("error_type") == "SharedMemoryConcurrency"
+        ):
             # This is a general shared memory concurrency error
             root_cause = "shared_memory_synchronization_failure"
 
@@ -1287,9 +1298,11 @@ class CrossLanguageOrchestrator:
             # Check for synchronization issues
             for process_name, analysis in process_analyses.items():
                 error_msg = str(analysis["error"].get("message", "")).lower()
-                if ("lock" in error_msg or
-                        "mutex" in error_msg or
-                        "semaphore" in error_msg):
+                if (
+                    "lock" in error_msg
+                    or "mutex" in error_msg
+                    or "semaphore" in error_msg
+                ):
                     root_cause = "shared_memory_synchronization_failure"
                     break
 
@@ -1753,10 +1766,12 @@ class CrossLanguageOrchestrator:
                 # Check if types match
                 if expected_response.get(missing) == actual_response.get(extra):
                     # Check if names are similar (contains common substring)
-                    if (missing in extra or
-                            extra in missing or
-                            missing.replace("_", "") in extra.replace("_", "") or
-                            extra.replace("_", "") in missing.replace("_", "")):
+                    if (
+                        missing in extra
+                        or extra in missing
+                        or missing.replace("_", "") in extra.replace("_", "")
+                        or extra.replace("_", "") in missing.replace("_", "")
+                    ):
                         field_renames.append((missing, extra))
                         break
 
@@ -2157,10 +2172,14 @@ class CrossLanguageOrchestrator:
         # Determine specific performance issue
         issue_type = error_data.get("issue_type", "").lower()
 
-        if "serialization" in issue_type or (pipeline and
-            any("serialize" in s.get("stage", "").lower() or
-                "deserialize" in s.get("stage", "").lower()
-                for s in pipeline)):
+        if "serialization" in issue_type or (
+            pipeline
+            and any(
+                "serialize" in s.get("stage", "").lower()
+                or "deserialize" in s.get("stage", "").lower()
+                for s in pipeline
+            )
+        ):
             result["root_cause"] = "inefficient_serialization_between_languages"
             result["optimizations"] = {
                 "general": [
@@ -2630,8 +2649,10 @@ class CrossLanguageOrchestrator:
             vulnerability_confirmed = False
 
             for step in flow:
-                if step.get("vulnerable") or (step.get("validation") is False and
-                        step.get("sanitization") is False):
+                if step.get("vulnerable") or (
+                    step.get("validation") is False
+                    and step.get("sanitization") is False
+                ):
                     vulnerability_confirmed = True
 
                 language = step.get("language", "unknown")

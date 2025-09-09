@@ -20,17 +20,14 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
-from modules.analysis.language_plugin_system import (
-    LanguagePlugin,
-    LanguagePluginRegistry,
-)
+from modules.analysis.cross_language_orchestrator import \
+    CrossLanguageOrchestrator
+from modules.analysis.language_plugin_system import (LanguagePlugin,
+                                                     LanguagePluginRegistry)
 from modules.monitoring.metrics_collector import MetricsCollector
 from modules.testing.container_manager import ContainerManager
-from modules.testing.security_scanner import (
-    SecurityScanResult,
-    SecurityTestOrchestrator,
-)
+from modules.testing.security_scanner import (SecurityScanResult,
+                                              SecurityTestOrchestrator)
 
 logger = logging.getLogger(__name__)
 
@@ -171,9 +168,9 @@ class LanguageIntegrationTestRunner(ABC):
 
                     # Check for critical vulnerabilities
                     if (
-                        result.security_report and
-                        result.security_report["summary"]["by_severity"]["critical"] >
-                        0
+                        result.security_report
+                        and result.security_report["summary"]["by_severity"]["critical"]
+                        > 0
                     ):
                         result.error_messages.append(
                             f"Critical security vulnerabilities found: {result.security_report['summary']['by_severity']['critical']}"

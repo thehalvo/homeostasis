@@ -149,7 +149,7 @@ class CacheManager:
         key_str = "&".join(f"{k}={v}" for k, v in items)
 
         # Hash the string
-        return hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()
+        return hashlib.sha256(key_str.encode()).hexdigest()
 
     def _docker_commit(
         self, container_id: str, repository: str, tag: str
@@ -540,7 +540,7 @@ class TestEnvironmentCache:
             Snapshot ID
         """
         # Generate a snapshot ID
-        snapshot_id = hashlib.md5(
+        snapshot_id = hashlib.sha256(
             f"{environment_id}_{test_type}_{int(time.time())}".encode()
         ).hexdigest()
 

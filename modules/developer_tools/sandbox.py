@@ -84,8 +84,10 @@ class SandboxEnvironment:
 
     def setup_environment(self, config: SimulationConfig) -> Path:
         """Set up an isolated environment for simulation"""
-        env_path = (self.base_path /
-                    f"env_{config.name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
+        env_path = (
+            self.base_path
+            / f"env_{config.name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        )
         env_path.mkdir(parents=True, exist_ok=True)
 
         # Create project structure

@@ -305,7 +305,7 @@ class ConfidenceCalculator:
         import hashlib
 
         context_str = "|".join(key_parts)
-        return hashlib.md5(context_str.encode(), usedforsecurity=False).hexdigest()[:16]
+        return hashlib.sha256(context_str.encode()).hexdigest()[:16]
 
     def _get_or_create_threshold(
         self, context_hash: str, context: ConfidenceContext

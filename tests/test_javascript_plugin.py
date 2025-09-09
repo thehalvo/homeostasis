@@ -11,14 +11,11 @@ from pathlib import Path
 
 import pytest
 
-from modules.analysis.plugins.javascript_dependency_analyzer import (
-    JavaScriptDependencyAnalyzer,
-)
+from modules.analysis.plugins.javascript_dependency_analyzer import \
+    JavaScriptDependencyAnalyzer
 from modules.analysis.plugins.javascript_plugin import (
-    JavaScriptExceptionHandler,
-    JavaScriptLanguagePlugin,
-    JavaScriptPatchGenerator,
-)
+    JavaScriptExceptionHandler, JavaScriptLanguagePlugin,
+    JavaScriptPatchGenerator)
 
 
 class TestJavaScriptLanguagePlugin:

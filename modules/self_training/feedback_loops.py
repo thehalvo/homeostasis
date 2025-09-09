@@ -14,16 +14,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import numpy as np
-from sklearn.metrics import (
-    accuracy_score,
-    f1_score,
-    mean_absolute_error,
-    mean_squared_error,
-    precision_score,
-    recall_score,
-)
+from sklearn.metrics import (accuracy_score, f1_score, mean_absolute_error,
+                             mean_squared_error, precision_score, recall_score)
 
-from ..analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
+from ..analysis.healing_metrics import \
+    HealingMetricsCollector as HealingMetrics
 from ..analysis.models.data_collector import ErrorDataCollector
 from ..analysis.models.serving import ModelServer
 from ..analysis.models.trainer import ModelTrainer, TrainingConfig
@@ -143,8 +138,8 @@ class MLFeedbackLoop:
 
         # Check performance degradation
         elif (
-            performance and
-            performance.get("accuracy", 1.0) < self.performance_threshold
+            performance
+            and performance.get("accuracy", 1.0) < self.performance_threshold
         ):
             should_retrain = True
             reason = f"Performance ({performance['accuracy']:.3f}) below threshold"

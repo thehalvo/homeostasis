@@ -9,25 +9,12 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 from modules.deployment.multi_environment.hybrid_orchestrator import (
-    Environment,
-    EnvironmentType,
-    HealingContext,
-    HealingPlan,
-    HealingScope,
-    HealingStep,
-)
+    Environment, EnvironmentType, HealingContext, HealingPlan, HealingScope,
+    HealingStep)
 from modules.deployment.multi_environment.multi_region import (
-    ConsistencyModel,
-    FailoverEvent,
-    FailoverOrchestrator,
-    FailoverStrategy,
-    MultiRegionResilienceStrategy,
-    Region,
-    RegionHealth,
-    RegionHealthMonitor,
-    RegionStatus,
-    ResiliencePolicy,
-)
+    ConsistencyModel, FailoverEvent, FailoverOrchestrator, FailoverStrategy,
+    MultiRegionResilienceStrategy, Region, RegionHealth, RegionHealthMonitor,
+    RegionStatus, ResiliencePolicy)
 
 
 @pytest.fixture

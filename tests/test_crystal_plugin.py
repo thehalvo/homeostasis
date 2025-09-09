@@ -4,11 +4,9 @@ Tests for the Crystal language plugin.
 
 import pytest
 
-from modules.analysis.plugins.crystal_plugin import (
-    CrystalExceptionHandler,
-    CrystalLanguagePlugin,
-    CrystalPatchGenerator,
-)
+from modules.analysis.plugins.crystal_plugin import (CrystalExceptionHandler,
+                                                     CrystalLanguagePlugin,
+                                                     CrystalPatchGenerator)
 
 
 class TestCrystalExceptionHandler:

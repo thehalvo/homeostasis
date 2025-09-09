@@ -221,13 +221,13 @@ class RegressionTestGenerator:
         self.logger.info(f"Running regression tests: {cmd}")
 
         # Run the tests
-        import subprocess
         import shlex
+        import subprocess
 
         try:
             # Parse command into list for safer execution
             cmd_list = shlex.split(cmd)
-            
+
             result = subprocess.run(
                 cmd_list,
                 shell=False,

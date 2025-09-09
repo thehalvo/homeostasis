@@ -826,8 +826,8 @@ class LLMManager:
 
         # Check global retry cooldown
         if (
-            health.global_retry_cooldown_until and
-            current_time < health.global_retry_cooldown_until
+            health.global_retry_cooldown_until
+            and current_time < health.global_retry_cooldown_until
         ):
             return True
 
@@ -848,8 +848,8 @@ class LLMManager:
 
         # Check if window has expired
         if (
-            current_time - health.retry_budget_window_start >
-            self.retry_config.retry_budget_window
+            current_time - health.retry_budget_window_start
+            > self.retry_config.retry_budget_window
         ):
             # Reset window
             health.retry_budget_window_start = current_time

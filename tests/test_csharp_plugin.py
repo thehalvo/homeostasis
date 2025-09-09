@@ -10,11 +10,11 @@ import sys
 import unittest
 from unittest.mock import MagicMock, patch
 
-# Add parent directory to path to import modules
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 from modules.analysis.language_adapters import CSharpErrorAdapter
 from modules.analysis.plugins.csharp_plugin import CSharpLanguagePlugin
+
+# Add parent directory to path to import modules
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 class TestCSharpPlugin(unittest.TestCase):
@@ -254,7 +254,8 @@ class TestCSharpPlugin(unittest.TestCase):
             mock_adapter.return_value = python_adapter
 
             # Convert to Python format
-            from modules.analysis.language_adapters import convert_from_standard_format
+            from modules.analysis.language_adapters import \
+                convert_from_standard_format
 
             python_error = convert_from_standard_format(standard_error, "python")
 

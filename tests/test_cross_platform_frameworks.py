@@ -8,17 +8,17 @@ import sys
 import unittest
 from pathlib import Path
 
+from modules.analysis.plugins.capacitor_cordova_plugin import \
+    CapacitorCordovaLanguagePlugin
+from modules.analysis.plugins.flutter_plugin import FlutterLanguagePlugin
+from modules.analysis.plugins.react_native_plugin import \
+    ReactNativeLanguagePlugin
+from modules.analysis.plugins.unity_plugin import UnityLanguagePlugin
+from modules.analysis.plugins.xamarin_plugin import XamarinLanguagePlugin
+
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
-from modules.analysis.plugins.capacitor_cordova_plugin import (
-    CapacitorCordovaLanguagePlugin,
-)
-from modules.analysis.plugins.flutter_plugin import FlutterLanguagePlugin
-from modules.analysis.plugins.react_native_plugin import ReactNativeLanguagePlugin
-from modules.analysis.plugins.unity_plugin import UnityLanguagePlugin
-from modules.analysis.plugins.xamarin_plugin import XamarinLanguagePlugin
 
 
 class TestReactNativePlugin(unittest.TestCase):

@@ -749,8 +749,8 @@ class DistributedTransactionHealer:
                         "type": "timeout_adjustment",
                         "description": "Increase transaction timeout",
                         "current_timeout": failed_transaction.timeout.total_seconds(),
-                        "suggested_timeout": failed_transaction.timeout.total_seconds() *
-                        2,
+                        "suggested_timeout": failed_transaction.timeout.total_seconds()
+                        * 2,
                     }
                 )
 

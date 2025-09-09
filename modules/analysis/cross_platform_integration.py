@@ -280,8 +280,10 @@ def get_cross_platform_integration_status():
             )
 
         if status["test_results"]["tests_passed"] < status["test_results"]["tests_run"]:
-            failed_tests = (status["test_results"]["tests_run"] -
-                          status["test_results"]["tests_passed"])
+            failed_tests = (
+                status["test_results"]["tests_run"]
+                - status["test_results"]["tests_passed"]
+            )
             status["recommendations"].append(
                 f"{failed_tests} plugin tests failed - check test_details for specific issues"
             )
@@ -293,8 +295,10 @@ def get_cross_platform_integration_status():
 
         # Overall health
         all_plugins_present = len(status["verification"]["missing_plugins"]) == 0
-        all_tests_passed = (status["test_results"]["tests_passed"] ==
-                           status["test_results"]["tests_run"])
+        all_tests_passed = (
+            status["test_results"]["tests_passed"]
+            == status["test_results"]["tests_run"]
+        )
 
         if all_plugins_present and all_tests_passed and status["plugins_loaded"] > 0:
             status["overall_status"] = "HEALTHY"

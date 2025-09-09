@@ -9,10 +9,7 @@ import json
 import sys
 from pathlib import Path
 
-from .rollback_manager import (
-    RollbackTrigger,
-    create_rollback_manager,
-)
+from .rollback_manager import RollbackTrigger, create_rollback_manager
 
 
 def cmd_create_snapshot(args: argparse.Namespace) -> None:

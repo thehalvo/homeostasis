@@ -23,11 +23,9 @@ from typing import Any, Dict, List
 project_root = Path(__file__).parents[2]
 sys.path.insert(0, str(project_root))
 
-from modules.monitoring.audit_monitor import (  # noqa: E402
-    export_audit_data,
-    generate_activity_report,
-    get_audit_monitor,
-)
+from modules.monitoring.audit_monitor import (export_audit_data,  # noqa: E402
+                                              generate_activity_report,
+                                              get_audit_monitor)
 
 
 def format_table(data: List[List[Any]], headers: List[str]) -> str:

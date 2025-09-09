@@ -11,12 +11,10 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from modules.security.regulated_industries import (
-    ComplianceRequirement,
-    RegulatedIndustriesSupport,
-    RegulatedIndustry,
-    ValidationLevel,
-)
+from modules.security.regulated_industries import (ComplianceRequirement,
+                                                   RegulatedIndustriesSupport,
+                                                   RegulatedIndustry,
+                                                   ValidationLevel)
 
 
 class TestRegulatedIndustriesSupport:

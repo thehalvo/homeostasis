@@ -172,8 +172,8 @@ class DeploymentMonitor:
         for fix_id, deployment in list(self.active_deployments.items()):
             # Skip if recently checked
             if (
-                current_time - deployment.last_checked <
-                self.check_interval.total_seconds()
+                current_time - deployment.last_checked
+                < self.check_interval.total_seconds()
             ):
                 continue
 
@@ -290,8 +290,8 @@ class DeploymentMonitor:
         return {
             "cpu_impact": health_metrics.get("cpu_usage", 0) - 50,  # Baseline 50%
             "memory_impact": health_metrics.get("memory_usage", 0) - 60,  # Baseline 60%
-            "response_time_impact": health_metrics.get("avg_response_time", 100) -
-            100,  # Baseline 100ms
+            "response_time_impact": health_metrics.get("avg_response_time", 100)
+            - 100,  # Baseline 100ms
         }
 
     def _calculate_stability_score(
@@ -741,8 +741,8 @@ class LearningPipeline:
         error_success = patterns.get("error_type_success", {})
         for error_type, error_stats in error_success.items():
             if (
-                error_stats.get("total", 0) > 5 and
-                error_stats.get("success_rate", 0) < 0.5
+                error_stats.get("total", 0) > 5
+                and error_stats.get("success_rate", 0) < 0.5
             ):
                 insights.append(
                     f"Low success rate ({error_stats['success_rate']:.1%}) for {error_type} errors - "

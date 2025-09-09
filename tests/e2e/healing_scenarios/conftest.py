@@ -11,20 +11,17 @@ from pathlib import Path
 
 import pytest
 
-from tests.e2e.healing_scenarios.test_utilities import (
-    HealingScenarioRunner,
-    MetricsCollector,
-    TestEnvironment,
-)
+from tests.e2e.healing_scenarios.test_utilities import (HealingScenarioRunner,
+                                                        MetricsCollector,
+                                                        TestEnvironment)
 
 # Check if we should use mock infrastructure
 USE_MOCK_INFRASTRUCTURE = os.environ.get("USE_MOCK_TESTS", "true").lower() == "true"
 
 if USE_MOCK_INFRASTRUCTURE:
     try:
-        from tests.e2e.healing_scenarios.test_infrastructure import (
-            MockServiceEnvironment,
-        )
+        from tests.e2e.healing_scenarios.test_infrastructure import \
+            MockServiceEnvironment
     except ImportError:
         USE_MOCK_INFRASTRUCTURE = False
 

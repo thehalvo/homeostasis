@@ -335,9 +335,9 @@ class MetricsCollector:
 
         # Get metrics
         if (
-            entity_id and
-            metric_type in self.grouped_metrics and
-            entity_id in self.grouped_metrics[metric_type]
+            entity_id
+            and metric_type in self.grouped_metrics
+            and entity_id in self.grouped_metrics[metric_type]
         ):
             metrics = self.grouped_metrics[metric_type][entity_id]
         else:

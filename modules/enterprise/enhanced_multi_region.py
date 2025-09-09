@@ -14,10 +14,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
 from modules.deployment.multi_environment.multi_region import (
-    MultiRegionResilienceStrategy,
-    Region,
-    RegionStatus,
-)
+    MultiRegionResilienceStrategy, Region, RegionStatus)
 from modules.monitoring.alert_system import AlertManager
 from modules.monitoring.observability_hooks import ObservabilityHooks
 from modules.security.audit import get_audit_logger

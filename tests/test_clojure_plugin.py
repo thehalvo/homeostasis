@@ -9,11 +9,11 @@ import sys
 import unittest
 from pathlib import Path
 
-# Add the project root to the Python path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from modules.analysis.language_adapters import ClojureErrorAdapter
 from modules.analysis.plugins.clojure_plugin import ClojureLanguagePlugin
+
+# Add the project root to the Python path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 class TestClojurePlugin(unittest.TestCase):
@@ -198,9 +198,9 @@ class TestClojurePlugin(unittest.TestCase):
         # Check that suggestions mention arity-related fixes or function arguments
         suggestions_text = " ".join(analysis["fix_suggestions"])
         self.assertTrue(
-            "arity" in suggestions_text.lower() or
-            "argument" in suggestions_text.lower() or
-            "function" in suggestions_text.lower()
+            "arity" in suggestions_text.lower()
+            or "argument" in suggestions_text.lower()
+            or "function" in suggestions_text.lower()
         )
 
     def test_class_cast_analysis(self):

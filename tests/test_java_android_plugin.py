@@ -13,13 +13,11 @@ import os
 import sys
 import unittest
 
+from modules.analysis.plugins.java_android_plugin import (
+    AndroidJavaExceptionHandler, AndroidJavaLanguagePlugin)
+
 # Add the modules directory to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "modules"))
-
-from analysis.plugins.java_android_plugin import (
-    AndroidJavaExceptionHandler,
-    AndroidJavaLanguagePlugin,
-)
 
 
 class TestJavaAndroidPlugin(unittest.TestCase):

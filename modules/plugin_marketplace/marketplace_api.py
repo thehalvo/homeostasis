@@ -18,17 +18,8 @@ import jwt
 import redis
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    Float,
-    ForeignKey,
-    Integer,
-    String,
-    Text,
-    create_engine,
-)
+from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Integer,
+                        String, Text, create_engine)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.sql import func
@@ -349,9 +340,9 @@ class MarketplaceAPI:
             if query_str:
                 search_pattern = f"%{query_str}%"
                 query = query.filter(
-                    Plugin.display_name.ilike(search_pattern) |
-                    Plugin.description.ilike(search_pattern) |
-                    Plugin.keywords.ilike(search_pattern)
+                    Plugin.display_name.ilike(search_pattern)
+                    | Plugin.description.ilike(search_pattern)
+                    | Plugin.keywords.ilike(search_pattern)
                 )
 
             if plugin_type:
@@ -907,8 +898,8 @@ class MarketplaceAPI:
                 "total_plugins": session.query(Plugin)
                 .filter(Plugin.status == "approved")
                 .count(),
-                "total_downloads": session.query(func.sum(Plugin.downloads)).scalar() or
-                0,
+                "total_downloads": session.query(func.sum(Plugin.downloads)).scalar()
+                or 0,
                 "total_authors": session.query(Author).count(),
                 "plugins_by_type": {},
                 "top_plugins": [],

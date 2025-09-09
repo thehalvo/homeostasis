@@ -5,27 +5,18 @@ This module provides deployment capabilities for the Homeostasis self-healing sy
 including canary deployments, blue-green deployments, and rollback mechanisms.
 """
 
-from modules.deployment.blue_green import (
-    BlueGreenDeployment,
-    BlueGreenStatus,
-    DeploymentColor,
-    get_blue_green_deployment,
-)
-
+from modules.deployment.blue_green import (BlueGreenDeployment,
+                                           BlueGreenStatus, DeploymentColor,
+                                           get_blue_green_deployment)
 # Import main components
-from modules.deployment.canary import (
-    CanaryDeployment,
-    CanaryStatus,
-    get_canary_deployment,
-)
-from modules.deployment.traffic_manager import (
-    KubernetesTrafficManager,
-    NginxTrafficManager,
-    TrafficSplitter,
-    get_kubernetes_manager,
-    get_nginx_manager,
-    get_traffic_splitter,
-)
+from modules.deployment.canary import (CanaryDeployment, CanaryStatus,
+                                       get_canary_deployment)
+from modules.deployment.traffic_manager import (KubernetesTrafficManager,
+                                                NginxTrafficManager,
+                                                TrafficSplitter,
+                                                get_kubernetes_manager,
+                                                get_nginx_manager,
+                                                get_traffic_splitter)
 
 __all__ = [
     # Canary Deployment

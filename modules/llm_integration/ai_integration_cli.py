@@ -11,7 +11,8 @@ from typing import Optional
 
 import click
 
-from .ai_integration_bridge import AICapability, CodeContext, get_ai_integration_bridge
+from .ai_integration_bridge import (AICapability, CodeContext,
+                                    get_ai_integration_bridge)
 
 
 @click.group(name="ai")
@@ -361,7 +362,9 @@ def test_integration(config_file: str):
 
     # Summary
     total = passed + failed
-    click.echo(f"🏁 Test Summary: {passed}/{total} passed ({passed / total * 100:.1f}%)")
+    click.echo(
+        f"🏁 Test Summary: {passed}/{total} passed ({passed / total * 100:.1f}%)"
+    )
 
     if failed > 0:
         exit(1)

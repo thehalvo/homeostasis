@@ -164,8 +164,10 @@ class JavaExceptionHandler:
                         result["tags"] = tags
 
                     # Special case: IllegalMonitorStateException with deadlock message
-                    if (rule.get("id") == "java_illegal_monitor_state" and
-                            "deadlock" in message.lower()):
+                    if (
+                        rule.get("id") == "java_illegal_monitor_state"
+                        and "deadlock" in message.lower()
+                    ):
                         result["severity"] = "critical"
                         result["root_cause"] = "java_deadlock"
 
@@ -289,8 +291,10 @@ class JavaExceptionHandler:
                 "match_groups": tuple(),
                 "framework": error_data.get("framework", ""),
             }
-        elif ("ArrayIndexOutOfBoundsException" in error_type or
-                "IndexOutOfBoundsException" in error_type):
+        elif (
+            "ArrayIndexOutOfBoundsException" in error_type
+            or "IndexOutOfBoundsException" in error_type
+        ):
             return {
                 "error_data": error_data,
                 "rule_id": "java_index_out_of_bounds",
@@ -690,10 +694,12 @@ class JavaExceptionHandler:
 
     def _load_generics_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Java generics and type system errors."""
-        rules_file = (Path(__file__).parent.parent /
-                      "rules" /
-                      "java" /
-                      "java_generics_errors.json")
+        rules_file = (
+            Path(__file__).parent.parent
+            / "rules"
+            / "java"
+            / "java_generics_errors.json"
+        )
 
         if rules_file.exists():
             try:
@@ -707,10 +713,12 @@ class JavaExceptionHandler:
 
     def _load_reflection_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Java reflection errors."""
-        rules_file = (Path(__file__).parent.parent /
-                      "rules" /
-                      "java" /
-                      "java_reflection_errors.json")
+        rules_file = (
+            Path(__file__).parent.parent
+            / "rules"
+            / "java"
+            / "java_reflection_errors.json"
+        )
 
         if rules_file.exists():
             try:
@@ -1070,10 +1078,12 @@ class JavaExceptionHandler:
 
     def _load_hibernate_rules(self) -> List[Dict[str, Any]]:
         """Load rules for Hibernate and JPA exceptions."""
-        rules_file = (Path(__file__).parent.parent /
-                      "rules" /
-                      "hibernate" /
-                      "hibernate_errors.json")
+        rules_file = (
+            Path(__file__).parent.parent
+            / "rules"
+            / "hibernate"
+            / "hibernate_errors.json"
+        )
 
         if rules_file.exists():
             try:

@@ -9,7 +9,8 @@ import os
 import re
 from typing import Any, Dict, List, Optional
 
-from ...emerging_tech.iot import DeviceMetrics, IoTDeviceMonitor, IoTError, IoTPlatform
+from ...emerging_tech.iot import (DeviceMetrics, IoTDeviceMonitor, IoTError,
+                                  IoTPlatform)
 from ..language_plugin_system import LanguagePlugin
 
 

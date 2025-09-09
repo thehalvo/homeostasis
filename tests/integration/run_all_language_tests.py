@@ -19,9 +19,7 @@ from typing import Any, Dict, List
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from tests.integration.language_integration_framework import (  # noqa: E402
-    IntegrationTestOrchestrator,
-    IntegrationTestResult,
-)
+    IntegrationTestOrchestrator, IntegrationTestResult)
 from tests.integration.language_runners import LANGUAGE_RUNNERS  # noqa: E402
 
 # Configure logging
@@ -203,9 +201,9 @@ class ComprehensiveTestRunner:
                     "total": len(category_results),
                     "passed": sum(1 for r in category_results if r.passed),
                     "failed": sum(1 for r in category_results if not r.passed),
-                    "pass_rate": sum(1 for r in category_results if r.passed) /
-                    len(category_results) *
-                    100,
+                    "pass_rate": sum(1 for r in category_results if r.passed)
+                    / len(category_results)
+                    * 100,
                 }
 
         # Error analysis

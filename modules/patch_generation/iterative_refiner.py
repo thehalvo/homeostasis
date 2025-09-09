@@ -17,7 +17,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from ..analysis.llm_context_manager import LLMContextManager
-from ..llm_integration.provider_abstraction import LLMManager, LLMMessage, LLMRequest
+from ..llm_integration.provider_abstraction import (LLMManager, LLMMessage,
+                                                    LLMRequest)
 from .code_style_analyzer import CodeStyleAnalyzer
 
 logger = logging.getLogger(__name__)
@@ -485,7 +486,7 @@ OUTPUT FORMAT:
             new_lines = change.get("new_code", "").split("\n")
 
             # Apply change
-            lines[start:end + 1] = new_lines
+            lines[start : end + 1] = new_lines
 
         return "\n".join(lines)
 
@@ -499,8 +500,9 @@ OUTPUT FORMAT:
         try:
             # Parse command into list for safer execution
             import shlex
+
             cmd_list = shlex.split(modified_command)
-            
+
             result = subprocess.run(
                 cmd_list,
                 shell=False,
@@ -735,9 +737,9 @@ OUTPUT FORMAT:
     def _is_validation_successful(self, validation_results: Dict[str, Any]) -> bool:
         """Check if validation is successful."""
         return (
-            validation_results.get("tests_passed", False) and
-            validation_results.get("no_errors", False) and
-            validation_results.get("semantic_preserved", True)
+            validation_results.get("tests_passed", False)
+            and validation_results.get("no_errors", False)
+            and validation_results.get("semantic_preserved", True)
         )
 
     def _has_converged(self, improvement_metrics: Dict[str, float]) -> bool:
@@ -869,15 +871,15 @@ OUTPUT FORMAT:
         if overall_improvement > 0.5:
             self.strategy_weights[strategy] = min(
                 1.0,
-                self.strategy_weights[strategy] +
-                self.learning_rate * overall_improvement,
+                self.strategy_weights[strategy]
+                + self.learning_rate * overall_improvement,
             )
         elif overall_improvement < 0:
             # Decrease weight for unsuccessful strategies
             self.strategy_weights[strategy] = max(
                 0.1,
-                self.strategy_weights[strategy] -
-                self.learning_rate * abs(overall_improvement),
+                self.strategy_weights[strategy]
+                - self.learning_rate * abs(overall_improvement),
             )
 
         # Normalize weights

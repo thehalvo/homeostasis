@@ -16,12 +16,8 @@ from typing import Any, Dict, List, Optional
 
 from .cross_language_orchestrator import CrossLanguageOrchestrator
 from .language_plugin_system import get_plugin, load_all_plugins
-from .shared_error_schema import (
-    SharedErrorSchema,
-    denormalize_error,
-    detect_language,
-    normalize_error,
-)
+from .shared_error_schema import (SharedErrorSchema, denormalize_error,
+                                  detect_language, normalize_error)
 
 logger = logging.getLogger(__name__)
 
@@ -213,8 +209,10 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
         self.metrics["fix_generation_times"][language].append(fix_time)
 
         # Check if we used cross-language knowledge
-        if ("used_cross_language" in enhanced_context and
-                enhanced_context["used_cross_language"]):
+        if (
+            "used_cross_language" in enhanced_context
+            and enhanced_context["used_cross_language"]
+        ):
             fix["used_cross_language"] = True
             fix["source_languages"] = enhanced_context.get("source_languages", [])
             self.metrics["cross_language_matches"] += 1
@@ -386,46 +384,53 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
         # Check for Rust-specific patterns (more extensive than base class)
         if "message" in error_data and isinstance(error_data["message"], str):
             message = error_data["message"]
-            if ("panicked at" in message or
-                    "thread 'main'" in message or
-                    "unwrap()" in message or
-                    "Option::unwrap" in message or
-                    ".rs:" in message):
+            if (
+                "panicked at" in message
+                or "thread 'main'" in message
+                or "unwrap()" in message
+                or "Option::unwrap" in message
+                or ".rs:" in message
+            ):
                 return "rust"
 
         # Check for PHP-specific patterns
         if "message" in error_data and isinstance(error_data["message"], str):
             message = error_data["message"]
-            if ("PHP Notice" in message or
-                    "PHP Warning" in message or
-                    "PHP Error" in message or
-                    "PHP Fatal error" in message or
-                    "Call to undefined method" in message or
-                    "Call to undefined function" in message or
-                    "Undefined variable" in message or
-                    "Call to a member function" in message or
-                    "SQLSTATE[" in message
+            if (
+                "PHP Notice" in message
+                or "PHP Warning" in message
+                or "PHP Error" in message
+                or "PHP Fatal error" in message
+                or "Call to undefined method" in message
+                or "Call to undefined function" in message
+                or "Undefined variable" in message
+                or "Call to a member function" in message
+                or "SQLSTATE[" in message
             ):
                 return "php"
 
         # Check for Scala-specific patterns
         if "message" in error_data and isinstance(error_data["message"], str):
             message = error_data["message"]
-            if ("scala.MatchError" in message or
-                    "scala.None$.get" in message or
-                    "scala.Option" in message or
-                    "akka." in message or
-                    "play.api." in message or
-                    "scala.concurrent.Future" in message):
+            if (
+                "scala.MatchError" in message
+                or "scala.None$.get" in message
+                or "scala.Option" in message
+                or "akka." in message
+                or "play.api." in message
+                or "scala.concurrent.Future" in message
+            ):
                 return "scala"
 
         # Check for error_type indicating Scala
         if "error_type" in error_data and isinstance(error_data["error_type"], str):
             error_type = error_data["error_type"]
-            if (error_type.startswith("scala.") or
-                    error_type.startswith("akka.") or
-                    error_type.startswith("play.api.") or
-                    "MatchError" in error_type):
+            if (
+                error_type.startswith("scala.")
+                or error_type.startswith("akka.")
+                or error_type.startswith("play.api.")
+                or "MatchError" in error_type
+            ):
                 return "scala"
 
         # Check for stack trace patterns
@@ -456,9 +461,11 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
 
             if isinstance(trace, list) and len(trace) > 0:
                 # Check if it looks like a PHP stack trace
-                if (isinstance(trace[0], dict) and
-                        "file" in trace[0] and
-                        ".php" in trace[0]["file"]):
+                if (
+                    isinstance(trace[0], dict)
+                    and "file" in trace[0]
+                    and ".php" in trace[0]["file"]
+                ):
                     return "php"
                 elif isinstance(trace[0], str) and ".php" in trace[0]:
                     return "php"
@@ -549,7 +556,9 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
             context_str = json.dumps(context, sort_keys=True)
             import hashlib
 
-            context_hash = hashlib.md5(context_str.encode(), usedforsecurity=False).hexdigest()[:10]
+            context_hash = hashlib.sha256(
+                context_str.encode()
+            ).hexdigest()[:20]
             key_parts.append(f"ctx:{context_hash}")
 
         return "|".join(key_parts)
@@ -653,8 +662,10 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
         if "root_cause" in error1 and "root_cause" in error2:
             if error1["root_cause"] == error2["root_cause"]:
                 score += 0.2
-            elif (error1["root_cause"] in error2["root_cause"] or
-                  error2["root_cause"] in error1["root_cause"]):
+            elif (
+                error1["root_cause"] in error2["root_cause"]
+                or error2["root_cause"] in error1["root_cause"]
+            ):
                 score += 0.1
 
         # Cap at 1.0

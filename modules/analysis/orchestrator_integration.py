@@ -10,12 +10,9 @@ import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from .comprehensive_error_detector import (
-    ComprehensiveErrorDetector,
-    ErrorClassification,
-    ErrorContext,
-    create_error_context_from_log,
-)
+from .comprehensive_error_detector import (ComprehensiveErrorDetector,
+                                           ErrorClassification, ErrorContext,
+                                           create_error_context_from_log)
 from .intelligent_classifier import IntelligentClassifier
 from .language_parsers import CompilerIntegration, create_language_parser
 from .llm_context_manager import LLMContextManager
@@ -595,6 +592,7 @@ if __name__ == "__main__":
 
     # Create test configuration
     import tempfile
+
     test_config = {
         "use_compiler_integration": True,
         "llm_context_storage": os.path.join(tempfile.gettempdir(), "test_llm_contexts"),

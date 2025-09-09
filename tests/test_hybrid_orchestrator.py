@@ -8,14 +8,8 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 from modules.deployment.multi_environment.hybrid_orchestrator import (
-    CloudConnector,
-    HealingContext,
-    HealingPlan,
-    HealingScope,
-    HealingStep,
-    HybridCloudOrchestrator,
-    OnPremiseConnector,
-)
+    CloudConnector, HealingContext, HealingPlan, HealingScope, HealingStep,
+    HybridCloudOrchestrator, OnPremiseConnector)
 
 
 @pytest.fixture

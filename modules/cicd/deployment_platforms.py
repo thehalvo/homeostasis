@@ -108,8 +108,10 @@ class VercelIntegration(DeploymentPlatformIntegration):
 
         # Extract error patterns from logs
         for log_entry in logs:
-            if (log_entry.get("type") == "stderr" or
-                    "error" in log_entry.get("text", "").lower()):
+            if (
+                log_entry.get("type") == "stderr"
+                or "error" in log_entry.get("text", "").lower()
+            ):
                 analysis["error_patterns"].append(log_entry.get("text", ""))
 
         # Generate healing suggestions

@@ -9,11 +9,9 @@ import logging
 import random
 from typing import Dict, Optional
 
-from modules.deployment.traffic_manager_hooks import (
-    CloudLoadBalancerHook,
-    KubernetesIngressHook,
-    NginxHook,
-)
+from modules.deployment.traffic_manager_hooks import (CloudLoadBalancerHook,
+                                                      KubernetesIngressHook,
+                                                      NginxHook)
 
 logger = logging.getLogger(__name__)
 

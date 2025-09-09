@@ -8,7 +8,8 @@ import logging
 from typing import Any, Dict, Optional
 
 from modules.deployment.serverless.aws_lambda import get_lambda_provider
-from modules.deployment.serverless.azure_functions import get_azure_functions_provider
+from modules.deployment.serverless.azure_functions import \
+    get_azure_functions_provider
 from modules.deployment.serverless.base_provider import ServerlessProvider
 from modules.deployment.serverless.gcp_functions import get_functions_provider
 

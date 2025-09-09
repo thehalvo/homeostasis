@@ -31,94 +31,114 @@ class RestrictedUnpickler(pickle.Unpickler):
     Restricted unpickler that only allows specific safe classes.
     This prevents arbitrary code execution during unpickling.
     """
-    
+
     # Whitelist of allowed modules and classes for production safety
     ALLOWED_MODULES = {
-        'numpy', 'numpy.core.multiarray', 'numpy.core.numeric',
-        'torch', 'torch._utils', 'torch.nn', 'torch.nn.parameter',
-        'sklearn.preprocessing._label', 'sklearn.preprocessing',
-        'collections', 'builtins'
+        "numpy",
+        "numpy.core.multiarray",
+        "numpy.core.numeric",
+        "torch",
+        "torch._utils",
+        "torch.nn",
+        "torch.nn.parameter",
+        "sklearn.preprocessing._label",
+        "sklearn.preprocessing",
+        "collections",
+        "builtins",
     }
-    
+
     ALLOWED_CLASSES = {
-        ('numpy', 'ndarray'),
-        ('numpy.core.multiarray', '_reconstruct'),
-        ('numpy', 'dtype'),
-        ('numpy', 'ufunc'),
-        ('torch._utils', '_rebuild_tensor_v2'),
-        ('torch', 'FloatStorage'),
-        ('torch', 'LongStorage'),
-        ('torch', 'IntStorage'),
-        ('torch', 'ShortStorage'),
-        ('torch', 'CharStorage'),
-        ('torch', 'ByteStorage'),
-        ('torch', 'DoubleStorage'),
-        ('torch', 'HalfStorage'),
-        ('torch', 'BoolStorage'),
-        ('torch', 'BFloat16Storage'),
-        ('torch', 'storage', '_load_from_bytes'),
-        ('torch.nn.parameter', 'Parameter'),
-        ('sklearn.preprocessing._label', 'LabelEncoder'),
-        ('collections', 'OrderedDict'),
-        ('builtins', 'set'),
-        ('builtins', 'frozenset'),
+        ("numpy", "ndarray"),
+        ("numpy.core.multiarray", "_reconstruct"),
+        ("numpy", "dtype"),
+        ("numpy", "ufunc"),
+        ("torch._utils", "_rebuild_tensor_v2"),
+        ("torch", "FloatStorage"),
+        ("torch", "LongStorage"),
+        ("torch", "IntStorage"),
+        ("torch", "ShortStorage"),
+        ("torch", "CharStorage"),
+        ("torch", "ByteStorage"),
+        ("torch", "DoubleStorage"),
+        ("torch", "HalfStorage"),
+        ("torch", "BoolStorage"),
+        ("torch", "BFloat16Storage"),
+        ("torch", "storage", "_load_from_bytes"),
+        ("torch.nn.parameter", "Parameter"),
+        ("sklearn.preprocessing._label", "LabelEncoder"),
+        ("collections", "OrderedDict"),
+        ("builtins", "set"),
+        ("builtins", "frozenset"),
     }
-    
+
     def find_class(self, module, name):
         # Only allow whitelisted modules and classes
         if module not in self.ALLOWED_MODULES:
             raise pickle.UnpicklingError(f"Forbidden module: {module}")
-        
+
         if (module, name) not in self.ALLOWED_CLASSES:
             # Allow basic types from builtins
-            if module == 'builtins' and name in ['list', 'tuple', 'dict', 'int', 'float', 'str', 'bool', 'bytes']:
+            if module == "builtins" and name in [
+                "list",
+                "tuple",
+                "dict",
+                "int",
+                "float",
+                "str",
+                "bool",
+                "bytes",
+            ]:
                 return super().find_class(module, name)
             raise pickle.UnpicklingError(f"Forbidden class: {module}.{name}")
-        
+
         return super().find_class(module, name)
 
 
-def secure_torch_load(filepath: str, map_location=None, expected_hash: Optional[str] = None):
+def secure_torch_load(
+    filepath: str, map_location=None, expected_hash: Optional[str] = None
+):
     """
     Securely load a PyTorch checkpoint with validation.
-    
+
     Args:
         filepath: Path to the checkpoint file
         map_location: Device mapping for torch.load
         expected_hash: Expected SHA256 hash of the file (optional but recommended)
-    
+
     Returns:
         Loaded checkpoint data
-    
+
     Raises:
         ValueError: If file hash doesn't match expected hash
         pickle.UnpicklingError: If forbidden classes are detected
     """
     filepath = Path(filepath)
-    
+
     if not filepath.exists():
         raise FileNotFoundError(f"Checkpoint not found: {filepath}")
-    
+
     # Verify file hash if provided (recommended for production)
     if expected_hash:
         hasher = hashlib.sha256()
-        with open(filepath, 'rb') as f:
+        with open(filepath, "rb") as f:
             while chunk := f.read(8192):
                 hasher.update(chunk)
-        
+
         actual_hash = hasher.hexdigest()
         if actual_hash != expected_hash:
-            raise ValueError(f"Checkpoint hash mismatch. Expected: {expected_hash}, Got: {actual_hash}")
-    
+            raise ValueError(
+                f"Checkpoint hash mismatch. Expected: {expected_hash}, Got: {actual_hash}"
+            )
+
     # Try to load with weights_only first (safest option)
     try:
-        with open(filepath, 'rb') as f:
+        with open(filepath, "rb") as f:
             return torch.load(f, map_location=map_location, weights_only=True)
     except Exception as e:
         logger.info(f"weights_only load failed, using restricted unpickler: {str(e)}")
-    
+
     # Fall back to restricted unpickler for checkpoints with non-tensor data
-    with open(filepath, 'rb') as f:
+    with open(filepath, "rb") as f:
         # Override the default unpickler used by torch.load
         original_unpickler = pickle.Unpickler
         try:
@@ -256,7 +276,7 @@ class DeepErrorClassifier(nn.Module):
         # Use specific revision for security and reproducibility
         self.encoder = AutoModel.from_pretrained(
             "microsoft/codebert-base",
-            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30"
+            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30",
         )
 
         # Freeze lower layers to prevent overfitting
@@ -342,7 +362,7 @@ class HierarchicalErrorClassifier(nn.Module):
         # Use specific revision for security and reproducibility
         self.encoder = AutoModel.from_pretrained(
             "microsoft/codebert-base",
-            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30"
+            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30",
         )
 
         # Coarse-grained classifier
@@ -408,7 +428,7 @@ class ErrorPatternRecognizer:
         # Use specific revision for security and reproducibility
         self.tokenizer = AutoTokenizer.from_pretrained(
             "microsoft/codebert-base",
-            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30"
+            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30",
         )
         self.model = None
         self.label_encoder = None

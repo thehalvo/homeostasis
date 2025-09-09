@@ -16,9 +16,8 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Protocol
 
 from ..analysis.code_style_analyzer import CodeStyleAnalyzer
-from ..patch_generation.multi_language_framework_detector import (
-    LanguageFrameworkDetector,
-)
+from ..patch_generation.multi_language_framework_detector import \
+    LanguageFrameworkDetector
 from .continuous_improvement import get_improvement_engine
 
 
@@ -658,7 +657,8 @@ class BuiltinContinuousLearningAdapter(ContinuousLearningInterface):
         """Collect feedback using existing improvement engine."""
         import time
 
-        from .continuous_improvement import FeedbackType, PatchFeedback, PatchOutcome
+        from .continuous_improvement import (FeedbackType, PatchFeedback,
+                                             PatchOutcome)
 
         # Convert analysis result to patch feedback
         outcome = (

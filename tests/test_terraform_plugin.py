@@ -5,10 +5,8 @@ Tests for the Terraform language plugin.
 import pytest
 
 from modules.analysis.plugins.terraform_plugin import (
-    TerraformExceptionHandler,
-    TerraformLanguagePlugin,
-    TerraformPatchGenerator,
-)
+    TerraformExceptionHandler, TerraformLanguagePlugin,
+    TerraformPatchGenerator)
 
 
 class TestTerraformExceptionHandler:

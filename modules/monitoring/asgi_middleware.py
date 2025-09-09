@@ -128,8 +128,8 @@ class HomeostasisASGIMiddleware:
                 response_headers[0] = message.get("headers", [])
 
             elif (
-                message_type == "http.response.body" and
-                self.config["LOG_RESPONSE_BODY"]
+                message_type == "http.response.body"
+                and self.config["LOG_RESPONSE_BODY"]
             ):
                 if "body" in message:
                     response_body.append(message["body"])
@@ -324,8 +324,8 @@ class HomeostasisASGIMiddleware:
 
             # Log performance metrics if enabled
             if (
-                self.config["MONITOR_PERFORMANCE"] and
-                duration > self.config["SLOW_REQUEST_THRESHOLD"]
+                self.config["MONITOR_PERFORMANCE"]
+                and duration > self.config["SLOW_REQUEST_THRESHOLD"]
             ):
                 await self._log_slow_request(scope, request_id, duration)
 
@@ -459,8 +459,8 @@ class HomeostasisASGIMiddleware:
                             json_body = self._sanitize_data(json_body)
                         error_data["request"]["body"] = json_body
                     elif (
-                        content_type and
-                        "application/x-www-form-urlencoded" in content_type
+                        content_type
+                        and "application/x-www-form-urlencoded" in content_type
                     ):
                         # Form data - just log the size
                         error_data["request"]["body_size"] = len(body)

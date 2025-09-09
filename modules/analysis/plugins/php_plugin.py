@@ -192,8 +192,10 @@ class PHPExceptionHandler:
                 "match_groups": tuple(),
                 "framework": "",
             }
-        elif ("Call to undefined method" in error_type or
-                "Call to undefined method" in message):
+        elif (
+            "Call to undefined method" in error_type
+            or "Call to undefined method" in message
+        ):
             return {
                 "error_data": error_data,
                 "rule_id": "php_undefined_method",
@@ -207,8 +209,10 @@ class PHPExceptionHandler:
                 "match_groups": tuple(),
                 "framework": "",
             }
-        elif ("Call to undefined function" in error_type or
-                "Call to undefined function" in message):
+        elif (
+            "Call to undefined function" in error_type
+            or "Call to undefined function" in message
+        ):
             return {
                 "error_data": error_data,
                 "rule_id": "php_undefined_function",
@@ -222,8 +226,10 @@ class PHPExceptionHandler:
                 "match_groups": tuple(),
                 "framework": "",
             }
-        elif ("Call to a member function" in error_type or
-                "Call to a member function" in message):
+        elif (
+            "Call to a member function" in error_type
+            or "Call to a member function" in message
+        ):
             return {
                 "error_data": error_data,
                 "rule_id": "php_null_reference",
@@ -251,9 +257,11 @@ class PHPExceptionHandler:
                 "match_groups": tuple(),
                 "framework": "",
             }
-        elif ("require" in error_type.lower() or
-                "include" in error_type.lower() or
-                "Failed opening required" in message):
+        elif (
+            "require" in error_type.lower()
+            or "include" in error_type.lower()
+            or "Failed opening required" in message
+        ):
             return {
                 "error_data": error_data,
                 "rule_id": "php_require_error",

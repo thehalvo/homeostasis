@@ -571,8 +571,8 @@ class ContextualAnalyzer:
                             {
                                 "file": str(file_path),
                                 "type": pattern,
-                                "line": content[: content.find(pattern)].count("\n") +
-                                1,
+                                "line": content[: content.find(pattern)].count("\n")
+                                + 1,
                             }
                         )
                         break
@@ -700,11 +700,11 @@ class ContextualAnalyzer:
 
             # Simple complexity estimation
             metrics["complexity"] = (
-                content.count("if ") +
-                content.count("for ") +
-                content.count("while ") +
-                content.count("except:") +
-                content.count("elif ")
+                content.count("if ")
+                + content.count("for ")
+                + content.count("while ")
+                + content.count("except:")
+                + content.count("elif ")
             )
 
         except Exception:
@@ -763,8 +763,8 @@ class ContextualAnalyzer:
             if node_id in self.dependency_graph:
                 for pred in self.dependency_graph.predecessors(node_id):
                     if (
-                        pred not in visited and
-                        "data" in self.dependency_graph.nodes[pred]
+                        pred not in visited
+                        and "data" in self.dependency_graph.nodes[pred]
                     ):
                         indirect.append(self.dependency_graph.nodes[pred]["data"])
                         traverse(pred, depth + 1)

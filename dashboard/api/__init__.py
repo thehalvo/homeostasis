@@ -5,12 +5,13 @@ This module provides communication between the dashboard and the Homeostasis sys
 """
 
 from dashboard.api.client import HomeostasisClient
-from dashboard.api.errors import APIError, ConnectionError, NotFoundError, AuthenticationError
+from dashboard.api.errors import (APIError, AuthenticationError,
+                                  ConnectionError, NotFoundError)
 
 __all__ = [
-    'HomeostasisClient',
-    'APIError',
-    'ConnectionError',
-    'NotFoundError',
-    'AuthenticationError',
+    "HomeostasisClient",
+    "APIError",
+    "ConnectionError",
+    "NotFoundError",
+    "AuthenticationError",
 ]

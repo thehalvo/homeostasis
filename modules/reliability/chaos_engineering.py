@@ -269,27 +269,27 @@ class ResourceFaultInjector(FaultInjector):
         """Inject resource fault."""
         try:
             if (
-                fault.fault_type == FaultType.CPU_SPIKE or
-                fault.fault_type == FaultType.RESOURCE_CPU
+                fault.fault_type == FaultType.CPU_SPIKE
+                or fault.fault_type == FaultType.RESOURCE_CPU
             ):
                 cpu_percent = int(
                     fault.parameters.get(
                         "cpu_percentage", fault.parameters.get("cpu_percent", 80)
-                    ) *
-                    fault.intensity
+                    )
+                    * fault.intensity
                 )
                 await self._create_cpu_spike(fault.target, cpu_percent)
             elif (
-                fault.fault_type == FaultType.MEMORY_LEAK or
-                fault.fault_type == FaultType.RESOURCE_MEMORY
+                fault.fault_type == FaultType.MEMORY_LEAK
+                or fault.fault_type == FaultType.RESOURCE_MEMORY
             ):
                 memory_mb = int(
                     fault.parameters.get("memory_mb", 100) * fault.intensity
                 )
                 await self._create_memory_leak(fault.target, memory_mb)
             elif (
-                fault.fault_type == FaultType.DISK_FAILURE or
-                fault.fault_type == FaultType.RESOURCE_DISK
+                fault.fault_type == FaultType.DISK_FAILURE
+                or fault.fault_type == FaultType.RESOURCE_DISK
             ):
                 await self._simulate_disk_failure(fault.target)
             elif fault.fault_type == FaultType.RESOURCE_EXHAUSTION:
@@ -305,18 +305,18 @@ class ResourceFaultInjector(FaultInjector):
         """Remove resource fault."""
         try:
             if (
-                fault.fault_type == FaultType.CPU_SPIKE or
-                fault.fault_type == FaultType.RESOURCE_CPU
+                fault.fault_type == FaultType.CPU_SPIKE
+                or fault.fault_type == FaultType.RESOURCE_CPU
             ):
                 await self._stop_cpu_spike(fault.target)
             elif (
-                fault.fault_type == FaultType.MEMORY_LEAK or
-                fault.fault_type == FaultType.RESOURCE_MEMORY
+                fault.fault_type == FaultType.MEMORY_LEAK
+                or fault.fault_type == FaultType.RESOURCE_MEMORY
             ):
                 await self._stop_memory_leak(fault.target)
             elif (
-                fault.fault_type == FaultType.DISK_FAILURE or
-                fault.fault_type == FaultType.RESOURCE_DISK
+                fault.fault_type == FaultType.DISK_FAILURE
+                or fault.fault_type == FaultType.RESOURCE_DISK
             ):
                 await self._restore_disk(fault.target)
             elif fault.fault_type == FaultType.RESOURCE_EXHAUSTION:
@@ -889,8 +889,8 @@ class ChaosEngineer:
         """Run a chaos experiment."""
         # Call the inject method to satisfy mock expectations
         if (
-            hasattr(self, "_inject_network_fault") and
-            experiment.fault_type == FaultType.NETWORK_LATENCY
+            hasattr(self, "_inject_network_fault")
+            and experiment.fault_type == FaultType.NETWORK_LATENCY
         ):
             self._inject_network_fault(experiment)
 
