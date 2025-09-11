@@ -201,9 +201,9 @@ class ComprehensiveTestRunner:
                     "total": len(category_results),
                     "passed": sum(1 for r in category_results if r.passed),
                     "failed": sum(1 for r in category_results if not r.passed),
-                    "pass_rate": sum(1 for r in category_results if r.passed)
-                    / len(category_results)
-                    * 100,
+                    "pass_rate": sum(1 for r in category_results if r.passed) /
+                    len(category_results) *
+                    100,
                 }
 
         # Error analysis

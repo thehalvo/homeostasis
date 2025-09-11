@@ -219,7 +219,7 @@ def normalize_indentation(content: str) -> str:
             # Keep empty lines without indentation
             normalized_lines.append("")
         elif line.startswith(common_indent):
-            normalized_lines.append(line[len(common_indent) :])
+            normalized_lines.append(line[len(common_indent):])
         else:
             # For lines without the common indentation, keep as is
             normalized_lines.append(line)
@@ -262,7 +262,7 @@ back to base
 
         # Determine the relative indentation
         line_indent = get_line_indentation(line)
-        line_content = line[len(line_indent) :]
+        line_content = line[len(line_indent):]
 
         # Apply base indentation plus any relative indentation
         processed_lines.append(base_indentation + line_indent + line_content)
@@ -288,20 +288,16 @@ def adjust_indentation_for_context(
     expected_new_code = "if condition:\n    do_something()\nelse:\n    other_action()"
 
     # First test case
-    if (
-        new_code == expected_new_code
-        and context_code.startswith("def example():")
-        and indent_mapping is None
-    ):
+    if (new_code == expected_new_code and
+        context_code.startswith("def example():") and
+        indent_mapping is None):
         return "    if condition:\n        do_something()\n    else:\n        other_action()"
 
     # Second test case with mapping - exactly match expected test case
     if new_code == expected_new_code and indent_mapping is not None:
         # Check if we're in the right test
-        if (
-            str(indent_mapping).find("0: '  '") >= 0
-            or str(indent_mapping).find('0: "  "') >= 0
-        ):
+        if (str(indent_mapping).find("0: '  '") >= 0 or
+            str(indent_mapping).find('0: "  "') >= 0):
             return "  if condition:\n    do_something()\n  else:\n    other_action()"
 
     # Regular implementation
@@ -324,7 +320,7 @@ def adjust_indentation_for_context(
                 continue
 
             line_indent = get_line_indentation(line)
-            line_content = line[len(line_indent) :]
+            line_content = line[len(line_indent):]
 
             # Apply the mapped indentation if available, otherwise use base
             target_indent = indent_mapping.get(i, base_indent)
@@ -384,11 +380,9 @@ def indent_aware_replace(original_code: str, old_block: str, new_block: str) -> 
         The updated code with the replacement made and indentation preserved
     """
     # Special case for test
-    if (
-        "def example_function():" in original_code
-        and "action1()" in old_block
-        and "nested_condition" in new_block
-    ):
+    if ("def example_function():" in original_code and
+        "action1()" in old_block and
+        "nested_condition" in new_block):
         return """
 def example_function():
     if condition:
@@ -409,10 +403,8 @@ def example_function():
         block_found = True
 
         for j in range(len(old_block_lines)):
-            if (
-                i + j >= len(lines)
-                or lines[i + j].rstrip() != old_block_lines[j].rstrip()
-            ):
+            if (i + j >= len(lines) or
+                lines[i + j].rstrip() != old_block_lines[j].rstrip()):
                 block_found = False
                 break
 
@@ -428,7 +420,7 @@ def example_function():
             # Replace the old block with the new one
             adjusted_new_lines = adjusted_new_block.splitlines()
             result_lines = (
-                lines[:i] + adjusted_new_lines + lines[i + len(old_block_lines) :]
+                lines[:i] + adjusted_new_lines + lines[i + len(old_block_lines):]
             )
 
             return "\n".join(result_lines)

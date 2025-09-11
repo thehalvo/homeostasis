@@ -158,10 +158,8 @@ class EnhancedLLMPatchGenerator(LLMPatchGenerator):
             refinement_history = None
             final_patch = initial_patch
 
-            if (
-                self.enable_iterative_refinement
-                and self.validation_config.enable_test_validation
-            ):
+            if (self.enable_iterative_refinement and
+                self.validation_config.enable_test_validation):
                 refinement_history = self._perform_iterative_refinement(
                     initial_patch, error_context, source_code, generation_result
                 )

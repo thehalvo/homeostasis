@@ -297,8 +297,8 @@ class TransformerCodeAnalyzer:
         """Extract code snippet from error data."""
         # Try to get code from detailed frames
         if (
-            "error_details" in error_data
-            and "detailed_frames" in error_data["error_details"]
+            "error_details" in error_data and
+            "detailed_frames" in error_data["error_details"]
         ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
@@ -330,8 +330,8 @@ class TransformerCodeAnalyzer:
     def _get_error_line(self, error_data: Dict[str, Any]) -> Optional[int]:
         """Extract error line number from error data."""
         if (
-            "error_details" in error_data
-            and "detailed_frames" in error_data["error_details"]
+            "error_details" in error_data and
+            "detailed_frames" in error_data["error_details"]
         ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
@@ -527,8 +527,8 @@ class CodeT5Analyzer:
     def _extract_relevant_code(self, error_data: Dict[str, Any]) -> str:
         """Extract relevant code from error data."""
         if (
-            "error_details" in error_data
-            and "detailed_frames" in error_data["error_details"]
+            "error_details" in error_data and
+            "detailed_frames" in error_data["error_details"]
         ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:

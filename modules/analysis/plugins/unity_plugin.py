@@ -1445,10 +1445,10 @@ class UnityLanguagePlugin(LanguagePlugin):
         ]
 
         return (
-            any(pattern in message for pattern in mobile_patterns)
-            or "mobile" in platform
-            or "android" in build_target
-            or "ios" in build_target
+            any(pattern in message for pattern in mobile_patterns) or
+            "mobile" in platform or
+            "android" in build_target or
+            "ios" in build_target
         )
 
     def _is_scripting_error(self, error_data: Dict[str, Any]) -> bool:
@@ -1468,9 +1468,9 @@ class UnityLanguagePlugin(LanguagePlugin):
         ]
 
         return any(
-            pattern in message
-            or pattern in stack_trace
-            or pattern in error_type.lower()
+            pattern in message or
+            pattern in stack_trace or
+            pattern in error_type.lower()
             for pattern in scripting_patterns
         )
 

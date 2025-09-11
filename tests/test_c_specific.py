@@ -120,17 +120,17 @@ class TestCSpecificErrors:
         # 1. The root cause contains "array" or "pointer" (when rule is found)
         # 2. The error is categorized as compilation (when rule is not found but category is correct)
         assert (
-            "array" in analysis["root_cause"]
-            or "pointer" in analysis["root_cause"]
-            or analysis["category"] == "compilation"
+            "array" in analysis["root_cause"] or
+            "pointer" in analysis["root_cause"] or
+            analysis["category"] == "compilation"
         )
 
         # If a suggestion is provided, it should mention size/length parameters
         if analysis["suggestion"]:
             assert (
-                "size parameter" in analysis["suggestion"].lower()
-                or "length" in analysis["suggestion"].lower()
-                or "parameter" in analysis["suggestion"].lower()
+                "size parameter" in analysis["suggestion"].lower() or
+                "length" in analysis["suggestion"].lower() or
+                "parameter" in analysis["suggestion"].lower()
             )
 
     def test_null_pointer_dereference_c(self):
@@ -157,8 +157,8 @@ class TestCSpecificErrors:
         ]
         assert analysis["severity"] == "critical"
         assert (
-            "null" in analysis["suggestion"].lower()
-            or "pointer" in analysis["suggestion"].lower()
+            "null" in analysis["suggestion"].lower() or
+            "pointer" in analysis["suggestion"].lower()
         )
 
     def test_format_string_vulnerability(self):
@@ -185,9 +185,9 @@ class TestCSpecificErrors:
             "medium",
         ]  # Severity depends on the specific rule
         assert (
-            "printf" in analysis["suggestion"]
-            or "literal" in analysis["suggestion"]
-            or "format" in analysis["suggestion"].lower()
+            "printf" in analysis["suggestion"] or
+            "literal" in analysis["suggestion"] or
+            "format" in analysis["suggestion"].lower()
         )
 
 
@@ -212,15 +212,15 @@ class TestCMemoryManagement:
         analysis = self.handler.analyze_exception(error_data)
 
         assert (
-            "memory allocation" in analysis["root_cause"]
-            or "malloc" in analysis["root_cause"]
-            or analysis["root_cause"]
-            in ["c_allocation_failure", "cpp_allocation_failure"]
+            "memory allocation" in analysis["root_cause"] or
+            "malloc" in analysis["root_cause"] or
+            analysis["root_cause"] in
+            ["c_allocation_failure", "cpp_allocation_failure"]
         )
         assert analysis["category"] == "memory"
         assert (
-            "malloc" in analysis["suggestion"].lower()
-            and "return" in analysis["suggestion"].lower()
+            "malloc" in analysis["suggestion"].lower() and
+            "return" in analysis["suggestion"].lower()
         )
 
     def test_use_after_free(self):
@@ -238,13 +238,13 @@ class TestCMemoryManagement:
         analysis = self.handler.analyze_exception(error_data)
 
         assert (
-            "use after free" in analysis["root_cause"]
-            or analysis["root_cause"] == "cpp_use_after_free"
+            "use after free" in analysis["root_cause"] or
+            analysis["root_cause"] == "cpp_use_after_free"
         )
         assert analysis["severity"] == "critical"
         assert (
-            "NULL" in analysis["suggestion"]
-            or "dangling pointer" in analysis["suggestion"].lower()
+            "NULL" in analysis["suggestion"] or
+            "dangling pointer" in analysis["suggestion"].lower()
         )
 
     def test_memory_leak_valgrind(self):
@@ -278,13 +278,13 @@ class TestCMemoryManagement:
         analysis = self.handler.analyze_exception(error_data)
 
         assert (
-            "buffer overflow" in analysis["root_cause"]
-            or analysis["root_cause"] == "cpp_buffer_overflow"
+            "buffer overflow" in analysis["root_cause"] or
+            analysis["root_cause"] == "cpp_buffer_overflow"
         )
         assert analysis["severity"] == "critical"
         assert (
-            "bounds" in analysis["suggestion"].lower()
-            or "size" in analysis["suggestion"].lower()
+            "bounds" in analysis["suggestion"].lower() or
+            "size" in analysis["suggestion"].lower()
         )
 
 
@@ -310,9 +310,9 @@ class TestCStandardLibraryErrors:
 
         assert "file" in analysis["root_cause"]
         assert (
-            "fopen" in analysis["suggestion"].lower()
-            or "NULL" in analysis["suggestion"]
-            or "file" in analysis["suggestion"].lower()
+            "fopen" in analysis["suggestion"].lower() or
+            "NULL" in analysis["suggestion"] or
+            "file" in analysis["suggestion"].lower()
         )
 
     def test_division_by_zero(self):
@@ -332,8 +332,8 @@ class TestCStandardLibraryErrors:
             "root_cause"
         ] in ["c_division_by_zero", "cpp_division_by_zero"]
         assert (
-            "check divisor" in analysis["suggestion"].lower()
-            or "zero" in analysis["suggestion"].lower()
+            "check divisor" in analysis["suggestion"].lower() or
+            "zero" in analysis["suggestion"].lower()
         )
 
     def test_string_function_misuse(self):
@@ -349,12 +349,12 @@ class TestCStandardLibraryErrors:
         analysis = self.handler.analyze_exception(error_data)
 
         assert (
-            "string" in analysis["root_cause"]
-            or analysis["root_cause"] == "c_string_null_termination"
+            "string" in analysis["root_cause"] or
+            analysis["root_cause"] == "c_string_null_termination"
         )
         assert (
-            "null terminator" in analysis["suggestion"].lower()
-            or "\\0" in analysis["suggestion"]
+            "null terminator" in analysis["suggestion"].lower() or
+            "\\0" in analysis["suggestion"]
         )
 
 
@@ -398,13 +398,13 @@ class TestCCompilerSpecificErrors:
         analysis = self.handler.analyze_exception(standard_error)
 
         assert (
-            "dead code" in analysis["root_cause"]
-            or "unused" in analysis["root_cause"]
-            or analysis["root_cause"] == "clang_dead_code"
+            "dead code" in analysis["root_cause"] or
+            "unused" in analysis["root_cause"] or
+            analysis["root_cause"] == "clang_dead_code"
         )
         assert (
-            "remove" in analysis["suggestion"].lower()
-            or "use" in analysis["suggestion"].lower()
+            "remove" in analysis["suggestion"].lower() or
+            "use" in analysis["suggestion"].lower()
         )
 
     def test_msvc_specific_error(self):
@@ -447,12 +447,12 @@ class TestCPreprocessorErrors:
         analysis = self.handler.analyze_exception(error_data)
 
         assert (
-            "macro" in analysis["root_cause"]
-            or "preprocessor" in analysis["root_cause"]
+            "macro" in analysis["root_cause"] or
+            "preprocessor" in analysis["root_cause"]
         )
         assert (
-            "#undef" in analysis["suggestion"]
-            or "ifndef" in analysis["suggestion"].lower()
+            "#undef" in analysis["suggestion"] or
+            "ifndef" in analysis["suggestion"].lower()
         )
 
     def test_include_guard_missing(self):
@@ -467,9 +467,9 @@ class TestCPreprocessorErrors:
         analysis = self.handler.analyze_exception(error_data)
 
         assert (
-            "include guard" in analysis["root_cause"]
-            or "header guard" in analysis["root_cause"]
-            or analysis["root_cause"] == "cpp_missing_include_guard"
+            "include guard" in analysis["root_cause"] or
+            "header guard" in analysis["root_cause"] or
+            analysis["root_cause"] == "cpp_missing_include_guard"
         )
         assert (
             "#ifndef" in analysis["suggestion"] and "#define" in analysis["suggestion"]
@@ -491,8 +491,8 @@ class TestCPreprocessorErrors:
 
         assert "circular" in analysis["root_cause"]
         assert (
-            "forward declaration" in analysis["suggestion"].lower()
-            or "refactor" in analysis["suggestion"].lower()
+            "forward declaration" in analysis["suggestion"].lower() or
+            "refactor" in analysis["suggestion"].lower()
         )
 
 
@@ -521,8 +521,8 @@ class TestCPatchGeneration:
 
         assert null_check_patch is not None
         assert (
-            "if (ptr != NULL)" in null_check_patch["content"]
-            or "if (ptr)" in null_check_patch["content"]
+            "if (ptr != NULL)" in null_check_patch["content"] or
+            "if (ptr)" in null_check_patch["content"]
         )
         assert null_check_patch["type"] == "code_modification"
 
@@ -545,8 +545,8 @@ class TestCPatchGeneration:
 
         assert bounds_patch is not None
         assert (
-            "if (index < 100)" in bounds_patch["content"]
-            or "index >= 0 && index < 100" in bounds_patch["content"]
+            "if (index < 100)" in bounds_patch["content"] or
+            "index >= 0 && index < 100" in bounds_patch["content"]
         )
 
     def test_generate_string_safety_patch(self):
@@ -568,12 +568,12 @@ class TestCPatchGeneration:
 
         assert string_patch is not None
         assert (
-            "strncpy(dest, src, 255)" in string_patch["content"]
-            or "strlcpy" in string_patch["content"]
+            "strncpy(dest, src, 255)" in string_patch["content"] or
+            "strlcpy" in string_patch["content"]
         )
         assert (
-            "dest[255] = '\\0'" in string_patch["content"]
-            or "null terminator" in string_patch["comment"]
+            "dest[255] = '\\0'" in string_patch["content"] or
+            "null terminator" in string_patch["comment"]
         )
 
     def test_generate_malloc_check_patch(self):
@@ -594,12 +594,12 @@ class TestCPatchGeneration:
 
         assert malloc_patch is not None
         assert (
-            "if (buffer == NULL)" in malloc_patch["content"]
-            or "if (!buffer)" in malloc_patch["content"]
+            "if (buffer == NULL)" in malloc_patch["content"] or
+            "if (!buffer)" in malloc_patch["content"]
         )
         assert (
-            "return" in malloc_patch["content"]
-            or "error" in malloc_patch["content"].lower()
+            "return" in malloc_patch["content"] or
+            "error" in malloc_patch["content"].lower()
         )
 
 
@@ -633,9 +633,9 @@ class TestCIntegrationScenarios:
         analysis = self.handler.analyze_exception(standard_error)
 
         assert (
-            "hardware" in analysis["root_cause"]
-            or "fault" in analysis["root_cause"]
-            or analysis["root_cause"] in ["cpp_hardware_fault", "cpp_unknown"]
+            "hardware" in analysis["root_cause"] or
+            "fault" in analysis["root_cause"] or
+            analysis["root_cause"] in ["cpp_hardware_fault", "cpp_unknown"]
         )
         assert analysis["severity"] in [
             "critical",
@@ -659,8 +659,8 @@ class TestCIntegrationScenarios:
         analysis = self.plugin.analyze_error(error_data)
 
         assert (
-            "kernel" in analysis["root_cause"]
-            or "null pointer" in analysis["root_cause"]
+            "kernel" in analysis["root_cause"] or
+            "null pointer" in analysis["root_cause"]
         )
         assert analysis["category"] == "memory"
 

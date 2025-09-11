@@ -1009,8 +1009,8 @@ class EnhancedComplianceReporting:
                 "status": (
                     "effective"
                     if all(
-                        self.base_compliance.controls[c].status
-                        == ControlStatus.COMPLIANT
+                        self.base_compliance.controls[c].status ==
+                        ControlStatus.COMPLIANT
                         for c in criteria_controls
                     )
                     else "exceptions_noted"
@@ -1087,8 +1087,8 @@ class EnhancedComplianceReporting:
                 "compliance_status": (
                     "compliant"
                     if all(
-                        self.base_compliance.controls[c].status
-                        == ControlStatus.COMPLIANT
+                        self.base_compliance.controls[c].status ==
+                        ControlStatus.COMPLIANT
                         for c in safeguard_controls
                     )
                     else "gaps_identified"
@@ -1173,17 +1173,17 @@ class EnhancedComplianceReporting:
                     [
                         log
                         for log in self.phi_access_logs
-                        if log.timestamp
-                        >= datetime.datetime.utcnow() - datetime.timedelta(days=1)
+                        if log.timestamp >=
+                        datetime.datetime.utcnow() - datetime.timedelta(days=1)
                     ]
                 ),
                 "failed_attempts_24h": len(
                     [
                         log
                         for log in self.phi_access_logs
-                        if log.timestamp
-                        >= datetime.datetime.utcnow() - datetime.timedelta(days=1)
-                        and not log.success
+                        if log.timestamp >=
+                        datetime.datetime.utcnow() - datetime.timedelta(days=1) and
+                        not log.success
                     ]
                 ),
             },

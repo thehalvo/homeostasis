@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import random
 import time
 from collections import defaultdict
@@ -6,6 +7,8 @@ from datetime import datetime, timedelta
 
 import networkx as nx
 import pytest
+
+logger = logging.getLogger(__name__)
 
 
 class TestServiceChaos:
@@ -598,7 +601,7 @@ class TestServiceChaos:
 
         for i in range(10):
             try:
-                result = await frontend_operation()
+                await frontend_operation()
                 results.append(
                     {
                         "iteration": i,

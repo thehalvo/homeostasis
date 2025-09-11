@@ -114,8 +114,8 @@ class Orchestrator:
         )
         if regression_enabled:
             self.regression_generator = RegressionTestGenerator(
-                output_dir=project_root
-                / self.config.get("testing", {})
+                output_dir=project_root /
+                self.config.get("testing", {})
                 .get("regression", {})
                 .get("save_path", "tests/regression"),
                 log_level=log_level,
@@ -978,8 +978,8 @@ class Orchestrator:
 
             # Check if we should use canary deployment
             if (
-                self.canary_enabled
-                and self.config["general"]["environment"] == "production"
+                self.canary_enabled and
+                self.config["general"]["environment"] == "production"
             ):
                 self.logger.info("Using canary deployment for gradual rollout")
 
@@ -2379,10 +2379,10 @@ def main():
             exit(1)
 
     elif (
-        args.canary_status
-        or args.canary_promote
-        or args.canary_complete
-        or args.canary_rollback
+        args.canary_status or
+        args.canary_promote or
+        args.canary_complete or
+        args.canary_rollback
     ):
         # Check if canary deployment is enabled
         if not orchestrator.canary_enabled:
@@ -2418,8 +2418,8 @@ def main():
         elif args.canary_promote:
             # Promote a canary deployment
             if (
-                canary_deployment.service_name != service_name
-                or canary_deployment.fix_id != args.canary_promote
+                canary_deployment.service_name != service_name or
+                canary_deployment.fix_id != args.canary_promote
             ):
                 print(
                     f"Loading canary deployment {args.canary_promote} for service {service_name}..."
@@ -2444,8 +2444,8 @@ def main():
         elif args.canary_complete:
             # Complete a canary deployment
             if (
-                canary_deployment.service_name != service_name
-                or canary_deployment.fix_id != args.canary_complete
+                canary_deployment.service_name != service_name or
+                canary_deployment.fix_id != args.canary_complete
             ):
                 print(
                     f"Loading canary deployment {args.canary_complete} for service {service_name}..."
@@ -2474,8 +2474,8 @@ def main():
         elif args.canary_rollback:
             # Roll back a canary deployment
             if (
-                canary_deployment.service_name != service_name
-                or canary_deployment.fix_id != args.canary_rollback
+                canary_deployment.service_name != service_name or
+                canary_deployment.fix_id != args.canary_rollback
             ):
                 print(
                     f"Loading canary deployment {args.canary_rollback} for service {service_name}..."

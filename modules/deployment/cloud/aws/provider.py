@@ -116,7 +116,7 @@ class AWSProvider(BaseCloudProvider):
             try:
                 if (stdout and
                         (stdout.strip().startswith("{") or
-                         stdout.strip().startswith("[")):
+                         stdout.strip().startswith("["))):
                     result = json.loads(stdout)
                 else:
                     result = {"output": stdout}

@@ -9,19 +9,25 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 # Import diff utilities
-from modules.patch_generation.diff_utils import (extract_code_block,
-                                                 generate_diff,
-                                                 identify_code_block)
+from modules.patch_generation.diff_utils import (
+    extract_code_block,
+    generate_diff,
+    identify_code_block,
+)
+
 # Import indentation utilities
 from modules.patch_generation.indent_utils import (
-    adjust_indentation_for_context, generate_line_indentation_map,
-    get_line_indentation, normalize_indentation)
+    adjust_indentation_for_context,
+    generate_line_indentation_map,
+    get_line_indentation,
+    normalize_indentation,
+)
+
 # Import LLM patch generator
-from modules.patch_generation.llm_patch_generator import \
-    create_llm_patch_generator
+from modules.patch_generation.llm_patch_generator import create_llm_patch_generator
+
 # Import hierarchical template system
-from modules.patch_generation.template_system import (BaseTemplate,
-                                                      TemplateManager)
+from modules.patch_generation.template_system import BaseTemplate, TemplateManager
 
 # Templates directory
 TEMPLATES_DIR = Path(__file__).parent / "templates"
@@ -397,11 +403,9 @@ class PatchGenerator:
         template = self.template_manager.get_template(template_name)
 
         # If not found and it's a legacy template name, try the legacy templates
-        if (
-            not template
-            and ":" not in template_name
-            and template_name in self.templates
-        ):
+        if (not template and
+            ":" not in template_name and
+            template_name in self.templates):
             template = self.templates[template_name]
         elif not template:
             return None
@@ -524,7 +528,7 @@ class PatchGenerator:
 
                     # Replace the lines in the file
                     new_lines = lines.copy()
-                    new_lines[line_range[0] - 1 : line_range[1]] = (
+                    new_lines[line_range[0] - 1:line_range[1]] = (
                         formatted_code.splitlines()
                     )
                     new_content = "\n".join(new_lines)
@@ -572,7 +576,7 @@ class PatchGenerator:
                 # Extract context for indentation analysis
                 context_start = max(1, start_line - 5)
                 context_end = min(len(lines), end_line + 5)
-                context_block = "\n".join(lines[context_start - 1 : context_end])
+                context_block = "\n".join(lines[context_start - 1:context_end])
 
                 # Apply context-aware indentation to the patch code
                 formatted_code = adjust_indentation_for_context(
@@ -583,7 +587,7 @@ class PatchGenerator:
 
                 # Apply the patch by replacing the entire block
                 new_lines = lines.copy()
-                new_lines[start_line - 1 : end_line] = formatted_code.splitlines()
+                new_lines[start_line - 1:end_line] = formatted_code.splitlines()
                 new_content = "\n".join(new_lines)
 
                 # Write the modified content back to the file
@@ -683,7 +687,7 @@ class PatchGenerator:
                 new_code = change.get("new_code", "").split("\n")
 
                 if 0 <= start_line < len(lines):
-                    lines[start_line : end_line + 1] = new_code
+                    lines[start_line:end_line + 1] = new_code
 
             # Write modified content
             backup_path = target_file.with_suffix(target_file.suffix + ".bak")

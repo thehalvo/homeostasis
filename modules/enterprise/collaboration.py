@@ -438,8 +438,8 @@ class TeamNotificationService:
                             recipient_id, TeamMember("", "", "")
                         ).teams:
                             if (
-                                team_id in teams
-                                and channel in teams[team_id].notification_channels
+                                team_id in teams and
+                                channel in teams[team_id].notification_channels
                             ):
                                 channel_configs.append(
                                     teams[team_id].notification_channels[channel]

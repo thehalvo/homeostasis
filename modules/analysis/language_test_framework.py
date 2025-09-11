@@ -449,12 +449,12 @@ class LanguageTestRunner:
                     error_message = None
 
                     if (
-                        "error_type" in test_case.error_data
-                        and "error_type" in roundtrip_error
+                        "error_type" in test_case.error_data and
+                        "error_type" in roundtrip_error
                     ):
                         if (
-                            test_case.error_data["error_type"]
-                            != roundtrip_error["error_type"]
+                            test_case.error_data["error_type"] !=
+                            roundtrip_error["error_type"]
                         ):
                             preserved = False
                             error_message = f"Error type changed: {test_case.error_data['error_type']} -> {roundtrip_error['error_type']}"

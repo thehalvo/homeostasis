@@ -424,8 +424,8 @@ class ComplianceReportingSystem:
                 compliant = sum(
                     1
                     for cid in control_ids
-                    if self.controls.get(cid)
-                    and self.controls[cid].status == ControlStatus.COMPLIANT
+                    if self.controls.get(cid) and
+                    self.controls[cid].status == ControlStatus.COMPLIANT
                 )
                 total = len(control_ids)
                 framework_summary[framework.value] = {

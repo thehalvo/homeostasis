@@ -261,8 +261,8 @@ class KotlinExceptionHandler:
 
         # Basic classification based on common Kotlin exceptions
         if (
-            "KotlinNullPointerException" in error_type
-            or "NullPointerException" in error_type
+            "KotlinNullPointerException" in error_type or
+            "NullPointerException" in error_type
         ):
             return {
                 "error_data": error_data,

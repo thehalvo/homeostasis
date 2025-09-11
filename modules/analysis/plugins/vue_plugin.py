@@ -941,10 +941,10 @@ class VueLanguagePlugin(LanguagePlugin):
 
         # Check for Vue Router patterns
         if (
-            "router" in message
-            or "route" in message
-            or "navigation" in message
-            or ("location" in message and "path" in message)
+            "router" in message or
+            "route" in message or
+            "navigation" in message or
+            ("location" in message and "path" in message)
         ):
             return True
 

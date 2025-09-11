@@ -58,8 +58,8 @@ class PluginManifest:
     """Represents a plugin manifest with validation."""
 
     MANIFEST_SCHEMA_PATH = (
-        Path(__file__).parent.parent.parent
-        / "standards/v1.0/schemas/plugin-manifest.json"
+        Path(__file__).parent.parent.parent /
+        "standards/v1.0/schemas/plugin-manifest.json"
     )
 
     def __init__(
@@ -458,8 +458,8 @@ class PluginRegistry:
             results = [
                 p
                 for p in results
-                if pattern in p.manifest.name.lower()
-                or pattern in p.manifest.display_name.lower()
+                if pattern in p.manifest.name.lower() or
+                pattern in p.manifest.display_name.lower()
             ]
 
         # Filter by status

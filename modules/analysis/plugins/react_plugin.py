@@ -228,9 +228,9 @@ class ReactExceptionHandler:
             suggestion = "Check state management and updates"
         elif "render" in message:
             if (
-                "unnecessary" in message
-                or "performance" in message
-                or "re-render" in message
+                "unnecessary" in message or
+                "performance" in message or
+                "re-render" in message
             ):
                 category = "performance"
                 suggestion = "Optimize rendering performance - use React.memo, useMemo, or useCallback"
@@ -339,10 +339,10 @@ class ReactExceptionHandler:
 
         # Redux specific errors (check first since Redux also uses Provider)
         if (
-            "redux" in message
-            or "store" in message
-            or "dispatch" in message
-            or "getstate" in message
+            "redux" in message or
+            "store" in message or
+            "dispatch" in message or
+            "getstate" in message
         ):
             return self._analyze_redux_error(message, error_data)
 

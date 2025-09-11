@@ -540,14 +540,14 @@ class ResourceQuotaManager:
                         "peak_usage": max_usage,
                         "utilization_percent": (
                             (
-                                avg_usage
-                                / self._get_current_limit(
+                                avg_usage /
+                                self._get_current_limit(
                                     entity_id, level, resource_type
-                                )
-                                * 100
+                                ) *
+                                100
                             )
-                            if self._get_current_limit(entity_id, level, resource_type)
-                            > 0
+                            if self._get_current_limit(entity_id, level, resource_type) >
+                            0
                             else 0
                         ),
                     }
@@ -667,8 +667,8 @@ class ResourceQuotaManager:
 
                 # Reset burst if window expired
                 if (
-                    usage.burst_start
-                    and (now - usage.burst_start).seconds > quota.burst_duration_seconds
+                    usage.burst_start and
+                    (now - usage.burst_start).seconds > quota.burst_duration_seconds
                 ):
                     usage.burst_usage = 0
                     usage.burst_start = None
@@ -944,8 +944,8 @@ class ResourceQuotaManager:
     def _save_usage_data(self):
         """Save usage data for persistence and analytics"""
         usage_file = (
-            self.storage_path
-            / f"usage_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.json"
+            self.storage_path /
+            f"usage_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.json"
         )
 
         with self._usage_lock:

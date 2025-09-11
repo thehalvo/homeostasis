@@ -252,9 +252,9 @@ class AuditMonitor:
                 for deployment in deployment_events:
                     # If deployment was less than 5 seconds after approval, flag it
                     if (
-                        0
-                        < (deployment.timestamp - approval.timestamp).total_seconds()
-                        < 5
+                        0 <
+                        (deployment.timestamp - approval.timestamp).total_seconds() <
+                        5
                     ):
                         anomalies.append(
                             {

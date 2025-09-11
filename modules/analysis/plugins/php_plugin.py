@@ -193,8 +193,8 @@ class PHPExceptionHandler:
                 "framework": "",
             }
         elif (
-            "Call to undefined method" in error_type
-            or "Call to undefined method" in message
+            "Call to undefined method" in error_type or
+            "Call to undefined method" in message
         ):
             return {
                 "error_data": error_data,
@@ -210,8 +210,8 @@ class PHPExceptionHandler:
                 "framework": "",
             }
         elif (
-            "Call to undefined function" in error_type
-            or "Call to undefined function" in message
+            "Call to undefined function" in error_type or
+            "Call to undefined function" in message
         ):
             return {
                 "error_data": error_data,
@@ -227,8 +227,8 @@ class PHPExceptionHandler:
                 "framework": "",
             }
         elif (
-            "Call to a member function" in error_type
-            or "Call to a member function" in message
+            "Call to a member function" in error_type or
+            "Call to a member function" in message
         ):
             return {
                 "error_data": error_data,
@@ -258,9 +258,9 @@ class PHPExceptionHandler:
                 "framework": "",
             }
         elif (
-            "require" in error_type.lower()
-            or "include" in error_type.lower()
-            or "Failed opening required" in message
+            "require" in error_type.lower() or
+            "include" in error_type.lower() or
+            "Failed opening required" in message
         ):
             return {
                 "error_data": error_data,

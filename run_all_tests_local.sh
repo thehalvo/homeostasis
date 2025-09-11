@@ -83,7 +83,7 @@ if ! command -v bandit &> /dev/null; then
 fi
 
 run_test "Bandit Security Check" \
-    "bandit -r modules/ tests/ -ll" || FAILED_TESTS+=("Bandit")
+    "bandit -r modules/ tests/ -ll --exclude=/venv/,/modules/healing/venv/" || FAILED_TESTS+=("Bandit")
 
 # 7. Unit tests
 echo -e "\n${YELLOW}=== UNIT TESTS ===${NC}"
@@ -108,12 +108,12 @@ if ! command -v detect-secrets &> /dev/null; then
 fi
 
 run_test "Secret Detection" \
-    "detect-secrets scan --all-files" || FAILED_TESTS+=("Secret Detection")
+    "detect-secrets scan --all-files | grep -v 'venv/' | grep -v 'modules/healing/venv/'" || FAILED_TESTS+=("Secret Detection")
 
 # 11. Check requirements files
 echo -e "\n${YELLOW}=== REQUIREMENTS VALIDATION ===${NC}"
 run_test "Requirements Installation Test" \
-    "pip install -r requirements.txt -r requirements-dev.txt --dry-run" || FAILED_TESTS+=("Requirements")
+    "pip install -r requirements.txt -r requirements-dev.txt --dry-run --quiet" || FAILED_TESTS+=("Requirements")
 
 # 12. Documentation build test
 echo -e "\n${YELLOW}=== DOCUMENTATION ===${NC}"

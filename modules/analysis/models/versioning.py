@@ -945,9 +945,9 @@ class ModelEvaluator:
 
             # Extract key metrics
             metrics = (
-                eval_result.classification_metrics
-                or eval_result.regression_metrics
-                or {}
+                eval_result.classification_metrics or
+                eval_result.regression_metrics or
+                {}
             )
 
             row = {
@@ -1023,9 +1023,9 @@ class ModelEvaluator:
             "winner": winner,
             "improvement": float(abs(eval_b.primary_score - eval_a.primary_score)),
             "improvement_pct": float(
-                (eval_b.primary_score - eval_a.primary_score)
-                / eval_a.primary_score
-                * 100
+                (eval_b.primary_score - eval_a.primary_score) /
+                eval_a.primary_score *
+                100
             ),
         }
 

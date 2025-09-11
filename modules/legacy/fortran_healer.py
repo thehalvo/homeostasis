@@ -551,7 +551,7 @@ class FortranHealer:
             ]
 
             # Replace original line with IF block
-            lines[error_idx : error_idx + 1] = check_lines
+            lines[error_idx:error_idx + 1] = check_lines
             return "\n".join(lines)
 
         return None
@@ -574,13 +574,13 @@ class FortranHealer:
                 " " * indent + f"    {index_expr} <= UBOUND({array_name},1)) THEN",
                 error_line,
                 " " * indent + "ELSE",
-                " " * indent
-                + f"  PRINT *, 'Array index out of bounds for {array_name}'",
+                " " * indent +
+                f"  PRINT *, 'Array index out of bounds for {array_name}'",
                 " " * indent + "  STOP",
                 " " * indent + "END IF",
             ]
 
-            lines[error_idx : error_idx + 1] = check_lines
+            lines[error_idx:error_idx + 1] = check_lines
             return "\n".join(lines)
 
         return None

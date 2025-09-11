@@ -140,8 +140,8 @@ class CommitAnalyzer:
         """
         # Check cache first
         if (
-            self.config.get("cache_enabled", True)
-            and commit_hash in self._analysis_cache
+            self.config.get("cache_enabled", True) and
+            commit_hash in self._analysis_cache
         ):
             return self._analysis_cache[commit_hash]
 
@@ -377,8 +377,8 @@ class CommitAnalyzer:
         test_files = [
             f
             for f in files_changed
-            if "test" in f.lower()
-            or f.endswith((".test.js", ".spec.js", "_test.py", "test_*.py"))
+            if "test" in f.lower() or
+            f.endswith((".test.js", ".spec.js", "_test.py", "test_*.py"))
         ]
         return len(test_files) == len(files_changed) and len(test_files) > 0
 

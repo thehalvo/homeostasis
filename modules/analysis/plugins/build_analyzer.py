@@ -13,6 +13,7 @@ try:
 except ImportError:
     # Configure secure defaults if defusedxml is not available
     import xml.etree.ElementTree
+
     import defusedxml.etree.ElementTree as ET
 
     xml.etree.ElementTree.XMLParser = xml.etree.ElementTree.XMLParser

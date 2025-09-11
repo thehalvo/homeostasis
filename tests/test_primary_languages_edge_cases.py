@@ -58,8 +58,8 @@ class TestPythonEdgeCases:
                     }
                 )
             elif (
-                "circular import" in message.lower()
-                or "partially initialized module" in message
+                "circular import" in message.lower() or
+                "partially initialized module" in message
             ):
                 response.update(
                     {
@@ -270,8 +270,8 @@ class TestJavaScriptEdgeCases:
         analysis = self.plugin.analyze_error(error_data)
         assert "stack" in analysis["root_cause"]
         assert (
-            "iteration" in analysis["suggestion"].lower()
-            or "loop" in analysis["suggestion"].lower()
+            "iteration" in analysis["suggestion"].lower() or
+            "loop" in analysis["suggestion"].lower()
         )
 
     def test_proxy_trap_infinite_recursion(self):
@@ -288,8 +288,8 @@ class TestJavaScriptEdgeCases:
         analysis = self.plugin.analyze_error(error_data)
         assert analysis is not None
         assert (
-            "proxy" in analysis["suggestion"].lower()
-            or "trap" in analysis["suggestion"].lower()
+            "proxy" in analysis["suggestion"].lower() or
+            "trap" in analysis["suggestion"].lower()
         )
 
 
@@ -380,8 +380,8 @@ class TestJavaEdgeCases:
 
         analysis = self.plugin.analyze_error(error_data)
         assert (
-            "circular" in analysis["root_cause"]
-            or "annotation" in analysis["root_cause"]
+            "circular" in analysis["root_cause"] or
+            "annotation" in analysis["root_cause"]
         )
 
     def test_jvm_segfault_in_jni(self):
@@ -397,8 +397,8 @@ class TestJavaEdgeCases:
         analysis = self.plugin.analyze_error(error_data)
         assert analysis["severity"] == "critical"
         assert (
-            "JNI" in analysis["suggestion"]
-            or "native" in analysis["suggestion"].lower()
+            "JNI" in analysis["suggestion"] or
+            "native" in analysis["suggestion"].lower()
         )
 
     def test_memory_leak_in_threadlocal(self):
@@ -417,8 +417,8 @@ class TestJavaEdgeCases:
         analysis = self.plugin.analyze_error(error_data)
         assert "ThreadLocal" in analysis["suggestion"]
         assert (
-            "remove()" in analysis["suggestion"]
-            or "clean" in analysis["suggestion"].lower()
+            "remove()" in analysis["suggestion"] or
+            "clean" in analysis["suggestion"].lower()
         )
 
 
@@ -452,8 +452,8 @@ class TestCppEdgeCases:
                     }
                 )
             elif (
-                "undefined_behavior" in error_data
-                or "undefined behavior" in message.lower()
+                "undefined_behavior" in error_data or
+                "undefined behavior" in message.lower()
             ):
                 response.update(
                     {"root_cause": "undefined behavior", "severity": "high"}
@@ -520,8 +520,8 @@ class TestCppEdgeCases:
 
         analysis = self.plugin.analyze_error(error_data)
         assert (
-            "coroutine" in analysis["root_cause"]
-            or "promise_type" in analysis["suggestion"]
+            "coroutine" in analysis["root_cause"] or
+            "promise_type" in analysis["suggestion"]
         )
 
     def test_module_partition_circular_dependency(self):
@@ -644,12 +644,12 @@ class TestGoEdgeCases:
 
         analysis = self.plugin.analyze_error(error_data)
         assert (
-            "reflect" in analysis["root_cause"]
-            or "reflection" in analysis["root_cause"]
+            "reflect" in analysis["root_cause"] or
+            "reflection" in analysis["root_cause"]
         )
         assert (
-            "nil check" in analysis["suggestion"]
-            or "IsValid()" in analysis["suggestion"]
+            "nil check" in analysis["suggestion"] or
+            "IsValid()" in analysis["suggestion"]
         )
 
     def test_unsafe_pointer_arithmetic_overflow(self):
@@ -696,8 +696,8 @@ class TestMultiLanguageEdgeCases:
             if plugin:
                 analysis = plugin.analyze_error(error)
                 assert (
-                    "encoding" in str(analysis).lower()
-                    or "decode" in str(analysis).lower()
+                    "encoding" in str(analysis).lower() or
+                    "decode" in str(analysis).lower()
                 )
 
     def test_numeric_overflow_across_languages(self):
@@ -735,8 +735,8 @@ class TestMultiLanguageEdgeCases:
                 analysis = plugin.analyze_error(test_case)
                 assert analysis is not None
                 assert (
-                    "overflow" in str(analysis).lower()
-                    or "arithmetic" in str(analysis).lower()
+                    "overflow" in str(analysis).lower() or
+                    "arithmetic" in str(analysis).lower()
                 )
 
     def test_memory_corruption_patterns(self):
@@ -798,8 +798,8 @@ class TestPlatformSpecificEdgeCases:
                 analysis = plugin.analyze_error(error)
                 assert analysis is not None
                 assert (
-                    "path" in analysis["suggestion"].lower()
-                    or "length" in analysis["suggestion"].lower()
+                    "path" in analysis["suggestion"].lower() or
+                    "length" in analysis["suggestion"].lower()
                 )
 
     def test_linux_file_descriptor_limit(self):
@@ -830,8 +830,8 @@ class TestPlatformSpecificEdgeCases:
         analysis = plugin.analyze_error(error_data)
 
         assert (
-            "file descriptor" in analysis["suggestion"]
-            or "ulimit" in analysis["suggestion"]
+            "file descriptor" in analysis["suggestion"] or
+            "ulimit" in analysis["suggestion"]
         )
 
     def test_macos_sandbox_violation(self):
@@ -848,8 +848,8 @@ class TestPlatformSpecificEdgeCases:
         if plugin:
             analysis = plugin.analyze_error(error_data)
             assert (
-                "sandbox" in str(analysis).lower()
-                or "entitlement" in str(analysis).lower()
+                "sandbox" in str(analysis).lower() or
+                "entitlement" in str(analysis).lower()
             )
 
 

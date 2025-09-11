@@ -327,8 +327,7 @@ class RuleVisualizer:
             result += (
                 ASCIIBar.generate_horizontal_bar_with_label(
                     category, count, max_value, width
-                )
-                + "\n"
+                ) + "\n"
             )
 
         return result
@@ -356,8 +355,7 @@ class RuleVisualizer:
                 result += (
                     ASCIIBar.generate_horizontal_bar_with_label(
                         severity, by_severity[severity], max_value, width
-                    )
-                    + "\n"
+                    ) + "\n"
                 )
 
         # Stacked bar representation
@@ -401,8 +399,7 @@ class RuleVisualizer:
             result += (
                 ASCIIBar.generate_horizontal_bar_with_label(
                     tag, count, max_value, width
-                )
-                + "\n"
+                ) + "\n"
             )
 
         return result
@@ -428,14 +425,13 @@ class RuleVisualizer:
         result += (
             ASCIIBar.generate_horizontal_bar_with_label(
                 "Coverage", rules_with_examples, total_rules, width
-            )
-            + "\n\n"
+            ) + "\n\n"
         )
 
         # Add summary
         result += f"Rules with examples: {rules_with_examples}/{total_rules} ({coverage_percentage:.1f}%)\n"
         result += f"Total examples: {example_coverage['total_examples']}\n"
-        result += f"Examples per rule: {example_coverage['total_examples']/total_rules:.2f} (average)\n"
+        result += f"Examples per rule: {example_coverage['total_examples'] / total_rules:.2f} (average)\n"
 
         return result
 
@@ -533,8 +529,7 @@ class RuleVisualizer:
                     result += (
                         ASCIIBar.generate_horizontal_bar_with_label(
                             criticality, by_criticality[criticality], max_value, width
-                        )
-                        + "\n"
+                        ) + "\n"
                     )
 
             result += "\n\n"
@@ -551,8 +546,7 @@ class RuleVisualizer:
                     result += (
                         ASCIIBar.generate_horizontal_bar_with_label(
                             complexity, by_complexity[complexity], max_value, width
-                        )
-                        + "\n"
+                        ) + "\n"
                     )
 
             result += "\n\n"
@@ -569,8 +563,7 @@ class RuleVisualizer:
                     result += (
                         ASCIIBar.generate_horizontal_bar_with_label(
                             reliability, by_reliability[reliability], max_value, width
-                        )
-                        + "\n"
+                        ) + "\n"
                     )
 
             result += "\n\n"
@@ -1072,7 +1065,7 @@ class RuleVisualizer:
         html_content = html_content.replace(
             "{{examples_per_rule}}",
             (
-                f"{example_coverage['total_examples']/self.stats['total_rules']:.2f}"
+                f"{example_coverage['total_examples'] / self.stats['total_rules']:.2f}"
                 if self.stats["total_rules"]
                 else "0"
             ),
@@ -1162,12 +1155,12 @@ def main() -> None:
 
     # Generate requested visualizations
     if (
-        args.text
-        or args.category
-        or args.severity
-        or args.tags
-        or args.examples
-        or args.dependencies
+        args.text or
+        args.category or
+        args.severity or
+        args.tags or
+        args.examples or
+        args.dependencies
     ):
         # Show specific visualizations if requested
         if args.category:

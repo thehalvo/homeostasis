@@ -36,8 +36,8 @@ class TestJavaErrorAdapter:
         assert standard_error["language"] == "java"
         assert standard_error["error_type"] == "java.lang.NullPointerException"
         assert (
-            standard_error["message"]
-            == 'Cannot invoke "String.length()" because "str" is null'
+            standard_error["message"] ==
+            'Cannot invoke "String.length()" because "str" is null'
         )
         assert len(standard_error["stack_trace"]) == 2
         assert standard_error["stack_trace"][0]["file"] == "StringProcessor.java"
@@ -184,8 +184,8 @@ class TestJavaExceptionHandler:
         assert analysis["category"] == "concurrency"
         assert analysis["tags"] == ["concurrency", "collections"]
         assert (
-            "Iterator" in analysis["suggestion"]
-            or "ConcurrentHashMap" in analysis["suggestion"]
+            "Iterator" in analysis["suggestion"] or
+            "ConcurrentHashMap" in analysis["suggestion"]
         )
 
     def test_analyze_deadlock_error(self):
@@ -241,8 +241,8 @@ class TestJavaExceptionHandler:
         assert analysis["framework"] == "hibernate"
         assert analysis["category"] == "framework"
         assert (
-            "eager" in analysis["suggestion"].lower()
-            or "session" in analysis["suggestion"].lower()
+            "eager" in analysis["suggestion"].lower() or
+            "session" in analysis["suggestion"].lower()
         )
 
     def test_analyze_memory_error(self):
@@ -317,8 +317,8 @@ class TestJavaPatchGenerator:
         assert null_patch["root_cause"] == "java_null_pointer"
         assert "suggestion_code" in null_patch
         assert (
-            "if (str != null)" in null_patch["suggestion_code"]
-            or "Optional" in null_patch["suggestion_code"]
+            "if (str != null)" in null_patch["suggestion_code"] or
+            "Optional" in null_patch["suggestion_code"]
         )
 
     def test_generate_concurrent_collection_patch(self):
@@ -340,8 +340,8 @@ class TestJavaPatchGenerator:
 
         assert concurrent_patch["language"] == "java"
         assert (
-            "Iterator" in concurrent_patch["suggestion_code"]
-            or "ConcurrentHashMap" in concurrent_patch["suggestion_code"]
+            "Iterator" in concurrent_patch["suggestion_code"] or
+            "ConcurrentHashMap" in concurrent_patch["suggestion_code"]
         )
 
     def test_generate_resource_leak_patch(self):
@@ -367,8 +367,8 @@ class TestJavaPatchGenerator:
         assert resource_patch["language"] == "java"
         assert "try (" in resource_patch["suggestion_code"]
         assert (
-            "AutoCloseable" in resource_patch["description"]
-            or "resource" in resource_patch["description"]
+            "AutoCloseable" in resource_patch["description"] or
+            "resource" in resource_patch["description"]
         )
 
 
@@ -679,8 +679,8 @@ class TestJavaGenericsAndReflectionErrors:
 
         assert analysis["root_cause"] == "java_class_cast"
         assert (
-            "array" in analysis["suggestion"].lower()
-            or "generic" in analysis["suggestion"].lower()
+            "array" in analysis["suggestion"].lower() or
+            "generic" in analysis["suggestion"].lower()
         )
 
     def test_analyze_reflection_access_error(self):
@@ -707,8 +707,8 @@ class TestJavaGenericsAndReflectionErrors:
         analysis = self.handler.analyze_exception(error_data)
 
         assert (
-            "abstract" in analysis["suggestion"].lower()
-            or "instantiate" in analysis["suggestion"].lower()
+            "abstract" in analysis["suggestion"].lower() or
+            "instantiate" in analysis["suggestion"].lower()
         )
 
 
@@ -903,8 +903,8 @@ class TestJavaIntegration:
 
         # Check that suggestions are Spring-specific
         assert (
-            "@Component" in analysis["suggestion"]
-            or "@Repository" in analysis["suggestion"]
+            "@Component" in analysis["suggestion"] or
+            "@Repository" in analysis["suggestion"]
         )
 
     def test_framework_detection_in_error_analysis(self):

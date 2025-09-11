@@ -168,9 +168,9 @@ class LanguageIntegrationTestRunner(ABC):
 
                     # Check for critical vulnerabilities
                     if (
-                        result.security_report
-                        and result.security_report["summary"]["by_severity"]["critical"]
-                        > 0
+                        result.security_report and
+                        result.security_report["summary"]["by_severity"]["critical"] >
+                        0
                     ):
                         result.error_messages.append(
                             f"Critical security vulnerabilities found: {result.security_report['summary']['by_severity']['critical']}"

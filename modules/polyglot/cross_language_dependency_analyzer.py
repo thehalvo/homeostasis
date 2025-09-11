@@ -334,8 +334,8 @@ class CrossLanguageDependencyAnalyzer:
 
             # Database
             if (
-                "import javax.persistence" in content
-                or "import org.springframework.data" in content
+                "import javax.persistence" in content or
+                "import org.springframework.data" in content
             ):
                 self._add_database_dependency(component_id, "jpa")
 
@@ -367,8 +367,8 @@ class CrossLanguageDependencyAnalyzer:
 
             # Database drivers
             if (
-                "github.com/lib/pq" in content
-                or "github.com/go-sql-driver/mysql" in content
+                "github.com/lib/pq" in content or
+                "github.com/go-sql-driver/mysql" in content
             ):
                 self._add_database_dependency(component_id, "sql")
             if "go.mongodb.org/mongo-driver" in content:

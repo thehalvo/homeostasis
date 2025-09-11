@@ -469,8 +469,8 @@ class HealingScenarioRunner:
                     result.logs.append("Patch generated")
 
                 if (
-                    "Successfully applied patch" in log_content
-                    and not result.patch_applied
+                    "Successfully applied patch" in log_content and
+                    not result.patch_applied
                 ):
                     result.patch_applied = True
                     result.logs.append("Patch applied")
@@ -480,8 +480,8 @@ class HealingScenarioRunner:
                     result.logs.append("Tests passed")
 
                 if (
-                    "Service is healthy after restart" in log_content
-                    and not result.deployment_successful
+                    "Service is healthy after restart" in log_content and
+                    not result.deployment_successful
                 ):
                     result.deployment_successful = True
                     result.logs.append("Deployment successful")

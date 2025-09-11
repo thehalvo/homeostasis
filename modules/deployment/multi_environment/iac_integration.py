@@ -402,8 +402,8 @@ class TerraformProvider(IaCProvider):
             ),
             "force_replacement": resource_change.get("change", {}).get(
                 "replace_paths", []
-            )
-            != [],
+            ) !=
+            [],
         }
 
     def _estimate_duration(
@@ -995,8 +995,8 @@ class InfrastructureAsCodeIntegration:
 
                 # Apply if auto-apply is enabled or risk is low
                 if (
-                    repo.auto_apply
-                    or plan.get("summary", {}).get("total_risk_score", 1.0) < 0.3
+                    repo.auto_apply or
+                    plan.get("summary", {}).get("total_risk_score", 1.0) < 0.3
                 ):
                     execution = await self.apply_infrastructure_changes(
                         repo_id, env, plan, auto_approve=repo.auto_apply

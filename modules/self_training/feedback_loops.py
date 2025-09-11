@@ -138,8 +138,8 @@ class MLFeedbackLoop:
 
         # Check performance degradation
         elif (
-            performance
-            and performance.get("accuracy", 1.0) < self.performance_threshold
+            performance and
+            performance.get("accuracy", 1.0) < self.performance_threshold
         ):
             should_retrain = True
             reason = f"Performance ({performance['accuracy']:.3f}) below threshold"

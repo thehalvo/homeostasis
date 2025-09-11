@@ -60,7 +60,7 @@ class VercelIntegration(DeploymentPlatformIntegration):
         if self.team_id:
             params["teamId"] = self.team_id
 
-        response = requests.get(url, headers=self.headers, params=params)
+        response = requests.get(url, headers=self.headers, params=params, timeout=30)
         response.raise_for_status()
 
         return response.json().get("deployments", [])
@@ -73,7 +73,7 @@ class VercelIntegration(DeploymentPlatformIntegration):
         if self.team_id:
             params["teamId"] = self.team_id
 
-        response = requests.get(url, headers=self.headers, params=params)
+        response = requests.get(url, headers=self.headers, params=params, timeout=30)
         response.raise_for_status()
 
         return response.json()
@@ -86,7 +86,7 @@ class VercelIntegration(DeploymentPlatformIntegration):
         if self.team_id:
             params["teamId"] = self.team_id
 
-        response = requests.get(url, headers=self.headers, params=params)
+        response = requests.get(url, headers=self.headers, params=params, timeout=30)
         response.raise_for_status()
 
         return response.json()
@@ -109,8 +109,8 @@ class VercelIntegration(DeploymentPlatformIntegration):
         # Extract error patterns from logs
         for log_entry in logs:
             if (
-                log_entry.get("type") == "stderr"
-                or "error" in log_entry.get("text", "").lower()
+                log_entry.get("type") == "stderr" or
+                "error" in log_entry.get("text", "").lower()
             ):
                 analysis["error_patterns"].append(log_entry.get("text", ""))
 
@@ -212,7 +212,7 @@ class NetlifyIntegration(DeploymentPlatformIntegration):
 
         url = f"{self.api_url}/sites/{site_id}/deploys"
 
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
         return response.json()
@@ -221,7 +221,7 @@ class NetlifyIntegration(DeploymentPlatformIntegration):
         """Get build logs for a deploy"""
         url = f"{self.api_url}/deploys/{deploy_id}/log"
 
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
         return response.text
@@ -355,7 +355,7 @@ class HerokuIntegration(DeploymentPlatformIntegration):
 
         url = f"{self.api_url}/apps/{app_name}/builds"
 
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
         return response.json()
@@ -364,7 +364,7 @@ class HerokuIntegration(DeploymentPlatformIntegration):
         """Get build result details"""
         url = f"{self.api_url}/builds/{build_id}/result"
 
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
         return response.json()

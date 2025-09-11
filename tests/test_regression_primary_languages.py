@@ -50,9 +50,9 @@ class TestPythonRegressions:
 
         # Handle walrus operator in old Python
         if (
-            error_type == "SyntaxError"
-            and ":=" in code_snippet
-            and python_version < "3.8"
+            error_type == "SyntaxError" and
+            ":=" in code_snippet and
+            python_version < "3.8"
         ):
             return {
                 "category": "syntax",
@@ -65,8 +65,8 @@ class TestPythonRegressions:
 
         # Handle dataclass errors
         if error_type == "TypeError" and (
-            "dataclass" in error_data.get("decorator", "")
-            or "Field cannot have a default factory" in message
+            "dataclass" in error_data.get("decorator", "") or
+            "Field cannot have a default factory" in message
         ):
             return {
                 "category": "type",
@@ -150,8 +150,8 @@ class TestPythonRegressions:
 
         # Should recognize this as version incompatibility
         assert (
-            "version" in analysis["suggestion"].lower()
-            or "3.8" in analysis["suggestion"]
+            "version" in analysis["suggestion"].lower() or
+            "3.8" in analysis["suggestion"]
         )
         assert (
             ":=" in analysis["suggestion"] or "walrus" in analysis["suggestion"].lower()
@@ -201,8 +201,8 @@ class TestPythonRegressions:
             "dataclass" in analysis["root_cause"] or "field" in analysis["root_cause"]
         )
         assert (
-            "default_factory" in analysis["suggestion"]
-            or "field()" in analysis["suggestion"]
+            "default_factory" in analysis["suggestion"] or
+            "field()" in analysis["suggestion"]
         )
 
 
@@ -238,9 +238,9 @@ class TestJavaScriptRegressions:
 
         # Handle Promise constructor anti-pattern
         if (
-            error_type == "UnhandledPromiseRejection"
-            and "async" in code_context
-            and "new Promise" in code_context
+            error_type == "UnhandledPromiseRejection" and
+            "async" in code_context and
+            "new Promise" in code_context
         ):
             return {
                 "category": "async",
@@ -290,12 +290,12 @@ class TestJavaScriptRegressions:
         analysis = self.plugin.analyze_error(error_data)
 
         assert (
-            "optional chaining" in analysis["suggestion"].lower()
-            or "?." in analysis["suggestion"]
+            "optional chaining" in analysis["suggestion"].lower() or
+            "?." in analysis["suggestion"]
         )
         assert (
-            "version" in analysis["suggestion"].lower()
-            or "compatibility" in analysis["suggestion"].lower()
+            "version" in analysis["suggestion"].lower() or
+            "compatibility" in analysis["suggestion"].lower()
         )
 
     def test_regression_promise_constructor_antipattern(self):
@@ -335,8 +335,8 @@ class TestJavaScriptRegressions:
 
         assert "BigInt" in analysis["root_cause"] or "bigint" in analysis["root_cause"]
         assert (
-            "convert" in analysis["suggestion"].lower()
-            or "Number(" in analysis["suggestion"]
+            "convert" in analysis["suggestion"].lower() or
+            "Number(" in analysis["suggestion"]
         )
 
 
@@ -421,12 +421,12 @@ class TestJavaRegressions:
         analysis = self.plugin.analyze_error(error_data)
 
         assert (
-            "lambda" in analysis["root_cause"]
-            or "type inference" in analysis["suggestion"].lower()
+            "lambda" in analysis["root_cause"] or
+            "type inference" in analysis["suggestion"].lower()
         )
         assert (
-            "generic" in analysis["suggestion"].lower()
-            or "explicit" in analysis["suggestion"].lower()
+            "generic" in analysis["suggestion"].lower() or
+            "explicit" in analysis["suggestion"].lower()
         )
 
     def test_regression_concurrent_modification_in_stream(self):
@@ -449,8 +449,8 @@ class TestJavaRegressions:
 
         assert "stream" in analysis["suggestion"].lower()
         assert (
-            "concurrent" in analysis["root_cause"]
-            or "modification" in analysis["root_cause"]
+            "concurrent" in analysis["root_cause"] or
+            "modification" in analysis["root_cause"]
         )
 
     def test_regression_record_pattern_matching(self):
@@ -505,9 +505,9 @@ class TestCppRegressions:
 
         # Handle move after move
         if (
-            "moved-from object" in message
-            or "use after move" in message.lower()
-            or "use of moved" in message
+            "moved-from object" in message or
+            "use after move" in message.lower() or
+            "use of moved" in message
         ):
             return {
                 "category": "cpp",
@@ -559,8 +559,8 @@ class TestCppRegressions:
 
         assert "typename" in analysis["suggestion"]
         assert (
-            "template" in analysis["root_cause"]
-            or "dependent" in analysis["root_cause"]
+            "template" in analysis["root_cause"] or
+            "dependent" in analysis["root_cause"]
         )
 
     def test_regression_move_after_move(self):
@@ -601,8 +601,8 @@ class TestCppRegressions:
         analysis = self.plugin.analyze_error(error_data)
 
         assert (
-            "concept" in analysis["root_cause"]
-            or "constraint" in analysis["root_cause"]
+            "concept" in analysis["root_cause"] or
+            "constraint" in analysis["root_cause"]
         )
         assert analysis["category"] == "compilation"
 
@@ -730,8 +730,8 @@ class TestGoRegressions:
         analysis = self.plugin.analyze_error(error_data)
 
         assert (
-            "ambiguous" in analysis["root_cause"]
-            or "embedded" in analysis["root_cause"]
+            "ambiguous" in analysis["root_cause"] or
+            "embedded" in analysis["root_cause"]
         )
         assert "explicit" in analysis["suggestion"].lower()
 
@@ -758,13 +758,13 @@ class TestMultiLanguageRegressions:
 
         # Unicode normalization errors
         if (
-            "unicode" in message.lower()
-            or "normalization" in message.lower()
-            or "normalization" in context.lower()
-            or (
-                "strings appear equal" in message
-                and error_data.get("string1")
-                and error_data.get("string2")
+            "unicode" in message.lower() or
+            "normalization" in message.lower() or
+            "normalization" in context.lower() or
+            (
+                "strings appear equal" in message and
+                error_data.get("string1") and
+                error_data.get("string2")
             )
         ):
             return {
@@ -778,9 +778,9 @@ class TestMultiLanguageRegressions:
 
         # Timezone errors
         if (
-            "timezone" in context.lower()
-            or "tzinfo" in message.lower()
-            or "time zone" in message.lower()
+            "timezone" in context.lower() or
+            "tzinfo" in message.lower() or
+            "time zone" in message.lower()
         ):
             return {
                 "category": "datetime",
@@ -828,8 +828,8 @@ class TestMultiLanguageRegressions:
             if plugin:
                 analysis = plugin.analyze_error(test_case)
                 assert (
-                    "normaliz" in analysis["suggestion"].lower()
-                    or "unicode" in analysis["suggestion"].lower()
+                    "normaliz" in analysis["suggestion"].lower() or
+                    "unicode" in analysis["suggestion"].lower()
                 )
 
     def test_regression_timezone_serialization_errors(self):
@@ -863,8 +863,8 @@ class TestMultiLanguageRegressions:
             if plugin:
                 analysis = plugin.analyze_error(test_case)
                 assert (
-                    "timezone" in analysis["suggestion"].lower()
-                    or "tz" in analysis["suggestion"].lower()
+                    "timezone" in analysis["suggestion"].lower() or
+                    "tz" in analysis["suggestion"].lower()
                 )
 
 
@@ -993,8 +993,8 @@ class TestFrameworkSpecificRegressions:
 
         assert "circular" in analysis["root_cause"]
         assert (
-            "@Lazy" in analysis["suggestion"]
-            or "refactor" in analysis["suggestion"].lower()
+            "@Lazy" in analysis["suggestion"] or
+            "refactor" in analysis["suggestion"].lower()
         )
 
 

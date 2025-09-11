@@ -384,7 +384,7 @@ Expire-Date: 2y
             for line in lines:
                 if line.startswith(f"{self.healing_signature_prefix}:"):
                     signature_line = line[
-                        len(self.healing_signature_prefix) + 1 :
+                        len(self.healing_signature_prefix) + 1:
                     ].strip()
                     break
 

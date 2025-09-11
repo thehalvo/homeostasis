@@ -186,9 +186,9 @@ class BlockchainPlugin(LanguagePlugin):
 
         # Additional smart contract specific checks
         if (
-            platform == BlockchainPlatform.ETHEREUM
-            and file_path
-            and file_path.endswith(".sol")
+            platform == BlockchainPlatform.ETHEREUM and
+            file_path and
+            file_path.endswith(".sol")
         ):
             errors.extend(self._check_solidity_patterns(code))
 

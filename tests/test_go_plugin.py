@@ -180,8 +180,8 @@ class TestGoExceptionHandler:
         assert analysis["root_cause"] == "go_type_assertion_failure"
         assert analysis["category"] == "runtime"
         assert (
-            "type assertion" in analysis["suggestion"].lower()
-            or "type switch" in analysis["suggestion"].lower()
+            "type assertion" in analysis["suggestion"].lower() or
+            "type switch" in analysis["suggestion"].lower()
         )
 
     def test_analyze_channel_deadlock(self):
@@ -215,8 +215,8 @@ class TestGoExceptionHandler:
         assert analysis["category"] == "concurrency"
         assert analysis["severity"] == "high"
         assert (
-            "mutex" in analysis["suggestion"].lower()
-            or "atomic" in analysis["suggestion"].lower()
+            "mutex" in analysis["suggestion"].lower() or
+            "atomic" in analysis["suggestion"].lower()
         )
 
     def test_analyze_map_concurrent_access(self):
@@ -234,8 +234,8 @@ class TestGoExceptionHandler:
         assert analysis["root_cause"] == "go_concurrent_map_access"
         assert analysis["category"] == "concurrency"
         assert (
-            "sync.Map" in analysis["suggestion"]
-            or "mutex" in analysis["suggestion"].lower()
+            "sync.Map" in analysis["suggestion"] or
+            "mutex" in analysis["suggestion"].lower()
         )
 
     def test_analyze_compilation_error(self):
@@ -266,8 +266,8 @@ class TestGoExceptionHandler:
         assert analysis["root_cause"] == "go_import_cycle"
         assert analysis["category"] == "compilation"
         assert (
-            "refactor" in analysis["suggestion"].lower()
-            or "dependency" in analysis["suggestion"].lower()
+            "refactor" in analysis["suggestion"].lower() or
+            "dependency" in analysis["suggestion"].lower()
         )
 
 
@@ -317,8 +317,8 @@ class TestGoPatchGenerator:
 
         assert bounds_patch is not None
         assert (
-            "if index < len(arr)" in bounds_patch["content"]
-            or "len(arr) > index" in bounds_patch["content"]
+            "if index < len(arr)" in bounds_patch["content"] or
+            "len(arr) > index" in bounds_patch["content"]
         )
 
     def test_generate_type_assertion_patch(self):
@@ -360,8 +360,8 @@ class TestGoPatchGenerator:
 
         assert mutex_patch is not None
         assert (
-            "sync.Mutex" in mutex_patch["imports"]
-            or "sync.RWMutex" in mutex_patch["imports"]
+            "sync.Mutex" in mutex_patch["imports"] or
+            "sync.RWMutex" in mutex_patch["imports"]
         )
         assert "Lock()" in mutex_patch["content"]
         assert "Unlock()" in mutex_patch["content"]
@@ -492,8 +492,8 @@ class TestGoFrameworkSpecific:
 
         assert analysis["framework"] == "gorm"
         assert (
-            "ErrRecordNotFound" in analysis["suggestion"]
-            or "not found" in analysis["suggestion"].lower()
+            "ErrRecordNotFound" in analysis["suggestion"] or
+            "not found" in analysis["suggestion"].lower()
         )
 
     def test_fiber_error(self):
@@ -583,8 +583,8 @@ class TestGoEdgeCases:
             "timeout" in analysis["root_cause"] or "deadline" in analysis["root_cause"]
         )
         assert (
-            "timeout" in analysis["suggestion"].lower()
-            or "deadline" in analysis["suggestion"].lower()
+            "timeout" in analysis["suggestion"].lower() or
+            "deadline" in analysis["suggestion"].lower()
         )
 
 
@@ -608,8 +608,8 @@ class TestGoPerformanceAndSecurity:
         assert "memory" in analysis["root_cause"]
         assert analysis["category"] == "performance"
         assert (
-            "profile" in analysis["suggestion"].lower()
-            or "pprof" in analysis["suggestion"].lower()
+            "profile" in analysis["suggestion"].lower() or
+            "pprof" in analysis["suggestion"].lower()
         )
 
     def test_sql_injection_detection(self):
@@ -625,13 +625,13 @@ class TestGoPerformanceAndSecurity:
         analysis = self.handler.analyze_exception(error_data)
 
         assert (
-            "injection" in analysis["root_cause"]
-            or "security" in analysis["root_cause"]
+            "injection" in analysis["root_cause"] or
+            "security" in analysis["root_cause"]
         )
         assert analysis["severity"] == "critical"
         assert (
-            "prepared statement" in analysis["suggestion"].lower()
-            or "parameterized" in analysis["suggestion"].lower()
+            "prepared statement" in analysis["suggestion"].lower() or
+            "parameterized" in analysis["suggestion"].lower()
         )
 
     def test_infinite_loop_detection(self):
@@ -651,8 +651,8 @@ class TestGoPerformanceAndSecurity:
         assert "loop" in analysis["root_cause"]
         assert analysis["category"] == "performance"
         assert (
-            "condition" in analysis["suggestion"].lower()
-            or "termination" in analysis["suggestion"].lower()
+            "condition" in analysis["suggestion"].lower() or
+            "termination" in analysis["suggestion"].lower()
         )
 
 

@@ -778,8 +778,8 @@ class CrossClusterOrchestrator:
         affected_services = [
             service
             for service in self.services.values()
-            if failed_cluster_id in service.replicas
-            and service.replicas[failed_cluster_id] > 0
+            if failed_cluster_id in service.replicas and
+            service.replicas[failed_cluster_id] > 0
         ]
 
         if not affected_services:

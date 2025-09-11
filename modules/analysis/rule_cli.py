@@ -959,11 +959,11 @@ def main() -> None:
             else:
                 # Ensure required fields are provided
                 if (
-                    not args.pattern
-                    or not args.type
-                    or not args.description
-                    or not args.root_cause
-                    or not args.suggestion
+                    not args.pattern or
+                    not args.type or
+                    not args.description or
+                    not args.root_cause or
+                    not args.suggestion
                 ):
                     print(
                         "Error: Missing required fields. Use --input or provide --pattern, --type, --description, --root-cause, and --suggestion."

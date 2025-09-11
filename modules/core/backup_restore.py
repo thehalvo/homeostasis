@@ -931,10 +931,10 @@ class BackupRestoreManager:
             if destination == BackupDestination.LOCAL:
                 # Local storage
                 source_path = (
-                    self.local_backup_path
-                    / (tenant_id or "default")
-                    / backup_id
-                    / archive_name
+                    self.local_backup_path /
+                    (tenant_id or "default") /
+                    backup_id /
+                    archive_name
                 )
                 if source_path.exists():
                     shutil.copy2(source_path, target_path)
@@ -1058,8 +1058,8 @@ class BackupRestoreManager:
         full_backups = [
             b
             for b in self._backup_index.values()
-            if b.backup_type == BackupType.FULL
-            and (not tenant_id or b.tenant_id == tenant_id)
+            if b.backup_type == BackupType.FULL and
+            (not tenant_id or b.tenant_id == tenant_id)
         ]
 
         if full_backups:
@@ -1100,8 +1100,8 @@ class BackupRestoreManager:
             else:
                 parent_info = parent_files[relative_path]
                 if (
-                    file_path.stat().st_mtime > parent_info["modified"]
-                    or file_path.stat().st_size != parent_info["size"]
+                    file_path.stat().st_mtime > parent_info["modified"] or
+                    file_path.stat().st_size != parent_info["size"]
                 ):
                     changed_files.append(file_path)
 

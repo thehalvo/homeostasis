@@ -59,11 +59,9 @@ def parse_diff(diff_content: str) -> Dict[str, Any]:
     lines = diff_content.splitlines()
 
     # Check if we have a valid diff
-    if (
-        len(lines) < 2
-        or not lines[0].startswith("--- ")
-        or not lines[1].startswith("+++ ")
-    ):
+    if (len(lines) < 2 or
+        not lines[0].startswith("--- ") or
+        not lines[1].startswith("+++ ")):
         return result
 
     # Extract filename from the diff header
@@ -142,7 +140,7 @@ def apply_diff_to_file(
                 added_lines = hunk["added"]
 
             # Check if the lines to be removed match the ones in the file
-            original_slice = lines[original_start : original_start + original_count]
+            original_slice = lines[original_start:original_start + original_count]
             original_matches = True
 
             for i, line in enumerate(removed_lines):
@@ -154,7 +152,7 @@ def apply_diff_to_file(
                 return False
 
             # Apply the changes
-            lines[original_start : original_start + original_count] = added_lines
+            lines[original_start:original_start + original_count] = added_lines
 
         # Write the modified content back to the file
         with open(file_path, "w") as f:
@@ -279,7 +277,7 @@ def extract_code_block(file_path: Path, line_range: Tuple[int, int]) -> str:
 
     # Extract the specified lines
     start_line, end_line = line_range
-    code_block = lines[start_line - 1 : end_line]
+    code_block = lines[start_line - 1:end_line]
 
     return "".join(code_block)
 
@@ -308,7 +306,7 @@ def get_code_context(
     end_line = min(len(lines), focus_line + context_after)
 
     # Extract the context
-    context_lines = lines[start_line - 1 : end_line]
+    context_lines = lines[start_line - 1:end_line]
 
     # Format with line numbers
     result = []

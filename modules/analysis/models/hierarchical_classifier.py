@@ -139,7 +139,12 @@ def secure_torch_load(
         original_unpickler = pickle.Unpickler
         try:
             pickle.Unpickler = RestrictedUnpickler
-            return torch.load(filepath, map_location=map_location)
+            # Use weights_only=True for additional security when possible
+            try:
+                return torch.load(filepath, map_location=map_location, weights_only=True)
+            except (TypeError, pickle.UnpicklingError):
+                # Fallback to restricted unpickler if weights_only fails
+                return torch.load(filepath, map_location=map_location)
         finally:
             pickle.Unpickler = original_unpickler
 
@@ -516,8 +521,8 @@ class HierarchicalClassificationPipeline:
 
         # Add code context
         if (
-            "error_details" in error_data
-            and "detailed_frames" in error_data["error_details"]
+            "error_details" in error_data and
+            "detailed_frames" in error_data["error_details"]
         ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:

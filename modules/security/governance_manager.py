@@ -368,8 +368,8 @@ class GovernanceManager:
 
         # Check if request has expired
         if (
-            request.expires_at
-            and datetime.fromisoformat(request.expires_at) < datetime.now()
+            request.expires_at and
+            datetime.fromisoformat(request.expires_at) < datetime.now()
         ):
             request.status = ApprovalStatus.EXPIRED
             self._save_approval_requests()
@@ -566,9 +566,9 @@ class GovernanceManager:
         """Find the applicable governance policy for a patch."""
         for policy in self.policies.values():
             if (
-                policy.is_active
-                and category in policy.patch_categories
-                and risk_level in policy.risk_levels
+                policy.is_active and
+                category in policy.patch_categories and
+                risk_level in policy.risk_levels
             ):
                 return policy
         return None

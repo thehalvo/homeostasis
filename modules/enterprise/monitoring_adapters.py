@@ -786,7 +786,7 @@ class SplunkAdapter(MonitoringAdapter):
                 try:
                     import defusedxml.ElementTree as ET
                 except ImportError:
-                    import xml.etree.ElementTree as ET
+                    import defusedxml.ElementTree as ET
 
                 root = ET.fromstring(response.text)
                 self._session_key = root.find(".//sessionKey").text
@@ -1505,8 +1505,8 @@ class NewRelicAdapter(MonitoringAdapter):
                     not metric_name.replace("_", "")
                     .replace(".", "")
                     .replace("-", "")
-                    .isalnum()
-                    and metric_name != "*"
+                    .isalnum() and
+                    metric_name != "*"
                 ):
                     raise ValueError(f"Invalid metric name: {metric_name}")
                 nrql = f"SELECT average({metric_name}) FROM Metric"
@@ -1744,8 +1744,8 @@ class NewRelicAdapter(MonitoringAdapter):
             data = {
                 "deployment": {
                     "revision": f"alert_ack_{alert_id}",
-                    "description": message
-                    or f"Alert {alert_id} acknowledged by Homeostasis",
+                    "description": message or
+                    f"Alert {alert_id} acknowledged by Homeostasis",
                     "user": "homeostasis",
                 }
             }

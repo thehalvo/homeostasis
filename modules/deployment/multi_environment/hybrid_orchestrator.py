@@ -403,9 +403,9 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
 
         # Determine if approval is required
         approval_required = (
-            risk_score > 0.7
-            or context.constraints.get("require_approval", False)
-            or any(
+            risk_score > 0.7 or
+            context.constraints.get("require_approval", False) or
+            any(
                 "production" in env.metadata.get("tags", [])
                 for env in context.affected_environments
             )
@@ -466,7 +466,7 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
         for i, env in enumerate(ordered_envs):
             dependencies = [f"prepare_{e.id}" for e in context.affected_environments]
             if i > 0:
-                dependencies.append(f"apply_{ordered_envs[i-1].id}")
+                dependencies.append(f"apply_{ordered_envs[i - 1].id}")
 
             step = HealingStep(
                 step_id=f"apply_{env.id}",

@@ -770,8 +770,8 @@ class EnsembleTrainer(ModelTrainer):
                 n_jobs=self.config.n_jobs,
                 cv_folds=self.config.cv_folds,
                 optimization_method=self.config.optimization_method,
-                optimization_trials=self.config.optimization_trials
-                // len(self.config.ensemble_models),
+                optimization_trials=self.config.optimization_trials //
+                len(self.config.ensemble_models),
                 distributed=self.config.distributed,
                 distributed_backend=self.config.distributed_backend,
                 experiment_tracking="none",  # Track only ensemble

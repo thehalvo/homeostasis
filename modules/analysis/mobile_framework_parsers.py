@@ -416,9 +416,9 @@ class FrameworkDetector:
                         if "react-native" in deps:
                             return FrameworkType.REACT_NATIVE
                         elif (
-                            "@capacitor/core" in deps
-                            or "@ionic/angular" in deps
-                            or "@ionic/react" in deps
+                            "@capacitor/core" in deps or
+                            "@ionic/angular" in deps or
+                            "@ionic/react" in deps
                         ):
                             return FrameworkType.CAPACITOR_CORDOVA
                         elif "cordova" in deps or "phonegap" in deps:
@@ -485,17 +485,17 @@ class FrameworkDetector:
                         elif any("ember " in script for script in scripts.values()):
                             return FrameworkType.EMBER
                         elif any(
-                            "tailwind" in script
-                            or "postcss" in script
-                            or "sass" in script
+                            "tailwind" in script or
+                            "postcss" in script or
+                            "sass" in script
                             for script in scripts.values()
                         ):
                             return FrameworkType.CSS
                         elif any(
-                            "webpack" in script
-                            or "rollup" in script
-                            or "vite" in script
-                            or "build" in script
+                            "webpack" in script or
+                            "rollup" in script or
+                            "vite" in script or
+                            "build" in script
                             for script in scripts.values()
                         ):
                             return FrameworkType.BUILD_SYSTEMS
@@ -504,20 +504,20 @@ class FrameworkDetector:
 
             # Additional mobile framework detection
             if (
-                (project_path / "AndroidManifest.xml").exists()
-                or (
+                (project_path / "AndroidManifest.xml").exists() or
+                (
                     project_path / "app" / "src" / "main" / "AndroidManifest.xml"
-                ).exists()
-                or (project_path / "build.gradle").exists()
+                ).exists() or
+                (project_path / "build.gradle").exists()
             ):
                 return FrameworkType.JAVA_ANDROID
 
             # Capacitor/Cordova detection
             if (
-                (project_path / "capacitor.config.ts").exists()
-                or (project_path / "capacitor.config.js").exists()
-                or (project_path / "config.xml").exists()
-                or (project_path / "ionic.config.json").exists()
+                (project_path / "capacitor.config.ts").exists() or
+                (project_path / "capacitor.config.js").exists() or
+                (project_path / "config.xml").exists() or
+                (project_path / "ionic.config.json").exists()
             ):
                 return FrameworkType.CAPACITOR_CORDOVA
 
@@ -545,22 +545,22 @@ class FrameworkDetector:
 
             # CSS framework detection
             if (
-                (project_path / "tailwind.config.js").exists()
-                or (project_path / "postcss.config.js").exists()
-                or list(project_path.glob("**/*.scss"))
-                or list(project_path.glob("**/*.sass"))
-                or list(project_path.glob("**/*.less"))
+                (project_path / "tailwind.config.js").exists() or
+                (project_path / "postcss.config.js").exists() or
+                list(project_path.glob("**/*.scss")) or
+                list(project_path.glob("**/*.sass")) or
+                list(project_path.glob("**/*.less"))
             ):
                 return FrameworkType.CSS
 
             # Build system detection
             if (
-                (project_path / "webpack.config.js").exists()
-                or (project_path / "rollup.config.js").exists()
-                or (project_path / "vite.config.js").exists()
-                or (project_path / "vite.config.ts").exists()
-                or (project_path / "gulpfile.js").exists()
-                or (project_path / "Gruntfile.js").exists()
+                (project_path / "webpack.config.js").exists() or
+                (project_path / "rollup.config.js").exists() or
+                (project_path / "vite.config.js").exists() or
+                (project_path / "vite.config.ts").exists() or
+                (project_path / "gulpfile.js").exists() or
+                (project_path / "Gruntfile.js").exists()
             ):
                 return FrameworkType.BUILD_SYSTEMS
 
