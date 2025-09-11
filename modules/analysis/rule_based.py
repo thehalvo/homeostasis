@@ -6,9 +6,15 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from .rule_config import (DEFAULT_RULES_DIR, Rule, RuleCategory, RuleSet,
-                          convert_legacy_patterns, get_all_rule_sets,
-                          get_rules_for_category)
+from .rule_config import (
+    DEFAULT_RULES_DIR,
+    Rule,
+    RuleCategory,
+    RuleSet,
+    convert_legacy_patterns,
+    get_all_rule_sets,
+    get_rules_for_category,
+)
 
 # Legacy error patterns for backward compatibility
 ERROR_PATTERNS = [

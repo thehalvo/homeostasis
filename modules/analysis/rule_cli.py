@@ -9,11 +9,16 @@ import traceback
 from pathlib import Path
 from typing import Any, Dict, List, Union
 
-from .rule_categories import (EnhancedRule, RuleDependency,
-                              detect_rule_conflicts)
+from .rule_categories import EnhancedRule, RuleDependency, detect_rule_conflicts
 from .rule_confidence import ConfidenceScorer, ContextualRuleAnalyzer
-from .rule_config import (DEFAULT_RULES_DIR, Rule, RuleCategory, RuleLoader,
-                          RuleSet, get_all_rule_sets)
+from .rule_config import (
+    DEFAULT_RULES_DIR,
+    Rule,
+    RuleCategory,
+    RuleLoader,
+    RuleSet,
+    get_all_rule_sets,
+)
 
 
 class RuleStats:
@@ -959,11 +964,11 @@ def main() -> None:
             else:
                 # Ensure required fields are provided
                 if (
-                    not args.pattern or
-                    not args.type or
-                    not args.description or
-                    not args.root_cause or
-                    not args.suggestion
+                    not args.pattern
+                    or not args.type
+                    or not args.description
+                    or not args.root_cause
+                    or not args.suggestion
                 ):
                     print(
                         "Error: Missing required fields. Use --input or provide --pattern, --type, --description, --root-cause, and --suggestion."

@@ -19,13 +19,7 @@ import re
 import secrets
 
 # Always import defusedxml for security
-try:
-    import defusedxml.ElementTree as ET
-except ImportError:
-    # If defusedxml is not available, use standard library with secure defaults
-    import xml.etree.ElementTree as ET  # noqa: F811
-
-    # Note: xml.etree.ElementTree in Python 3.x has secure defaults
+import defusedxml.ElementTree as ET
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -173,8 +167,8 @@ class IdentityProviderIntegration:
             name=name,
             type=type,
             config=config,
-            attribute_mapping=attribute_mapping or
-            self._get_default_attribute_mapping(type),
+            attribute_mapping=attribute_mapping
+            or self._get_default_attribute_mapping(type),
         )
 
         # Validate configuration
@@ -974,8 +968,8 @@ class OIDCHandler(OAuth2Handler):
     def _discover_endpoints(self, config: Dict):
         """Discover OIDC endpoints from discovery URL."""
         discovery_url = (
-            config.get("discovery_url") or
-            f"{config['issuer']}/.well-known/openid-configuration"
+            config.get("discovery_url")
+            or f"{config['issuer']}/.well-known/openid-configuration"
         )
 
         response = requests.get(discovery_url, timeout=30)

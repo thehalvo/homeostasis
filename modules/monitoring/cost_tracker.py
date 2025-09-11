@@ -259,8 +259,8 @@ class CostTracker:
 
         for threshold in budget.alert_thresholds:
             if (
-                usage_percentage >= threshold and
-                threshold not in self.sent_alerts[budget_id]
+                usage_percentage >= threshold
+                and threshold not in self.sent_alerts[budget_id]
             ):
                 # Determine alert type
                 if threshold >= 100.0:
@@ -428,8 +428,8 @@ class CostTracker:
                     "remaining": budget.amount - usage,
                     "usage_percentage": (usage / budget.amount) * 100.0,
                     "period_start": period_start,
-                    "time_remaining": self._get_period_duration(budget.period) -
-                    (time.time() - period_start),
+                    "time_remaining": self._get_period_duration(budget.period)
+                    - (time.time() - period_start),
                 }
             else:
                 result = {}
@@ -586,8 +586,8 @@ class CostTracker:
             most_expensive = sorted_providers[-1]
 
             if (
-                most_expensive[1]["cost_per_token"] >
-                cheapest[1]["cost_per_token"] * 1.5
+                most_expensive[1]["cost_per_token"]
+                > cheapest[1]["cost_per_token"] * 1.5
             ):
                 recommendations.append(
                     f"Consider using {cheapest[0]} more often - it's {most_expensive[1]['cost_per_token'] / cheapest[1]['cost_per_token']:.1f}x cheaper per token than {most_expensive[0]}"

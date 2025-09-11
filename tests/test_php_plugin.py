@@ -1,9 +1,11 @@
 import unittest
 
 from modules.analysis.language_adapters import PHPErrorAdapter
-from modules.analysis.plugins.php_plugin import (PHPExceptionHandler,
-                                                 PHPLanguagePlugin,
-                                                 PHPPatchGenerator)
+from modules.analysis.plugins.php_plugin import (
+    PHPExceptionHandler,
+    PHPLanguagePlugin,
+    PHPPatchGenerator,
+)
 
 
 class TestPHPPlugin(unittest.TestCase):

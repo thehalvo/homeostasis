@@ -8,13 +8,21 @@ from unittest.mock import Mock
 import pytest
 
 from modules.llm_integration.patch_generator import PatchData
-from modules.self_training import (AnnotationInterface, AnnotationType,
-                                   ConfidenceCalculator, ConfidenceContext,
-                                   DeploymentMonitor, FixComplexity,
-                                   LearningPipeline, MLFeedbackLoop,
-                                   OutcomeTracker, PredictionFeedback,
-                                   ReviewTrigger, RuleExtractor,
-                                   SystemCriticality)
+from modules.self_training import (
+    AnnotationInterface,
+    AnnotationType,
+    ConfidenceCalculator,
+    ConfidenceContext,
+    DeploymentMonitor,
+    FixComplexity,
+    LearningPipeline,
+    MLFeedbackLoop,
+    OutcomeTracker,
+    PredictionFeedback,
+    ReviewTrigger,
+    RuleExtractor,
+    SystemCriticality,
+)
 from modules.self_training.continuous_learning import FixOutcome
 
 

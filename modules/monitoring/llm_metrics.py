@@ -306,8 +306,8 @@ class CostCalculator:
             # Try partial match for model names
             for pricing_model, pricing in provider_pricing.items():
                 if (
-                    model.lower() in pricing_model.lower() or
-                    pricing_model.lower() in model.lower()
+                    model.lower() in pricing_model.lower()
+                    or pricing_model.lower() in model.lower()
                 ):
                     model_pricing = pricing
                     break

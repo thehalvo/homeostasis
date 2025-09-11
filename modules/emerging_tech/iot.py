@@ -1577,8 +1577,8 @@ sampler.adaptive_sampling_loop(read_sensor, process_data)
             older_cpu = [m.cpu_usage for m in historical_data[-10:-5]]
 
             if (
-                sum(recent_cpu) / len(recent_cpu) >
-                sum(older_cpu) / len(older_cpu) * 1.2
+                sum(recent_cpu) / len(recent_cpu)
+                > sum(older_cpu) / len(older_cpu) * 1.2
             ):
                 trends["cpu"] = "increasing"
 
@@ -1586,8 +1586,8 @@ sampler.adaptive_sampling_loop(read_sensor, process_data)
             older_memory = [m.memory_usage for m in historical_data[-10:-5]]
 
             if (
-                sum(recent_memory) / len(recent_memory) >
-                sum(older_memory) / len(older_memory) * 1.1
+                sum(recent_memory) / len(recent_memory)
+                > sum(older_memory) / len(older_memory) * 1.1
             ):
                 trends["memory"] = "increasing"
 

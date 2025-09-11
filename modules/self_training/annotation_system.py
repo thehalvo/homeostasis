@@ -163,9 +163,9 @@ class AnnotationInterface:
 
         for task in self.tasks.values():
             if (
-                task.status == AnnotationStatus.PENDING and
-                (task.expires_at is None or task.expires_at > current_time) and
-                (task_types is None or task.task_type in task_types)
+                task.status == AnnotationStatus.PENDING
+                and (task.expires_at is None or task.expires_at > current_time)
+                and (task_types is None or task.task_type in task_types)
             ):
                 available_tasks.append(task)
 

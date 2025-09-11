@@ -918,7 +918,7 @@ class ModernizationAnalyzer:
         # Group into waves
         wave_size = max(1, len(sorted_paths) // 4)
         waves = [
-            sorted_paths[i:i + wave_size]
+            sorted_paths[i : i + wave_size]
             for i in range(0, len(sorted_paths), wave_size)
         ]
 

@@ -9,10 +9,12 @@ import os
 import re
 from typing import Any, Dict, List, Optional
 
-from ...emerging_tech.quantum_computing import (QuantumError,
-                                                QuantumErrorMitigator,
-                                                QuantumErrorType,
-                                                QuantumFramework)
+from ...emerging_tech.quantum_computing import (
+    QuantumError,
+    QuantumErrorMitigator,
+    QuantumErrorType,
+    QuantumFramework,
+)
 from ..language_plugin_system import LanguagePlugin
 
 

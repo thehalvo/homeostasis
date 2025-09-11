@@ -5,10 +5,13 @@ Test cases for augmented reality application resilience
 import unittest
 
 from modules.analysis.plugins.ar_plugin import ARPlugin
-from modules.emerging_tech.augmented_reality import (ARError, ARErrorType,
-                                                     ARPerformanceMetrics,
-                                                     ARPlatform,
-                                                     ARResilienceManager)
+from modules.emerging_tech.augmented_reality import (
+    ARError,
+    ARErrorType,
+    ARPerformanceMetrics,
+    ARPlatform,
+    ARResilienceManager,
+)
 
 
 class TestARResilienceManager(unittest.TestCase):

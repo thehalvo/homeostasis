@@ -442,7 +442,7 @@ class UserManagementSystem:
         # Keep only the last N passwords
         if len(self.password_history[user_id]) > self.password_policy.history_count:
             self.password_history[user_id] = self.password_history[user_id][
-                -self.password_policy.history_count:
+                -self.password_policy.history_count :
             ]
 
         # Update password changed timestamp

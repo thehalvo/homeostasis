@@ -11,12 +11,11 @@ This script demonstrates the enhanced LLM patch generation capabilities:
 import sys
 from pathlib import Path
 
-from modules.patch_generation.code_style_analyzer import \
-    create_code_style_analyzer
-from modules.patch_generation.llm_patch_generator import \
-    create_llm_patch_generator
-from modules.patch_generation.multi_language_framework_detector import \
-    create_multi_language_detector
+from modules.patch_generation.code_style_analyzer import create_code_style_analyzer
+from modules.patch_generation.llm_patch_generator import create_llm_patch_generator
+from modules.patch_generation.multi_language_framework_detector import (
+    create_multi_language_detector,
+)
 
 # Add project root to path
 project_root = Path(__file__).parent

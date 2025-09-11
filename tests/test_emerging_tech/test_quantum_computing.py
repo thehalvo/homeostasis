@@ -5,10 +5,12 @@ Test cases for quantum computing error mitigation
 import unittest
 
 from modules.analysis.plugins.quantum_plugin import QuantumPlugin
-from modules.emerging_tech.quantum_computing import (QuantumError,
-                                                     QuantumErrorMitigator,
-                                                     QuantumErrorType,
-                                                     QuantumFramework)
+from modules.emerging_tech.quantum_computing import (
+    QuantumError,
+    QuantumErrorMitigator,
+    QuantumErrorType,
+    QuantumFramework,
+)
 
 
 class TestQuantumErrorMitigator(unittest.TestCase):

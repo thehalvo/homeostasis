@@ -4,12 +4,19 @@ Tests for the academic collaboration module.
 
 import unittest
 
-from modules.academic import (AcademicFormalVerificationFramework,
-                              AssessmentType, EducationLevel,
-                              ProofAssistantInterface, PropertyType,
-                              ResearchFocus, ResearchModelChecker,
-                              SelfHealingCurriculum, SystemModel,
-                              ThesisVerificationTools, VerificationProperty)
+from modules.academic import (
+    AcademicFormalVerificationFramework,
+    AssessmentType,
+    EducationLevel,
+    ProofAssistantInterface,
+    PropertyType,
+    ResearchFocus,
+    ResearchModelChecker,
+    SelfHealingCurriculum,
+    SystemModel,
+    ThesisVerificationTools,
+    VerificationProperty,
+)
 
 
 class TestFormalVerificationFramework(unittest.TestCase):

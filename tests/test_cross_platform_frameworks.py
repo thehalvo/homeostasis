@@ -8,11 +8,11 @@ import sys
 import unittest
 from pathlib import Path
 
-from modules.analysis.plugins.capacitor_cordova_plugin import \
-    CapacitorCordovaLanguagePlugin
+from modules.analysis.plugins.capacitor_cordova_plugin import (
+    CapacitorCordovaLanguagePlugin,
+)
 from modules.analysis.plugins.flutter_plugin import FlutterLanguagePlugin
-from modules.analysis.plugins.react_native_plugin import \
-    ReactNativeLanguagePlugin
+from modules.analysis.plugins.react_native_plugin import ReactNativeLanguagePlugin
 from modules.analysis.plugins.unity_plugin import UnityLanguagePlugin
 from modules.analysis.plugins.xamarin_plugin import XamarinLanguagePlugin
 

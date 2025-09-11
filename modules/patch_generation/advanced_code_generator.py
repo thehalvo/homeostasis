@@ -23,10 +23,10 @@ from typing import Any, Dict, List, Optional
 import networkx as nx
 
 from ..analysis.llm_context_manager import LLMContextManager
-from ..analysis.models.transformer_code_understanding import \
-    TransformerCodeAnalyzer as TransformerCodeUnderstanding
-from ..llm_integration.provider_abstraction import (LLMManager, LLMMessage,
-                                                    LLMRequest)
+from ..analysis.models.transformer_code_understanding import (
+    TransformerCodeAnalyzer as TransformerCodeUnderstanding,
+)
+from ..llm_integration.provider_abstraction import LLMManager, LLMMessage, LLMRequest
 from .code_style_analyzer import CodeStyleAnalyzer
 from .multi_language_framework_detector import MultiLanguageFrameworkDetector
 
@@ -788,8 +788,10 @@ OUTPUT FORMAT:
             patterns.append("Layered Architecture")
 
         # Check for microservices
-        if (any("service" in f.lower() for f in related_files) and
-            len(related_files) > 5):
+        if (
+            any("service" in f.lower() for f in related_files)
+            and len(related_files) > 5
+        ):
             patterns.append("Microservices")
 
         # Framework-specific patterns
@@ -1346,8 +1348,8 @@ OUTPUT FORMAT:
                 if file_content and old_name in file_content:
                     # Check if there's a corresponding change
                     has_update = any(
-                        old_name in change.get("original_code", "") and
-                        new_name in change.get("new_code", "")
+                        old_name in change.get("original_code", "")
+                        and new_name in change.get("new_code", "")
                         for change in changes
                     )
                     if not has_update:

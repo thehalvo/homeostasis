@@ -11,9 +11,11 @@ import sys
 import unittest
 from unittest.mock import patch
 
-from modules.analysis.plugins.react_plugin import (ReactExceptionHandler,
-                                                   ReactLanguagePlugin,
-                                                   ReactPatchGenerator)
+from modules.analysis.plugins.react_plugin import (
+    ReactExceptionHandler,
+    ReactLanguagePlugin,
+    ReactPatchGenerator,
+)
 
 # Add the project root to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))

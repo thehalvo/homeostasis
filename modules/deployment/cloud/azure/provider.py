@@ -583,8 +583,9 @@ class AzureProvider(BaseCloudProvider):
                 return get_credentials_result
 
             # Now we can use kubectl
-            from modules.deployment.kubernetes.kubernetes_deployment import \
-                KubernetesDeployment
+            from modules.deployment.kubernetes.kubernetes_deployment import (
+                KubernetesDeployment,
+            )
 
             # Create Kubernetes deployment
             k8s_deployment = KubernetesDeployment(
@@ -802,8 +803,9 @@ class AzureProvider(BaseCloudProvider):
                 return get_credentials_result
 
             # Now we can use kubectl
-            from modules.deployment.kubernetes.kubernetes_deployment import \
-                KubernetesDeployment
+            from modules.deployment.kubernetes.kubernetes_deployment import (
+                KubernetesDeployment,
+            )
 
             # Create Kubernetes deployment
             k8s_deployment = KubernetesDeployment({"namespace": namespace})
@@ -976,8 +978,9 @@ class AzureProvider(BaseCloudProvider):
                     return get_credentials_result
 
                 # Now we can use kubectl
-                from modules.deployment.kubernetes.kubernetes_deployment import \
-                    KubernetesDeployment
+                from modules.deployment.kubernetes.kubernetes_deployment import (
+                    KubernetesDeployment,
+                )
 
                 # Create Kubernetes deployment
                 k8s_deployment = KubernetesDeployment({"namespace": namespace})

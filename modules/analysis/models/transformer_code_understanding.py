@@ -15,8 +15,12 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from transformers import (AutoModel, AutoTokenizer, T5ForConditionalGeneration,
-                          T5Tokenizer)
+from transformers import (
+    AutoModel,
+    AutoTokenizer,
+    T5ForConditionalGeneration,
+    T5Tokenizer,
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -153,8 +157,8 @@ class TransformerCodeAnalyzer:
         if revision is None:
             raise ValueError(f"Model {model_name} not in secure whitelist")
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, revision=revision)
-        self.model = AutoModel.from_pretrained(model_name, revision=revision).to(
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, revision=revision)  # nosec: B615 - Using secure revision
+        self.model = AutoModel.from_pretrained(model_name, revision=revision).to(  # nosec: B615 - Using secure revision
             self.device
         )
 
@@ -297,8 +301,8 @@ class TransformerCodeAnalyzer:
         """Extract code snippet from error data."""
         # Try to get code from detailed frames
         if (
-            "error_details" in error_data and
-            "detailed_frames" in error_data["error_details"]
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
         ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
@@ -330,8 +334,8 @@ class TransformerCodeAnalyzer:
     def _get_error_line(self, error_data: Dict[str, Any]) -> Optional[int]:
         """Extract error line number from error data."""
         if (
-            "error_details" in error_data and
-            "detailed_frames" in error_data["error_details"]
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
         ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
@@ -448,8 +452,8 @@ class CodeT5Analyzer:
         if revision is None:
             raise ValueError(f"Model {model_name} not in secure whitelist")
 
-        self.tokenizer = T5Tokenizer.from_pretrained(model_name, revision=revision)
-        self.model = T5ForConditionalGeneration.from_pretrained(
+        self.tokenizer = T5Tokenizer.from_pretrained(model_name, revision=revision)  # nosec: B615 - Using secure revision
+        self.model = T5ForConditionalGeneration.from_pretrained(  # nosec: B615 - Using secure revision
             model_name, revision=revision
         ).to(self.device)
 
@@ -527,8 +531,8 @@ class CodeT5Analyzer:
     def _extract_relevant_code(self, error_data: Dict[str, Any]) -> str:
         """Extract relevant code from error data."""
         if (
-            "error_details" in error_data and
-            "detailed_frames" in error_data["error_details"]
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
         ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:

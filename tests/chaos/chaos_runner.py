@@ -28,8 +28,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 from modules.monitoring.error_collector import ErrorCollector  # noqa: E402
 from modules.monitoring.metrics_collector import MetricsCollector  # noqa: E402
 from modules.reliability.chaos_engineering import ChaosEngineer  # noqa: E402
-from modules.reliability.chaos_engineering import (ChaosExperiment,
-                                                   ChaosMonkey, FaultType)
+from modules.reliability.chaos_engineering import (
+    ChaosExperiment,  # noqa: E402
+    ChaosMonkey,
+    FaultType,
+)
 
 
 class ChaosTestRunner:
@@ -95,9 +98,9 @@ class ChaosTestRunner:
 
         for key, value in user.items():
             if (
-                key in result and
-                isinstance(result[key], dict) and
-                isinstance(value, dict)
+                key in result
+                and isinstance(result[key], dict)
+                and isinstance(value, dict)
             ):
                 result[key] = self._merge_configs(result[key], value)
             else:

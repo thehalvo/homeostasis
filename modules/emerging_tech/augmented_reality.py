@@ -518,9 +518,9 @@ class ARResilienceManager:
 
         # Check motion-to-photon latency for VR
         if (
-            metrics.motion_to_photon_latency_ms and
-            metrics.motion_to_photon_latency_ms >
-            thresholds.get("max_motion_to_photon_ms", 20)
+            metrics.motion_to_photon_latency_ms
+            and metrics.motion_to_photon_latency_ms
+            > thresholds.get("max_motion_to_photon_ms", 20)
         ):
             return ARError(
                 error_type=ARErrorType.MOTION_SICKNESS_RISK,
@@ -1829,9 +1829,9 @@ class AnchorStabilizer {
 
         # Check motion-to-photon latency
         if (
-            metrics.motion_to_photon_latency_ms and
-            metrics.motion_to_photon_latency_ms >
-            thresholds.get("max_motion_to_photon_ms", 20)
+            metrics.motion_to_photon_latency_ms
+            and metrics.motion_to_photon_latency_ms
+            > thresholds.get("max_motion_to_photon_ms", 20)
         ):
             analysis["issues"].append(
                 f"High latency: {metrics.motion_to_photon_latency_ms}ms"
@@ -1851,8 +1851,8 @@ class AnchorStabilizer {
             violations.append("Excessive rotation speed")
 
         if (
-            motion_data.get("linear_acceleration", 0) >
-            comfort["max_linear_acceleration"]
+            motion_data.get("linear_acceleration", 0)
+            > comfort["max_linear_acceleration"]
         ):
             violations.append("High acceleration detected")
 
@@ -1877,8 +1877,8 @@ class AnchorStabilizer {
                 "light_estimation": device_capabilities.get("supports_lighting", True),
                 "cloud_anchors": device_capabilities.get("has_internet", True),
                 "image_tracking": device_capabilities.get("cpu_score", 50) > 40,
-                "face_tracking": platform == ARPlatform.ARKIT and
-                device_capabilities.get("has_truedepth", False),
+                "face_tracking": platform == ARPlatform.ARKIT
+                and device_capabilities.get("has_truedepth", False),
                 "max_tracked_images": (
                     4 if device_capabilities.get("ram_gb", 2) >= 4 else 1
                 ),

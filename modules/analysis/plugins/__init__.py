@@ -5,9 +5,13 @@ This package contains language-specific plugins for the Homeostasis framework.
 """
 
 # Import utility functions from the parent module
-from ..language_plugin_system import (LanguagePlugin, get_all_plugins,
-                                      get_plugin, get_supported_languages,
-                                      register_plugin)
+from ..language_plugin_system import (
+    LanguagePlugin,
+    get_all_plugins,
+    get_plugin,
+    get_supported_languages,
+    register_plugin,
+)
 
 __all__ = [
     "LanguagePlugin",

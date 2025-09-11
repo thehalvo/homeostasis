@@ -243,8 +243,8 @@ class CrystalExceptionHandler:
 
             # Only update if we don't already have a high confidence nil subcategory
             if not (
-                analysis.get("subcategory") == "nil" and
-                analysis.get("confidence") == "high"
+                analysis.get("subcategory") == "nil"
+                and analysis.get("confidence") == "high"
             ):
                 analysis.update(
                     {

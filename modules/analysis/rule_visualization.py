@@ -20,10 +20,11 @@ except ImportError:
     try:
         # Try relative import
         sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-        from modules.analysis.rule_categories import (RuleDependency,
-                                                      detect_rule_conflicts)
-        from modules.analysis.rule_config import (DEFAULT_RULES_DIR,
-                                                  get_all_rule_sets)
+        from modules.analysis.rule_categories import (
+            RuleDependency,
+            detect_rule_conflicts,
+        )
+        from modules.analysis.rule_config import DEFAULT_RULES_DIR, get_all_rule_sets
     except ImportError as e:
         print(f"Error importing required modules: {e}")
         print("\nDependency problem detected. Try installing required packages:")
@@ -327,7 +328,8 @@ class RuleVisualizer:
             result += (
                 ASCIIBar.generate_horizontal_bar_with_label(
                     category, count, max_value, width
-                ) + "\n"
+                )
+                + "\n"
             )
 
         return result
@@ -355,7 +357,8 @@ class RuleVisualizer:
                 result += (
                     ASCIIBar.generate_horizontal_bar_with_label(
                         severity, by_severity[severity], max_value, width
-                    ) + "\n"
+                    )
+                    + "\n"
                 )
 
         # Stacked bar representation
@@ -399,7 +402,8 @@ class RuleVisualizer:
             result += (
                 ASCIIBar.generate_horizontal_bar_with_label(
                     tag, count, max_value, width
-                ) + "\n"
+                )
+                + "\n"
             )
 
         return result
@@ -425,7 +429,8 @@ class RuleVisualizer:
         result += (
             ASCIIBar.generate_horizontal_bar_with_label(
                 "Coverage", rules_with_examples, total_rules, width
-            ) + "\n\n"
+            )
+            + "\n\n"
         )
 
         # Add summary
@@ -529,7 +534,8 @@ class RuleVisualizer:
                     result += (
                         ASCIIBar.generate_horizontal_bar_with_label(
                             criticality, by_criticality[criticality], max_value, width
-                        ) + "\n"
+                        )
+                        + "\n"
                     )
 
             result += "\n\n"
@@ -546,7 +552,8 @@ class RuleVisualizer:
                     result += (
                         ASCIIBar.generate_horizontal_bar_with_label(
                             complexity, by_complexity[complexity], max_value, width
-                        ) + "\n"
+                        )
+                        + "\n"
                     )
 
             result += "\n\n"
@@ -563,7 +570,8 @@ class RuleVisualizer:
                     result += (
                         ASCIIBar.generate_horizontal_bar_with_label(
                             reliability, by_reliability[reliability], max_value, width
-                        ) + "\n"
+                        )
+                        + "\n"
                     )
 
             result += "\n\n"
@@ -1155,12 +1163,12 @@ def main() -> None:
 
     # Generate requested visualizations
     if (
-        args.text or
-        args.category or
-        args.severity or
-        args.tags or
-        args.examples or
-        args.dependencies
+        args.text
+        or args.category
+        or args.severity
+        or args.tags
+        or args.examples
+        or args.dependencies
     ):
         # Show specific visualizations if requested
         if args.category:

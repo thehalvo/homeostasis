@@ -7,10 +7,12 @@ testing, and deployment.
 
 import pytest
 
-from tests.e2e.healing_scenarios.test_utilities import (HealingScenario,
-                                                        check_error_fixed,
-                                                        check_no_syntax_errors,
-                                                        check_service_healthy)
+from tests.e2e.healing_scenarios.test_utilities import (
+    HealingScenario,
+    check_error_fixed,
+    check_no_syntax_errors,
+    check_service_healthy,
+)
 
 
 class TestBasicHealingScenarios:

@@ -393,10 +393,10 @@ class MultiLanguageFeatureExtractor:
             try:
                 # Use specific revision for security and reproducibility
                 model_revision = "1b2e0bfe5003709471fb6e04c0943470cf4a5b30"
-                self.tokenizer = AutoTokenizer.from_pretrained(
+                self.tokenizer = AutoTokenizer.from_pretrained(  # nosec: B615 - Using specific revision for security
                     "microsoft/codebert-base", revision=model_revision
                 )
-                self.semantic_model = AutoModel.from_pretrained(
+                self.semantic_model = AutoModel.from_pretrained(  # nosec: B615 - Using specific revision for security
                     "microsoft/codebert-base", revision=model_revision
                 )
                 self.semantic_model.eval()
@@ -460,8 +460,8 @@ class MultiLanguageFeatureExtractor:
 
         # Extract from detailed frames
         if (
-            "error_details" in error_data and
-            "detailed_frames" in error_data["error_details"]
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
         ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
@@ -660,13 +660,13 @@ class MultiLanguageFeatureExtractor:
             anti_patterns=[
                 k
                 for k, v in pattern_matches.items()
-                if k.startswith(("bare_", "uses_eval", "uses_var", "global_usage")) and
-                v
+                if k.startswith(("bare_", "uses_eval", "uses_var", "global_usage"))
+                and v
             ],
             # Context features
             surrounding_code=error_context["surrounding_code"],
-            imports=dependency_features["external_dependencies"] +
-            dependency_features["internal_dependencies"],
+            imports=dependency_features["external_dependencies"]
+            + dependency_features["internal_dependencies"],
             locals=error_data.get("error_details", {})
             .get("detailed_frames", [{}])[-1]
             .get("locals", {}),

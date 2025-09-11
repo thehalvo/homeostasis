@@ -277,9 +277,9 @@ class COBOLHealer:
 
             # Check for missing periods
             if (
-                in_procedure and
-                code_line.strip() and
-                not code_line.rstrip().endswith(".")
+                in_procedure
+                and code_line.strip()
+                and not code_line.rstrip().endswith(".")
             ):
                 # Check if it's a statement that requires a period
                 if any(

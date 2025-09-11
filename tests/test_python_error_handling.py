@@ -13,9 +13,10 @@ from unittest.mock import patch
 import pytest
 
 from modules.analysis.comprehensive_error_detector import (
-    ComprehensiveErrorDetector, PythonParser)
-from modules.analysis.cross_language_orchestrator import \
-    CrossLanguageOrchestrator
+    ComprehensiveErrorDetector,
+    PythonParser,
+)
+from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
 from modules.analysis.language_parsers import CompilerIntegration
 
 # Add the modules directory to the Python path

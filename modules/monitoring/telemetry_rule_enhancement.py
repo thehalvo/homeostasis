@@ -143,7 +143,7 @@ class ErrorPatternAnalyzer:
                 insights.append(
                     {
                         "type": "dominant_error_type",
-                        "message": f"Error type '{most_common[0]}' accounts for {most_common[1] /len(error_data) *100:.1f}% of all errors",
+                        "message": f"Error type '{most_common[0]}' accounts for {most_common[1] / len(error_data) * 100:.1f}% of all errors",
                         "recommendation": f"Consider creating specialized detection and fixing rules for '{most_common[0]}'",
                     }
                 )
@@ -214,7 +214,7 @@ class ErrorPatternAnalyzer:
                 insights.append(
                     {
                         "type": "high_severity_concentration",
-                        "message": f"{high_severity /total_errors *100:.1f}% of errors are high/critical severity",
+                        "message": f"{high_severity / total_errors * 100:.1f}% of errors are high/critical severity",
                         "recommendation": "Consider implementing more proactive monitoring and faster response times",
                     }
                 )
@@ -320,7 +320,7 @@ class LLMPerformanceAnalyzer:
                             {
                                 "type": "low_provider_success_rate",
                                 "provider": provider,
-                                "message": f"Provider {provider} has low success rate: {success_rate *100:.1f}%",
+                                "message": f"Provider {provider} has low success rate: {success_rate * 100:.1f}%",
                                 "recommendation": "Consider reviewing prompts or switching providers for better results",
                             }
                         )
@@ -370,7 +370,7 @@ class LLMPerformanceAnalyzer:
                             {
                                 "type": "low_response_confidence",
                                 "provider": provider,
-                                "message": f"Provider {provider} has low average confidence: {avg_confidence *100:.1f}%",
+                                "message": f"Provider {provider} has low average confidence: {avg_confidence * 100:.1f}%",
                                 "recommendation": "Consider improving prompt engineering or model selection",
                             }
                         )
@@ -409,7 +409,7 @@ class LLMPerformanceAnalyzer:
                 insights.append(
                     {
                         "type": "provider_success_comparison",
-                        "message": f"Provider {best_provider} has {rate_diff *100:.1f}% higher success rate than {worst_provider}",
+                        "message": f"Provider {best_provider} has {rate_diff * 100:.1f}% higher success rate than {worst_provider}",
                         "recommendation": f"Consider prioritizing {best_provider} for critical fixes",
                     }
                 )
@@ -553,7 +553,7 @@ class RuleOptimizer:
                     {
                         "rule_id": rule_id,
                         "type": "precision_improvement",
-                        "message": f"Rule {rule_id} has low precision ({precision *100:.1f}%) with {stats['false_positives']} false positives",
+                        "message": f"Rule {rule_id} has low precision ({precision * 100:.1f}%) with {stats['false_positives']} false positives",
                         "recommendation": "Consider adding more specific conditions to reduce false positives",
                     }
                 )
@@ -564,7 +564,7 @@ class RuleOptimizer:
                     {
                         "rule_id": rule_id,
                         "type": "recall_improvement",
-                        "message": f"Rule {rule_id} has low recall ({recall *100:.1f}%) with {stats['false_negatives']} false negatives",
+                        "message": f"Rule {rule_id} has low recall ({recall * 100:.1f}%) with {stats['false_negatives']} false negatives",
                         "recommendation": "Consider broadening rule conditions to catch more cases",
                     }
                 )
@@ -586,7 +586,7 @@ class RuleOptimizer:
                     {
                         "rule_id": rule_id,
                         "type": "confidence_improvement",
-                        "message": f"Rule {rule_id} has low average confidence: {avg_confidence *100:.1f}%",
+                        "message": f"Rule {rule_id} has low average confidence: {avg_confidence * 100:.1f}%",
                         "recommendation": "Consider improving rule logic or adding confidence boosting factors",
                     }
                 )
@@ -599,7 +599,7 @@ class RuleOptimizer:
                     {
                         "rule_id": rule_id,
                         "type": "utilization_review",
-                        "message": f"Rule {rule_id} has very low match rate: {match_rate *100:.1f}%",
+                        "message": f"Rule {rule_id} has very low match rate: {match_rate * 100:.1f}%",
                         "recommendation": "Consider reviewing if this rule is still relevant or needs adjustment",
                     }
                 )

@@ -11,10 +11,14 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from .comprehensive_error_detector import (ComprehensiveErrorDetector,
-                                           ErrorCategory, ErrorClassification,
-                                           ErrorContext, ErrorSeverity,
-                                           LanguageType)
+from .comprehensive_error_detector import (
+    ComprehensiveErrorDetector,
+    ErrorCategory,
+    ErrorClassification,
+    ErrorContext,
+    ErrorSeverity,
+    LanguageType,
+)
 from .language_parsers import CompilerIntegration, create_language_parser
 
 logger = logging.getLogger(__name__)

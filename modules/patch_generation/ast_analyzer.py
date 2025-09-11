@@ -312,9 +312,11 @@ class CodeVisitor(ast.NodeVisitor):
                 target.value, ast.Name
             ):
                 # Class attribute assignment
-                if (target.value.id == "self" and
-                    self.current_function and
-                    self.current_class):
+                if (
+                    target.value.id == "self"
+                    and self.current_function
+                    and self.current_class
+                ):
                     if self.current_function.name == "__init__":
                         # Record as class attribute if in __init__ method
                         attr_name = target.attr
@@ -511,9 +513,11 @@ class CodeVisitor(ast.NodeVisitor):
 
         # Apply the inferred type
         if inferred_type:
-            if (is_attribute and
-                self.current_class and
-                name in self.current_class.attributes):
+            if (
+                is_attribute
+                and self.current_class
+                and name in self.current_class.attributes
+            ):
                 self.current_class.attributes[name].value_type = inferred_type
             elif name in self.variables:
                 self.variables[name].value_type = inferred_type
@@ -701,9 +705,11 @@ class ASTAnalyzer:
 
         undefined = []
         for name, var_info in self.visitor.variables.items():
-            if (var_info.usages and
-                not var_info.assignments and
-                not var_info.is_parameter):
+            if (
+                var_info.usages
+                and not var_info.assignments
+                and not var_info.is_parameter
+            ):
                 undefined.append(name)
 
         return undefined
@@ -789,7 +795,7 @@ class ASTAnalyzer:
         if end_line > len(lines):
             end_line = len(lines)
 
-        return "\n".join(lines[start_line - 1:end_line])
+        return "\n".join(lines[start_line - 1 : end_line])
 
     def find_nodes_at_line(self, line_number: int) -> List[ast.AST]:
         """

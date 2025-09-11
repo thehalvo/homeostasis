@@ -11,19 +11,26 @@ Provides enterprise-grade features for the Homeostasis self-healing system inclu
 
 from typing import Any, Dict, Optional
 
-from modules.deployment.multi_environment.multi_region import \
-    MultiRegionResilienceStrategy
-from modules.enterprise.advanced_rbac import (AdvancedRBACManager,
-                                              create_advanced_rbac_manager)
+from modules.deployment.multi_environment.multi_region import (
+    MultiRegionResilienceStrategy,
+)
+from modules.enterprise.advanced_rbac import (
+    AdvancedRBACManager,
+    create_advanced_rbac_manager,
+)
 from modules.enterprise.enhanced_compliance import (
-    EnhancedComplianceReporting, create_enhanced_compliance)
+    EnhancedComplianceReporting,
+    create_enhanced_compliance,
+)
 from modules.enterprise.enhanced_multi_region import (
-    EnhancedMultiRegionFailover, create_enhanced_multi_region)
+    EnhancedMultiRegionFailover,
+    create_enhanced_multi_region,
+)
+
 # Import enterprise components
-from modules.enterprise.saml_sso import (SAMLAuthenticationManager,
-                                         create_saml_manager)
-from modules.enterprise.sla_monitoring import (SLAMonitoringSystem,
-                                               create_sla_monitoring)
+from modules.enterprise.saml_sso import SAMLAuthenticationManager, create_saml_manager
+from modules.enterprise.sla_monitoring import SLAMonitoringSystem, create_sla_monitoring
+
 # Import base components needed
 from modules.security.auth import get_auth_manager
 from modules.security.compliance_reporting import get_compliance_reporting
@@ -387,8 +394,8 @@ class EnterpriseFeatures:
                     "active_monitors": active_monitors,
                 }
                 if (
-                    active_monitors == 0 and
-                    len(self.enhanced_compliance.monitoring_rules) > 0
+                    active_monitors == 0
+                    and len(self.enhanced_compliance.monitoring_rules) > 0
                 ):
                     health["issues"].append(
                         "Compliance monitoring rules defined but not running"
@@ -422,8 +429,8 @@ class EnterpriseFeatures:
                 # Check region health
                 dashboard = self.enhanced_multi_region.get_failover_dashboard()
                 unhealthy_regions = (
-                    dashboard["total_regions_count"] -
-                    dashboard["healthy_regions_count"]
+                    dashboard["total_regions_count"]
+                    - dashboard["healthy_regions_count"]
                 )
                 health["components"]["enhanced_multi_region"] = {
                     "status": "degraded" if unhealthy_regions > 0 else "healthy",

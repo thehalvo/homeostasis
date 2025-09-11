@@ -7,8 +7,11 @@ from unittest.mock import Mock, patch
 import psutil
 import pytest
 
-from modules.reliability.chaos_engineering import (ChaosEngineer,
-                                                   ChaosExperiment, FaultType)
+from modules.reliability.chaos_engineering import (
+    ChaosEngineer,
+    ChaosExperiment,
+    FaultType,
+)
 
 
 class TestChaosEngineering:
@@ -550,8 +553,8 @@ class TestChaosEngineering:
                 elapsed = time.time() - start_time
                 progress = i / 10  # Ramp over 10 iterations
                 current_latency = experiment.parameters["initial_latency_ms"] + (
-                    experiment.parameters["final_latency_ms"] -
-                    experiment.parameters["initial_latency_ms"]
+                    experiment.parameters["final_latency_ms"]
+                    - experiment.parameters["initial_latency_ms"]
                 ) * min(progress, 1.0)
 
                 latency_samples.append(

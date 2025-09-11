@@ -4,9 +4,11 @@ Tests for the R language plugin.
 
 import pytest
 
-from modules.analysis.plugins.r_plugin import (RExceptionHandler,
-                                               RLanguagePlugin,
-                                               RPatchGenerator)
+from modules.analysis.plugins.r_plugin import (
+    RExceptionHandler,
+    RLanguagePlugin,
+    RPatchGenerator,
+)
 
 
 class TestRExceptionHandler:

@@ -113,7 +113,9 @@ def get_item(item_id: int):
         return items[item_id]  # This will cause a KeyError
         """
 
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as temp_file:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".py", delete=False
+        ) as temp_file:
             temp_file.write(fastapi_code)
             temp_path = Path(temp_file.name)
 

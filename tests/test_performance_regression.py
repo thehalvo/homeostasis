@@ -14,19 +14,18 @@ from unittest.mock import Mock
 
 import pytest
 
-from modules.analysis.comprehensive_error_detector import \
-    ComprehensiveErrorDetector
-from modules.analysis.healing_metrics import \
-    HealingMetricsCollector as HealingMetrics
+from modules.analysis.comprehensive_error_detector import ComprehensiveErrorDetector
+from modules.analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
 from modules.analysis.language_plugin_system import LanguagePluginSystem
 from modules.analysis.llm_context_manager import LLMContextManager
 from modules.deployment.canary import CanaryDeployment as CanaryDeployer
 from modules.llm_integration.provider_abstraction import LLMManager
-from modules.patch_generation.advanced_code_generator import \
-    AdvancedCodeGenerator
+from modules.patch_generation.advanced_code_generator import AdvancedCodeGenerator
 from modules.testing.performance_regression import (
-    PerformanceRegressionDetector, PerformanceRegressionTester,
-    performance_test)
+    PerformanceRegressionDetector,
+    PerformanceRegressionTester,
+    performance_test,
+)
 
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))

@@ -63,7 +63,7 @@ class GitLabCIIntegration:
             "sort": "desc",
         }
 
-        response = requests.get(url, headers=self.headers, params=params)
+        response = requests.get(url, headers=self.headers, params=params, timeout=30)
         response.raise_for_status()
 
         return response.json()
@@ -80,7 +80,7 @@ class GitLabCIIntegration:
         """
         url = f"{self.api_url}/projects/{self.project_id}/pipelines/{pipeline_id}/jobs"
 
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
         return response.json()
@@ -97,7 +97,7 @@ class GitLabCIIntegration:
         """
         url = f"{self.api_url}/projects/{self.project_id}/jobs/{job_id}/trace"
 
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
         return response.text
@@ -361,7 +361,7 @@ class GitLabCIIntegration:
             },
         }
 
-        response = requests.post(url, headers=self.headers, json=data)
+        response = requests.post(url, headers=self.headers, json=data, timeout=30)
         response.raise_for_status()
 
         return response.json()

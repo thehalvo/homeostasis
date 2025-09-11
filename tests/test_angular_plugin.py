@@ -3,9 +3,11 @@
 import pytest
 
 # Import the Angular plugin
-from modules.analysis.plugins.angular_plugin import (AngularExceptionHandler,
-                                                     AngularLanguagePlugin,
-                                                     AngularPatchGenerator)
+from modules.analysis.plugins.angular_plugin import (
+    AngularExceptionHandler,
+    AngularLanguagePlugin,
+    AngularPatchGenerator,
+)
 
 
 class TestAngularLanguagePlugin:

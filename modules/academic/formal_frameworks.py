@@ -14,9 +14,13 @@ from typing import Any, Dict, List, Optional, Tuple
 import z3
 from z3 import Solver
 
-from ..reliability.formal_verification import (PropertyType, SystemModel,
-                                               VerificationProperty,
-                                               VerificationResult, Z3Verifier)
+from ..reliability.formal_verification import (
+    PropertyType,
+    SystemModel,
+    VerificationProperty,
+    VerificationResult,
+    Z3Verifier,
+)
 
 logger = logging.getLogger(__name__)
 

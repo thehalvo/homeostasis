@@ -371,8 +371,8 @@ class FailoverCoordinator:
 
             # Check if instance should be marked as failing
             if (
-                instance.consecutive_failures >=
-                group.health_check_config.unhealthy_threshold
+                instance.consecutive_failures
+                >= group.health_check_config.unhealthy_threshold
             ):
                 if instance.state == InstanceState.ACTIVE:
                     instance.state = InstanceState.FAILING
@@ -506,8 +506,8 @@ class FailoverCoordinator:
         start_time = time.time()
 
         while (
-            failed_instance.current_load > 0 and
-            time.time() - start_time < drain_timeout
+            failed_instance.current_load > 0
+            and time.time() - start_time < drain_timeout
         ):
             await asyncio.sleep(1)
             # In real implementation, would check actual connection count

@@ -11,8 +11,10 @@ import unittest
 
 from modules.analysis.language_adapters import TypeScriptErrorAdapter
 from modules.analysis.plugins.typescript_plugin import (
-    TypeScriptExceptionHandler, TypeScriptLanguagePlugin,
-    TypeScriptPatchGenerator)
+    TypeScriptExceptionHandler,
+    TypeScriptLanguagePlugin,
+    TypeScriptPatchGenerator,
+)
 
 # Add the modules directory to the path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "modules"))

@@ -70,8 +70,8 @@ class HealthChecker:
                 if status == HealthStatus.UNHEALTHY:
                     overall_status = HealthStatus.UNHEALTHY
                 elif (
-                    status == HealthStatus.DEGRADED and
-                    overall_status != HealthStatus.UNHEALTHY
+                    status == HealthStatus.DEGRADED
+                    and overall_status != HealthStatus.UNHEALTHY
                 ):
                     overall_status = HealthStatus.DEGRADED
 
@@ -137,10 +137,10 @@ class HealthChecker:
         if error_rate > 0.1 or response_time > 5000:  # 10% errors or 5s response time
             return HealthStatus.UNHEALTHY
         elif (
-            error_rate > 0.05 or
-            response_time > 2000 or
-            cpu_usage > 80 or
-            memory_usage > 80
+            error_rate > 0.05
+            or response_time > 2000
+            or cpu_usage > 80
+            or memory_usage > 80
         ):
             return HealthStatus.DEGRADED
         else:

@@ -287,8 +287,8 @@ class FSharpExceptionHandler:
             elif "type mismatch" in message.lower() or "expecting a" in message.lower():
                 subcategory = "type"
             elif (
-                "pattern match" in message.lower() or
-                "incomplete pattern" in message.lower()
+                "pattern match" in message.lower()
+                or "incomplete pattern" in message.lower()
             ):
                 subcategory = "pattern"
             elif "computation expression" in message.lower():
@@ -489,10 +489,10 @@ class FSharpExceptionHandler:
 
         # Check for option-related errors (but avoid generic "some" word in message)
         if "option" in message_lower or (
-            "some(" in message_lower or
-            "none(" in message_lower or
-            "some " in message_lower and
-            "value" in message_lower
+            "some(" in message_lower
+            or "none(" in message_lower
+            or "some " in message_lower
+            and "value" in message_lower
         ):
             return {
                 "category": "fsharp",
@@ -506,9 +506,9 @@ class FSharpExceptionHandler:
 
         # Check for result-related errors (but avoid generic "error" word)
         if (
-            "result" in message_lower or
-            "ok(" in message_lower or
-            ("error(" in message_lower and "result" in message_lower)
+            "result" in message_lower
+            or "ok(" in message_lower
+            or ("error(" in message_lower and "result" in message_lower)
         ):
             return {
                 "category": "fsharp",

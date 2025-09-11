@@ -9,9 +9,11 @@ import sys
 import unittest
 from pathlib import Path
 
-from modules.analysis.plugins.svelte_plugin import (SvelteExceptionHandler,
-                                                    SvelteLanguagePlugin,
-                                                    SveltePatchGenerator)
+from modules.analysis.plugins.svelte_plugin import (
+    SvelteExceptionHandler,
+    SvelteLanguagePlugin,
+    SveltePatchGenerator,
+)
 
 # Add the modules directory to the path
 sys.path.insert(0, str(Path(__file__).parent.parent / "modules"))

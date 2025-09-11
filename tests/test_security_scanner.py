@@ -11,13 +11,15 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-from modules.testing.security_scanner import (ContainerSecurityScanner,
-                                              DependencyVulnerabilityScanner,
-                                              IaCSecurityScanner,
-                                              SecurityScanResult,
-                                              SecurityTestOrchestrator,
-                                              SecurityVulnerability,
-                                              StaticCodeSecurityScanner)
+from modules.testing.security_scanner import (
+    ContainerSecurityScanner,
+    DependencyVulnerabilityScanner,
+    IaCSecurityScanner,
+    SecurityScanResult,
+    SecurityTestOrchestrator,
+    SecurityVulnerability,
+    StaticCodeSecurityScanner,
+)
 
 
 class TestSecurityVulnerability:

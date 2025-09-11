@@ -15,8 +15,7 @@ from typing import Any, Dict, List, Tuple
 
 import pytest
 
-from modules.analysis.comprehensive_error_detector import \
-    ComprehensiveErrorDetector
+from modules.analysis.comprehensive_error_detector import ComprehensiveErrorDetector
 from modules.analysis.language_plugin_system import LanguagePluginSystem
 
 # Add the modules directory to the Python path

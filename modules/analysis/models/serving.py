@@ -54,6 +54,7 @@ except ImportError:
     PROMETHEUS_AVAILABLE = False
 
 from .code_features import MultiLanguageFeatureExtractor
+
 # Import other modules
 from .versioning import ModelVersionControl
 
@@ -665,8 +666,7 @@ if FASTAPI_AVAILABLE:
             async def metrics():
                 """Prometheus metrics endpoint."""
                 from fastapi.responses import Response
-                from prometheus_client import (CONTENT_TYPE_LATEST,
-                                               generate_latest)
+                from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
                 return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 

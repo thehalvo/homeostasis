@@ -4,9 +4,11 @@ Tests for the Julia language plugin.
 
 import pytest
 
-from modules.analysis.plugins.julia_plugin import (JuliaExceptionHandler,
-                                                   JuliaLanguagePlugin,
-                                                   JuliaPatchGenerator)
+from modules.analysis.plugins.julia_plugin import (
+    JuliaExceptionHandler,
+    JuliaLanguagePlugin,
+    JuliaPatchGenerator,
+)
 
 
 class TestJuliaExceptionHandler:

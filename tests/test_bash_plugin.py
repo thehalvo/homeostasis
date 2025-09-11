@@ -4,9 +4,11 @@ Tests for the Bash/Shell language plugin.
 
 import pytest
 
-from modules.analysis.plugins.bash_plugin import (BashExceptionHandler,
-                                                  BashLanguagePlugin,
-                                                  BashPatchGenerator)
+from modules.analysis.plugins.bash_plugin import (
+    BashExceptionHandler,
+    BashLanguagePlugin,
+    BashPatchGenerator,
+)
 
 
 class TestBashExceptionHandler:

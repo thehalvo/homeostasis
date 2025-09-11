@@ -24,11 +24,21 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from scipy import stats
-from sklearn.metrics import (accuracy_score, classification_report,
-                             cohen_kappa_score, confusion_matrix, f1_score,
-                             log_loss, matthews_corrcoef, mean_absolute_error,
-                             mean_squared_error, precision_score, r2_score,
-                             recall_score, roc_auc_score)
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    cohen_kappa_score,
+    confusion_matrix,
+    f1_score,
+    log_loss,
+    matthews_corrcoef,
+    mean_absolute_error,
+    mean_squared_error,
+    precision_score,
+    r2_score,
+    recall_score,
+    roc_auc_score,
+)
 
 # Optional imports for advanced features
 try:
@@ -262,9 +272,7 @@ class ModelVersionControl:
     def _generate_version_id(self, model_name: str) -> str:
         """Generate a unique version ID."""
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        random_suffix = hashlib.sha256(os.urandom(16)).hexdigest()[
-            :16
-        ]
+        random_suffix = hashlib.sha256(os.urandom(16)).hexdigest()[:16]
         return f"{model_name}_{timestamp}_{random_suffix}"
 
     def commit_model(
@@ -945,9 +953,9 @@ class ModelEvaluator:
 
             # Extract key metrics
             metrics = (
-                eval_result.classification_metrics or
-                eval_result.regression_metrics or
-                {}
+                eval_result.classification_metrics
+                or eval_result.regression_metrics
+                or {}
             )
 
             row = {
@@ -1023,9 +1031,9 @@ class ModelEvaluator:
             "winner": winner,
             "improvement": float(abs(eval_b.primary_score - eval_a.primary_score)),
             "improvement_pct": float(
-                (eval_b.primary_score - eval_a.primary_score) /
-                eval_a.primary_score *
-                100
+                (eval_b.primary_score - eval_a.primary_score)
+                / eval_a.primary_score
+                * 100
             ),
         }
 

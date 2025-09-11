@@ -273,8 +273,8 @@ class CSharpExceptionHandler:
                 "framework": "",
             }
         elif (
-            "DbUpdateException" in error_type or
-            "DbUpdateConcurrencyException" in error_type
+            "DbUpdateException" in error_type
+            or "DbUpdateConcurrencyException" in error_type
         ):
             return {
                 "error_data": error_data,
@@ -290,8 +290,8 @@ class CSharpExceptionHandler:
                 "framework": "entityframework",
             }
         elif (
-            "TaskCanceledException" in error_type or
-            "OperationCanceledException" in error_type
+            "TaskCanceledException" in error_type
+            or "OperationCanceledException" in error_type
         ):
             return {
                 "error_data": error_data,
@@ -675,8 +675,8 @@ class CSharpPatchGenerator:
                     self._generate_argument_null_suggestion(analysis, context)
                 )
             elif (
-                root_cause == "ef_db_update_failed" or
-                root_cause == "ef_concurrency_conflict"
+                root_cause == "ef_db_update_failed"
+                or root_cause == "ef_concurrency_conflict"
             ):
                 patch_result["suggestion_code"] = (
                     self._generate_ef_exception_suggestion(analysis, context)

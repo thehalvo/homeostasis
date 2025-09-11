@@ -255,8 +255,8 @@ class GitIntegration:
 
                 # Apply confidence boost from similar fixes
                 issue["confidence"] = min(
-                    issue.get("confidence", 0.5) +
-                    healing_context.get("confidence_boost", 0.0),
+                    issue.get("confidence", 0.5)
+                    + healing_context.get("confidence_boost", 0.0),
                     1.0,
                 )
 

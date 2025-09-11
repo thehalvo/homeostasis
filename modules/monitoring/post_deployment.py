@@ -644,8 +644,8 @@ if __name__ == "__main__":
     if monitoring_started:
         # Skip input prompt in test mode
         if not (
-            os.environ.get("USE_MOCK_TESTS") == "true" or
-            os.environ.get("HOMEOSTASIS_TEST_MODE") == "true"
+            os.environ.get("USE_MOCK_TESTS") == "true"
+            or os.environ.get("HOMEOSTASIS_TEST_MODE") == "true"
         ):
             print("Monitoring started. Press Enter to stop...")
             input()

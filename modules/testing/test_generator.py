@@ -284,7 +284,7 @@ if __name__ == "__main__":
 
                     # Get function body
                     body_lines = []
-                    for line in code.splitlines()[node.lineno:node.end_lineno]:
+                    for line in code.splitlines()[node.lineno : node.end_lineno]:
                         body_lines.append(line)
 
                     # Get module path for imports

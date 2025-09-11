@@ -14,16 +14,13 @@ import string
 import sys
 import threading
 import time
-from concurrent.futures import (ProcessPoolExecutor, ThreadPoolExecutor,
-                                as_completed)
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from typing import Any, Dict
 
 import pytest
 
-from modules.analysis.comprehensive_error_detector import \
-    ComprehensiveErrorDetector
-from modules.analysis.cross_language_orchestrator import \
-    CrossLanguageOrchestrator
+from modules.analysis.comprehensive_error_detector import ComprehensiveErrorDetector
+from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
 from modules.analysis.language_plugin_system import LanguagePluginSystem
 
 # Add the modules directory to the Python path

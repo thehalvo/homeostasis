@@ -16,8 +16,10 @@ from typing import Any, ClassVar, Dict, List, Optional
 
 # Import indentation utilities
 from modules.patch_generation.indent_utils import (
-    adjust_indentation_for_context, normalize_indentation,
-    preserve_relative_indentation)
+    adjust_indentation_for_context,
+    normalize_indentation,
+    preserve_relative_indentation,
+)
 
 
 class BaseTemplate:
@@ -209,8 +211,10 @@ class BaseTemplate:
         result = self._process_loops(result, variables)
 
         # Apply any necessary indentation adjustments
-        if ("code_block" in variables and
-            variables.get("preserve_indentation", "true").lower() == "true"):
+        if (
+            "code_block" in variables
+            and variables.get("preserve_indentation", "true").lower() == "true"
+        ):
             # If this template uses code_block, preserve relative indentation
             # Normalize the result first to remove any template-defined indentation
             normalized_result = normalize_indentation(result)
@@ -280,9 +284,9 @@ class BaseTemplate:
 
             # Handle default values in the format {{ var|default:"value" }}
             default_pattern = (
-                r"\{\{\s*" +
-                re.escape(var_name) +
-                r'\s*\|\s*default\s*:\s*"([^"]+)"\s*\}\}'
+                r"\{\{\s*"
+                + re.escape(var_name)
+                + r'\s*\|\s*default\s*:\s*"([^"]+)"\s*\}\}'
             )
 
             def replace_default(match):

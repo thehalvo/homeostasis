@@ -59,8 +59,7 @@ class EdgeDeployer:
         provider_config = self.provider_configs.get(provider_name, {})
 
         if provider_name.lower() == "cloudflare":
-            from modules.deployment.edge.cloudflare import \
-                get_cloudflare_provider
+            from modules.deployment.edge.cloudflare import get_cloudflare_provider
 
             provider = get_cloudflare_provider(provider_config)
         elif provider_name.lower() == "cdn":

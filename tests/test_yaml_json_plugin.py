@@ -4,12 +4,15 @@ Tests for the YAML/JSON language plugin.
 
 import pytest
 
-from modules.analysis.plugins.yaml_json_plugin import \
-    YAMLJSONExceptionHandler as YamlJsonExceptionHandler
-from modules.analysis.plugins.yaml_json_plugin import \
-    YAMLJSONLanguagePlugin as YamlJsonLanguagePlugin
-from modules.analysis.plugins.yaml_json_plugin import \
-    YAMLJSONPatchGenerator as YamlJsonPatchGenerator
+from modules.analysis.plugins.yaml_json_plugin import (
+    YAMLJSONExceptionHandler as YamlJsonExceptionHandler,
+)
+from modules.analysis.plugins.yaml_json_plugin import (
+    YAMLJSONLanguagePlugin as YamlJsonLanguagePlugin,
+)
+from modules.analysis.plugins.yaml_json_plugin import (
+    YAMLJSONPatchGenerator as YamlJsonPatchGenerator,
+)
 
 
 class TestYamlJsonExceptionHandler:

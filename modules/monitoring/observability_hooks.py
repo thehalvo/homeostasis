@@ -25,10 +25,10 @@ from typing import Any, Callable, Dict, List, Optional
 try:
     from opentelemetry import baggage, metrics, trace
     from opentelemetry.context import attach, detach
-    from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import \
-        OTLPMetricExporter
-    from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import \
-        OTLPSpanExporter
+    from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
+        OTLPMetricExporter,
+    )
+    from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
     from opentelemetry.instrumentation.requests import RequestsInstrumentor
     from opentelemetry.metrics import CallbackOptions, Observation
     from opentelemetry.sdk.metrics import MeterProvider
@@ -45,9 +45,13 @@ except ImportError:
     trace = None
     metrics = None
 
-from modules.monitoring.monitoring_adapters import (AlertSeverity, Event,
-                                                    Metric, MetricType,
-                                                    create_monitoring_adapter)
+from modules.monitoring.monitoring_adapters import (
+    AlertSeverity,
+    Event,
+    Metric,
+    MetricType,
+    create_monitoring_adapter,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -617,8 +621,8 @@ class ObservabilityHooks:
     ):
         """Record successful operation metrics"""
         if (
-            self.healing_duration_histogram and
-            operation_type == OperationType.HEALING_CYCLE
+            self.healing_duration_histogram
+            and operation_type == OperationType.HEALING_CYCLE
         ):
             self.healing_duration_histogram.record(
                 duration_ms, attributes={"operation": operation_name}

@@ -207,8 +207,8 @@ class ErrorClassificationFeatures:
 
         detailed_frames = []
         if (
-            "error_details" in error_data and
-            "detailed_frames" in error_data["error_details"]
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
         ):
             detailed_frames = error_data["error_details"]["detailed_frames"]
 
@@ -263,8 +263,8 @@ class ErrorClassificationFeatures:
         # Get local variables if available
         local_vars = []
         if (
-            "error_details" in error_data and
-            "detailed_frames" in error_data["error_details"]
+            "error_details" in error_data
+            and "detailed_frames" in error_data["error_details"]
         ):
             for frame in error_data["error_details"]["detailed_frames"]:
                 if "locals" in frame:

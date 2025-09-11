@@ -9,9 +9,11 @@ import os
 import sys
 import unittest
 
-from modules.analysis.plugins.vue_plugin import (VueExceptionHandler,
-                                                 VueLanguagePlugin,
-                                                 VuePatchGenerator)
+from modules.analysis.plugins.vue_plugin import (
+    VueExceptionHandler,
+    VueLanguagePlugin,
+    VuePatchGenerator,
+)
 
 # Add the modules directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "modules"))

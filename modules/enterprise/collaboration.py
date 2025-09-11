@@ -438,8 +438,8 @@ class TeamNotificationService:
                             recipient_id, TeamMember("", "", "")
                         ).teams:
                             if (
-                                team_id in teams and
-                                channel in teams[team_id].notification_channels
+                                team_id in teams
+                                and channel in teams[team_id].notification_channels
                             ):
                                 channel_configs.append(
                                     teams[team_id].notification_channels[channel]
@@ -687,7 +687,7 @@ class SlackIntegration:
                 if self.webhook_url:
                     # Use webhook
                     response = requests.post(
-                        self.webhook_url, json={"channel": channel, **slack_message}
+                        self.webhook_url, json={"channel": channel, **slack_message}, timeout=30
                     )
                     response.raise_for_status()
 
@@ -702,6 +702,7 @@ class SlackIntegration:
                         "https://slack.com/api/chat.postMessage",
                         headers=headers,
                         json={"channel": channel, **slack_message},
+                        timeout=30,
                     )
                     response.raise_for_status()
 
@@ -793,7 +794,7 @@ class MicrosoftTeamsIntegration:
 
             # Send to webhook
             if self.webhook_url:
-                response = requests.post(self.webhook_url, json=teams_card)
+                response = requests.post(self.webhook_url, json=teams_card, timeout=30)
                 response.raise_for_status()
 
             # For advanced scenarios, use Graph API

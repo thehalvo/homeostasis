@@ -11,8 +11,7 @@ from typing import Optional
 
 import click
 
-from .ai_integration_bridge import (AICapability, CodeContext,
-                                    get_ai_integration_bridge)
+from .ai_integration_bridge import AICapability, CodeContext, get_ai_integration_bridge
 
 
 @click.group(name="ai")

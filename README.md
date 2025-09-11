@@ -114,9 +114,9 @@ homeostasis provider-status --verbose
 
 **Environment Variables** (highest priority):
 ```bash
-export HOMEOSTASIS_OPENAI_API_KEY="sk-..."
-export HOMEOSTASIS_ANTHROPIC_API_KEY="sk-ant-..."
-export HOMEOSTASIS_OPENROUTER_API_KEY="sk-or-..."
+export HOMEOSTASIS_OPENAI_API_KEY="your-openai-api-key-here"
+export HOMEOSTASIS_ANTHROPIC_API_KEY="your-anthropic-api-key-here"
+export HOMEOSTASIS_OPENROUTER_API_KEY="your-openrouter-api-key-here"
 ```
 
 **External Secrets Managers** (auto-detected):

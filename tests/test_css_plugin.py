@@ -11,9 +11,11 @@ from unittest.mock import patch
 import pytest
 
 # Import the CSS plugin components
-from modules.analysis.plugins.css_plugin import (CSSExceptionHandler,
-                                                 CSSLanguagePlugin,
-                                                 CSSPatchGenerator)
+from modules.analysis.plugins.css_plugin import (
+    CSSExceptionHandler,
+    CSSLanguagePlugin,
+    CSSPatchGenerator,
+)
 
 
 class TestCSSLanguagePlugin:

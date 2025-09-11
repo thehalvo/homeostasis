@@ -35,8 +35,8 @@ class TestNetworkChaos:
                 "name": "pareto",
                 "base_ms": 50,
                 "shape": 1.2,
-                "distribution": lambda base, shape: base *
-                (random.paretovariate(shape)),
+                "distribution": lambda base, shape: base
+                * (random.paretovariate(shape)),
             },
             {
                 "name": "bimodal",

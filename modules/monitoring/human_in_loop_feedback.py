@@ -20,8 +20,7 @@ from typing import Any, Dict, List, Optional
 import requests
 
 from modules.monitoring.logger import MonitoringLogger
-from modules.security.approval import (ApprovalManager, ApprovalStatus,
-                                       ApprovalType)
+from modules.security.approval import ApprovalManager, ApprovalStatus, ApprovalType
 from modules.security.audit import get_audit_logger, log_event
 
 logger = logging.getLogger(__name__)

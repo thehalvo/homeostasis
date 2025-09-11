@@ -404,9 +404,9 @@ class RExceptionHandler:
                     subcategory = "dimension"
                     tags.append("dimension")
                 elif (
-                    "missing values" in message.lower() or
-                    "na" in message.lower() or
-                    "nan" in message.lower()
+                    "missing values" in message.lower()
+                    or "na" in message.lower()
+                    or "nan" in message.lower()
                 ):
                     subcategory = "na"
                     tags.append("na")

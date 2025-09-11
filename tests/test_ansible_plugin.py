@@ -4,9 +4,11 @@ Tests for the Ansible language plugin.
 
 import pytest
 
-from modules.analysis.plugins.ansible_plugin import (AnsibleExceptionHandler,
-                                                     AnsibleLanguagePlugin,
-                                                     AnsiblePatchGenerator)
+from modules.analysis.plugins.ansible_plugin import (
+    AnsibleExceptionHandler,
+    AnsibleLanguagePlugin,
+    AnsiblePatchGenerator,
+)
 
 
 class TestAnsibleExceptionHandler:

@@ -8,16 +8,7 @@ Maven and Gradle build files.
 import logging
 import re
 
-try:
-    import defusedxml.ElementTree as ET
-except ImportError:
-    # Configure secure defaults if defusedxml is not available
-    import xml.etree.ElementTree
-
-    import defusedxml.etree.ElementTree as ET
-
-    xml.etree.ElementTree.XMLParser = xml.etree.ElementTree.XMLParser
-    # Note: Without defusedxml, we cannot fully secure against all XML attacks
+import defusedxml.ElementTree as ET
 from pathlib import Path
 from typing import Any, Dict, Optional
 

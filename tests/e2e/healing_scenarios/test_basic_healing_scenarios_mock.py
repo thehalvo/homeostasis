@@ -11,7 +11,11 @@ import pytest
 import yaml
 
 from tests.e2e.healing_scenarios.test_infrastructure import (
-    LogSimulator, MockOrchestrator, MockServiceEnvironment, PatchValidator)
+    LogSimulator,
+    MockOrchestrator,
+    MockServiceEnvironment,
+    PatchValidator,
+)
 
 
 class TestBasicHealingScenariosMock:

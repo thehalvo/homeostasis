@@ -412,8 +412,9 @@ class OpenTelemetryPlugin(LoggingPlugin):
         exporter_endpoint = self.config.get("exporter_endpoint")
         if exporter_endpoint:
             try:
-                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import \
-                    OTLPSpanExporter
+                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+                    OTLPSpanExporter,
+                )
 
                 otlp_exporter = OTLPSpanExporter(endpoint=exporter_endpoint)
                 span_processor = BatchSpanProcessor(otlp_exporter)

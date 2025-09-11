@@ -13,11 +13,21 @@ import pytest
 import yaml
 
 from modules.deployment.multi_environment.config_manager import (
-    ChangeAction, ConfigDrift, ConfigFormat, ConfigScope, ConfigType,
-    ConfigValidator, ConfigValue, LocalConfigProvider,
-    MultiEnvironmentConfigManager, SecretManager)
+    ChangeAction,
+    ConfigDrift,
+    ConfigFormat,
+    ConfigScope,
+    ConfigType,
+    ConfigValidator,
+    ConfigValue,
+    LocalConfigProvider,
+    MultiEnvironmentConfigManager,
+    SecretManager,
+)
 from modules.deployment.multi_environment.hybrid_orchestrator import (
-    Environment, EnvironmentType)
+    Environment,
+    EnvironmentType,
+)
 
 
 @pytest.fixture

@@ -12,15 +12,17 @@ from pathlib import Path
 
 import pytest
 
-from modules.analysis.cross_language_orchestrator import \
-    CrossLanguageOrchestrator
-from modules.analysis.language_plugin_system import (get_all_plugins,
-                                                     load_all_plugins)
-from modules.analysis.language_test_framework import (LanguageTestRunner,
-                                                      LanguageTestSuite)
-from modules.analysis.shared_error_schema import (SharedErrorSchema,
-                                                  denormalize_error,
-                                                  normalize_error)
+from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
+from modules.analysis.language_plugin_system import get_all_plugins, load_all_plugins
+from modules.analysis.language_test_framework import (
+    LanguageTestRunner,
+    LanguageTestSuite,
+)
+from modules.analysis.shared_error_schema import (
+    SharedErrorSchema,
+    denormalize_error,
+    normalize_error,
+)
 
 # Add project root to sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))

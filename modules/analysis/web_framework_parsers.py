@@ -10,8 +10,7 @@ import logging
 import re
 from typing import Any, Dict, List, Optional
 
-from .comprehensive_error_detector import (ErrorCategory, ErrorContext,
-                                           LanguageType)
+from .comprehensive_error_detector import ErrorCategory, ErrorContext, LanguageType
 from .language_parsers import LanguageSpecificParser
 
 logger = logging.getLogger(__name__)

@@ -331,11 +331,11 @@ class SQLExceptionHandler:
         # Check for index errors before general constraint errors
         if (
             (
-                "index" in message_lower and
-                ("duplicate" in message_lower or "unique" in message_lower)
-            ) or
-            ("cannot create index" in message_lower) or
-            ("index" in message_lower and "already exists" in message_lower)
+                "index" in message_lower
+                and ("duplicate" in message_lower or "unique" in message_lower)
+            )
+            or ("cannot create index" in message_lower)
+            or ("index" in message_lower and "already exists" in message_lower)
         ):
             return {
                 "category": "sql",
@@ -394,17 +394,17 @@ class SQLExceptionHandler:
             }
 
         if (
-            ("could not connect" in message_lower) or
-            (
-                "connection" in message_lower and
-                (
-                    "failed" in message_lower or
-                    "refused" in message_lower or
-                    "timeout" in message_lower
+            ("could not connect" in message_lower)
+            or (
+                "connection" in message_lower
+                and (
+                    "failed" in message_lower
+                    or "refused" in message_lower
+                    or "timeout" in message_lower
                 )
-            ) or
-            ("unable to connect" in message_lower) or
-            ("database server" in message_lower and "connect" in message_lower)
+            )
+            or ("unable to connect" in message_lower)
+            or ("database server" in message_lower and "connect" in message_lower)
         ):
             return {
                 "category": "sql",

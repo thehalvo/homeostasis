@@ -170,8 +170,8 @@ class CPPExceptionHandler:
                             # Normalize rules
                             for rule in category_rules:
                                 if (
-                                    "suggestion" in rule and
-                                    "fix_suggestions" not in rule
+                                    "suggestion" in rule
+                                    and "fix_suggestions" not in rule
                                 ):
                                     rule["fix_suggestions"] = [rule["suggestion"]]
                             category_name = rule_file.stem.replace("c_", "").replace(
@@ -521,15 +521,15 @@ class CPPExceptionHandler:
         file_path = context.get("file_path", "") or ""
 
         if (
-            file_path and
-            ("CMakeLists.txt" in file_path or "cmake" in file_path.lower()) or
-            context.get("cmake_detected")
+            file_path
+            and ("CMakeLists.txt" in file_path or "cmake" in file_path.lower())
+            or context.get("cmake_detected")
         ):
             return "cmake"
         elif (
-            file_path and
-            ("Makefile" in file_path or "makefile" in file_path.lower()) or
-            context.get("make_detected")
+            file_path
+            and ("Makefile" in file_path or "makefile" in file_path.lower())
+            or context.get("make_detected")
         ):
             return "make"
         elif file_path and "build.ninja" in file_path or context.get("ninja_detected"):
@@ -781,10 +781,10 @@ target_include_directories({target_name} PRIVATE {include_dirs})
             # Handle legacy format - check root_cause field
             root_cause = error_analysis.get("root_cause", "")
             if (
-                "null" in root_cause or
-                "segmentation" in root_cause or
-                "memory" in root_cause or
-                "buffer" in root_cause
+                "null" in root_cause
+                or "segmentation" in root_cause
+                or "memory" in root_cause
+                or "buffer" in root_cause
             ):
                 category = "memory"
             elif "compilation" in root_cause:
@@ -855,9 +855,9 @@ target_include_directories({target_name} PRIVATE {include_dirs})
         # Handle specific memory error patterns
         # First check for null pointer issues
         if (
-            "null" in error_analysis.get("root_cause", "") or
-            "null" in error_analysis.get("rule_id", "") or
-            "segmentation" in error_analysis.get("root_cause", "")
+            "null" in error_analysis.get("root_cause", "")
+            or "null" in error_analysis.get("rule_id", "")
+            or "segmentation" in error_analysis.get("root_cause", "")
         ):
             if context and context.get("variable_name"):
                 var_name = context["variable_name"]
@@ -885,9 +885,9 @@ dest[{dest_size - 1}] = '\\0';  // Ensure null termination"""
 
             # Array bounds checking
             elif (
-                "[" in code_snippet and
-                "]" in code_snippet and
-                context.get("buffer_size")
+                "[" in code_snippet
+                and "]" in code_snippet
+                and context.get("buffer_size")
             ):
                 buffer_size = context.get("buffer_size", 100)
                 # Extract the array access pattern
@@ -962,9 +962,9 @@ if (buffer == NULL) {
 
         # Handle undeclared identifier errors
         if (
-            "undeclared" in error_msg or
-            "not declared" in error_msg or
-            root_cause == "cpp_undeclared_identifier"
+            "undeclared" in error_msg
+            or "not declared" in error_msg
+            or root_cause == "cpp_undeclared_identifier"
         ):
             if "vector" in error_msg:
                 patch_content = "#include <vector>"

@@ -510,8 +510,8 @@ class AndroidJavaExceptionHandler:
 
         # Activity not found errors
         if (
-            "activitynotfoundexception" in message or
-            "unable to find explicit activity" in message
+            "activitynotfoundexception" in message
+            or "unable to find explicit activity" in message
         ):
             return {
                 "category": "android",
@@ -526,8 +526,8 @@ class AndroidJavaExceptionHandler:
 
         # Activity launch errors
         if (
-            "android.util.androidruntimeexception" in message and
-            "calling startactivity" in message
+            "android.util.androidruntimeexception" in message
+            and "calling startactivity" in message
         ):
             return {
                 "category": "android",

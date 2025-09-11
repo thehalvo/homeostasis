@@ -10,8 +10,7 @@ import sys
 
 import pytest
 
-from modules.analysis.cross_language_orchestrator import \
-    CrossLanguageOrchestrator
+from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
 from modules.analysis.language_plugin_system import LanguagePluginSystem
 
 # Add the modules directory to the Python path

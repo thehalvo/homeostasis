@@ -11,7 +11,9 @@ import sys
 import unittest
 
 from modules.patch_generation.multi_language_framework_detector import (
-    LanguageType, MultiLanguageFrameworkDetector)
+    LanguageType,
+    MultiLanguageFrameworkDetector,
+)
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -191,8 +193,9 @@ CMD ["python", "app.py"]
 
         for lang_type in phase_12a_languages:
             # Create a dummy language info
-            from modules.patch_generation.multi_language_framework_detector import \
-                LanguageInfo
+            from modules.patch_generation.multi_language_framework_detector import (
+                LanguageInfo,
+            )
 
             lang_info = LanguageInfo(
                 language=lang_type,

@@ -256,9 +256,9 @@ class NextjsExceptionHandler:
 
         # Basic categorization based on error patterns
         if (
-            "getstaticprops" in message or
-            "getserversideprops" in message or
-            "getstaticpaths" in message
+            "getstaticprops" in message
+            or "getserversideprops" in message
+            or "getstaticpaths" in message
         ):
             category = "data_fetching"
             suggestion = "Check Next.js data fetching methods and their return values"
@@ -1319,9 +1319,9 @@ class NextjsLanguagePlugin(LanguagePlugin):
 
         # Check if file path contains API route patterns
         if (
-            "/api/" in file_path or
-            "/pages/api/" in file_path or
-            "/app/api/" in file_path
+            "/api/" in file_path
+            or "/pages/api/" in file_path
+            or "/app/api/" in file_path
         ):
             return True
 

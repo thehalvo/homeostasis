@@ -505,8 +505,8 @@ class JuliaExceptionHandler:
         if (
             any(
                 keyword in message_lower for keyword in ["undefvarerror", "not defined"]
-            ) and
-            "@" not in message
+            )
+            and "@" not in message
         ):
             return {
                 "category": "julia",

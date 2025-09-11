@@ -16,13 +16,21 @@ from typing import Any, Dict, List, Optional
 
 from ..analysis.llm_context_manager import LLMContextManager
 from ..llm_integration.advanced_prompting import (
-    PromptExample, create_advanced_prompt_manager)
+    PromptExample,
+    create_advanced_prompt_manager,
+)
 from ..llm_integration.api_key_manager import APIKeyManager
-from .advanced_code_generator import (CodeGenerationMode, GenerationResult,
-                                      create_advanced_code_generator)
+from .advanced_code_generator import (
+    CodeGenerationMode,
+    GenerationResult,
+    create_advanced_code_generator,
+)
 from .contextual_analyzer import ImpactAnalysis, create_contextual_analyzer
-from .iterative_refiner import (RefinementHistory, ValidationFeedback,
-                                create_iterative_refiner)
+from .iterative_refiner import (
+    RefinementHistory,
+    ValidationFeedback,
+    create_iterative_refiner,
+)
 from .llm_patch_generator import LLMPatchGenerator
 
 logger = logging.getLogger(__name__)
@@ -158,8 +166,10 @@ class EnhancedLLMPatchGenerator(LLMPatchGenerator):
             refinement_history = None
             final_patch = initial_patch
 
-            if (self.enable_iterative_refinement and
-                self.validation_config.enable_test_validation):
+            if (
+                self.enable_iterative_refinement
+                and self.validation_config.enable_test_validation
+            ):
                 refinement_history = self._perform_iterative_refinement(
                     initial_patch, error_context, source_code, generation_result
                 )

@@ -201,8 +201,8 @@ class AuthenticationManager:
         refresh_payload = {
             "sub": user_info["username"],
             "iat": now,
-            "exp": now +
-            self.config.get("refresh_token_expiry", DEFAULT_REFRESH_TOKEN_EXPIRY),
+            "exp": now
+            + self.config.get("refresh_token_expiry", DEFAULT_REFRESH_TOKEN_EXPIRY),
             "type": "refresh",
         }
 

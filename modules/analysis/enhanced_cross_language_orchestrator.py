@@ -16,8 +16,12 @@ from typing import Any, Dict, List, Optional
 
 from .cross_language_orchestrator import CrossLanguageOrchestrator
 from .language_plugin_system import get_plugin, load_all_plugins
-from .shared_error_schema import (SharedErrorSchema, denormalize_error,
-                                  detect_language, normalize_error)
+from .shared_error_schema import (
+    SharedErrorSchema,
+    denormalize_error,
+    detect_language,
+    normalize_error,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -556,9 +560,7 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
             context_str = json.dumps(context, sort_keys=True)
             import hashlib
 
-            context_hash = hashlib.sha256(
-                context_str.encode()
-            ).hexdigest()[:20]
+            context_hash = hashlib.sha256(context_str.encode()).hexdigest()[:20]
             key_parts.append(f"ctx:{context_hash}")
 
         return "|".join(key_parts)

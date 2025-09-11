@@ -74,8 +74,8 @@ class APIKeyManager:
         """
         # Check if we're in test mode
         if (
-            os.environ.get("USE_MOCK_TESTS") == "true" or
-            os.environ.get("HOMEOSTASIS_TEST_MODE") == "true"
+            os.environ.get("USE_MOCK_TESTS") == "true"
+            or os.environ.get("HOMEOSTASIS_TEST_MODE") == "true"
         ):
             return "test_password_12345"
 

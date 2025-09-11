@@ -12,9 +12,12 @@ import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from .comprehensive_error_detector import (ErrorCategory, ErrorContext,
-                                           LanguageSpecificParser,
-                                           LanguageType)
+from .comprehensive_error_detector import (
+    ErrorCategory,
+    ErrorContext,
+    LanguageSpecificParser,
+    LanguageType,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -1180,8 +1183,8 @@ class CompilerIntegration:
             ):
                 diagnostics.update(self._analyze_typescript_code(source_code))
             elif language == LanguageType.DART and (
-                self.available_compilers.get("dart") or
-                self.available_compilers.get("flutter")
+                self.available_compilers.get("dart")
+                or self.available_compilers.get("flutter")
             ):
                 diagnostics.update(self._analyze_dart_code(source_code))
             elif language == LanguageType.PYTHON:

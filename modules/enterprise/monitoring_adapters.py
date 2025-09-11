@@ -7,6 +7,7 @@ events, and alerts that can be used by the Homeostasis healing system.
 
 import json
 import logging
+import re
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -1505,21 +1506,25 @@ class NewRelicAdapter(MonitoringAdapter):
                     not metric_name.replace("_", "")
                     .replace(".", "")
                     .replace("-", "")
-                    .isalnum() and
-                    metric_name != "*"
+                    .isalnum()
+                    and metric_name != "*"
                 ):
                     raise ValueError(f"Invalid metric name: {metric_name}")
-                nrql = f"SELECT average({metric_name}) FROM Metric"
+                nrql = f"SELECT average({metric_name}) FROM Metric"  # nosec: B608 - metric_name is validated above
 
-                # Add WHERE clauses
+                # Add WHERE clauses with proper parameterization
                 where_clauses = []
                 for k, v in query.get("where", {}).items():
-                    # Validate field name
-                    if not k.replace("_", "").replace(".", "").isalnum():
+                    # Validate field name - only allow alphanumeric, underscore, and dots
+                    if not re.match(r'^[a-zA-Z0-9_.]+$', k):
                         raise ValueError(f"Invalid field name: {k}")
-                    # Escape single quotes in values
-                    escaped_value = str(v).replace("'", "''")
-                    where_clauses.append(f"{k} = '{escaped_value}'")
+                    # Properly escape and quote values
+                    if isinstance(v, (int, float)):
+                        where_clauses.append(f"{k} = {v}")
+                    else:
+                        # Double any single quotes and wrap in quotes
+                        escaped_value = str(v).replace("'", "''")
+                        where_clauses.append(f"{k} = '{escaped_value}'")
 
                 if where_clauses:
                     nrql += f" WHERE {' AND '.join(where_clauses)}"
@@ -1633,7 +1638,7 @@ class NewRelicAdapter(MonitoringAdapter):
             WHERE timestamp >= {start_ts} 
             AND timestamp <= {end_ts}
             LIMIT {batch_size}
-            """
+            """  # nosec: B608 - Values are validated as integers above
 
             gql_query = {
                 "query": f"""
@@ -1744,8 +1749,8 @@ class NewRelicAdapter(MonitoringAdapter):
             data = {
                 "deployment": {
                     "revision": f"alert_ack_{alert_id}",
-                    "description": message or
-                    f"Alert {alert_id} acknowledged by Homeostasis",
+                    "description": message
+                    or f"Alert {alert_id} acknowledged by Homeostasis",
                     "user": "homeostasis",
                 }
             }

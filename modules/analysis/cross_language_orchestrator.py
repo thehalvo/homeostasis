@@ -12,8 +12,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from modules.analysis.analyzer import AnalysisStrategy, Analyzer
 from modules.analysis.javascript_analyzer import JavaScriptAnalyzer
-from modules.analysis.language_adapters import (ErrorAdapterFactory,
-                                                ErrorSchemaValidator)
+from modules.analysis.language_adapters import ErrorAdapterFactory, ErrorSchemaValidator
 from modules.analysis.language_plugin_system import get_plugin
 
 logger = logging.getLogger(__name__)

@@ -4,9 +4,11 @@ Tests for the SQL language plugin.
 
 import pytest
 
-from modules.analysis.plugins.sql_plugin import (SQLExceptionHandler,
-                                                 SQLLanguagePlugin,
-                                                 SQLPatchGenerator)
+from modules.analysis.plugins.sql_plugin import (
+    SQLExceptionHandler,
+    SQLLanguagePlugin,
+    SQLPatchGenerator,
+)
 
 
 class TestSQLExceptionHandler:

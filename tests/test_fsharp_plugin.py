@@ -4,9 +4,11 @@ Tests for the F# language plugin.
 
 import pytest
 
-from modules.analysis.plugins.fsharp_plugin import (FSharpExceptionHandler,
-                                                    FSharpLanguagePlugin,
-                                                    FSharpPatchGenerator)
+from modules.analysis.plugins.fsharp_plugin import (
+    FSharpExceptionHandler,
+    FSharpLanguagePlugin,
+    FSharpPatchGenerator,
+)
 
 
 class TestFSharpExceptionHandler:

@@ -15,13 +15,13 @@ auth:
   # Default admin credentials - change in production!
   default_users:
     - username: 'admin'
-      password: 'admin'
+      password: 'changeme-admin-password'  # CHANGE THIS IN PRODUCTION
       roles: ['admin']
     - username: 'operator'
-      password: 'operator'
+      password: 'changeme-operator-password'  # CHANGE THIS IN PRODUCTION
       roles: ['operator']
     - username: 'viewer'
-      password: 'viewer'
+      password: 'changeme-viewer-password'  # CHANGE THIS IN PRODUCTION
       roles: ['viewer']
 
 # API security settings

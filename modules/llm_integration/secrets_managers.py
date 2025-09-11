@@ -147,7 +147,7 @@ class AWSSecretsManager(SecretsManagerBase):
             for secret in response.get("SecretList", []):
                 name = secret.get("Name", "")
                 if name.startswith(self._secret_prefix):
-                    secrets.append(name[len(self._secret_prefix):])
+                    secrets.append(name[len(self._secret_prefix) :])
 
             return secrets
 
@@ -256,7 +256,7 @@ class AzureKeyVault(SecretsManagerBase):
             for secret_properties in client.list_properties_of_secrets():
                 name = secret_properties.name
                 if name.startswith(self._secret_prefix):
-                    original_name = name[len(self._secret_prefix):].replace("-", "_")
+                    original_name = name[len(self._secret_prefix) :].replace("-", "_")
                     secrets.append(original_name)
 
             return secrets

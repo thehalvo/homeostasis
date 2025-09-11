@@ -533,8 +533,8 @@ class RollbackManager:
         validation_results = {
             "files_restored": len(rollback_op.files_restored),
             "files_expected": len(snapshot.file_paths),
-            "all_files_restored": len(rollback_op.files_restored) ==
-            len(snapshot.file_paths),
+            "all_files_restored": len(rollback_op.files_restored)
+            == len(snapshot.file_paths),
             "validation_timestamp": datetime.now().isoformat(),
         }
 

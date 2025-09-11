@@ -5,8 +5,10 @@ Tests for the Dockerfile language plugin.
 import pytest
 
 from modules.analysis.plugins.dockerfile_plugin import (
-    DockerfileExceptionHandler, DockerfileLanguagePlugin,
-    DockerfilePatchGenerator)
+    DockerfileExceptionHandler,
+    DockerfileLanguagePlugin,
+    DockerfilePatchGenerator,
+)
 
 
 class TestDockerfileExceptionHandler:

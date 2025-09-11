@@ -616,8 +616,8 @@ class HomeostasisMiddleware:
             return True
 
         if (
-            isinstance(exc, PermissionDenied) and
-            "PermissionDenied" in self.ignore_exceptions
+            isinstance(exc, PermissionDenied)
+            and "PermissionDenied" in self.ignore_exceptions
         ):
             return True
 

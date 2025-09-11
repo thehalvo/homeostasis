@@ -5,8 +5,10 @@ Tests for the PowerShell language plugin.
 import pytest
 
 from modules.analysis.plugins.powershell_plugin import (
-    PowerShellExceptionHandler, PowerShellLanguagePlugin,
-    PowerShellPatchGenerator)
+    PowerShellExceptionHandler,
+    PowerShellLanguagePlugin,
+    PowerShellPatchGenerator,
+)
 
 
 class TestPowerShellExceptionHandler:

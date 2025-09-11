@@ -569,9 +569,9 @@ class MultiEnvironmentConfigManager:
 
                     # Handle secrets
                     if (
-                        decrypt_secrets and
-                        isinstance(value, dict) and
-                        value.get("_type") == "secret"
+                        decrypt_secrets
+                        and isinstance(value, dict)
+                        and value.get("_type") == "secret"
                     ):
                         encrypted_value = value.get("_value")
                         if encrypted_value:
@@ -688,8 +688,8 @@ class MultiEnvironmentConfigManager:
         """Check if change requires approval"""
         # Production changes require approval
         if (
-            change.config_value.environment and
-            "prod" in change.config_value.environment
+            change.config_value.environment
+            and "prod" in change.config_value.environment
         ):
             return True
 
@@ -843,8 +843,8 @@ class MultiEnvironmentConfigManager:
                 differences=differences,
                 severity=severity,
                 detected_at=datetime.utcnow(),
-                auto_remediate=severity in ["low", "medium"] and
-                not any(
+                auto_remediate=severity in ["low", "medium"]
+                and not any(
                     d["key"].endswith((".secret", ".password", ".key"))
                     for d in differences
                 ),

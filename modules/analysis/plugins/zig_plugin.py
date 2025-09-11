@@ -285,8 +285,8 @@ class ZigExceptionHandler:
         # Check syntax errors - but skip if it looks like a type error
         for pattern in self.zig_error_patterns["syntax_error"]:
             if (
-                re.search(pattern, message, re.IGNORECASE) and
-                "expected type" not in message
+                re.search(pattern, message, re.IGNORECASE)
+                and "expected type" not in message
             ):
                 return {
                     "category": "zig",

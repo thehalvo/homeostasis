@@ -562,35 +562,35 @@ class MultiTenancyManager:
         # Calculate usage percentages
         usage_pct = {
             "healing_cycles": (
-                tenant.usage.healing_cycles_count /
-                tenant.quota.max_healing_cycles_per_hour *
-                100
+                tenant.usage.healing_cycles_count
+                / tenant.quota.max_healing_cycles_per_hour
+                * 100
             ),
             "patches": (
                 tenant.usage.patches_count / tenant.quota.max_patches_per_day * 100
             ),
             "deployments": (
-                tenant.usage.deployments_count /
-                tenant.quota.max_deployments_per_day *
-                100
+                tenant.usage.deployments_count
+                / tenant.quota.max_deployments_per_day
+                * 100
             ),
             "file_modifications": (
-                tenant.usage.file_modifications_count /
-                tenant.quota.max_file_modifications_per_hour *
-                100
+                tenant.usage.file_modifications_count
+                / tenant.quota.max_file_modifications_per_hour
+                * 100
             ),
             "storage": (
                 tenant.usage.storage_used_mb / tenant.quota.max_storage_mb * 100
             ),
             "cpu_seconds": (
-                tenant.usage.cpu_seconds_used /
-                tenant.quota.max_cpu_seconds_per_hour *
-                100
+                tenant.usage.cpu_seconds_used
+                / tenant.quota.max_cpu_seconds_per_hour
+                * 100
             ),
             "api_calls": (
-                tenant.usage.api_calls_count /
-                tenant.quota.max_api_calls_per_minute *
-                100
+                tenant.usage.api_calls_count
+                / tenant.quota.max_api_calls_per_minute
+                * 100
             ),
         }
 

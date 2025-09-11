@@ -254,8 +254,7 @@ class TestCSharpPlugin(unittest.TestCase):
             mock_adapter.return_value = python_adapter
 
             # Convert to Python format
-            from modules.analysis.language_adapters import \
-                convert_from_standard_format
+            from modules.analysis.language_adapters import convert_from_standard_format
 
             python_error = convert_from_standard_format(standard_error, "python")
 

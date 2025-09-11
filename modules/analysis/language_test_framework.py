@@ -14,8 +14,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from .cross_language_orchestrator import CrossLanguageOrchestrator
 from .language_adapters import ErrorAdapterFactory, convert_to_standard_format
-from .language_plugin_system import (LanguagePlugin, get_plugin,
-                                     load_all_plugins)
+from .language_plugin_system import LanguagePlugin, get_plugin, load_all_plugins
 
 logger = logging.getLogger(__name__)
 
@@ -449,12 +448,12 @@ class LanguageTestRunner:
                     error_message = None
 
                     if (
-                        "error_type" in test_case.error_data and
-                        "error_type" in roundtrip_error
+                        "error_type" in test_case.error_data
+                        and "error_type" in roundtrip_error
                     ):
                         if (
-                            test_case.error_data["error_type"] !=
-                            roundtrip_error["error_type"]
+                            test_case.error_data["error_type"]
+                            != roundtrip_error["error_type"]
                         ):
                             preserved = False
                             error_message = f"Error type changed: {test_case.error_data['error_type']} -> {roundtrip_error['error_type']}"

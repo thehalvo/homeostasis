@@ -13,8 +13,10 @@ import tempfile
 from pathlib import Path
 from typing import Any, Tuple
 
-from .language_integration_framework import (IntegrationTestCase,
-                                             LanguageIntegrationTestRunner)
+from .language_integration_framework import (
+    IntegrationTestCase,
+    LanguageIntegrationTestRunner,
+)
 
 logger = logging.getLogger(__name__)
 

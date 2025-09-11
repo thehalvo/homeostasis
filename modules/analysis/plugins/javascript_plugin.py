@@ -249,9 +249,9 @@ class JavaScriptExceptionHandler:
 
         # TypeScript errors
         if (
-            "typescript" in message.lower() or
-            "tsc" in message.lower() or
-            error_type.startswith("TS")
+            "typescript" in message.lower()
+            or "tsc" in message.lower()
+            or error_type.startswith("TS")
         ):
             return self._analyze_typescript_error(message, error_data)
 
@@ -724,8 +724,8 @@ class JavaScriptPatchGenerator:
         # Check if it's a Promise chain
         if ".then(" in problem_line and ".catch(" not in problem_line:
             fixed_line = (
-                problem_line.rstrip() +
-                ".catch(error => console.error('Promise rejected:', error));"
+                problem_line.rstrip()
+                + ".catch(error => console.error('Promise rejected:', error));"
             )
 
             return {
@@ -1067,9 +1067,9 @@ class JavaScriptLanguagePlugin(LanguagePlugin):
         ]
 
         return (
-            any(pattern in message for pattern in transpilation_patterns) or
-            any(pattern in stack_trace for pattern in transpilation_patterns) or
-            error_type.startswith("TS")
+            any(pattern in message for pattern in transpilation_patterns)
+            or any(pattern in stack_trace for pattern in transpilation_patterns)
+            or error_type.startswith("TS")
         )
 
     def _is_bundler_error(self, error_data: Dict[str, Any]) -> bool:

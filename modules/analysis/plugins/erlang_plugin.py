@@ -578,8 +578,8 @@ class ErlangExceptionHandler:
             k for k in self.erlang_concepts["message"] if k != "message"
         ]
         if any(keyword in message_lower for keyword in message_keywords) or (
-            "message" in message_lower and
-            (
+            "message" in message_lower
+            and (
                 "send" in message_lower or "receive" in message_lower or "!" in message
             )
         ):
