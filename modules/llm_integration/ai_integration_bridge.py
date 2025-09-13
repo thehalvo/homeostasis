@@ -17,7 +17,7 @@ from typing import Any, Callable, Dict, List, Optional, Protocol
 
 from ..analysis.code_style_analyzer import CodeStyleAnalyzer
 from ..patch_generation.multi_language_framework_detector import (
-    LanguageFrameworkDetector,
+    MultiLanguageFrameworkDetector,
 )
 from .continuous_improvement import get_improvement_engine
 
@@ -205,7 +205,7 @@ class AIIntegrationBridge:
             self.register_style_preserver(builtin_style_preserver)
 
             # Register existing language detector as part of code understanding
-            language_detector = LanguageFrameworkDetector()
+            language_detector = MultiLanguageFrameworkDetector()
             builtin_code_understander = BuiltinCodeUnderstandingAdapter(
                 language_detector
             )
@@ -544,7 +544,7 @@ class BuiltinStylePreserver(StylePreservationInterface):
 class BuiltinCodeUnderstandingAdapter(CodeUnderstandingInterface):
     """Adapter for existing language detection and analysis components."""
 
-    def __init__(self, language_detector: LanguageFrameworkDetector):
+    def __init__(self, language_detector: MultiLanguageFrameworkDetector):
         self.language_detector = language_detector
 
     def extract_semantic_features(self, code_context: CodeContext) -> Dict[str, Any]:
@@ -552,7 +552,7 @@ class BuiltinCodeUnderstandingAdapter(CodeUnderstandingInterface):
         file_path = Path(code_context.file_path)
 
         # Use existing detector to get language and framework info
-        detected_info = self.language_detector.detect_language_and_framework(
+        detected_info = self.language_detector.detect_language_and_frameworks(
             file_path, code_context.code_content
         )
 

@@ -48,7 +48,7 @@ class BaseTemplate:
         """
         self.name = name
         self.parent_name = parent
-        self.parent = None
+        self.parent: Optional['BaseTemplate'] = None
         self.file_path = file_path
 
         # Store raw content before processing
@@ -99,7 +99,7 @@ class BaseTemplate:
         Returns:
             Dictionary of metadata
         """
-        metadata = {"variables": [], "description": "", "applicability": []}
+        metadata: Dict[str, Any] = {"variables": [], "description": "", "applicability": []}
 
         # Extract variable definitions from comments
         var_pattern = r"#\s*-\s*\{\{\s*([\w_]+)\s*\}\}:\s*(.+)$"
@@ -376,7 +376,7 @@ class BaseTemplate:
 
             # Check if variable exists and is truthy
             var_value = variables.get(var_name, "")
-            return var_value and var_value.lower() not in ("false", "0", "")
+            return bool(var_value and var_value.lower() not in ("false", "0", ""))
 
     def _process_loops(self, content: str, variables: Dict[str, str]) -> str:
         """
@@ -470,7 +470,7 @@ class TemplateManager:
         """
         self.templates_dir = templates_dir
         self.framework_dirs = self._discover_framework_dirs()
-        self.templates = {}
+        self.templates: Dict[str, BaseTemplate] = {}
 
         # Load all templates
         self._load_templates()

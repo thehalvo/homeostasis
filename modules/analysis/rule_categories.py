@@ -361,14 +361,14 @@ class RuleDependency:
         Returns:
             List of lists, where each inner list represents a circular dependency chain
         """
-        circular_chains = []
+        circular_chains: List[List[str]] = []
 
         for rule in self.rules:
             if not hasattr(rule, "dependencies") or not rule.dependencies:
                 continue
 
             # Check for circular dependencies starting from this rule
-            visited = set()
+            visited: Set[str] = set()
             path = [rule.id]
             self._dfs_check_circular(rule.id, visited, path, circular_chains)
 
@@ -623,7 +623,7 @@ if __name__ == "__main__":
     )
 
     # Check for circular dependencies
-    rules = [rule1, rule2, rule3, rule4, rule5]
+    rules: List[Union[Rule, EnhancedRule]] = [rule1, rule2, rule3, rule4, rule5]
     dependency_checker = RuleDependency(rules)
     circular_deps = dependency_checker.detect_circular_dependencies()
 
@@ -650,7 +650,7 @@ if __name__ == "__main__":
         suggestion="Fix specific error",
     )
 
-    conflict_rules = [conflict_rule1, conflict_rule2]
+    conflict_rules: List[Union[Rule, EnhancedRule]] = [conflict_rule1, conflict_rule2]
     conflicts = detect_rule_conflicts(conflict_rules)
 
     print("\nRule Conflicts:")

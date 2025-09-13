@@ -9,7 +9,7 @@ type mismatches, and ordering problems.
 import ast
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from modules.patch_generation.ast_analyzer import ASTAnalyzer, FunctionInfo
 
@@ -45,9 +45,9 @@ class FunctionCallMatch:
         self.issues: List[ParameterIssue] = []
 
         # Match parameters between call and definition
-        self.param_matches = {}  # param_name -> arg_value
-        self.unmatched_args = []  # positional args that couldn't be matched
-        self.unmatched_params = []  # parameters without corresponding args
+        self.param_matches: Dict[str, ast.AST] = {}  # param_name -> arg_value
+        self.unmatched_args: List[ast.AST] = []  # positional args that couldn't be matched
+        self.unmatched_params: List[str] = []  # parameters without corresponding args
 
         # Analyze the match
         self._analyze_match()
@@ -154,7 +154,7 @@ class FunctionSignatureAnalyzer:
             ast_analyzer: Optional existing ASTAnalyzer to use
         """
         self.ast_analyzer = ast_analyzer or ASTAnalyzer()
-        self.file_path = None
+        self.file_path: Optional[str] = None
 
     def analyze_file(self, file_path: Path) -> bool:
         """
@@ -318,7 +318,7 @@ class FunctionSignatureAnalyzer:
         Returns:
             Dictionary mapping parameter names to type information
         """
-        type_info = {}
+        type_info: Dict[str, Dict[str, Any]] = {}
 
         # Get function calls
         call_matches = self.find_function_calls(function_name)

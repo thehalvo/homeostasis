@@ -26,6 +26,12 @@ flask==3.1.2
 flask-cors==6.0.1
 optuna==3.4.0
 python-ldap==3.4.3
+# NOTE: MLflow has known CVEs (CVE-2024-37052 to CVE-2024-37060) related to
+# deserialization of untrusted models. In production, ensure:
+# 1. Only load models from trusted sources
+# 2. Run MLflow server with restricted access
+# 3. Consider using model signatures and input validation
+# 4. Monitor for security updates
 mlflow==3.3.2
 setuptools==80.9.0
 pandas==2.2.0

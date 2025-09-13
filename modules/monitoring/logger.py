@@ -22,7 +22,7 @@ LOGS_DIR.mkdir(exist_ok=True)
 LOG_FILE = LOGS_DIR / "homeostasis.log"
 
 # Get basic system information
-SYSTEM_INFO = {
+SYSTEM_INFO: Dict[str, Any] = {
     "hostname": socket.gethostname(),
     "os_name": os.name,
     "platform": platform.platform(),
@@ -61,11 +61,11 @@ class MonitoringLogger:
         self.log_file = log_file or LOG_FILE
 
         # Store system info globally for this logger instance
-        self.system_info = SYSTEM_INFO.copy()
+        self.system_info: Dict[str, Any] = SYSTEM_INFO.copy()
         self.system_info["service_name"] = service_name
 
         # Add environment variables (excluding sensitive ones)
-        env_vars = {}
+        env_vars: Dict[str, str] = {}
         # Extended list of sensitive environment variable patterns
         excluded_env_vars = [
             "API_KEY",
@@ -138,7 +138,7 @@ class MonitoringLogger:
             The log record as a dictionary
         """
         # Create base log record
-        log_record = {
+        log_record: Dict[str, Any] = {
             "timestamp": datetime.now().isoformat(),
             "service": self.service_name,
             "level": level,

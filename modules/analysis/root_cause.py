@@ -36,7 +36,7 @@ class RootCause:
     confidence: float  # 0.0 to 1.0
     evidence: List[str]
     fix_suggestions: List[str]
-    related_errors: List[str] = None
+    related_errors: Optional[List[str]] = None
 
     def __post_init__(self):
         if self.related_errors is None:
@@ -71,7 +71,7 @@ class RootCauseAnalyzer:
         """
         self.config = config or {}
         self.patterns = self._load_patterns()
-        self.analysis_cache = {}
+        self.analysis_cache: Dict[str, RootCause] = {}
 
         logger.info("Root cause analyzer initialized")
 

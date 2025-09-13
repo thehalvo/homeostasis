@@ -95,7 +95,7 @@ class KnowledgeBase:
         os.makedirs(self.storage_dir, exist_ok=True)
 
         # Load existing templates
-        self.templates = {}  # error_type -> List[FixTemplate]
+        self.templates: Dict[str, List[FixTemplate]] = {}  # error_type -> List[FixTemplate]
         self._load_templates()
 
         logger.info(
@@ -175,7 +175,7 @@ class KnowledgeBase:
         fix_type: str,
         pattern: str,
         template: str,
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> FixTemplate:
         """Add a new fix template.
 
@@ -335,7 +335,7 @@ class KnowledgeBase:
         fix_type: str,
         original_code: str,
         fixed_code: str,
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> Optional[FixTemplate]:
         """Learn a new template from a successful fix.
 

@@ -37,7 +37,9 @@ from .formal_frameworks import (
 from .formal_frameworks import (
     create_workshop_materials as create_formal_workshop_materials,
 )
-from .formal_frameworks import generate_course_syllabus
+from .formal_frameworks import (
+    generate_course_syllabus,
+)
 
 __all__ = [
     # Formal verification

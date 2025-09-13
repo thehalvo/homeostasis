@@ -7,7 +7,7 @@ Provides commands for analyzing patterns, generating recommendations, and monito
 
 import json
 from datetime import datetime
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 import click
 
@@ -123,7 +123,7 @@ def recommend(category: Optional[str], priority: Optional[str], output_json: boo
         click.echo()
 
         # Group by priority
-        priority_groups = {"high": [], "medium": [], "low": []}
+        priority_groups: Dict[str, List[Any]] = {"high": [], "medium": [], "low": []}
         for rec in recommendations:
             if rec.priority in priority_groups:
                 priority_groups[rec.priority].append(rec)

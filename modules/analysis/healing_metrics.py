@@ -31,6 +31,9 @@ class HealingMetricsCollector:
     4. Long-term healing impact
     """
 
+    metrics: Dict[str, Any]
+    metrics_file: Path
+
     def __init__(self, metrics_file: Optional[Union[str, Path]] = None):
         """
         Initialize the metrics collector.
@@ -318,7 +321,7 @@ class HealingMetricsCollector:
         Returns:
             Language comparison metrics
         """
-        comparison = {
+        comparison: Dict[str, Any] = {
             "success_rates": {},
             "performance": {},
             "error_coverage": {},
@@ -495,7 +498,9 @@ class HealingMetricsCollector:
 
     def reset_metrics(self) -> None:
         """Reset all metrics to initial values."""
-        self.__init__(self.metrics_file)
+        # Re-initialize with same metrics file
+        metrics_file = self.metrics_file
+        self.__init__(metrics_file)  # type: ignore[misc]
         logger.info("Metrics have been reset")
 
     def _load_metrics(self) -> None:
@@ -722,14 +727,14 @@ class HealingMetricsCollector:
 
 
 def track_healing_event(
-    orchestrator,
+    orchestrator: Any,
     error_data: Dict[str, Any],
     language: str,
     fix_data: Optional[Dict[str, Any]] = None,
     successful: bool = False,
     timings: Optional[Dict[str, float]] = None,
     metrics_collector: Optional[HealingMetricsCollector] = None,
-) -> None:
+) -> HealingMetricsCollector:
     """
     Track a healing event in the metrics system.
 

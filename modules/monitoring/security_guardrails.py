@@ -621,7 +621,7 @@ class SecurityGuardrails:
         self.compliance_rules = compliance_rules or self._get_default_compliance_rules()
 
         # Violation tracking
-        self.violations_history = []
+        self.violations_history: List[SecurityViolation] = []
         self.quarantine_hashes: Set[str] = set()
 
         # Thread safety
@@ -748,7 +748,7 @@ class SecurityGuardrails:
         return violations
 
     def analyze_content(
-        self, content: str, source: str = "unknown", context: Dict[str, Any] = None
+        self, content: str, source: str = "unknown", context: Optional[Dict[str, Any]] = None
     ) -> Tuple[bool, List[SecurityViolation], str]:
         """
         Comprehensive content analysis for security violations.
@@ -911,9 +911,9 @@ class SecurityGuardrails:
             ]
 
         # Group violations by type
-        violations_by_type = defaultdict(int)
-        violations_by_severity = defaultdict(int)
-        violations_by_source = defaultdict(int)
+        violations_by_type: defaultdict[str, int] = defaultdict(int)
+        violations_by_severity: defaultdict[str, int] = defaultdict(int)
+        violations_by_source: defaultdict[str, int] = defaultdict(int)
 
         for violation in recent_violations:
             violations_by_type[violation.violation_type.value] += 1

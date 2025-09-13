@@ -111,7 +111,7 @@ class FeedbackManager:
         os.makedirs(self.storage_dir, exist_ok=True)
 
         # Load existing feedback
-        self.feedback = {}  # suggestion_id -> List[Feedback]
+        self.feedback: Dict[str, List[Feedback]] = {}  # suggestion_id -> List[Feedback]
         self._load_feedback()
 
         logger.info(

@@ -7,10 +7,10 @@ Maven and Gradle build files.
 
 import logging
 import re
-
-import defusedxml.ElementTree as ET
 from pathlib import Path
 from typing import Any, Dict, Optional
+
+import defusedxml.ElementTree as ET
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class BuildFileAnalyzer:
                 """Prepend namespace to tag if needed."""
                 return f"{{{ns['']}}}{tag}" if ns else tag
 
-            results = {
+            results: Dict[str, Any] = {
                 "dependencies": [],
                 "repositories": [],
                 "plugins": [],
@@ -190,7 +190,7 @@ class BuildFileAnalyzer:
             with open(build_path, "r") as f:
                 content = f.read()
 
-            results = {
+            results: Dict[str, Any] = {
                 "dependencies": [],
                 "repositories": [],
                 "plugins": [],
@@ -372,7 +372,7 @@ class BuildFileAnalyzer:
         """
         project_path = Path(project_dir)
 
-        report = {
+        report: Dict[str, Any] = {
             "projectType": "unknown",
             "buildFiles": [],
             "dependencies": {},

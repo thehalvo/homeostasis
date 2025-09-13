@@ -7,7 +7,7 @@ signatures to generate better-targeted patches.
 """
 
 import ast
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
 
@@ -35,10 +35,10 @@ class FunctionInfo:
     parameters: List[Dict[str, Any]]  # Parameter information
     return_annotation: Optional[str] = None  # Return type annotation if present
     docstring: Optional[str] = None  # Function docstring if present
-    calls: List[ast.Call] = None  # Calls to this function
+    calls: List[ast.Call] = field(default_factory=list)  # Calls to this function
     is_method: bool = False  # Whether this is a class method
     is_async: bool = False  # Whether this is an async function
-    decorators: List[str] = None  # Function decorators
+    decorators: List[str] = field(default_factory=list)  # Function decorators
     parent_class: Optional[str] = None  # Parent class if this is a method
 
 
@@ -52,7 +52,7 @@ class ClassInfo:
     methods: Dict[str, FunctionInfo]  # Class methods
     attributes: Dict[str, VariableInfo]  # Class attributes
     docstring: Optional[str] = None  # Class docstring if present
-    decorators: List[str] = None  # Class decorators
+    decorators: List[str] = field(default_factory=list)  # Class decorators
 
 
 class ImportInfo(NamedTuple):
@@ -535,12 +535,20 @@ class CodeVisitor(ast.NodeVisitor):
             if isinstance(annotation.value, ast.Name):
                 base = annotation.value.id
                 # For simple subscripts, like List[str]
-                if isinstance(annotation.slice, ast.Index):
-                    index = self._get_annotation_name(annotation.slice.value)
-                    return f"{base}[{index}]"
-                elif isinstance(annotation.slice, ast.Name):
+                if isinstance(annotation.slice, ast.Name):
                     return f"{base}[{annotation.slice.id}]"
-                return f"{base}[...]"
+                else:
+                    # Handle both Python < 3.9 (ast.Index) and Python 3.9+ (direct slice)
+                    try:
+                        # Try to get the slice value directly (Python 3.9+)
+                        slice_expr = annotation.slice
+                        # For Python < 3.9, check if it's an Index node
+                        if hasattr(slice_expr, 'value'):
+                            slice_expr = slice_expr.value  # type: ignore
+                        index = self._get_annotation_name(slice_expr)
+                        return f"{base}[{index}]"
+                    except:
+                        return f"{base}[...]"
             elif isinstance(annotation.value, ast.Attribute):
                 base = self._get_attribute_name(annotation.value)
                 return f"{base}[...]"
@@ -564,7 +572,7 @@ class CodeVisitor(ast.NodeVisitor):
         elif isinstance(node, ast.List):
             return [self._get_node_value(elt) for elt in node.elts]
         elif isinstance(node, ast.Dict):
-            keys = [self._get_node_value(k) for k in node.keys]
+            keys = [self._get_node_value(k) if k is not None else None for k in node.keys]
             values = [self._get_node_value(v) for v in node.values]
             return dict(zip(keys, values))
         elif isinstance(node, ast.Name):

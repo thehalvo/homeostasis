@@ -157,8 +157,12 @@ class TransformerCodeAnalyzer:
         if revision is None:
             raise ValueError(f"Model {model_name} not in secure whitelist")
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, revision=revision)  # nosec: B615 - Using secure revision
-        self.model = AutoModel.from_pretrained(model_name, revision=revision).to(  # nosec: B615 - Using secure revision
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            model_name, revision=revision
+        )  # nosec: B615 - Using secure revision
+        self.model = AutoModel.from_pretrained(
+            model_name, revision=revision
+        ).to(  # nosec: B615 - Using secure revision
             self.device
         )
 
@@ -452,10 +456,14 @@ class CodeT5Analyzer:
         if revision is None:
             raise ValueError(f"Model {model_name} not in secure whitelist")
 
-        self.tokenizer = T5Tokenizer.from_pretrained(model_name, revision=revision)  # nosec: B615 - Using secure revision
+        self.tokenizer = T5Tokenizer.from_pretrained(
+            model_name, revision=revision
+        )  # nosec: B615 - Using secure revision
         self.model = T5ForConditionalGeneration.from_pretrained(  # nosec: B615 - Using secure revision
             model_name, revision=revision
-        ).to(self.device)
+        ).to(
+            self.device
+        )
 
     def generate_fix(self, error_context: str, max_length: int = 150) -> str:
         """

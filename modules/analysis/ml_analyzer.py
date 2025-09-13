@@ -61,7 +61,7 @@ class MLAnalyzer:
         self.ml_confidence_threshold = ml_confidence_threshold
 
         # Initialize ML classifier
-        self.ml_classifier = None
+        self.ml_classifier: Optional[ErrorClassifierModel] = None
         if self.mode != MLAnalysisMode.DISABLED:
             self._initialize_ml_model(ml_model_path)
 
@@ -85,12 +85,13 @@ class MLAnalyzer:
 
         # Try to load the model
         try:
-            model_loaded = self.ml_classifier.load()
-            if model_loaded:
-                logger.info(f"Loaded ML model from {model_path}")
-                logger.info(
-                    f"Model can classify {len(self.ml_classifier.classes)} error types"
-                )
+            if self.ml_classifier is not None:
+                model_loaded = self.ml_classifier.load()
+                if model_loaded:
+                    logger.info(f"Loaded ML model from {model_path}")
+                    logger.info(
+                        f"Model can classify {len(self.ml_classifier.classes)} error types"
+                    )
             else:
                 logger.warning(
                     f"Failed to load ML model from {model_path}, ML analysis will be disabled"
@@ -314,7 +315,11 @@ class MLAnalyzer:
 
         elif self.mode in [MLAnalysisMode.PARALLEL, MLAnalysisMode.ENSEMBLE]:
             # Combine results
-            return self._combine_results(rule_result, ml_result)
+            if ml_result is not None:
+                return self._combine_results(rule_result, ml_result)
+            else:
+                # Fall back to rule result if ML failed
+                return rule_result
 
         # Default to rule-based result if no other case matches
         return rule_result
@@ -361,7 +366,7 @@ class HybridAnalyzer:
         self.ml_analyzer = MLAnalyzer(mode=ml_mode, ml_model_path=ml_model_path)
 
         # Initialize LLM analyzer if enabled
-        self.llm_analyzer = None
+        self.llm_analyzer: Optional[AIAnalyzer] = None
         self.use_llm = use_llm
 
         if use_llm:

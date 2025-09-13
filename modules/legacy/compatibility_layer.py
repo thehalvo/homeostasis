@@ -8,13 +8,13 @@ different versions, protocols, and data formats in heterogeneous environments.
 import json
 import logging
 import re
-
-# Always import defusedxml for security
-import defusedxml.ElementTree as ET
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+
+# Always import defusedxml for security
+import defusedxml.ElementTree as ET
 
 logger = logging.getLogger(__name__)
 
@@ -70,8 +70,8 @@ class ConversionRule:
 
     source_type: str
     target_type: str
-    converter: callable
-    validator: Optional[callable] = None
+    converter: Callable
+    validator: Optional[Callable] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -81,7 +81,7 @@ class SchemaMapping:
 
     source_field: str
     target_field: str
-    transformation: Optional[callable] = None
+    transformation: Optional[Callable] = None
     default_value: Any = None
     required: bool = False
 
@@ -287,10 +287,10 @@ class CompatibilityLayer:
                         issue_type=CompatibilityIssue.DATA_TYPE_MISMATCH,
                         source_format="packed_decimal",
                         target_format="decimal",
-                        field_name=field,
+                        field_name=field_name,
                         source_value=value,
                         expected_type="decimal",
-                        message=f"Field {field} contains packed decimal data",
+                        message=f"Field {field_name} contains packed decimal data",
                         severity="high",
                         suggested_fix="Convert packed decimal to standard decimal",
                     )
@@ -306,10 +306,10 @@ class CompatibilityLayer:
                             issue_type=CompatibilityIssue.CHARACTER_SET,
                             source_format="ebcdic",
                             target_format="utf-8",
-                            field_name=field,
+                            field_name=field_name,
                             source_value=value,
                             expected_type="string",
-                            message=f"Field {field} appears to contain EBCDIC data",
+                            message=f"Field {field_name} appears to contain EBCDIC data",
                             severity="high",
                             suggested_fix="Convert EBCDIC to UTF-8",
                         )
@@ -375,7 +375,7 @@ class CompatibilityLayer:
         self, data: Any, target: DataFormat
     ) -> List[CompatibilityError]:
         """Check for numeric precision issues."""
-        issues = []
+        issues: List[CompatibilityError] = []
 
         # Check for potential precision loss when converting
         # from fixed-point to floating-point
@@ -443,13 +443,13 @@ class CompatibilityLayer:
 
             if issue.source_format == "packed_decimal":
                 # Convert packed decimal
-                converted = self._convert_packed_decimal(field_value)
+                converted = self._convert_packed_decimal(field_value) if isinstance(field_value, bytes) else None
                 data[issue.field_name] = converted
                 return data, f"Converted packed decimal in field {issue.field_name}"
 
             elif issue.source_format == "zoned_decimal":
                 # Convert zoned decimal
-                converted = self._convert_zoned_decimal(field_value)
+                converted = self._convert_zoned_decimal(field_value) if isinstance(field_value, bytes) else None
                 data[issue.field_name] = converted
                 return data, f"Converted zoned decimal in field {issue.field_name}"
 
@@ -528,7 +528,7 @@ class CompatibilityLayer:
 
     def convert_encoding(
         self, data: bytes, source_encoding: str, target_encoding: str
-    ) -> str:
+    ) -> Union[str, bytes]:
         """Convert between character encodings."""
         source_codec = self._encoding_map.get(source_encoding, {}).get(
             "python_codec", source_encoding
@@ -553,7 +553,7 @@ class CompatibilityLayer:
 
     def convert_date_format(
         self, date_value: Any, source_format: str, target_format: str
-    ) -> str:
+    ) -> Union[str, int]:
         """Convert between date formats."""
         if source_format == target_format:
             return date_value
@@ -832,7 +832,8 @@ class CompatibilityLayer:
         if len(copybook_data) >= offset + 5:
             packed_balance = copybook_data[offset : offset + 5]
             if self._is_packed_decimal(packed_balance):
-                result["balance"] = self._convert_packed_decimal(packed_balance) / 100
+                balance = self._convert_packed_decimal(packed_balance) / 100
+                result["balance"] = str(balance)
             offset += 5
 
         # Status
@@ -990,7 +991,7 @@ class CompatibilityLayer:
         """Adapt EDI format to JSON."""
         # Simplified EDI X12 parser
         segments = edi_data.strip().split("~")
-        result = {"segments": []}
+        result: Dict[str, Any] = {"segments": []}
 
         for segment in segments:
             if segment:

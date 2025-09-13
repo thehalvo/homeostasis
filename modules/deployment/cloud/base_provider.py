@@ -6,7 +6,7 @@ This module provides a base class for cloud providers.
 
 import abc
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ class BaseCloudProvider(abc.ABC):
     This class defines the interface that all cloud providers must implement.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize base cloud provider.
 
         Args:

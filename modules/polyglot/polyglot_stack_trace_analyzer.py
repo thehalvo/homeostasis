@@ -292,7 +292,7 @@ class PolyglotStackTraceAnalyzer:
         Analyze patterns in a stack trace.
         Identifies common issues like infinite recursion, deep calls, etc.
         """
-        analysis = {
+        analysis: Dict[str, Any] = {
             "trace_id": trace.trace_id,
             "depth": len(trace.frames),
             "patterns": [],
@@ -332,7 +332,7 @@ class PolyglotStackTraceAnalyzer:
 
     def _detect_recursion(self, trace: StackTrace) -> Optional[Dict[str, Any]]:
         """Detect recursion patterns in stack trace."""
-        function_counts = {}
+        function_counts: Dict[str, int] = {}
 
         for frame in trace.frames:
             key = f"{frame.module_name}.{frame.function_name}"
@@ -344,7 +344,7 @@ class PolyglotStackTraceAnalyzer:
         }
 
         if recursive_funcs:
-            max_func = max(recursive_funcs, key=recursive_funcs.get)
+            max_func = max(recursive_funcs, key=lambda k: recursive_funcs[k])
             return {
                 "function": max_func,
                 "occurrences": recursive_funcs[max_func],
@@ -566,7 +566,7 @@ class PythonStackTraceParser(StackTraceParser):
 
     def parse(self, raw_trace: str) -> StackTrace:
         lines = raw_trace.strip().split("\n")
-        frames = []
+        frames: List[StackFrame] = []
         error_message = ""
         error_type = "Exception"
 
@@ -645,7 +645,7 @@ class JavaScriptStackTraceParser(StackTraceParser):
 
     def parse(self, raw_trace: str) -> StackTrace:
         lines = raw_trace.strip().split("\n")
-        frames = []
+        frames: List[StackFrame] = []
         error_message = ""
         error_type = "Error"
 
@@ -725,7 +725,7 @@ class JavaStackTraceParser(StackTraceParser):
 
     def parse(self, raw_trace: str) -> StackTrace:
         lines = raw_trace.strip().split("\n")
-        frames = []
+        frames: List[StackFrame] = []
         error_message = ""
         error_type = "Exception"
 
@@ -809,7 +809,7 @@ class GoStackTraceParser(StackTraceParser):
 
     def parse(self, raw_trace: str) -> StackTrace:
         lines = raw_trace.strip().split("\n")
-        frames = []
+        frames: List[StackFrame] = []
         error_message = ""
         error_type = "panic"
 
@@ -900,7 +900,7 @@ class CSharpStackTraceParser(StackTraceParser):
 
     def parse(self, raw_trace: str) -> StackTrace:
         lines = raw_trace.strip().split("\n")
-        frames = []
+        frames: List[StackFrame] = []
         error_message = ""
         error_type = "Exception"
 
@@ -974,7 +974,7 @@ class RubyStackTraceParser(StackTraceParser):
 
     def parse(self, raw_trace: str) -> StackTrace:
         lines = raw_trace.strip().split("\n")
-        frames = []
+        frames: List[StackFrame] = []
         error_message = ""
         error_type = "StandardError"
 
@@ -1048,7 +1048,7 @@ class PHPStackTraceParser(StackTraceParser):
 
     def parse(self, raw_trace: str) -> StackTrace:
         lines = raw_trace.strip().split("\n")
-        frames = []
+        frames: List[StackFrame] = []
         error_message = ""
         error_type = "Error"
 
@@ -1118,7 +1118,7 @@ class RustStackTraceParser(StackTraceParser):
 
     def parse(self, raw_trace: str) -> StackTrace:
         lines = raw_trace.strip().split("\n")
-        frames = []
+        frames: List[StackFrame] = []
         error_message = ""
         error_type = "panic"
 

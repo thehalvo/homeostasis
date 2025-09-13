@@ -8,22 +8,22 @@ both legacy FORTRAN 77 and modern Fortran 90/95/2003/2008/2018.
 import logging
 import re
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
 
-class FortranStandard(Enum):
+class FortranStandard(IntEnum):
     """Fortran language standards."""
 
-    F66 = "FORTRAN 66"
-    F77 = "FORTRAN 77"
-    F90 = "Fortran 90"
-    F95 = "Fortran 95"
-    F2003 = "Fortran 2003"
-    F2008 = "Fortran 2008"
-    F2018 = "Fortran 2018"
+    F66 = 1966
+    F77 = 1977
+    F90 = 1990
+    F95 = 1995
+    F2003 = 2003
+    F2008 = 2008
+    F2018 = 2018
 
 
 @dataclass
@@ -492,7 +492,7 @@ class FortranHealer:
 
         return None
 
-    def _add_implicit_none(self, lines: List[str], error_idx: int) -> str:
+    def _add_implicit_none(self, lines: List[str], error_idx: int) -> Optional[str]:
         """Add IMPLICIT NONE statement."""
         # Find program unit start
         for i in range(error_idx, -1, -1):
@@ -507,7 +507,7 @@ class FortranHealer:
 
         return None
 
-    def _fix_continuation(self, lines: List[str], error_idx: int) -> str:
+    def _fix_continuation(self, lines: List[str], error_idx: int) -> Optional[str]:
         """Fix continuation line issues."""
         if error_idx > 0:
             is_fixed = self._is_fixed_format(lines)
@@ -530,7 +530,7 @@ class FortranHealer:
 
         return None
 
-    def _add_zero_check(self, lines: List[str], error_idx: int) -> str:
+    def _add_zero_check(self, lines: List[str], error_idx: int) -> Optional[str]:
         """Add check for division by zero."""
         error_line = lines[error_idx]
 
@@ -556,7 +556,7 @@ class FortranHealer:
 
         return None
 
-    def _add_bounds_check(self, lines: List[str], error_idx: int) -> str:
+    def _add_bounds_check(self, lines: List[str], error_idx: int) -> Optional[str]:
         """Add array bounds checking."""
         error_line = lines[error_idx]
 
@@ -586,7 +586,7 @@ class FortranHealer:
         return None
 
     def modernize_code(
-        self, source_code: str, target_standard: FortranStandard = None
+        self, source_code: str, target_standard: Optional[FortranStandard] = None
     ) -> Tuple[str, List[Dict[str, Any]]]:
         """Modernize Fortran code to newer standard."""
         if target_standard is None:
@@ -626,8 +626,8 @@ class FortranHealer:
         self, lines: List[str]
     ) -> Tuple[List[str], List[Dict[str, Any]]]:
         """Convert fixed format to free format."""
-        new_lines = []
-        modifications = []
+        new_lines: List[str] = []
+        modifications: List[Dict[str, Any]] = []
 
         for i, line in enumerate(lines):
             if not line:
@@ -699,8 +699,8 @@ class FortranHealer:
         self, lines: List[str]
     ) -> Tuple[List[str], List[Dict[str, Any]]]:
         """Replace COMMON blocks with modules."""
-        modifications = []
-        common_blocks = {}
+        modifications: List[Dict[str, Any]] = []
+        common_blocks: Dict[str, List[str]] = {}
 
         # First pass - collect COMMON blocks
         for i, line in enumerate(lines):

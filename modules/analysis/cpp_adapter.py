@@ -7,8 +7,10 @@ C/C++ error formats and the standard Homeostasis error format.
 
 from typing import Any, Dict, List, Union
 
+from modules.analysis.language_adapters import LanguageAdapter
 
-class CPPErrorAdapter:
+
+class CPPErrorAdapter(LanguageAdapter):
     """
     Adapter for converting C/C++ errors to/from standard format.
 
@@ -247,7 +249,7 @@ class CPPErrorAdapter:
         return str(frame)
 
     def _extract_file_info(
-        self, cpp_error: Dict[str, Any], stack_trace: List[str]
+        self, cpp_error: Dict[str, Any], stack_trace: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """Extract file, line, and column information."""
         import re

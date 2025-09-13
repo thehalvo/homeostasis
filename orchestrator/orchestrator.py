@@ -23,32 +23,44 @@ from modules.analysis.analyzer import AnalysisStrategy, Analyzer
 from modules.deployment.blue_green import get_blue_green_deployment
 from modules.deployment.canary import CanaryStatus, get_canary_deployment
 from modules.deployment.cloud.provider_factory import get_cloud_provider
-from modules.deployment.kubernetes.kubernetes_deployment import \
-    get_kubernetes_deployment
-from modules.deployment.traffic_manager import (get_cloud_manager,
-                                                get_kubernetes_manager,
-                                                get_nginx_manager,
-                                                get_traffic_splitter)
+from modules.deployment.kubernetes.kubernetes_deployment import (
+    get_kubernetes_deployment,
+)
+from modules.deployment.traffic_manager import (
+    get_cloud_manager,
+    get_kubernetes_manager,
+    get_nginx_manager,
+    get_traffic_splitter,
+)
 from modules.monitoring.alert_system import AlertManager, AnomalyDetector
 from modules.monitoring.audit_monitor import get_audit_monitor
 from modules.monitoring.extractor import get_latest_errors
 from modules.monitoring.feedback_loop import FeedbackLoop
-from modules.monitoring.healing_audit import (end_healing_session,
-                                              get_healing_auditor,
-                                              start_healing_session)
+from modules.monitoring.healing_audit import (
+    end_healing_session,
+    get_healing_auditor,
+    start_healing_session,
+)
+
 # Import modules
 from modules.monitoring.logger import MonitoringLogger
 from modules.monitoring.metrics_collector import MetricsCollector
-from modules.monitoring.post_deployment import (PostDeploymentMonitor,
-                                                SuccessRateTracker)
+from modules.monitoring.post_deployment import PostDeploymentMonitor, SuccessRateTracker
 from modules.patch_generation.patcher import PatchGenerator
-from modules.security.approval import (ApprovalError, ApprovalStatus,
-                                       ApprovalType, create_approval_request,
-                                       get_approval_manager, needs_approval)
+from modules.security.approval import (
+    ApprovalError,
+    ApprovalStatus,
+    ApprovalType,
+    create_approval_request,
+    get_approval_manager,
+    needs_approval,
+)
 from modules.security.audit import get_audit_logger, log_fix
 from modules.security.healing_rate_limiter import get_healing_rate_limiter
-from modules.suggestion.suggestion_manager import (SuggestionStatus,
-                                                   get_suggestion_manager)
+from modules.suggestion.suggestion_manager import (
+    SuggestionStatus,
+    get_suggestion_manager,
+)
 from modules.testing.container_manager import ContainerManager
 from modules.testing.parallel_runner import ParallelTestRunner
 from modules.testing.regression_generator import RegressionTestGenerator
@@ -114,8 +126,8 @@ class Orchestrator:
         )
         if regression_enabled:
             self.regression_generator = RegressionTestGenerator(
-                output_dir=project_root /
-                self.config.get("testing", {})
+                output_dir=project_root
+                / self.config.get("testing", {})
                 .get("regression", {})
                 .get("save_path", "tests/regression"),
                 log_level=log_level,
@@ -978,8 +990,8 @@ class Orchestrator:
 
             # Check if we should use canary deployment
             if (
-                self.canary_enabled and
-                self.config["general"]["environment"] == "production"
+                self.canary_enabled
+                and self.config["general"]["environment"] == "production"
             ):
                 self.logger.info("Using canary deployment for gradual rollout")
 
@@ -2379,10 +2391,10 @@ def main():
             exit(1)
 
     elif (
-        args.canary_status or
-        args.canary_promote or
-        args.canary_complete or
-        args.canary_rollback
+        args.canary_status
+        or args.canary_promote
+        or args.canary_complete
+        or args.canary_rollback
     ):
         # Check if canary deployment is enabled
         if not orchestrator.canary_enabled:
@@ -2418,8 +2430,8 @@ def main():
         elif args.canary_promote:
             # Promote a canary deployment
             if (
-                canary_deployment.service_name != service_name or
-                canary_deployment.fix_id != args.canary_promote
+                canary_deployment.service_name != service_name
+                or canary_deployment.fix_id != args.canary_promote
             ):
                 print(
                     f"Loading canary deployment {args.canary_promote} for service {service_name}..."
@@ -2444,8 +2456,8 @@ def main():
         elif args.canary_complete:
             # Complete a canary deployment
             if (
-                canary_deployment.service_name != service_name or
-                canary_deployment.fix_id != args.canary_complete
+                canary_deployment.service_name != service_name
+                or canary_deployment.fix_id != args.canary_complete
             ):
                 print(
                     f"Loading canary deployment {args.canary_complete} for service {service_name}..."
@@ -2474,8 +2486,8 @@ def main():
         elif args.canary_rollback:
             # Roll back a canary deployment
             if (
-                canary_deployment.service_name != service_name or
-                canary_deployment.fix_id != args.canary_rollback
+                canary_deployment.service_name != service_name
+                or canary_deployment.fix_id != args.canary_rollback
             ):
                 print(
                     f"Loading canary deployment {args.canary_rollback} for service {service_name}..."
@@ -2609,7 +2621,9 @@ def main():
                 exit(0)
             else:  # text
                 from modules.monitoring.audit_report import (
-                    format_table, get_summary_report)
+                    format_table,
+                    get_summary_report,
+                )
 
                 if args.report_type == "summary":
                     output = get_summary_report(report)
@@ -2664,8 +2678,7 @@ def main():
                     else:
                         output += "No security events recorded."
                 else:  # full
-                    from modules.monitoring.audit_report import \
-                        get_user_activity_report
+                    from modules.monitoring.audit_report import get_user_activity_report
 
                     summary = get_summary_report(report)
                     user_activity = get_user_activity_report(report)

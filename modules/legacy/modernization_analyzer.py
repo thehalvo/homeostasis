@@ -594,7 +594,7 @@ class ModernizationAnalyzer:
         """Create comprehensive modernization plan."""
         # Analyze system statistics
         total_loc = sum(c.lines_of_code for c in components)
-        languages = {}
+        languages: Dict[str, int] = {}
         complexity_dist = {"low": 0, "medium": 0, "high": 0}
 
         for comp in components:
@@ -982,7 +982,7 @@ class ModernizationAnalyzer:
         payback_years = migration_cost / total_annual_benefit
 
         # 5-year NPV (assuming 10% discount rate)
-        npv = 0
+        npv = 0.0
         for year in range(1, 6):
             npv += total_annual_benefit / ((1.1) ** year)
         npv -= migration_cost

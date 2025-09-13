@@ -127,7 +127,7 @@ class UnifiedErrorTaxonomy:
     Provides mapping, classification, and pattern matching capabilities.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = logging.getLogger(__name__)
         self.error_patterns: Dict[str, ErrorPattern] = {}
         self.language_mappers: Dict[str, LanguageErrorMapper] = {}
@@ -590,14 +590,14 @@ class UnifiedErrorTaxonomy:
         # This would contain language-specific code templates
         language_fixes = {
             "python": {
-                "Add null/nil checks before access": "if obj is not None:\n    obj.method()",
-                "Add explicit type conversion": "int(value) or str(value) or float(value)",
-                "Add proper synchronization": "with threading.Lock():\n    # critical section",
+                "Add null/nil checks before access": {"code": "if obj is not None:\n    obj.method()"},
+                "Add explicit type conversion": {"code": "int(value) or str(value) or float(value)"},
+                "Add proper synchronization": {"code": "with threading.Lock():\n    # critical section"},
             },
             "javascript": {
-                "Add null/nil checks before access": "if (obj !== null && obj !== undefined) {\n    obj.method();\n}",
-                "Add explicit type conversion": "Number(value) or String(value) or Boolean(value)",
-                "Add proper synchronization": "// Use async/await or Promise chains",
+                "Add null/nil checks before access": {"code": "if (obj !== null && obj !== undefined) {\n    obj.method();\n}"},
+                "Add explicit type conversion": {"code": "Number(value) or String(value) or Boolean(value)"},
+                "Add proper synchronization": {"code": "// Use async/await or Promise chains"},
             },
             # Add more languages...
         }

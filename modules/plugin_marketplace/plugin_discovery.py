@@ -172,7 +172,7 @@ class PluginInfo:
         self.loaded_at = None
         self.error = None
         self.instance = None
-        self.metadata = {}
+        self.metadata: Dict[str, Any] = {}
 
     @property
     def id(self) -> str:
@@ -250,7 +250,7 @@ class PluginDiscovery:
         Returns:
             List of discovered plugins
         """
-        plugins = []
+        plugins: List[PluginInfo] = []
 
         for search_path in self.search_paths:
             plugins.extend(self.discover_in_path(search_path))
@@ -267,7 +267,7 @@ class PluginDiscovery:
         Returns:
             List of discovered plugins
         """
-        plugins = []
+        plugins: List[PluginInfo] = []
 
         if not path.exists():
             return plugins
@@ -471,7 +471,7 @@ class PluginRegistry:
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get registry statistics."""
-        stats = {
+        stats: Dict[str, Any] = {
             "total": len(self.plugins),
             "by_type": {},
             "by_status": {},
@@ -520,7 +520,7 @@ class PluginValidator:
         Returns:
             Tuple of (is_valid, list_of_issues)
         """
-        issues = []
+        issues: List[str] = []
 
         # Run security checks
         for check in self.security_checks:
@@ -541,7 +541,7 @@ class PluginValidator:
 
     def _check_permissions(self, plugin_info: PluginInfo) -> List[str]:
         """Check permission requirements."""
-        issues = []
+        issues: List[str] = []
         permissions = plugin_info.manifest.permissions
 
         # Check for dangerous permissions
@@ -561,7 +561,7 @@ class PluginValidator:
 
     def _check_dependencies(self, plugin_info: PluginInfo) -> List[str]:
         """Check dependency security."""
-        issues = []
+        issues: List[str] = []
 
         # This would integrate with vulnerability databases
         # For now, just a placeholder
@@ -570,7 +570,7 @@ class PluginValidator:
 
     def _check_code_signatures(self, plugin_info: PluginInfo) -> List[str]:
         """Check code signatures."""
-        issues = []
+        issues: List[str] = []
 
         # Check for signature file
         sig_file = plugin_info.path / "manifest.json.sig"
@@ -581,7 +581,7 @@ class PluginValidator:
 
     def _check_known_vulnerabilities(self, plugin_info: PluginInfo) -> List[str]:
         """Check for known vulnerabilities."""
-        issues = []
+        issues: List[str] = []
 
         # This would check against CVE databases
         # For now, just a placeholder
@@ -590,7 +590,7 @@ class PluginValidator:
 
     def _check_documentation(self, plugin_info: PluginInfo) -> List[str]:
         """Check documentation completeness."""
-        issues = []
+        issues: List[str] = []
 
         required_docs = ["README.md", "LICENSE", "CHANGELOG.md"]
         for doc in required_docs:
@@ -601,7 +601,7 @@ class PluginValidator:
 
     def _check_tests(self, plugin_info: PluginInfo) -> List[str]:
         """Check test coverage."""
-        issues = []
+        issues: List[str] = []
 
         test_dir = plugin_info.path / "tests"
         if not test_dir.exists():
@@ -611,7 +611,7 @@ class PluginValidator:
 
     def _check_code_quality(self, plugin_info: PluginInfo) -> List[str]:
         """Check code quality metrics."""
-        issues = []
+        issues: List[str] = []
 
         # This would run linters and static analysis
         # For now, just a placeholder
@@ -620,7 +620,7 @@ class PluginValidator:
 
     def _check_performance(self, plugin_info: PluginInfo) -> List[str]:
         """Check performance requirements."""
-        issues = []
+        issues: List[str] = []
 
         # This would run performance benchmarks
         # For now, just a placeholder

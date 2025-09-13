@@ -9,7 +9,7 @@ to enable LLM-based patch generation across multiple programming languages and f
 import json
 import logging
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -66,11 +66,8 @@ class FrameworkInfo:
     language: LanguageType
     version: Optional[str] = None
     confidence: float = 0.0
-    indicators: List[str] = None
+    indicators: List[str] = field(default_factory=list)
 
-    def __post_init__(self):
-        if self.indicators is None:
-            self.indicators = []
 
 
 @dataclass
@@ -5032,7 +5029,7 @@ class MultiLanguageFrameworkDetector:
         Returns:
             Context dictionary for LLM prompts
         """
-        context = {
+        context: Dict[str, Any] = {
             "language": language_info.language.value,
             "confidence": language_info.confidence,
             "features": language_info.language_features,

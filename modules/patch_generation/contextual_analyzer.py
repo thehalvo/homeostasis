@@ -67,8 +67,8 @@ class ContextualAnalyzer:
         """
         self.config = config or {}
         self.dependency_graph = nx.DiGraph()
-        self.file_cache = {}
-        self.analysis_cache = {}
+        self.file_cache: Dict[str, Any] = {}
+        self.analysis_cache: Dict[str, Any] = {}
 
         # Configuration
         self.max_depth = self.config.get("max_analysis_depth", 5)
@@ -520,7 +520,7 @@ class ContextualAnalyzer:
 
     def _analyze_module_structure(self, root_dir: str) -> Dict[str, Any]:
         """Analyze the module structure of the project."""
-        structure = {"packages": [], "modules": [], "standalone_files": []}
+        structure: Dict[str, List[Any]] = {"packages": [], "modules": [], "standalone_files": []}
 
         root_path = Path(root_dir)
 
@@ -592,7 +592,7 @@ class ContextualAnalyzer:
 
     def _analyze_test_coverage(self, target_file: str, root_dir: str) -> Dict[str, Any]:
         """Analyze test coverage for the target file."""
-        coverage = {
+        coverage: Dict[str, Any] = {
             "has_tests": False,
             "test_files": [],
             "test_functions": [],
@@ -1006,15 +1006,15 @@ class ContextualAnalyzer:
         for match in re.finditer(func_pattern, content):
             func_name = match.group(1) or match.group(2)
             if func_name:
-                line = content[: match.start()].count("\n") + 1
-                graph.add_node(func_name, type="function", line=line)
+                line_num = content[: match.start()].count("\n") + 1
+                graph.add_node(func_name, type="function", line=line_num)
 
         # Class declarations
         class_pattern = r"class\s+(\w+)"
         for match in re.finditer(class_pattern, content):
             class_name = match.group(1)
-            line = content[: match.start()].count("\n") + 1
-            graph.add_node(class_name, type="class", line=line)
+            line_num = content[: match.start()].count("\n") + 1
+            graph.add_node(class_name, type="class", line=line_num)
 
         # Simple call detection
         call_pattern = r"(\w+)\s*\("
@@ -1045,8 +1045,8 @@ class ContextualAnalyzer:
         class_pattern = r"(?:public\s+)?(?:abstract\s+)?(?:final\s+)?class\s+(\w+)"
         for match in re.finditer(class_pattern, content):
             class_name = match.group(1)
-            line = content[: match.start()].count("\n") + 1
-            graph.add_node(class_name, type="class", line=line)
+            line_num = content[: match.start()].count("\n") + 1
+            graph.add_node(class_name, type="class", line=line_num)
 
         # Method declarations
         method_pattern = r"(?:public\s+|private\s+|protected\s+)?(?:static\s+)?(?:final\s+)?(?:\w+(?:<[^>]+>)?)\s+(\w+)\s*\([^)]*\)\s*(?:throws\s+[^{]+)?\s*\{"
@@ -1093,7 +1093,7 @@ class ContextualAnalyzer:
 
     def _analyze_python_data_flow(self, content: str) -> Dict[str, Any]:
         """Analyze data flow in Python code."""
-        data_flow = {
+        data_flow: Dict[str, Any] = {
             "variables": {},
             "parameters": {},
             "returns": {},
@@ -1179,7 +1179,7 @@ class ContextualAnalyzer:
 
     def _analyze_javascript_data_flow(self, content: str) -> Dict[str, Any]:
         """Analyze data flow in JavaScript/TypeScript code."""
-        data_flow = {
+        data_flow: Dict[str, Any] = {
             "variables": {},
             "parameters": {},
             "returns": {},
@@ -1218,7 +1218,7 @@ class ContextualAnalyzer:
         # Return statements
         return_pattern = r"return\s+([^;]+);"
         for match in re.finditer(return_pattern, content):
-            line = content[: match.start()].count("\n") + 1
+            line_num = content[: match.start()].count("\n") + 1
             # Find containing function (simplified)
             preceding = content[: match.start()]
             func_matches = list(re.finditer(func_pattern, preceding))
@@ -1229,7 +1229,7 @@ class ContextualAnalyzer:
                     if func_name not in data_flow["returns"]:
                         data_flow["returns"][func_name] = []
                     data_flow["returns"][func_name].append(
-                        {"type": "expression", "line": line}
+                        {"type": "expression", "line": line_num}
                     )
 
         return data_flow

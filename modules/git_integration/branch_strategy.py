@@ -13,7 +13,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from modules.monitoring.logger import HomeostasisLogger
+from modules.monitoring.logger import MonitoringLogger
 
 
 class BranchType(Enum):
@@ -72,14 +72,14 @@ class BranchStrategy:
         """
         self.repo_path = Path(repo_path)
         self.config = config or self._load_default_config()
-        self.logger = HomeostasisLogger(__name__)
+        self.logger = MonitoringLogger(__name__)
 
         # Initialize branch strategies
         self.strategies = self._initialize_strategies()
 
         # Cache for branch information
-        self._branch_cache = {}
-        self._cache_expiry = {}
+        self._branch_cache: Dict[str, Any] = {}
+        self._cache_expiry: Dict[str, float] = {}
 
     def _load_default_config(self) -> Dict[str, Any]:
         """Load default configuration for branch strategies."""

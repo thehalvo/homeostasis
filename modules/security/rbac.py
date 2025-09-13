@@ -20,7 +20,7 @@ class PermissionDeniedError(Exception):
 class RBACManager:
     """Manages role-based access control for Homeostasis."""
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict] = None):
         """Initialize the RBAC manager.
 
         Args:
@@ -352,7 +352,7 @@ class RBACManager:
 _rbac_manager = None
 
 
-def get_rbac_manager(config: Dict = None) -> RBACManager:
+def get_rbac_manager(config: Optional[Dict] = None) -> RBACManager:
     """Get or create the singleton RBACManager instance.
 
     Args:

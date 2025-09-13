@@ -523,8 +523,8 @@ class TestEnvironmentCache:
         environment_id: str,
         test_type: str,
         container_id: Optional[str] = None,
-        files_to_snapshot: List[Path] = None,
-        metadata: Dict[str, Any] = None,
+        files_to_snapshot: Optional[List[Path]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Create a snapshot of a test environment.

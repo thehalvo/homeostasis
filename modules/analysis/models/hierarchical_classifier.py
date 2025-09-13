@@ -146,7 +146,9 @@ def secure_torch_load(
                 )
             except (TypeError, pickle.UnpicklingError):
                 # Fallback to restricted unpickler if weights_only fails
-                return torch.load(filepath, map_location=map_location)  # nosec: B614 - Using RestrictedUnpickler for safety
+                return torch.load(
+                    filepath, map_location=map_location
+                )  # nosec: B614 - Using RestrictedUnpickler for safety
         finally:
             pickle.Unpickler = original_unpickler
 

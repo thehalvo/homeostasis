@@ -76,10 +76,10 @@ class SwiftDependencyAnalyzer:
         Returns:
             Analysis results with dependency information
         """
-        project_path = Path(project_path)
+        project_path_obj = Path(project_path)
 
         # Look for Package.swift file
-        package_file = project_path / "Package.swift"
+        package_file = project_path_obj / "Package.swift"
         if not package_file.exists():
             return {
                 "has_spm": False,
@@ -95,10 +95,10 @@ class SwiftDependencyAnalyzer:
             package_info = self._parse_package_swift(package_file)
 
             # Analyze dependencies
-            dependency_analysis = self._analyze_dependencies(package_info, project_path)
+            dependency_analysis = self._analyze_dependencies(package_info, project_path_obj)
 
             # Check for common issues
-            issues = self._check_dependency_issues(package_info, project_path)
+            issues = self._check_dependency_issues(package_info, project_path_obj)
 
             return {
                 "has_spm": True,
@@ -140,7 +140,7 @@ class SwiftDependencyAnalyzer:
 
     def _extract_dependencies(self, content: str) -> List[Dict[str, Any]]:
         """Extract dependencies from Package.swift content."""
-        dependencies = []
+        dependencies: List[Dict[str, Any]] = []
 
         # Find dependencies array
         deps_match = re.search(r"dependencies:\s*\[(.*?)\]", content, re.DOTALL)
@@ -186,7 +186,7 @@ class SwiftDependencyAnalyzer:
 
     def _extract_targets(self, content: str) -> List[Dict[str, Any]]:
         """Extract targets from Package.swift content."""
-        targets = []
+        targets: List[Dict[str, Any]] = []
 
         # Find targets array
         targets_match = re.search(r"targets:\s*\[(.*?)\]", content, re.DOTALL)
@@ -202,7 +202,7 @@ class SwiftDependencyAnalyzer:
         matches = re.finditer(target_pattern, targets_content, re.DOTALL)
 
         for match in matches:
-            target = {"name": match.group(1), "dependencies": []}
+            target: Dict[str, Any] = {"name": match.group(1), "dependencies": []}
 
             if match.group(2):
                 # Extract target dependencies
@@ -216,7 +216,7 @@ class SwiftDependencyAnalyzer:
 
     def _extract_platforms(self, content: str) -> List[str]:
         """Extract supported platforms from Package.swift content."""
-        platforms = []
+        platforms: List[str] = []
 
         platforms_match = re.search(r"platforms:\s*\[(.*?)\]", content, re.DOTALL)
         if not platforms_match:
@@ -238,7 +238,7 @@ class SwiftDependencyAnalyzer:
         """Analyze the dependencies for potential issues."""
         dependencies = package_info.get("dependencies", [])
 
-        analysis = {
+        analysis: Dict[str, Any] = {
             "total_dependencies": len(dependencies),
             "remote_dependencies": len(
                 [d for d in dependencies if d.get("type") == "remote"]
@@ -311,7 +311,7 @@ class SwiftDependencyAnalyzer:
         dependencies = package_info.get("dependencies", [])
 
         # Group dependencies by package name
-        package_groups = {}
+        package_groups: Dict[str, List[Dict[str, Any]]] = {}
         for dep in dependencies:
             if dep.get("type") == "remote":
                 url = dep.get("url", "")

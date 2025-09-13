@@ -37,7 +37,10 @@ from .formal_verification import (
     create_example_critical_system,
     verify_critical_healing,
 )
-from .hardware_boundary_healing import CPUMonitor, DiskMonitor
+from .hardware_boundary_healing import (
+    CPUMonitor,
+    DiskMonitor,
+)
 from .hardware_boundary_healing import FaultType as HardwareFaultType
 from .hardware_boundary_healing import (
     HardwareComponent,

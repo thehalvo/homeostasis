@@ -687,7 +687,9 @@ class SlackIntegration:
                 if self.webhook_url:
                     # Use webhook
                     response = requests.post(
-                        self.webhook_url, json={"channel": channel, **slack_message}, timeout=30
+                        self.webhook_url,
+                        json={"channel": channel, **slack_message},
+                        timeout=30,
                     )
                     response.raise_for_status()
 

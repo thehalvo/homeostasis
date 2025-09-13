@@ -585,7 +585,7 @@ class EnvironmentCollector:
         Returns:
             Dictionary of environmental factors
         """
-        factors = {}
+        factors: Dict[str, EnvironmentalFactor] = {}
 
         if not custom_data or not isinstance(custom_data, dict):
             return factors
@@ -653,6 +653,11 @@ class EnvironmentCorrelator:
     """
     Correlates errors with environmental factors.
     """
+
+    collector: EnvironmentCollector
+    error_occurrences: defaultdict[str, List[Any]]
+    factor_values: defaultdict[str, List[Any]]
+    error_factors: defaultdict[str, Any]
 
     def __init__(self):
         """Initialize the environment correlator."""
@@ -745,7 +750,7 @@ class EnvironmentCorrelator:
         Returns:
             Dictionary with correlation analysis
         """
-        results = {
+        results: Dict[str, Any] = {
             "correlations": [],
             "error_counts": {},
             "factor_stats": {},
@@ -963,7 +968,7 @@ class EnvironmentCorrelator:
         Returns:
             List of factor patterns
         """
-        patterns = []
+        patterns: List[Dict[str, Any]] = []
 
         for etype in error_types:
             occurrences = self.error_occurrences[etype]
@@ -972,7 +977,7 @@ class EnvironmentCorrelator:
                 continue
 
             # Group factor values by occurrence
-            factor_sets = []
+            factor_sets: List[Dict[str, Any]] = []
 
             for occurrence in occurrences:
                 error_id = occurrence["error_id"]
@@ -991,7 +996,7 @@ class EnvironmentCorrelator:
                 continue
 
             # Find common combinations (simplified association rule mining)
-            factor_combinations = defaultdict(int)
+            factor_combinations: defaultdict[Any, int] = defaultdict(int)
 
             for factor_set in factor_sets:
                 # Generate combinations of factors
@@ -1004,7 +1009,7 @@ class EnvironmentCorrelator:
                         factor_combinations[key] += 1
 
             # Filter significant combinations
-            significant_combinations = []
+            significant_combinations: List[Dict[str, Any]] = []
 
             for combo, count in factor_combinations.items():
                 if (
@@ -1029,13 +1034,13 @@ class EnvironmentCorrelator:
                         "occurrences": len(occurrences),
                         "factor_combinations": sorted(
                             significant_combinations,
-                            key=lambda x: x["confidence"],
+                            key=lambda x: float(x["confidence"]),
                             reverse=True,
                         ),
                     }
                 )
 
-        return sorted(patterns, key=lambda x: x.get("occurrences", 0), reverse=True)
+        return sorted(patterns, key=lambda x: int(x.get("occurrences", 0)), reverse=True)
 
     def suggest_monitoring(self) -> Dict[str, Any]:
         """

@@ -13,8 +13,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from ..analysis.healing_metrics import \
-    HealingMetricsCollector as HealingMetrics
+from ..analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
 from ..analysis.rule_config import Rule, RuleConfidence
 from ..llm_integration.patch_generator import PatchData
 

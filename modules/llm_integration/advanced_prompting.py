@@ -67,9 +67,9 @@ class AdvancedPromptManager:
             config: Configuration dictionary
         """
         self.config = config or {}
-        self.templates = {}
-        self.example_cache = {}
-        self.prompt_history = []
+        self.templates: Dict[str, PromptTemplate] = {}
+        self.example_cache: Dict[str, Any] = {}
+        self.prompt_history: List[Dict[str, Any]] = []
 
         # Configuration
         self.max_examples = self.config.get("max_examples", 5)

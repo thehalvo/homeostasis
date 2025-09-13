@@ -5,7 +5,7 @@ Enhanced confidence scoring for rule-based error analysis.
 import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from .rule_categories import EnhancedRule
 from .rule_config import Rule, RuleConfidence
@@ -74,7 +74,7 @@ class ConfidenceScorer:
     def score_match(
         rule: Union[Rule, EnhancedRule],
         match: re.Match,
-        error_context: Dict[str, Any] = None,
+        error_context: Optional[Dict[str, Any]] = None,
     ) -> RuleMatch:
         """
         Score a match based on various factors.
@@ -94,7 +94,7 @@ class ConfidenceScorer:
 
         # Calculate individual scores
         rule_match.context_score = ConfidenceScorer._calculate_context_score(
-            rule, error_context
+            rule, match, error_context
         )
         rule_match.specificity_score = ConfidenceScorer._calculate_specificity_score(
             rule, match
@@ -108,13 +108,14 @@ class ConfidenceScorer:
 
     @staticmethod
     def _calculate_context_score(
-        rule: Union[Rule, EnhancedRule], error_context: Dict[str, Any]
+        rule: Union[Rule, EnhancedRule], match: re.Match, error_context: Dict[str, Any]
     ) -> float:
         """
         Calculate context-based confidence score.
 
         Args:
             rule: The rule being scored
+            match: The regex match object
             error_context: Information about the error's context
 
         Returns:
@@ -141,8 +142,8 @@ class ConfidenceScorer:
                     locals_dict = frame["locals"]
 
                     # For KeyError, check if the key is mentioned in locals
-                    if rule.type == "KeyError" and rule.match and rule.match.groups():
-                        key_name = rule.match.group(1).strip("'\"")
+                    if rule.type == "KeyError" and match and match.groups():
+                        key_name = match.group(1).strip("'\"")
                         # Check if key exists in any dict in locals
                         for var_name, var_value in locals_dict.items():
                             if isinstance(var_value, dict) and key_name in var_value:

@@ -211,7 +211,7 @@ def get_error_summary(
     )
 
     # Count errors by type
-    error_types = defaultdict(int)
+    error_types: Dict[str, int] = defaultdict(int)
     for error in errors:
         # Check both top-level and in error_details
         error_type = error.get("exception_type", "Unknown")
@@ -221,13 +221,13 @@ def get_error_summary(
         error_types[error_type] += 1
 
     # Count errors by service
-    services = defaultdict(int)
+    services: Dict[str, int] = defaultdict(int)
     for error in errors:
         service = error.get("service", "Unknown")
         services[service] += 1
 
     # Count errors by endpoint (for HTTP requests)
-    endpoints = defaultdict(int)
+    endpoints: Dict[str, int] = defaultdict(int)
     for error in errors:
         request_info = error.get("request_info", {})
         if request_info:
@@ -238,14 +238,14 @@ def get_error_summary(
                 endpoints[endpoint] += 1
 
     # Count errors by tag
-    tags = defaultdict(int)
+    tags: Dict[str, int] = defaultdict(int)
     for error in errors:
         for tag in error.get("tags", []):
             tags[tag] += 1
 
     # Get error counts by time periods
     current_time = datetime.now()
-    time_periods = {
+    time_periods: Dict[str, Any] = {
         "last_hour": 0,
         "last_day": 0,
         "last_week": 0,

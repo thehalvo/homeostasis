@@ -10,11 +10,12 @@ import json
 import os
 import sqlite3
 import statistics
+import sys
 import threading
 import time
 import warnings
 from contextlib import contextmanager
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
@@ -32,7 +33,7 @@ class PerformanceMetric:
     timestamp: datetime
     git_commit: str
     environment: Dict[str, Any]
-    metadata: Dict[str, Any] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -407,7 +408,7 @@ class PerformanceRegressionDetector:
 class PerformanceRegressionTester:
     """Main class for running performance regression tests."""
 
-    def __init__(self, detector: PerformanceRegressionDetector = None):
+    def __init__(self, detector: Optional[PerformanceRegressionDetector] = None):
         self.detector = detector or PerformanceRegressionDetector()
         self.tracker = PerformanceTracker()
         self.current_git_commit = self._get_git_commit()
@@ -429,13 +430,13 @@ class PerformanceRegressionTester:
         """Get environment information."""
         return {
             "platform": os.uname().sysname,
-            "python_version": f"{os.sys.version_info.major}.{os.sys.version_info.minor}",
+            "python_version": f"{sys.version_info.major}.{sys.version_info.minor}",
             "cpu_count": psutil.cpu_count(),
             "total_memory": psutil.virtual_memory().total / 1024 / 1024 / 1024,  # GB
         }
 
     @contextmanager
-    def measure(self, test_name: str, metadata: Dict[str, Any] = None):
+    def measure(self, test_name: str, metadata: Optional[Dict[str, Any]] = None):
         """Context manager for measuring performance."""
         self.tracker.start()
 
@@ -487,7 +488,7 @@ class PerformanceRegressionTester:
         test_name: str,
         iterations: int = 10,
         warmup: int = 2,
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """Run a benchmark with multiple iterations."""
         # Warmup runs
@@ -589,7 +590,7 @@ class PerformanceWarning(UserWarning):
 
 
 # Decorator for easy performance testing
-def performance_test(name: str = None, iterations: int = 10, warmup: int = 2):
+def performance_test(name: Optional[str] = None, iterations: int = 10, warmup: int = 2):
     """Decorator for marking performance tests."""
 
     def decorator(func):

@@ -11,7 +11,7 @@ import logging
 import os
 import pkgutil
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
@@ -30,10 +30,10 @@ class ModuleContext:
     is_stdlib: bool = False
     is_third_party: bool = False
     is_local: bool = False
-    symbols: Dict[str, Any] = None
-    functions: Set[str] = None
-    classes: Set[str] = None
-    constants: Dict[str, Any] = None
+    symbols: Dict[str, Any] = field(default_factory=dict)
+    functions: Set[str] = field(default_factory=set)
+    classes: Set[str] = field(default_factory=set)
+    constants: Dict[str, Any] = field(default_factory=dict)
     doc: Optional[str] = None
 
 
@@ -43,7 +43,7 @@ class ImportAnalyzer:
     """
 
     def __init__(
-        self, ast_analyzer: ASTAnalyzer = None, project_root: Optional[Path] = None
+        self, ast_analyzer: Optional[ASTAnalyzer] = None, project_root: Optional[Path] = None
     ):
         """
         Initialize the import analyzer.

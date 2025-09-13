@@ -17,15 +17,14 @@ import json
 import logging
 import re
 import secrets
-
-# Always import defusedxml for security
-import defusedxml.ElementTree as ET
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import urlencode
 
+# Always import defusedxml for security
+import defusedxml.ElementTree as ET
 import ldap
 import requests
 

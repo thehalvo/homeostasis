@@ -12,7 +12,7 @@ import os
 import socket
 import uuid
 from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class AuditLogger:
     """Handles structured audit logging for security events."""
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict[Any, Any]] = None):
         """Initialize the audit logger.
 
         Args:
@@ -57,6 +57,7 @@ class AuditLogger:
         rotation = self.config.get("rotation", "daily")
         retention = self.config.get("retention", 90)  # days
 
+        handler: logging.Handler
         if rotation == "size":
             # Rotate based on size
             max_bytes = self.config.get("max_bytes", 10 * 1024 * 1024)  # 10 MB
@@ -95,8 +96,8 @@ class AuditLogger:
     def log_event(
         self,
         event_type: str,
-        user: str = None,
-        details: Dict = None,
+        user: Optional[str] = None,
+        details: Optional[Dict[Any, Any]] = None,
         status: str = "success",
         severity: str = "info",
     ) -> str:
@@ -140,8 +141,8 @@ class AuditLogger:
         self,
         username: str,
         status: str = "success",
-        source_ip: str = None,
-        details: Dict = None,
+        source_ip: Optional[str] = None,
+        details: Optional[Dict[Any, Any]] = None,
     ) -> str:
         """Log a login event.
 
@@ -169,7 +170,7 @@ class AuditLogger:
         )
 
     def log_logout(
-        self, username: str, session_duration: int = None, source_ip: str = None
+        self, username: str, session_duration: Optional[int] = None, source_ip: Optional[str] = None
     ) -> str:
         """Log a logout event.
 
@@ -181,7 +182,7 @@ class AuditLogger:
         Returns:
             str: Event ID
         """
-        details = {}
+        details: Dict[str, Any] = {}
         if session_duration is not None:
             details["session_duration"] = session_duration
         if source_ip:
@@ -195,8 +196,8 @@ class AuditLogger:
         resource: str,
         action: str,
         status: str = "success",
-        source_ip: str = None,
-        details: Dict = None,
+        source_ip: Optional[str] = None,
+        details: Optional[Dict[Any, Any]] = None,
     ) -> str:
         """Log a resource access event.
 
@@ -231,9 +232,9 @@ class AuditLogger:
         self,
         fix_id: str,
         event_type: str,
-        user: str = None,
+        user: Optional[str] = None,
         status: str = "success",
-        details: Dict = None,
+        details: Optional[Dict[Any, Any]] = None,
     ) -> str:
         """Log a fix-related event.
 
@@ -261,9 +262,9 @@ class AuditLogger:
         self,
         fix_id: str,
         environment: str,
-        user: str = None,
+        user: Optional[str] = None,
         status: str = "success",
-        details: Dict = None,
+        details: Optional[Dict[Any, Any]] = None,
     ) -> str:
         """Log a deployment event.
 
@@ -339,10 +340,10 @@ class AuditLogger:
     def log_security_event(
         self,
         event_type: str,
-        user: str = None,
-        source_ip: str = None,
+        user: Optional[str] = None,
+        source_ip: Optional[str] = None,
         severity: str = "warning",
-        details: Dict = None,
+        details: Optional[Dict[Any, Any]] = None,
     ) -> str:
         """Log a security-related event.
 
@@ -373,7 +374,7 @@ class AuditLogger:
 _audit_logger = None
 
 
-def get_audit_logger(config: Dict = None) -> AuditLogger:
+def get_audit_logger(config: Optional[Dict[Any, Any]] = None) -> AuditLogger:
     """Get or create the singleton AuditLogger instance.
 
     Args:
@@ -390,8 +391,8 @@ def get_audit_logger(config: Dict = None) -> AuditLogger:
 
 def log_event(
     event_type: str,
-    user: str = None,
-    details: Dict = None,
+    user: Optional[str] = None,
+    details: Optional[Dict[Any, Any]] = None,
     status: str = "success",
     severity: str = "info",
 ) -> str:
@@ -417,7 +418,7 @@ def log_event(
 
 
 def log_login(
-    username: str, status: str = "success", source_ip: str = None, details: Dict = None
+    username: str, status: str = "success", source_ip: Optional[str] = None, details: Optional[Dict[Any, Any]] = None
 ) -> str:
     """Log a login event.
 
@@ -438,9 +439,9 @@ def log_login(
 def log_fix(
     fix_id: str,
     event_type: str,
-    user: str = None,
+    user: Optional[str] = None,
     status: str = "success",
-    details: Dict = None,
+    details: Optional[Dict[Any, Any]] = None,
 ) -> str:
     """Log a fix-related event.
 

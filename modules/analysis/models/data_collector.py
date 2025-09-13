@@ -87,7 +87,7 @@ class DataAnonymizer:
             Anonymized error data
         """
         # Make a deep copy to avoid modifying the original
-        result = {}
+        result: Dict[str, Any] = {}
 
         for key, value in error_data.items():
             if isinstance(value, str):
@@ -446,7 +446,7 @@ class ErrorDataCollector:
             return []
 
         # Get all labels
-        labels_by_error_id = {}
+        labels_by_error_id: Dict[str, Tuple[str, str]] = {}
         with open(self.labels_file, "r") as f:
             for line in f:
                 try:
@@ -527,7 +527,7 @@ class ErrorDataCollector:
 
         elif format == "json":
             # Convert to a single JSON file
-            dataset = {
+            dataset: Dict[str, Any] = {
                 "metadata": self.get_dataset_stats(),
                 "errors": [],
                 "labels": [],
@@ -810,7 +810,7 @@ class SyntheticDataGenerator:
         """
         import random
 
-        variables = {}
+        variables: Dict[str, Any] = {}
 
         # Add some random variables
         for _ in range(random.randint(1, 5)):

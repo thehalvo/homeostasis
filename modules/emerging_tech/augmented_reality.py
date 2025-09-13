@@ -64,7 +64,7 @@ class ARError:
     suggested_fix: Optional[str] = None
     confidence: float = 0.0
     severity: str = "medium"
-    timestamp: datetime = None
+    timestamp: Optional[datetime] = None
 
 
 @dataclass
@@ -327,7 +327,7 @@ class ARResilienceManager:
             },
         }
 
-    def _initialize_performance_thresholds(self) -> Dict[str, Dict[str, float]]:
+    def _initialize_performance_thresholds(self) -> Dict[str, Dict[str, Any]]:
         """Initialize performance thresholds for different platforms"""
         return {
             "mobile_ar": {
@@ -337,7 +337,7 @@ class ARResilienceManager:
                 "max_cpu_usage": 0.80,
                 "max_gpu_usage": 0.85,
                 "max_memory_usage": 0.75,
-                "max_thermal_state": "nominal",
+                "max_thermal_state_numeric": 1.0,  # 0=idle, 1=nominal, 2=serious, 3=critical
                 "min_tracking_quality": 0.7,
             },
             "standalone_vr": {
@@ -403,7 +403,7 @@ class ARResilienceManager:
             platform_scores[platform] = score
 
         # Return the platform with highest score if it's above threshold
-        best_platform = max(platform_scores, key=platform_scores.get)
+        best_platform = max(platform_scores, key=lambda k: platform_scores[k])
         if platform_scores[best_platform] >= 4:
             return best_platform
 
@@ -509,7 +509,7 @@ class ARResilienceManager:
                 error_type=ARErrorType.THERMAL_THROTTLING,
                 platform=platform,
                 description=f"Device thermal throttling: {metrics.thermal_state}",
-                performance_metrics={"thermal_state": metrics.thermal_state},
+                performance_metrics={},
                 suggested_fix="Reduce workload to prevent overheating",
                 severity="critical",
                 confidence=0.9,
@@ -709,6 +709,8 @@ public class DynamicLODManager {
         }
 
         strategy_name = strategy.get("name")
+        if strategy_name is None:
+            return None
         return healing_templates.get(strategy_name)
 
     def _generate_arkit_healing(
@@ -884,6 +886,8 @@ class FallbackTrackingManager {
         }
 
         strategy_name = strategy.get("name")
+        if strategy_name is None:
+            return None
         return healing_templates.get(strategy_name)
 
     def _generate_unity_healing(
@@ -1129,6 +1133,8 @@ public class AdaptiveRenderScale : MonoBehaviour
         }
 
         strategy_name = strategy.get("name")
+        if strategy_name is None:
+            return None
         return healing_templates.get(strategy_name)
 
     def _generate_webxr_healing(
@@ -1468,6 +1474,8 @@ class XRComfortMode {
         }
 
         strategy_name = strategy.get("name")
+        if strategy_name is None:
+            return None
         return healing_templates.get(strategy_name)
 
     def _generate_generic_ar_healing(
@@ -1786,11 +1794,13 @@ class AnchorStabilizer {
         }
 
         strategy_name = strategy.get("name")
+        if strategy_name is None:
+            return None
         return healing_templates.get(strategy_name)
 
     def analyze_performance(self, metrics: ARPerformanceMetrics) -> Dict[str, Any]:
         """Analyze AR application performance"""
-        analysis = {"overall_status": "healthy", "issues": [], "recommendations": []}
+        analysis: Dict[str, Any] = {"overall_status": "healthy", "issues": [], "recommendations": []}
 
         # Determine platform category
         if metrics.motion_to_photon_latency_ms is not None:
@@ -1865,7 +1875,7 @@ class AnchorStabilizer {
         self, platform: ARPlatform, device_capabilities: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Generate optimized AR configuration for platform"""
-        config = {
+        config: Dict[str, Any] = {
             "platform": platform.value,
             "generated_at": datetime.now().isoformat(),
             "settings": {},

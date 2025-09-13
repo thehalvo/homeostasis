@@ -943,12 +943,12 @@ class SelfHealingCurriculum:
 
     def _generate_weekly_schedule(self, module: CourseModule) -> List[Dict[str, Any]]:
         """Generate a weekly schedule for a module."""
-        weeks = []
+        weeks: List[Dict[str, Any]] = []
         topics_per_week = len(module.topics) / (module.duration_hours / 3)
 
         topic_index = 0
         for week in range(1, (module.duration_hours // 3) + 1):
-            week_content = {
+            week_content: Dict[str, Any] = {
                 "week": week,
                 "topics": [],
                 "activities": [],
@@ -978,7 +978,7 @@ class SelfHealingCurriculum:
 
     def _calculate_assessment_weights(self, module: CourseModule) -> Dict[str, float]:
         """Calculate assessment weights for grading."""
-        weights = {}
+        weights: Dict[str, float] = {}
         total_weight = sum(a.get("weight", 0) for a in module.assessments)
 
         for assessment in module.assessments:
@@ -1261,7 +1261,7 @@ def generate_interactive_exercise(
     topic: str, difficulty: str = "medium"
 ) -> Dict[str, Any]:
     """Generate an interactive coding exercise."""
-    exercises = {
+    exercises: Dict[str, Dict[str, Any]] = {
         "error_detection": {
             "title": "Implement Basic Error Detection",
             "description": "Create a function that detects common Python errors in log files",
@@ -1416,7 +1416,7 @@ def create_workshop_materials(topic: str, duration_hours: int = 8) -> Dict[str, 
     Returns:
         Workshop materials package
     """
-    materials = {
+    materials: Dict[str, Any] = {
         "title": topic,  # For backward compatibility
         "topic": topic,
         "duration": f"{duration_hours} hours",  # For compatibility with tests

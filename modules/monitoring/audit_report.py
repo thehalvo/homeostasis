@@ -24,8 +24,8 @@ project_root = Path(__file__).parents[2]
 sys.path.insert(0, str(project_root))
 
 from modules.monitoring.audit_monitor import export_audit_data  # noqa: E402
-from modules.monitoring.audit_monitor import (
-    generate_activity_report,  # noqa: E402
+from modules.monitoring.audit_monitor import (  # noqa: E402
+    generate_activity_report,
     get_audit_monitor,
 )
 

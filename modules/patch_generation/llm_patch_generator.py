@@ -20,8 +20,12 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ..analysis.llm_context_manager import LLMContextManager
 from ..llm_integration.api_key_manager import APIKeyManager
-from ..llm_integration.provider_abstraction import (LLMError, LLMManager,
-                                                    LLMMessage, LLMRequest)
+from ..llm_integration.provider_abstraction import (
+    LLMError,
+    LLMManager,
+    LLMMessage,
+    LLMRequest,
+)
 from ..security.llm_security_manager import create_llm_security_manager
 from .code_style_analyzer import create_code_style_analyzer
 from .multi_language_framework_detector import create_multi_language_detector

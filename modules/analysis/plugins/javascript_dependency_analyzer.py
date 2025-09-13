@@ -71,10 +71,10 @@ class JavaScriptDependencyAnalyzer:
         Returns:
             Analysis results including conflicts, missing dependencies, and suggestions
         """
-        project_path = Path(project_path)
+        project_path_obj = Path(project_path)
 
         # Find package.json
-        package_json_path = project_path / "package.json"
+        package_json_path = project_path_obj / "package.json"
         if not package_json_path.exists():
             return {
                 "error": "package.json not found",
@@ -95,12 +95,12 @@ class JavaScriptDependencyAnalyzer:
         analysis = {
             "project_name": package_data.get("name", "unknown"),
             "project_version": package_data.get("version", "0.0.0"),
-            "package_manager": self._detect_package_manager(project_path),
+            "package_manager": self._detect_package_manager(project_path_obj),
             "dependencies": self._analyze_dependencies(package_data),
             "dev_dependencies": self._analyze_dev_dependencies(package_data),
             "peer_dependencies": self._analyze_peer_dependencies(package_data),
-            "conflicts": self._detect_version_conflicts(package_data, project_path),
-            "missing_dependencies": self._detect_missing_dependencies(project_path),
+            "conflicts": self._detect_version_conflicts(package_data, project_path_obj),
+            "missing_dependencies": self._detect_missing_dependencies(project_path_obj),
             "security_issues": self._detect_security_issues(package_data),
             "outdated_packages": self._detect_outdated_packages(package_data),
             "suggestions": [],
@@ -284,7 +284,7 @@ class JavaScriptDependencyAnalyzer:
         missing = []
 
         # Look for JavaScript files
-        js_files = []
+        js_files: List[Path] = []
         for pattern in ["**/*.js", "**/*.mjs", "**/*.cjs", "**/*.jsx"]:
             js_files.extend(project_path.glob(pattern))
 

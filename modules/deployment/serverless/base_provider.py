@@ -18,7 +18,7 @@ class ServerlessProvider(abc.ABC):
     This class defines the interface that all serverless providers must implement.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize base serverless provider.
 
         Args:

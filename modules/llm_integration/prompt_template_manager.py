@@ -354,7 +354,7 @@ class PromptTemplateManager:
                 continue
 
             # Calculate matching score
-            score = 0
+            score: float = 0
 
             # Exact domain match
             if domain and template.metadata.domain == domain:

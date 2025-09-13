@@ -96,13 +96,13 @@ class CostTracker:
         self.provider_configs = provider_configs or {}
 
         # Cost tracking
-        self.cost_history = deque(maxlen=10000)  # Keep last 10k transactions
-        self.budget_usage = defaultdict(float)  # Current usage per budget
-        self.budget_periods = {}  # Track budget period start times
+        self.cost_history: deque[Dict[str, Any]] = deque(maxlen=10000)  # Keep last 10k transactions
+        self.budget_usage: defaultdict[str, float] = defaultdict(float)  # Current usage per budget
+        self.budget_periods: Dict[str, float] = {}  # Track budget period start times
 
         # Alerts
         self.alert_callbacks: List[Callable[[CostAlert], None]] = []
-        self.sent_alerts = defaultdict(set)  # Track sent alerts to avoid duplicates
+        self.sent_alerts: defaultdict[str, set[float]] = defaultdict(set)  # Track sent alerts to avoid duplicates
 
         # Thread safety
         self._lock = threading.Lock()
@@ -464,7 +464,7 @@ class CostTracker:
         total_cost = sum(tx["cost"] for tx in recent_transactions)
         total_tokens = sum(tx["tokens"] for tx in recent_transactions)
 
-        breakdown = defaultdict(lambda: {"cost": 0.0, "tokens": 0, "requests": 0})
+        breakdown: defaultdict[str, Dict[str, Any]] = defaultdict(lambda: {"cost": 0.0, "tokens": 0, "requests": 0})
 
         for tx in recent_transactions:
             if group_by == "provider":
@@ -515,9 +515,9 @@ class CostTracker:
             ]
 
         # Group by day
-        daily_costs = defaultdict(float)
-        daily_tokens = defaultdict(int)
-        daily_requests = defaultdict(int)
+        daily_costs: defaultdict[str, float] = defaultdict(float)
+        daily_tokens: defaultdict[str, int] = defaultdict(int)
+        daily_requests: defaultdict[str, int] = defaultdict(int)
 
         for tx in recent_transactions:
             day = datetime.fromtimestamp(tx["timestamp"]).strftime("%Y-%m-%d")

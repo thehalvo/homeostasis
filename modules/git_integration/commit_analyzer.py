@@ -13,7 +13,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from modules.monitoring.logger import HomeostasisLogger
+from modules.monitoring.logger import MonitoringLogger
 
 
 @dataclass
@@ -64,13 +64,13 @@ class CommitAnalyzer:
         """
         self.repo_path = Path(repo_path)
         self.config = config or self._load_default_config()
-        self.logger = HomeostasisLogger(__name__)
+        self.logger = MonitoringLogger(__name__)
 
         # Compile regex patterns for performance
         self._compile_patterns()
 
         # Cache for commit analyses
-        self._analysis_cache = {}
+        self._analysis_cache: Dict[str, Dict[str, Any]] = {}
 
     def _load_default_config(self) -> Dict[str, Any]:
         """Load default configuration for commit analysis."""
@@ -438,7 +438,7 @@ class CommitAnalyzer:
 
     def _extract_additional_context(self, commit_info: CommitInfo) -> Dict[str, Any]:
         """Extract additional contextual information."""
-        context = {}
+        context: Dict[str, Any] = {}
 
         # File types changed
         file_extensions = set()
@@ -580,10 +580,10 @@ class CommitAnalyzer:
             return {"total_fixes": 0, "patterns": {}}
 
         # Analyze patterns
-        issue_types = defaultdict(int)
-        affected_files = defaultdict(int)
-        fix_scopes = defaultdict(int)
-        referenced_issues = defaultdict(int)
+        issue_types: defaultdict[str, int] = defaultdict(int)
+        affected_files: defaultdict[str, int] = defaultdict(int)
+        fix_scopes: defaultdict[str, int] = defaultdict(int)
+        referenced_issues: defaultdict[str, int] = defaultdict(int)
 
         for fix_commit in fix_commits:
             # Issue types from message
@@ -644,7 +644,7 @@ class CommitAnalyzer:
             # Get recent commits
             analyses = self.analyze_commit_history(limit=100)
 
-            context = {
+            context: Dict[str, Any] = {
                 "similar_fixes": [],
                 "related_files": [],
                 "common_patterns": [],

@@ -10,7 +10,7 @@ This module provides a comprehensive interface for error analysis, supporting:
 
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from .ai_stub import (
     AVAILABLE_MODELS,
@@ -75,6 +75,9 @@ class Analyzer:
             self.use_ai = strategy != AnalysisStrategy.RULE_BASED_ONLY
 
         self.strategy = strategy
+
+        # Type annotation for analyzer
+        self.analyzer: Union[MLAnalyzer, HybridAnalyzer, RuleBasedAnalyzer, AIAnalyzer]
 
         # Initialize appropriate analyzer based on strategy
         if strategy == AnalysisStrategy.ML_BASED:

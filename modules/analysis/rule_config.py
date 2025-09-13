@@ -207,7 +207,9 @@ class RuleSet:
     A collection of rules for error analysis.
     """
 
-    def __init__(self, name: str, rules: List[Rule] = None, description: str = ""):
+    def __init__(
+        self, name: str, rules: Optional[List[Rule]] = None, description: str = ""
+    ):
         """
         Initialize a rule set.
 
@@ -377,7 +379,11 @@ class RuleLoader:
             import importlib.util
 
             spec = importlib.util.spec_from_file_location("rules_module", file_path)
+            if spec is None:
+                raise ValueError(f"Could not load module spec from {file_path}")
             module = importlib.util.module_from_spec(spec)
+            if spec.loader is None:
+                raise ValueError(f"Module spec has no loader for {file_path}")
             spec.loader.exec_module(module)
 
             # Get rule set from the module
@@ -412,16 +418,16 @@ class RuleLoader:
             List of RuleSet instances
         """
         directory_path = Path(directory_path)
-        rule_sets = []
+        rule_sets: List[RuleSet] = []
 
         # Get list of rule files
         if recursive:
-            rule_files = []
+            rule_files: List[Path] = []
             for format_enum in RuleFormat:
                 extension = f".{format_enum.value}"
                 rule_files.extend(directory_path.glob(f"**/*{extension}"))
         else:
-            rule_files = []
+            rule_files: List[Path] = []
             for format_enum in RuleFormat:
                 extension = f".{format_enum.value}"
                 rule_files.extend(directory_path.glob(f"*{extension}"))

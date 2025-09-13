@@ -310,7 +310,7 @@ class CodeStyleAnalyzer:
             return "type_alias_preferred"
         return "mixed"
 
-    def _analyze_typescript_enums(self, source_code: str) -> str:
+    def _analyze_typescript_enums(self, source_code: str) -> Optional[str]:
         """Analyze TypeScript enum style conventions."""
         const_enum_count = len(re.findall(r"const\s+enum\s+\w+", source_code))
         regular_enum_count = len(re.findall(r"(?<!const\s)enum\s+\w+", source_code))
@@ -629,7 +629,7 @@ class CodeStyleAnalyzer:
         patterns = {}
 
         # Analyze spacing around operators
-        operator_spacing = defaultdict(int)
+        operator_spacing: Dict[str, int] = defaultdict(int)
         for line in lines:
             # Check for spaces around = operator
             if " = " in line:
@@ -649,7 +649,7 @@ class CodeStyleAnalyzer:
         patterns = {}
 
         # Analyze spacing around operators and braces
-        brace_spacing = defaultdict(int)
+        brace_spacing: Dict[str, int] = defaultdict(int)
         for line in lines:
             # Check for spaces in object literals
             if "{ " in line and " }" in line:
@@ -897,7 +897,7 @@ class CodeStyleAnalyzer:
         avg_line_length = int(sum(line_lengths) / len(line_lengths))
 
         # Aggregate naming conventions
-        aggregated_naming = {}
+        aggregated_naming: Dict[str, str] = {}
         for key in ["functions", "classes", "variables"]:
             values = [
                 c.naming_conventions.get(key)

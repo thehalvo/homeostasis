@@ -11,7 +11,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Deque, Dict, List, Optional, Set, Tuple, Union
 
 import z3
 from z3 import Not, Solver, sat, unsat
@@ -313,7 +313,7 @@ class ContractVerifier:
         func_ast: ast.FunctionDef,
         preconditions: List[str],
         postconditions: List[str],
-        invariants: List[str] = None,
+        invariants: Optional[List[str]] = None,
     ) -> List[VerificationResult]:
         """Verify function contracts using formal methods."""
         # Extract function parameters and return type
@@ -514,7 +514,7 @@ class ModelChecker:
         from collections import deque
 
         for init_state in model.initial_states:
-            queue = deque([(init_state, [])])
+            queue: Deque[Tuple[str, List[Tuple[str, str, str]]]] = deque([(init_state, [])])
             visited = {init_state}
 
             while queue:

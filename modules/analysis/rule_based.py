@@ -228,7 +228,9 @@ class RuleBasedAnalyzer:
                 "root_cause": best_rule.root_cause,
                 "description": best_rule.description,
                 "suggestion": best_rule.suggestion,
-                "match_groups": best_match.groups() if best_match.groups() else None,
+                "match_groups": (
+                    best_match.groups() if best_match and best_match.groups() else None
+                ),
                 "confidence": best_rule.confidence.value,
                 "severity": best_rule.severity.value,
                 "category": best_rule.category.value,
@@ -347,9 +349,9 @@ class RuleBasedAnalyzer:
         Returns:
             Dictionary with rule statistics
         """
-        categories = {}
+        categories: Dict[str, int] = {}
         tags = set()
-        severities = {}
+        severities: Dict[str, int] = {}
 
         for rule in self.rules:
             # Count by category

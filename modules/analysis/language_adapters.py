@@ -35,9 +35,11 @@ class ErrorSchemaValidator:
             schema_path: Path to the schema file, default to the standard error_schema.json
         """
         if schema_path is None:
-            schema_path = SCHEMA_DIR / "error_schema.json"
+            actual_path = SCHEMA_DIR / "error_schema.json"
+        else:
+            actual_path = Path(schema_path)
 
-        with open(schema_path, "r") as f:
+        with open(actual_path, "r") as f:
             self.schema = json.load(f)
 
         try:
@@ -552,10 +554,10 @@ class JavaScriptErrorAdapter(LanguageAdapter):
                             )
                         break
 
-            return frames if frames else None
+            return frames
         except Exception as e:
             logger.debug(f"Failed to parse JS stack trace: {e}")
-            return None
+            return []
 
     def _convert_frames_to_js_stack(
         self, error_type: str, message: str, frames: List[Dict[str, Any]]
@@ -926,10 +928,10 @@ class JavaErrorAdapter(LanguageAdapter):
                         }
                     )
 
-            return frames if frames else None
+            return frames
         except Exception as e:
             logger.debug(f"Failed to parse Java stack trace: {e}")
-            return None
+            return []
 
     def _convert_frames_to_java_stack(
         self, error_type: str, message: str, frames: List[Dict[str, Any]]
@@ -1269,10 +1271,10 @@ class GoErrorAdapter(LanguageAdapter):
 
                 i += 1
 
-            return frames if frames else None
+            return frames
         except Exception as e:
             logger.debug(f"Failed to parse Go stack trace: {e}")
-            return None
+            return []
 
     def _convert_frames_to_go_stack(
         self, error_type: str, message: str, frames: List[Dict[str, Any]]
@@ -1547,10 +1549,10 @@ class RubyErrorAdapter(LanguageAdapter):
                         }
                     )
 
-            return frames if frames else None
+            return frames
         except Exception as e:
             logger.debug(f"Failed to parse Ruby stack trace: {e}")
-            return None
+            return []
 
     def _convert_frames_to_ruby_backtrace(
         self, frames: List[Dict[str, Any]]
@@ -1874,10 +1876,10 @@ class RustErrorAdapter(LanguageAdapter):
             if current_frame is not None:
                 frames.append(current_frame)
 
-            return frames if frames else None
+            return frames
         except Exception as e:
             logger.debug(f"Failed to parse Rust stack trace: {e}")
-            return None
+            return []
 
     def _convert_frames_to_rust_backtrace(
         self, frames: List[Dict[str, Any]]
@@ -2239,10 +2241,10 @@ class CSharpErrorAdapter(LanguageAdapter):
                     }
                 )
 
-            return frames if frames else None
+            return frames
         except Exception as e:
             logger.debug(f"Failed to parse C# stack trace: {e}")
-            return None
+            return []
 
     def _convert_frames_to_csharp_stack(
         self, error_type: str, message: str, frames: List[Dict[str, Any]]
@@ -4291,10 +4293,10 @@ class TypeScriptErrorAdapter(LanguageAdapter):
                             )
                         break
 
-            return frames if frames else None
+            return frames
         except Exception as e:
             logger.debug(f"Failed to parse TypeScript stack trace: {e}")
-            return None
+            return []
 
     def _convert_frames_to_ts_stack(
         self, error_type: str, message: str, frames: List[Dict[str, Any]]
@@ -5239,12 +5241,14 @@ class KotlinErrorAdapter(LanguageAdapter):
 
         # If it's already a list of strings, return as-is
         if all(isinstance(frame, str) for frame in stack_trace):
-            return stack_trace
+            return [str(frame) for frame in stack_trace]  # Type assertion for mypy
 
         # Convert structured frames to Kotlin format
-        if all(isinstance(frame, dict) for frame in stack_trace):
-            frames = []
-            for frame in stack_trace:
+        frames = []
+        for frame in stack_trace:
+            if isinstance(frame, str):
+                frames.append(frame)
+            elif isinstance(frame, dict):
                 if "raw" in frame:
                     frames.append(frame["raw"])
                 else:

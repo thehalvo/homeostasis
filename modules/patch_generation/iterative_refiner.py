@@ -17,8 +17,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from ..analysis.llm_context_manager import LLMContextManager
-from ..llm_integration.provider_abstraction import (LLMManager, LLMMessage,
-                                                    LLMRequest)
+from ..llm_integration.provider_abstraction import LLMManager, LLMMessage, LLMRequest
 from .code_style_analyzer import CodeStyleAnalyzer
 
 logger = logging.getLogger(__name__)

@@ -11,7 +11,7 @@ import functools
 import threading
 import time
 from pathlib import Path
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Optional
 
 import psutil
 
@@ -34,8 +34,8 @@ class ResourceManager:
             log_level: Logging level
         """
         self.logger = MonitoringLogger("resource_manager", log_level=log_level)
-        self.metrics = {}
-        self.running_tests = {}
+        self.metrics: Dict[str, Any] = {}
+        self.running_tests: Dict[str, Any] = {}
 
     def with_timeout(self, func: Callable, *args, timeout: int = 30, **kwargs) -> Any:
         """
@@ -200,7 +200,7 @@ class ResourceManager:
 
         return {}
 
-    def enforce_resource_limits(self, resource_limits: Dict[str, str] = None) -> None:
+    def enforce_resource_limits(self, resource_limits: Optional[Dict[str, str]] = None) -> None:
         """
         Enforce resource limits on the current process.
 
@@ -247,7 +247,7 @@ class ResourceManager:
         self,
         func: Callable,
         *args,
-        resource_limits: Dict[str, str] = None,
+        resource_limits: Optional[Dict[str, str]] = None,
         timeout: int = 30,
         **kwargs,
     ) -> Any:

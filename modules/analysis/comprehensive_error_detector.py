@@ -310,7 +310,7 @@ class PythonParser(LanguageSpecificParser):
                     category = ErrorCategory.SYNTAX
 
                     # Generate specific suggestions
-                    if "invalid syntax" in error_message:
+                    if error_message and "invalid syntax" in error_message:
                         if "=" in error_string and "if" in error_string:
                             suggestion = "Use '==' for comparison, not '=' for assignment in conditions"
                         else:
@@ -320,20 +320,20 @@ class PythonParser(LanguageSpecificParser):
                     elif "TabError" in error_type:
                         suggestion = "Convert all indentation to either tabs or spaces (spaces recommended). Do not mix tabs and spaces."
                     elif (
-                        "unmatched" in error_message
-                        or "unexpected EOF" in error_message
+                        error_message
+                        and ("unmatched" in error_message or "unexpected EOF" in error_message)
                     ):
                         suggestion = "Check for unmatched parentheses, brackets, or braces. Every opening symbol needs a closing match."
 
                 elif error_type in ["ImportError", "ModuleNotFoundError"]:
                     category = ErrorCategory.DEPENDENCY
-                    module_match = re.search(r"'([^']+)'", error_message)
+                    module_match = re.search(r"'([^']+)'", error_message) if error_message else None
                     module_name = module_match.group(1) if module_match else "module"
                     suggestion = f"Install the module with 'pip install {module_name}' or verify import path"
 
                 elif error_type == "FileNotFoundError":
                     category = ErrorCategory.FILESYSTEM
-                    file_match = re.search(r"'([^']+)'", error_message)
+                    file_match = re.search(r"'([^']+)'", error_message) if error_message else None
                     filename = file_match.group(1) if file_match else "file"
                     suggestion = f"Check if file exists before opening. Use os.path.exists('{filename}') or try/except"
 
@@ -374,21 +374,21 @@ class PythonParser(LanguageSpecificParser):
 
                     # Generate specific suggestions for logic errors
                     if "NameError" in error_type:
-                        var_match = re.search(r"'([^']+)'", error_message)
+                        var_match = re.search(r"'([^']+)'", error_message) if error_message else None
                         var_name = var_match.group(1) if var_match else "variable"
                         suggestion = f"Define '{var_name}' before use or check for typos in variable name"
                     elif "AttributeError" in error_type:
                         suggestion = "Check available attributes with dir(object) or review class documentation"
                     elif "KeyError" in error_type:
-                        key_match = re.search(r"'([^']+)'", error_message)
+                        key_match = re.search(r"'([^']+)'", error_message) if error_message else None
                         key_name = key_match.group(1) if key_match else "key"
                         suggestion = f"Check if key exists before accessing. Use dict.get('{key_name}', default) or 'if key in dict'"
                     elif "IndexError" in error_type:
                         suggestion = "List index out of range. Check list length before accessing or use try/except."
                     elif "TypeError" in error_type:
-                        if "not callable" in error_message:
+                        if error_message and "not callable" in error_message:
                             suggestion = "Object is not a function. Remove parentheses or check variable assignment."
-                        elif "not subscriptable" in error_message:
+                        elif error_message and "not subscriptable" in error_message:
                             suggestion = "Object doesn't support indexing. Check type or use appropriate access method."
                         else:
                             suggestion = "Type mismatch. Check argument types and function signatures."
@@ -887,13 +887,13 @@ class GoParser(LanguageSpecificParser):
             "nil_pointer": "Check for nil pointers before dereferencing. Use if ptr != nil guard.",
             "index_out_of_range": (
                 f"Check array/slice bounds before access. Index {match.group(1)} is out of range for length {match.group(2)}."
-                if match.lastindex >= 2
+                if match.lastindex and match.lastindex >= 2
                 else "Check array/slice bounds before access."
             ),
             "slice_bounds": "Verify slice indices are within valid range [0:len(slice)].",
             "nil_interface": (
                 f"Check if {match.group(1)} is nil before type assertion."
-                if match.lastindex >= 1
+                if match.lastindex and match.lastindex >= 1
                 else "Check interface is not nil before type assertion."
             ),
             "divide_by_zero": "Add zero check before division: if divisor != 0",
@@ -903,7 +903,7 @@ class GoParser(LanguageSpecificParser):
             "deadlock": "Review goroutine synchronization. Check for circular channel dependencies.",
             "generic_panic": (
                 f"Panic: {match.group(1)}. Add error handling or recover() in defer."
-                if match.lastindex >= 1
+                if match.lastindex and match.lastindex >= 1
                 else "Add proper error handling."
             ),
         }
@@ -914,13 +914,13 @@ class GoParser(LanguageSpecificParser):
         suggestions = {
             "undefined_symbol": (
                 f"Define or import '{match.group(1)}' before use."
-                if match.lastindex >= 1
+                if match.lastindex and match.lastindex >= 1
                 else "Define or import symbol before use."
             ),
             "type_mismatch": "Check type compatibility. Use type assertion or conversion if needed.",
             "unused_import": (
                 f"Remove unused import or use the imported package '{match.group(1)}'."
-                if match.lastindex >= 1
+                if match.lastindex and match.lastindex >= 1
                 else "Remove unused import."
             ),
             "unused_declaration": "Remove unused variable or use blank identifier '_' if needed.",
@@ -937,7 +937,7 @@ class GoParser(LanguageSpecificParser):
         suggestions = {
             "package_not_found": (
                 f"Run 'go get {match.group(1)}' to install package."
-                if match.lastindex >= 1
+                if match.lastindex and match.lastindex >= 1
                 else "Install missing package with go get."
             ),
             "module_not_found": "Update go.mod or run 'go mod tidy' to resolve dependencies.",
@@ -1139,7 +1139,7 @@ class ComprehensiveErrorDetector:
         Returns:
             Environment context dictionary
         """
-        context = {}
+        context: Dict[str, Any] = {}
 
         # OS information
         context["os_type"] = os.name
@@ -1191,7 +1191,7 @@ class ComprehensiveErrorDetector:
         Returns:
             Dependencies information
         """
-        dependencies = {}
+        dependencies: Dict[str, Any] = {}
 
         if not project_root:
             project_root = os.getcwd()
@@ -1655,7 +1655,7 @@ class ComprehensiveErrorDetector:
         Returns:
             Correlation analysis results
         """
-        correlation_result = {
+        correlation_result: Dict[str, Any] = {
             "total_errors": len(error_contexts),
             "error_patterns": defaultdict(int),
             "affected_services": set(),
@@ -1753,7 +1753,7 @@ class ComprehensiveErrorDetector:
         self, error_contexts: List[ErrorContext], monitoring_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Correlate errors with monitoring data."""
-        correlation = {
+        correlation: Dict[str, Any] = {
             "metrics_anomalies": [],
             "performance_impact": {},
             "resource_usage": {},

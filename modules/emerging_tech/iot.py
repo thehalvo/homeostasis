@@ -7,7 +7,7 @@ applications including device management, connectivity, and resource constraints
 
 import logging
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
@@ -66,7 +66,7 @@ class IoTError:
     suggested_fix: Optional[str] = None
     confidence: float = 0.0
     severity: str = "medium"
-    timestamp: datetime = None
+    timestamp: datetime = field(default_factory=datetime.now)
 
 
 @dataclass
@@ -606,7 +606,7 @@ class IoTDeviceMonitor:
         return self._generate_generic_iot_healing(iot_error, strategy)
 
     def _generate_arduino_healing(
-        self, error: IoTError, strategy: Dict[str, Any]
+        self, error: IoTError, strategy: Optional[Dict[str, Any]]
     ) -> Optional[str]:
         """Generate Arduino-specific healing code"""
         healing_templates = {
@@ -734,11 +734,11 @@ void setup() {
 """,
         }
 
-        strategy_name = strategy.get("name")
-        return healing_templates.get(strategy_name)
+        strategy_name = strategy.get("name") if strategy else None
+        return healing_templates.get(strategy_name) if strategy_name else None
 
     def _generate_esp32_healing(
-        self, error: IoTError, strategy: Dict[str, Any]
+        self, error: IoTError, strategy: Optional[Dict[str, Any]]
     ) -> Optional[str]:
         """Generate ESP32-specific healing code"""
         healing_templates = {
@@ -925,11 +925,11 @@ String processLocally(ComputeTask& task) {
 """,
         }
 
-        strategy_name = strategy.get("name")
-        return healing_templates.get(strategy_name)
+        strategy_name = strategy.get("name") if strategy else None
+        return healing_templates.get(strategy_name) if strategy_name else None
 
     def _generate_raspberrypi_healing(
-        self, error: IoTError, strategy: Dict[str, Any]
+        self, error: IoTError, strategy: Optional[Dict[str, Any]]
     ) -> Optional[str]:
         """Generate Raspberry Pi specific healing code"""
         healing_templates = {
@@ -1090,11 +1090,11 @@ calibrator.auto_calibrate()
 ''',
         }
 
-        strategy_name = strategy.get("name")
-        return healing_templates.get(strategy_name)
+        strategy_name = strategy.get("name") if strategy else None
+        return healing_templates.get(strategy_name) if strategy_name else None
 
     def _generate_mqtt_healing(
-        self, error: IoTError, strategy: Dict[str, Any]
+        self, error: IoTError, strategy: Optional[Dict[str, Any]]
     ) -> Optional[str]:
         """Generate MQTT-specific healing code"""
         healing_templates = {
@@ -1318,11 +1318,11 @@ class OfflineCapableMQTT:
 ''',
         }
 
-        strategy_name = strategy.get("name")
-        return healing_templates.get(strategy_name)
+        strategy_name = strategy.get("name") if strategy else None
+        return healing_templates.get(strategy_name) if strategy_name else None
 
     def _generate_generic_iot_healing(
-        self, error: IoTError, strategy: Dict[str, Any]
+        self, error: IoTError, strategy: Optional[Dict[str, Any]]
     ) -> Optional[str]:
         """Generate generic IoT healing code"""
         healing_templates = {
@@ -1519,17 +1519,17 @@ sampler.adaptive_sampling_loop(read_sensor, process_data)
 ''',
         }
 
-        strategy_name = strategy.get("name")
-        return healing_templates.get(strategy_name)
+        strategy_name = strategy.get("name") if strategy else None
+        return healing_templates.get(strategy_name) if strategy_name else None
 
     def analyze_device_health(
         self,
         device_id: str,
         metrics: DeviceMetrics,
-        historical_data: List[DeviceMetrics] = None,
+        historical_data: Optional[List[DeviceMetrics]] = None,
     ) -> Dict[str, Any]:
         """Analyze overall device health"""
-        health_status = {
+        health_status: Dict[str, Any] = {
             "device_id": device_id,
             "timestamp": datetime.now(),
             "overall_health": "healthy",
@@ -1597,7 +1597,7 @@ sampler.adaptive_sampling_loop(read_sensor, process_data)
         self, platform: IoTPlatform, requirements: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Generate optimized device configuration"""
-        config = {
+        config: Dict[str, Any] = {
             "platform": platform.value,
             "generated_at": datetime.now().isoformat(),
             "settings": {},

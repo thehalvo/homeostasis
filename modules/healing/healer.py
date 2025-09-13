@@ -6,7 +6,7 @@ This module provides the main healing functionality for Homeostasis.
 
 import logging
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, Optional
@@ -36,11 +36,7 @@ class HealingResult:
     timestamp: datetime
     duration_seconds: float
     error: Optional[str] = None
-    metadata: Dict[str, Any] = None
-
-    def __post_init__(self):
-        if self.metadata is None:
-            self.metadata = {}
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""

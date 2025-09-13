@@ -49,7 +49,7 @@ class SecretsManagerBase(ABC):
 class AWSSecretsManager(SecretsManagerBase):
     """AWS Secrets Manager integration."""
 
-    def __init__(self, region_name: str = None):
+    def __init__(self, region_name: Optional[str] = None):
         """Initialize AWS Secrets Manager client."""
         self._client = None
         self._region_name = region_name or os.getenv("AWS_DEFAULT_REGION", "us-east-1")
@@ -170,7 +170,7 @@ class AWSSecretsManager(SecretsManagerBase):
 class AzureKeyVault(SecretsManagerBase):
     """Azure Key Vault integration."""
 
-    def __init__(self, vault_url: str = None):
+    def __init__(self, vault_url: Optional[str] = None):
         """Initialize Azure Key Vault client."""
         self._client = None
         self._vault_url = vault_url or os.getenv("AZURE_KEY_VAULT_URL")
@@ -280,7 +280,7 @@ class AzureKeyVault(SecretsManagerBase):
 class HashiCorpVault(SecretsManagerBase):
     """HashiCorp Vault integration."""
 
-    def __init__(self, vault_url: str = None, vault_token: str = None):
+    def __init__(self, vault_url: Optional[str] = None, vault_token: Optional[str] = None):
         """Initialize HashiCorp Vault client."""
         self._client = None
         self._vault_url = vault_url or os.getenv("VAULT_ADDR", "http://localhost:8200")

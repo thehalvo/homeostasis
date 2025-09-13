@@ -570,6 +570,8 @@ contract SecureContract {
         }
 
         strategy_name = strategy.get("name")
+        if strategy_name is None:
+            return None
         return healing_templates.get(strategy_name)
 
     def _generate_hyperledger_healing(
@@ -662,6 +664,8 @@ func (s *SmartContract) SafeInvoke(ctx contractapi.TransactionContextInterface,
         }
 
         strategy_name = strategy.get("name")
+        if strategy_name is None:
+            return None
         return healing_templates.get(strategy_name)
 
     def _generate_solana_healing(
@@ -772,6 +776,8 @@ pub enum ErrorCode {
         }
 
         strategy_name = strategy.get("name")
+        if strategy_name is None:
+            return None
         return healing_templates.get(strategy_name)
 
     def _generate_generic_healing(
@@ -855,6 +861,8 @@ async function waitForFinality(provider, txHash, confirmations = 6) {
         }
 
         strategy_name = strategy.get("name")
+        if strategy_name is None:
+            return None
         return healing_templates.get(strategy_name)
 
     def optimize_gas_usage(self, contract_code: str) -> List[Dict[str, str]]:

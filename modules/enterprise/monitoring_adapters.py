@@ -1516,7 +1516,7 @@ class NewRelicAdapter(MonitoringAdapter):
                 where_clauses = []
                 for k, v in query.get("where", {}).items():
                     # Validate field name - only allow alphanumeric, underscore, and dots
-                    if not re.match(r'^[a-zA-Z0-9_.]+$', k):
+                    if not re.match(r"^[a-zA-Z0-9_.]+$", k):
                         raise ValueError(f"Invalid field name: {k}")
                     # Properly escape and quote values
                     if isinstance(v, (int, float)):

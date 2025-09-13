@@ -416,7 +416,7 @@ class ContinuousImprovementEngine:
         provider_data = cursor.fetchall()
 
         # Group by provider
-        provider_stats = defaultdict(lambda: defaultdict(int))
+        provider_stats: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
 
         for feedback_source, outcome, context_json, count in provider_data:
             try:
@@ -461,7 +461,7 @@ class ContinuousImprovementEngine:
         self, cursor, min_samples: int
     ) -> List[LearningPattern]:
         """Analyze temporal patterns in patch success/failure."""
-        patterns = []
+        patterns: List[LearningPattern] = []
 
         # Get time-series data
         cursor.execute(
@@ -478,8 +478,8 @@ class ContinuousImprovementEngine:
             return patterns
 
         # Analyze hourly patterns
-        hourly_success = defaultdict(int)
-        hourly_total = defaultdict(int)
+        hourly_success: Dict[int, int] = defaultdict(int)
+        hourly_total: Dict[int, int] = defaultdict(int)
 
         for timestamp, outcome, metrics_json in time_data:
             hour = datetime.fromtimestamp(timestamp).hour
@@ -715,7 +715,7 @@ class ContinuousImprovementEngine:
 
     def _generate_provider_recommendations(self) -> List[ImprovementRecommendation]:
         """Generate recommendations based on provider performance patterns."""
-        recommendations = []
+        recommendations: List[ImprovementRecommendation] = []
 
         provider_patterns = [
             p

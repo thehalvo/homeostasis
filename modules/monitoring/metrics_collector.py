@@ -48,8 +48,8 @@ class MetricsCollector:
         self.history_limit = history_limit
 
         # Initialize storage for in-memory metrics
-        self.metrics = {}
-        self.grouped_metrics = {}
+        self.metrics: Dict[str, Any] = {}
+        self.grouped_metrics: Dict[str, Any] = {}
 
         # Load existing metrics
         self._load_metrics()
@@ -218,7 +218,7 @@ class MetricsCollector:
         success: bool,
         duration: float,
         memory_usage: Optional[float] = None,
-        other_data: Dict[str, Any] = None,
+        other_data: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Record a test metric.
@@ -250,7 +250,7 @@ class MetricsCollector:
         patch_id: str,
         success: bool,
         duration: float,
-        other_data: Dict[str, Any] = None,
+        other_data: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Record a deployment metric.
@@ -280,7 +280,7 @@ class MetricsCollector:
         success: bool,
         response_time: Optional[float] = None,
         error_rate: Optional[float] = None,
-        other_data: Dict[str, Any] = None,
+        other_data: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Record a fix effectiveness metric.
@@ -401,9 +401,13 @@ class MetricsCollector:
         numeric_fields = ["duration", "memory_usage", "response_time", "error_rate"]
 
         for field in numeric_fields:
-            values = [
-                m.get(field) for m in metrics if field in m and m.get(field) is not None
-            ]
+            values: List[float] = []
+            for m in metrics:
+                if field in m and m.get(field) is not None:
+                    try:
+                        values.append(float(m[field]))
+                    except (ValueError, TypeError):
+                        continue
 
             if not values:
                 continue
@@ -424,7 +428,7 @@ class MetricsCollector:
         return result
 
     def generate_report(
-        self, metric_types: List[str] = None, output_file: Optional[Path] = None
+        self, metric_types: Optional[List[str]] = None, output_file: Optional[Path] = None
     ) -> Dict[str, Any]:
         """
         Generate a comprehensive report on metrics.
@@ -439,7 +443,7 @@ class MetricsCollector:
         if metric_types is None:
             metric_types = list(self.metrics.keys())
 
-        report = {
+        report: Dict[str, Any] = {
             "timestamp": time.time(),
             "date": datetime.datetime.now().isoformat(),
             "metric_types": metric_types,
@@ -455,7 +459,7 @@ class MetricsCollector:
             overall = self.analyze_metrics(metric_type)
 
             # Per-entity analysis
-            entities = {}
+            entities: Dict[str, Any] = {}
             if metric_type in self.grouped_metrics:
                 for entity_id in self.grouped_metrics[metric_type]:
                     entities[entity_id] = self.analyze_metrics(metric_type, entity_id)
@@ -520,8 +524,8 @@ class MetricsCollector:
             scores["fix"] = success_rate
 
         # Calculate weighted score
-        total_weight = 0
-        weighted_score = 0
+        total_weight: float = 0
+        weighted_score: float = 0
 
         for metric_type, weight in weights.items():
             if metric_type in scores:

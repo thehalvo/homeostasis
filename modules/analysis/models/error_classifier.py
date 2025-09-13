@@ -324,8 +324,8 @@ class ErrorClassifierModel:
         """
         self.feature_extractor = ErrorClassificationFeatures()
         self.model_path = model_path
-        self.pipeline = None
-        self.classes = []
+        self.pipeline: Optional[Pipeline] = None
+        self.classes: List[str] = []
         self.trained = False
 
     def build_pipeline(self):
@@ -373,7 +373,7 @@ class ErrorClassifierModel:
                 print(f"Model file not found: {self.model_path}")
                 return False
 
-            model_data = secure_pickle_load(model_file)
+            model_data = secure_pickle_load(str(model_file))
             self.pipeline = model_data["pipeline"]
             self.classes = model_data["classes"]
             self.trained = True
@@ -449,6 +449,7 @@ class ErrorClassifierModel:
 
         # Build and train pipeline
         self.pipeline = self.build_pipeline()
+        assert self.pipeline is not None, "Pipeline build failed"
         self.pipeline.fit(X_train, y_train)
 
         # Get unique classes
@@ -489,6 +490,8 @@ class ErrorClassifierModel:
         X_text = self.feature_extractor.prepare_text_features(error_data)
 
         # Get prediction and probabilities
+        if self.pipeline is None:
+            raise RuntimeError("Model not trained or loaded")
         error_type = self.pipeline.predict([X_text])[0]
         probabilities = self.pipeline.predict_proba([X_text])[0]
 

@@ -9,19 +9,25 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 # Import diff utilities
-from modules.patch_generation.diff_utils import (extract_code_block,
-                                                 generate_diff,
-                                                 identify_code_block)
+from modules.patch_generation.diff_utils import (
+    extract_code_block,
+    generate_diff,
+    identify_code_block,
+)
+
 # Import indentation utilities
 from modules.patch_generation.indent_utils import (
-    adjust_indentation_for_context, generate_line_indentation_map,
-    get_line_indentation, normalize_indentation)
+    adjust_indentation_for_context,
+    generate_line_indentation_map,
+    get_line_indentation,
+    normalize_indentation,
+)
+
 # Import LLM patch generator
-from modules.patch_generation.llm_patch_generator import \
-    create_llm_patch_generator
+from modules.patch_generation.llm_patch_generator import create_llm_patch_generator
+
 # Import hierarchical template system
-from modules.patch_generation.template_system import (BaseTemplate,
-                                                      TemplateManager)
+from modules.patch_generation.template_system import BaseTemplate, TemplateManager
 
 # Templates directory
 TEMPLATES_DIR = Path(__file__).parent / "templates"

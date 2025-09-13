@@ -405,7 +405,7 @@ class LLMModel(AIModel):
 class EnsembleModel(AIModel):
     """Placeholder for an ensemble of multiple AI models for error analysis."""
 
-    def __init__(self, config: AIModelConfig, models: List[AIModel] = None):
+    def __init__(self, config: AIModelConfig, models: Optional[List[AIModel]] = None):
         """
         Initialize the ensemble model.
 

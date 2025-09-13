@@ -99,6 +99,8 @@ class PluginSandbox:
             else:
                 logger.warning("Falling back to standard sandbox")
                 return StandardSandbox(plugin_id, permissions)
+        else:
+            raise ValueError(f"Unexpected security level: {self.security_level}")
 
 
 class SandboxContext:

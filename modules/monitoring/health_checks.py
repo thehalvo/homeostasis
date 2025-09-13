@@ -7,7 +7,7 @@ This module provides health checking functionality for monitoring system health.
 import logging
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -34,8 +34,8 @@ class HealthChecker:
             config: Configuration for health checks
         """
         self.config = config or {}
-        self.checks = []
-        self.results = {}
+        self.checks: List[Tuple[str, Callable[[], HealthStatus]]] = []
+        self.results: Dict[str, Any] = {}
 
     def register_check(self, name: str, check_func) -> None:
         """

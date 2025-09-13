@@ -23,7 +23,7 @@ class NginxHook:
     between different service versions.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize Nginx hook.
 
         Args:
@@ -341,7 +341,7 @@ class KubernetesIngressHook:
     between different service versions.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize Kubernetes Ingress hook.
 
         Args:
@@ -556,7 +556,7 @@ class KubernetesIngressHook:
         remaining = 100 - sum(normalized_services.values())
         if remaining != 0:
             # Add remaining to the highest weight service
-            max_service = max(normalized_services, key=normalized_services.get)
+            max_service = max(normalized_services, key=lambda k: normalized_services[k])
             normalized_services[max_service] += remaining
 
         # Generate VirtualService YAML
@@ -599,7 +599,7 @@ class KubernetesIngressHook:
         # We'll use annotations for Nginx Ingress Controller
 
         # Get the service with the highest weight
-        primary_service = max(services, key=services.get)
+        primary_service = max(services, key=lambda k: services[k])
 
         # Normalize weights for annotation
         total_weight = sum(services.values())
@@ -656,8 +656,10 @@ class KubernetesIngressHook:
         }
 
         # Add canary annotations if needed
-        if canary_annotation:
-            ingress["metadata"]["annotations"].update(canary_annotation)
+        if canary_annotation and isinstance(ingress, dict):
+            if "metadata" in ingress and isinstance(ingress["metadata"], dict):
+                if "annotations" in ingress["metadata"] and isinstance(ingress["metadata"]["annotations"], dict):
+                    ingress["metadata"]["annotations"].update(canary_annotation)
 
         return json.dumps(ingress, indent=2)
 
@@ -680,7 +682,7 @@ class KubernetesIngressHook:
             str: Ingress YAML
         """
         # Get the service with the highest weight
-        primary_service = max(services, key=services.get)
+        primary_service = max(services, key=lambda k: services[k])
 
         # Normalize weights for annotation
         total_weight = sum(services.values())
@@ -734,8 +736,10 @@ class KubernetesIngressHook:
         }
 
         # Add canary annotations if needed
-        if canary_annotation:
-            ingress["metadata"]["annotations"].update(canary_annotation)
+        if canary_annotation and isinstance(ingress, dict):
+            if "metadata" in ingress and isinstance(ingress["metadata"], dict):
+                if "annotations" in ingress["metadata"] and isinstance(ingress["metadata"]["annotations"], dict):
+                    ingress["metadata"]["annotations"].update(canary_annotation)
 
         return json.dumps(ingress, indent=2)
 
@@ -799,7 +803,7 @@ class CloudLoadBalancerHook:
     between different service versions.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize cloud load balancer hook.
 
         Args:

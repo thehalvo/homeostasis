@@ -5,7 +5,7 @@ Utilities for code diff generation and handling multi-line patches.
 import difflib
 import re
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 
 def generate_diff(
@@ -54,7 +54,7 @@ def parse_diff(diff_content: str) -> Dict[str, Any]:
     Returns:
         Dictionary containing the parsed diff information
     """
-    result = {"filename": None, "hunks": []}
+    result: Dict[str, Any] = {"filename": None, "hunks": []}
 
     lines = diff_content.splitlines()
 
@@ -71,7 +71,7 @@ def parse_diff(diff_content: str) -> Dict[str, Any]:
     if from_file.startswith("a/"):
         result["filename"] = from_file[2:]
 
-    current_hunk = None
+    current_hunk: Optional[Dict[str, Any]] = None
 
     # Process each line in the diff
     for line in lines[2:]:

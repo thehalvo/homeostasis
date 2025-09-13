@@ -78,7 +78,7 @@ class MainframeAdapter:
 
     def __init__(self, environment: MainframeEnvironment):
         self.environment = environment
-        self.connection = None
+        self.connection: Optional[Dict[str, Any]] = None
         self._abend_codes = self._load_abend_codes()
         self._jcl_patterns = self._compile_jcl_patterns()
 
@@ -283,7 +283,7 @@ class MainframeAdapter:
                         error_message=f"Job failed with completion code SYSTEM={system_code} USER={user_code}",
                         timestamp=datetime.now(),
                         dataset=None,
-                        program=self._extract_program_name(job_output, current_step),
+                        program=self._extract_program_name(job_output, current_step) if current_step else None,
                         mainframe_type=self.environment.mainframe_type,
                         severity="high" if system_code != "000" else "medium",
                         sysout=job_output,
@@ -316,7 +316,7 @@ class MainframeAdapter:
 
     def analyze_error(self, error: MainframeError) -> Dict[str, Any]:
         """Analyze mainframe error and suggest healing strategy."""
-        analysis = {
+        analysis: Dict[str, Any] = {
             "error": error,
             "root_cause": None,
             "healing_strategies": [],

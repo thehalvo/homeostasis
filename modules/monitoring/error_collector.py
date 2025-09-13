@@ -30,8 +30,8 @@ class ErrorCollector:
         Args:
             storage_path: Path to store collected errors (optional)
         """
-        self.errors = []
-        self.error_counts = defaultdict(int)
+        self.errors: List[Dict[str, Any]] = []
+        self.error_counts: Dict[str, int] = defaultdict(int)
         self.storage_path = storage_path
         self._lock = threading.Lock()
 
@@ -215,7 +215,7 @@ class ErrorCollector:
         if not errors_copy:
             return {"patterns": [], "insights": []}
 
-        patterns = []
+        patterns: List[Dict[str, Any]] = []
 
         # Time-based patterns
         error_times = [datetime.fromisoformat(e["collected_at"]) for e in errors_copy]
