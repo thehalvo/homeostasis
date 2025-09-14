@@ -428,7 +428,8 @@ class ErrorDataCollector:
             return {"error": "Metadata file not found"}
 
         with open(self.metadata_file, "r") as f:
-            return json.load(f)
+            data = json.load(f)
+            return dict(data) if isinstance(data, dict) else {"error": "Invalid metadata format"}
 
     def get_training_data(
         self, limit: Optional[int] = None
@@ -598,7 +599,8 @@ class SyntheticDataGenerator:
         """
         if patterns_file and Path(patterns_file).exists():
             with open(patterns_file, "r") as f:
-                return json.load(f)
+                data = json.load(f)
+                return dict(data) if isinstance(data, dict) else {}
 
         # Use default patterns if no file provided
         return {

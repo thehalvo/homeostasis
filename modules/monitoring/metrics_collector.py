@@ -360,7 +360,7 @@ class MetricsCollector:
 
             return filtered_metrics
 
-        return metrics
+        return list(metrics) if isinstance(metrics, list) else []
 
     def analyze_metrics(
         self, metric_type: str, entity_id: Optional[str] = None
@@ -428,7 +428,9 @@ class MetricsCollector:
         return result
 
     def generate_report(
-        self, metric_types: Optional[List[str]] = None, output_file: Optional[Path] = None
+        self,
+        metric_types: Optional[List[str]] = None,
+        output_file: Optional[Path] = None,
     ) -> Dict[str, Any]:
         """
         Generate a comprehensive report on metrics.

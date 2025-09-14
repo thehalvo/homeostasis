@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_serverless_provider(
-    provider_type: str, config: Dict[str, Any] = None
+    provider_type: str, config: Optional[Dict[str, Any]] = None
 ) -> Optional[ServerlessProvider]:
     """Get a serverless provider by type.
 

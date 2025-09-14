@@ -6,6 +6,7 @@ Provides a modular system for registering and discovering LLM providers.
 """
 
 import importlib
+import importlib.util
 import inspect
 import logging
 from abc import ABC, abstractmethod
@@ -433,7 +434,7 @@ class ProviderRegistry:
         Returns:
             Registry information
         """
-        info = {
+        info: Dict[str, Any] = {
             "total_providers": len(self._provider_classes),
             "capabilities": dict(self._capabilities),
             "providers": {},

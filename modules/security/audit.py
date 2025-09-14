@@ -170,7 +170,10 @@ class AuditLogger:
         )
 
     def log_logout(
-        self, username: str, session_duration: Optional[int] = None, source_ip: Optional[str] = None
+        self,
+        username: str,
+        session_duration: Optional[int] = None,
+        source_ip: Optional[str] = None,
     ) -> str:
         """Log a logout event.
 
@@ -418,7 +421,10 @@ def log_event(
 
 
 def log_login(
-    username: str, status: str = "success", source_ip: Optional[str] = None, details: Optional[Dict[Any, Any]] = None
+    username: str,
+    status: str = "success",
+    source_ip: Optional[str] = None,
+    details: Optional[Dict[Any, Any]] = None,
 ) -> str:
     """Log a login event.
 

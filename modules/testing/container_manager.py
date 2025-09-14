@@ -12,7 +12,7 @@ import subprocess
 import time
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from modules.monitoring.logger import MonitoringLogger
 
@@ -33,8 +33,8 @@ class ContainerManager:
             log_level: Logging level
         """
         self.logger = MonitoringLogger("container_manager", log_level=log_level)
-        self.containers = {}  # Map of test_id -> container_id
-        self.container_cache = {}  # Map of cache_key -> container_id
+        self.containers: Dict[str, str] = {}  # Map of test_id -> container_id
+        self.container_cache: Dict[str, str] = {}  # Map of cache_key -> container_id
 
         # Check if Docker is available
         try:
@@ -92,7 +92,7 @@ class ContainerManager:
         self,
         test_type: str = "unit",
         use_cache: bool = True,
-        resource_limits: Dict[str, str] = None,
+        resource_limits: Optional[Dict[str, str]] = None,
     ) -> str:
         """
         Create a new Docker container for testing.
@@ -218,7 +218,7 @@ class ContainerManager:
             self.logger.info("Running tests locally")
             from modules.testing.runner import TestRunner
 
-            runner = TestRunner(log_level=self.logger.level)
+            runner = TestRunner(log_level=str(self.logger.log_level))
             return runner.run_tests(test_command, project_root, timeout)
 
         container_id = self.containers[test_id]
@@ -426,7 +426,7 @@ class ContainerManager:
         test_type: str = "unit",
         test_command: str = "pytest tests/",
         timeout: int = 60,
-        resource_limits: Dict[str, str] = None,
+        resource_limits: Optional[Dict[str, str]] = None,
         use_cache: bool = True,
     ) -> Dict[str, Any]:
         """

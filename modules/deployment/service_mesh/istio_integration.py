@@ -28,7 +28,7 @@ class IstioIntegration:
     including VirtualServices, DestinationRules, and ServiceEntries.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize Istio integration.
 
         Args:
@@ -177,6 +177,7 @@ spec:
                 }
 
             # Try to parse JSON output if possible
+            result: Dict[str, Any]
             try:
                 if stdout and stdout.strip().startswith("{"):
                     result = json.loads(stdout)
@@ -231,6 +232,7 @@ spec:
                 }
 
             # Try to parse JSON output if possible
+            result: Dict[str, Any]
             try:
                 if stdout and stdout.strip().startswith("{"):
                     result = json.loads(stdout)
@@ -609,7 +611,7 @@ spec:
 _istio_integration = None
 
 
-def get_istio_integration(config: Dict[str, Any] = None) -> IstioIntegration:
+def get_istio_integration(config: Optional[Dict[str, Any]] = None) -> IstioIntegration:
     """Get or create the singleton IstioIntegration instance.
 
     Args:

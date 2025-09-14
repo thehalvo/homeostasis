@@ -17,7 +17,7 @@ import requests
 
 from modules.analysis.language_adapters import LanguageAdapterManager
 from modules.analysis.rule_based import RuleBasedAnalyzer
-from modules.monitoring.logger import HomeostasisLogger
+from modules.monitoring.logger import MonitoringLogger
 from modules.patch_generation.patcher import Patcher
 
 
@@ -60,7 +60,7 @@ class PRAnalyzer:
         """
         self.repo_path = Path(repo_path)
         self.config = config or self._load_default_config()
-        self.logger = HomeostasisLogger(__name__)
+        self.logger = MonitoringLogger(__name__)
 
         # Initialize analysis components
         self.analyzer = RuleBasedAnalyzer()

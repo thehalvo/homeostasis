@@ -505,17 +505,19 @@ class BuiltinStylePreserver(StylePreservationInterface):
 
     def analyze_style(self, code_context: CodeContext) -> Dict[str, Any]:
         """Analyze style using existing CodeStyleAnalyzer."""
-        return self.style_analyzer.analyze_style(
+        result = self.style_analyzer.analyze_style(
             code_context.code_content, code_context.language
         )
+        return dict(result) if isinstance(result, dict) else {}
 
     def preserve_style(
         self, original_code: str, generated_code: str, style_preferences: Dict[str, Any]
     ) -> str:
         """Apply style preservation using existing analyzer."""
-        return self.style_analyzer.apply_style_preferences(
+        result = self.style_analyzer.apply_style_preferences(
             generated_code, style_preferences
         )
+        return str(result) if result is not None else generated_code
 
     def validate_style_consistency(self, code_snippets: List[str]) -> Dict[str, Any]:
         """Validate style consistency across code snippets."""
@@ -553,15 +555,18 @@ class BuiltinCodeUnderstandingAdapter(CodeUnderstandingInterface):
 
         # Use existing detector to get language and framework info
         detected_info = self.language_detector.detect_language_and_frameworks(
-            file_path, code_context.code_content
+            str(file_path), code_context.code_content
         )
 
+        # Extract primary framework info if available
+        primary_framework = detected_info.frameworks[0] if detected_info.frameworks else None
+
         return {
-            "language": detected_info.get("language"),
-            "framework": detected_info.get("framework"),
-            "confidence": detected_info.get("confidence", 0.0),
-            "framework_version": detected_info.get("framework_version"),
-            "additional_frameworks": detected_info.get("additional_frameworks", []),
+            "language": detected_info.language.value if detected_info.language else None,
+            "framework": primary_framework.name if primary_framework else None,
+            "confidence": detected_info.confidence,
+            "framework_version": primary_framework.version if primary_framework else None,
+            "additional_frameworks": [f.name for f in detected_info.frameworks[1:]] if len(detected_info.frameworks) > 1 else [],
         }
 
     def analyze_code_structure(self, code_context: CodeContext) -> Dict[str, Any]:
@@ -693,7 +698,8 @@ class BuiltinContinuousLearningAdapter(ContinuousLearningInterface):
 
     def get_learning_metrics(self) -> Dict[str, Any]:
         """Get learning metrics from improvement engine."""
-        return self.improvement_engine.get_statistics()
+        stats = self.improvement_engine.get_statistics()
+        return dict(stats) if isinstance(stats, dict) else {}
 
 
 # Global instance

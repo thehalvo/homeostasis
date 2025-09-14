@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import git
+from git import Repo
 
 from modules.monitoring.logger import MonitoringLogger
 from modules.security.audit import get_audit_logger, log_event
@@ -36,7 +37,7 @@ class ActionPatchHistoryLogger:
     - Security and compliance logging
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the action patch history logger.
 
@@ -73,7 +74,7 @@ class ActionPatchHistoryLogger:
         self.versions_dir.mkdir(exist_ok=True)
 
         # Initialize git repository if needed
-        self.git_repo = None
+        self.git_repo: Optional[Repo] = None
         if self.include_git_history:
             self._init_git_repo()
 
@@ -106,7 +107,10 @@ class ActionPatchHistoryLogger:
             self.git_repo = None
 
     def log_action_start(
-        self, session_id: str, action_type: str, context: Dict[str, Any] = None
+        self,
+        session_id: str,
+        action_type: str,
+        context: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Log the start of a healing action.
@@ -168,7 +172,7 @@ class ActionPatchHistoryLogger:
         model: str,
         prompt: str,
         response: str,
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Log an LLM interaction with full prompt/response details.
@@ -254,9 +258,9 @@ class ActionPatchHistoryLogger:
         action_id: str,
         file_path: str,
         change_type: str,
-        old_content: str = None,
-        new_content: str = None,
-        metadata: Dict[str, Any] = None,
+        old_content: Optional[str] = None,
+        new_content: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Log a file change with complete diff tracking.
@@ -279,7 +283,7 @@ class ActionPatchHistoryLogger:
         timestamp = datetime.utcnow()
 
         # Create change record
-        change_record = {
+        change_record: Dict[str, Any] = {
             "change_id": change_id,
             "action_id": action_id,
             "timestamp": timestamp.isoformat(),
@@ -451,8 +455,8 @@ class ActionPatchHistoryLogger:
         self,
         action_id: str,
         status: str,
-        performance_metrics: Dict[str, Any] = None,
-        error_details: Dict[str, Any] = None,
+        performance_metrics: Optional[Dict[str, Any]] = None,
+        error_details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log the completion of a healing action.
@@ -506,7 +510,7 @@ class ActionPatchHistoryLogger:
         )
 
     def get_action_history(
-        self, session_id: str = None, action_type: str = None, days_back: int = 7
+        self, session_id: Optional[str] = None, action_type: Optional[str] = None, days_back: int = 7
     ) -> List[Dict[str, Any]]:
         """
         Retrieve action history with optional filtering.
@@ -557,7 +561,7 @@ class ActionPatchHistoryLogger:
         return actions
 
     def get_file_change_history(
-        self, file_path: str = None, days_back: int = 7
+        self, file_path: Optional[str] = None, days_back: int = 7
     ) -> List[Dict[str, Any]]:
         """
         Retrieve file change history.
@@ -603,7 +607,7 @@ class ActionPatchHistoryLogger:
         return changes
 
     def get_llm_interaction_history(
-        self, action_id: str = None, provider: str = None, days_back: int = 7
+        self, action_id: Optional[str] = None, provider: Optional[str] = None, days_back: int = 7
     ) -> List[Dict[str, Any]]:
         """
         Retrieve LLM interaction history.
@@ -856,7 +860,8 @@ class ActionPatchHistoryLogger:
 
         try:
             with open(action_file, "r") as f:
-                return json.load(f)
+                data: Dict[str, Any] = json.load(f)
+                return data
         except Exception as e:
             self.monitoring_logger.warning(
                 f"Failed to read action record {action_id}: {e}"
@@ -869,7 +874,7 @@ _action_patch_history_logger = None
 
 
 def get_action_patch_history_logger(
-    config: Dict[str, Any] = None,
+    config: Optional[Dict[str, Any]] = None,
 ) -> ActionPatchHistoryLogger:
     """
     Get or create the singleton ActionPatchHistoryLogger instance.
@@ -888,7 +893,7 @@ def get_action_patch_history_logger(
 
 # Convenience functions
 def log_action_start(
-    session_id: str, action_type: str, context: Dict[str, Any] = None
+    session_id: str, action_type: str, context: Optional[Dict[str, Any]] = None
 ) -> str:
     """Log the start of a healing action."""
     return get_action_patch_history_logger().log_action_start(
@@ -902,7 +907,7 @@ def log_llm_interaction(
     model: str,
     prompt: str,
     response: str,
-    metadata: Dict[str, Any] = None,
+    metadata: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Log an LLM interaction."""
     return get_action_patch_history_logger().log_llm_interaction(
@@ -914,9 +919,9 @@ def log_file_change(
     action_id: str,
     file_path: str,
     change_type: str,
-    old_content: str = None,
-    new_content: str = None,
-    metadata: Dict[str, Any] = None,
+    old_content: Optional[str] = None,
+    new_content: Optional[str] = None,
+    metadata: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Log a file change."""
     return get_action_patch_history_logger().log_file_change(
@@ -940,8 +945,8 @@ def log_patch_application(
 def log_action_completion(
     action_id: str,
     status: str,
-    performance_metrics: Dict[str, Any] = None,
-    error_details: Dict[str, Any] = None,
+    performance_metrics: Optional[Dict[str, Any]] = None,
+    error_details: Optional[Dict[str, Any]] = None,
 ) -> None:
     """Log the completion of a healing action."""
     get_action_patch_history_logger().log_action_completion(

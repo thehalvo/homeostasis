@@ -163,12 +163,12 @@ class ErrorClassificationFeatures:
             Exception type as string
         """
         # Try different fields where exception type might be found
-        exception_type = error_data.get("exception_type", "")
+        exception_type = str(error_data.get("exception_type", ""))
         if not exception_type and "error_details" in error_data:
-            exception_type = error_data["error_details"].get("exception_type", "")
+            exception_type = str(error_data["error_details"].get("exception_type", ""))
         if not exception_type:
             # Try to extract from message
-            message = error_data.get("message", "")
+            message = str(error_data.get("message", ""))
             if ":" in message:
                 exception_type = message.split(":", 1)[0].strip()
 
@@ -184,9 +184,9 @@ class ErrorClassificationFeatures:
         Returns:
             Error message as string
         """
-        message = error_data.get("message", "")
+        message = str(error_data.get("message", ""))
         if not message and "error_details" in error_data:
-            message = error_data["error_details"].get("message", "")
+            message = str(error_data["error_details"].get("message", ""))
         return message
 
     def extract_traceback_info(

@@ -70,7 +70,7 @@ class CommitAnalyzer:
         self._compile_patterns()
 
         # Cache for commit analyses
-        self._analysis_cache: Dict[str, Dict[str, Any]] = {}
+        self._analysis_cache: Dict[str, CommitAnalysis] = {}
 
     def _load_default_config(self) -> Dict[str, Any]:
         """Load default configuration for commit analysis."""
@@ -143,7 +143,12 @@ class CommitAnalyzer:
             self.config.get("cache_enabled", True)
             and commit_hash in self._analysis_cache
         ):
-            return self._analysis_cache[commit_hash]
+            cached_result = self._analysis_cache[commit_hash]
+            # Ensure we return CommitAnalysis type
+            if isinstance(cached_result, CommitAnalysis):
+                return cached_result
+            # If cached as dict, skip cache and re-analyze
+            del self._analysis_cache[commit_hash]
 
         try:
             # Get commit information
@@ -323,7 +328,7 @@ class CommitAnalyzer:
         for commit_type, keywords in self.config["commit_types"].items():
             for keyword in keywords:
                 if subject_lower.startswith(keyword) or f"({keyword})" in subject_lower:
-                    return commit_type
+                    return str(commit_type)
 
         # Check conventional commit format
         if self.config.get("conventional_commits", True):
@@ -331,7 +336,7 @@ class CommitAnalyzer:
             if conventional_match:
                 type_name = conventional_match.group(1).lower()
                 if type_name in self.config["commit_types"]:
-                    return type_name
+                    return str(type_name)
 
         return "unknown"
 

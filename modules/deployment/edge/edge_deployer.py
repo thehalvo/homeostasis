@@ -6,7 +6,7 @@ at the edge (CDN, edge servers, etc.) for improved performance and resilience.
 """
 
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from modules.security.audit import get_audit_logger
 
@@ -21,7 +21,7 @@ class EdgeDeployer:
     applications at edge locations across multiple providers.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize the edge deployer.
 
         Args:
@@ -36,9 +36,9 @@ class EdgeDeployer:
         self.provider_configs = self.config.get("providers", {})
 
         # Initialize providers (lazy-loaded)
-        self._providers = {}
+        self._providers: Dict[str, Any] = {}
 
-    def _get_provider(self, provider_name: str = None):
+    def _get_provider(self, provider_name: Optional[str] = None):
         """Get an edge provider by name.
 
         Args:
@@ -79,8 +79,8 @@ class EdgeDeployer:
         service_name: str,
         fix_id: str,
         source_path: str,
-        options: Dict[str, Any] = None,
-        provider_name: str = None,
+        options: Optional[Dict[str, Any]] = None,
+        provider_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Deploy a service to the edge.
 
@@ -125,9 +125,9 @@ class EdgeDeployer:
         self,
         service_name: str,
         fix_id: str,
-        source_path: str = None,
-        options: Dict[str, Any] = None,
-        provider_name: str = None,
+        source_path: Optional[str] = None,
+        options: Optional[Dict[str, Any]] = None,
+        provider_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Update an edge deployment.
 
@@ -169,7 +169,7 @@ class EdgeDeployer:
         return result
 
     def delete_edge_deployment(
-        self, service_name: str, fix_id: str, provider_name: str = None
+        self, service_name: str, fix_id: str, provider_name: Optional[str] = None
     ) -> Dict[str, Any]:
         """Delete an edge deployment.
 
@@ -208,7 +208,7 @@ class EdgeDeployer:
         return result
 
     def get_edge_deployment_status(
-        self, service_name: str, fix_id: str, provider_name: str = None
+        self, service_name: str, fix_id: str, provider_name: Optional[str] = None
     ) -> Dict[str, Any]:
         """Get the status of an edge deployment.
 
@@ -234,8 +234,8 @@ class EdgeDeployer:
         self,
         service_name: str,
         fix_id: str,
-        paths: List[str] = None,
-        provider_name: str = None,
+        paths: Optional[List[str]] = None,
+        provider_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Purge the cache for an edge deployment.
 
@@ -280,7 +280,7 @@ class EdgeDeployer:
         service_name: str,
         fix_id: str,
         percentage: int = 10,
-        provider_name: str = None,
+        provider_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Setup canary deployment for an edge service.
 
@@ -321,7 +321,7 @@ class EdgeDeployer:
         return result
 
     def update_edge_canary(
-        self, service_name: str, fix_id: str, percentage: int, provider_name: str = None
+        self, service_name: str, fix_id: str, percentage: int, provider_name: Optional[str] = None
     ) -> Dict[str, Any]:
         """Update canary deployment for an edge service.
 
@@ -362,7 +362,7 @@ class EdgeDeployer:
         return result
 
     def complete_edge_canary(
-        self, service_name: str, fix_id: str, provider_name: str = None
+        self, service_name: str, fix_id: str, provider_name: Optional[str] = None
     ) -> Dict[str, Any]:
         """Complete canary deployment for an edge service.
 
@@ -401,7 +401,7 @@ class EdgeDeployer:
         return result
 
     def rollback_edge_canary(
-        self, service_name: str, fix_id: str, provider_name: str = None
+        self, service_name: str, fix_id: str, provider_name: Optional[str] = None
     ) -> Dict[str, Any]:
         """Rollback canary deployment for an edge service.
 
@@ -444,7 +444,7 @@ class EdgeDeployer:
 _edge_deployer = None
 
 
-def get_edge_deployer(config: Dict[str, Any] = None) -> EdgeDeployer:
+def get_edge_deployer(config: Optional[Dict[str, Any]] = None) -> EdgeDeployer:
     """Get or create the singleton EdgeDeployer instance.
 
     Args:

@@ -43,7 +43,9 @@ class ImportAnalyzer:
     """
 
     def __init__(
-        self, ast_analyzer: Optional[ASTAnalyzer] = None, project_root: Optional[Path] = None
+        self,
+        ast_analyzer: Optional[ASTAnalyzer] = None,
+        project_root: Optional[Path] = None,
     ):
         """
         Initialize the import analyzer.

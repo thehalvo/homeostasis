@@ -178,7 +178,7 @@ class ASCIIBar:
         # Create legend
         legend = "  ".join(
             [
-                f"{fills.get(cat, '█')} {cat}: {val}"
+                f"{fills.get(cat, '█') if fills else '█'} {cat}: {val}"
                 for cat, val in values.items()
                 if val > 0
             ]
@@ -195,7 +195,7 @@ class RuleVisualizer:
     Visualizes rule statistics and coverage.
     """
 
-    def __init__(self, rules_dir: Path = None):
+    def __init__(self, rules_dir: Optional[Path] = None):
         """
         Initialize with rules directory.
 
@@ -221,15 +221,15 @@ class RuleVisualizer:
             Dictionary of statistics
         """
         # Basic counts
-        by_category = {}
-        by_severity = {}
-        by_confidence = {}
-        by_criticality = {}
-        by_complexity = {}
-        by_reliability = {}
-        by_source = {}
-        by_rule_type = {}
-        tags = {}
+        by_category: Dict[str, int] = {}
+        by_severity: Dict[str, int] = {}
+        by_confidence: Dict[str, int] = {}
+        by_criticality: Dict[str, int] = {}
+        by_complexity: Dict[str, int] = {}
+        by_reliability: Dict[str, int] = {}
+        by_source: Dict[str, int] = {}
+        by_rule_type: Dict[str, int] = {}
+        tags: Dict[str, int] = {}
 
         for rule in self.rules:
             # Count by category

@@ -12,7 +12,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Deque, Dict, List, Optional, Set
 
 import numpy as np
 
@@ -60,9 +60,9 @@ class DeployedFix:
 
     # Monitoring data
     error_recurrence_count: int = 0
-    performance_metrics: Dict[str, float] = None
+    performance_metrics: Optional[Dict[str, float]] = None
     stability_score: float = 1.0
-    last_checked: float = None
+    last_checked: Optional[float] = None
 
     def __post_init__(self):
         if self.performance_metrics is None:
@@ -126,9 +126,9 @@ class DeploymentMonitor:
         self.monitoring_duration = timedelta(hours=monitoring_duration_hours)
         self.check_interval = timedelta(hours=check_interval_hours)
 
-        self.active_deployments = {}
-        self.completed_deployments = {}
-        self.outcome_history = deque(maxlen=1000)
+        self.active_deployments: Dict[str, DeployedFix] = {}
+        self.completed_deployments: Dict[str, DeployedFix] = {}
+        self.outcome_history: Deque[OutcomeReport] = deque(maxlen=1000)
 
         # Load existing deployments
         self._load_deployments()
@@ -437,8 +437,8 @@ class OutcomeTracker:
 
     def __init__(self, deployment_monitor: DeploymentMonitor):
         self.deployment_monitor = deployment_monitor
-        self.outcome_patterns = defaultdict(list)
-        self.success_predictors = {}
+        self.outcome_patterns: Dict[str, List[Any]] = defaultdict(list)
+        self.success_predictors: Dict[str, Any] = {}
 
     def analyze_outcome_patterns(self) -> Dict[str, Any]:
         """Analyze patterns in fix outcomes."""
@@ -505,7 +505,9 @@ class OutcomeTracker:
 
     def _analyze_confidence_accuracy(self) -> Dict[str, float]:
         """Analyze how accurate confidence scores are."""
-        confidence_bins = defaultdict(lambda: {"predicted": [], "actual": []})
+        confidence_bins: Dict[float, Dict[str, List[float]]] = defaultdict(
+            lambda: {"predicted": [], "actual": []}
+        )
 
         for report in self.deployment_monitor.outcome_history:
             deployment = self._get_deployment_for_report(report)
@@ -560,7 +562,7 @@ class OutcomeTracker:
 
         if len(regression_reports) >= 5:
             # Analyze common patterns
-            file_types = defaultdict(int)
+            file_types: Dict[str, int] = defaultdict(int)
             fix_sizes = []
 
             for report in regression_reports:

@@ -471,7 +471,7 @@ class MLBasedClassifier:
     def __init__(self, model_path: Optional[str] = None):
         """Initialize ML classifier."""
         self.model_path = model_path
-        self.model = None
+        self.model: Optional[Dict[str, Any]] = None
         self.categories = list(ErrorCategory)
         self.feature_extractor = FeatureExtractor()
 
@@ -557,6 +557,9 @@ class MLBasedClassifier:
         self, features: ClassificationFeatures
     ) -> Tuple[Optional[ErrorCategory], float]:
         """Classify using weighted scoring fallback model."""
+        if not self.model:
+            return None, 0.0
+
         category_scores = {}
 
         for category, weights in self.model["weights"].items():
@@ -735,6 +738,9 @@ class IntelligentClassifier:
                 language = error_context.language
                 file_path = error_context.file_path
 
+            if not source_code_snippet:
+                return None
+
             return self.compiler_integration.get_detailed_diagnostics(
                 source_code_snippet, language, file_path
             )
@@ -889,6 +895,11 @@ class IntelligentClassifier:
                 error_context
             )
             return comprehensive_result
+
+        # At this point, category should not be None
+        if not category:
+            # Fallback to comprehensive detector if category is somehow None
+            return self.comprehensive_detector.classify_error(error_context)
 
         return ErrorClassification(
             category=category,

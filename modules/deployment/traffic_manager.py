@@ -7,7 +7,7 @@ including traffic splitting and service proxying.
 
 import logging
 import random
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from modules.deployment.traffic_manager_hooks import (
     CloudLoadBalancerHook,
@@ -26,14 +26,14 @@ class TrafficSplitter:
     implemented by different backend mechanisms (e.g., nginx, Kubernetes, etc.)
     """
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict] = None):
         """Initialize traffic splitter.
 
         Args:
             config: Configuration dictionary
         """
         self.config = config or {}
-        self.split_rules = {}  # {service_name: {deployment_id: percentage}}
+        self.split_rules: Dict[str, Dict[str, int]] = {}  # {service_name: {deployment_id: percentage}}
 
     def set_split_percentage(
         self, service_name: str, deployment_id: str, percentage: int
@@ -134,7 +134,7 @@ class TrafficSplitter:
         logger.info(f"Removed traffic split for {service_name}/{deployment_id}")
         return True
 
-    def get_split_rules(self, service_name: Optional[str] = None) -> Dict:
+    def get_split_rules(self, service_name: Optional[str] = None) -> Dict[str, Any]:
         """Get the current traffic split rules.
 
         Args:
@@ -177,7 +177,7 @@ class NginxTrafficManager:
     Generates and updates Nginx configuration files for traffic splitting.
     """
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict] = None):
         """Initialize Nginx traffic manager.
 
         Args:
@@ -280,7 +280,7 @@ class KubernetesTrafficManager:
     Uses Kubernetes services and destination rules for traffic splitting.
     """
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict] = None):
         """Initialize Kubernetes traffic manager.
 
         Args:
@@ -490,7 +490,7 @@ class CloudTrafficManager:
     Supports AWS, GCP, and Azure.
     """
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict] = None):
         """Initialize cloud traffic manager.
 
         Args:
@@ -552,7 +552,7 @@ _kubernetes_manager = None
 _cloud_manager = None
 
 
-def get_traffic_splitter(config: Dict = None) -> TrafficSplitter:
+def get_traffic_splitter(config: Optional[Dict] = None) -> TrafficSplitter:
     """Get traffic splitter singleton.
 
     Args:
@@ -567,7 +567,7 @@ def get_traffic_splitter(config: Dict = None) -> TrafficSplitter:
     return _traffic_splitter
 
 
-def get_nginx_manager(config: Dict = None) -> NginxTrafficManager:
+def get_nginx_manager(config: Optional[Dict] = None) -> NginxTrafficManager:
     """Get Nginx traffic manager singleton.
 
     Args:
@@ -582,7 +582,7 @@ def get_nginx_manager(config: Dict = None) -> NginxTrafficManager:
     return _nginx_manager
 
 
-def get_kubernetes_manager(config: Dict = None) -> KubernetesTrafficManager:
+def get_kubernetes_manager(config: Optional[Dict] = None) -> KubernetesTrafficManager:
     """Get Kubernetes traffic manager singleton.
 
     Args:
@@ -597,7 +597,7 @@ def get_kubernetes_manager(config: Dict = None) -> KubernetesTrafficManager:
     return _kubernetes_manager
 
 
-def get_cloud_manager(config: Dict = None) -> CloudTrafficManager:
+def get_cloud_manager(config: Optional[Dict] = None) -> CloudTrafficManager:
     """Get cloud traffic manager singleton.
 
     Args:

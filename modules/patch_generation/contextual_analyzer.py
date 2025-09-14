@@ -520,7 +520,11 @@ class ContextualAnalyzer:
 
     def _analyze_module_structure(self, root_dir: str) -> Dict[str, Any]:
         """Analyze the module structure of the project."""
-        structure: Dict[str, List[Any]] = {"packages": [], "modules": [], "standalone_files": []}
+        structure: Dict[str, List[Any]] = {
+            "packages": [],
+            "modules": [],
+            "standalone_files": [],
+        }
 
         root_path = Path(root_dir)
 

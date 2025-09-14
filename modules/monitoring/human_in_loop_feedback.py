@@ -66,7 +66,7 @@ class ReviewGate:
         conditions: Dict[str, Any],
         reviewers: List[str],
         timeout_minutes: int = 60,
-        escalation_path: List[str] = None,
+        escalation_path: Optional[List[str]] = None,
     ):
         """
         Initialize a review gate.
@@ -145,7 +145,7 @@ class ReviewGate:
 class NotificationManager:
     """Manages notifications across different channels."""
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the notification manager.
 
@@ -273,7 +273,7 @@ class NotificationManager:
 
         try:
             # Format message for Slack
-            slack_message = {
+            slack_message: Dict[str, Any] = {
                 "text": subject,
                 "attachments": [
                     {
@@ -442,7 +442,7 @@ class HumanInLoopFeedbackSystem:
         self.approval_manager = ApprovalManager(approval_config)
 
         # Load review gates
-        self.review_gates = {}
+        self.review_gates: Dict[str, ReviewGate] = {}
         self._load_review_gates()
 
         # Feedback storage
@@ -452,7 +452,7 @@ class HumanInLoopFeedbackSystem:
         self.feedback_storage.mkdir(parents=True, exist_ok=True)
 
         # Active reviews tracking
-        self.active_reviews = {}
+        self.active_reviews: Dict[str, Any] = {}
 
     def _load_review_gates(self) -> None:
         """Load review gates from configuration."""
@@ -875,11 +875,11 @@ Command: homeostasis --approve {request_id}
         try:
             if feedback_type == FeedbackType.APPROVAL:
                 self.approval_manager.approve_request(
-                    request_id, reviewer, details.get("comment") if details else None
+                    request_id, reviewer, str(details.get("comment", "")) if details else ""
                 )
             elif feedback_type == FeedbackType.REJECTION:
                 self.approval_manager.reject_request(
-                    request_id, reviewer, details.get("reason") if details else None
+                    request_id, reviewer, str(details.get("reason", "")) if details else ""
                 )
             elif feedback_type == FeedbackType.MODIFICATION:
                 # Add comment with modification details

@@ -181,7 +181,7 @@ class PolyglotStackTraceAnalyzer:
         if hints:
             trace_id = hints.get("trace_id")
             if trace_id:
-                return (
+                return bool(
                     trace1.metadata.get("trace_id") == trace_id
                     and trace2.metadata.get("trace_id") == trace_id
                 )

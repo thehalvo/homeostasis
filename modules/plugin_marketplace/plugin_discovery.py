@@ -91,12 +91,12 @@ class PluginManifest:
     @property
     def name(self) -> str:
         """Get plugin name."""
-        return self.data["name"]
+        return str(self.data["name"])
 
     @property
     def version(self) -> str:
         """Get plugin version."""
-        return self.data["version"]
+        return str(self.data["version"])
 
     @property
     def type(self) -> PluginType:
@@ -106,12 +106,12 @@ class PluginManifest:
     @property
     def display_name(self) -> str:
         """Get display name."""
-        return self.data["displayName"]
+        return str(self.data["displayName"])
 
     @property
     def description(self) -> str:
         """Get description."""
-        return self.data["description"]
+        return str(self.data["description"])
 
     @property
     def required_capabilities(self) -> Set[str]:
@@ -126,12 +126,14 @@ class PluginManifest:
     @property
     def permissions(self) -> Dict[str, List[str]]:
         """Get permission requirements."""
-        return self.data.get("permissions", {})
+        perms = self.data.get("permissions", {})
+        return dict(perms) if isinstance(perms, dict) else {}
 
     @property
     def engines(self) -> Dict[str, str]:
         """Get engine requirements."""
-        return self.data["engines"]
+        engines = self.data["engines"]
+        return dict(engines) if isinstance(engines, dict) else {}
 
     def is_compatible_with_ushs(self, ushs_version: str) -> bool:
         """
@@ -149,7 +151,7 @@ class PluginManifest:
 
         try:
             # Parse version requirement
-            return semver.match(ushs_version, required_range)
+            return bool(semver.match(ushs_version, required_range))
         except ValueError:
             logger.warning(f"Invalid version requirement: {required_range}")
             return False

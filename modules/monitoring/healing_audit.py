@@ -21,7 +21,7 @@ class HealingActivityAuditor:
     tracking and logging of all steps in the self-healing process.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the healing activity auditor.
 
@@ -37,13 +37,13 @@ class HealingActivityAuditor:
         self.track_execution_time = self.config.get("track_execution_time", True)
 
         # Track healing sessions
-        self.active_sessions = {}
+        self.active_sessions: Dict[str, Any] = {}
 
     def start_healing_session(
         self,
         trigger: str = "scheduled",
         user: str = "system",
-        details: Dict[str, Any] = None,
+        details: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Start a new healing session.
@@ -87,7 +87,10 @@ class HealingActivityAuditor:
         return session_id
 
     def end_healing_session(
-        self, session_id: str, status: str = "completed", details: Dict[str, Any] = None
+        self,
+        session_id: str,
+        status: str = "completed",
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         End a healing session.
@@ -131,7 +134,7 @@ class HealingActivityAuditor:
         error_id: str,
         error_type: str,
         source: str,
-        details: Dict[str, Any] = None,
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log an error detection activity.
@@ -179,7 +182,7 @@ class HealingActivityAuditor:
         root_cause: str,
         confidence: float,
         duration_ms: Optional[float] = None,
-        details: Dict[str, Any] = None,
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log an error analysis activity.
@@ -238,7 +241,7 @@ class HealingActivityAuditor:
         file_path: str,
         template_name: Optional[str] = None,
         confidence: float = 0.0,
-        details: Dict[str, Any] = None,
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log a patch generation activity.
@@ -297,7 +300,7 @@ class HealingActivityAuditor:
         fix_id: str,
         file_path: str,
         status: str = "success",
-        details: Dict[str, Any] = None,
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log a patch application activity.
@@ -346,7 +349,7 @@ class HealingActivityAuditor:
         test_type: str,
         status: str,
         duration_ms: Optional[float] = None,
-        details: Dict[str, Any] = None,
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log a test execution activity.
@@ -401,7 +404,7 @@ class HealingActivityAuditor:
         status: str,
         deployment_type: str = "standard",
         user: str = "system",
-        details: Dict[str, Any] = None,
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log a deployment activity.
@@ -455,9 +458,9 @@ class HealingActivityAuditor:
         fix_id: str,
         percentage: float,
         status: str,
-        metrics: Dict[str, float] = None,
+        metrics: Optional[Dict[str, float]] = None,
         user: str = "system",
-        details: Dict[str, Any] = None,
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log a canary deployment update.
@@ -513,7 +516,7 @@ class HealingActivityAuditor:
         fix_id: str,
         interaction_type: str,
         user: str,
-        details: Dict[str, Any] = None,
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log a human interaction with the healing process.
@@ -569,7 +572,7 @@ class HealingActivityAuditor:
         status: str,
         reason: str,
         user: str = "system",
-        details: Dict[str, Any] = None,
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log a rollback activity.
@@ -620,7 +623,8 @@ class HealingActivityAuditor:
         Returns:
             Dict[str, Any]: Session history or empty dict if not found
         """
-        return self.active_sessions.get(session_id, {})
+        result = self.active_sessions.get(session_id)
+        return result if result is not None else {}
 
     def get_active_sessions(self) -> List[Dict[str, Any]]:
         """
@@ -636,7 +640,9 @@ class HealingActivityAuditor:
 _healing_auditor = None
 
 
-def get_healing_auditor(config: Dict[str, Any] = None) -> HealingActivityAuditor:
+def get_healing_auditor(
+    config: Optional[Dict[str, Any]] = None,
+) -> HealingActivityAuditor:
     """
     Get or create the singleton HealingActivityAuditor instance.
 
@@ -653,7 +659,9 @@ def get_healing_auditor(config: Dict[str, Any] = None) -> HealingActivityAuditor
 
 
 def start_healing_session(
-    trigger: str = "scheduled", user: str = "system", details: Dict[str, Any] = None
+    trigger: str = "scheduled",
+    user: str = "system",
+    details: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     Start a new healing session.
@@ -670,7 +678,7 @@ def start_healing_session(
 
 
 def end_healing_session(
-    session_id: str, status: str = "completed", details: Dict[str, Any] = None
+    session_id: str, status: str = "completed", details: Optional[Dict[str, Any]] = None
 ) -> None:
     """
     End a healing session.
@@ -688,7 +696,7 @@ def log_error_detection(
     error_id: str,
     error_type: str,
     source: str,
-    details: Dict[str, Any] = None,
+    details: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Log an error detection activity.
@@ -712,7 +720,7 @@ def log_error_analysis(
     root_cause: str,
     confidence: float,
     duration_ms: Optional[float] = None,
-    details: Dict[str, Any] = None,
+    details: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Log an error analysis activity.
@@ -745,7 +753,7 @@ def log_patch_generation(
     file_path: str,
     template_name: Optional[str] = None,
     confidence: float = 0.0,
-    details: Dict[str, Any] = None,
+    details: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Log a patch generation activity.
@@ -777,7 +785,7 @@ def log_patch_application(
     fix_id: str,
     file_path: str,
     status: str = "success",
-    details: Dict[str, Any] = None,
+    details: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Log a patch application activity.
@@ -800,7 +808,7 @@ def log_test_execution(
     test_type: str,
     status: str,
     duration_ms: Optional[float] = None,
-    details: Dict[str, Any] = None,
+    details: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Log a test execution activity.
@@ -825,7 +833,7 @@ def log_deployment(
     status: str,
     deployment_type: str = "standard",
     user: str = "system",
-    details: Dict[str, Any] = None,
+    details: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Log a deployment activity.
@@ -849,7 +857,7 @@ def log_human_interaction(
     fix_id: str,
     interaction_type: str,
     user: str,
-    details: Dict[str, Any] = None,
+    details: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Log a human interaction with the healing process.

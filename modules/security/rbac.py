@@ -6,9 +6,15 @@ and functionality in production environments.
 """
 
 import logging
-from typing import Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, TypedDict, cast
 
 logger = logging.getLogger(__name__)
+
+
+class RoleInfo(TypedDict):
+    """Type definition for role information."""
+    description: str
+    permissions: Set[str]
 
 
 class PermissionDeniedError(Exception):
@@ -27,6 +33,8 @@ class RBACManager:
             config: Configuration dictionary for RBAC settings
         """
         self.config = config or {}
+        self.permissions: Dict[str, str] = {}
+        self.roles: Dict[str, RoleInfo] = {}
 
         # Define default roles and permissions
         self._init_default_roles()
@@ -123,12 +131,12 @@ class RBACManager:
                 continue
 
             # Create or update role
-            self.roles[role_name] = {
+            self.roles[role_name] = cast(RoleInfo, {
                 "description": role_config.get(
                     "description", f"Custom role: {role_name}"
                 ),
                 "permissions": set(role_config.get("permissions", [])),
-            }
+            })
 
     def list_roles(self) -> Dict[str, Dict]:
         """List all available roles.

@@ -10,6 +10,7 @@ This module extends the basic LLM patch generator with advanced features:
 """
 
 import logging
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -91,12 +92,18 @@ class EnhancedLLMPatchGenerator(LLMPatchGenerator):
         self.prompt_manager = create_advanced_prompt_manager(config)
 
         # Enhanced configuration
-        self.enable_advanced_features = config.get("enable_advanced_features", True)
-        self.enable_iterative_refinement = config.get(
-            "enable_iterative_refinement", True
+        self.enable_advanced_features = (
+            config.get("enable_advanced_features", True) if config else True
         )
-        self.enable_impact_analysis = config.get("enable_impact_analysis", True)
-        self.semantic_analysis_depth = config.get("semantic_analysis_depth", 3)
+        self.enable_iterative_refinement = (
+            config.get("enable_iterative_refinement", True) if config else True
+        )
+        self.enable_impact_analysis = (
+            config.get("enable_impact_analysis", True) if config else True
+        )
+        self.semantic_analysis_depth = (
+            config.get("semantic_analysis_depth", 3) if config else 3
+        )
 
         logger.info(
             "Initialized Enhanced LLM Patch Generator with Phase 13.3 capabilities"
@@ -133,7 +140,7 @@ class EnhancedLLMPatchGenerator(LLMPatchGenerator):
             if self.enable_impact_analysis:
                 codebase_context = self.contextual_analyzer.analyze_codebase_context(
                     error_context.get("file_path", ""),
-                    additional_context.get("root_dir"),
+                    additional_context.get("root_dir") if additional_context else None,
                 )
 
             # Use advanced code generator for initial patch
@@ -354,8 +361,6 @@ class EnhancedLLMPatchGenerator(LLMPatchGenerator):
             if "class " in original_code:
                 change_type = "class"
                 # Extract class name
-                import re
-
                 match = re.search(r"class\s+(\w+)", original_code)
                 if match:
                     changed_entity = match.group(1)

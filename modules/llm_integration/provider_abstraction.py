@@ -604,21 +604,23 @@ class LLMManager:
             retry_config: Configuration for retry behavior
         """
         self.api_key_manager = api_key_manager
-        self._providers = {}
+        self._providers: Dict[str, LLMProviderInterface] = {}
         self._provider_order = [
             "anthropic",
             "openai",
             "openrouter",
         ]  # Default preference order
         self.retry_config = retry_config or RetryConfig()
-        self._provider_health = {}  # Track health metrics for each provider
+        self._provider_health: Dict[str, ProviderHealthMetrics] = (
+            {}
+        )  # Track health metrics for each provider
         self._circuit_breaker_threshold = (
             5  # Consecutive failures before opening circuit
         )
         self._circuit_breaker_timeout = 300  # 5 minutes
         self.logger = logging.getLogger(__name__)
         # Global retry tracking
-        self._global_retry_history = []  # List of retry timestamps
+        self._global_retry_history: List[float] = []  # List of retry timestamps
         self._last_global_cooldown_check = 0.0
 
     def _classify_error(
@@ -1062,7 +1064,8 @@ class LLMManager:
 
                 # Override default model for the target provider
                 if provider_name in model_mapping:
-                    provider._default_model = model_mapping[provider_name]
+                    # Note: This sets the default model through a custom attribute
+                    setattr(provider, "_default_model", model_mapping[provider_name])
 
                 self._providers[cache_key] = provider
                 return provider
@@ -1172,6 +1175,7 @@ class LLMManager:
                                 if enable_retry:
 
                                     def operation():
+                                        assert proxy_provider is not None
                                         return proxy_provider.complete(request)
 
                                     return self._retry_with_backoff(
@@ -1179,6 +1183,7 @@ class LLMManager:
                                     )
                                 else:
                                     start_time = time.time()
+                                    assert proxy_provider is not None
                                     response = proxy_provider.complete(request)
                                     latency = time.time() - start_time
                                     self._update_provider_health(
@@ -1416,7 +1421,7 @@ class LLMManager:
         Returns:
             Provider status summary
         """
-        summary = {
+        summary: Dict[str, Any] = {
             "total_providers": len(self._provider_health),
             "healthy_providers": 0,
             "unhealthy_providers": 0,

@@ -6,7 +6,7 @@ Provides validators for ensuring security standards are met for various inputs.
 
 import ipaddress
 import re
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 # Regular expressions for validation
 EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
@@ -234,7 +234,7 @@ def sanitize_filename(filename: str) -> str:
     return re.sub(r"[^a-zA-Z0-9_.-]", "_", filename)
 
 
-def validate_and_sanitize_json(json_data: Dict) -> Tuple[bool, Dict, Optional[str]]:
+def validate_and_sanitize_json(json_data: Dict[str, Any]) -> Tuple[bool, Dict[str, Any], Optional[str]]:
     """Validate and sanitize JSON data.
 
     Args:
@@ -243,7 +243,7 @@ def validate_and_sanitize_json(json_data: Dict) -> Tuple[bool, Dict, Optional[st
     Returns:
         Tuple[bool, Dict, Optional[str]]: (is_valid, sanitized_data, reason_if_invalid)
     """
-    sanitized = {}
+    sanitized: Dict[str, Any] = {}
 
     # Process each field
     for key, value in json_data.items():
@@ -274,7 +274,7 @@ def validate_and_sanitize_json(json_data: Dict) -> Tuple[bool, Dict, Optional[st
 
         elif isinstance(value, list):
             # Process list items
-            sanitized_list = []
+            sanitized_list: List[Any] = []
             for item in value:
                 if isinstance(item, str):
                     # Check string items for potential attacks

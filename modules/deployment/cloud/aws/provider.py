@@ -27,7 +27,7 @@ class AWSProvider(BaseCloudProvider):
     - EKS (Elastic Kubernetes Service)
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize AWS provider.
 
         Args:
@@ -113,11 +113,12 @@ class AWSProvider(BaseCloudProvider):
                 }
 
             # Try to parse JSON output if possible
+            result: Dict[str, Any]
             try:
                 if stdout and (
                     stdout.strip().startswith("{") or stdout.strip().startswith("[")
                 ):
-                    result = json.loads(stdout)
+                    result = dict(json.loads(stdout))
                 else:
                     result = {"output": stdout}
             except json.JSONDecodeError:
@@ -143,7 +144,7 @@ class AWSProvider(BaseCloudProvider):
 
         # Try to get caller identity
         result = self._run_aws_cli(["sts", "get-caller-identity"])
-        return result.get("success", False)
+        return bool(result.get("success", False))
 
     def _deploy_lambda(
         self, service_name: str, fix_id: str, source_path: str, **kwargs

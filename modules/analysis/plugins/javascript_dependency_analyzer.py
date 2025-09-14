@@ -254,28 +254,31 @@ class JavaScriptDependencyAnalyzer:
         all_deps.update(package_data.get("peerDependencies", {}))
 
         # Check for known conflicts
-        for conflict_def in self.known_issues["common_conflicts"]:
-            packages = conflict_def["packages"]
-            reason = conflict_def["reason"]
+        common_conflicts = self.known_issues["common_conflicts"]
+        if isinstance(common_conflicts, list):
+            for conflict_def in common_conflicts:
+                if isinstance(conflict_def, dict) and "packages" in conflict_def and "reason" in conflict_def:
+                    packages = conflict_def["packages"]
+                    reason = conflict_def["reason"]
 
-            # Check if all packages in the conflict are present
-            present_packages = [pkg for pkg in packages if pkg in all_deps]
+                    # Check if all packages in the conflict are present
+                    present_packages = [pkg for pkg in packages if pkg in all_deps]
 
-            if len(present_packages) >= 2:
-                # Check version compatibility
-                versions = {pkg: all_deps[pkg] for pkg in present_packages}
+                    if len(present_packages) >= 2:
+                        # Check version compatibility
+                        versions = {pkg: all_deps[pkg] for pkg in present_packages}
 
-                if reason == "version_mismatch":
-                    if not self._are_versions_compatible(versions):
-                        conflicts.append(
-                            {
-                                "type": "version_mismatch",
-                                "packages": present_packages,
-                                "versions": versions,
-                                "severity": "high",
-                                "message": f"Version mismatch detected between {', '.join(present_packages)}",
-                            }
-                        )
+                        if reason == "version_mismatch":
+                            if not self._are_versions_compatible(versions):
+                                conflicts.append(
+                                    {
+                                        "type": "version_mismatch",
+                                        "packages": present_packages,
+                                        "versions": versions,
+                                        "severity": "high",
+                                        "message": f"Version mismatch detected between {', '.join(present_packages)}",
+                                    }
+                                )
 
         return conflicts
 
@@ -495,12 +498,15 @@ class JavaScriptDependencyAnalyzer:
         peer_deps = package_data.get("peerDependencies", {})
 
         # Check if packages requiring peer dependencies are installed
-        for dep_name in dependencies:
-            if dep_name in self.known_issues["peer_dependencies"]:
-                required_peers = self.known_issues["peer_dependencies"][dep_name]
-                for peer in required_peers:
-                    if peer not in dependencies and peer not in peer_deps:
-                        missing.append(peer)
+        peer_dependencies = self.known_issues.get("peer_dependencies", {})
+        if isinstance(peer_dependencies, dict):
+            for dep_name in dependencies:
+                if dep_name in peer_dependencies:
+                    required_peers = peer_dependencies[dep_name]
+                    if isinstance(required_peers, list):
+                        for peer in required_peers:
+                            if peer not in dependencies and peer not in peer_deps:
+                                missing.append(peer)
 
         return missing
 

@@ -11,7 +11,7 @@ import logging
 import os
 import uuid
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from modules.security.audit import get_audit_logger
 from modules.security.rbac import get_rbac_manager
@@ -88,9 +88,15 @@ class ApprovalRequest:
 
         # Initialize status and approvals
         self.status = ApprovalStatus.PENDING
-        self.approvals = {}  # {username: {'timestamp': datetime, 'comment': str}}
-        self.rejections = {}  # {username: {'timestamp': datetime, 'reason': str}}
-        self.comments = []  # [{username: str, timestamp: datetime, comment: str}]
+        self.approvals: Dict[str, Dict[str, Any]] = (
+            {}
+        )  # {username: {'timestamp': datetime, 'comment': str}}
+        self.rejections: Dict[str, Dict[str, Any]] = (
+            {}
+        )  # {username: {'timestamp': datetime, 'reason': str}}
+        self.comments: List[Dict[str, Any]] = (
+            []
+        )  # [{username: str, timestamp: datetime, comment: str}]
 
     def to_dict(self) -> Dict:
         """Convert to dictionary.
@@ -210,7 +216,7 @@ class ApprovalRequest:
             self.updated_at = datetime.datetime.utcnow()
             return
 
-    def approve(self, username: str, comment: str = None) -> bool:
+    def approve(self, username: str, comment: Optional[str] = None) -> bool:
         """Approve the request.
 
         Args:
@@ -247,7 +253,7 @@ class ApprovalRequest:
 
         return self.is_approved()
 
-    def reject(self, username: str, reason: str = None) -> bool:
+    def reject(self, username: str, reason: Optional[str] = None) -> bool:
         """Reject the request.
 
         Args:
@@ -284,7 +290,7 @@ class ApprovalRequest:
 
         return True
 
-    def cancel(self, username: str, reason: str = None) -> bool:
+    def cancel(self, username: str, reason: Optional[str] = None) -> bool:
         """Cancel the request.
 
         Args:
@@ -333,7 +339,11 @@ class ApprovalRequest:
 class ApprovalManager:
     """Manages approval workflows for critical changes."""
 
-    def __init__(self, config: Dict = None, storage_path: str = None):
+    def __init__(
+        self,
+        config: Optional[Dict[str, Any]] = None,
+        storage_path: Optional[str] = None,
+    ):
         """Initialize the approval manager.
 
         Args:
@@ -346,7 +356,7 @@ class ApprovalManager:
         self.storage_path = storage_path or "logs/approvals.json"
 
         # Load existing approval requests
-        self.requests = {}
+        self.requests: Dict[str, ApprovalRequest] = {}
         self._load_requests()
 
         # Set up required approvers
@@ -403,8 +413,8 @@ class ApprovalManager:
         title: str,
         description: str,
         data: Dict,
-        required_approvers: int = None,
-        expiry: int = None,
+        required_approvers: Optional[int] = None,
+        expiry: Optional[int] = None,
     ) -> ApprovalRequest:
         """Create a new approval request.
 
@@ -517,7 +527,7 @@ class ApprovalManager:
         return results
 
     def approve_request(
-        self, request_id: str, username: str, comment: str = None
+        self, request_id: str, username: str, comment: Optional[str] = None
     ) -> bool:
         """Approve an approval request.
 
@@ -575,7 +585,7 @@ class ApprovalManager:
         return result
 
     def reject_request(
-        self, request_id: str, username: str, reason: str = None
+        self, request_id: str, username: str, reason: Optional[str] = None
     ) -> bool:
         """Reject an approval request.
 
@@ -629,7 +639,7 @@ class ApprovalManager:
         return result
 
     def cancel_request(
-        self, request_id: str, username: str, reason: str = None
+        self, request_id: str, username: str, reason: Optional[str] = None
     ) -> bool:
         """Cancel an approval request.
 
@@ -758,7 +768,7 @@ class ApprovalManager:
 _approval_manager = None
 
 
-def get_approval_manager(config: Dict = None) -> ApprovalManager:
+def get_approval_manager(config: Optional[Dict[str, Any]] = None) -> ApprovalManager:
     """Get or create the singleton ApprovalManager instance.
 
     Args:
@@ -779,8 +789,8 @@ def create_approval_request(
     title: str,
     description: str,
     data: Dict,
-    required_approvers: int = None,
-    expiry: int = None,
+    required_approvers: Optional[int] = None,
+    expiry: Optional[int] = None,
 ) -> ApprovalRequest:
     """Create a new approval request.
 

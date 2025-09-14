@@ -114,9 +114,9 @@ class RuleExtractor:
         self.min_examples = min_examples
         self.min_confidence = min_confidence
 
-        self.patterns = {}
-        self.fix_history = []
-        self.pattern_candidates = defaultdict(list)
+        self.patterns: Dict[str, ExtractedPattern] = {}
+        self.fix_history: List[Dict[str, Any]] = []
+        self.pattern_candidates: Dict[str, List[Tuple[ExtractedPattern, str]]] = defaultdict(list)
 
         # Load existing patterns
         self._load_patterns()
@@ -361,7 +361,7 @@ class RuleExtractor:
         for transform in transformations:
             # Only check if the before pattern matches; after_pattern contains backreferences
             # which are not valid in search patterns
-            if re.search(transform["before_pattern"], before_text):
+            if re.search(str(transform["before_pattern"]), before_text):
                 # Check if the transformation could explain the change
                 # This is a simplified check - in reality we'd need more sophisticated analysis
                 if (
@@ -584,7 +584,7 @@ class PatternAnalyzer:
 
     def __init__(self, rule_extractor: RuleExtractor):
         self.rule_extractor = rule_extractor
-        self.pattern_stats = defaultdict(
+        self.pattern_stats: Dict[str, Dict[str, Any]] = defaultdict(
             lambda: {
                 "occurrences": 0,
                 "success_rate": 0.0,
@@ -595,7 +595,7 @@ class PatternAnalyzer:
         )
 
     def analyze_pattern_effectiveness(
-        self, pattern: ExtractedPattern, healing_metrics: HealingMetrics
+        self, pattern: ExtractedPattern, healing_metrics: Optional[HealingMetrics] = None
     ) -> Dict[str, Any]:
         """Analyze how effective a pattern has been."""
         effectiveness = {
@@ -606,18 +606,23 @@ class PatternAnalyzer:
             "error_coverage": [],
         }
 
-        # Get metrics for each application
+        # Since HealingMetricsCollector doesn't have get_fix_metrics method,
+        # we'll use the stored fix history instead
         successes = 0
         total_time = 0
         error_types = set()
 
         for fix_id in pattern.source_examples:
-            metrics = healing_metrics.get_fix_metrics(fix_id)
-            if metrics:
-                if metrics.get("success"):
-                    successes += 1
-                total_time += metrics.get("fix_time", 0)
-                error_types.add(metrics.get("error_type"))
+            # Look up fix in our history
+            for fix in self.rule_extractor.fix_history:
+                if fix.get("fix_id") == fix_id:
+                    metadata = fix.get("metadata", {})
+                    if metadata.get("success", True):  # Default to success if not specified
+                        successes += 1
+                    total_time += metadata.get("fix_time", 0)
+                    if "error_type" in metadata:
+                        error_types.add(metadata["error_type"])
+                    break
 
         if pattern.source_examples:
             effectiveness["success_rate"] = successes / len(pattern.source_examples)
@@ -631,17 +636,18 @@ class PatternAnalyzer:
         correlations = []
 
         # Build co-occurrence matrix
-        pattern_pairs = defaultdict(int)
+        pattern_pairs: Dict[Tuple[str, str], int] = defaultdict(int)
 
         for fix in self.rule_extractor.fix_history:
-            fix_patterns = []
+            fix_patterns: List[ExtractedPattern] = []
             # Extract all patterns from this fix
             # (This would need actual implementation)
 
             # Count co-occurrences
             for i, p1 in enumerate(fix_patterns):
                 for p2 in fix_patterns[i + 1 :]:
-                    key = tuple(sorted([p1.pattern_id, p2.pattern_id]))
+                    sorted_ids = sorted([p1.pattern_id, p2.pattern_id])
+                    key = (sorted_ids[0], sorted_ids[1])
                     pattern_pairs[key] += 1
 
         # Calculate correlations
@@ -690,7 +696,7 @@ class AutomatedRuleGenerator:
                     added_rules.append(rule)
 
                     logger.info(
-                        f"Added auto-generated rule {rule.rule_id} with "
+                        f"Added auto-generated rule {rule.id} with "
                         f"{effectiveness['success_rate']:.2%} success rate"
                     )
 
@@ -715,8 +721,8 @@ class AutomatedRuleGenerator:
     def _get_pattern_for_rule(self, rule: Rule) -> Optional[ExtractedPattern]:
         """Get the pattern that generated a rule."""
         # Extract pattern ID from rule ID (assuming format "auto_<pattern_id>")
-        if rule.rule_id.startswith("auto_"):
-            pattern_id = rule.rule_id[5:]
+        if rule.id and rule.id.startswith("auto_"):
+            pattern_id = rule.id[5:]
             for pattern in self.rule_extractor.patterns.values():
                 if pattern.pattern_id == pattern_id:
                     return pattern
@@ -738,15 +744,19 @@ class AutomatedRuleGenerator:
 
         if pattern1 and pattern2:
             # Create composite rule
+            composite_confidence = min(pattern1.confidence, pattern2.confidence) * correlation
             return Rule(
-                rule_id=f"composite_{pattern1_id}_{pattern2_id}",
-                name=f"Composite: {pattern1.description} + {pattern2.description}",
-                confidence_score=min(pattern1.confidence, pattern2.confidence)
-                * correlation,
-                auto_generated=True,
+                pattern=f"({pattern1.error_patterns[0] if pattern1.error_patterns else '.*'})|({pattern2.error_patterns[0] if pattern2.error_patterns else '.*'})",
+                type="CompositeError",
+                description=f"Composite: {pattern1.description} + {pattern2.description}",
+                root_cause=f"composite_{pattern1_id}_{pattern2_id}",
+                suggestion=f"Apply fixes for both: {pattern1.description} and {pattern2.description}",
+                id=f"composite_{pattern1_id}_{pattern2_id}",
+                confidence=RuleConfidence.HIGH if composite_confidence >= 0.8 else RuleConfidence.MEDIUM,
                 metadata={
                     "correlation": correlation,
                     "component_patterns": [pattern1_id, pattern2_id],
+                    "auto_generated": True,
                 },
             )
 

@@ -26,7 +26,7 @@ class AWSLambdaProvider(ServerlessProvider):
     Manages the deployment, update, and monitoring of functions on AWS Lambda.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize AWS Lambda provider.
 
         Args:
@@ -35,10 +35,10 @@ class AWSLambdaProvider(ServerlessProvider):
         super().__init__(config)
 
         # Set default values from config
-        self.region = self.config.get("region", "us-east-1")
-        self.role_arn = self.config.get("role_arn")
-        self.timeout = self.config.get("timeout", 30)
-        self.memory_size = self.config.get("memory_size", 128)
+        self.region: str = self.config.get("region", "us-east-1")
+        self.role_arn: Optional[str] = self.config.get("role_arn")
+        self.timeout: int = self.config.get("timeout", 30)
+        self.memory_size: int = self.config.get("memory_size", 128)
 
         # Check if AWS CLI is available
         self.aws_cli_available = self._check_aws_cli_available()
@@ -66,7 +66,7 @@ class AWSLambdaProvider(ServerlessProvider):
         self,
         service: str,
         operation: str,
-        args: List[str] = None,
+        args: Optional[List[str]] = None,
         input_data: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Run AWS CLI command.
@@ -85,7 +85,7 @@ class AWSLambdaProvider(ServerlessProvider):
             return {"success": True, "simulated": True}
 
         try:
-            cmd = ["aws", service, operation, "--region", self.region]
+            cmd: List[str] = ["aws", service, operation, "--region", self.region]
             if args:
                 cmd.extend(args)
 
@@ -112,6 +112,7 @@ class AWSLambdaProvider(ServerlessProvider):
                 }
 
             # Try to parse JSON output
+            result: Dict[str, Any]
             try:
                 if stdout and stdout.strip():
                     result = json.loads(stdout)
@@ -174,7 +175,7 @@ class AWSLambdaProvider(ServerlessProvider):
 
         # Try listing functions to check if Lambda is available
         result = self._run_aws_cli("lambda", "list-functions")
-        return result["success"]
+        return bool(result.get("success", False))
 
     def deploy_function(
         self,
@@ -309,7 +310,7 @@ class AWSLambdaProvider(ServerlessProvider):
         function_name: str,
         fix_id: str,
         source_path: str,
-        handler: str = None,
+        handler: Optional[str] = None,
         **kwargs,
     ) -> Dict[str, Any]:
         """Update a serverless function on AWS Lambda.
@@ -568,7 +569,7 @@ class AWSLambdaProvider(ServerlessProvider):
                 return []
 
             # Extract log events
-            logs = result.get("events", [])
+            logs: List[Dict[str, Any]] = result.get("events", [])
             return logs
 
         except Exception as e:
@@ -990,7 +991,7 @@ class AWSLambdaProvider(ServerlessProvider):
 _lambda_provider = None
 
 
-def get_lambda_provider(config: Dict[str, Any] = None) -> AWSLambdaProvider:
+def get_lambda_provider(config: Optional[Dict[str, Any]] = None) -> AWSLambdaProvider:
     """Get or create the singleton AWSLambdaProvider instance.
 
     Args:

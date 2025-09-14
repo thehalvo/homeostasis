@@ -95,7 +95,9 @@ class KnowledgeBase:
         os.makedirs(self.storage_dir, exist_ok=True)
 
         # Load existing templates
-        self.templates: Dict[str, List[FixTemplate]] = {}  # error_type -> List[FixTemplate]
+        self.templates: Dict[str, List[FixTemplate]] = (
+            {}
+        )  # error_type -> List[FixTemplate]
         self._load_templates()
 
         logger.info(

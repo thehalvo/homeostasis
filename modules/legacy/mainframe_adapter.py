@@ -283,7 +283,11 @@ class MainframeAdapter:
                         error_message=f"Job failed with completion code SYSTEM={system_code} USER={user_code}",
                         timestamp=datetime.now(),
                         dataset=None,
-                        program=self._extract_program_name(job_output, current_step) if current_step else None,
+                        program=(
+                            self._extract_program_name(job_output, current_step)
+                            if current_step
+                            else None
+                        ),
                         mainframe_type=self.environment.mainframe_type,
                         severity="high" if system_code != "000" else "medium",
                         sysout=job_output,
@@ -306,12 +310,12 @@ class MainframeAdapter:
         # Look for PGM= in the EXEC statement
         pattern = f"//{step_name}\\s+EXEC\\s+PGM=([\\w\\.]+)"
         match = re.search(pattern, job_output)
-        return match.group(1) if match else None
+        return str(match.group(1)) if match else None
 
     def _get_abend_severity(self, abend_code: str) -> str:
         """Get severity level for ABEND code."""
         if abend_code in self._abend_codes:
-            return self._abend_codes[abend_code]["severity"]
+            return str(self._abend_codes[abend_code]["severity"])
         return "medium"  # Default severity
 
     def analyze_error(self, error: MainframeError) -> Dict[str, Any]:

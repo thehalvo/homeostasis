@@ -416,7 +416,9 @@ class ContinuousImprovementEngine:
         provider_data = cursor.fetchall()
 
         # Group by provider
-        provider_stats: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
+        provider_stats: Dict[str, Dict[str, int]] = defaultdict(
+            lambda: defaultdict(int)
+        )
 
         for feedback_source, outcome, context_json, count in provider_data:
             try:

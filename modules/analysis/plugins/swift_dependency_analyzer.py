@@ -95,7 +95,9 @@ class SwiftDependencyAnalyzer:
             package_info = self._parse_package_swift(package_file)
 
             # Analyze dependencies
-            dependency_analysis = self._analyze_dependencies(package_info, project_path_obj)
+            dependency_analysis = self._analyze_dependencies(
+                package_info, project_path_obj
+            )
 
             # Check for common issues
             issues = self._check_dependency_issues(package_info, project_path_obj)

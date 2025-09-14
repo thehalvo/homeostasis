@@ -437,7 +437,7 @@ class FeedbackManager:
         if not ratings:
             return None
 
-        return sum(ratings) / len(ratings)
+        return float(sum(ratings) / len(ratings))
 
     def get_approval_count(self, suggestion_id: str) -> int:
         """Get the number of approvals for a suggestion.

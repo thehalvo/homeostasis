@@ -27,7 +27,7 @@ class KubernetesDeployment:
     including deployments, services, and ingress resources.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize Kubernetes deployment manager.
 
         Args:
@@ -36,11 +36,11 @@ class KubernetesDeployment:
         self.config = config or {}
 
         # Set default values from config
-        self.namespace = self.config.get("namespace", "default")
-        self.deployment_strategy = self.config.get(
+        self.namespace: str = self.config.get("namespace", "default")
+        self.deployment_strategy: str = self.config.get(
             "deployment_strategy", "rolling-update"
         )
-        self.service_account = self.config.get("service_account", "default")
+        self.service_account: str = self.config.get("service_account", "default")
         self.resource_limits = self.config.get(
             "resource_limits", {"cpu": "1.0", "memory": "1g"}
         )
@@ -239,6 +239,7 @@ spec:
                 }
 
             # Try to parse JSON output if possible
+            result: Dict[str, Any]
             try:
                 if stdout and stdout.strip().startswith("{"):
                     result = json.loads(stdout)
@@ -385,7 +386,7 @@ spec:
             ]
         )
 
-        return result["success"]
+        return bool(result.get("success", False))
 
     def create_deployment(
         self,
@@ -553,7 +554,7 @@ spec:
         fix_id: str,
         host: str,
         path: str = "/",
-        annotations: Dict[str, str] = None,
+        annotations: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
         """Create Kubernetes ingress for a service.
 
@@ -719,7 +720,7 @@ spec:
         service_name: str,
         fix_id: str,
         image: str,
-        host: str = None,
+        host: Optional[str] = None,
         create_ingress: bool = True,
     ) -> Dict[str, Any]:
         """Deploy a service to Kubernetes.
@@ -843,7 +844,7 @@ spec:
 _kubernetes_deployment = None
 
 
-def get_kubernetes_deployment(config: Dict[str, Any] = None) -> KubernetesDeployment:
+def get_kubernetes_deployment(config: Optional[Dict[str, Any]] = None) -> KubernetesDeployment:
     """Get or create the singleton KubernetesDeployment instance.
 
     Args:

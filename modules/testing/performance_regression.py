@@ -97,11 +97,17 @@ class PerformanceTracker:
         self.monitoring = False
 
         # Calculate duration
-        duration = time.perf_counter() - self.start_time
+        if self.start_time is None:
+            duration = 0.0
+        else:
+            duration = time.perf_counter() - self.start_time
 
         # Calculate memory delta
         end_memory = self.process.memory_info().rss
-        memory_delta = (end_memory - self.start_memory) / 1024 / 1024  # MB
+        if self.start_memory is None:
+            memory_delta = 0.0
+        else:
+            memory_delta = (end_memory - self.start_memory) / 1024 / 1024  # MB
 
         # Calculate average CPU usage
         avg_cpu = statistics.mean(self.cpu_samples) if self.cpu_samples else 0
@@ -454,7 +460,7 @@ class PerformanceRegressionTester:
                 timestamp=datetime.now(),
                 git_commit=self.current_git_commit,
                 environment=self.environment,
-                metadata=metadata,
+                metadata=metadata or {},
             )
 
             self.detector.record_metric(metric)
@@ -534,7 +540,7 @@ class PerformanceRegressionTester:
             timestamp=datetime.now(),
             git_commit=self.current_git_commit,
             environment=self.environment,
-            metadata=metadata,
+            metadata=metadata or {},
         )
 
         regressions = self.detector.detect_regression(avg_metric)

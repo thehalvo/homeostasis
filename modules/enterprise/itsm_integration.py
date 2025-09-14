@@ -111,7 +111,7 @@ class ITSMConnector(ABC):
         self.base_url = config.get("base_url", "")
         self.auth_method = config.get("auth_method", "basic")
         self.verify_ssl = config.get("verify_ssl", True)
-        self._session = None
+        self._session: Optional[requests.Session] = None
 
     @abstractmethod
     def authenticate(self) -> bool:
@@ -164,6 +164,7 @@ class ITSMConnector(ABC):
         """Close the session if needed"""
         if self._session:
             self._session.close()
+            self._session = None
 
 
 class ServiceNowConnector(ITSMConnector):
@@ -199,6 +200,8 @@ class ServiceNowConnector(ITSMConnector):
                     data["username"] = self.username
                     data["password"] = self.password
 
+                if not self._session:
+                    raise RuntimeError("Session not initialized")
                 response = self._session.post(
                     token_url, data=data, verify=self.verify_ssl
                 )
@@ -206,15 +209,19 @@ class ServiceNowConnector(ITSMConnector):
 
                 token_data = response.json()
                 self.access_token = token_data.get("access_token")
-                self._session.headers.update(
-                    {"Authorization": f"Bearer {self.access_token}"}
-                )
+                if self._session:
+                    self._session.headers.update(
+                        {"Authorization": f"Bearer {self.access_token}"}
+                    )
             else:
                 # Basic authentication
-                self._session.auth = (self.username, self.password)
+                if self._session:
+                    self._session.auth = (self.username, self.password)
 
             # Test connection
             test_url = f"{self.base_url}/api/now/table/incident?sysparm_limit=1"
+            if not self._session:
+                raise RuntimeError("Session not initialized")
             response = self._session.get(test_url, verify=self.verify_ssl)
             response.raise_for_status()
 

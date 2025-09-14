@@ -905,7 +905,7 @@ class CodeStyleAnalyzer:
                 if c.naming_conventions.get(key)
             ]
             if values:
-                aggregated_naming[key] = Counter(values).most_common(1)[0][0]
+                aggregated_naming[key] = str(Counter(values).most_common(1)[0][0])
 
         # Calculate aggregate confidence
         avg_confidence = sum(c.confidence for c in conventions_list) / len(

@@ -37,7 +37,7 @@ def calculate_ranking_score(suggestion) -> float:
         float: Ranking score (0-1)
     """
     # Start with the confidence score as the base
-    score = suggestion.confidence
+    score = float(suggestion.confidence)
 
     # Adjust based on various factors
 
@@ -109,6 +109,6 @@ def calculate_complexity_penalty(suggestion) -> float:
     complexity_score = min(0.2, complexity_score)
 
     # Combine penalties
-    total_penalty = size_penalty + complexity_score
+    total_penalty = float(size_penalty + complexity_score)
 
     return min(0.3, total_penalty)  # Cap at 0.3 to avoid excessive penalties

@@ -421,13 +421,12 @@ class RuleLoader:
         rule_sets: List[RuleSet] = []
 
         # Get list of rule files
+        rule_files: List[Path] = []
         if recursive:
-            rule_files: List[Path] = []
             for format_enum in RuleFormat:
                 extension = f".{format_enum.value}"
                 rule_files.extend(directory_path.glob(f"**/*{extension}"))
         else:
-            rule_files: List[Path] = []
             for format_enum in RuleFormat:
                 extension = f".{format_enum.value}"
                 rule_files.extend(directory_path.glob(f"*{extension}"))

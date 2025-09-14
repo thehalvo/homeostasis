@@ -34,9 +34,7 @@ from .formal_frameworks import (
     ResearchProblem,
     ThesisVerificationTools,
 )
-from .formal_frameworks import (
-    create_workshop_materials as create_formal_workshop_materials,
-)
+from .formal_frameworks import create_workshop_materials as create_formal_workshop_materials
 from .formal_frameworks import (
     generate_course_syllabus,
 )

@@ -2346,7 +2346,7 @@ class ErrorAdapterFactory:
         """
         # Check if language is explicitly specified
         if "language" in error_data:
-            return error_data["language"].lower()
+            return str(error_data["language"]).lower()
 
         # Look for language-specific indicators
         if "exception_type" in error_data and "traceback" in error_data:
@@ -4877,8 +4877,7 @@ class SwiftErrorAdapter(LanguageAdapter):
         """
         if isinstance(stack_trace, str):
             return stack_trace.split("\n")
-
-        if not isinstance(stack_trace, list):
+        elif not isinstance(stack_trace, list):
             return []
 
         # If it's already a list of strings, return as-is
@@ -5233,10 +5232,7 @@ class KotlinErrorAdapter(LanguageAdapter):
         Returns:
             List of formatted stack trace strings
         """
-        if not stack_trace:
-            return []
-
-        if not isinstance(stack_trace, list):
+        if not stack_trace or not isinstance(stack_trace, list):
             return []
 
         # If it's already a list of strings, return as-is

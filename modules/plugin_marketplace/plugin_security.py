@@ -289,7 +289,7 @@ class ContainerSandbox(SandboxContext):
 
         # Create container
         self.container = self.docker_client.containers.create(**config)
-        self.container.start()
+        self.container.start()  # type: ignore[union-attr]
 
     def teardown(self):
         """Tear down container sandbox."""
@@ -404,7 +404,7 @@ class PluginSigner:
         # Clean up archive
         archive_path.unlink()
 
-        return signed.status == "signature created"
+        return bool(signed.status == "signature created")
 
     def verify_plugin(self, plugin_path: Path) -> Tuple[bool, Optional[str]]:
         """
@@ -440,7 +440,7 @@ class PluginSigner:
         """
         import_result = self.gpg.import_keys(key_data)
         if import_result.count > 0:
-            return import_result.fingerprints[0]
+            return str(import_result.fingerprints[0])
         raise ValueError("Failed to import public key")
 
     def export_public_key(self, key_fingerprint: str) -> str:
@@ -453,7 +453,7 @@ class PluginSigner:
         Returns:
             Public key data
         """
-        return self.gpg.export_keys(key_fingerprint)
+        return str(self.gpg.export_keys(key_fingerprint))
 
 
 class VulnerabilityScanner:

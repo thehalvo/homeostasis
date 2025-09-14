@@ -26,7 +26,7 @@ class GCPProvider(BaseCloudProvider):
     - GKE (Google Kubernetes Engine)
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize GCP provider.
 
         Args:
@@ -35,7 +35,7 @@ class GCPProvider(BaseCloudProvider):
         super().__init__(config)
 
         # GCP-specific configuration
-        self.project_id = self.config.get("project_id")
+        self.project_id = self.config.get("project_id", "")
         self.location = self.region or self.config.get("location", "us-central1")
         self.cloud_function_enabled = self.config.get("cloud_function", False)
         self.cloud_run_enabled = self.config.get("cloud_run", False)
@@ -166,6 +166,14 @@ class GCPProvider(BaseCloudProvider):
         runtime = kwargs.get("runtime", "python39")
         memory = kwargs.get("memory", "256MB")
         timeout = kwargs.get("timeout", "60s")
+
+        # Validate required fields
+        if not self.project_id:
+            logger.error("GCP project ID is not configured")
+            return {
+                "success": False,
+                "error": "GCP project ID is not configured",
+            }
 
         if not self.gcloud_available:
             logger.info(f"Simulating GCP Cloud Function deployment: {function_name}")

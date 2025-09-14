@@ -5,7 +5,7 @@ Provides functionality for deploying and managing applications on generic CDNs.
 """
 
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from modules.security.audit import get_audit_logger
 
@@ -20,7 +20,7 @@ class CDNProvider:
     generic CDNs (without specific features like workers).
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize CDN provider.
 
         Args:
@@ -74,7 +74,11 @@ class CDNProvider:
         }
 
     def update(
-        self, service_name: str, fix_id: str, source_path: str = None, **kwargs
+        self,
+        service_name: str,
+        fix_id: str,
+        source_path: Optional[str] = None,
+        **kwargs,
     ) -> Dict[str, Any]:
         """Update a service on a CDN.
 
@@ -172,7 +176,7 @@ class CDNProvider:
         }
 
     def purge_cache(
-        self, service_name: str, fix_id: str, paths: List[str] = None
+        self, service_name: str, fix_id: str, paths: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         """Purge the cache for a service on a CDN.
 
@@ -373,7 +377,7 @@ class CDNProvider:
 _cdn_provider = None
 
 
-def get_cdn_provider(config: Dict[str, Any] = None) -> CDNProvider:
+def get_cdn_provider(config: Optional[Dict[str, Any]] = None) -> CDNProvider:
     """Get or create the singleton CDNProvider instance.
 
     Args:

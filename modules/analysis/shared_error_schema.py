@@ -65,7 +65,7 @@ class SharedErrorSchema:
             schema_path: Optional path to a custom schema file
         """
         if schema_path is None:
-            schema_path = SCHEMA_DIR / "error_schema.json"
+            schema_path = str(SCHEMA_DIR / "error_schema.json")
 
         self.validator = ErrorSchemaValidator(schema_path)
         self.language_configs = self._load_language_configs()
@@ -116,7 +116,7 @@ class SharedErrorSchema:
         """
         # If language is explicitly specified
         if "language" in error_data:
-            return error_data["language"].lower()
+            return str(error_data["language"]).lower()
 
         # Apply language-specific detection rules
         for language, config in self.language_configs.items():
@@ -430,7 +430,8 @@ class SharedErrorSchema:
 
         try:
             with open(config_file, "r") as f:
-                return json.load(f)
+                data = json.load(f)
+                return dict(data) if isinstance(data, dict) else {}
         except Exception as e:
             logger.error(f"Error loading language configurations: {e}")
             return self._create_default_configs()
@@ -688,7 +689,7 @@ class SharedErrorSchema:
         severity_mappings = language_config.get("severity_mappings", {})
         for standard, lang_specific in severity_mappings.items():
             if lang_specific.lower() == severity:
-                return standard
+                return str(standard)
 
         # Map common levels
         level_map = {
@@ -905,22 +906,23 @@ if __name__ == "__main__":
         print(f"\nTesting {lang} error:")
         try:
             # Normalize to standard format
-            normalized = schema.normalize_error(error_data, lang)
-            print(f"  Normalized error type: {normalized.get('error_type')}")
-            print(f"  Normalized message: {normalized.get('message')}")
-            print(f"  Normalized severity: {normalized.get('severity')}")
+            if isinstance(error_data, dict):
+                normalized = schema.normalize_error(error_data, lang)
+                print(f"  Normalized error type: {normalized.get('error_type')}")
+                print(f"  Normalized message: {normalized.get('message')}")
+                print(f"  Normalized severity: {normalized.get('severity')}")
 
-            # Validate the normalized error
-            is_valid, error_msg = schema.validate(normalized)
-            print(f"  Validation: {'Valid' if is_valid else 'Invalid'}")
-            if error_msg:
-                print(f"  Validation error: {error_msg}")
+                # Validate the normalized error
+                is_valid, error_msg = schema.validate(normalized)
+                print(f"  Validation: {'Valid' if is_valid else 'Invalid'}")
+                if error_msg:
+                    print(f"  Validation error: {error_msg}")
 
-            # Convert back to language-specific format
-            denormalized = schema.denormalize_error(normalized, lang)
-            print(
-                f"  Denormalized error type: {denormalized.get('error_type') or denormalized.get('name') or denormalized.get('exception_class')}"
-            )
+                # Convert back to language-specific format
+                denormalized = schema.denormalize_error(normalized, lang)
+                print(
+                    f"  Denormalized error type: {denormalized.get('error_type') or denormalized.get('name') or denormalized.get('exception_class')}"
+                )
 
         except Exception as e:
             print(f"  Error processing {lang} example: {e}")
@@ -928,5 +930,6 @@ if __name__ == "__main__":
     # Test language detection
     print("\nTesting language detection:")
     for lang, error_data in examples.items():
-        detected = schema.detect_language(error_data)
-        print(f"  Example {lang}: detected as {detected}")
+        if isinstance(error_data, dict):
+            detected = schema.detect_language(error_data)
+            print(f"  Example {lang}: detected as {detected}")

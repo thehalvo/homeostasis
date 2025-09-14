@@ -196,11 +196,13 @@ class ResourceManager:
             # Clean up
             del self.running_tests[test_id]
 
-            return metrics
+            return dict(metrics)
 
         return {}
 
-    def enforce_resource_limits(self, resource_limits: Optional[Dict[str, str]] = None) -> None:
+    def enforce_resource_limits(
+        self, resource_limits: Optional[Dict[str, str]] = None
+    ) -> None:
         """
         Enforce resource limits on the current process.
 

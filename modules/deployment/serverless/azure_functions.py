@@ -20,7 +20,7 @@ class AzureFunctionsProvider(ServerlessProvider):
     Manages the deployment, update, and monitoring of functions on Azure Functions.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize Azure Functions provider.
 
         Args:
@@ -95,7 +95,7 @@ class AzureFunctionsProvider(ServerlessProvider):
         function_name: str,
         fix_id: str,
         source_path: str,
-        handler: str = None,
+        handler: Optional[str] = None,
         **kwargs
     ) -> Dict[str, Any]:
         """Update a serverless function on Azure Functions.
@@ -251,7 +251,7 @@ _azure_functions_provider = None
 
 
 def get_azure_functions_provider(
-    config: Dict[str, Any] = None,
+    config: Optional[Dict[str, Any]] = None,
 ) -> AzureFunctionsProvider:
     """Get or create the singleton AzureFunctionsProvider instance.
 

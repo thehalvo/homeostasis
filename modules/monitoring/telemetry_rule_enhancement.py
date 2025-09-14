@@ -14,7 +14,7 @@ import uuid
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, DefaultDict, Dict, List, Optional
 
 from modules.monitoring.feedback_loop import FeedbackLoop
 from modules.monitoring.logger import MonitoringLogger
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 class TelemetryDataPoint:
     """Represents a telemetry data point with rich metadata."""
 
-    def __init__(self, event_type: str, timestamp: datetime = None, **kwargs):
+    def __init__(self, event_type: str, timestamp: Optional[datetime] = None, **kwargs):
         """
         Initialize a telemetry data point.
 
@@ -54,7 +54,7 @@ class TelemetryDataPoint:
 class ErrorPatternAnalyzer:
     """Analyzes error patterns to identify trends and insights."""
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the error pattern analyzer.
 
@@ -65,9 +65,11 @@ class ErrorPatternAnalyzer:
         self.monitoring_logger = MonitoringLogger("error_pattern_analyzer")
 
         # Pattern storage
-        self.error_patterns = defaultdict(list)
-        self.temporal_patterns = defaultdict(list)
-        self.contextual_patterns = defaultdict(lambda: defaultdict(list))
+        self.error_patterns: DefaultDict[str, List[Any]] = defaultdict(list)
+        self.temporal_patterns: DefaultDict[str, List[Any]] = defaultdict(list)
+        self.contextual_patterns: DefaultDict[str, DefaultDict[str, List[Any]]] = (
+            defaultdict(lambda: defaultdict(list))
+        )
 
     def analyze_error_patterns(
         self, error_data: List[Dict[str, Any]]
@@ -85,10 +87,10 @@ class ErrorPatternAnalyzer:
             return {"patterns": [], "insights": []}
 
         # Group errors by type, file, time, etc.
-        error_types = Counter()
-        file_patterns = Counter()
-        temporal_patterns = defaultdict(list)
-        severity_patterns = Counter()
+        error_types: Counter[str] = Counter()
+        file_patterns: Counter[str] = Counter()
+        temporal_patterns: DefaultDict[str, DefaultDict[int, int]] = defaultdict(lambda: defaultdict(int))
+        severity_patterns: Counter[str] = Counter()
 
         for error in error_data:
             error_type = error.get("error_type", "unknown")
@@ -110,12 +112,8 @@ class ErrorPatternAnalyzer:
                     hour = dt.hour
                     day_of_week = dt.weekday()
 
-                    temporal_patterns["hourly"][hour] = (
-                        temporal_patterns["hourly"].get(hour, 0) + 1
-                    )
-                    temporal_patterns["daily"][day_of_week] = (
-                        temporal_patterns["daily"].get(day_of_week, 0) + 1
-                    )
+                    temporal_patterns["hourly"][hour] += 1
+                    temporal_patterns["daily"][day_of_week] += 1
 
                 except Exception as e:
                     self.monitoring_logger.warning(
@@ -123,8 +121,8 @@ class ErrorPatternAnalyzer:
                     )
 
         # Identify significant patterns
-        patterns = []
-        insights = []
+        patterns: List[Dict[str, Any]] = []
+        insights: List[Dict[str, Any]] = []
 
         # Most common error types
         top_errors = error_types.most_common(5)
@@ -175,7 +173,7 @@ class ErrorPatternAnalyzer:
             patterns.append(
                 {
                     "type": "temporal_patterns",
-                    "data": dict(temporal_patterns),
+                    "data": {k: dict(v) for k, v in temporal_patterns.items()},
                     "description": "Error occurrence patterns by time",
                 }
             )
@@ -234,7 +232,7 @@ class ErrorPatternAnalyzer:
 class LLMPerformanceAnalyzer:
     """Analyzes LLM performance metrics and identifies optimization opportunities."""
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the LLM performance analyzer.
 
@@ -258,7 +256,9 @@ class LLMPerformanceAnalyzer:
             return {"performance_metrics": {}, "insights": []}
 
         # Group by provider and model
-        provider_performance = defaultdict(lambda: defaultdict(list))
+        provider_performance: DefaultDict[str, DefaultDict[str, List[Any]]] = (
+            defaultdict(lambda: defaultdict(list))
+        )
         model_performance = defaultdict(list)
         token_usage = defaultdict(list)
         response_quality = defaultdict(list)
@@ -382,8 +382,8 @@ class LLMPerformanceAnalyzer:
                 p: m.get("avg_response_time", float("inf"))
                 for p, m in performance_metrics.items()
             }
-            fastest_provider = min(response_times, key=response_times.get)
-            slowest_provider = max(response_times, key=response_times.get)
+            fastest_provider = min(response_times, key=lambda x: response_times[x])
+            slowest_provider = max(response_times, key=lambda x: response_times[x])
 
             time_diff = (
                 response_times[slowest_provider] - response_times[fastest_provider]
@@ -401,8 +401,8 @@ class LLMPerformanceAnalyzer:
             success_rates = {
                 p: m.get("success_rate", 0) for p, m in performance_metrics.items()
             }
-            best_provider = max(success_rates, key=success_rates.get)
-            worst_provider = min(success_rates, key=success_rates.get)
+            best_provider = max(success_rates, key=lambda x: success_rates[x])
+            worst_provider = min(success_rates, key=lambda x: success_rates[x])
 
             rate_diff = success_rates[best_provider] - success_rates[worst_provider]
             if rate_diff > 0.1:  # More than 10% difference
@@ -428,7 +428,7 @@ class LLMPerformanceAnalyzer:
 class RuleOptimizer:
     """Optimizes detection and classification rules based on performance data."""
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the rule optimizer.
 
@@ -454,7 +454,7 @@ class RuleOptimizer:
             return {"rule_metrics": {}, "optimization_suggestions": []}
 
         # Group by rule
-        rule_performance = defaultdict(
+        rule_performance: DefaultDict[str, Dict[str, Any]] = defaultdict(
             lambda: {
                 "executions": 0,
                 "matches": 0,
@@ -503,9 +503,9 @@ class RuleOptimizer:
                 continue
 
             # Calculate performance metrics
-            precision = 0
-            recall = 0
-            f1_score = 0
+            precision = 0.0
+            recall = 0.0
+            f1_score = 0.0
 
             if stats["true_positives"] + stats["false_positives"] > 0:
                 precision = stats["true_positives"] / (
@@ -629,7 +629,7 @@ class RuleOptimizer:
         Returns:
             Specific improvement recommendations
         """
-        improvements = {
+        improvements: Dict[str, Any] = {
             "rule_id": rule_id,
             "current_performance": performance_data,
             "suggested_changes": [],
@@ -699,7 +699,7 @@ class TelemetryRuleEnhancementSystem:
     and provides intelligent insights for system improvement.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the telemetry and rule enhancement system.
 
@@ -728,11 +728,11 @@ class TelemetryRuleEnhancementSystem:
         self.telemetry_storage.mkdir(parents=True, exist_ok=True)
 
         # Analytics cache
-        self.analytics_cache = {}
+        self.analytics_cache: Dict[str, Any] = {}
         self.cache_ttl = self.config.get("cache_ttl_minutes", 60)
 
         # Telemetry data buffer
-        self.telemetry_buffer = []
+        self.telemetry_buffer: List[Dict[str, Any]] = []
         self.buffer_size = self.config.get("buffer_size", 1000)
 
     def collect_telemetry(self, event_type: str, **data) -> str:
@@ -797,9 +797,9 @@ class TelemetryRuleEnhancementSystem:
 
     def load_telemetry_data(
         self,
-        event_types: List[str] = None,
-        start_time: datetime = None,
-        end_time: datetime = None,
+        event_types: Optional[List[str]] = None,
+        start_time: Optional[datetime] = None,
+        end_time: Optional[datetime] = None,
     ) -> List[Dict[str, Any]]:
         """
         Load telemetry data from storage.
@@ -962,7 +962,7 @@ class TelemetryRuleEnhancementSystem:
         Returns:
             Comprehensive insights and recommendations
         """
-        insights = {
+        insights: Dict[str, Any] = {
             "analysis_period": f"{days_back} days",
             "generated_at": datetime.utcnow().isoformat(),
             "error_patterns": {},

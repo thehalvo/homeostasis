@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from modules.monitoring.logger import HomeostasisLogger
+from modules.monitoring.logger import MonitoringLogger
 
 
 class CommitSecurity:
@@ -31,7 +31,7 @@ class CommitSecurity:
         """
         self.repo_path = Path(repo_path)
         self.config = config or self._load_default_config()
-        self.logger = HomeostasisLogger(__name__)
+        self.logger = MonitoringLogger(__name__)
 
         # Initialize GPG configuration
         self.gpg_available = self._check_gpg_available()
@@ -439,7 +439,7 @@ Expire-Date: 2y
 
     def _extract_healing_metadata(self, commit_message: str) -> Dict[str, Any]:
         """Extract healing metadata from commit message."""
-        metadata = {}
+        metadata: Dict[str, Any] = {}
         lines = commit_message.split("\n")
 
         for line in lines:
@@ -614,7 +614,7 @@ Expire-Date: 2y
         """
         audit_entries = self.get_audit_trail()
 
-        results = {
+        results: Dict[str, Any] = {
             "total_entries": len(audit_entries),
             "verified_entries": 0,
             "failed_verifications": [],

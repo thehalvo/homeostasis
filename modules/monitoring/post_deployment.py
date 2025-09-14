@@ -582,11 +582,11 @@ class SuccessRateTracker:
 
         if bug_id:
             if bug_id in stats:
-                return stats[bug_id]["success_rate"]
+                return float(stats[bug_id]["success_rate"])
             return 0.0
 
         if "overall" in stats:
-            return stats["overall"]["success_rate"]
+            return float(stats["overall"]["success_rate"])
 
         return 0.0
 
@@ -597,7 +597,7 @@ class SuccessRateTracker:
         Returns:
             Fix statistics
         """
-        return self.history["stats"]
+        return dict(self.history["stats"])
 
     def get_recent_fixes(self, limit: int = 10) -> List[Dict[str, Any]]:
         """

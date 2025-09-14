@@ -174,6 +174,21 @@ class LanguageSpecificParser:
     def __init__(self, language: LanguageType):
         self.language = language
 
+    def parse(self, error_message: str) -> Optional[Dict[str, Any]]:
+        """Parse error message and return structured error info."""
+        # Try parsing as syntax error first
+        result = self.parse_syntax_error(error_message)
+        if result:
+            return result
+
+        # Try parsing as compilation error
+        result = self.parse_compilation_error(error_message)
+        if result:
+            return result
+
+        # Return None if no specific parser matches
+        return None
+
     def parse_syntax_error(
         self, error_message: str, source_code: Optional[str] = None
     ) -> Optional[Dict[str, Any]]:
@@ -319,21 +334,29 @@ class PythonParser(LanguageSpecificParser):
                         suggestion = "Use proper indentation - Python uses 4 spaces by convention. Check that all blocks are properly indented."
                     elif "TabError" in error_type:
                         suggestion = "Convert all indentation to either tabs or spaces (spaces recommended). Do not mix tabs and spaces."
-                    elif (
-                        error_message
-                        and ("unmatched" in error_message or "unexpected EOF" in error_message)
+                    elif error_message and (
+                        "unmatched" in error_message
+                        or "unexpected EOF" in error_message
                     ):
                         suggestion = "Check for unmatched parentheses, brackets, or braces. Every opening symbol needs a closing match."
 
                 elif error_type in ["ImportError", "ModuleNotFoundError"]:
                     category = ErrorCategory.DEPENDENCY
-                    module_match = re.search(r"'([^']+)'", error_message) if error_message else None
+                    module_match = (
+                        re.search(r"'([^']+)'", error_message)
+                        if error_message
+                        else None
+                    )
                     module_name = module_match.group(1) if module_match else "module"
                     suggestion = f"Install the module with 'pip install {module_name}' or verify import path"
 
                 elif error_type == "FileNotFoundError":
                     category = ErrorCategory.FILESYSTEM
-                    file_match = re.search(r"'([^']+)'", error_message) if error_message else None
+                    file_match = (
+                        re.search(r"'([^']+)'", error_message)
+                        if error_message
+                        else None
+                    )
                     filename = file_match.group(1) if file_match else "file"
                     suggestion = f"Check if file exists before opening. Use os.path.exists('{filename}') or try/except"
 
@@ -374,13 +397,21 @@ class PythonParser(LanguageSpecificParser):
 
                     # Generate specific suggestions for logic errors
                     if "NameError" in error_type:
-                        var_match = re.search(r"'([^']+)'", error_message) if error_message else None
+                        var_match = (
+                            re.search(r"'([^']+)'", error_message)
+                            if error_message
+                            else None
+                        )
                         var_name = var_match.group(1) if var_match else "variable"
                         suggestion = f"Define '{var_name}' before use or check for typos in variable name"
                     elif "AttributeError" in error_type:
                         suggestion = "Check available attributes with dir(object) or review class documentation"
                     elif "KeyError" in error_type:
-                        key_match = re.search(r"'([^']+)'", error_message) if error_message else None
+                        key_match = (
+                            re.search(r"'([^']+)'", error_message)
+                            if error_message
+                            else None
+                        )
                         key_name = key_match.group(1) if key_match else "key"
                         suggestion = f"Check if key exists before accessing. Use dict.get('{key_name}', default) or 'if key in dict'"
                     elif "IndexError" in error_type:
@@ -1043,7 +1074,7 @@ class ComprehensiveErrorDetector:
         if result:
             result["language"] = language
 
-        return result
+        return dict(result) if result else None
 
     def detect_language(self, error_context: ErrorContext) -> LanguageType:
         """

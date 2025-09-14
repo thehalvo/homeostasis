@@ -409,9 +409,10 @@ class KubernetesIngressHook:
                 }
 
             # Try to parse JSON output if possible
+            result: Dict[str, Any]
             try:
                 if stdout and stdout.strip().startswith("{"):
-                    result = json.loads(stdout)
+                    result = dict(json.loads(stdout))
                 else:
                     result = {"output": stdout}
             except json.JSONDecodeError:
@@ -496,9 +497,9 @@ class KubernetesIngressHook:
                 # Clean up temp file
                 os.unlink(vs_path)
 
-                return apply_result.get("success", False) or apply_result.get(
+                return bool(apply_result.get("success", False)) or bool(apply_result.get(
                     "simulated", False
-                )
+                ))
 
             else:
                 # For regular Kubernetes, we'll use Ingress with annotations
@@ -658,7 +659,9 @@ class KubernetesIngressHook:
         # Add canary annotations if needed
         if canary_annotation and isinstance(ingress, dict):
             if "metadata" in ingress and isinstance(ingress["metadata"], dict):
-                if "annotations" in ingress["metadata"] and isinstance(ingress["metadata"]["annotations"], dict):
+                if "annotations" in ingress["metadata"] and isinstance(
+                    ingress["metadata"]["annotations"], dict
+                ):
                     ingress["metadata"]["annotations"].update(canary_annotation)
 
         return json.dumps(ingress, indent=2)
@@ -738,7 +741,9 @@ class KubernetesIngressHook:
         # Add canary annotations if needed
         if canary_annotation and isinstance(ingress, dict):
             if "metadata" in ingress and isinstance(ingress["metadata"], dict):
-                if "annotations" in ingress["metadata"] and isinstance(ingress["metadata"]["annotations"], dict):
+                if "annotations" in ingress["metadata"] and isinstance(
+                    ingress["metadata"]["annotations"], dict
+                ):
                     ingress["metadata"]["annotations"].update(canary_annotation)
 
         return json.dumps(ingress, indent=2)

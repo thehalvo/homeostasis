@@ -77,7 +77,7 @@ class RegressionTestGenerator:
 
         try:
             with open(self.history_file, "r") as f:
-                return json.load(f)
+                return dict(json.load(f))
         except Exception as e:
             self.logger.exception(
                 e,
@@ -115,7 +115,7 @@ class RegressionTestGenerator:
         return f"{patch_id}_{bug_id}_{file_path}_{function_name}"
 
     def generate_regression_test(
-        self, patch: Dict[str, Any], error_info: Dict[str, Any] = None
+        self, patch: Dict[str, Any], error_info: Optional[Dict[str, Any]] = None
     ) -> Optional[Path]:
         """
         Generate a regression test for a fixed error.
@@ -164,7 +164,7 @@ class RegressionTestGenerator:
         return None
 
     def generate_regression_tests_for_patches(
-        self, patches: List[Dict[str, Any]], error_info: List[Dict[str, Any]] = None
+        self, patches: List[Dict[str, Any]], error_info: Optional[List[Dict[str, Any]]] = None
     ) -> List[Path]:
         """
         Generate regression tests for multiple patches.

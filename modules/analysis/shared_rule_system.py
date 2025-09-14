@@ -35,7 +35,7 @@ class SharedRule:
         root_cause: str,
         suggestion: str,
         applicable_languages: Optional[List[str]] = None,
-        language_specific_patterns: Optional[Dict[str, str]] = None,
+        language_specific_patterns: Optional[Dict[str, Union[str, List[str]]]] = None,
         language_specific_suggestions: Optional[Dict[str, str]] = None,
         confidence: str = "medium",
         severity: str = "medium",
@@ -78,7 +78,7 @@ class SharedRule:
         self.examples = examples or {}
 
         # Pre-compile regex patterns for efficiency
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, Any] = {}
         self._compile_patterns()
 
     def to_dict(self) -> Dict[str, Any]:
@@ -238,9 +238,9 @@ class SharedRule:
                 logger.warning(f"Invalid pattern in rule {self.rule_id}: {e}")
 
         # Compile language-specific patterns
-        for lang, pattern in self.language_specific_patterns.items():
-            if isinstance(pattern, list):
-                for i, p in enumerate(pattern):
+        for lang, pattern_value in self.language_specific_patterns.items():
+            if isinstance(pattern_value, list):
+                for i, p in enumerate(pattern_value):
                     key = f"{lang}_{i}"
                     try:
                         self.compiled_patterns[key] = re.compile(
@@ -253,7 +253,7 @@ class SharedRule:
             else:
                 try:
                     self.compiled_patterns[lang] = re.compile(
-                        pattern, re.IGNORECASE | re.DOTALL
+                        pattern_value, re.IGNORECASE | re.DOTALL
                     )
                 except Exception as e:
                     logger.warning(
@@ -507,7 +507,7 @@ class SharedRuleRegistry:
         directory.mkdir(exist_ok=True, parents=True)
 
         # Organize rules by category
-        rules_by_category = {}
+        rules_by_category: Dict[str, List[Dict[str, Any]]] = {}
 
         for rule in self.rules.values():
             category = rule.category
@@ -816,7 +816,7 @@ if __name__ == "__main__":
     logger.info(f"Loaded {rules_count} shared rules")
 
     # Test rules with example errors
-    example_errors = {
+    example_errors: Dict[str, Dict[str, Any]] = {
         "python_keyerror": {
             "language": "python",
             "exception_type": "KeyError",

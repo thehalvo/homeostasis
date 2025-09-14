@@ -13,7 +13,7 @@ import socket
 import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 
 import requests
 
@@ -25,7 +25,9 @@ class AlertManager:
     Manages alerts for unexpected behavior after fixes.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, log_level: str = "INFO"):
+    def __init__(
+        self, config: Optional[Dict[str, Any]] = None, log_level: str = "INFO"
+    ):
         """
         Initialize the alert manager.
 
@@ -36,7 +38,7 @@ class AlertManager:
         self.logger = MonitoringLogger("alert_manager", log_level=log_level)
 
         # Default configuration
-        self.config = {
+        self.config: Dict[str, Any] = {
             "channels": {
                 "console": True,
                 "email": False,
@@ -65,10 +67,10 @@ class AlertManager:
             self._update_config(config)
 
         # Alert history
-        self.alert_history = []
+        self.alert_history: List[Dict[str, Any]] = []
 
         # Alert handlers
-        self.alert_handlers = {}
+        self.alert_handlers: Dict[str, Callable] = {}
 
         # Register default handlers
         self._register_default_handlers()
@@ -211,7 +213,7 @@ class AlertManager:
             data_text = f"```{json.dumps(data, indent=2)}```" if data else ""
 
             # Create payload
-            payload = {
+            payload: Dict[str, Any] = {
                 "text": "*[Homeostasis Alert]*",
                 "blocks": [
                     {
@@ -288,9 +290,9 @@ class AlertManager:
     def send_alert(
         self,
         message: str,
-        data: Dict[str, Any] = None,
+        data: Optional[Dict[str, Any]] = None,
         level: str = "warning",
-        channels: List[str] = None,
+        channels: Optional[List[str]] = None,
     ) -> None:
         """
         Send an alert through configured channels.
@@ -384,8 +386,8 @@ class AlertManager:
                 continue
 
             # Get historical values
-            historical_values = [
-                m.get(metric_name)
+            historical_values: List[float] = [
+                float(m.get(metric_name))
                 for m in historical_metrics
                 if metric_name in m and isinstance(m.get(metric_name), (int, float))
             ]
@@ -439,7 +441,7 @@ class AlertManager:
             return {"count": 0, "message": "No alerts recorded"}
 
         # Group alerts by level
-        alerts_by_level = {}
+        alerts_by_level: Dict[str, List[Dict[str, Any]]] = {}
         for alert in self.alert_history:
             level = alert["level"]
             if level not in alerts_by_level:
@@ -479,7 +481,7 @@ class AnomalyDetector:
         self.alert_manager = alert_manager
 
         # Baseline metrics
-        self.baselines = {}
+        self.baselines: Dict[str, Dict[str, Any]] = {}
 
         # Detection thresholds
         self.thresholds = {
@@ -632,7 +634,7 @@ class AnomalyDetector:
 
     def monitor_for_anomalies(
         self, service_url: str, patch_id: str, duration: int = 3600, interval: int = 60
-    ) -> None:
+    ) -> Dict[str, Any]:
         """
         Monitor a service for anomalies after a fix.
 
@@ -691,7 +693,7 @@ class AnomalyDetector:
             self.logger.exception(
                 e, message=f"Failed to monitor {service_url} for anomalies"
             )
-            return None
+            return {}
 
     def _check_for_anomalies(
         self, current_metrics: Dict[str, Any], baseline: Dict[str, Any], patch_id: str

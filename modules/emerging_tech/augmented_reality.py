@@ -1800,7 +1800,11 @@ class AnchorStabilizer {
 
     def analyze_performance(self, metrics: ARPerformanceMetrics) -> Dict[str, Any]:
         """Analyze AR application performance"""
-        analysis: Dict[str, Any] = {"overall_status": "healthy", "issues": [], "recommendations": []}
+        analysis: Dict[str, Any] = {
+            "overall_status": "healthy",
+            "issues": [],
+            "recommendations": [],
+        }
 
         # Determine platform category
         if metrics.motion_to_photon_latency_ms is not None:

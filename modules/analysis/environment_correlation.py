@@ -1040,7 +1040,9 @@ class EnvironmentCorrelator:
                     }
                 )
 
-        return sorted(patterns, key=lambda x: int(x.get("occurrences", 0)), reverse=True)
+        return sorted(
+            patterns, key=lambda x: int(x.get("occurrences", 0)), reverse=True
+        )
 
     def suggest_monitoring(self) -> Dict[str, Any]:
         """

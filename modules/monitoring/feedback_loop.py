@@ -11,7 +11,7 @@ import json
 import time
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, DefaultDict, Dict, List, Optional
 
 from modules.monitoring.logger import MonitoringLogger
 from modules.monitoring.metrics_collector import MetricsCollector
@@ -54,12 +54,12 @@ class FeedbackLoop:
         self.insights = self._load_insights()
 
         # Template effectiveness tracking
-        self.template_stats = defaultdict(
+        self.template_stats: DefaultDict[str, Dict[str, int]] = defaultdict(
             lambda: {"uses": 0, "success": 0, "failure": 0}
         )
 
         # Bug type effectiveness tracking
-        self.bug_type_stats = defaultdict(
+        self.bug_type_stats: DefaultDict[str, Dict[str, int]] = defaultdict(
             lambda: {"fixes": 0, "success": 0, "failure": 0}
         )
 
@@ -85,7 +85,8 @@ class FeedbackLoop:
 
         try:
             with open(self.insights_file, "r") as f:
-                return json.load(f)
+                data: Dict[str, Any] = json.load(f)
+                return data
         except Exception as e:
             self.logger.exception(
                 e, message=f"Failed to load insights from {self.insights_file}"
@@ -129,7 +130,7 @@ class FeedbackLoop:
         template_name: str,
         bug_type: str,
         success: bool,
-        metrics: Dict[str, Any] = None,
+        metrics: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Record a fix result for learning.
@@ -547,7 +548,9 @@ class FeedbackLoop:
             return None
 
         # Group by template
-        template_success = defaultdict(lambda: {"count": 0, "success": 0})
+        template_success: DefaultDict[str, Dict[str, int]] = defaultdict(
+            lambda: {"count": 0, "success": 0}
+        )
 
         for fix in bug_fixes:
             template = fix.get("template")
@@ -560,7 +563,7 @@ class FeedbackLoop:
 
         # Find the template with highest success rate (with at least 3 uses)
         best_template = None
-        best_rate = 0
+        best_rate = 0.0
 
         for template, stats in template_success.items():
             if stats["count"] < 3:
@@ -574,7 +577,7 @@ class FeedbackLoop:
         return best_template
 
     def log_learning_event(
-        self, event_type: str, description: str, data: Dict[str, Any] = None
+        self, event_type: str, description: str, data: Optional[Dict[str, Any]] = None
     ) -> None:
         """
         Log a learning event for the feedback loop.
@@ -626,7 +629,7 @@ class FixImprovement:
         Returns:
             Identified patterns
         """
-        patterns = {"templates": {}, "bug_types": {}, "general": []}
+        patterns: Dict[str, Any] = {"templates": {}, "bug_types": {}, "general": []}
 
         # Analyze template effectiveness
         template_stats = self.feedback_loop.get_template_effectiveness()

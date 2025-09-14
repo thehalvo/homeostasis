@@ -748,7 +748,10 @@ class SecurityGuardrails:
         return violations
 
     def analyze_content(
-        self, content: str, source: str = "unknown", context: Optional[Dict[str, Any]] = None
+        self,
+        content: str,
+        source: str = "unknown",
+        context: Optional[Dict[str, Any]] = None,
     ) -> Tuple[bool, List[SecurityViolation], str]:
         """
         Comprehensive content analysis for security violations.

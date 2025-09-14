@@ -5,7 +5,7 @@ Utilities for code diff generation and handling multi-line patches.
 import difflib
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 
 def generate_diff(

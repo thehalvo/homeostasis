@@ -329,7 +329,7 @@ if __name__ == "__main__":
         self,
         function_details: Dict[str, Any],
         error_type: str,
-        params: Dict[str, Any] = None,
+        params: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Generate test code for a function.
@@ -489,7 +489,7 @@ if __name__ == "__main__":
         function_name: str,
         error_type: str,
         output_path: Optional[Path] = None,
-        params: Dict[str, Any] = None,
+        params: Optional[Dict[str, Any]] = None,
     ) -> Optional[Path]:
         """
         Generate a test for a specific error type.
@@ -567,7 +567,7 @@ if __name__ == "__main__":
             return None
 
     def generate_test_for_patch(
-        self, patch: Dict[str, Any], error_info: Dict[str, Any] = None
+        self, patch: Dict[str, Any], error_info: Optional[Dict[str, Any]] = None
     ) -> Optional[Path]:
         """
         Generate a test for a patch.

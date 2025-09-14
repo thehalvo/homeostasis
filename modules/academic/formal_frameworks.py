@@ -426,7 +426,7 @@ class AcademicFormalVerificationFramework:
         self, problem: ResearchProblem, num_instances: int = 100
     ) -> Dict[str, Any]:
         """Generate dataset for academic research."""
-        dataset = {
+        dataset: Dict[str, Any] = {
             "problem": problem.title,
             "instances": [],
             "metadata": {
@@ -465,7 +465,7 @@ class AcademicFormalVerificationFramework:
         states = {f"s{i}" for i in range(num_states)}
 
         # Random transitions
-        transitions = {}
+        transitions: Dict[str, Dict[str, str]] = {}
         for state in states:
             transitions[state] = {}
             num_transitions = random.randint(1, 3)
@@ -735,7 +735,7 @@ class ThesisVerificationTools:
                 "Theorem Proving",
             ]
 
-    def _generate_thesis_experiments(self, area: ResearchFocus) -> List[Dict[str, str]]:
+    def _generate_thesis_experiments(self, area: ResearchFocus) -> List[Dict[str, Any]]:
         """Generate thesis experiments based on research area."""
         experiments = []
 
@@ -1005,6 +1005,8 @@ class ProofAssistantInterface:
             return self._export_to_lean(model, properties)
         elif target == "Agda":
             return self._export_to_agda(model, properties)
+        else:
+            raise ValueError(f"Unsupported proof assistant: {target}")
 
     def _export_to_coq(
         self, model: SystemModel, properties: List[VerificationProperty]

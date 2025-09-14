@@ -20,7 +20,7 @@ class GCPFunctionsProvider(ServerlessProvider):
     Manages the deployment, update, and monitoring of functions on Google Cloud Functions.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize Google Cloud Functions provider.
 
         Args:
@@ -95,7 +95,7 @@ class GCPFunctionsProvider(ServerlessProvider):
         function_name: str,
         fix_id: str,
         source_path: str,
-        handler: str = None,
+        handler: Optional[str] = None,
         **kwargs
     ) -> Dict[str, Any]:
         """Update a serverless function on Google Cloud Functions.
@@ -250,7 +250,9 @@ class GCPFunctionsProvider(ServerlessProvider):
 _functions_provider = None
 
 
-def get_functions_provider(config: Dict[str, Any] = None) -> GCPFunctionsProvider:
+def get_functions_provider(
+    config: Optional[Dict[str, Any]] = None,
+) -> GCPFunctionsProvider:
     """Get or create the singleton GCPFunctionsProvider instance.
 
     Args:

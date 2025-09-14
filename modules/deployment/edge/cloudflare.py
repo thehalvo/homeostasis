@@ -26,7 +26,7 @@ class CloudflareProvider:
     Cloudflare Workers and other Cloudflare edge services.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize Cloudflare provider.
 
         Args:
@@ -119,6 +119,7 @@ class CloudflareProvider:
                 }
 
             # Try to parse JSON output if possible
+            result: Dict[str, Any]
             try:
                 if stdout and stdout.strip().startswith("{"):
                     result = json.loads(stdout)
@@ -265,7 +266,11 @@ format = "service-worker"
             return {"success": False, "error": str(e)}
 
     def update(
-        self, service_name: str, fix_id: str, source_path: str = None, **kwargs
+        self,
+        service_name: str,
+        fix_id: str,
+        source_path: Optional[str] = None,
+        **kwargs,
     ) -> Dict[str, Any]:
         """Update a service on Cloudflare Workers.
 
@@ -422,7 +427,7 @@ format = "service-worker"
             return {"success": False, "error": str(e)}
 
     def purge_cache(
-        self, service_name: str, fix_id: str, paths: List[str] = None
+        self, service_name: str, fix_id: str, paths: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         """Purge the cache for a Cloudflare Worker.
 
@@ -671,7 +676,7 @@ format = "service-worker"
 _cloudflare_provider = None
 
 
-def get_cloudflare_provider(config: Dict[str, Any] = None) -> CloudflareProvider:
+def get_cloudflare_provider(config: Optional[Dict[str, Any]] = None) -> CloudflareProvider:
     """Get or create the singleton CloudflareProvider instance.
 
     Args:

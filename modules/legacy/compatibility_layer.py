@@ -443,13 +443,21 @@ class CompatibilityLayer:
 
             if issue.source_format == "packed_decimal":
                 # Convert packed decimal
-                converted = self._convert_packed_decimal(field_value) if isinstance(field_value, bytes) else None
+                converted = (
+                    self._convert_packed_decimal(field_value)
+                    if isinstance(field_value, bytes)
+                    else None
+                )
                 data[issue.field_name] = converted
                 return data, f"Converted packed decimal in field {issue.field_name}"
 
             elif issue.source_format == "zoned_decimal":
                 # Convert zoned decimal
-                converted = self._convert_zoned_decimal(field_value) if isinstance(field_value, bytes) else None
+                converted = (
+                    self._convert_zoned_decimal(field_value)
+                    if isinstance(field_value, bytes)
+                    else None
+                )
                 data[issue.field_name] = converted
                 return data, f"Converted zoned decimal in field {issue.field_name}"
 
@@ -556,7 +564,10 @@ class CompatibilityLayer:
     ) -> Union[str, int]:
         """Convert between date formats."""
         if source_format == target_format:
-            return date_value
+            if isinstance(date_value, (str, int)):
+                return date_value
+            else:
+                return str(date_value)
 
         # Parse source date
         if source_format == "epoch":

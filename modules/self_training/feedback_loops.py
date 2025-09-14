@@ -42,7 +42,7 @@ class PredictionFeedback:
     prediction: Any
     actual_outcome: Optional[Any] = None
     confidence: Optional[float] = None
-    timestamp: float = None
+    timestamp: Optional[float] = None
     context: Optional[Dict[str, Any]] = None
 
     def __post_init__(self):
@@ -75,8 +75,8 @@ class MLFeedbackLoop:
         self.retrain_interval = timedelta(hours=retrain_interval_hours)
         self.performance_threshold = performance_threshold
 
-        self.feedback_buffer = defaultdict(list)
-        self.last_retrain = defaultdict(lambda: datetime.min)
+        self.feedback_buffer: Dict[str, List[PredictionFeedback]] = defaultdict(list)
+        self.last_retrain: Dict[str, datetime] = defaultdict(lambda: datetime.min)
         self.performance_tracker = ModelPerformanceTracker()
         self.data_collector = ErrorDataCollector()
 
@@ -319,8 +319,8 @@ class AutomatedRetrainer:
     ):
         self.training_config_dir = Path(training_config_dir)
         self.model_registry_dir = Path(model_registry_dir)
-        self.retrain_queue = []
-        self.active_retrains = {}
+        self.retrain_queue: List[Dict[str, Any]] = []
+        self.active_retrains: Dict[str, Dict[str, Any]] = {}
 
     def schedule_retrain(
         self,

@@ -5,7 +5,7 @@ Enhanced confidence scoring for rule-based error analysis.
 import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from .rule_categories import EnhancedRule
 from .rule_config import Rule, RuleConfidence
@@ -348,7 +348,7 @@ class RuleMatchRanker:
         ranked = RuleMatchRanker.rank_matches(matches)
 
         # Track which spans are covered by higher confidence matches
-        covered_spans = []
+        covered_spans: List[Tuple[int, int]] = []
         resolved_matches = []
 
         for match in ranked:
@@ -392,7 +392,7 @@ class ContextualRuleAnalyzer:
         self.rules = rules
 
     def analyze_error(
-        self, error_text: str, error_context: Dict[str, Any] = None
+        self, error_text: str, error_context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Analyze an error with confidence scoring.
@@ -434,7 +434,8 @@ class ContextualRuleAnalyzer:
 
         # Prepare alternative matches if available
         alternatives = []
-        for match in resolved_matches[1:] if len(resolved_matches) > 1 else []:
+        alt_matches = resolved_matches[1:] if len(resolved_matches) > 1 else []
+        for match in alt_matches:
             alternatives.append(
                 {
                     "rule_id": match.rule.id,
@@ -486,7 +487,7 @@ class ContextualRuleAnalyzer:
 
 if __name__ == "__main__":
     # Example usage
-    from rule_config import Rule, RuleCategory, RuleConfidence, RuleSeverity
+    from .rule_config import RuleCategory, RuleSeverity
 
     # Create sample rules
     rule1 = Rule(

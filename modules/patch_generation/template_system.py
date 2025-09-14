@@ -48,7 +48,7 @@ class BaseTemplate:
         """
         self.name = name
         self.parent_name = parent
-        self.parent: Optional['BaseTemplate'] = None
+        self.parent: Optional["BaseTemplate"] = None
         self.file_path = file_path
 
         # Store raw content before processing
@@ -99,7 +99,11 @@ class BaseTemplate:
         Returns:
             Dictionary of metadata
         """
-        metadata: Dict[str, Any] = {"variables": [], "description": "", "applicability": []}
+        metadata: Dict[str, Any] = {
+            "variables": [],
+            "description": "",
+            "applicability": [],
+        }
 
         # Extract variable definitions from comments
         var_pattern = r"#\s*-\s*\{\{\s*([\w_]+)\s*\}\}:\s*(.+)$"
@@ -400,15 +404,17 @@ class BaseTemplate:
             loop_content = match.group(3)
 
             # Get the list from variables
-            items_list = variables.get(list_var, "[]")
+            items_value: Any = variables.get(list_var, "[]")
 
             # Try to parse as JSON if it's a string representation of a list
-            if isinstance(items_list, str):
+            if isinstance(items_value, str):
                 try:
-                    items_list = json.loads(items_list)
+                    items_list = json.loads(items_value)
                 except json.JSONDecodeError:
                     # Not valid JSON, treat as a comma-separated list
-                    items_list = [item.strip() for item in items_list.split(",")]
+                    items_list = [item.strip() for item in items_value.split(",")]
+            else:
+                items_list = items_value
 
             # Ensure it's a list
             if not isinstance(items_list, list):

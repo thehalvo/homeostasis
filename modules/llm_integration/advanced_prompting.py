@@ -122,7 +122,7 @@ class AdvancedPromptManager:
         elif strategy == PromptingStrategy.DECOMPOSITION:
             prompt = self._build_decomposition_prompt(template, context)
         else:
-            prompt = self._build_basic_prompt(template, context)
+            raise ValueError(f"Unknown prompting strategy: {strategy}")
 
         # Add success criteria
         prompt = self._add_success_criteria(prompt, template)

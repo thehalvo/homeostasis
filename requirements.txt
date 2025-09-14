@@ -26,12 +26,24 @@ flask==3.1.2
 flask-cors==6.0.1
 optuna==3.4.0
 python-ldap==3.4.3
-# NOTE: MLflow has known CVEs (CVE-2024-37052 to CVE-2024-37060) related to
-# deserialization of untrusted models. In production, ensure:
-# 1. Only load models from trusted sources
-# 2. Run MLflow server with restricted access
-# 3. Consider using model signatures and input validation
-# 4. Monitor for security updates
+# SECURITY WARNING: MLflow 3.3.2 has 8 known CVEs (CVE-2024-37052 to CVE-2024-37060)
+# related to arbitrary code execution when loading models. These vulnerabilities affect:
+# - PyFunc models (CVE-2024-37054)
+# - Recipe execution (CVE-2024-37060)
+# - LightGBM models (CVE-2024-37056)
+# - TensorFlow models (CVE-2024-37057)
+# - pmdarima models (CVE-2024-37055)
+# - scikit-learn models (CVE-2024-37052, CVE-2024-37053)
+# - PyTorch models (CVE-2024-37059)
+#
+# MITIGATION STEPS:
+# 1. Only load models from trusted sources (internal model registry)
+# 2. Run MLflow server with authentication and restricted network access
+# 3. Use model signatures and strict input validation
+# 4. Run model serving in isolated containers/sandboxes
+# 5. Disable model loading from external sources
+# 6. Monitor for patches - upgrade when security fixes are available
+# 7. Consider using alternative model serving solutions for untrusted models
 mlflow==3.3.2
 setuptools==80.9.0
 pandas==2.2.0

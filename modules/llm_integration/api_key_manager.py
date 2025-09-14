@@ -61,8 +61,8 @@ class APIKeyManager:
         # Ensure config directory exists
         self.config_dir.mkdir(exist_ok=True)
 
-        self._cipher_suite = None
-        self._keys = {}
+        self._cipher_suite: Optional[Fernet] = None
+        self._keys: Dict[str, str] = {}
         self._use_external_secrets = use_external_secrets
 
     def _get_password(self) -> str:

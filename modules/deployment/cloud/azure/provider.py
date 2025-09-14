@@ -26,7 +26,7 @@ class AzureProvider(BaseCloudProvider):
     - AKS (Azure Kubernetes Service)
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize Azure provider.
 
         Args:

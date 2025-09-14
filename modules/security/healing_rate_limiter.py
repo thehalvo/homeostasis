@@ -63,7 +63,7 @@ import collections
 import logging
 import time
 from datetime import datetime
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from modules.security.audit import log_event
 
@@ -79,7 +79,7 @@ class HealingRateLimitExceededError(Exception):
 class HealingRateLimiter:
     """Rate limiter for self-healing actions."""
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize the healing rate limiter.
 
         Args:
@@ -138,7 +138,7 @@ class HealingRateLimiter:
                     )
 
         # Initialize storage for action counts and timestamps
-        self.action_counts = {
+        self.action_counts: Dict[str, Any] = {
             "healing_cycle": collections.defaultdict(int),
             "patch_application": collections.defaultdict(int),
             "deployment": collections.defaultdict(int),
@@ -146,7 +146,7 @@ class HealingRateLimiter:
         }
 
         # Store time windows for each action type
-        self.time_windows = {
+        self.time_windows: Dict[str, Any] = {
             "healing_cycle": collections.defaultdict(float),
             "patch_application": collections.defaultdict(float),
             "deployment": collections.defaultdict(float),
@@ -154,13 +154,13 @@ class HealingRateLimiter:
         }
 
         # Track accumulated actions by file for advanced throttling
-        self.file_actions = collections.defaultdict(list)
+        self.file_actions: Dict[str, List[float]] = collections.defaultdict(list)
 
         # Store the last healing cycle time for enforcing minimum intervals
-        self.last_healing_cycle = 0
+        self.last_healing_cycle: float = 0
 
         # Cooldown tracking for files that have had issues
-        self.file_cooldowns = {}
+        self.file_cooldowns: Dict[str, float] = {}
 
     def check_healing_cycle_limit(self) -> bool:
         """Check if a new healing cycle is within rate limits.
@@ -393,7 +393,7 @@ class HealingRateLimiter:
         """
         now = time.time()
 
-        usage = {}
+        usage: Dict[str, Any] = {}
 
         # Global actions
         for action_type in ["healing_cycle", "patch_application", "deployment"]:
@@ -418,7 +418,7 @@ class HealingRateLimiter:
             }
 
         # Files in cooldown
-        files_in_cooldown = {}
+        files_in_cooldown: Dict[str, Any] = {}
         for file_path, cooldown_until in self.file_cooldowns.items():
             remaining = cooldown_until - now
             if remaining > 0:
@@ -430,7 +430,7 @@ class HealingRateLimiter:
         usage["cooldowns"] = files_in_cooldown
 
         # Top files by modification count
-        top_files = []
+        top_files: List[Dict[str, Any]] = []
         for file_path, counts in self.action_counts["file"].items():
             top_files.append(
                 {
@@ -477,7 +477,7 @@ class HealingRateLimiter:
 _healing_rate_limiter = None
 
 
-def get_healing_rate_limiter(config: Dict = None) -> HealingRateLimiter:
+def get_healing_rate_limiter(config: Optional[Dict[str, Any]] = None) -> HealingRateLimiter:
     """Get or create the singleton HealingRateLimiter instance.
 
     Args:

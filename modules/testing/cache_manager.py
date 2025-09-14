@@ -72,7 +72,8 @@ class CacheManager:
 
         try:
             with open(self.cache_index_file, "r") as f:
-                return json.load(f)
+                data = json.load(f)
+                return dict(data) if isinstance(data, dict) else {}
         except Exception as e:
             self.logger.exception(e, message="Failed to load cache index")
             return {}

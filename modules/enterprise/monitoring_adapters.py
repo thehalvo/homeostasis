@@ -13,7 +13,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Type
 
 import requests
 
@@ -142,7 +142,11 @@ class MonitoringAdapter(ABC):
         self.poll_interval = config.get("poll_interval", 60)  # seconds
         self.batch_size = config.get("batch_size", 100)
         self.metric_prefix = config.get("metric_prefix", "homeostasis")
-        self._callbacks = {"metric": [], "alert": [], "event": []}
+        self._callbacks: Dict[str, List[Callable]] = {
+            "metric": [],
+            "alert": [],
+            "event": [],
+        }
 
     @abstractmethod
     def connect(self) -> bool:
@@ -215,7 +219,14 @@ class DatadogAdapter(MonitoringAdapter):
         self.app_key = config.get("app_key", "")
         self.base_url = config.get("base_url", "https://api.datadoghq.com")
         self.site = config.get("site", "datadoghq.com")
-        self._session = None
+        self._session: Optional[requests.Session] = None
+
+    @property
+    def session(self) -> requests.Session:
+        """Get session, ensuring it's connected"""
+        if not self._session:
+            raise RuntimeError("Not connected to Datadog")
+        return self._session
 
     def connect(self) -> bool:
         """Connect to Datadog API"""
@@ -231,6 +242,7 @@ class DatadogAdapter(MonitoringAdapter):
 
             # Test connection
             test_url = f"{self.base_url}/api/v1/validate"
+            assert self._session is not None
             response = self._session.get(test_url)
             response.raise_for_status()
 
@@ -245,6 +257,8 @@ class DatadogAdapter(MonitoringAdapter):
         self, query: Dict[str, Any], start_time: datetime, end_time: datetime
     ) -> List[Metric]:
         """Query metrics from Datadog"""
+        if not self._session:
+            raise RuntimeError("Not connected to Datadog. Call connect() first.")
         try:
             url = f"{self.base_url}/api/v1/query"
 
@@ -301,6 +315,8 @@ class DatadogAdapter(MonitoringAdapter):
 
     def get_alerts(self, filters: Dict[str, Any]) -> List[Alert]:
         """Get alerts from Datadog monitors"""
+        if not self._session:
+            raise RuntimeError("Not connected to Datadog. Call connect() first.")
         try:
             url = f"{self.base_url}/api/v1/monitor"
 
@@ -353,6 +369,8 @@ class DatadogAdapter(MonitoringAdapter):
         self, filters: Dict[str, Any], start_time: datetime, end_time: datetime
     ) -> List[Event]:
         """Get events from Datadog"""
+        if not self._session:
+            raise RuntimeError("Not connected to Datadog. Call connect() first.")
         try:
             url = f"{self.base_url}/api/v1/events"
 
@@ -362,9 +380,9 @@ class DatadogAdapter(MonitoringAdapter):
             }
 
             if filters.get("tags"):
-                params["tags"] = ",".join(filters["tags"])
+                params["tags"] = ",".join(filters["tags"])  # type: ignore
             if filters.get("sources"):
-                params["sources"] = ",".join(filters["sources"])
+                params["sources"] = ",".join(filters["sources"])  # type: ignore
             if filters.get("priority"):
                 params["priority"] = filters["priority"]
 
@@ -420,7 +438,7 @@ class DatadogAdapter(MonitoringAdapter):
                 ]
             }
 
-            response = self._session.post(url, json=data)
+            response = self.session.post(url, json=data)
             response.raise_for_status()
 
             return True
@@ -507,7 +525,7 @@ class PrometheusAdapter(MonitoringAdapter):
         self.username = config.get("username", "")
         self.password = config.get("password", "")
         self.bearer_token = config.get("bearer_token", "")
-        self._session = None
+        self._session: Optional[requests.Session] = None
 
     def connect(self) -> bool:
         """Connect to Prometheus API"""
@@ -762,7 +780,7 @@ class SplunkAdapter(MonitoringAdapter):
         self.username = config.get("username", "")
         self.password = config.get("password", "")
         self.token = config.get("token", "")
-        self._session = None
+        self._session: Optional[requests.Session] = None
         self._session_key = None
 
     def connect(self) -> bool:
@@ -1092,7 +1110,7 @@ class ElasticAdapter(MonitoringAdapter):
         self.password = config.get("password", "")
         self.api_key = config.get("api_key", "")
         self.cloud_id = config.get("cloud_id", "")
-        self._session = None
+        self._session: Optional[requests.Session] = None
 
     def connect(self) -> bool:
         """Connect to Elasticsearch"""
@@ -1386,14 +1404,17 @@ class ElasticAdapter(MonitoringAdapter):
         # System metrics
         if "system" in source:
             if "cpu" in source["system"]:
-                return source["system"]["cpu"].get("total", {}).get("pct")
+                pct = source["system"]["cpu"].get("total", {}).get("pct")
+                return float(pct) if pct is not None else None
             elif "memory" in source["system"]:
-                return source["system"]["memory"].get("used", {}).get("pct")
+                pct = source["system"]["memory"].get("used", {}).get("pct")
+                return float(pct) if pct is not None else None
 
         # Generic metric field
         if "metric" in source:
             if isinstance(source["metric"], dict):
-                return source["metric"].get("value")
+                value = source["metric"].get("value")
+                return float(value) if value is not None else None
             else:
                 return float(source["metric"])
 
@@ -1414,7 +1435,7 @@ class ElasticAdapter(MonitoringAdapter):
         ]
 
         for field_name in tag_fields:
-            value = source
+            value: Optional[Dict[str, Any]] = source
             for part in field_name.split("."):
                 if isinstance(value, dict) and part in value:
                     value = value[part]
@@ -1467,7 +1488,7 @@ class NewRelicAdapter(MonitoringAdapter):
         self.base_url = (
             f"https://api.{'eu.' if self.region == 'eu' else ''}newrelic.com"
         )
-        self._session = None
+        self._session: Optional[requests.Session] = None
 
     def connect(self) -> bool:
         """Connect to New Relic API"""
@@ -1803,7 +1824,7 @@ def create_monitoring_adapter(
     provider: str, config: Dict[str, Any]
 ) -> Optional[MonitoringAdapter]:
     """Factory function to create monitoring adapter instances"""
-    providers = {
+    providers: Dict[str, Type[MonitoringAdapter]] = {
         "datadog": DatadogAdapter,
         "prometheus": PrometheusAdapter,
         "splunk": SplunkAdapter,

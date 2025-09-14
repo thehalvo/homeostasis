@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional
 
 import yaml
 
-from modules.monitoring.logger import HomeostasisLogger
+from modules.monitoring.logger import MonitoringLogger
 
 from .branch_strategy import BranchStrategy
 from .commit_analyzer import CommitAnalyzer
@@ -34,7 +34,7 @@ class GitIntegration:
             config_path: Optional path to configuration file
         """
         self.repo_path = Path(repo_path)
-        self.logger = HomeostasisLogger(__name__)
+        self.logger = MonitoringLogger(__name__)
 
         # Load configuration
         self.config = self._load_config(config_path)

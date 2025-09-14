@@ -69,7 +69,6 @@ class FrameworkInfo:
     indicators: List[str] = field(default_factory=list)
 
 
-
 @dataclass
 class LanguageInfo:
     """Information about detected language and frameworks."""

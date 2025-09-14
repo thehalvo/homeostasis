@@ -9,7 +9,7 @@ import enum
 import logging
 import time
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from modules.deployment.traffic_manager import get_traffic_splitter
 from modules.monitoring.metrics_collector import MetricsCollector
@@ -47,7 +47,7 @@ class BlueGreenDeployment:
     After the green environment is deployed and tested, traffic is switched from blue to green.
     """
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize blue-green deployment manager.
 
         Args:
@@ -66,13 +66,13 @@ class BlueGreenDeployment:
 
     def reset_state(self) -> None:
         """Reset the state of the blue-green deployment."""
-        self.service_name = None
-        self.fix_id = None
+        self.service_name: Optional[str] = None
+        self.fix_id: Optional[str] = None
         self.status = BlueGreenStatus.NOT_STARTED
-        self.active_color = None
-        self.inactive_color = None
-        self.start_time = None
-        self.completion_time = None
+        self.active_color: Optional[DeploymentColor] = None
+        self.inactive_color: Optional[DeploymentColor] = None
+        self.start_time: Optional[datetime] = None
+        self.completion_time: Optional[datetime] = None
         self.test_duration = self.config.get("test_duration", 300)  # 5 minutes
 
     def get_active_environment(self) -> Optional[DeploymentColor]:
@@ -124,7 +124,9 @@ class BlueGreenDeployment:
                     "service_name": service_name,
                     "fix_id": fix_id,
                     "active_color": self.active_color.value,
-                    "target_color": self.inactive_color.value,
+                    "target_color": (
+                        self.inactive_color.value if self.inactive_color else None
+                    ),
                 },
             )
         except Exception as e:
@@ -147,6 +149,7 @@ class BlueGreenDeployment:
 
         # In a real implementation, you would deploy to the inactive environment here
         # For now, just simulate the deployment
+        assert self.inactive_color is not None
         logger.info(
             f"Deploying fix {self.fix_id} to {self.inactive_color.value} environment"
         )
@@ -164,7 +167,9 @@ class BlueGreenDeployment:
                 details={
                     "service_name": self.service_name,
                     "fix_id": self.fix_id,
-                    "target_color": self.inactive_color.value,
+                    "target_color": (
+                        self.inactive_color.value if self.inactive_color else None
+                    ),
                 },
             )
         except Exception as e:
@@ -184,12 +189,14 @@ class BlueGreenDeployment:
 
         # In a real implementation, you would run tests on the inactive environment
         # For now, just simulate the testing
+        assert self.inactive_color is not None
         logger.info(f"Testing {self.inactive_color.value} environment")
 
         # Simulate test duration
         time.sleep(2)
 
         # Assume tests pass
+        assert self.inactive_color is not None
         logger.info(f"Tests passed for {self.inactive_color.value} environment")
 
         # Log to audit if available
@@ -199,7 +206,9 @@ class BlueGreenDeployment:
                 details={
                     "service_name": self.service_name,
                     "fix_id": self.fix_id,
-                    "target_color": self.inactive_color.value,
+                    "target_color": (
+                        self.inactive_color.value if self.inactive_color else None
+                    ),
                     "test_success": True,
                 },
             )
@@ -223,6 +232,8 @@ class BlueGreenDeployment:
 
         # In a real implementation, you would update the load balancer or proxy
         # For now, just simulate the traffic switch
+        assert self.active_color is not None
+        assert self.inactive_color is not None
         logger.info(
             f"Switching traffic from {self.active_color.value} to {self.inactive_color.value}"
         )
@@ -237,7 +248,10 @@ class BlueGreenDeployment:
         self.status = BlueGreenStatus.COMPLETED
         self.completion_time = datetime.now()
 
+        assert self.active_color is not None
         logger.info(f"Traffic switched to {self.active_color.value} environment")
+        assert self.completion_time is not None
+        assert self.start_time is not None
         logger.info(
             f"Blue-green deployment completed in "
             f"{(self.completion_time - self.start_time).total_seconds()} seconds"
@@ -250,11 +264,17 @@ class BlueGreenDeployment:
                 details={
                     "service_name": self.service_name,
                     "fix_id": self.fix_id,
-                    "active_color": self.active_color.value,
-                    "inactive_color": self.inactive_color.value,
+                    "active_color": (
+                        self.active_color.value if self.active_color else None
+                    ),
+                    "inactive_color": (
+                        self.inactive_color.value if self.inactive_color else None
+                    ),
                     "duration_seconds": (
-                        self.completion_time - self.start_time
-                    ).total_seconds(),
+                        (self.completion_time - self.start_time).total_seconds()
+                        if self.completion_time and self.start_time
+                        else 0
+                    ),
                 },
             )
         except Exception as e:
@@ -275,6 +295,8 @@ class BlueGreenDeployment:
         # In a real implementation, you would switch traffic back to the original environment
         # For now, just simulate the rollback
         original_active = self.active_color
+        assert self.active_color is not None
+        assert self.inactive_color is not None
         logger.info(
             f"Rolling back: switching traffic from {self.active_color.value} to {self.inactive_color.value}"
         )
@@ -286,6 +308,7 @@ class BlueGreenDeployment:
         self.status = BlueGreenStatus.ROLLED_BACK
         self.completion_time = datetime.now()
 
+        assert self.active_color is not None
         logger.info(f"Rolled back to {self.active_color.value} environment")
 
         # Log to audit if available
@@ -295,9 +318,15 @@ class BlueGreenDeployment:
                 details={
                     "service_name": self.service_name,
                     "fix_id": self.fix_id,
-                    "active_color": self.active_color.value,
-                    "inactive_color": self.inactive_color.value,
-                    "rolled_back_from": original_active.value,
+                    "active_color": (
+                        self.active_color.value if self.active_color else None
+                    ),
+                    "inactive_color": (
+                        self.inactive_color.value if self.inactive_color else None
+                    ),
+                    "rolled_back_from": (
+                        original_active.value if original_active else None
+                    ),
                 },
             )
         except Exception as e:
@@ -336,7 +365,9 @@ class BlueGreenDeployment:
 _blue_green_deployment = None
 
 
-def get_blue_green_deployment(config: Dict = None) -> BlueGreenDeployment:
+def get_blue_green_deployment(
+    config: Optional[Dict[str, Any]] = None,
+) -> BlueGreenDeployment:
     """Get or create the singleton BlueGreenDeployment instance.
 
     Args:

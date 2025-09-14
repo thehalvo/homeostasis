@@ -78,8 +78,8 @@ class BranchStrategy:
         self.strategies = self._initialize_strategies()
 
         # Cache for branch information
-        self._branch_cache: Dict[str, Any] = {}
-        self._cache_expiry: Dict[str, float] = {}
+        self._branch_cache: Dict[str, BranchInfo] = {}
+        self._cache_expiry: Dict[str, datetime] = {}
 
     def _load_default_config(self) -> Dict[str, Any]:
         """Load default configuration for branch strategies."""
@@ -376,7 +376,7 @@ class BranchStrategy:
                 )
 
                 if result.returncode == 0:
-                    return pattern
+                    return str(pattern)
             except Exception:
                 continue
 

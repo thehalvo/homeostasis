@@ -14,7 +14,7 @@ import time
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, DefaultDict, Dict, List, Optional
 
 from modules.security.audit import log_event
 
@@ -81,7 +81,7 @@ class AuditMonitor:
     and detects anomalies or potential security issues.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize the audit monitor.
 
         Args:
@@ -96,14 +96,14 @@ class AuditMonitor:
         self.last_position = 0
 
         # Initialize in-memory event cache
-        self.event_cache = []
+        self.event_cache: List[AuditEvent] = []
         self.event_cache_size = self.config.get("event_cache_size", 1000)
 
         # Initialize statistics
-        self.event_counts = Counter()
-        self.user_activity = defaultdict(Counter)
-        self.fix_activity = defaultdict(list)
-        self.error_events = []
+        self.event_counts: Counter[str] = Counter()
+        self.user_activity: DefaultDict[str, Counter[str]] = defaultdict(Counter)
+        self.fix_activity: DefaultDict[str, List[AuditEvent]] = defaultdict(list)
+        self.error_events: List[AuditEvent] = []
 
         # Time tracking
         self.last_analysis_time = datetime.datetime.now()
@@ -241,11 +241,11 @@ class AuditMonitor:
                 )
 
         # Check for suspicious patterns in fix deployment
-        for fix_id, events in self.fix_activity.items():
+        for fix_id, fix_events in self.fix_activity.items():
             # Check if there are rapid approval-deployment sequences
-            approval_events = [e for e in events if e.event_type == "fix_approved"]
+            approval_events = [e for e in fix_events if e.event_type == "fix_approved"]
             deployment_events = [
-                e for e in events if e.event_type in ("fix_deployed", "deployment")
+                e for e in fix_events if e.event_type in ("fix_deployed", "deployment")
             ]
 
             for approval in approval_events:
@@ -322,12 +322,12 @@ class AuditMonitor:
         recent_events = [e for e in self.event_cache if e.timestamp >= cutoff_time]
 
         # Count events by type
-        event_counts = Counter()
+        event_counts: Counter[str] = Counter()
         for event in recent_events:
             event_counts[event.event_type] += 1
 
         # Count activities by user
-        user_activity = defaultdict(Counter)
+        user_activity: DefaultDict[str, Counter[str]] = defaultdict(Counter)
         for event in recent_events:
             user_activity[event.user][event.event_type] += 1
 
@@ -508,7 +508,7 @@ class AuditMonitor:
 _audit_monitor = None
 
 
-def get_audit_monitor(config: Dict[str, Any] = None) -> AuditMonitor:
+def get_audit_monitor(config: Optional[Dict[str, Any]] = None) -> AuditMonitor:
     """Get or create the singleton AuditMonitor instance.
 
     Args:

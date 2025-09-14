@@ -31,7 +31,7 @@ class FunctionInfo:
     """Information about a function in the code."""
 
     name: str
-    node: ast.FunctionDef
+    node: Union[ast.FunctionDef, ast.AsyncFunctionDef]
     parameters: List[Dict[str, Any]]  # Parameter information
     return_annotation: Optional[str] = None  # Return type annotation if present
     docstring: Optional[str] = None  # Function docstring if present
@@ -69,32 +69,32 @@ class CodeVisitor(ast.NodeVisitor):
     AST visitor that collects information about code structure.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.variables = {}  # name -> VariableInfo
-        self.functions = {}  # name -> FunctionInfo
-        self.classes = {}  # name -> ClassInfo
-        self.imports = []  # List of ImportInfo
+        self.variables: Dict[str, VariableInfo] = {}  # name -> VariableInfo
+        self.functions: Dict[str, FunctionInfo] = {}  # name -> FunctionInfo
+        self.classes: Dict[str, ClassInfo] = {}  # name -> ClassInfo
+        self.imports: List[ImportInfo] = []  # List of ImportInfo
 
         # Stack of scopes for tracking variable definitions
-        self.scope_stack = []
+        self.scope_stack: List[ast.AST] = []
 
         # Track current function or class
-        self.current_function = None
-        self.current_class = None
+        self.current_function: Optional[FunctionInfo] = None
+        self.current_class: Optional[ClassInfo] = None
 
         # Track for condition structures
-        self.if_stack = []
-        self.loop_stack = []
-        self.exception_handlers = []
+        self.if_stack: List[ast.If] = []
+        self.loop_stack: List[Union[ast.For, ast.While]] = []
+        self.exception_handlers: List[ast.ExceptHandler] = []
 
-    def visit_Module(self, node):
+    def visit_Module(self, node: ast.Module) -> None:
         """Visit a Module node."""
         self.scope_stack.append(node)
         self.generic_visit(node)
         self.scope_stack.pop()
 
-    def visit_Import(self, node):
+    def visit_Import(self, node: ast.Import) -> None:
         """Visit an Import node."""
         names = [(alias.name, alias.asname) for alias in node.names]
         for name, asname in names:
@@ -108,7 +108,7 @@ class CodeVisitor(ast.NodeVisitor):
         self.imports.append(ImportInfo(module="", names=names))
         self.generic_visit(node)
 
-    def visit_ImportFrom(self, node):
+    def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
         """Visit an ImportFrom node."""
         names = [(alias.name, alias.asname) for alias in node.names]
         for name, asname in names:
@@ -127,18 +127,19 @@ class CodeVisitor(ast.NodeVisitor):
         )
         self.generic_visit(node)
 
-    def visit_FunctionDef(self, node):
-        """Visit a FunctionDef node."""
+    def visit_FunctionDef(self, node: Union[ast.FunctionDef, ast.AsyncFunctionDef]) -> None:
+        """Visit a FunctionDef or AsyncFunctionDef node."""
         # Extract docstring if present
         docstring = ast.get_docstring(node)
 
         # Process function parameters
-        parameters = []
+        parameters: List[Dict[str, Any]] = []
         for arg in node.args.args:
             arg_info = {
                 "name": arg.arg,
                 "annotation": self._get_annotation_name(arg.annotation),
                 "default": None,
+                "keyword_only": False,
             }
             parameters.append(arg_info)
 
@@ -168,9 +169,10 @@ class CodeVisitor(ast.NodeVisitor):
         kwdefaults = node.args.kw_defaults
         if kwdefaults:
             kw_start = len(parameters) - len(node.args.kwonlyargs)
-            for i, default in enumerate(kwdefaults):
+            for i in range(len(kwdefaults)):
+                default: Optional[ast.expr] = kwdefaults[i]
                 idx = kw_start + i
-                if default and idx < len(parameters):
+                if default is not None and idx < len(parameters):
                     parameters[idx]["default"] = self._get_node_value(default)
 
         # Process varargs and kwargs
@@ -248,12 +250,12 @@ class CodeVisitor(ast.NodeVisitor):
         self.scope_stack.pop()
         self.current_function = prev_function
 
-    def visit_AsyncFunctionDef(self, node):
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
         """Visit an AsyncFunctionDef node."""
         # Use the same implementation as FunctionDef
         self.visit_FunctionDef(node)
 
-    def visit_ClassDef(self, node):
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:
         """Visit a ClassDef node."""
         # Extract docstring if present
         docstring = ast.get_docstring(node)
@@ -300,7 +302,7 @@ class CodeVisitor(ast.NodeVisitor):
         self.scope_stack.pop()
         self.current_class = prev_class
 
-    def visit_Assign(self, node):
+    def visit_Assign(self, node: ast.Assign) -> None:
         """Visit an Assign node."""
         # Process each target
         for target in node.targets:
@@ -326,7 +328,7 @@ class CodeVisitor(ast.NodeVisitor):
         # Visit the value and other parts
         self.generic_visit(node)
 
-    def visit_AnnAssign(self, node):
+    def visit_AnnAssign(self, node: ast.AnnAssign) -> None:
         """Visit an AnnAssign (annotated assignment) node."""
         if isinstance(node.target, ast.Name):
             # Add variable with type annotation
@@ -352,7 +354,7 @@ class CodeVisitor(ast.NodeVisitor):
 
         self.generic_visit(node)
 
-    def visit_Name(self, node):
+    def visit_Name(self, node: ast.Name) -> None:
         """Visit a Name node."""
         if isinstance(node.ctx, ast.Load):
             # This is a variable usage
@@ -362,7 +364,7 @@ class CodeVisitor(ast.NodeVisitor):
 
         self.generic_visit(node)
 
-    def visit_Attribute(self, node):
+    def visit_Attribute(self, node: ast.Attribute) -> None:
         """Visit an Attribute node to track attribute access."""
         # Check if the base value is a Name node (e.g., 'pd' in 'pd.DataFrame')
         if isinstance(node.value, ast.Name) and isinstance(node.value.ctx, ast.Load):
@@ -380,7 +382,7 @@ class CodeVisitor(ast.NodeVisitor):
 
         self.generic_visit(node)
 
-    def visit_Call(self, node):
+    def visit_Call(self, node: ast.Call) -> None:
         """Visit a Call node."""
         # Record function calls
         if isinstance(node.func, ast.Name):
@@ -398,25 +400,25 @@ class CodeVisitor(ast.NodeVisitor):
 
         self.generic_visit(node)
 
-    def visit_If(self, node):
+    def visit_If(self, node: ast.If) -> None:
         """Visit an If node to track conditional blocks."""
         self.if_stack.append(node)
         self.generic_visit(node)
         self.if_stack.pop()
 
-    def visit_For(self, node):
+    def visit_For(self, node: ast.For) -> None:
         """Visit a For node to track loop blocks."""
         self.loop_stack.append(node)
         self.generic_visit(node)
         self.loop_stack.pop()
 
-    def visit_While(self, node):
+    def visit_While(self, node: ast.While) -> None:
         """Visit a While node to track loop blocks."""
         self.loop_stack.append(node)
         self.generic_visit(node)
         self.loop_stack.pop()
 
-    def visit_ExceptHandler(self, node):
+    def visit_ExceptHandler(self, node: ast.ExceptHandler) -> None:
         """Visit an ExceptHandler node to track exception handling."""
         self.exception_handlers.append(node)
         self.generic_visit(node)
@@ -543,11 +545,11 @@ class CodeVisitor(ast.NodeVisitor):
                         # Try to get the slice value directly (Python 3.9+)
                         slice_expr = annotation.slice
                         # For Python < 3.9, check if it's an Index node
-                        if hasattr(slice_expr, 'value'):
-                            slice_expr = slice_expr.value  # type: ignore
+                        if hasattr(slice_expr, "value"):
+                            slice_expr = getattr(slice_expr, "value")
                         index = self._get_annotation_name(slice_expr)
                         return f"{base}[{index}]"
-                    except:
+                    except (AttributeError, IndexError, KeyError):
                         return f"{base}[...]"
             elif isinstance(annotation.value, ast.Attribute):
                 base = self._get_attribute_name(annotation.value)
@@ -572,7 +574,9 @@ class CodeVisitor(ast.NodeVisitor):
         elif isinstance(node, ast.List):
             return [self._get_node_value(elt) for elt in node.elts]
         elif isinstance(node, ast.Dict):
-            keys = [self._get_node_value(k) if k is not None else None for k in node.keys]
+            keys = [
+                self._get_node_value(k) if k is not None else None for k in node.keys
+            ]
             values = [self._get_node_value(v) for v in node.values]
             return dict(zip(keys, values))
         elif isinstance(node, ast.Name):
@@ -592,11 +596,11 @@ class ASTAnalyzer:
     Analyzer class for extracting information from Python code using AST.
     """
 
-    def __init__(self):
-        self.source_code = ""
-        self.ast_tree = None
-        self.visitor = None
-        self.file_path = None
+    def __init__(self) -> None:
+        self.source_code: str = ""
+        self.ast_tree: Optional[ast.AST] = None
+        self.visitor: Optional[CodeVisitor] = None
+        self.file_path: Optional[Path] = None
 
     def parse_file(self, file_path: Union[str, Path]) -> bool:
         """
@@ -610,7 +614,7 @@ class ASTAnalyzer:
         """
         try:
             # Store the file path
-            self.file_path = file_path
+            self.file_path = Path(file_path) if isinstance(file_path, str) else file_path
 
             with open(file_path, "r", encoding="utf-8") as f:
                 self.source_code = f.read()
@@ -821,7 +825,7 @@ class ASTAnalyzer:
         nodes = []
 
         class LineVisitor(ast.NodeVisitor):
-            def generic_visit(self, node):
+            def generic_visit(self, node: ast.AST) -> None:
                 if hasattr(node, "lineno") and node.lineno == line_number:
                     nodes.append(node)
                 super().generic_visit(node)
@@ -848,7 +852,7 @@ class ASTAnalyzer:
             ):
                 start = func_info.node.lineno
                 end = func_info.node.end_lineno
-                if start <= line_number <= end:
+                if end is not None and start <= line_number <= end:
                     return func_info
 
         return None
@@ -872,7 +876,7 @@ class ASTAnalyzer:
             ):
                 start = class_info.node.lineno
                 end = class_info.node.end_lineno
-                if start <= line_number <= end:
+                if end is not None and start <= line_number <= end:
                     return class_info
 
         return None

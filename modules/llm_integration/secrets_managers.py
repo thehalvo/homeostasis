@@ -79,7 +79,7 @@ class AWSSecretsManager(SecretsManagerBase):
             full_name = f"{self._secret_prefix}{secret_name}"
 
             response = client.get_secret_value(SecretId=full_name)
-            return response["SecretString"]
+            return str(response["SecretString"])
 
         except self._boto_exceptions as e:
             error_code = (
@@ -208,7 +208,7 @@ class AzureKeyVault(SecretsManagerBase):
             full_name = f"{self._secret_prefix}{secret_name.replace('_', '-')}"
 
             secret = client.get_secret(full_name)
-            return secret.value
+            return str(secret.value) if secret.value else None
 
         except self._azure_exceptions as e:
             if "SecretNotFound" in str(e):
@@ -280,7 +280,9 @@ class AzureKeyVault(SecretsManagerBase):
 class HashiCorpVault(SecretsManagerBase):
     """HashiCorp Vault integration."""
 
-    def __init__(self, vault_url: Optional[str] = None, vault_token: Optional[str] = None):
+    def __init__(
+        self, vault_url: Optional[str] = None, vault_token: Optional[str] = None
+    ):
         """Initialize HashiCorp Vault client."""
         self._client = None
         self._vault_url = vault_url or os.getenv("VAULT_ADDR", "http://localhost:8200")
@@ -300,7 +302,7 @@ class HashiCorpVault(SecretsManagerBase):
 
                 self._client = hvac.Client(url=self._vault_url, token=self._vault_token)
 
-                if not self._client.is_authenticated():
+                if self._client is None or not self._client.is_authenticated():
                     raise SecretsManagerError("HashiCorp Vault authentication failed")
 
             except ImportError:
@@ -316,7 +318,8 @@ class HashiCorpVault(SecretsManagerBase):
             path = f"{self._secret_path}/{secret_name}"
 
             response = client.secrets.kv.v2.read_secret_version(path=path)
-            return response["data"]["data"].get("value")
+            value = response["data"]["data"].get("value")
+            return str(value) if value is not None else None
 
         except Exception as e:
             if "404" in str(e) or "Not Found" in str(e):
@@ -359,7 +362,7 @@ class HashiCorpVault(SecretsManagerBase):
             client = self._get_client()
 
             response = client.secrets.kv.v2.list_secrets(path=self._secret_path)
-            return response["data"]["keys"]
+            return list(response["data"]["keys"])
 
         except Exception as e:
             if "404" in str(e) or "Not Found" in str(e):
@@ -372,7 +375,7 @@ class HashiCorpVault(SecretsManagerBase):
         """Check if HashiCorp Vault is available."""
         try:
             client = self._get_client()
-            return client.is_authenticated()
+            return bool(client.is_authenticated())
         except Exception:
             return False
 

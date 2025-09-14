@@ -16,7 +16,7 @@ import time
 from collections import defaultdict, deque
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Deque, Dict, List, Optional, Tuple
 
 from .logger import MonitoringLogger
 from .metrics_collector import MetricsCollector
@@ -358,8 +358,10 @@ class LLMMetricsCollector:
         self.alert_config = alert_config or AlertConfig()
 
         # Metrics storage
-        self.recent_requests = deque(maxlen=1000)  # Keep last 1000 requests in memory
-        self.usage_windows = {
+        self.recent_requests: Deque[LLMRequestMetrics] = deque(
+            maxlen=1000
+        )  # Keep last 1000 requests in memory
+        self.usage_windows: Dict[str, Deque[Any]] = {
             "minute": deque(maxlen=60),
             "hour": deque(maxlen=24),
             "day": deque(maxlen=30),
@@ -369,7 +371,7 @@ class LLMMetricsCollector:
         self._lock = threading.Lock()
 
         # Alert state
-        self._last_alert_times = defaultdict(float)
+        self._last_alert_times: Dict[str, float] = defaultdict(float)
 
         self.logger.info("Initialized LLM metrics collector")
 
@@ -634,7 +636,7 @@ class LLMMetricsCollector:
             "month": 2592000,
         }
 
-        usage = {}
+        usage: Dict[str, Any] = {}
 
         with self._lock:
             for window_name, window_seconds in windows.items():
@@ -667,19 +669,19 @@ class LLMMetricsCollector:
                 usage[f"successful_requests_last_{window_name}"] = successful_requests
                 usage[f"failed_requests_last_{window_name}"] = failed_requests
                 usage[f"tokens_last_{window_name}"] = total_tokens
-                usage[f"cost_last_{window_name}"] = total_cost
-                usage[f"avg_latency_last_{window_name}"] = avg_latency
+                usage[f"cost_last_{window_name}"] = float(total_cost)
+                usage[f"avg_latency_last_{window_name}"] = float(avg_latency)
                 usage[f"pii_requests_last_{window_name}"] = pii_requests
                 usage[f"unsafe_requests_last_{window_name}"] = unsafe_requests
 
                 if total_requests > 0:
-                    usage[f"success_rate_last_{window_name}"] = (
+                    usage[f"success_rate_last_{window_name}"] = float(
                         successful_requests / total_requests
                     )
-                    usage[f"pii_rate_last_{window_name}"] = (
+                    usage[f"pii_rate_last_{window_name}"] = float(
                         pii_requests / total_requests
                     )
-                    usage[f"unsafe_rate_last_{window_name}"] = (
+                    usage[f"unsafe_rate_last_{window_name}"] = float(
                         unsafe_requests / total_requests
                     )
                 else:
@@ -702,7 +704,7 @@ class LLMMetricsCollector:
         current_time = time.time()
         cutoff_time = current_time - time_window
 
-        provider_stats = defaultdict(
+        provider_stats: Dict[str, Dict[str, Any]] = defaultdict(
             lambda: {
                 "requests": 0,
                 "successful_requests": 0,
@@ -806,7 +808,7 @@ class LLMMetricsCollector:
 
     def _group_by_provider(self, requests: List[LLMRequestMetrics]) -> Dict[str, int]:
         """Group requests by provider."""
-        provider_counts = defaultdict(int)
+        provider_counts: Dict[str, int] = defaultdict(int)
         for request in requests:
             provider_counts[request.provider] += 1
         return dict(provider_counts)
@@ -863,22 +865,22 @@ class LLMMetricsCollector:
         if not recent_requests:
             return {"total_cost": 0.0, "by_provider": {}, "by_model": {}}
 
-        total_cost = sum(r.cost for r in recent_requests)
+        total_cost = sum(r.cost or 0.0 for r in recent_requests)
 
         # Group by provider
-        provider_costs = defaultdict(float)
-        provider_tokens = defaultdict(int)
+        provider_costs: Dict[str, float] = defaultdict(float)
+        provider_tokens: Dict[str, int] = defaultdict(int)
 
         # Group by model
-        model_costs = defaultdict(float)
-        model_tokens = defaultdict(int)
+        model_costs: Dict[str, float] = defaultdict(float)
+        model_tokens: Dict[str, int] = defaultdict(int)
 
         for request in recent_requests:
-            provider_costs[request.provider] += request.cost
+            provider_costs[request.provider] += request.cost or 0.0
             provider_tokens[request.provider] += request.total_tokens or 0
 
             model_key = f"{request.provider}/{request.model}"
-            model_costs[model_key] += request.cost
+            model_costs[model_key] += request.cost or 0.0
             model_tokens[model_key] += request.total_tokens or 0
 
         return {
@@ -931,7 +933,7 @@ class LLMMetricsCollector:
                 requests_to_export = list(self.recent_requests)
 
         # Convert to serializable format
-        export_data = {
+        export_data: Dict[str, Any] = {
             "export_timestamp": current_time,
             "time_window": time_window,
             "total_requests": len(requests_to_export),

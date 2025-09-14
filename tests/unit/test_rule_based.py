@@ -5,12 +5,6 @@ Unit tests for the rule-based analyzer module.
 import pytest
 
 from modules.analysis.rule_based import RuleBasedAnalyzer
-from modules.analysis.rule_config import (
-    Rule,
-    RuleCategory,
-    RuleConfidence,
-    RuleSeverity,
-)
 
 
 class TestRuleBasedAnalyzer:

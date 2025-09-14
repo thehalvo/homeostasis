@@ -431,7 +431,7 @@ class FastAPIDependencyAnalyzer:
                 )
 
         # Check for shared dependencies that could be cached
-        dependency_usage_count = {}
+        dependency_usage_count: Dict[str, int] = {}
         for route_data in analysis_results.get("routes", {}).values():
             for dep in route_data.get("deps", []):
                 dependency_usage_count[dep] = dependency_usage_count.get(dep, 0) + 1
@@ -466,7 +466,7 @@ class FastAPIDependencyAnalyzer:
         self, file_analyses: Dict[str, Dict[str, Any]]
     ) -> Dict[str, Any]:
         """Consolidate analyses from multiple files."""
-        consolidated = {
+        consolidated: Dict[str, Any] = {
             "dependencies": {},
             "routes": {},
             "dependency_chains": {},

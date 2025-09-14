@@ -8,7 +8,7 @@ both legacy FORTRAN 77 and modern Fortran 90/95/2003/2008/2018.
 import logging
 import re
 from dataclasses import dataclass
-from enum import Enum, IntEnum
+from enum import IntEnum
 from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
@@ -700,7 +700,7 @@ class FortranHealer:
     ) -> Tuple[List[str], List[Dict[str, Any]]]:
         """Replace COMMON blocks with modules."""
         modifications: List[Dict[str, Any]] = []
-        common_blocks: Dict[str, List[str]] = {}
+        common_blocks: Dict[str, List[Dict[str, Any]]] = {}
 
         # First pass - collect COMMON blocks
         for i, line in enumerate(lines):

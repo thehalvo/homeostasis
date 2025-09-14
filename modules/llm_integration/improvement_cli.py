@@ -48,7 +48,7 @@ def analyze():
     click.echo()
 
     # Group patterns by type
-    pattern_groups = {}
+    pattern_groups: Dict[str, List[Any]] = {}
     for pattern in patterns:
         if pattern.pattern_type not in pattern_groups:
             pattern_groups[pattern.pattern_type] = []

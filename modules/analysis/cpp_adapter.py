@@ -245,8 +245,9 @@ class CPPErrorAdapter(LanguageAdapter):
                 return f"[{addr}] {func} at {file}:{line}"
             else:
                 return f"{func} at {file}:{line}"
-
-        return str(frame)
+        else:
+            # Should not reach here given the type hint, but handle gracefully
+            return str(frame)
 
     def _extract_file_info(
         self, cpp_error: Dict[str, Any], stack_trace: List[Dict[str, Any]]

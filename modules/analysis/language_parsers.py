@@ -1156,7 +1156,7 @@ class CompilerIntegration:
         Returns:
             Detailed diagnostic information
         """
-        diagnostics = {
+        diagnostics: Dict[str, Any] = {
             "language": language.value,
             "compiler_available": False,
             "syntax_valid": None,
@@ -1222,7 +1222,11 @@ class CompilerIntegration:
 
     def _analyze_java_code(self, source_code: str) -> Dict[str, Any]:
         """Analyze Java code using javac."""
-        result = {"compiler_available": True, "compilation_errors": [], "warnings": []}
+        result: Dict[str, Any] = {
+            "compiler_available": True,
+            "compilation_errors": [],
+            "warnings": [],
+        }
 
         try:
             with tempfile.NamedTemporaryFile(
@@ -1260,7 +1264,11 @@ class CompilerIntegration:
 
     def _analyze_go_code(self, source_code: str) -> Dict[str, Any]:
         """Analyze Go code using go build."""
-        result = {"compiler_available": True, "compilation_errors": [], "warnings": []}
+        result: Dict[str, Any] = {
+            "compiler_available": True,
+            "compilation_errors": [],
+            "warnings": [],
+        }
 
         try:
             with tempfile.NamedTemporaryFile(mode="w", suffix=".go", delete=False) as f:
@@ -1292,7 +1300,11 @@ class CompilerIntegration:
 
     def _analyze_rust_code(self, source_code: str) -> Dict[str, Any]:
         """Analyze Rust code using rustc."""
-        result = {"compiler_available": True, "compilation_errors": [], "warnings": []}
+        result: Dict[str, Any] = {
+            "compiler_available": True,
+            "compilation_errors": [],
+            "warnings": [],
+        }
 
         try:
             with tempfile.NamedTemporaryFile(mode="w", suffix=".rs", delete=False) as f:
@@ -1327,7 +1339,11 @@ class CompilerIntegration:
 
     def _analyze_csharp_code(self, source_code: str) -> Dict[str, Any]:
         """Analyze C# code using dotnet build."""
-        result = {"compiler_available": True, "compilation_errors": [], "warnings": []}
+        result: Dict[str, Any] = {
+            "compiler_available": True,
+            "compilation_errors": [],
+            "warnings": [],
+        }
 
         # C# analysis would require a full project structure
         # For now, return a placeholder
@@ -1337,7 +1353,11 @@ class CompilerIntegration:
 
     def _analyze_typescript_code(self, source_code: str) -> Dict[str, Any]:
         """Analyze TypeScript code using tsc."""
-        result = {"compiler_available": True, "compilation_errors": [], "warnings": []}
+        result: Dict[str, Any] = {
+            "compiler_available": True,
+            "compilation_errors": [],
+            "warnings": [],
+        }
 
         try:
             with tempfile.NamedTemporaryFile(mode="w", suffix=".ts", delete=False) as f:
@@ -1369,7 +1389,11 @@ class CompilerIntegration:
 
     def _analyze_python_code(self, source_code: str) -> Dict[str, Any]:
         """Analyze Python code using ast module."""
-        result = {"compiler_available": True, "compilation_errors": [], "warnings": []}
+        result: Dict[str, Any] = {
+            "compiler_available": True,
+            "compilation_errors": [],
+            "warnings": [],
+        }
 
         try:
             import ast
@@ -1386,7 +1410,11 @@ class CompilerIntegration:
 
     def _analyze_dart_code(self, source_code: str) -> Dict[str, Any]:
         """Analyze Dart/Flutter code using dart analyze."""
-        result = {"compiler_available": True, "compilation_errors": [], "warnings": []}
+        result: Dict[str, Any] = {
+            "compiler_available": True,
+            "compilation_errors": [],
+            "warnings": [],
+        }
 
         try:
             with tempfile.NamedTemporaryFile(
@@ -1467,7 +1495,8 @@ def create_language_parser(language: LanguageType) -> Optional[LanguageSpecificP
     parser_factory = parser_map.get(language)
     if parser_factory:
         try:
-            return parser_factory()
+            parser = parser_factory()
+            return parser if isinstance(parser, LanguageSpecificParser) else None
         except Exception as e:
             logger.error(f"Error creating parser for {language.value}: {e}")
 

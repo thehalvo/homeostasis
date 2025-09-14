@@ -514,7 +514,9 @@ class ModelChecker:
         from collections import deque
 
         for init_state in model.initial_states:
-            queue: Deque[Tuple[str, List[Tuple[str, str, str]]]] = deque([(init_state, [])])
+            queue: Deque[Tuple[str, List[Tuple[str, str, str]]]] = deque(
+                [(init_state, [])]
+            )
             visited = {init_state}
 
             while queue:

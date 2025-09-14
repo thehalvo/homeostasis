@@ -553,15 +553,15 @@ class HealingMetricsCollector:
             Error type
         """
         if language == "python":
-            return error_data.get("exception_type", "Unknown")
+            return str(error_data.get("exception_type", "Unknown"))
         elif language == "javascript":
-            return error_data.get("name", "Unknown")
+            return str(error_data.get("name", "Unknown"))
         elif language == "java":
-            return error_data.get("exception_class", "Unknown")
+            return str(error_data.get("exception_class", "Unknown"))
         elif language == "go":
-            return error_data.get("error_type", "Unknown")
+            return str(error_data.get("error_type", "Unknown"))
         else:
-            return error_data.get("error_type", "Unknown")
+            return str(error_data.get("error_type", "Unknown"))
 
     def _update_timing_metrics(self, timings: Dict[str, float]) -> None:
         """
