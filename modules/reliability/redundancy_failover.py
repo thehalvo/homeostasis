@@ -209,8 +209,8 @@ class HTTPHealthChecker(HealthChecker):
             async with aiohttp.ClientSession(timeout=timeout) as session:
                 async with session.get(url) as response:
                     if health_check.expected_response:
-                        return response.status == health_check.expected_response
-                    return response.status == 200
+                        return bool(response.status == health_check.expected_response)
+                    return bool(response.status == 200)
         except Exception as e:
             logger.warning(f"Health check failed for {instance.instance_id}: {e}")
             return False
@@ -445,9 +445,14 @@ class FailoverCoordinator:
             # Update instance states
             if event.success:
                 failed_instance.state = InstanceState.FAILED
-                logger.info(
-                    f"Failover completed: {failed_instance.instance_id} -> {event.replacement_instance.instance_id}"
-                )
+                if event.replacement_instance:
+                    logger.info(
+                        f"Failover completed: {failed_instance.instance_id} -> {event.replacement_instance.instance_id}"
+                    )
+                else:
+                    logger.info(
+                        f"Failover completed: {failed_instance.instance_id} -> (no replacement instance)"
+                    )
 
             # Send notification
             if self.notification_handler:

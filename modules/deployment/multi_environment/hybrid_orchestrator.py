@@ -13,7 +13,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
-from modules.enterprise.orchestration import EnterpriseOrchestrator
+from modules.enterprise.orchestration import EnterpriseOrchestrator, DeploymentResult, DeploymentStatus
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 from modules.security.audit import AuditLogger
 
@@ -630,9 +630,9 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
                 return {"status": "rejected", "plan_id": plan.plan_id}
 
         # Record start of healing
-        await self.auditor.log_event(
+        self.auditor.log_event(
             "healing_started",
-            {
+            details={
                 "plan_id": plan.plan_id,
                 "error_id": plan.context.error_id,
                 "environments": [
@@ -663,9 +663,9 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
                     )
 
             # All steps completed successfully
-            await self.auditor.log_event(
+            self.auditor.log_event(
                 "healing_completed",
-                {
+                details={
                     "plan_id": plan.plan_id,
                     "duration": sum(r.get("duration", 0) for r in results.values()),
                 },
@@ -679,9 +679,9 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
             # Execute rollback
             rollback_results = await self._execute_rollback(plan, executed_steps)
 
-            await self.auditor.log_event(
+            self.auditor.log_event(
                 "healing_failed",
-                {
+                details={
                     "plan_id": plan.plan_id,
                     "error": str(e),
                     "rollback_results": rollback_results,
@@ -865,27 +865,47 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
         is_valid = len(errors) == 0
         return is_valid, errors
 
-    async def execute_plan(self, plan) -> Dict[str, Any]:
+    async def execute_plan(self, plan) -> DeploymentResult:
         """Execute a deployment plan"""
         # Use existing execute_healing_plan method
-        return await self.execute_healing_plan(plan)
+        result = await self.execute_healing_plan(plan)
+
+        # Convert to DeploymentResult
+        return DeploymentResult(
+            deployment_id=result.get("plan_id", ""),
+            plan_id=result.get("plan_id", ""),
+            status=DeploymentStatus.COMPLETED if result.get("status") == "success" else DeploymentStatus.FAILED,
+            start_time=datetime.now(),
+            end_time=datetime.now(),
+            deployed_resources=[],
+            failed_resources=[],
+            logs=[],
+            metrics=result.get("results", {}),
+            errors=[result.get("error", "")] if result.get("error") else [],
+        )
 
     async def get_deployment_status(
         self, deployment_id: str
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[DeploymentResult]:
         """Get status of a deployment"""
         plan = self.active_plans.get(deployment_id)
         if not plan:
             return None
 
-        return {
-            "deployment_id": deployment_id,
-            "status": "active",
-            "plan": plan,
-            "affected_environments": [
-                env.name for env in plan.context.affected_environments
-            ],
-        }
+        return DeploymentResult(
+            deployment_id=deployment_id,
+            plan_id=plan.plan_id,
+            status=DeploymentStatus.IN_PROGRESS,
+            start_time=datetime.now(),
+            deployed_resources=[],
+            failed_resources=[],
+            logs=[],
+            metrics={
+                "affected_environments": [
+                    env.name for env in plan.context.affected_environments
+                ],
+            },
+        )
 
     async def cancel_deployment(self, deployment_id: str) -> bool:
         """Cancel an active deployment"""

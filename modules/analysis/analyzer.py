@@ -235,7 +235,7 @@ class Analyzer:
         ):
             # Combine both analyses, using the more detailed information from each
             # For example, use rule-based root cause but AI descriptions and suggestions
-            combined = {
+            combined: Dict[str, Any] = {
                 "error_data": error_data,
                 "rule_analysis": rule_analysis,
                 "ai_analysis": ai_analysis,

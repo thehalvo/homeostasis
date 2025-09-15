@@ -131,12 +131,12 @@ class RegressionTestGenerator:
 
         # Check if we've already generated a test for this patch
         if patch_key in self.history["patches"]:
-            test_path = Path(self.history["patches"][patch_key])
-            if test_path.exists():
+            existing_test_path = Path(self.history["patches"][patch_key])
+            if existing_test_path.exists():
                 self.logger.info(
                     f"Using existing regression test for patch {patch_key}"
                 )
-                return test_path
+                return existing_test_path
 
         # Generate a new test
         self.logger.info(f"Generating regression test for patch {patch_key}")
@@ -164,7 +164,9 @@ class RegressionTestGenerator:
         return None
 
     def generate_regression_tests_for_patches(
-        self, patches: List[Dict[str, Any]], error_info: Optional[List[Dict[str, Any]]] = None
+        self,
+        patches: List[Dict[str, Any]],
+        error_info: Optional[List[Dict[str, Any]]] = None,
     ) -> List[Path]:
         """
         Generate regression tests for multiple patches.

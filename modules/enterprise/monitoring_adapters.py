@@ -283,6 +283,7 @@ class DatadogAdapter(MonitoringAdapter):
                 "to": int(end_time.timestamp()),
             }
 
+            assert self._session is not None
             response = self._session.get(url, params=params)
             response.raise_for_status()
 
@@ -328,6 +329,7 @@ class DatadogAdapter(MonitoringAdapter):
             if filters.get("monitor_ids"):
                 params["monitor_ids"] = ",".join(map(str, filters["monitor_ids"]))
 
+            assert self._session is not None
             response = self._session.get(url, params=params)
             response.raise_for_status()
 
@@ -386,6 +388,7 @@ class DatadogAdapter(MonitoringAdapter):
             if filters.get("priority"):
                 params["priority"] = filters["priority"]
 
+            assert self._session is not None
             response = self._session.get(url, params=params)
             response.raise_for_status()
 
@@ -467,6 +470,11 @@ class DatadogAdapter(MonitoringAdapter):
                 "source_type_name": event.source or "homeostasis",
             }
 
+            if self._session is None:
+                logger.error("Session not initialized")
+                return False
+
+            assert self._session is not None
             response = self._session.post(url, json=data)
             response.raise_for_status()
 
@@ -485,6 +493,7 @@ class DatadogAdapter(MonitoringAdapter):
             if message:
                 data["message"] = message
 
+            assert self._session is not None
             response = self._session.post(url, json=data)
             response.raise_for_status()
 
@@ -543,6 +552,7 @@ class PrometheusAdapter(MonitoringAdapter):
             # Test connection
             test_url = f"{self.base_url}/api/v1/query"
             params = {"query": "up"}
+            assert self._session is not None
             response = self._session.get(test_url, params=params)
             response.raise_for_status()
 
@@ -585,6 +595,7 @@ class PrometheusAdapter(MonitoringAdapter):
                 "step": f"{step}s",
             }
 
+            assert self._session is not None
             response = self._session.get(url, params=params)
             response.raise_for_status()
 
@@ -635,6 +646,7 @@ class PrometheusAdapter(MonitoringAdapter):
             if filters.get("inhibited"):
                 params["inhibited"] = filters["inhibited"]
 
+            assert self._session is not None
             response = self._session.get(url, params=params)
             response.raise_for_status()
 
@@ -742,6 +754,7 @@ class PrometheusAdapter(MonitoringAdapter):
                 "comment": message or "Acknowledged by Homeostasis",
             }
 
+            assert self._session is not None
             response = self._session.post(url, json=data)
             response.raise_for_status()
 
@@ -798,6 +811,7 @@ class SplunkAdapter(MonitoringAdapter):
                 auth_url = f"{self.base_url}/services/auth/login"
                 data = {"username": self.username, "password": self.password}
 
+                assert self._session is not None
                 response = self._session.post(auth_url, data=data)
                 response.raise_for_status()
 
@@ -816,6 +830,7 @@ class SplunkAdapter(MonitoringAdapter):
 
             # Test connection
             test_url = f"{self.base_url}/services/server/info"
+            assert self._session is not None
             response = self._session.get(test_url)
             response.raise_for_status()
 
@@ -846,6 +861,7 @@ class SplunkAdapter(MonitoringAdapter):
             url = f"{self.base_url}/services/search/jobs"
             data = {"search": search_query, "output_mode": "json"}
 
+            assert self._session is not None
             response = self._session.post(url, data=data)
             response.raise_for_status()
 
@@ -860,6 +876,7 @@ class SplunkAdapter(MonitoringAdapter):
             results_url = f"{self.base_url}/services/search/jobs/{job_id}/results"
             params = {"output_mode": "json"}
 
+            assert self._session is not None
             response = self._session.get(results_url, params=params)
             response.raise_for_status()
 
@@ -887,6 +904,7 @@ class SplunkAdapter(MonitoringAdapter):
             url = f"{self.base_url}/services/alerts/fired_alerts"
             params = {"output_mode": "json"}
 
+            assert self._session is not None
             response = self._session.get(url, params=params)
             response.raise_for_status()
 
@@ -937,6 +955,7 @@ class SplunkAdapter(MonitoringAdapter):
             url = f"{self.base_url}/services/search/jobs"
             data = {"search": search_query, "output_mode": "json"}
 
+            assert self._session is not None
             response = self._session.post(url, data=data)
             response.raise_for_status()
 
@@ -951,6 +970,7 @@ class SplunkAdapter(MonitoringAdapter):
             results_url = f"{self.base_url}/services/search/jobs/{job_id}/results"
             params = {"output_mode": "json", "count": self.batch_size}
 
+            assert self._session is not None
             response = self._session.get(results_url, params=params)
             response.raise_for_status()
 
@@ -996,6 +1016,7 @@ class SplunkAdapter(MonitoringAdapter):
                 },
             }
 
+            assert self._session is not None
             response = self._session.post(url, json=data)
             response.raise_for_status()
 
@@ -1024,6 +1045,7 @@ class SplunkAdapter(MonitoringAdapter):
                 },
             }
 
+            assert self._session is not None
             response = self._session.post(url, json=data)
             response.raise_for_status()
 
@@ -1056,6 +1078,7 @@ class SplunkAdapter(MonitoringAdapter):
             url = f"{self.base_url}/services/search/jobs/{job_id}"
             params = {"output_mode": "json"}
 
+            assert self._session is not None
             response = self._session.get(url, params=params)
             if response.status_code == 200:
                 job_data = response.json()
@@ -1137,6 +1160,7 @@ class ElasticAdapter(MonitoringAdapter):
                 )
 
             # Test connection
+            assert self._session is not None
             response = self._session.get(f"{self.base_url}/_cluster/health")
             response.raise_for_status()
 
@@ -1185,6 +1209,7 @@ class ElasticAdapter(MonitoringAdapter):
                 es_query["query"]["bool"]["must"].append({"match": {field_name: value}})
 
             url = f"{self.base_url}/{index}/_search"
+            assert self._session is not None
             response = self._session.post(url, json=es_query)
             response.raise_for_status()
 
@@ -1225,6 +1250,7 @@ class ElasticAdapter(MonitoringAdapter):
                 "sort": [{"trigger_event.triggered_time": {"order": "desc"}}],
             }
 
+            assert self._session is not None
             response = self._session.post(url, json=query)
             response.raise_for_status()
 
@@ -1290,6 +1316,7 @@ class ElasticAdapter(MonitoringAdapter):
                 query["query"]["bool"]["must"].append({"match": {field_name: value}})
 
             url = f"{self.base_url}/{index}/_search"
+            assert self._session is not None
             response = self._session.post(url, json=query)
             response.raise_for_status()
 
@@ -1336,6 +1363,7 @@ class ElasticAdapter(MonitoringAdapter):
             }
 
             url = f"{self.base_url}/{index}/_doc"
+            assert self._session is not None
             response = self._session.post(url, json=doc)
             response.raise_for_status()
 
@@ -1364,6 +1392,7 @@ class ElasticAdapter(MonitoringAdapter):
             }
 
             url = f"{self.base_url}/{index}/_doc"
+            assert self._session is not None
             response = self._session.post(url, json=doc)
             response.raise_for_status()
 
@@ -1388,6 +1417,7 @@ class ElasticAdapter(MonitoringAdapter):
                 }
             }
 
+            assert self._session is not None
             response = self._session.post(url, json=doc)
             response.raise_for_status()
 
@@ -1502,6 +1532,7 @@ class NewRelicAdapter(MonitoringAdapter):
             test_query = {"query": "{ actor { user { name email } } }"}
 
             url = f"{self.base_url}/graphql"
+            assert self._session is not None
             response = self._session.post(url, json=test_query)
             response.raise_for_status()
 
@@ -1569,6 +1600,7 @@ class NewRelicAdapter(MonitoringAdapter):
             }
 
             url = f"{self.base_url}/graphql"
+            assert self._session is not None
             response = self._session.post(url, json=gql_query)
             response.raise_for_status()
 
@@ -1676,6 +1708,7 @@ class NewRelicAdapter(MonitoringAdapter):
             }
 
             url = f"{self.base_url}/graphql"
+            assert self._session is not None
             response = self._session.post(url, json=gql_query)
             response.raise_for_status()
 

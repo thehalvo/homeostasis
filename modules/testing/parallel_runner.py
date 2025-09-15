@@ -23,7 +23,7 @@ class ParallelTestRunner:
     def __init__(
         self,
         log_level: str = "INFO",
-        max_workers: int = None,
+        max_workers: Optional[int] = None,
         use_containers: bool = True,
     ):
         """
@@ -35,8 +35,10 @@ class ParallelTestRunner:
             use_containers: Whether to use Docker containers for isolation
         """
         self.logger = MonitoringLogger("parallel_test_runner", log_level=log_level)
+        self.log_level = log_level
+        cpu_count = os.cpu_count() or 1
         self.max_workers = max_workers or min(
-            os.cpu_count() * 2, 8
+            cpu_count * 2, 8
         )  # Default to CPU count * 2 or 8, whichever is smaller
         self.use_containers = use_containers
 
@@ -54,7 +56,7 @@ class ParallelTestRunner:
         test_type: str,
         test_command: str,
         timeout: int,
-        resource_limits: Dict[str, str] = None,
+        resource_limits: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
         """
         Validate a patch using a container.
@@ -75,7 +77,7 @@ class ParallelTestRunner:
             )
             from modules.testing.runner import TestRunner
 
-            runner = TestRunner(log_level=self.logger.level)
+            runner = TestRunner(log_level=self.log_level)
             return runner.validate_patch(patch_id, test_command, project_root, timeout)
 
         return self.container_manager.validate_patch(
@@ -103,7 +105,7 @@ class ParallelTestRunner:
         """
         from modules.testing.runner import TestRunner
 
-        runner = TestRunner(log_level=self.logger.level)
+        runner = TestRunner(log_level=self.log_level)
         return runner.validate_patch(patch_id, test_command, working_dir, timeout)
 
     def validate_patches(
@@ -112,7 +114,7 @@ class ParallelTestRunner:
         test_command: str = "pytest tests/",
         test_type: str = "unit",
         timeout: int = 60,
-        resource_limits: Dict[str, str] = None,
+        resource_limits: Optional[Dict[str, str]] = None,
     ) -> List[Dict[str, Any]]:
         """
         Validate multiple patches in parallel.
@@ -200,10 +202,10 @@ class ParallelTestRunner:
     def run_graduated_tests(
         self,
         patch: Dict[str, Any],
-        test_types: List[str] = ["unit", "integration", "system"],
-        test_commands: Dict[str, str] = None,
-        timeouts: Dict[str, int] = None,
-        resource_limits: Dict[str, Dict[str, str]] = None,
+        test_types: Optional[List[str]] = None,
+        test_commands: Optional[Dict[str, str]] = None,
+        timeouts: Optional[Dict[str, int]] = None,
+        resource_limits: Optional[Dict[str, Dict[str, str]]] = None,
     ) -> Dict[str, Any]:
         """
         Run graduated testing (unit -> integration -> system).
@@ -222,6 +224,10 @@ class ParallelTestRunner:
         """
         patch_id = patch.get("patch_id", "unknown")
         self.logger.info(f"Running graduated tests for patch {patch_id}")
+
+        # Set up default test types if not provided
+        if test_types is None:
+            test_types = ["unit", "integration", "system"]
 
         # Set up default test commands if not provided
         if test_commands is None:
@@ -293,10 +299,10 @@ class ParallelTestRunner:
     def validate_patches_graduated(
         self,
         patches: List[Dict[str, Any]],
-        test_types: List[str] = ["unit", "integration", "system"],
-        test_commands: Dict[str, str] = None,
-        timeouts: Dict[str, int] = None,
-        resource_limits: Dict[str, Dict[str, str]] = None,
+        test_types: Optional[List[str]] = None,
+        test_commands: Optional[Dict[str, str]] = None,
+        timeouts: Optional[Dict[str, int]] = None,
+        resource_limits: Optional[Dict[str, Dict[str, str]]] = None,
     ) -> List[Dict[str, Any]]:
         """
         Validate multiple patches using graduated testing (unit -> integration -> system).
@@ -315,6 +321,10 @@ class ParallelTestRunner:
             List of validation results
         """
         self.logger.info(f"Validating {len(patches)} patches with graduated testing")
+
+        # Set up default test types if not provided
+        if test_types is None:
+            test_types = ["unit", "integration", "system"]
 
         validation_results = []
 

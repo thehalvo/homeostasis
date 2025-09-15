@@ -143,12 +143,7 @@ class CommitAnalyzer:
             self.config.get("cache_enabled", True)
             and commit_hash in self._analysis_cache
         ):
-            cached_result = self._analysis_cache[commit_hash]
-            # Ensure we return CommitAnalysis type
-            if isinstance(cached_result, CommitAnalysis):
-                return cached_result
-            # If cached as dict, skip cache and re-analyze
-            del self._analysis_cache[commit_hash]
+            return self._analysis_cache[commit_hash]
 
         try:
             # Get commit information

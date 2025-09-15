@@ -33,7 +33,9 @@ class TrafficSplitter:
             config: Configuration dictionary
         """
         self.config = config or {}
-        self.split_rules: Dict[str, Dict[str, int]] = {}  # {service_name: {deployment_id: percentage}}
+        self.split_rules: Dict[str, Dict[str, int]] = (
+            {}
+        )  # {service_name: {deployment_id: percentage}}
 
     def set_split_percentage(
         self, service_name: str, deployment_id: str, percentage: int

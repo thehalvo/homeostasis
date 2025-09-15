@@ -127,7 +127,9 @@ class CodeVisitor(ast.NodeVisitor):
         )
         self.generic_visit(node)
 
-    def visit_FunctionDef(self, node: Union[ast.FunctionDef, ast.AsyncFunctionDef]) -> None:
+    def visit_FunctionDef(
+        self, node: Union[ast.FunctionDef, ast.AsyncFunctionDef]
+    ) -> None:
         """Visit a FunctionDef or AsyncFunctionDef node."""
         # Extract docstring if present
         docstring = ast.get_docstring(node)
@@ -170,10 +172,10 @@ class CodeVisitor(ast.NodeVisitor):
         if kwdefaults:
             kw_start = len(parameters) - len(node.args.kwonlyargs)
             for i in range(len(kwdefaults)):
-                default: Optional[ast.expr] = kwdefaults[i]
+                kw_default: Optional[ast.expr] = kwdefaults[i]
                 idx = kw_start + i
-                if default is not None and idx < len(parameters):
-                    parameters[idx]["default"] = self._get_node_value(default)
+                if kw_default is not None and idx < len(parameters):
+                    parameters[idx]["default"] = self._get_node_value(kw_default)
 
         # Process varargs and kwargs
         if node.args.vararg:
@@ -614,7 +616,9 @@ class ASTAnalyzer:
         """
         try:
             # Store the file path
-            self.file_path = Path(file_path) if isinstance(file_path, str) else file_path
+            self.file_path = (
+                Path(file_path) if isinstance(file_path, str) else file_path
+            )
 
             with open(file_path, "r", encoding="utf-8") as f:
                 self.source_code = f.read()

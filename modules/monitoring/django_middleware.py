@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from .extractor import extract_error_context
+# from .extractor import extract_errors  # TODO: implement extract_error_context
 from .logger import MonitoringLogger
 
 # Check if Django is available
@@ -28,10 +28,10 @@ except ImportError:
     DJANGO_AVAILABLE = False
     # Create dummy classes for type hints
 
-    class HttpRequest:
+    class HttpRequest:  # type: ignore[no-redef]
         pass
 
-    class HttpResponse:
+    class HttpResponse:  # type: ignore[no-redef]
         pass
 
 
@@ -391,9 +391,10 @@ class HomeostasisMiddleware:
                 }
 
             # Extract additional error context
-            error_context = extract_error_context(exc, error_data)
-            if error_context:
-                error_data["error_details"] = error_context
+            # TODO: Implement extract_error_context function
+            # error_context = extract_error_context(exc, error_data)
+            # if error_context:
+            #     error_data["error_details"] = error_context
 
             # Log the exception
             self.monitoring_logger.error(
@@ -477,10 +478,10 @@ class HomeostasisMiddleware:
         x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         if x_forwarded_for:
             # Get the first address in case of proxy chains
-            ip = x_forwarded_for.split(",")[0].strip()
+            ip: str = x_forwarded_for.split(",")[0].strip()
         else:
             ip = request.META.get("REMOTE_ADDR", "unknown")
-        return ip
+        return str(ip)
 
     def _get_safe_headers(self, request: HttpRequest) -> Dict[str, str]:
         """

@@ -129,8 +129,8 @@ class CMDBSynchronizer(ABC):
         self.sync_interval = config.get("sync_interval", 300)  # 5 minutes default
         self.batch_size = config.get("batch_size", 100)
         self.enable_auto_discovery = config.get("enable_auto_discovery", True)
-        self.last_sync_time = None
-        self._local_cache = {}  # Cache for performance
+        self.last_sync_time: Optional[datetime] = None
+        self._local_cache: Dict[str, CMDBItem] = {}  # Cache for performance
 
     @abstractmethod
     def connect(self) -> bool:
@@ -181,7 +181,7 @@ class CMDBSynchronizer(ABC):
         self, discovered_items: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """Sync discovered items from Homeostasis to CMDB"""
-        results = {
+        results: Dict[str, Any] = {
             "created": 0,
             "updated": 0,
             "unchanged": 0,
@@ -199,7 +199,7 @@ class CMDBSynchronizer(ABC):
                     new_checksum = ci.calculate_checksum()
                     if existing.checksum != new_checksum:
                         ci.checksum = new_checksum
-                        if self.update_ci(ci.ci_id, ci.__dict__):
+                        if ci.ci_id and self.update_ci(ci.ci_id, ci.__dict__):
                             results["updated"] += 1
                             results["details"].append(
                                 {
@@ -251,8 +251,8 @@ class CMDBSynchronizer(ABC):
 
     def get_impact_analysis(self, ci_id: str, depth: int = 3) -> Dict[str, Any]:
         """Analyze potential impact of changes to a CI"""
-        visited = set()
-        impact_map = {"direct": [], "indirect": [], "critical_paths": []}
+        visited: Set[str] = set()
+        impact_map: Dict[str, List[Any]] = {"direct": [], "indirect": [], "critical_paths": []}
 
         self._traverse_relationships(ci_id, impact_map, visited, 0, depth)
 
@@ -299,13 +299,14 @@ class CMDBSynchronizer(ABC):
                     else:
                         impact_map["indirect"].append(ci_info)
 
-                    self._traverse_relationships(
-                        target_ci.ci_id,
-                        impact_map,
-                        visited,
-                        current_depth + 1,
-                        max_depth,
-                    )
+                    if target_ci.ci_id:
+                        self._traverse_relationships(
+                            target_ci.ci_id,
+                            impact_map,
+                            visited,
+                            current_depth + 1,
+                            max_depth,
+                        )
 
     def _convert_to_cmdb_item(self, data: Dict[str, Any]) -> CMDBItem:
         """Convert discovered data to CMDB item"""
@@ -359,7 +360,7 @@ class ServiceNowCMDB(CMDBSynchronizer):
         self.username = config.get("username", "")
         self.password = config.get("password", "")
         self.base_url = f"https://{self.instance}.service-now.com"
-        self._session = None
+        self._session: Optional[requests.Session] = None
 
     def connect(self) -> bool:
         """Connect to ServiceNow CMDB"""
@@ -384,6 +385,10 @@ class ServiceNowCMDB(CMDBSynchronizer):
 
     def get_ci(self, ci_id: str) -> Optional[CMDBItem]:
         """Get CI from ServiceNow"""
+        if not self._session:
+            logger.error("No active session to ServiceNow")
+            return None
+
         try:
             url = f"{self.base_url}/api/now/table/cmdb_ci/{ci_id}"
             response = self._session.get(url)
@@ -398,6 +403,9 @@ class ServiceNowCMDB(CMDBSynchronizer):
 
     def create_ci(self, ci: CMDBItem) -> Tuple[bool, str]:
         """Create CI in ServiceNow"""
+        if not self._session:
+            return False, "No active session to ServiceNow"
+
         try:
             # Determine appropriate table based on CI type
             table = self._get_table_for_ci_type(ci.ci_type)
@@ -432,6 +440,10 @@ class ServiceNowCMDB(CMDBSynchronizer):
 
     def update_ci(self, ci_id: str, updates: Dict[str, Any]) -> bool:
         """Update CI in ServiceNow"""
+        if not self._session:
+            logger.error("No active session to ServiceNow")
+            return False
+
         try:
             # First get the CI to determine its table
             existing = self.get_ci(ci_id)
@@ -479,6 +491,10 @@ class ServiceNowCMDB(CMDBSynchronizer):
 
     def delete_ci(self, ci_id: str) -> bool:
         """Delete CI from ServiceNow (soft delete - set to decommissioned)"""
+        if not self._session:
+            logger.error("No active session to ServiceNow")
+            return False
+
         try:
             return self.update_ci(ci_id, {"status": CIStatus.DECOMMISSIONED})
 
@@ -488,6 +504,10 @@ class ServiceNowCMDB(CMDBSynchronizer):
 
     def search_cis(self, criteria: Dict[str, Any]) -> List[CMDBItem]:
         """Search CIs in ServiceNow"""
+        if not self._session:
+            logger.error("No active session to ServiceNow")
+            return []
+
         try:
             # Build query
             query_parts = []
@@ -550,9 +570,13 @@ class ServiceNowCMDB(CMDBSynchronizer):
 
     def get_relationships(self, ci_id: str) -> List[CMDBRelationship]:
         """Get relationships for a CI from ServiceNow"""
+        if not self._session:
+            logger.error("No active session to ServiceNow")
+            return []
+
         try:
             url = f"{self.base_url}/api/now/table/cmdb_rel_ci"
-            params = {
+            params: Dict[str, Any] = {
                 "sysparm_query": f"parent={ci_id}^ORchild={ci_id}",
                 "sysparm_limit": 1000,
             }
@@ -580,6 +604,10 @@ class ServiceNowCMDB(CMDBSynchronizer):
 
     def create_relationship(self, relationship: CMDBRelationship) -> bool:
         """Create relationship in ServiceNow"""
+        if not self._session:
+            logger.error("No active session to ServiceNow")
+            return False
+
         try:
             url = f"{self.base_url}/api/now/table/cmdb_rel_ci"
 
@@ -603,6 +631,10 @@ class ServiceNowCMDB(CMDBSynchronizer):
 
     def delete_relationship(self, relationship_id: str) -> bool:
         """Delete relationship from ServiceNow"""
+        if not self._session:
+            logger.error("No active session to ServiceNow")
+            return False
+
         try:
             url = f"{self.base_url}/api/now/table/cmdb_rel_ci/{relationship_id}"
             response = self._session.delete(url)
@@ -694,7 +726,7 @@ class ServiceNowCMDB(CMDBSynchronizer):
                 ci_id=data.get("sys_id"),
                 name=data.get("name", ""),
                 ci_type=ci_type,
-                status=status_map.get(data.get("operational_status"), CIStatus.ACTIVE),
+                status=status_map.get(data.get("operational_status", ""), CIStatus.ACTIVE),
                 description=data.get("short_description", ""),
                 owner=data.get("owned_by"),
                 support_group=data.get("support_group"),
@@ -737,7 +769,7 @@ class DeviceCMDB(CMDBSynchronizer):
         self.base_url = config.get("base_url", "")
         self.username = config.get("username", "")
         self.password = config.get("password", "")
-        self._session = None
+        self._session: Optional[requests.Session] = None
 
     def connect(self) -> bool:
         """Connect to Device42 CMDB"""
@@ -762,6 +794,10 @@ class DeviceCMDB(CMDBSynchronizer):
 
     def get_ci(self, ci_id: str) -> Optional[CMDBItem]:
         """Get CI from Device42"""
+        if not self._session:
+            logger.error("No active session to Device42")
+            return None
+
         try:
             # Device42 uses different endpoints for different CI types
             # Try devices first
@@ -784,6 +820,9 @@ class DeviceCMDB(CMDBSynchronizer):
 
     def create_ci(self, ci: CMDBItem) -> Tuple[bool, str]:
         """Create CI in Device42"""
+        if not self._session:
+            return False, "No active session to Device42"
+
         try:
             # Determine endpoint based on CI type
             if ci.ci_type in [CIType.SERVER, CIType.NETWORK_DEVICE]:
@@ -818,6 +857,10 @@ class DeviceCMDB(CMDBSynchronizer):
 
     def update_ci(self, ci_id: str, updates: Dict[str, Any]) -> bool:
         """Update CI in Device42"""
+        if not self._session:
+            logger.error("No active session to Device42")
+            return False
+
         try:
             # Get existing CI to determine type
             existing = self.get_ci(ci_id)
@@ -855,6 +898,10 @@ class DeviceCMDB(CMDBSynchronizer):
 
     def delete_ci(self, ci_id: str) -> bool:
         """Delete CI from Device42"""
+        if not self._session:
+            logger.error("No active session to Device42")
+            return False
+
         try:
             # Get existing CI to determine type
             existing = self.get_ci(ci_id)
@@ -879,6 +926,10 @@ class DeviceCMDB(CMDBSynchronizer):
 
     def search_cis(self, criteria: Dict[str, Any]) -> List[CMDBItem]:
         """Search CIs in Device42"""
+        if not self._session:
+            logger.error("No active session to Device42")
+            return []
+
         try:
             items = []
 
@@ -918,6 +969,10 @@ class DeviceCMDB(CMDBSynchronizer):
 
     def get_relationships(self, ci_id: str) -> List[CMDBRelationship]:
         """Get relationships from Device42"""
+        if not self._session:
+            logger.error("No active session to Device42")
+            return []
+
         try:
             url = f"{self.base_url}/api/1.0/device_connections/"
             params = {"device_id": ci_id}
@@ -943,6 +998,10 @@ class DeviceCMDB(CMDBSynchronizer):
 
     def create_relationship(self, relationship: CMDBRelationship) -> bool:
         """Create relationship in Device42"""
+        if not self._session:
+            logger.error("No active session to Device42")
+            return False
+
         try:
             url = f"{self.base_url}/api/1.0/device_connections/"
             data = {
@@ -962,6 +1021,10 @@ class DeviceCMDB(CMDBSynchronizer):
 
     def delete_relationship(self, relationship_id: str) -> bool:
         """Delete relationship from Device42"""
+        if not self._session:
+            logger.error("No active session to Device42")
+            return False
+
         try:
             url = f"{self.base_url}/api/1.0/device_connections/{relationship_id}/"
             response = self._session.delete(url)

@@ -235,19 +235,16 @@ class CPPErrorAdapter(LanguageAdapter):
             return frame
 
         # Format structured frame
-        if isinstance(frame, dict):
-            func = frame.get("function", "??")
-            file = frame.get("file", "??")
-            line = frame.get("line", 0)
-            addr = frame.get("address", "")
+        # At this point, frame must be a dict based on the type hint
+        func = frame.get("function", "??")
+        file = frame.get("file", "??")
+        line = frame.get("line", 0)
+        addr = frame.get("address", "")
 
-            if addr:
-                return f"[{addr}] {func} at {file}:{line}"
-            else:
-                return f"{func} at {file}:{line}"
+        if addr:
+            return f"[{addr}] {func} at {file}:{line}"
         else:
-            # Should not reach here given the type hint, but handle gracefully
-            return str(frame)
+            return f"{func} at {file}:{line}"
 
     def _extract_file_info(
         self, cpp_error: Dict[str, Any], stack_trace: List[Dict[str, Any]]

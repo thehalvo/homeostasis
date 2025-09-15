@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +109,7 @@ class HybridOrchestrator:
         self.routing_rules: List[RoutingRule] = []
         self.active_transactions: Dict[str, HybridTransaction] = {}
         self.circuit_breakers: Dict[str, CircuitBreaker] = {}
-        self.data_sync_queue = queue.Queue()
+        self.data_sync_queue: queue.Queue[Dict[str, Any]] = queue.Queue()
         self.metrics = MetricsCollector()
         self._executor = ThreadPoolExecutor(max_workers=10)
         self._running = False
@@ -241,10 +241,10 @@ class HybridOrchestrator:
             return True
 
         if "operation" in request:
-            return request["operation"] == pattern
+            return bool(request["operation"] == pattern)
 
         if "path" in request:
-            return request["path"].startswith(pattern)
+            return bool(request["path"].startswith(pattern))
 
         return False
 
@@ -303,20 +303,20 @@ class HybridOrchestrator:
         tasks = []
 
         # Send to legacy (primary)
-        legacy_task = asyncio.create_task(
-            self._send_to_system(
-                transaction, self._get_legacy_system(route["targets"]), is_primary=True
+        legacy_system = self._get_legacy_system(route["targets"])
+        if legacy_system:
+            legacy_task = asyncio.create_task(
+                self._send_to_system(transaction, legacy_system, is_primary=True)
             )
-        )
-        tasks.append(("legacy", legacy_task))
+            tasks.append(("legacy", legacy_task))
 
         # Send to modern (shadow)
-        modern_task = asyncio.create_task(
-            self._send_to_system(
-                transaction, self._get_modern_system(route["targets"]), is_primary=False
+        modern_system = self._get_modern_system(route["targets"])
+        if modern_system:
+            modern_task = asyncio.create_task(
+                self._send_to_system(transaction, modern_system, is_primary=False)
             )
-        )
-        tasks.append(("modern", modern_task))
+            tasks.append(("modern", modern_task))
 
         # Wait for all to complete
         results = {}
@@ -349,6 +349,9 @@ class HybridOrchestrator:
             system = self._get_legacy_system(route["targets"])
             transaction.metadata["routed_to"] = "legacy"
 
+        if not system:
+            raise ValueError(f"No system found for targets: {route['targets']}")
+
         return await self._send_to_system(transaction, system, is_primary=True)
 
     async def _execute_blue_green(
@@ -362,6 +365,9 @@ class HybridOrchestrator:
             system = self._get_legacy_system(route["targets"])
         else:
             system = self._get_modern_system(route["targets"])
+
+        if not system:
+            raise ValueError(f"No system found for targets: {route['targets']}")
 
         return await self._send_to_system(transaction, system, is_primary=True)
 
@@ -378,6 +384,9 @@ class HybridOrchestrator:
             system = self._get_modern_system(route["targets"])
         else:
             system = self._get_legacy_system(route["targets"])
+
+        if not system:
+            raise ValueError(f"No system found for targets: {route['targets']}")
 
         return await self._send_to_system(transaction, system, is_primary=True)
 
@@ -482,9 +491,9 @@ class HybridOrchestrator:
             return self._convert_from_soap(response)
         elif system.type in [SystemType.MICROSERVICE, SystemType.MODERN_API]:
             # Already in modern format
-            return response
+            return cast(Dict[str, Any], response)
         else:
-            return response
+            return cast(Dict[str, Any], response)
 
     def _convert_to_copybook(self, request: Dict[str, Any]) -> str:
         """Convert JSON to COBOL copybook format."""
@@ -768,7 +777,7 @@ class CircuitBreaker:
         self.threshold = threshold
         self.timeout = timeout
         self.failure_count = 0
-        self.last_failure_time = None
+        self.last_failure_time: Optional[datetime] = None
         self.state = "closed"  # closed, open, half-open
 
     def is_available(self) -> bool:
@@ -778,11 +787,12 @@ class CircuitBreaker:
 
         if self.state == "open":
             # Check if timeout has passed
-            if self.last_failure_time:
-                elapsed = (datetime.now() - self.last_failure_time).seconds
-                if elapsed > self.timeout:
-                    self.state = "half-open"
-                    return True
+            if not self.last_failure_time:
+                return False
+            elapsed = (datetime.now() - self.last_failure_time).seconds
+            if elapsed > self.timeout:
+                self.state = "half-open"
+                return True
             return False
 
         return self.state == "half-open"

@@ -89,7 +89,9 @@ class ErrorPatternAnalyzer:
         # Group errors by type, file, time, etc.
         error_types: Counter[str] = Counter()
         file_patterns: Counter[str] = Counter()
-        temporal_patterns: DefaultDict[str, DefaultDict[int, int]] = defaultdict(lambda: defaultdict(int))
+        temporal_patterns: DefaultDict[str, DefaultDict[int, int]] = defaultdict(
+            lambda: defaultdict(int)
+        )
         severity_patterns: Counter[str] = Counter()
 
         for error in error_data:
@@ -749,7 +751,7 @@ class TelemetryRuleEnhancementSystem:
         telemetry_point = TelemetryDataPoint(event_type, **data)
 
         # Add to buffer
-        self.telemetry_buffer.append(telemetry_point)
+        self.telemetry_buffer.append(telemetry_point.to_dict())
 
         # Flush buffer if it's full
         if len(self.telemetry_buffer) >= self.buffer_size:
@@ -779,7 +781,7 @@ class TelemetryRuleEnhancementSystem:
             file_path = self.telemetry_storage / filename
 
             # Convert to serializable format
-            telemetry_data = [point.to_dict() for point in self.telemetry_buffer]
+            telemetry_data = self.telemetry_buffer
 
             # Save to file
             with open(file_path, "w") as f:
@@ -816,14 +818,20 @@ class TelemetryRuleEnhancementSystem:
 
         # Load from buffer first
         for point in self.telemetry_buffer:
-            if event_types and point.event_type not in event_types:
-                continue
-            if start_time and point.timestamp < start_time:
-                continue
-            if end_time and point.timestamp > end_time:
+            if event_types and point.get("event_type") not in event_types:
                 continue
 
-            telemetry_data.append(point.to_dict())
+            # Parse timestamp if needed for comparison
+            if start_time or end_time:
+                timestamp_str = point.get("timestamp")
+                if timestamp_str:
+                    point_timestamp = datetime.fromisoformat(timestamp_str)
+                    if start_time and point_timestamp < start_time:
+                        continue
+                    if end_time and point_timestamp > end_time:
+                        continue
+
+            telemetry_data.append(point)
 
         # Load from storage files
         try:
@@ -1217,7 +1225,7 @@ _telemetry_system = None
 
 
 def get_telemetry_system(
-    config: Dict[str, Any] = None,
+    config: Optional[Dict[str, Any]] = None,
 ) -> TelemetryRuleEnhancementSystem:
     """
     Get or create the singleton TelemetryRuleEnhancementSystem instance.

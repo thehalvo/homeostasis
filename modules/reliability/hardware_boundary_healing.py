@@ -84,6 +84,7 @@ class HardwareComponent:
     capabilities: List[str] = field(default_factory=list)
     last_check: Optional[datetime] = None
     fault_history: List[Dict[str, Any]] = field(default_factory=list)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
@@ -96,6 +97,7 @@ class HardwareComponent:
             "status": self.status,
             "metrics": self.metrics,
             "last_check": self.last_check.isoformat() if self.last_check else None,
+            "metadata": self.metadata,
         }
 
 

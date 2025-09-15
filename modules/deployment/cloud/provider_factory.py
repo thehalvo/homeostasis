@@ -20,7 +20,7 @@ class CloudProviderFactory:
     for working with different cloud providers.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize cloud provider factory.
 
         Args:
@@ -28,7 +28,7 @@ class CloudProviderFactory:
         """
         self.config = config or {}
         self.provider_name = self.config.get("provider", "none").lower()
-        self._provider = None
+        self._provider: Optional[BaseCloudProvider] = None
 
     def get_provider(self) -> Optional[BaseCloudProvider]:
         """Get cloud provider instance based on configuration.
@@ -74,7 +74,7 @@ class CloudProviderFactory:
 _cloud_provider_factory = None
 
 
-def get_cloud_provider(config: Dict[str, Any] = None) -> Optional[BaseCloudProvider]:
+def get_cloud_provider(config: Optional[Dict[str, Any]] = None) -> Optional[BaseCloudProvider]:
     """Get or create cloud provider instance based on configuration.
 
     Args:

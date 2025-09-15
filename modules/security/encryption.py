@@ -12,7 +12,7 @@ import hmac
 import json
 import logging
 import os
-from typing import Dict, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union, cast
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
@@ -31,7 +31,7 @@ class EncryptionError(Exception):
 class EncryptionManager:
     """Manages encryption operations for Homeostasis."""
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize the encryption manager.
 
         Args:
@@ -173,7 +173,7 @@ class EncryptionManager:
                 f"Failed to decode decrypted bytes to string: {str(e)}"
             )
 
-    def decrypt_to_json(self, encrypted_data: Union[str, bytes]) -> Dict:
+    def decrypt_to_json(self, encrypted_data: Union[str, bytes]) -> Dict[str, Any]:
         """Decrypt to JSON.
 
         Args:
@@ -187,7 +187,7 @@ class EncryptionManager:
         """
         decrypted_str = self.decrypt_to_string(encrypted_data)
         try:
-            return json.loads(decrypted_str)
+            return cast(Dict[str, Any], json.loads(decrypted_str))
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse decrypted string as JSON: {str(e)}")
             raise EncryptionError(f"Failed to parse decrypted string as JSON: {str(e)}")
@@ -240,7 +240,7 @@ class EncryptionManager:
 _encryption_manager = None
 
 
-def get_encryption_manager(config: Dict = None) -> EncryptionManager:
+def get_encryption_manager(config: Optional[Dict[str, Any]] = None) -> EncryptionManager:
     """Get or create the singleton EncryptionManager instance.
 
     Args:

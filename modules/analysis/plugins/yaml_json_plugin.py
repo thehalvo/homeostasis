@@ -178,7 +178,7 @@ class YAMLJSONExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[Any]] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -633,7 +633,7 @@ class YAMLJSONPatchGenerator:
 
     def _load_templates(self) -> Dict[str, str]:
         """Load YAML/JSON patch templates."""
-        templates = {}
+        templates: Dict[str, str] = {}
 
         if not self.yaml_json_template_dir.exists():
             logger.warning(

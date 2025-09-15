@@ -477,7 +477,9 @@ class HealingRateLimiter:
 _healing_rate_limiter = None
 
 
-def get_healing_rate_limiter(config: Optional[Dict[str, Any]] = None) -> HealingRateLimiter:
+def get_healing_rate_limiter(
+    config: Optional[Dict[str, Any]] = None,
+) -> HealingRateLimiter:
     """Get or create the singleton HealingRateLimiter instance.
 
     Args:

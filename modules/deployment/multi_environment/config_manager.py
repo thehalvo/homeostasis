@@ -845,7 +845,7 @@ class MultiEnvironmentConfigManager:
                 detected_at=datetime.utcnow(),
                 auto_remediate=severity in ["low", "medium"]
                 and not any(
-                    d["key"].endswith((".secret", ".password", ".key"))
+                    d.get("key", "").endswith((".secret", ".password", ".key"))
                     for d in differences
                 ),
             )

@@ -15,7 +15,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import requests
 
@@ -129,7 +129,7 @@ class ReviewGate:
                     if actual_value >= value:
                         return False
                 elif operator == "in":
-                    if actual_value not in value:
+                    if value is not None and actual_value not in value:
                         return False
                 elif operator == "contains":
                     if value not in actual_value:
@@ -167,7 +167,7 @@ class NotificationManager:
         recipients: List[str],
         subject: str,
         message: str,
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> bool:
         """
         Send a notification through the specified channel.
@@ -193,12 +193,6 @@ class NotificationManager:
                 return self._send_dashboard(recipients, subject, message, metadata)
             elif channel == NotificationChannel.SMS:
                 return self._send_sms(recipients, subject, message, metadata)
-            else:
-                self.monitoring_logger.warning(
-                    f"Unsupported notification channel: {channel}"
-                )
-                return False
-
         except Exception as e:
             self.monitoring_logger.error(
                 f"Failed to send {channel.value} notification: {e}"
@@ -210,7 +204,7 @@ class NotificationManager:
         recipients: List[str],
         subject: str,
         message: str,
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> bool:
         """Send email notification."""
         if not self.email_config.get("enabled", False):
@@ -260,7 +254,7 @@ class NotificationManager:
         recipients: List[str],
         subject: str,
         message: str,
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> bool:
         """Send Slack notification."""
         if not self.slack_config.get("enabled", False):
@@ -322,7 +316,7 @@ class NotificationManager:
         recipients: List[str],
         subject: str,
         message: str,
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> bool:
         """Send webhook notification."""
         if not self.webhook_config.get("enabled", False):
@@ -360,7 +354,7 @@ class NotificationManager:
         recipients: List[str],
         subject: str,
         message: str,
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> bool:
         """Send dashboard notification (store for dashboard display)."""
         try:
@@ -406,7 +400,7 @@ class NotificationManager:
         recipients: List[str],
         subject: str,
         message: str,
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> bool:
         """Send SMS notification (placeholder - requires SMS service integration)."""
         # This would integrate with services like Twilio, AWS SNS, etc.
@@ -422,7 +416,7 @@ class HumanInLoopFeedbackSystem:
     intelligent notifications, and comprehensive feedback collection.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the human-in-the-loop feedback system.
 
@@ -847,7 +841,7 @@ Command: homeostasis --approve {request_id}
         request_id: str,
         feedback_type: FeedbackType,
         reviewer: str,
-        details: Dict[str, Any] = None,
+        details: Optional[Dict[str, Any]] = None,
     ) -> bool:
         """
         Process feedback from a reviewer.
@@ -875,18 +869,22 @@ Command: homeostasis --approve {request_id}
         try:
             if feedback_type == FeedbackType.APPROVAL:
                 self.approval_manager.approve_request(
-                    request_id, reviewer, str(details.get("comment", "")) if details else ""
+                    request_id,
+                    reviewer,
+                    str(details.get("comment", "")) if details else "",
                 )
             elif feedback_type == FeedbackType.REJECTION:
                 self.approval_manager.reject_request(
-                    request_id, reviewer, str(details.get("reason", "")) if details else ""
+                    request_id,
+                    reviewer,
+                    str(details.get("reason", "")) if details else "",
                 )
             elif feedback_type == FeedbackType.MODIFICATION:
                 # Add comment with modification details
                 self.approval_manager.add_comment(
                     request_id,
                     reviewer,
-                    f"Modification requested: {details.get('changes', 'No details provided')}",
+                    f"Modification requested: {details.get('changes', 'No details provided') if details else 'No details provided'}",
                 )
             elif feedback_type == FeedbackType.ESCALATION:
                 # Handle escalation
@@ -914,7 +912,7 @@ Command: homeostasis --approve {request_id}
         fix_id: str,
         feedback_type: FeedbackType,
         reviewer: str,
-        details: Any = None,
+        details: Optional[Any] = None,
     ) -> None:
         """Log feedback for analysis and improvement."""
         feedback_record = {
@@ -942,7 +940,7 @@ Command: homeostasis --approve {request_id}
         )
 
     def _handle_escalation(
-        self, request_id: str, reviewer: str, details: Dict[str, Any] = None
+        self, request_id: str, reviewer: str, details: Optional[Dict[str, Any]] = None
     ) -> None:
         """Handle escalation of a review request."""
         review_data = self.active_reviews[request_id]
@@ -986,7 +984,7 @@ Please review this request urgently.
                 except ValueError:
                     continue
 
-    def get_pending_reviews(self, reviewer: str = None) -> List[Dict[str, Any]]:
+    def get_pending_reviews(self, reviewer: Optional[str] = None) -> List[Dict[str, Any]]:
         """
         Get list of pending reviews.
 
@@ -1039,7 +1037,7 @@ Please review this request urgently.
         if not feedback_file.exists():
             return {"total_feedback": 0}
 
-        stats = {
+        stats: Dict[str, Any] = {
             "total_feedback": 0,
             "by_type": {},
             "by_reviewer": {},
@@ -1095,7 +1093,7 @@ _human_in_loop_system = None
 
 
 def get_human_in_loop_system(
-    config: Dict[str, Any] = None,
+    config: Optional[Dict[str, Any]] = None,
 ) -> HumanInLoopFeedbackSystem:
     """
     Get or create the singleton HumanInLoopFeedbackSystem instance.
@@ -1126,7 +1124,7 @@ def process_feedback(
     request_id: str,
     feedback_type: FeedbackType,
     reviewer: str,
-    details: Dict[str, Any] = None,
+    details: Optional[Dict[str, Any]] = None,
 ) -> bool:
     """Process feedback from a reviewer."""
     return get_human_in_loop_system().process_feedback(
@@ -1134,6 +1132,6 @@ def process_feedback(
     )
 
 
-def get_pending_reviews(reviewer: str = None) -> List[Dict[str, Any]]:
+def get_pending_reviews(reviewer: Optional[str] = None) -> List[Dict[str, Any]]:
     """Get list of pending reviews."""
     return get_human_in_loop_system().get_pending_reviews(reviewer)

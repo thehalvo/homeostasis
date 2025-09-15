@@ -91,7 +91,7 @@ class VueExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[Any]] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -492,7 +492,7 @@ class VuePatchGenerator:
 
     def _load_templates(self) -> Dict[str, str]:
         """Load Vue patch templates."""
-        templates = {}
+        templates: Dict[str, str] = {}
 
         if not self.vue_template_dir.exists():
             logger.warning(

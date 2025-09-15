@@ -14,7 +14,7 @@ import time
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from modules.monitoring.metrics_collector import MetricsCollector
 from modules.monitoring.post_deployment import PostDeploymentMonitor
@@ -54,7 +54,7 @@ class CanaryDeployment:
     the percentage if metrics remain healthy.
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize canary deployment manager.
 
         Args:
@@ -86,16 +86,16 @@ class CanaryDeployment:
 
     def reset_state(self) -> None:
         """Reset the state of the canary deployment."""
-        self.service_name = None
-        self.fix_id = None
+        self.service_name: Optional[str] = None
+        self.fix_id: Optional[str] = None
         self.status = CanaryStatus.NOT_STARTED
         self.current_percentage = 0
-        self.start_time = None
-        self.last_increment_time = None
-        self.completion_time = None
-        self.metrics_history = []
+        self.start_time: Optional[datetime] = None
+        self.last_increment_time: Optional[datetime] = None
+        self.completion_time: Optional[datetime] = None
+        self.metrics_history: List[Dict[str, Any]] = []
         self.current_metrics = CanaryMetrics()
-        self.monitoring_thread = None
+        self.monitoring_thread: Optional[threading.Thread] = None
         self.stop_monitoring = False
 
     def start(
@@ -157,7 +157,7 @@ class CanaryDeployment:
 
     def _start_monitoring(self) -> None:
         """Start the background thread for monitoring canary metrics."""
-        if self.monitoring_thread and self.monitoring_thread.is_alive():
+        if self.monitoring_thread is not None and self.monitoring_thread.is_alive():
             return
 
         self.stop_monitoring = False
@@ -182,9 +182,15 @@ class CanaryDeployment:
 
                 # Check if it's time to increment
                 current_time = datetime.now()
-                seconds_since_last = (
-                    current_time - self.last_increment_time
-                ).total_seconds()
+                if self.last_increment_time is not None:
+                    seconds_since_last = (
+                        current_time - self.last_increment_time
+                    ).total_seconds()
+                else:
+                    # First iteration, use start_time
+                    seconds_since_last = (
+                        current_time - self.start_time
+                    ).total_seconds() if self.start_time else 0
 
                 if seconds_since_last >= self.interval_seconds:
                     # Check if metrics are healthy
@@ -212,10 +218,13 @@ class CanaryDeployment:
         """Update the current metrics for the canary deployment."""
         try:
             # Get metrics from the metrics collector
-            metrics = self.metrics_collector.get_latest_metrics(self.fix_id)
+            if not self.fix_id:
+                return
+            metrics_list = self.metrics_collector.get_metrics("fix", self.fix_id)
 
-            # Update current metrics
-            if metrics:
+            # Update current metrics - use the latest metric if available
+            if metrics_list and len(metrics_list) > 0:
+                metrics = metrics_list[-1]  # Get the most recent metric
                 self.current_metrics = CanaryMetrics(
                     error_rate=metrics.get("error_rate", 0.0),
                     response_time=metrics.get("response_time", 0.0),
@@ -249,7 +258,7 @@ class CanaryDeployment:
             bool: True if metrics are healthy
         """
         # Basic check for success rate exceeding threshold
-        return self.current_metrics.success_rate >= self.metrics_threshold
+        return bool(self.current_metrics.success_rate >= self.metrics_threshold)
 
     def _increment_percentage(self) -> bool:
         """Increment the canary percentage.
@@ -533,9 +542,14 @@ class CanaryDeployment:
         # Stop monitoring
         self._stop_monitoring()
 
+        duration = (
+            (self.completion_time - self.start_time).total_seconds()
+            if self.start_time and self.completion_time
+            else 0
+        )
         logger.info(
             f"Completed canary deployment for {self.service_name} after "
-            f"{(self.completion_time - self.start_time).total_seconds()} seconds"
+            f"{duration} seconds"
         )
 
         # Log to audit log if available
@@ -546,8 +560,10 @@ class CanaryDeployment:
                     "service_name": self.service_name,
                     "fix_id": self.fix_id,
                     "duration_seconds": (
-                        self.completion_time - self.start_time
-                    ).total_seconds(),
+                        (self.completion_time - self.start_time).total_seconds()
+                        if self.start_time and self.completion_time
+                        else 0
+                    ),
                     "final_metrics": {
                         "error_rate": self.current_metrics.error_rate,
                         "success_rate": self.current_metrics.success_rate,
@@ -579,9 +595,14 @@ class CanaryDeployment:
         # Stop monitoring
         self._stop_monitoring()
 
+        duration = (
+            (self.completion_time - self.start_time).total_seconds()
+            if self.start_time and self.completion_time
+            else 0
+        )
         logger.warning(
             f"Rolled back canary deployment for {self.service_name} at {self.current_percentage}% "
-            f"after {(self.completion_time - self.start_time).total_seconds()} seconds"
+            f"after {duration} seconds"
         )
 
         # Log to audit log if available
@@ -593,8 +614,10 @@ class CanaryDeployment:
                     "fix_id": self.fix_id,
                     "percentage_at_rollback": self.current_percentage,
                     "duration_seconds": (
-                        self.completion_time - self.start_time
-                    ).total_seconds(),
+                        (self.completion_time - self.start_time).total_seconds()
+                        if self.start_time and self.completion_time
+                        else 0
+                    ),
                     "metrics_at_rollback": {
                         "error_rate": self.current_metrics.error_rate,
                         "success_rate": self.current_metrics.success_rate,
@@ -655,7 +678,7 @@ class CanaryDeployment:
 _canary_deployment = None
 
 
-def get_canary_deployment(config: Dict[str, Any] = None) -> CanaryDeployment:
+def get_canary_deployment(config: Optional[Dict[str, Any]] = None) -> CanaryDeployment:
     """Get or create the singleton CanaryDeployment instance.
 
     Args:

@@ -85,13 +85,12 @@ class MLAnalyzer:
 
         # Try to load the model
         try:
-            if self.ml_classifier is not None:
-                model_loaded = self.ml_classifier.load()
-                if model_loaded:
-                    logger.info(f"Loaded ML model from {model_path}")
-                    logger.info(
-                        f"Model can classify {len(self.ml_classifier.classes)} error types"
-                    )
+            model_loaded = self.ml_classifier.load()
+            if model_loaded:
+                logger.info(f"Loaded ML model from {model_path}")
+                logger.info(
+                    f"Model can classify {len(self.ml_classifier.classes)} error types"
+                )
             else:
                 logger.warning(
                     f"Failed to load ML model from {model_path}, ML analysis will be disabled"

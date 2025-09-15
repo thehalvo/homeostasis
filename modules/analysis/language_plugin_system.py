@@ -654,6 +654,10 @@ if __name__ == "__main__":
     # Test each plugin
     for lang_id in languages:
         plugin = get_plugin(lang_id)
+        if not plugin:
+            logger.warning(f"Plugin not found for language: {lang_id}")
+            continue
+
         metadata = plugin.get_metadata()
 
         logger.info(f"\nPlugin: {metadata['language_name']} ({lang_id})")

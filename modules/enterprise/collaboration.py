@@ -391,7 +391,7 @@ class TeamNotificationService:
 
     def __init__(self, config: Dict[str, Any]):
         self.config = config
-        self._channel_adapters = {}
+        self._channel_adapters: Dict[NotificationChannel, Any] = {}
         self._initialize_adapters()
 
     def _initialize_adapters(self):
@@ -465,11 +465,11 @@ class ChangeApprovalWorkflow:
         self.config = config
         self.approval_timeout = config.get("approval_timeout", 3600)  # seconds
         self.auto_approve_low_risk = config.get("auto_approve_low_risk", False)
-        self._pending_actions = {}
+        self._pending_actions: Dict[str, Dict[str, Any]] = {}
 
     async def create_approval_request(
         self, healing_action: Dict[str, Any], approvers: List[str]
-    ) -> ApprovalRequest:
+    ) -> Optional[ApprovalRequest]:
         """Create approval request for a healing action"""
         risk_level = self._assess_risk(healing_action)
 
@@ -563,9 +563,9 @@ class TeamMetricsCollector:
 
     def __init__(self, config: Dict[str, Any]):
         self.config = config
-        self._metrics_store = defaultdict(lambda: defaultdict(int))
-        self._response_times = defaultdict(list)
-        self._resolution_times = defaultdict(list)
+        self._metrics_store: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
+        self._response_times: Dict[str, List[float]] = defaultdict(list)
+        self._resolution_times: Dict[str, List[float]] = defaultdict(list)
 
     async def record_notification(self, notification: Notification):
         """Record notification metrics"""
@@ -626,7 +626,7 @@ class TeamMetricsCollector:
         team = teams.get(team_id)
         if team:
             for member_id in team.members:
-                member_metrics = self._metrics_store.get(member_id, {})
+                member_metrics: Dict[str, int] = self._metrics_store.get(member_id, {})
 
                 metrics.healing_actions_triggered += member_metrics.get(
                     "healing_actions_triggered", 0
@@ -725,7 +725,7 @@ class SlackIntegration:
             NotificationPriority.INFO: "#CCCCCC",
         }
 
-        message = {
+        message: Dict[str, Any] = {
             "text": notification.title,
             "attachments": [
                 {
@@ -757,22 +757,25 @@ class SlackIntegration:
 
         # Add action buttons if approval required
         if notification.metadata.get("approval_request_id"):
-            message["attachments"][0]["actions"] = [
-                {
-                    "name": "approve",
-                    "text": "Approve",
-                    "type": "button",
-                    "value": notification.metadata["approval_request_id"],
-                    "style": "primary",
-                },
-                {
-                    "name": "reject",
-                    "text": "Reject",
-                    "type": "button",
-                    "value": notification.metadata["approval_request_id"],
-                    "style": "danger",
-                },
-            ]
+            if isinstance(message["attachments"], list) and len(message["attachments"]) > 0:
+                attachment = message["attachments"][0]
+                if isinstance(attachment, dict):
+                    attachment["actions"] = [
+                        {
+                            "name": "approve",
+                            "text": "Approve",
+                            "type": "button",
+                            "value": notification.metadata["approval_request_id"],
+                            "style": "primary",
+                        },
+                        {
+                            "name": "reject",
+                            "text": "Reject",
+                            "type": "button",
+                            "value": notification.metadata["approval_request_id"],
+                            "style": "danger",
+                        },
+                    ]
 
         return message
 

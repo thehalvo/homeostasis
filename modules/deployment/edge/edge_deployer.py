@@ -58,6 +58,7 @@ class EdgeDeployer:
         # Initialize the provider
         provider_config = self.provider_configs.get(provider_name, {})
 
+        provider: Any = None
         if provider_name.lower() == "cloudflare":
             from modules.deployment.edge.cloudflare import get_cloudflare_provider
 
@@ -103,7 +104,7 @@ class EdgeDeployer:
 
         # Deploy to the edge
         options = options or {}
-        result = provider.deploy(service_name, fix_id, source_path, **options)
+        result: Dict[str, Any] = provider.deploy(service_name, fix_id, source_path, **options)
 
         # Log the deployment
         try:
@@ -150,7 +151,7 @@ class EdgeDeployer:
 
         # Update the deployment
         options = options or {}
-        result = provider.update(service_name, fix_id, source_path, **options)
+        result: Dict[str, Any] = provider.update(service_name, fix_id, source_path, **options)
 
         # Log the update
         try:
@@ -189,7 +190,7 @@ class EdgeDeployer:
             return {"success": False, "error": error_msg}
 
         # Delete the deployment
-        result = provider.delete(service_name, fix_id)
+        result: Dict[str, Any] = provider.delete(service_name, fix_id)
 
         # Log the deletion
         try:
@@ -256,7 +257,7 @@ class EdgeDeployer:
             return {"success": False, "error": error_msg}
 
         # Purge the cache
-        result = provider.purge_cache(service_name, fix_id, paths)
+        result: Dict[str, Any] = provider.purge_cache(service_name, fix_id, paths)
 
         # Log the purge
         try:
@@ -301,7 +302,7 @@ class EdgeDeployer:
             return {"success": False, "error": error_msg}
 
         # Setup canary
-        result = provider.setup_canary(service_name, fix_id, percentage)
+        result: Dict[str, Any] = provider.setup_canary(service_name, fix_id, percentage)
 
         # Log the canary setup
         try:
@@ -321,7 +322,11 @@ class EdgeDeployer:
         return result
 
     def update_edge_canary(
-        self, service_name: str, fix_id: str, percentage: int, provider_name: Optional[str] = None
+        self,
+        service_name: str,
+        fix_id: str,
+        percentage: int,
+        provider_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Update canary deployment for an edge service.
 
@@ -342,7 +347,7 @@ class EdgeDeployer:
             return {"success": False, "error": error_msg}
 
         # Update canary
-        result = provider.update_canary(service_name, fix_id, percentage)
+        result: Dict[str, Any] = provider.update_canary(service_name, fix_id, percentage)
 
         # Log the canary update
         try:
@@ -382,7 +387,7 @@ class EdgeDeployer:
             return {"success": False, "error": error_msg}
 
         # Complete canary
-        result = provider.complete_canary(service_name, fix_id)
+        result: Dict[str, Any] = provider.complete_canary(service_name, fix_id)
 
         # Log the canary completion
         try:
@@ -421,7 +426,7 @@ class EdgeDeployer:
             return {"success": False, "error": error_msg}
 
         # Rollback canary
-        result = provider.rollback_canary(service_name, fix_id)
+        result: Dict[str, Any] = provider.rollback_canary(service_name, fix_id)
 
         # Log the canary rollback
         try:

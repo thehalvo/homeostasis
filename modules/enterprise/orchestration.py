@@ -14,7 +14,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Type, cast
 
 import requests
 import yaml
@@ -267,11 +267,13 @@ class EnterpriseOrchestrator(ABC):
         """Perform HTTP health check"""
         try:
             url = check.get("url")
+            if not url:
+                return False
             expected_status = check.get("expected_status", 200)
             timeout = check.get("timeout", 30)
 
             response = requests.get(url, timeout=timeout)
-            return response.status_code == expected_status
+            return bool(response.status_code == expected_status)
 
         except Exception as e:
             logger.error(f"HTTP health check failed: {e}")
@@ -301,6 +303,8 @@ class EnterpriseOrchestrator(ABC):
         """Perform script-based health check"""
         try:
             script = check.get("script")
+            if not script:
+                return False
             timeout = check.get("timeout", 60)
 
             proc = await asyncio.create_subprocess_shell(
@@ -466,7 +470,7 @@ class KubernetesOrchestrator(EnterpriseOrchestrator):
             )
 
             if result[0] == 0:
-                return json.loads(result[1])
+                return cast(Dict[str, Any], json.loads(result[1]))
             else:
                 return {"error": result[2]}
 
@@ -587,6 +591,8 @@ class KubernetesOrchestrator(EnterpriseOrchestrator):
 
             elif hook_type == "script":
                 script = hook.get("script")
+                if not script:
+                    return
                 proc = await asyncio.create_subprocess_shell(
                     script,
                     stdout=asyncio.subprocess.PIPE,
@@ -616,7 +622,7 @@ class KubernetesOrchestrator(EnterpriseOrchestrator):
 
         stdout, stderr = await proc.communicate()
 
-        return proc.returncode, stdout.decode(), stderr.decode()
+        return proc.returncode or 0, stdout.decode(), stderr.decode()
 
 
 class TerraformOrchestrator(EnterpriseOrchestrator):
@@ -848,7 +854,7 @@ class TerraformOrchestrator(EnterpriseOrchestrator):
 
         stdout, stderr = await proc.communicate()
 
-        return proc.returncode, stdout.decode(), stderr.decode()
+        return proc.returncode or 0, stdout.decode(), stderr.decode()
 
 
 class AnsibleOrchestrator(EnterpriseOrchestrator):
@@ -986,6 +992,8 @@ class AnsibleOrchestrator(EnterpriseOrchestrator):
         """Run an Ansible playbook"""
         try:
             playbook = resource.configuration.get("playbook")
+            if not playbook:
+                raise ValueError("Playbook content is required")
 
             # Write playbook to temporary file
             with tempfile.NamedTemporaryFile(
@@ -1066,7 +1074,7 @@ class AnsibleOrchestrator(EnterpriseOrchestrator):
 
         stdout, stderr = await proc.communicate()
 
-        return proc.returncode, stdout.decode(), stderr.decode()
+        return proc.returncode or 0, stdout.decode(), stderr.decode()
 
 
 # Factory function to create orchestrators
@@ -1074,7 +1082,7 @@ def create_orchestrator(
     orchestrator_type: str, config: Dict[str, Any]
 ) -> Optional[EnterpriseOrchestrator]:
     """Factory function to create orchestrator instances"""
-    orchestrators = {
+    orchestrators: Dict[str, Type[EnterpriseOrchestrator]] = {
         "kubernetes": KubernetesOrchestrator,
         "k8s": KubernetesOrchestrator,  # Alias
         "terraform": TerraformOrchestrator,

@@ -456,7 +456,7 @@ class RollbackManager:
             ]
         )
 
-        rollbacks_by_trigger = {}
+        rollbacks_by_trigger: Dict[str, int] = {}
         for op in self.rollback_operations.values():
             trigger = op.trigger.value
             rollbacks_by_trigger[trigger] = rollbacks_by_trigger.get(trigger, 0) + 1
@@ -569,7 +569,7 @@ class RollbackManager:
 
     def _check_security_violations(self, metrics: Dict[str, Any]) -> List[str]:
         """Check for security violations in current metrics."""
-        violations = []
+        violations: List[str] = []
 
         # In a real implementation, this would check:
         # - Failed authentication attempts
@@ -588,7 +588,7 @@ class RollbackManager:
 
         if baseline_response_time > 0:
             degradation_ratio = current_response_time / baseline_response_time
-            return (
+            return bool(
                 degradation_ratio > self.monitoring_config.max_response_time_degradation
             )
 
@@ -599,7 +599,7 @@ class RollbackManager:
     ) -> bool:
         """Check if error rate has spiked."""
         current_error_rate = current.get("error_rate", 0)
-        return current_error_rate > self.monitoring_config.max_error_rate_threshold
+        return bool(current_error_rate > self.monitoring_config.max_error_rate_threshold)
 
     def _load_rollback_data(self):
         """Load rollback data from storage."""

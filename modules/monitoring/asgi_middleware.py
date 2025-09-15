@@ -14,7 +14,7 @@ import uuid
 from datetime import datetime
 from typing import Any, Callable, Dict, Optional
 
-from .extractor import extract_error_context
+# from .extractor import extract_error_context  # TODO: implement extract_error_context
 from .logger import MonitoringLogger
 
 logger = logging.getLogger(__name__)
@@ -28,6 +28,8 @@ class HomeostasisASGIMiddleware:
     handling, logs them in the Homeostasis format, and optionally attempts to
     recover from known error patterns.
     """
+
+    config: Dict[str, Any]
 
     def __init__(self, app, **config):
         """
@@ -317,7 +319,7 @@ class HomeostasisASGIMiddleware:
                     response_data["body_error"] = str(e)
 
             # Log the response
-            log_level = "INFO" if status < 400 else "WARNING"
+            log_level = "INFO" if status and status < 400 else "WARNING"
             log_method = getattr(self.monitoring_logger, log_level.lower())
 
             log_method(f"Response: {status} ({duration:.3f}s)", response=response_data)
@@ -471,9 +473,10 @@ class HomeostasisASGIMiddleware:
                     error_data["request"]["body_error"] = str(e)
 
             # Extract additional error context
-            error_context = extract_error_context(exc, error_data)
-            if error_context:
-                error_data["error_details"] = error_context
+            # TODO: Implement extract_error_context function
+            # error_context = extract_error_context(exc, error_data)
+            # if error_context:
+            #     error_data["error_details"] = error_context
 
             # Log the exception
             self.monitoring_logger.error(
@@ -689,6 +692,23 @@ class HomeostasisASGIMiddleware:
         return False
 
 
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
+
+if TYPE_CHECKING:
+    from tornado.web import RequestHandler
+
+@runtime_checkable
+class TornadoHandlerProtocol(Protocol):
+    """Protocol defining the expected interface for Tornado RequestHandler."""
+    request: Any
+    _headers: Any
+
+    def get_status(self) -> int: ...
+    def set_status(self, status_code: int) -> None: ...
+    def set_header(self, name: str, value: str) -> None: ...
+    def write(self, chunk: Any) -> None: ...
+    def finish(self) -> None: ...
+
 class TornadoMonitoringMixin:
     """
     Mixin for integrating Homeostasis monitoring into Tornado request handlers.
@@ -696,11 +716,14 @@ class TornadoMonitoringMixin:
     This mixin captures and processes exceptions that occur during request
     handling, logs them in the Homeostasis format, and optionally attempts to
     recover from known error patterns.
+
+    Note: This mixin assumes it will be used with tornado.web.RequestHandler
+    as a base class. The super() calls are to RequestHandler methods.
     """
 
     def initialize(self, **kwargs):
         """Initialize the request handler."""
-        super().initialize(**kwargs)
+        super().initialize(**kwargs)  # type: ignore[misc]
 
         # Get or create a Homeostasis configuration
         self.homeostasis_config = getattr(self, "homeostasis_config", {})
@@ -735,7 +758,7 @@ class TornadoMonitoringMixin:
 
     def prepare(self):
         """Called at the beginning of a request before get/post/etc."""
-        super().prepare()
+        super().prepare()  # type: ignore[misc]
 
         if not self.homeostasis_config.get("ENABLED", True):
             return
@@ -746,7 +769,7 @@ class TornadoMonitoringMixin:
 
     def on_finish(self):
         """Called after the end of a request."""
-        super().on_finish()
+        super().on_finish()  # type: ignore[misc]
 
         if not self.homeostasis_config.get("ENABLED", True):
             return
@@ -767,7 +790,7 @@ class TornadoMonitoringMixin:
     def write_error(self, status_code, **kwargs):
         """Override to customize the error response."""
         if not self.homeostasis_config.get("ENABLED", True):
-            return super().write_error(status_code, **kwargs)
+            return super().write_error(status_code, **kwargs)  # type: ignore[misc]
 
         exc_info = kwargs.get("exc_info")
         if exc_info:
@@ -786,7 +809,7 @@ class TornadoMonitoringMixin:
                     return
 
         # Fall back to default error handling
-        return super().write_error(status_code, **kwargs)
+        return super().write_error(status_code, **kwargs)  # type: ignore[misc]
 
     def _log_request(self):
         """Log information about the incoming request."""
@@ -947,9 +970,10 @@ class TornadoMonitoringMixin:
             }
 
             # Extract additional error context
-            error_context = extract_error_context(exc, error_data)
-            if error_context:
-                error_data["error_details"] = error_context
+            # TODO: Implement extract_error_context function
+            # error_context = extract_error_context(exc, error_data)
+            # if error_context:
+            #     error_data["error_details"] = error_context
 
             # Log the exception
             self.homeostasis_logger.error(

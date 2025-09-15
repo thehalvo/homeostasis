@@ -289,7 +289,8 @@ class ContainerSandbox(SandboxContext):
 
         # Create container
         self.container = self.docker_client.containers.create(**config)
-        self.container.start()  # type: ignore[union-attr]
+        if self.container:
+            self.container.start()
 
     def teardown(self):
         """Tear down container sandbox."""

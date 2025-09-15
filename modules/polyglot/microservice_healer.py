@@ -275,7 +275,7 @@ class MicroserviceHealer:
         self, strategy: HealingStrategy, dry_run: bool
     ) -> Dict[str, Any]:
         """Execute healing with coordination between services."""
-        result = {"services_healed": [], "errors": []}
+        result: Dict[str, Any] = {"services_healed": [], "errors": []}
 
         # Sort services by dependency order
         ordered_services = self._get_deployment_order(strategy.target_services)
@@ -530,7 +530,7 @@ class MicroserviceHealer:
         self, patches: Dict[str, List[Dict[str, Any]]]
     ) -> Dict[str, Any]:
         """Generate a rollback plan for the patches."""
-        rollback_plan = {"services": {}, "order": []}
+        rollback_plan: Dict[str, Any] = {"services": {}, "order": []}
 
         for service_id, service_patches in patches.items():
             rollback_plan["services"][service_id] = {
@@ -611,7 +611,7 @@ class MicroserviceHealer:
         total_healings = len(self.healing_history)
         successful_healings = sum(1 for h in self.healing_history if h["success"])
 
-        services_by_language = {}
+        services_by_language: Dict[str, int] = {}
         for service in self.services.values():
             lang = service.language
             services_by_language[lang] = services_by_language.get(lang, 0) + 1

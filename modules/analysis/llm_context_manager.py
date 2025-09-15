@@ -47,6 +47,9 @@ class FailureLog:
     retry_delay: Optional[float] = None
     stack_trace: Optional[str] = None
     additional_context: Optional[Dict[str, Any]] = None
+    error_type: Optional[str] = None
+    validation_type: Optional[str] = None
+    failure_reason: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
@@ -61,6 +64,9 @@ class FailureLog:
             "retry_delay": self.retry_delay,
             "stack_trace": self.stack_trace,
             "additional_context": self.additional_context,
+            "error_type": self.error_type,
+            "validation_type": self.validation_type,
+            "failure_reason": self.failure_reason,
         }
 
 
@@ -111,6 +117,8 @@ class LLMContext:
 
     # Monitoring data
     performance_metrics: Optional[Dict[str, Any]] = None
+    # LLM responses
+    llm_responses: List[Dict[str, Any]] = field(default_factory=list)
     system_state: Optional[Dict[str, Any]] = None
 
     # LLM-specific metadata
@@ -437,11 +445,15 @@ class LLMContextManager:
         Returns:
             Context statistics
         """
+        categories_count = defaultdict(int)
+        languages_count = defaultdict(int)
+        severities_count = defaultdict(int)
+
         stats = {
             "total_contexts": len(self.contexts),
-            "categories": defaultdict(int),
-            "languages": defaultdict(int),
-            "severities": defaultdict(int),
+            "categories": categories_count,
+            "languages": languages_count,
+            "severities": severities_count,
             "avg_confidence": 0.0,
             "storage_size_mb": 0.0,
         }
@@ -470,9 +482,9 @@ class LLMContextManager:
         stats["storage_size_mb"] = storage_size / (1024 * 1024)
 
         # Convert defaultdicts to regular dicts
-        stats["categories"] = dict(stats["categories"])
-        stats["languages"] = dict(stats["languages"])
-        stats["severities"] = dict(stats["severities"])
+        stats["categories"] = dict(categories_count)
+        stats["languages"] = dict(languages_count)
+        stats["severities"] = dict(severities_count)
 
         return stats
 
@@ -715,7 +727,7 @@ Please provide:
 4. Testing recommendations
 """,
             "context": context.to_dict(),
-            "max_tokens": context.provider_preferences.get("max_tokens", 2000),
+            "max_tokens": context.provider_preferences.get("max_tokens", 2000) if context.provider_preferences else 2000,
         }
 
     def _create_focused_prompt(self, context: LLMContext) -> Dict[str, Any]:
@@ -734,7 +746,7 @@ Line: {context.error_context.line_number or 'Unknown'}
 Provide only the corrected code with minimal explanation.
 """,
             "context": context.to_dict(),
-            "max_tokens": context.provider_preferences.get("max_tokens", 1000),
+            "max_tokens": context.provider_preferences.get("max_tokens", 1000) if context.provider_preferences else 1000,
         }
 
     def _create_patch_generation_prompt(self, context: LLMContext) -> Dict[str, Any]:
@@ -755,7 +767,7 @@ LANGUAGE: {context.error_context.language.value}
 Return the patch in unified diff format.
 """,
             "context": context.to_dict(),
-            "max_tokens": context.provider_preferences.get("max_tokens", 1500),
+            "max_tokens": context.provider_preferences.get("max_tokens", 1500) if context.provider_preferences else 1500,
         }
 
     def _format_additional_context(self, context: LLMContext) -> str:
@@ -817,14 +829,15 @@ Return the patch in unified diff format.
         failure_log = FailureLog(
             failure_id=failure_id,
             context_id=context_id,
-            timestamp=datetime.now().isoformat(),
+            failure_type=FailureType.LLM_REQUEST_FAILED,
+            timestamp=datetime.now().timestamp(),
+            error_message=error_message,
             provider=provider,
             error_type=error_type,
-            error_message=error_message,
             attempt_number=attempt_number,
             retry_delay=retry_delay,
-            request_data=request_data or {},
             stack_trace=stack_trace,
+            additional_context={"request_data": request_data or {}},
         )
 
         # Add to context if it exists
@@ -871,15 +884,19 @@ Return the patch in unified diff format.
         validation_failure = FailureLog(
             failure_id=failure_id,
             context_id=context_id,
-            patch_id=patch_id,
-            timestamp=datetime.now().isoformat(),
+            failure_type=FailureType.TEST_VALIDATION_FAILED,
+            timestamp=datetime.now().timestamp(),
+            error_message=failure_reason,
             validation_type=validation_type,
             failure_reason=failure_reason,
-            test_output=test_output,
-            error_output=error_output,
-            test_counts=test_counts or {},
-            execution_time=execution_time,
-            retry_context=retry_context,
+            additional_context={
+                "patch_id": patch_id,
+                "test_output": test_output,
+                "error_output": error_output,
+                "test_counts": test_counts or {},
+                "execution_time": execution_time,
+                "retry_context": retry_context,
+            },
         )
 
         # Add to context if it exists
@@ -1017,7 +1034,10 @@ if __name__ == "__main__":
 
     # Retrieve context
     retrieved_context = manager.get_context(context_id)
-    print(f"Retrieved context: {retrieved_context.context_id}")
+    if retrieved_context:
+        print(f"Retrieved context: {retrieved_context.context_id}")
+    else:
+        print("Context not found")
 
     # Prepare LLM prompt
     prompt_data = manager.prepare_llm_prompt(context_id, "comprehensive")

@@ -114,6 +114,7 @@ class AzureProvider(BaseCloudProvider):
                 }
 
             # Try to parse JSON output if possible
+            result: Dict[str, Any]
             try:
                 if stdout and stdout.strip():
                     result = json.loads(stdout)
@@ -146,7 +147,7 @@ class AzureProvider(BaseCloudProvider):
 
         # Try to get subscription info
         result = self._run_az(["account", "show"])
-        return result.get("success", False)
+        return bool(result.get("success", False))
 
     def _deploy_function(
         self, service_name: str, fix_id: str, source_path: str, **kwargs

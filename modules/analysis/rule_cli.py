@@ -7,7 +7,7 @@ import json
 import os
 import traceback
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Sequence, Union
 
 from .rule_categories import EnhancedRule, RuleDependency, detect_rule_conflicts
 from .rule_confidence import ConfidenceScorer, ContextualRuleAnalyzer
@@ -26,7 +26,7 @@ class RuleStats:
     Collects and analyzes statistics for rules.
     """
 
-    def __init__(self, rules_dir: Path = None):
+    def __init__(self, rules_dir: Optional[Path] = None):
         """
         Initialize with rules directory.
 
@@ -50,9 +50,9 @@ class RuleStats:
             all_rules.extend(rule_set.rules)
 
         # Basic counts
-        by_category = {}
-        by_severity = {}
-        by_confidence = {}
+        by_category: Dict[str, int] = {}
+        by_severity: Dict[str, int] = {}
+        by_confidence: Dict[str, int] = {}
         tags = set()
 
         for rule in all_rules:
@@ -73,11 +73,11 @@ class RuleStats:
 
         # Enhanced stats for EnhancedRule instances
         enhanced_rules = [r for r in all_rules if isinstance(r, EnhancedRule)]
-        by_criticality = {}
-        by_complexity = {}
-        by_reliability = {}
-        by_source = {}
-        by_type = {}
+        by_criticality: Dict[str, int] = {}
+        by_complexity: Dict[str, int] = {}
+        by_reliability: Dict[str, int] = {}
+        by_source: Dict[str, int] = {}
+        by_type: Dict[str, int] = {}
 
         for rule in enhanced_rules:
             # Count by criticality
@@ -111,7 +111,9 @@ class RuleStats:
         # Check for circular dependencies in enhanced rules
         circular_deps = []
         if enhanced_rules:
-            dependency_checker = RuleDependency(enhanced_rules)
+            # Cast to proper type for RuleDependency
+            rules_for_dependency: List[Union[Rule, EnhancedRule]] = list(enhanced_rules)
+            dependency_checker = RuleDependency(rules_for_dependency)
             circular_deps = dependency_checker.detect_circular_dependencies()
 
         # Compile stats
@@ -262,7 +264,7 @@ class RuleTester:
     Tests rules against sample data.
     """
 
-    def __init__(self, rules: List[Union[Rule, EnhancedRule]] = None):
+    def __init__(self, rules: Optional[List[Union[Rule, EnhancedRule]]] = None):
         """
         Initialize with optional rules.
 
@@ -272,7 +274,7 @@ class RuleTester:
         self.rules = rules or []
 
     def load_rules(
-        self, rule_ids: List[str] = None, categories: List[str] = None
+        self, rule_ids: Optional[List[str]] = None, categories: Optional[List[str]] = None
     ) -> None:
         """
         Load rules for testing.
@@ -326,7 +328,7 @@ class RuleTester:
         return RuleTestResult(rule, test_string, expected_match)
 
     def test_with_examples(
-        self, rules: List[Union[Rule, EnhancedRule]] = None
+        self, rules: Optional[List[Union[Rule, EnhancedRule]]] = None
     ) -> List[RuleTestResult]:
         """
         Test rules using their example strings.
@@ -481,7 +483,7 @@ class RuleManager:
     Manages rule creation, editing, and organization.
     """
 
-    def __init__(self, rules_dir: Path = None):
+    def __init__(self, rules_dir: Optional[Path] = None):
         """
         Initialize with rules directory.
 
@@ -636,12 +638,16 @@ class RuleManager:
             for i, rule in enumerate(rule_set.rules):
                 if rule.id == rule_id:
                     # Update rule data
+                    updated_rule: Union[Rule, EnhancedRule]
                     if isinstance(rule, EnhancedRule):
                         updated_rule = EnhancedRule.from_dict(
                             {**rule.to_dict(), **rule_data}
                         )
                     else:
-                        updated_rule = Rule.from_dict({**rule.to_dict(), **rule_data})
+                        # Create a new Rule from the updated data
+                        rule_dict = rule.to_dict()
+                        rule_dict.update(rule_data)
+                        updated_rule = Rule.from_dict(rule_dict)
 
                     # Replace rule in the rule set
                     rule_set.rules[i] = updated_rule
@@ -740,7 +746,7 @@ class RuleAnalyzer:
     Analyzes error messages using rules.
     """
 
-    def __init__(self, rules: List[Union[Rule, EnhancedRule]] = None):
+    def __init__(self, rules: Optional[List[Union[Rule, EnhancedRule]]] = None):
         """
         Initialize with optional rules.
 
@@ -760,7 +766,7 @@ class RuleAnalyzer:
             self.analyzer = ContextualRuleAnalyzer(all_rules)
 
     def analyze_error(
-        self, error_text: str, error_context: Dict[str, Any] = None
+        self, error_text: str, error_context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Analyze an error message.
@@ -1107,7 +1113,7 @@ def main() -> None:
                     error_context = json.load(f)
 
             # Analyze the error
-            analysis = analyzer.analyze_error(args.error, error_context)
+            analysis = analyzer.analyze_error(args.error, error_context or {})
 
             # Print analysis
             analyzer.print_analysis(analysis)

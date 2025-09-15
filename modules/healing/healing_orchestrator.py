@@ -59,7 +59,7 @@ class HealingOrchestrator:
         errors_by_service = self._group_errors_by_service(errors)
 
         # Determine healing order based on dependencies
-        healing_order = self._determine_healing_order(errors_by_service.keys())
+        healing_order = self._determine_healing_order(list(errors_by_service.keys()))
 
         # Execute healing in order
         results = {}
@@ -122,7 +122,7 @@ class HealingOrchestrator:
         Returns:
             Dictionary mapping service names to their errors
         """
-        errors_by_service = {}
+        errors_by_service: Dict[str, List[Dict[str, Any]]] = {}
         for error in errors:
             service = error.get("service", "unknown")
             if service not in errors_by_service:
@@ -148,7 +148,7 @@ class HealingOrchestrator:
             return [list(services)]
 
         # Group by dependency level
-        levels = {}
+        levels: Dict[int, List[str]] = {}
         for service in services:
             deps = self.healing_dependencies.get(service, [])
             level = 0
@@ -206,8 +206,8 @@ class HealingOrchestrator:
         if not results:
             return 0.0
 
-        total_errors = sum(r.get("total_errors", 0) for r in results.values())
-        total_healed = sum(r.get("healed", 0) for r in results.values())
+        total_errors = sum(int(r.get("total_errors", 0)) for r in results.values())
+        total_healed = sum(int(r.get("healed", 0)) for r in results.values())
 
         if total_errors == 0:
             return 0.0

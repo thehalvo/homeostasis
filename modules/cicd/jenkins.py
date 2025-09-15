@@ -11,7 +11,7 @@ import base64
 import json
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 from urllib.parse import urljoin
 
 import requests
@@ -36,7 +36,7 @@ class JenkinsIntegration:
             username: Jenkins username
             api_token: Jenkins API token
         """
-        self.jenkins_url = (jenkins_url or os.getenv("JENKINS_URL", "")).rstrip("/")
+        self.jenkins_url = (jenkins_url or os.getenv("JENKINS_URL") or "").rstrip("/")
         self.username = username or os.getenv("JENKINS_USERNAME")
         self.api_token = api_token or os.getenv("JENKINS_API_TOKEN")
 
@@ -56,7 +56,7 @@ class JenkinsIntegration:
             "Content-Type": "application/json",
         }
 
-    def get_job_info(self, job_name: str) -> Dict:
+    def get_job_info(self, job_name: str) -> Dict[str, Any]:
         """
         Get information about a Jenkins job
 
@@ -71,9 +71,9 @@ class JenkinsIntegration:
         response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
-        return response.json()
+        return cast(Dict[str, Any], response.json())
 
-    def get_build_info(self, job_name: str, build_number: int) -> Dict:
+    def get_build_info(self, job_name: str, build_number: int) -> Dict[str, Any]:
         """
         Get information about a specific build
 
@@ -89,7 +89,7 @@ class JenkinsIntegration:
         response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
-        return response.json()
+        return cast(Dict[str, Any], response.json())
 
     def get_console_log(self, job_name: str, build_number: int) -> str:
         """
@@ -145,7 +145,7 @@ class JenkinsIntegration:
         build_info = self.get_build_info(job_name, build_number)
         console_log = self.get_console_log(job_name, build_number)
 
-        analysis = {
+        analysis: Dict[str, Any] = {
             "job_name": job_name,
             "build_number": build_number,
             "build_url": build_info.get("url"),

@@ -8,7 +8,9 @@ and integrated with the orchestrator system.
 import importlib
 import logging
 import sys
+from datetime import datetime
 from pathlib import Path
+from typing import Dict, Any, List
 
 # Import the plugin registration system
 from .language_plugin_system import plugin_registry
@@ -140,7 +142,8 @@ def test_cross_platform_error_handling():
     Returns:
         Dictionary with test results
     """
-    test_results = {"tests_run": 0, "tests_passed": 0, "test_details": {}}
+    from typing import Dict, Any, List
+    test_results: Dict[str, Any] = {"tests_run": 0, "tests_passed": 0, "test_details": {}}
 
     # Sample errors for each cross-platform framework
     sample_errors = {
@@ -179,7 +182,7 @@ def test_cross_platform_error_handling():
     # Test each plugin
     for plugin_id, error_data in sample_errors.items():
         test_results["tests_run"] += 1
-        test_detail = {
+        test_detail: Dict[str, Any] = {
             "plugin_id": plugin_id,
             "can_handle": False,
             "analysis": None,
@@ -224,7 +227,7 @@ def test_cross_platform_error_handling():
                 if test_detail["analysis"]:
                     try:
                         fix = plugin.generate_fix(
-                            error_data, test_detail["analysis"], ""
+                            test_detail["analysis"], {"error_data": error_data}
                         )
                         test_detail["fix"] = {
                             "generated": fix is not None,
@@ -255,7 +258,7 @@ def get_cross_platform_integration_status():
     Returns:
         Dictionary with integration status
     """
-    status = {
+    status: Dict[str, Any] = {
         "timestamp": str(datetime.now()),
         "plugins_loaded": 0,
         "verification": None,
@@ -268,21 +271,23 @@ def get_cross_platform_integration_status():
         status["plugins_loaded"] = load_cross_platform_plugins()
 
         # Verify plugins
-        status["verification"] = verify_cross_platform_plugins()
+        verification = verify_cross_platform_plugins()
+        status["verification"] = verification
 
         # Test plugins
-        status["test_results"] = test_cross_platform_error_handling()
+        test_res = test_cross_platform_error_handling()
+        status["test_results"] = test_res
 
         # Generate recommendations
-        if status["verification"]["missing_plugins"]:
+        if verification["missing_plugins"]:
             status["recommendations"].append(
-                f"Missing plugins: {', '.join(status['verification']['missing_plugins'])}"
+                f"Missing plugins: {', '.join(verification['missing_plugins'])}"
             )
 
-        if status["test_results"]["tests_passed"] < status["test_results"]["tests_run"]:
+        if test_res["tests_passed"] < test_res["tests_run"]:
             failed_tests = (
-                status["test_results"]["tests_run"]
-                - status["test_results"]["tests_passed"]
+                test_res["tests_run"]
+                - test_res["tests_passed"]
             )
             status["recommendations"].append(
                 f"{failed_tests} plugin tests failed - check test_details for specific issues"
@@ -294,16 +299,16 @@ def get_cross_platform_integration_status():
             )
 
         # Overall health
-        all_plugins_present = len(status["verification"]["missing_plugins"]) == 0
+        all_plugins_present = len(verification["missing_plugins"]) == 0
         all_tests_passed = (
-            status["test_results"]["tests_passed"]
-            == status["test_results"]["tests_run"]
+            test_res["tests_passed"]
+            == test_res["tests_run"]
         )
 
         if all_plugins_present and all_tests_passed and status["plugins_loaded"] > 0:
             status["overall_status"] = "HEALTHY"
         elif (
-            status["plugins_loaded"] > 0 and status["test_results"]["tests_passed"] > 0
+            status["plugins_loaded"] > 0 and test_res["tests_passed"] > 0
         ):
             status["overall_status"] = "PARTIAL"
         else:

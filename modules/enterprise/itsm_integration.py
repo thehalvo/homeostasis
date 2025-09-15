@@ -255,6 +255,7 @@ class ServiceNowConnector(ITSMConnector):
             # Add custom fields
             data.update(incident.custom_fields)
 
+            assert self._session is not None
             response = self._session.post(url, json=data, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -279,6 +280,7 @@ class ServiceNowConnector(ITSMConnector):
                 updates["state"] = self._map_incident_status(updates["status"])
                 del updates["status"]
 
+            assert self._session is not None
             response = self._session.patch(url, json=updates, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -294,6 +296,7 @@ class ServiceNowConnector(ITSMConnector):
         try:
             url = f"{self.base_url}/api/now/table/incident/{incident_id}"
 
+            assert self._session is not None
             response = self._session.get(url, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -337,6 +340,7 @@ class ServiceNowConnector(ITSMConnector):
             # Add custom fields
             data.update(change.custom_fields)
 
+            assert self._session is not None
             response = self._session.post(url, json=data, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -362,6 +366,7 @@ class ServiceNowConnector(ITSMConnector):
                 updates["state"] = self._map_change_status(updates["status"])
                 del updates["status"]
 
+            assert self._session is not None
             response = self._session.patch(url, json=updates, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -377,6 +382,7 @@ class ServiceNowConnector(ITSMConnector):
         try:
             url = f"{self.base_url}/api/now/table/change_request/{change_id}"
 
+            assert self._session is not None
             response = self._session.get(url, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -415,6 +421,7 @@ class ServiceNowConnector(ITSMConnector):
             if query_parts:
                 params["sysparm_query"] = "^".join(query_parts)
 
+            assert self._session is not None
             response = self._session.get(url, params=params, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -437,6 +444,7 @@ class ServiceNowConnector(ITSMConnector):
             # Add healing action reference to work notes
             work_note = f"Linked to Homeostasis healing action: {healing_action_id}"
 
+            assert self._session is not None
             response = self._session.patch(
                 url, json={"work_notes": work_note}, verify=self.verify_ssl
             )
@@ -502,8 +510,8 @@ class ServiceNowConnector(ITSMConnector):
             incident_id=data.get("sys_id"),
             short_description=data.get("short_description", ""),
             description=data.get("description", ""),
-            priority=priority_map.get(data.get("priority"), IncidentPriority.MEDIUM),
-            status=state_to_status.get(data.get("state"), IncidentStatus.NEW),
+            priority=priority_map.get(data.get("priority") or "", IncidentPriority.MEDIUM),
+            status=state_to_status.get(data.get("state") or "", IncidentStatus.NEW),
             assignment_group=data.get("assignment_group"),
             assigned_to=data.get("assigned_to"),
             category=data.get("category"),
@@ -552,7 +560,7 @@ class ServiceNowConnector(ITSMConnector):
             implementation_plan=data.get("implementation_plan", ""),
             backout_plan=data.get("backout_plan", ""),
             test_plan=data.get("test_plan", ""),
-            status=state_to_status.get(data.get("state"), ChangeRequestStatus.NEW),
+            status=state_to_status.get(data.get("state") or "", ChangeRequestStatus.NEW),
             type=data.get("type", "standard"),
             assignment_group=data.get("assignment_group"),
             assigned_to=data.get("assigned_to"),
@@ -645,6 +653,7 @@ class JiraServiceManagementConnector(ITSMConnector):
                 data["fields"].update(incident.custom_fields)
 
             # Add healing context as a comment after creation
+            assert self._session is not None
             response = self._session.post(url, json=data, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -672,7 +681,7 @@ class JiraServiceManagementConnector(ITSMConnector):
             url = f"{self.base_url}/rest/api/3/issue/{incident_id}"
 
             # Build update data
-            data = {"fields": {}}
+            data: Dict[str, Any] = {"fields": {}}
 
             if "short_description" in updates:
                 data["fields"]["summary"] = updates["short_description"]
@@ -703,6 +712,7 @@ class JiraServiceManagementConnector(ITSMConnector):
                 self._transition_issue(incident_id, updates["status"])
 
             if data["fields"]:
+                assert self._session is not None
                 response = self._session.put(url, json=data, verify=self.verify_ssl)
                 response.raise_for_status()
 
@@ -718,6 +728,7 @@ class JiraServiceManagementConnector(ITSMConnector):
         try:
             url = f"{self.base_url}/rest/api/3/issue/{incident_id}"
 
+            assert self._session is not None
             response = self._session.get(url, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -776,6 +787,7 @@ class JiraServiceManagementConnector(ITSMConnector):
             if change.custom_fields:
                 data["fields"].update(change.custom_fields)
 
+            assert self._session is not None
             response = self._session.post(url, json=data, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -807,6 +819,7 @@ class JiraServiceManagementConnector(ITSMConnector):
         try:
             url = f"{self.base_url}/rest/api/3/issue/{change_id}"
 
+            assert self._session is not None
             response = self._session.get(url, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -849,6 +862,7 @@ class JiraServiceManagementConnector(ITSMConnector):
                 "startAt": query.get("offset", 0),
             }
 
+            assert self._session is not None
             response = self._session.get(url, params=params, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -890,6 +904,7 @@ class JiraServiceManagementConnector(ITSMConnector):
                 }
             }
 
+            assert self._session is not None
             response = self._session.post(url, json=data, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -904,6 +919,7 @@ class JiraServiceManagementConnector(ITSMConnector):
         try:
             # Get available transitions
             url = f"{self.base_url}/rest/api/3/issue/{issue_id}/transitions"
+            assert self._session is not None
             response = self._session.get(url, verify=self.verify_ssl)
             response.raise_for_status()
 
@@ -923,6 +939,7 @@ class JiraServiceManagementConnector(ITSMConnector):
 
             # Execute transition
             data = {"transition": {"id": transition_id}}
+            assert self._session is not None
             response = self._session.post(url, json=data, verify=self.verify_ssl)
             response.raise_for_status()
 

@@ -9,7 +9,7 @@ import logging
 import re
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 from .rule_based import RuleBasedAnalyzer
 from .rule_confidence import ConfidenceLevel, ConfidenceScorer
@@ -66,7 +66,7 @@ class CausalChainAnalyzer:
         """
         # Use existing ID if available
         if "_id" in error_data:
-            return error_data["_id"]
+            return str(error_data["_id"])
 
         # Use timestamp + service + error type as ID
         timestamp = error_data.get("timestamp", "")
@@ -249,7 +249,7 @@ class CausalChainAnalyzer:
                 }
 
         # Known error chains
-        error_chain_patterns = [
+        error_chain_patterns: List[Dict[str, Any]] = [
             {
                 "cause": "KeyError",
                 "effect": "AttributeError",
@@ -275,9 +275,9 @@ class CausalChainAnalyzer:
                 node1.error_type == pattern["cause"]
                 and node2.error_type == pattern["effect"]
             ):
-                if pattern["confidence"] > causality_confidence:
-                    causality_confidence = pattern["confidence"]
-                    reason = pattern["reason"]
+                if float(pattern["confidence"]) > causality_confidence:
+                    causality_confidence = float(pattern["confidence"])
+                    reason = str(pattern["reason"])
                     evidence = {
                         "from_error": node1.error_type,
                         "to_error": node2.error_type,
@@ -484,14 +484,14 @@ class CausalChainAnalyzer:
                 error_cause_sequences.append(chain_root_causes)
 
         # Count occurrences of error type patterns
-        type_patterns = {}
+        type_patterns: Dict[str, int] = {}
         for sequence in error_type_sequences:
             for i in range(len(sequence) - 1):
                 pattern = f"{sequence[i]} → {sequence[i + 1]}"
                 type_patterns[pattern] = type_patterns.get(pattern, 0) + 1
 
         # Count occurrences of root cause patterns
-        cause_patterns = {}
+        cause_patterns: Dict[str, int] = {}
         for sequence in error_cause_sequences:
             for i in range(len(sequence) - 1):
                 pattern = f"{sequence[i]} → {sequence[i + 1]}"

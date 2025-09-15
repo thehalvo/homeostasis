@@ -116,7 +116,9 @@ class RuleExtractor:
 
         self.patterns: Dict[str, ExtractedPattern] = {}
         self.fix_history: List[Dict[str, Any]] = []
-        self.pattern_candidates: Dict[str, List[Tuple[ExtractedPattern, str]]] = defaultdict(list)
+        self.pattern_candidates: Dict[str, List[Tuple[ExtractedPattern, str]]] = (
+            defaultdict(list)
+        )
 
         # Load existing patterns
         self._load_patterns()
@@ -595,7 +597,9 @@ class PatternAnalyzer:
         )
 
     def analyze_pattern_effectiveness(
-        self, pattern: ExtractedPattern, healing_metrics: Optional[HealingMetrics] = None
+        self,
+        pattern: ExtractedPattern,
+        healing_metrics: Optional[HealingMetrics] = None,
     ) -> Dict[str, Any]:
         """Analyze how effective a pattern has been."""
         effectiveness = {
@@ -617,7 +621,9 @@ class PatternAnalyzer:
             for fix in self.rule_extractor.fix_history:
                 if fix.get("fix_id") == fix_id:
                     metadata = fix.get("metadata", {})
-                    if metadata.get("success", True):  # Default to success if not specified
+                    if metadata.get(
+                        "success", True
+                    ):  # Default to success if not specified
                         successes += 1
                     total_time += metadata.get("fix_time", 0)
                     if "error_type" in metadata:
@@ -744,7 +750,9 @@ class AutomatedRuleGenerator:
 
         if pattern1 and pattern2:
             # Create composite rule
-            composite_confidence = min(pattern1.confidence, pattern2.confidence) * correlation
+            composite_confidence = (
+                min(pattern1.confidence, pattern2.confidence) * correlation
+            )
             return Rule(
                 pattern=f"({pattern1.error_patterns[0] if pattern1.error_patterns else '.*'})|({pattern2.error_patterns[0] if pattern2.error_patterns else '.*'})",
                 type="CompositeError",
@@ -752,7 +760,11 @@ class AutomatedRuleGenerator:
                 root_cause=f"composite_{pattern1_id}_{pattern2_id}",
                 suggestion=f"Apply fixes for both: {pattern1.description} and {pattern2.description}",
                 id=f"composite_{pattern1_id}_{pattern2_id}",
-                confidence=RuleConfidence.HIGH if composite_confidence >= 0.8 else RuleConfidence.MEDIUM,
+                confidence=(
+                    RuleConfidence.HIGH
+                    if composite_confidence >= 0.8
+                    else RuleConfidence.MEDIUM
+                ),
                 metadata={
                     "correlation": correlation,
                     "component_patterns": [pattern1_id, pattern2_id],

@@ -257,7 +257,11 @@ class JavaScriptDependencyAnalyzer:
         common_conflicts = self.known_issues["common_conflicts"]
         if isinstance(common_conflicts, list):
             for conflict_def in common_conflicts:
-                if isinstance(conflict_def, dict) and "packages" in conflict_def and "reason" in conflict_def:
+                if (
+                    isinstance(conflict_def, dict)
+                    and "packages" in conflict_def
+                    and "reason" in conflict_def
+                ):
                     packages = conflict_def["packages"]
                     reason = conflict_def["reason"]
 

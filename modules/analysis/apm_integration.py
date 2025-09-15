@@ -11,7 +11,7 @@ import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import requests
 
@@ -62,7 +62,7 @@ class APMIntegration(ABC):
             config: APM configuration
         """
         self.config = config
-        self.session = None
+        self.session: Optional[requests.Session] = None
         self._initialize_session()
 
     def _initialize_session(self):
@@ -185,6 +185,10 @@ class APMIntegration(ABC):
         Returns:
             API response as dictionary
         """
+        if self.session is None:
+            logger.error("Session not initialized")
+            return {"error": "Session not initialized"}
+
         url = self._get_full_url(endpoint)
 
         try:
@@ -199,7 +203,7 @@ class APMIntegration(ABC):
             response.raise_for_status()
 
             if response.content:
-                return response.json()
+                return cast(Dict[str, Any], response.json())
             return {}
         except requests.exceptions.RequestException as e:
             logger.error(f"API request failed: {str(e)}")
@@ -794,7 +798,7 @@ class ElasticAPMIntegration(APMIntegration):
                 interval_param = interval
 
         # Build query
-        query = {
+        query: Dict[str, Any] = {
             "query": {
                 "bool": {
                     "must": [
@@ -807,18 +811,15 @@ class ElasticAPMIntegration(APMIntegration):
 
         # Add service filter if available
         if self.config.service_name:
-            query["query"]["bool"]["must"].append(
+            must_list = cast(List[Dict[str, Any]], query["query"]["bool"]["must"])
+            must_list.append(
                 {"term": {"service.name": self.config.service_name}}
             )
 
         # Add aggregations for each metric
         for metric_name in metric_names:
             query["aggs"][metric_name] = {
-                "avg": {"field": metric_name},
-                "date_histogram": {
-                    "field": "@timestamp",
-                    "fixed_interval": interval_param,
-                },
+                "avg": {"field": metric_name}
             }
 
         data = query
@@ -851,7 +852,7 @@ class ElasticAPMIntegration(APMIntegration):
             start_time = end_time - 3600000  # Last hour
 
         # Build query
-        query = {
+        query: Dict[str, Any] = {
             "query": {
                 "bool": {
                     "must": [
@@ -865,17 +866,18 @@ class ElasticAPMIntegration(APMIntegration):
         }
 
         # Add filters
+        must_list = cast(List[Dict[str, Any]], query["query"]["bool"]["must"])
         if filter_params:
             if "service" in filter_params:
-                query["query"]["bool"]["must"].append(
+                must_list.append(
                     {"term": {"service.name": filter_params["service"]}}
                 )
             if "transaction_name" in filter_params:
-                query["query"]["bool"]["must"].append(
+                must_list.append(
                     {"term": {"transaction.name": filter_params["transaction_name"]}}
                 )
             if "duration_min" in filter_params:
-                query["query"]["bool"]["must"].append(
+                must_list.append(
                     {
                         "range": {
                             "transaction.duration.us": {
@@ -886,7 +888,7 @@ class ElasticAPMIntegration(APMIntegration):
                     }
                 )
         elif self.config.service_name:
-            query["query"]["bool"]["must"].append(
+            must_list.append(
                 {"term": {"service.name": self.config.service_name}}
             )
 
@@ -922,7 +924,7 @@ class ElasticAPMIntegration(APMIntegration):
             start_time = end_time - 3600000  # Last hour
 
         # Build query
-        query = {
+        query: Dict[str, Any] = {
             "query": {
                 "bool": {
                     "must": [
@@ -936,21 +938,22 @@ class ElasticAPMIntegration(APMIntegration):
         }
 
         # Add filters
+        must_list = cast(List[Dict[str, Any]], query["query"]["bool"]["must"])
         if filter_params:
             if "service" in filter_params:
-                query["query"]["bool"]["must"].append(
+                must_list.append(
                     {"term": {"service.name": filter_params["service"]}}
                 )
             if "error_type" in filter_params:
-                query["query"]["bool"]["must"].append(
+                must_list.append(
                     {"term": {"error.type": filter_params["error_type"]}}
                 )
             if "error_message" in filter_params:
-                query["query"]["bool"]["must"].append(
+                must_list.append(
                     {"match_phrase": {"error.message": filter_params["error_message"]}}
                 )
         elif self.config.service_name:
-            query["query"]["bool"]["must"].append(
+            must_list.append(
                 {"term": {"service.name": self.config.service_name}}
             )
 
@@ -1100,7 +1103,7 @@ class APMDataCollector:
             List of standardized error data dictionaries
         """
         provider = self.integration.config.provider
-        standardized_errors = []
+        standardized_errors: List[Dict[str, Any]] = []
 
         try:
             if provider == APMProvider.DATADOG:

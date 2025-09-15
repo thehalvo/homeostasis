@@ -7,7 +7,7 @@ to enable automatic healing during deployment processes.
 
 import logging
 import os
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import requests
 
@@ -19,14 +19,14 @@ class DeploymentPlatformIntegration:
 
     def __init__(self, platform: str):
         self.platform = platform
-        self.api_token = None
-        self.headers = {}
+        self.api_token: Optional[str] = None
+        self.headers: Dict[str, str] = {}
 
-    def analyze_deployment_failure(self, deployment_id: str) -> Dict:
+    def analyze_deployment_failure(self, deployment_id: str) -> Dict[str, Any]:
         """Analyze a failed deployment"""
         raise NotImplementedError
 
-    def apply_healing_fix(self, analysis: Dict) -> Dict:
+    def apply_healing_fix(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
         """Apply healing fix to deployment"""
         raise NotImplementedError
 
@@ -36,24 +36,24 @@ class VercelIntegration(DeploymentPlatformIntegration):
 
     def __init__(self, api_token: Optional[str] = None, team_id: Optional[str] = None):
         super().__init__("vercel")
-        self.api_token = api_token or os.getenv("VERCEL_TOKEN")
-        self.team_id = team_id or os.getenv("VERCEL_TEAM_ID")
-
-        if not self.api_token:
+        token = api_token or os.getenv("VERCEL_TOKEN")
+        if not token:
             raise ValueError("Vercel API token required (set VERCEL_TOKEN env var)")
 
+        self.api_token = token
+        self.team_id = team_id or os.getenv("VERCEL_TEAM_ID")
+        self.api_url = "https://api.vercel.com"
         self.headers = {
             "Authorization": f"Bearer {self.api_token}",
             "Content-Type": "application/json",
         }
-        self.api_url = "https://api.vercel.com"
 
     def get_deployments(
         self, app_name: Optional[str] = None, limit: int = 20
-    ) -> List[Dict]:
+    ) -> List[Dict[str, Any]]:
         """Get recent deployments"""
         url = f"{self.api_url}/v6/deployments"
-        params = {"limit": limit}
+        params: Dict[str, Any] = {"limit": limit}
 
         if app_name:
             params["app"] = app_name
@@ -63,9 +63,9 @@ class VercelIntegration(DeploymentPlatformIntegration):
         response = requests.get(url, headers=self.headers, params=params, timeout=30)
         response.raise_for_status()
 
-        return response.json().get("deployments", [])
+        return cast(List[Dict[str, Any]], response.json().get("deployments", []))
 
-    def get_deployment_details(self, deployment_id: str) -> Dict:
+    def get_deployment_details(self, deployment_id: str) -> Dict[str, Any]:
         """Get detailed information about a deployment"""
         url = f"{self.api_url}/v13/deployments/{deployment_id}"
         params = {}
@@ -76,9 +76,9 @@ class VercelIntegration(DeploymentPlatformIntegration):
         response = requests.get(url, headers=self.headers, params=params, timeout=30)
         response.raise_for_status()
 
-        return response.json()
+        return cast(Dict[str, Any], response.json())
 
-    def get_build_logs(self, deployment_id: str) -> List[Dict]:
+    def get_build_logs(self, deployment_id: str) -> Dict[str, Any]:
         """Get build logs for a deployment"""
         url = f"{self.api_url}/v2/deployments/{deployment_id}/events"
         params = {}
@@ -89,14 +89,14 @@ class VercelIntegration(DeploymentPlatformIntegration):
         response = requests.get(url, headers=self.headers, params=params, timeout=30)
         response.raise_for_status()
 
-        return response.json()
+        return cast(Dict[str, Any], response.json())
 
-    def analyze_deployment_failure(self, deployment_id: str) -> Dict:
+    def analyze_deployment_failure(self, deployment_id: str) -> Dict[str, Any]:
         """Analyze a failed Vercel deployment"""
         deployment = self.get_deployment_details(deployment_id)
         logs = self.get_build_logs(deployment_id)
 
-        analysis = {
+        analysis: Dict[str, Any] = {
             "platform": "vercel",
             "deployment_id": deployment_id,
             "url": deployment.get("url"),
@@ -107,19 +107,21 @@ class VercelIntegration(DeploymentPlatformIntegration):
         }
 
         # Extract error patterns from logs
-        for log_entry in logs:
-            if (
-                log_entry.get("type") == "stderr"
-                or "error" in log_entry.get("text", "").lower()
-            ):
-                analysis["error_patterns"].append(log_entry.get("text", ""))
+        error_patterns = analysis["error_patterns"]
+        if isinstance(logs, dict) and "logs" in logs:
+            for log_entry in logs.get("logs", []):
+                if isinstance(log_entry, dict) and (
+                    log_entry.get("type") == "stderr"
+                    or "error" in log_entry.get("text", "").lower()
+                ):
+                    error_patterns.append(log_entry.get("text", ""))
 
         # Generate healing suggestions
         analysis["suggested_fixes"] = self._generate_vercel_suggestions(analysis)
 
         return analysis
 
-    def _generate_vercel_suggestions(self, analysis: Dict) -> List[Dict]:
+    def _generate_vercel_suggestions(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Generate Vercel-specific healing suggestions"""
         suggestions = []
 
@@ -169,7 +171,7 @@ class VercelIntegration(DeploymentPlatformIntegration):
 
         return suggestions
 
-    def create_vercel_config(self) -> Dict:
+    def create_vercel_config(self) -> Dict[str, Any]:
         """Create vercel.json configuration with healing hooks"""
         config = {
             "version": 2,
@@ -192,19 +194,20 @@ class NetlifyIntegration(DeploymentPlatformIntegration):
 
     def __init__(self, api_token: Optional[str] = None, site_id: Optional[str] = None):
         super().__init__("netlify")
-        self.api_token = api_token or os.getenv("NETLIFY_TOKEN")
-        self.site_id = site_id or os.getenv("NETLIFY_SITE_ID")
-
-        if not self.api_token:
+        token = api_token or os.getenv("NETLIFY_TOKEN")
+        if not token:
             raise ValueError("Netlify API token required (set NETLIFY_TOKEN env var)")
+
+        self.api_token = token
+        self.site_id = site_id or os.getenv("NETLIFY_SITE_ID")
+        self.api_url = "https://api.netlify.com/api/v1"
 
         self.headers = {
             "Authorization": f"Bearer {self.api_token}",
             "Content-Type": "application/json",
         }
-        self.api_url = "https://api.netlify.com/api/v1"
 
-    def get_site_deploys(self, site_id: Optional[str] = None) -> List[Dict]:
+    def get_site_deploys(self, site_id: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get recent deploys for a site"""
         site_id = site_id or self.site_id
         if not site_id:
@@ -215,7 +218,7 @@ class NetlifyIntegration(DeploymentPlatformIntegration):
         response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
-        return response.json()
+        return cast(List[Dict[str, Any]], response.json())
 
     def get_deploy_logs(self, deploy_id: str) -> str:
         """Get build logs for a deploy"""
@@ -226,11 +229,11 @@ class NetlifyIntegration(DeploymentPlatformIntegration):
 
         return response.text
 
-    def analyze_deployment_failure(self, deployment_id: str) -> Dict:
+    def analyze_deployment_failure(self, deployment_id: str) -> Dict[str, Any]:
         """Analyze a failed Netlify deployment"""
         logs = self.get_deploy_logs(deployment_id)
 
-        analysis = {
+        analysis: Dict[str, Any] = {
             "platform": "netlify",
             "deployment_id": deployment_id,
             "error_patterns": [],
@@ -266,7 +269,7 @@ class NetlifyIntegration(DeploymentPlatformIntegration):
 
         return list(set(patterns))
 
-    def _generate_netlify_suggestions(self, analysis: Dict) -> List[Dict]:
+    def _generate_netlify_suggestions(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Generate Netlify-specific healing suggestions"""
         suggestions = []
 
@@ -306,7 +309,7 @@ class NetlifyIntegration(DeploymentPlatformIntegration):
 
         return suggestions
 
-    def create_netlify_config(self) -> Dict:
+    def create_netlify_config(self) -> Dict[str, Any]:
         """Create netlify.toml configuration with healing hooks"""
         config = {
             "build": {
@@ -334,20 +337,21 @@ class HerokuIntegration(DeploymentPlatformIntegration):
 
     def __init__(self, api_token: Optional[str] = None, app_name: Optional[str] = None):
         super().__init__("heroku")
-        self.api_token = api_token or os.getenv("HEROKU_API_TOKEN")
-        self.app_name = app_name or os.getenv("HEROKU_APP_NAME")
-
-        if not self.api_token:
+        token = api_token or os.getenv("HEROKU_API_TOKEN")
+        if not token:
             raise ValueError("Heroku API token required (set HEROKU_API_TOKEN env var)")
+
+        self.api_token = token
+        self.app_name = app_name or os.getenv("HEROKU_APP_NAME")
+        self.api_url = "https://api.heroku.com"
 
         self.headers = {
             "Authorization": f"Bearer {self.api_token}",
             "Accept": "application/vnd.heroku+json; version=3",
             "Content-Type": "application/json",
         }
-        self.api_url = "https://api.heroku.com"
 
-    def get_app_builds(self, app_name: Optional[str] = None) -> List[Dict]:
+    def get_app_builds(self, app_name: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get recent builds for an app"""
         app_name = app_name or self.app_name
         if not app_name:
@@ -358,22 +362,22 @@ class HerokuIntegration(DeploymentPlatformIntegration):
         response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
-        return response.json()
+        return cast(List[Dict[str, Any]], response.json())
 
-    def get_build_result(self, build_id: str) -> Dict:
+    def get_build_result(self, build_id: str) -> Dict[str, Any]:
         """Get build result details"""
         url = f"{self.api_url}/builds/{build_id}/result"
 
         response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
-        return response.json()
+        return cast(Dict[str, Any], response.json())
 
-    def analyze_deployment_failure(self, deployment_id: str) -> Dict:
+    def analyze_deployment_failure(self, deployment_id: str) -> Dict[str, Any]:
         """Analyze a failed Heroku deployment"""
         build_result = self.get_build_result(deployment_id)
 
-        analysis = {
+        analysis: Dict[str, Any] = {
             "platform": "heroku",
             "deployment_id": deployment_id,
             "status": build_result.get("status"),
@@ -384,16 +388,17 @@ class HerokuIntegration(DeploymentPlatformIntegration):
 
         # Extract error patterns from build output
         build_output = build_result.get("lines", [])
+        error_patterns = analysis["error_patterns"]
         for line in build_output:
             if "error" in line.lower() or "failed" in line.lower():
-                analysis["error_patterns"].append(line)
+                error_patterns.append(line)
 
         # Generate healing suggestions
         analysis["suggested_fixes"] = self._generate_heroku_suggestions(analysis)
 
         return analysis
 
-    def _generate_heroku_suggestions(self, analysis: Dict) -> List[Dict]:
+    def _generate_heroku_suggestions(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Generate Heroku-specific healing suggestions"""
         suggestions = []
 
@@ -470,7 +475,7 @@ class UniversalDeploymentHealer:
 
         return self.platforms[platform]()
 
-    def heal_deployment(self, platform: str, deployment_id: str) -> Dict:
+    def heal_deployment(self, platform: str, deployment_id: str) -> Dict[str, Any]:
         """Heal a failed deployment on any supported platform"""
         integration = self.get_platform_integration(platform)
 
@@ -478,7 +483,7 @@ class UniversalDeploymentHealer:
         analysis = integration.analyze_deployment_failure(deployment_id)
 
         # Apply platform-specific healing
-        healing_result = {
+        healing_result: Dict[str, Any] = {
             "platform": platform,
             "deployment_id": deployment_id,
             "analysis": analysis,
@@ -487,21 +492,25 @@ class UniversalDeploymentHealer:
         }
 
         # Apply fixes based on suggestions
+        fixes_applied = cast(List[Dict[str, Any]], healing_result["fixes_applied"])
         for fix in analysis.get("suggested_fixes", []):
             if fix.get("confidence", 0) >= 0.8:
                 # Apply high-confidence fixes automatically
                 try:
                     result = self._apply_platform_fix(platform, fix)
-                    healing_result["fixes_applied"].append(result)
+                    fixes_applied.append(result)
                 except Exception as e:
                     logger.error(f"Failed to apply fix: {e}")
 
-        healing_result["success"] = len(healing_result["fixes_applied"]) > 0
+        healing_result["success"] = len(fixes_applied) > 0
         return healing_result
 
-    def _apply_platform_fix(self, platform: str, fix: Dict) -> Dict:
+    def _apply_platform_fix(self, platform: str, fix: Dict[str, Any]) -> Dict[str, Any]:
         """Apply a specific fix for a platform"""
         fix_type = fix.get("type")
+
+        if fix_type is None:
+            return {"fix": None, "applied": False, "reason": "No fix type specified"}
 
         if platform == "vercel":
             return self._apply_vercel_fix(fix_type, fix)
@@ -512,7 +521,7 @@ class UniversalDeploymentHealer:
 
         return {"fix": fix_type, "applied": False, "reason": "Unsupported platform"}
 
-    def _apply_vercel_fix(self, fix_type: str, fix: Dict) -> Dict:
+    def _apply_vercel_fix(self, fix_type: str, fix: Dict[str, Any]) -> Dict[str, Any]:
         """Apply Vercel-specific fixes"""
         if fix_type == "dependency":
             # Auto-add missing dependencies
@@ -527,7 +536,7 @@ class UniversalDeploymentHealer:
 
         return {"fix": fix_type, "applied": False, "reason": "Manual fix required"}
 
-    def _apply_netlify_fix(self, fix_type: str, fix: Dict) -> Dict:
+    def _apply_netlify_fix(self, fix_type: str, fix: Dict[str, Any]) -> Dict[str, Any]:
         """Apply Netlify-specific fixes"""
         if fix_type == "build_command":
             # Update build command
@@ -538,7 +547,7 @@ class UniversalDeploymentHealer:
 
         return {"fix": fix_type, "applied": False, "reason": "Manual fix required"}
 
-    def _apply_heroku_fix(self, fix_type: str, fix: Dict) -> Dict:
+    def _apply_heroku_fix(self, fix_type: str, fix: Dict[str, Any]) -> Dict[str, Any]:
         """Apply Heroku-specific fixes"""
         if fix_type == "procfile":
             # Update Procfile
@@ -549,7 +558,7 @@ class UniversalDeploymentHealer:
 
         return {"fix": fix_type, "applied": False, "reason": "Manual fix required"}
 
-    def create_universal_config(self) -> Dict:
+    def create_universal_config(self) -> Dict[str, Any]:
         """Create universal deployment healing configuration"""
         return {
             "homeostasis": {

@@ -429,7 +429,11 @@ class ErrorDataCollector:
 
         with open(self.metadata_file, "r") as f:
             data = json.load(f)
-            return dict(data) if isinstance(data, dict) else {"error": "Invalid metadata format"}
+            return (
+                dict(data)
+                if isinstance(data, dict)
+                else {"error": "Invalid metadata format"}
+            )
 
     def get_training_data(
         self, limit: Optional[int] = None

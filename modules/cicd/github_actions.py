@@ -7,7 +7,7 @@ healing during CI/CD workflows.
 
 import logging
 import os
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import requests
 import yaml
@@ -43,7 +43,7 @@ class GitHubActionsIntegration:
 
     def get_workflow_runs(
         self, workflow_id: Optional[str] = None, status: str = "failure"
-    ) -> List[Dict]:
+    ) -> List[Dict[str, Any]]:
         """
         Get workflow runs for the repository
 
@@ -55,7 +55,7 @@ class GitHubActionsIntegration:
             List of workflow run data
         """
         url = f"{self.base_url}/repos/{self.repo}/actions/runs"
-        params = {"status": status, "per_page": 50}
+        params: Dict[str, Any] = {"status": status, "per_page": 50}
 
         if workflow_id:
             params["workflow_id"] = workflow_id
@@ -63,7 +63,7 @@ class GitHubActionsIntegration:
         response = requests.get(url, headers=self.headers, params=params, timeout=30)
         response.raise_for_status()
 
-        return response.json().get("workflow_runs", [])
+        return cast(List[Dict[str, Any]], response.json().get("workflow_runs", []))
 
     def get_workflow_run_logs(self, run_id: int) -> str:
         """
@@ -82,7 +82,7 @@ class GitHubActionsIntegration:
 
         return response.text
 
-    def get_workflow_run_jobs(self, run_id: int) -> List[Dict]:
+    def get_workflow_run_jobs(self, run_id: int) -> List[Dict[str, Any]]:
         """
         Get jobs from a workflow run
 
@@ -97,9 +97,9 @@ class GitHubActionsIntegration:
         response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
-        return response.json().get("jobs", [])
+        return cast(List[Dict[str, Any]], response.json().get("jobs", []))
 
-    def analyze_workflow_failure(self, run_id: int) -> Dict:
+    def analyze_workflow_failure(self, run_id: int) -> Dict[str, Any]:
         """
         Analyze a failed workflow run to identify healing opportunities
 
@@ -112,7 +112,7 @@ class GitHubActionsIntegration:
         jobs = self.get_workflow_run_jobs(run_id)
         logs = self.get_workflow_run_logs(run_id)
 
-        analysis = {
+        analysis: Dict[str, Any] = {
             "run_id": run_id,
             "failed_jobs": [],
             "error_patterns": [],

@@ -23,7 +23,9 @@ from typing import Any, Dict, List, Optional
 import networkx as nx
 
 from ..analysis.llm_context_manager import LLMContextManager
-from ..analysis.models.transformer_code_understanding import TransformerCodeAnalyzer as TransformerCodeUnderstanding
+from ..analysis.models.transformer_code_understanding import (
+    TransformerCodeAnalyzer as TransformerCodeUnderstanding,
+)
 from ..llm_integration.provider_abstraction import LLMManager, LLMMessage, LLMRequest
 from .code_style_analyzer import CodeStyleAnalyzer
 from .multi_language_framework_detector import MultiLanguageFrameworkDetector

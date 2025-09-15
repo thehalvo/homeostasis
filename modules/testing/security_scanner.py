@@ -17,10 +17,10 @@ import json
 import logging
 import re
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Coroutine, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -37,13 +37,13 @@ class SecurityVulnerability:
     affected_component: str
     file_path: Optional[str] = None
     line_number: Optional[int] = None
-    cve_ids: List[str] = None
-    cwe_ids: List[str] = None
+    cve_ids: List[str] = field(default_factory=list)
+    cwe_ids: List[str] = field(default_factory=list)
     owasp_category: Optional[str] = None
     remediation: Optional[str] = None
-    references: List[str] = None
-    metadata: Dict[str, Any] = None
-    detected_at: datetime = None
+    references: List[str] = field(default_factory=list)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    detected_at: Optional[datetime] = None
     confidence: float = 1.0
 
 
@@ -58,9 +58,9 @@ class SecurityScanResult:
     completed_at: datetime
     vulnerabilities: List[SecurityVulnerability]
     summary: Dict[str, int]  # severity -> count
-    metadata: Dict[str, Any] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
     scan_status: str = "completed"  # completed, failed, partial
-    error_messages: List[str] = None
+    error_messages: List[str] = field(default_factory=list)
 
 
 class SecurityScanner:
@@ -72,7 +72,7 @@ class SecurityScanner:
         self.supported_file_patterns = []
 
     async def scan(
-        self, target_path: Path, options: Dict[str, Any] = None
+        self, target_path: Path, options: Optional[Dict[str, Any]] = None
     ) -> SecurityScanResult:
         """Perform security scan on target path."""
         raise NotImplementedError
@@ -116,12 +116,12 @@ class DependencyVulnerabilityScanner(SecurityScanner):
         ]
 
     async def scan(
-        self, target_path: Path, options: Dict[str, Any] = None
+        self, target_path: Path, options: Optional[Dict[str, Any]] = None
     ) -> SecurityScanResult:
         """Scan dependencies for vulnerabilities."""
         scan_id = self._generate_scan_id()
         started_at = datetime.now()
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         # Detect package managers and scan
         scanners = {
@@ -189,7 +189,7 @@ class DependencyVulnerabilityScanner(SecurityScanner):
 
     async def _scan_npm(self, target_path: Path) -> List[SecurityVulnerability]:
         """Scan NPM dependencies using npm audit."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             # Run npm audit
@@ -242,7 +242,7 @@ class DependencyVulnerabilityScanner(SecurityScanner):
 
     async def _scan_python(self, target_path: Path) -> List[SecurityVulnerability]:
         """Scan Python dependencies using safety."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             # Find requirements file
@@ -292,7 +292,7 @@ class DependencyVulnerabilityScanner(SecurityScanner):
 
     async def _scan_go(self, target_path: Path) -> List[SecurityVulnerability]:
         """Scan Go dependencies using govulncheck."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             process = await asyncio.create_subprocess_exec(
@@ -350,7 +350,7 @@ class DependencyVulnerabilityScanner(SecurityScanner):
 
     async def _scan_ruby(self, target_path: Path) -> List[SecurityVulnerability]:
         """Scan Ruby dependencies using bundle-audit."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             process = await asyncio.create_subprocess_exec(
@@ -396,7 +396,7 @@ class DependencyVulnerabilityScanner(SecurityScanner):
 
     async def _scan_rust(self, target_path: Path) -> List[SecurityVulnerability]:
         """Scan Rust dependencies using cargo-audit."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             process = await asyncio.create_subprocess_exec(
@@ -493,12 +493,12 @@ class StaticCodeSecurityScanner(SecurityScanner):
         }
 
     async def scan(
-        self, target_path: Path, options: Dict[str, Any] = None
+        self, target_path: Path, options: Optional[Dict[str, Any]] = None
     ) -> SecurityScanResult:
         """Scan source code for security issues."""
         scan_id = self._generate_scan_id()
         started_at = datetime.now()
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         # Language-specific scanners
         scanners = {
@@ -516,19 +516,8 @@ class StaticCodeSecurityScanner(SecurityScanner):
             ".kt": self._scan_kotlin_code,
         }
 
-        # Also run general scanners
-        general_scanners = [
-            self._scan_secrets,
-            self._scan_hardcoded_passwords,
-            self._scan_insecure_random,
-            self._scan_sql_injection,
-            self._scan_xss_vulnerabilities,
-            self._scan_path_traversal,
-            self._scan_insecure_deserialization,
-        ]
-
         # Scan files by extension
-        tasks = []
+        tasks: List[Coroutine[Any, Any, List[SecurityVulnerability]]] = []
         for ext, scanner_func in scanners.items():
             files = list(target_path.rglob(f"*{ext}"))
             if files:
@@ -536,8 +525,17 @@ class StaticCodeSecurityScanner(SecurityScanner):
                     tasks.append(scanner_func(file_path))
 
         # Run general scanners
-        for scanner_func in general_scanners:
-            tasks.append(scanner_func(target_path))
+        general_tasks: List[Coroutine[Any, Any, List[SecurityVulnerability]]] = []
+        general_tasks.append(self._scan_secrets(target_path))
+        general_tasks.append(self._scan_hardcoded_passwords(target_path))
+        general_tasks.append(self._scan_insecure_random(target_path))
+        general_tasks.append(self._scan_sql_injection(target_path))
+        general_tasks.append(self._scan_xss_vulnerabilities(target_path))
+        general_tasks.append(self._scan_path_traversal(target_path))
+        general_tasks.append(self._scan_insecure_deserialization(target_path))
+
+        # Combine all tasks
+        tasks.extend(general_tasks)
 
         # Execute all scans concurrently
         if tasks:
@@ -567,7 +565,7 @@ class StaticCodeSecurityScanner(SecurityScanner):
 
     async def _scan_python_code(self, file_path: Path) -> List[SecurityVulnerability]:
         """Scan Python code using bandit."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             process = await asyncio.create_subprocess_exec(
@@ -620,7 +618,7 @@ class StaticCodeSecurityScanner(SecurityScanner):
         self, file_path: Path
     ) -> List[SecurityVulnerability]:
         """Scan JavaScript code using ESLint security plugin."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             # Create temporary ESLint config
@@ -698,7 +696,7 @@ class StaticCodeSecurityScanner(SecurityScanner):
 
     async def _scan_go_code(self, file_path: Path) -> List[SecurityVulnerability]:
         """Scan Go code using gosec."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             process = await asyncio.create_subprocess_exec(
@@ -784,7 +782,7 @@ class StaticCodeSecurityScanner(SecurityScanner):
 
     async def _scan_secrets(self, target_path: Path) -> List[SecurityVulnerability]:
         """Scan for hardcoded secrets using detect-secrets."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             process = await asyncio.create_subprocess_exec(
@@ -832,7 +830,7 @@ class StaticCodeSecurityScanner(SecurityScanner):
         self, target_path: Path
     ) -> List[SecurityVulnerability]:
         """Scan for hardcoded passwords using regex patterns."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         # Common password patterns
         password_patterns = [
@@ -955,12 +953,12 @@ class ContainerSecurityScanner(SecurityScanner):
         ]
 
     async def scan(
-        self, target_path: Path, options: Dict[str, Any] = None
+        self, target_path: Path, options: Optional[Dict[str, Any]] = None
     ) -> SecurityScanResult:
         """Scan container images and Dockerfiles."""
         scan_id = self._generate_scan_id()
         started_at = datetime.now()
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         # Scan Dockerfiles
         dockerfile_vulns = await self._scan_dockerfiles(target_path)
@@ -990,7 +988,7 @@ class ContainerSecurityScanner(SecurityScanner):
 
     async def _scan_dockerfiles(self, target_path: Path) -> List[SecurityVulnerability]:
         """Scan Dockerfiles using hadolint."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             dockerfiles = list(target_path.rglob("Dockerfile*"))
@@ -1039,7 +1037,7 @@ class ContainerSecurityScanner(SecurityScanner):
 
     async def _scan_images(self, images: List[str]) -> List[SecurityVulnerability]:
         """Scan container images using trivy."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             for image in images:
@@ -1123,12 +1121,12 @@ class IaCSecurityScanner(SecurityScanner):
         ]
 
     async def scan(
-        self, target_path: Path, options: Dict[str, Any] = None
+        self, target_path: Path, options: Optional[Dict[str, Any]] = None
     ) -> SecurityScanResult:
         """Scan IaC files for security issues."""
         scan_id = self._generate_scan_id()
         started_at = datetime.now()
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         # Run different IaC scanners
         scanners = [
@@ -1184,7 +1182,7 @@ class IaCSecurityScanner(SecurityScanner):
 
     async def _scan_terraform(self, target_path: Path) -> List[SecurityVulnerability]:
         """Scan Terraform files using checkov."""
-        vulnerabilities = []
+        vulnerabilities: List[SecurityVulnerability] = []
 
         try:
             process = await asyncio.create_subprocess_exec(
@@ -1285,8 +1283,8 @@ class SecurityTestOrchestrator:
     async def run_security_scan(
         self,
         target_path: Path,
-        scan_types: List[str] = None,
-        options: Dict[str, Any] = None,
+        scan_types: Optional[List[str]] = None,
+        options: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, SecurityScanResult]:
         """Run security scans on target."""
         if scan_types is None:
@@ -1318,7 +1316,7 @@ class SecurityTestOrchestrator:
         self, scan_results: Dict[str, SecurityScanResult]
     ) -> Dict[str, Any]:
         """Generate comprehensive security report."""
-        report = {
+        report: Dict[str, Any] = {
             "timestamp": datetime.now().isoformat(),
             "summary": {
                 "total_vulnerabilities": 0,
@@ -1337,7 +1335,7 @@ class SecurityTestOrchestrator:
             "recommendations": [],
         }
 
-        all_vulnerabilities = []
+        all_vulnerabilities: List[SecurityVulnerability] = []
 
         for scan_type, result in scan_results.items():
             report["scans"][scan_type] = {

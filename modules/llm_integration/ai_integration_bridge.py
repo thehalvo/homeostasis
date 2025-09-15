@@ -559,14 +559,24 @@ class BuiltinCodeUnderstandingAdapter(CodeUnderstandingInterface):
         )
 
         # Extract primary framework info if available
-        primary_framework = detected_info.frameworks[0] if detected_info.frameworks else None
+        primary_framework = (
+            detected_info.frameworks[0] if detected_info.frameworks else None
+        )
 
         return {
-            "language": detected_info.language.value if detected_info.language else None,
+            "language": (
+                detected_info.language.value if detected_info.language else None
+            ),
             "framework": primary_framework.name if primary_framework else None,
             "confidence": detected_info.confidence,
-            "framework_version": primary_framework.version if primary_framework else None,
-            "additional_frameworks": [f.name for f in detected_info.frameworks[1:]] if len(detected_info.frameworks) > 1 else [],
+            "framework_version": (
+                primary_framework.version if primary_framework else None
+            ),
+            "additional_frameworks": (
+                [f.name for f in detected_info.frameworks[1:]]
+                if len(detected_info.frameworks) > 1
+                else []
+            ),
         }
 
     def analyze_code_structure(self, code_context: CodeContext) -> Dict[str, Any]:

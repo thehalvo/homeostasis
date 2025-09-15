@@ -33,7 +33,7 @@ class SecurityConfig:
             env_prefix: Prefix for environment variables
         """
         self.env_prefix = env_prefix
-        self.config = {}
+        self.config: Dict[str, Any] = {}
 
         # Load configuration
         if config_path and os.path.exists(config_path):
@@ -91,7 +91,8 @@ class SecurityConfig:
                 # Convert number values
                 if config_key in ["token_expiry", "refresh_token_expiry"]:
                     try:
-                        value = int(value)
+                        self.config[config_key] = int(value)
+                        continue
                     except ValueError:
                         logger.warning(f"Invalid value for {env_var}: {value}")
                         continue

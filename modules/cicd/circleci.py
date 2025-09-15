@@ -7,7 +7,7 @@ healing during CI/CD workflows via orbs and API integration.
 
 import logging
 import os
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import requests
 import yaml
@@ -54,7 +54,7 @@ class CircleCIIntegration:
             return f"{vcs_type}/{os.getenv('CIRCLE_PROJECT_USERNAME')}/{os.getenv('CIRCLE_PROJECT_REPONAME')}"
         return None
 
-    def get_pipeline_workflows(self, pipeline_id: str) -> List[Dict]:
+    def get_pipeline_workflows(self, pipeline_id: str) -> List[Dict[str, Any]]:
         """
         Get workflows for a pipeline
 
@@ -69,9 +69,9 @@ class CircleCIIntegration:
         response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
-        return response.json().get("items", [])
+        return cast(List[Dict[str, Any]], response.json().get("items", []))
 
-    def get_workflow_jobs(self, workflow_id: str) -> List[Dict]:
+    def get_workflow_jobs(self, workflow_id: str) -> List[Dict[str, Any]]:
         """
         Get jobs for a workflow
 
@@ -86,9 +86,9 @@ class CircleCIIntegration:
         response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
-        return response.json().get("items", [])
+        return cast(List[Dict[str, Any]], response.json().get("items", []))
 
-    def get_project_pipelines(self, branch: Optional[str] = None) -> List[Dict]:
+    def get_project_pipelines(self, branch: Optional[str] = None) -> List[Dict[str, Any]]:
         """
         Get recent pipelines for the project
 
@@ -99,7 +99,7 @@ class CircleCIIntegration:
             List of pipeline data
         """
         url = f"{self.api_url}/project/{self.project_slug}/pipeline"
-        params = {}
+        params: Dict[str, Any] = {}
 
         if branch:
             params["branch"] = branch
@@ -107,9 +107,9 @@ class CircleCIIntegration:
         response = requests.get(url, headers=self.headers, params=params, timeout=30)
         response.raise_for_status()
 
-        return response.json().get("items", [])
+        return cast(List[Dict[str, Any]], response.json().get("items", []))
 
-    def analyze_workflow_failure(self, workflow_id: str) -> Dict:
+    def analyze_workflow_failure(self, workflow_id: str) -> Dict[str, Any]:
         """
         Analyze a failed workflow to identify healing opportunities
 
@@ -121,7 +121,7 @@ class CircleCIIntegration:
         """
         jobs = self.get_workflow_jobs(workflow_id)
 
-        analysis = {
+        analysis: Dict[str, Any] = {
             "workflow_id": workflow_id,
             "failed_jobs": [],
             "error_patterns": [],
@@ -147,7 +147,7 @@ class CircleCIIntegration:
 
         return analysis
 
-    def create_orb_config(self) -> Dict:
+    def create_orb_config(self) -> Dict[str, Any]:
         """
         Create CircleCI orb configuration for Homeostasis
 
@@ -548,7 +548,7 @@ class CircleCIIntegration:
 
     def trigger_healing_pipeline(
         self, failed_workflow_id: str, branch: str = "main"
-    ) -> Dict:
+    ) -> Dict[str, Any]:
         """
         Trigger a healing pipeline for a failed workflow
 
@@ -572,7 +572,7 @@ class CircleCIIntegration:
         response = requests.post(url, headers=self.headers, json=data, timeout=30)
         response.raise_for_status()
 
-        return response.json()
+        return cast(Dict[str, Any], response.json())
 
     def _extract_failure_reason(self, job: Dict) -> str:
         """Extract failure reason from job data"""

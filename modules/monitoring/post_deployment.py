@@ -27,7 +27,7 @@ class PostDeploymentMonitor:
     Monitors service health after deployment.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, log_level: str = "INFO"):
+    def __init__(self, config: Optional[Dict[str, Any]] = None, log_level: str = "INFO"):
         """
         Initialize the post-deployment monitor.
 
@@ -38,7 +38,7 @@ class PostDeploymentMonitor:
         self.logger = MonitoringLogger("post_deployment_monitor", log_level=log_level)
 
         # Default configuration
-        self.config = {
+        self.config: Dict[str, Any] = {
             "check_interval": 60,  # seconds
             "duration": 3600,  # 1 hour monitoring period
             "metrics": ["response_time", "error_rate", "memory_usage"],
@@ -54,15 +54,15 @@ class PostDeploymentMonitor:
             self.config.update(config)
 
         # Data storage for metrics
-        self.metrics_data = {}
+        self.metrics_data: Dict[str, Any] = {}
 
         # Monitoring state
         self.is_monitoring = False
-        self.monitoring_thread = None
+        self.monitoring_thread: Optional[threading.Thread] = None
         self.stop_monitoring = threading.Event()
 
         # Alert handlers
-        self.alert_handlers = []
+        self.alert_handlers: List[Callable] = []
 
         self.logger.info("Initialized post-deployment monitor")
 
@@ -77,7 +77,7 @@ class PostDeploymentMonitor:
         """
         self.alert_handlers.append(handler)
 
-    def _send_alert(self, message: str, data: Dict[str, Any] = None) -> None:
+    def _send_alert(self, message: str, data: Optional[Dict[str, Any]] = None) -> None:
         """
         Send an alert to all registered handlers.
 
@@ -228,7 +228,12 @@ class PostDeploymentMonitor:
             metrics: Collected metrics
             patch_id: ID of the patch being monitored
         """
-        thresholds = self.config["alert_thresholds"]
+        thresholds_obj = self.config.get("alert_thresholds", {})
+        if not isinstance(thresholds_obj, dict):
+            return
+
+        # Type assertion for mypy
+        thresholds: Dict[str, Any] = thresholds_obj
 
         # Check response time
         if "response_time" in metrics and "response_time" in thresholds:
@@ -355,7 +360,8 @@ class PostDeploymentMonitor:
         Returns:
             List of metrics data points
         """
-        return self.metrics_data.get(patch_id, [])
+        result = self.metrics_data.get(patch_id, [])
+        return result if isinstance(result, list) else []
 
     def analyze_metrics(self, patch_id: str) -> Dict[str, Any]:
         """
@@ -380,9 +386,18 @@ class PostDeploymentMonitor:
         }
 
         # Calculate statistics for each metric
-        for metric_name in self.config["metrics"]:
+        metric_names = self.config.get("metrics", [])
+        if not isinstance(metric_names, list):
+            metric_names = []
+
+        for metric_name in metric_names:
             # Extract values for this metric
-            values = [m.get(metric_name) for m in metrics if metric_name in m]
+            values: List[float] = []
+            for m in metrics:
+                if metric_name in m:
+                    val = m.get(metric_name)
+                    if val is not None and isinstance(val, (int, float)):
+                        values.append(float(val))
 
             if not values:
                 continue
@@ -396,8 +411,9 @@ class PostDeploymentMonitor:
             }
 
             # Check if any values exceeded thresholds
-            if metric_name in self.config["alert_thresholds"]:
-                threshold = self.config["alert_thresholds"][metric_name]
+            alert_thresholds = self.config.get("alert_thresholds", {})
+            if isinstance(alert_thresholds, dict) and metric_name in alert_thresholds:
+                threshold = alert_thresholds[metric_name]
                 exceeded = [v for v in values if v > threshold]
 
                 results[metric_name]["exceeded_threshold"] = len(exceeded) > 0
@@ -406,12 +422,13 @@ class PostDeploymentMonitor:
 
         # Overall success assessment
         success = True
-        for metric_name in self.config["metrics"]:
-            if metric_name in results and results[metric_name].get(
-                "exceeded_threshold", False
-            ):
-                success = False
-                break
+        if isinstance(metric_names, list):
+            for metric_name in metric_names:
+                if metric_name in results and results[metric_name].get(
+                    "exceeded_threshold", False
+                ):
+                    success = False
+                    break
 
         results["success"] = success
 
@@ -428,7 +445,7 @@ class PostDeploymentMonitor:
         if not metrics_dir.exists():
             return {}
 
-        metrics_history = {}
+        metrics_history: Dict[str, List[Dict[str, Any]]] = {}
 
         # Find all metrics files
         for metrics_file in metrics_dir.glob("*.json"):
@@ -490,7 +507,10 @@ class SuccessRateTracker:
 
         try:
             with open(self.history_file, "r") as f:
-                return json.load(f)
+                data = json.load(f)
+                if isinstance(data, dict):
+                    return data
+                return {"fixes": [], "stats": {}}
         except Exception as e:
             self.logger.exception(
                 e, message=f"Failed to load fix history from {self.history_file}"
@@ -508,7 +528,7 @@ class SuccessRateTracker:
             )
 
     def record_fix(
-        self, patch_id: str, bug_id: str, success: bool, metrics: Dict[str, Any] = None
+        self, patch_id: str, bug_id: str, success: bool, metrics: Optional[Dict[str, Any]] = None
     ) -> None:
         """
         Record a fix and its success or failure.

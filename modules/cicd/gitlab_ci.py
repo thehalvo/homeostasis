@@ -7,7 +7,7 @@ healing during CI/CD pipelines.
 
 import logging
 import os
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import requests
 import yaml
@@ -44,7 +44,7 @@ class GitLabCIIntegration:
         self.headers = {"PRIVATE-TOKEN": self.token, "Content-Type": "application/json"}
         self.api_url = f"{self.gitlab_url}/api/v4"
 
-    def get_pipelines(self, status: str = "failed", per_page: int = 20) -> List[Dict]:
+    def get_pipelines(self, status: str = "failed", per_page: int = 20) -> List[Dict[str, Any]]:
         """
         Get pipelines for the project
 
@@ -56,7 +56,7 @@ class GitLabCIIntegration:
             List of pipeline data
         """
         url = f"{self.api_url}/projects/{self.project_id}/pipelines"
-        params = {
+        params: Dict[str, Any] = {
             "status": status,
             "per_page": per_page,
             "order_by": "updated_at",
@@ -66,9 +66,9 @@ class GitLabCIIntegration:
         response = requests.get(url, headers=self.headers, params=params, timeout=30)
         response.raise_for_status()
 
-        return response.json()
+        return cast(List[Dict[str, Any]], response.json())
 
-    def get_pipeline_jobs(self, pipeline_id: int) -> List[Dict]:
+    def get_pipeline_jobs(self, pipeline_id: int) -> List[Dict[str, Any]]:
         """
         Get jobs from a pipeline
 
@@ -83,7 +83,7 @@ class GitLabCIIntegration:
         response = requests.get(url, headers=self.headers, timeout=30)
         response.raise_for_status()
 
-        return response.json()
+        return cast(List[Dict[str, Any]], response.json())
 
     def get_job_log(self, job_id: int) -> str:
         """
@@ -114,7 +114,7 @@ class GitLabCIIntegration:
         """
         jobs = self.get_pipeline_jobs(pipeline_id)
 
-        analysis = {
+        analysis: Dict[str, Any] = {
             "pipeline_id": pipeline_id,
             "failed_jobs": [],
             "error_patterns": [],
@@ -340,7 +340,7 @@ class GitLabCIIntegration:
 
         return yaml.dump(config, default_flow_style=False, sort_keys=False)
 
-    def create_healing_trigger(self, failed_pipeline_id: int) -> Dict:
+    def create_healing_trigger(self, failed_pipeline_id: int) -> Dict[str, Any]:
         """
         Trigger a healing pipeline for a failed pipeline
 
@@ -364,7 +364,7 @@ class GitLabCIIntegration:
         response = requests.post(url, headers=self.headers, json=data, timeout=30)
         response.raise_for_status()
 
-        return response.json()
+        return cast(Dict[str, Any], response.json())
 
     def _extract_failure_reason(self, job: Dict, log: str) -> str:
         """Extract failure reason from job and logs"""

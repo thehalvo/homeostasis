@@ -625,6 +625,12 @@ class AWSProvider(BaseCloudProvider):
             )
 
             # Deploy to Kubernetes
+            if not image:
+                return {
+                    "success": False,
+                    "error": "Image parameter is required for EKS deployment"
+                }
+
             deploy_result = k8s_deployment.deploy_service(
                 service_name=service_name,
                 fix_id=fix_id,
@@ -1136,7 +1142,8 @@ class AWSProvider(BaseCloudProvider):
             if not result.get("success", False):
                 return []
 
-            return result.get("events", [])
+            events = result.get("events", [])
+            return events if isinstance(events, list) else []
 
         elif deployment_type == "ecs" and self.ecs_enabled:
             cluster_name = kwargs.get("cluster_name", "homeostasis")
@@ -1165,7 +1172,8 @@ class AWSProvider(BaseCloudProvider):
             if not result.get("success", False):
                 return []
 
-            return result.get("events", [])
+            events = result.get("events", [])
+            return events if isinstance(events, list) else []
 
         elif deployment_type == "eks" and self.eks_enabled:
             cluster_name = kwargs.get("cluster_name", "homeostasis")

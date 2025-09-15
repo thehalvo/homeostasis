@@ -150,7 +150,7 @@ def count_rules() -> Tuple[int, Dict[str, int]]:
         all_rules.extend(rule_set.rules)
 
     # Count by category
-    by_category = {}
+    by_category: Dict[str, int] = {}
     for rule in all_rules:
         category = rule.category.value
         by_category[category] = by_category.get(category, 0) + 1

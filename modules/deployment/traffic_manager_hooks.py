@@ -497,9 +497,9 @@ class KubernetesIngressHook:
                 # Clean up temp file
                 os.unlink(vs_path)
 
-                return bool(apply_result.get("success", False)) or bool(apply_result.get(
-                    "simulated", False
-                ))
+                return bool(apply_result.get("success", False)) or bool(
+                    apply_result.get("simulated", False)
+                )
 
             else:
                 # For regular Kubernetes, we'll use Ingress with annotations
@@ -525,8 +525,8 @@ class KubernetesIngressHook:
                 # Clean up temp file
                 os.unlink(ingress_path)
 
-                return apply_result.get("success", False) or apply_result.get(
-                    "simulated", False
+                return bool(apply_result.get("success", False)) or bool(
+                    apply_result.get("simulated", False)
                 )
 
         except Exception as e:
@@ -781,8 +781,8 @@ class KubernetesIngressHook:
                     ["delete", "virtualservice", name, "--namespace", self.namespace]
                 )
 
-                return vs_result.get("success", False) or vs_result.get(
-                    "simulated", False
+                return bool(vs_result.get("success", False)) or bool(
+                    vs_result.get("simulated", False)
                 )
 
             else:
@@ -791,8 +791,8 @@ class KubernetesIngressHook:
                     ["delete", "ingress", name, "--namespace", self.namespace]
                 )
 
-                return ingress_result.get("success", False) or ingress_result.get(
-                    "simulated", False
+                return bool(ingress_result.get("success", False)) or bool(
+                    ingress_result.get("simulated", False)
                 )
 
         except Exception as e:
@@ -930,6 +930,7 @@ class CloudLoadBalancerHook:
                 }
 
             # Try to parse JSON output if possible
+            result: Dict[str, Any]
             try:
                 if stdout and stdout.strip():
                     result = json.loads(stdout)
@@ -988,6 +989,7 @@ class CloudLoadBalancerHook:
                 }
 
             # Try to parse JSON output if possible
+            result: Dict[str, Any]
             try:
                 if stdout and stdout.strip():
                     result = json.loads(stdout)
@@ -1046,6 +1048,7 @@ class CloudLoadBalancerHook:
                 }
 
             # Try to parse JSON output if possible
+            result: Dict[str, Any]
             try:
                 if stdout and stdout.strip():
                     result = json.loads(stdout)
@@ -1240,8 +1243,8 @@ class CloudLoadBalancerHook:
             # Clean up temp file
             os.unlink(service_path)
 
-            return update_result.get("success", False) or update_result.get(
-                "simulated", False
+            return bool(update_result.get("success", False)) or bool(
+                update_result.get("simulated", False)
             )
 
         except Exception as e:

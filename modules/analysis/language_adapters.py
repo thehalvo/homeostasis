@@ -4865,7 +4865,7 @@ class SwiftErrorAdapter(LanguageAdapter):
 
         return swift_error
 
-    def _format_swift_stack_trace(self, stack_trace: Union[List, str]) -> List[str]:
+    def _format_swift_stack_trace(self, stack_trace: Any) -> List[str]:
         """
         Format stack trace for Swift.
 

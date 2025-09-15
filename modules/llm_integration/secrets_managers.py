@@ -302,7 +302,7 @@ class HashiCorpVault(SecretsManagerBase):
 
                 self._client = hvac.Client(url=self._vault_url, token=self._vault_token)
 
-                if self._client is None or not self._client.is_authenticated():
+                if not self._client.is_authenticated():
                     raise SecretsManagerError("HashiCorp Vault authentication failed")
 
             except ImportError:

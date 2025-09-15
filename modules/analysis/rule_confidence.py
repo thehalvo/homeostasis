@@ -435,13 +435,13 @@ class ContextualRuleAnalyzer:
         # Prepare alternative matches if available
         alternatives = []
         alt_matches = resolved_matches[1:] if len(resolved_matches) > 1 else []
-        for match in alt_matches:
+        for alt_match in alt_matches:
             alternatives.append(
                 {
-                    "rule_id": match.rule.id,
-                    "description": match.rule.description,
-                    "confidence_score": match.confidence_score,
-                    "confidence": match.confidence_level.value,
+                    "rule_id": alt_match.rule.id,
+                    "description": alt_match.rule.description,
+                    "confidence_score": alt_match.confidence_score,
+                    "confidence": alt_match.confidence_level.value,
                 }
             )
 

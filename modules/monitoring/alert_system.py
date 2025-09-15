@@ -386,11 +386,11 @@ class AlertManager:
                 continue
 
             # Get historical values
-            historical_values: List[float] = [
-                float(m.get(metric_name))
-                for m in historical_metrics
-                if metric_name in m and isinstance(m.get(metric_name), (int, float))
-            ]
+            historical_values: List[float] = []
+            for m in historical_metrics:
+                val = m.get(metric_name)
+                if val is not None and isinstance(val, (int, float)):
+                    historical_values.append(float(val))
 
             if len(historical_values) < 5:
                 continue
@@ -571,7 +571,6 @@ class AnomalyDetector:
 
         except requests.RequestException as e:
             self.logger.warning(f"Health check failed: {str(e)}")
-            metrics["error"] = str(e)
 
         # Error rate (sample requests to endpoints)
         error_count = 0
@@ -614,7 +613,11 @@ class AnomalyDetector:
         # Calculate statistics for each metric
         for metric_name in ["response_time", "error_rate", "memory_usage"]:
             # Extract values for this metric
-            values = [m.get(metric_name) for m in metrics if metric_name in m]
+            values: List[float] = []
+            for m in metrics:
+                val = m.get(metric_name)
+                if val is not None and isinstance(val, (int, float)):
+                    values.append(float(val))
 
             if not values:
                 continue

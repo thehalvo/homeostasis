@@ -844,7 +844,9 @@ spec:
 _kubernetes_deployment = None
 
 
-def get_kubernetes_deployment(config: Optional[Dict[str, Any]] = None) -> KubernetesDeployment:
+def get_kubernetes_deployment(
+    config: Optional[Dict[str, Any]] = None,
+) -> KubernetesDeployment:
     """Get or create the singleton KubernetesDeployment instance.
 
     Args:

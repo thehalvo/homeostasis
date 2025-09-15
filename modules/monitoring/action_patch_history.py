@@ -510,7 +510,10 @@ class ActionPatchHistoryLogger:
         )
 
     def get_action_history(
-        self, session_id: Optional[str] = None, action_type: Optional[str] = None, days_back: int = 7
+        self,
+        session_id: Optional[str] = None,
+        action_type: Optional[str] = None,
+        days_back: int = 7,
     ) -> List[Dict[str, Any]]:
         """
         Retrieve action history with optional filtering.
@@ -607,7 +610,10 @@ class ActionPatchHistoryLogger:
         return changes
 
     def get_llm_interaction_history(
-        self, action_id: Optional[str] = None, provider: Optional[str] = None, days_back: int = 7
+        self,
+        action_id: Optional[str] = None,
+        provider: Optional[str] = None,
+        days_back: int = 7,
     ) -> List[Dict[str, Any]]:
         """
         Retrieve LLM interaction history.

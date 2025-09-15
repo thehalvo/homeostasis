@@ -12,11 +12,12 @@ import time
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 from urllib.parse import urljoin
 
 import requests
 import websocket
+from websocket import WebSocketApp
 
 logger = logging.getLogger(__name__)
 
@@ -112,8 +113,8 @@ class HomeostasisClient:
         self.verify_ssl = verify_ssl
         self.session = requests.Session()
         self._setup_session()
-        self.ws_client = None
-        self._callbacks = {}
+        self.ws_client: Optional[WebSocketApp] = None
+        self._callbacks: Dict[str, List[Callable]] = {}
 
     def _setup_session(self):
         """Configure session with authentication and headers"""
@@ -152,7 +153,8 @@ class HomeostasisClient:
             data = error
 
         response = self._make_request("POST", "/api/v1/errors", json=data)
-        return response.json()
+        result: Dict[str, Any] = response.json()
+        return result
 
     def get_healing_status(self, healing_id: str) -> HealingResult:
         """Get status of a healing operation"""
@@ -176,12 +178,13 @@ class HomeostasisClient:
         self, error_id: str, options: Optional[Dict[str, Any]] = None
     ) -> str:
         """Manually trigger healing for an error"""
-        data = {"error_id": error_id}
+        data: Dict[str, Any] = {"error_id": error_id}
         if options:
             data["options"] = options
 
         response = self._make_request("POST", "/api/v1/healings", json=data)
-        return response.json()["healing_id"]
+        result = response.json()
+        return str(result["healing_id"])
 
     def list_errors(
         self,
@@ -196,7 +199,8 @@ class HomeostasisClient:
             params.update(filters)
 
         response = self._make_request("GET", "/api/v1/errors", params=params)
-        return response.json()
+        result: Dict[str, Any] = response.json()
+        return result
 
     def get_system_health(self) -> SystemHealth:
         """Get system health status"""
@@ -218,7 +222,8 @@ class HomeostasisClient:
         params = {"type": metric_type, "range": time_range}
 
         response = self._make_request("GET", "/api/v1/metrics", params=params)
-        return response.json()
+        result: Dict[str, Any] = response.json()
+        return result
 
     def rollback_healing(self, healing_id: str, reason: Optional[str] = None) -> bool:
         """Rollback a healing operation"""
@@ -227,7 +232,8 @@ class HomeostasisClient:
         response = self._make_request(
             "POST", f"/api/v1/healings/{healing_id}/rollback", json=data
         )
-        return response.json()["success"]
+        result = response.json()
+        return bool(result["success"])
 
     def approve_healing(self, healing_id: str, approved_by: str) -> bool:
         """Approve a healing operation (for systems with approval workflow)"""
@@ -236,12 +242,15 @@ class HomeostasisClient:
         response = self._make_request(
             "POST", f"/api/v1/healings/{healing_id}/approve", json=data
         )
-        return response.json()["success"]
+        result = response.json()
+        return bool(result["success"])
 
     def get_patches(self, healing_id: str) -> List[Dict[str, Any]]:
         """Get patches generated for a healing"""
         response = self._make_request("GET", f"/api/v1/healings/{healing_id}/patches")
-        return response.json()["patches"]
+        result = response.json()
+        patches: List[Dict[str, Any]] = result["patches"]
+        return patches
 
     def test_patch(
         self, patch_id: str, test_config: Optional[Dict[str, Any]] = None
@@ -252,7 +261,8 @@ class HomeostasisClient:
         response = self._make_request(
             "POST", f"/api/v1/patches/{patch_id}/test", json=data
         )
-        return response.json()
+        result: Dict[str, Any] = response.json()
+        return result
 
     # Configuration Management
 
@@ -260,12 +270,14 @@ class HomeostasisClient:
         """Get system configuration"""
         endpoint = f"/api/v1/config/{component}" if component else "/api/v1/config"
         response = self._make_request("GET", endpoint)
-        return response.json()
+        result: Dict[str, Any] = response.json()
+        return result
 
     def update_config(self, component: str, config: Dict[str, Any]) -> bool:
         """Update system configuration"""
         response = self._make_request("PUT", f"/api/v1/config/{component}", json=config)
-        return response.json()["success"]
+        result = response.json()
+        return bool(result["success"])
 
     # Rule Management
 
@@ -280,27 +292,33 @@ class HomeostasisClient:
             params["category"] = category
 
         response = self._make_request("GET", "/api/v1/rules", params=params)
-        return response.json()["rules"]
+        result = response.json()
+        rules: List[Dict[str, Any]] = result["rules"]
+        return rules
 
     def get_rule(self, rule_id: str) -> Dict[str, Any]:
         """Get details of a specific rule"""
         response = self._make_request("GET", f"/api/v1/rules/{rule_id}")
-        return response.json()
+        result: Dict[str, Any] = response.json()
+        return result
 
     def create_custom_rule(self, rule_data: Dict[str, Any]) -> str:
         """Create a custom healing rule"""
         response = self._make_request("POST", "/api/v1/rules", json=rule_data)
-        return response.json()["rule_id"]
+        result = response.json()
+        return str(result["rule_id"])
 
     def update_rule(self, rule_id: str, rule_data: Dict[str, Any]) -> bool:
         """Update an existing rule"""
         response = self._make_request("PUT", f"/api/v1/rules/{rule_id}", json=rule_data)
-        return response.json()["success"]
+        result = response.json()
+        return bool(result["success"])
 
     def delete_rule(self, rule_id: str) -> bool:
         """Delete a custom rule"""
         response = self._make_request("DELETE", f"/api/v1/rules/{rule_id}")
-        return response.json()["success"]
+        result = response.json()
+        return bool(result["success"])
 
     # WebSocket Support for Real-time Updates
 
@@ -327,8 +345,8 @@ class HomeostasisClient:
             if on_error:
                 on_error(error)
 
-        def _on_close(ws):
-            logger.info("WebSocket connection closed")
+        def _on_close(ws, close_status_code, close_msg):
+            logger.info(f"WebSocket connection closed: {close_status_code} - {close_msg}")
             if on_close:
                 on_close()
 
@@ -373,7 +391,8 @@ class HomeostasisClient:
         data = {"errors": [error.to_dict() for error in errors]}
 
         response = self._make_request("POST", "/api/v1/errors/batch", json=data)
-        return response.json()
+        result: Dict[str, Any] = response.json()
+        return result
 
     def batch_get_status(self, healing_ids: List[str]) -> Dict[str, HealingResult]:
         """Get status of multiple healing operations"""
@@ -473,4 +492,4 @@ def quick_report_error(
         )
 
         result = client.report_error(error)
-        return result["error_id"]
+        return str(result["error_id"])

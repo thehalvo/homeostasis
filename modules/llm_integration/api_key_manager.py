@@ -10,7 +10,7 @@ import getpass
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import requests
 from cryptography.fernet import Fernet
@@ -126,7 +126,7 @@ class APIKeyManager:
             cipher_suite = self._get_cipher_suite()
             encrypted_data = self.keys_file.read_bytes()
             decrypted_data = cipher_suite.decrypt(encrypted_data)
-            return json.loads(decrypted_data.decode())
+            return cast(Dict[str, str], json.loads(decrypted_data.decode()))
         except Exception as e:
             raise KeyValidationError(f"Failed to load keys: {e}")
 
@@ -653,7 +653,7 @@ class APIKeyManager:
                 for key, value in default_config.items():
                     if key not in config:
                         config[key] = value
-                return config
+                return cast(Dict[str, Any], config)
         except Exception as e:
             print(f"Warning: Failed to load provider config, using defaults: {e}")
             return self._get_default_provider_config()
@@ -757,7 +757,7 @@ class APIKeyManager:
             List of provider names in fallback order
         """
         config = self._load_provider_config()
-        return config.get("fallback_order", ["anthropic", "openai", "openrouter"])
+        return cast(List[str], config.get("fallback_order", ["anthropic", "openai", "openrouter"]))
 
     def set_enable_fallback(self, enabled: bool) -> None:
         """
@@ -781,7 +781,7 @@ class APIKeyManager:
             True if fallback is enabled
         """
         config = self._load_provider_config()
-        return config.get("enable_fallback", True)
+        return cast(bool, config.get("enable_fallback", True))
 
     def set_openrouter_unified_mode(
         self,
@@ -828,7 +828,7 @@ class APIKeyManager:
             OpenRouter unified configuration
         """
         config = self._load_provider_config()
-        return config.get("openrouter_unified_config", {"enabled": False})
+        return cast(Dict[str, Any], config.get("openrouter_unified_config", {"enabled": False}))
 
     def set_provider_policies(
         self,
@@ -880,14 +880,14 @@ class APIKeyManager:
             Dictionary of provider policies
         """
         config = self._load_provider_config()
-        return config.get(
+        return cast(Dict[str, str], config.get(
             "provider_policies",
             {
                 "cost_preference": "balanced",
                 "latency_preference": "balanced",
                 "reliability_preference": "high",
             },
-        )
+        ))
 
     def get_provider_config_summary(self) -> Dict[str, Any]:
         """

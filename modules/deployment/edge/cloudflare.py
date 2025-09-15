@@ -676,7 +676,9 @@ format = "service-worker"
 _cloudflare_provider = None
 
 
-def get_cloudflare_provider(config: Optional[Dict[str, Any]] = None) -> CloudflareProvider:
+def get_cloudflare_provider(
+    config: Optional[Dict[str, Any]] = None,
+) -> CloudflareProvider:
     """Get or create the singleton CloudflareProvider instance.
 
     Args:

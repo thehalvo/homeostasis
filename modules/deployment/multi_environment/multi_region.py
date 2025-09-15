@@ -697,7 +697,7 @@ class MultiRegionResilienceStrategy:
         consistency_model: ConsistencyModel,
     ) -> Dict[str, Any]:
         """Coordinate asynchronous healing with eventual consistency"""
-        results = {
+        results: Dict[str, Any] = {
             "status": "asynchronous",
             "consistency_model": consistency_model.value,
             "regions": {},
@@ -735,7 +735,7 @@ class MultiRegionResilienceStrategy:
         phase_num = 0
 
         remaining_steps = steps.copy()
-        completed_steps = set()
+        completed_steps: Set[str] = set()
 
         while remaining_steps:
             phase_steps = []

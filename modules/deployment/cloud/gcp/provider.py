@@ -113,6 +113,7 @@ class GCPProvider(BaseCloudProvider):
                 }
 
             # Try to parse JSON output if possible
+            result: Dict[str, Any]
             try:
                 if stdout and stdout.strip():
                     result = json.loads(stdout)
@@ -145,7 +146,7 @@ class GCPProvider(BaseCloudProvider):
 
         # Try to get project info
         result = self._run_gcloud(["projects", "describe", self.project_id])
-        return result.get("success", False)
+        return bool(result.get("success", False))
 
     def _deploy_function(
         self, service_name: str, fix_id: str, source_path: str, **kwargs
@@ -901,7 +902,11 @@ class GCPProvider(BaseCloudProvider):
             if not result.get("success", False):
                 return []
 
-            return result if isinstance(result, list) else []
+            # Extract logs from result - gcloud logging read returns the logs in the output
+            logs = result.get("output", [])
+            if isinstance(logs, list):
+                return logs
+            return []
 
         elif deployment_type == "run" and self.cloud_run_enabled:
             service_identifier = f"{service_name}-{fix_id}"
@@ -928,7 +933,11 @@ class GCPProvider(BaseCloudProvider):
             if not result.get("success", False):
                 return []
 
-            return result if isinstance(result, list) else []
+            # Extract logs from result - gcloud logging read returns the logs in the output
+            logs = result.get("output", [])
+            if isinstance(logs, list):
+                return logs
+            return []
 
         elif deployment_type == "gke" and self.gke_enabled:
             cluster_name = kwargs.get("cluster_name", "homeostasis")

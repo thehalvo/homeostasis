@@ -31,8 +31,8 @@ class DistributedMonitor:
             config: Configuration for the distributed monitor
         """
         self.config = config or {}
-        self.monitors = {}
-        self.metrics_buffer = []
+        self.monitors: Dict[str, Any] = {}
+        self.metrics_buffer: List[Dict[str, Any]] = []
         self.executor = ThreadPoolExecutor(max_workers=10)
         self.is_running = False
 
@@ -265,7 +265,7 @@ class DistributedMonitor:
         Returns:
             Health status summary
         """
-        status = {
+        status: Dict[str, Any] = {
             "timestamp": datetime.now().isoformat(),
             "targets": {},
             "overall_health": "healthy",
@@ -350,7 +350,7 @@ class AlertingSystem:
 
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.config = config or {}
-        self.alerts = []
+        self.alerts: List[Dict[str, Any]] = []
 
     def create_alert(self, alert: Dict[str, Any]):
         """Create a new alert."""

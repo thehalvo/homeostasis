@@ -234,7 +234,9 @@ def sanitize_filename(filename: str) -> str:
     return re.sub(r"[^a-zA-Z0-9_.-]", "_", filename)
 
 
-def validate_and_sanitize_json(json_data: Dict[str, Any]) -> Tuple[bool, Dict[str, Any], Optional[str]]:
+def validate_and_sanitize_json(
+    json_data: Dict[str, Any],
+) -> Tuple[bool, Dict[str, Any], Optional[str]]:
     """Validate and sanitize JSON data.
 
     Args:

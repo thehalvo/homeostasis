@@ -383,9 +383,9 @@ class ServiceFaultInjector(FaultInjector):
                 signal = fault.parameters.get("signal", "SIGTERM")
                 await self._kill_process(fault.target, signal)
             elif fault.fault_type == FaultType.DEPENDENCY_FAILURE:
-                await self._fail_dependency(
-                    fault.target, fault.parameters.get("dependency")
-                )
+                dependency = fault.parameters.get("dependency", "")
+                if dependency:
+                    await self._fail_dependency(fault.target, dependency)
             elif fault.fault_type == FaultType.DATABASE_SLOWDOWN:
                 slowdown_factor = (
                     fault.parameters.get("slowdown_factor", 10) * fault.intensity
@@ -406,9 +406,9 @@ class ServiceFaultInjector(FaultInjector):
             elif fault.fault_type == FaultType.PROCESS_KILL:
                 await self._restart_process(fault.target)
             elif fault.fault_type == FaultType.DEPENDENCY_FAILURE:
-                await self._restore_dependency(
-                    fault.target, fault.parameters.get("dependency")
-                )
+                dependency = fault.parameters.get("dependency", "")
+                if dependency:
+                    await self._restore_dependency(fault.target, dependency)
             elif fault.fault_type == FaultType.DATABASE_SLOWDOWN:
                 await self._restore_database_speed(fault.target)
             else:
@@ -749,7 +749,7 @@ class ChaosMonkey:
         insights["success_rate"] = successful / len(self.experiment_history)
 
         # Analyze common failures
-        failure_counts = {}
+        failure_counts: Dict[str, int] = {}
         for result in self.experiment_history:
             for failure in result.failures_detected:
                 failure_type = failure.split(":")[0] if ":" in failure else failure
@@ -850,7 +850,7 @@ def create_resource_chaos_experiment() -> ChaosExperiment:
 # Simplified classes for testing compatibility
 
 
-class ChaosExperiment:
+class SimplifiedChaosExperiment:
     """Simplified chaos experiment for testing."""
 
     def __init__(
