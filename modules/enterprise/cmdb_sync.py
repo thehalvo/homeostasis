@@ -252,7 +252,11 @@ class CMDBSynchronizer(ABC):
     def get_impact_analysis(self, ci_id: str, depth: int = 3) -> Dict[str, Any]:
         """Analyze potential impact of changes to a CI"""
         visited: Set[str] = set()
-        impact_map: Dict[str, List[Any]] = {"direct": [], "indirect": [], "critical_paths": []}
+        impact_map: Dict[str, List[Any]] = {
+            "direct": [],
+            "indirect": [],
+            "critical_paths": [],
+        }
 
         self._traverse_relationships(ci_id, impact_map, visited, 0, depth)
 
@@ -726,7 +730,9 @@ class ServiceNowCMDB(CMDBSynchronizer):
                 ci_id=data.get("sys_id"),
                 name=data.get("name", ""),
                 ci_type=ci_type,
-                status=status_map.get(data.get("operational_status", ""), CIStatus.ACTIVE),
+                status=status_map.get(
+                    data.get("operational_status", ""), CIStatus.ACTIVE
+                ),
                 description=data.get("short_description", ""),
                 owner=data.get("owned_by"),
                 support_group=data.get("support_group"),

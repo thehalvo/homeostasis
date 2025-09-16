@@ -18,6 +18,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from ..analysis.comprehensive_error_detector import ErrorContext
 from ..analysis.llm_context_manager import LLMContextManager
 from ..llm_integration.api_key_manager import APIKeyManager
 from ..llm_integration.provider_abstraction import (
@@ -66,8 +67,8 @@ class PatchValidationConfig:
     retry_on_test_failure: bool = True
     require_all_tests_pass: bool = False  # If True, all tests must pass
     test_command: Optional[str] = None  # Custom test command
-    pre_validation_commands: List[str] = None  # Commands to run before validation
-    post_validation_commands: List[str] = None  # Commands to run after validation
+    pre_validation_commands: Optional[List[str]] = None  # Commands to run before validation
+    post_validation_commands: Optional[List[str]] = None  # Commands to run after validation
 
 
 class LLMPatchGenerator:
@@ -300,9 +301,18 @@ class LLMPatchGenerator:
             Generated patch information or None if generation fails
         """
         try:
+            # Convert dict to ErrorContext for storage
+            error_context_obj = ErrorContext(
+                error_message=error_context.get("error_message", ""),
+                exception_type=error_context.get("exception_type"),
+                stack_trace=error_context.get("stack_trace"),
+                file_path=error_context.get("file_path"),
+                line_number=error_context.get("line_number")
+            )
+
             # Store the error context for LLM processing
             context_id = self.context_manager.store_error_context(
-                error_context=error_context, additional_analysis=additional_context
+                error_context=error_context_obj, additional_analysis=additional_context
             )
 
             # Prepare LLM prompt for patch generation
@@ -665,10 +675,12 @@ Provide your response in the following JSON format:
             json_match = re.search(r"\{.*\}", response, re.DOTALL)
             if json_match:
                 json_str = json_match.group(0)
-                return json.loads(json_str)
+                parsed_json: Dict[str, Any] = json.loads(json_str)
+                return parsed_json
 
             # Try parsing the entire response as JSON
-            return json.loads(response)
+            parsed_response: Dict[str, Any] = json.loads(response)
+            return parsed_response
 
         except json.JSONDecodeError:
             return None

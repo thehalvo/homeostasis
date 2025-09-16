@@ -13,7 +13,11 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
-from modules.enterprise.orchestration import EnterpriseOrchestrator, DeploymentResult, DeploymentStatus
+from modules.enterprise.orchestration import (
+    DeploymentResult,
+    DeploymentStatus,
+    EnterpriseOrchestrator,
+)
 from modules.monitoring.distributed_monitoring import DistributedMonitor
 from modules.security.audit import AuditLogger
 
@@ -321,11 +325,12 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
         if error_type in ["network_connectivity", "api_timeout", "service_unavailable"]:
             # These errors might affect connected environments
             source_env_id = error_data.get("environment_id")
-            for env_id, env in self.environments.items():
-                if env_id != source_env_id:
-                    # Check if environments are connected
-                    if await self._are_environments_connected(source_env_id, env_id):
-                        affected.append(env)
+            if source_env_id is not None:
+                for env_id, env in self.environments.items():
+                    if env_id != source_env_id:
+                        # Check if environments are connected
+                        if await self._are_environments_connected(source_env_id, env_id):
+                            affected.append(env)
 
         return affected
 
@@ -364,7 +369,7 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
         self, error_data: Dict[str, Any], affected_envs: List[Environment]
     ) -> int:
         """Calculate healing priority based on impact and severity"""
-        base_priority = error_data.get("severity", 5)
+        base_priority: int = error_data.get("severity", 5)
 
         # Increase priority for production environments
         prod_count = sum(
@@ -382,8 +387,8 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
         self, context: HealingContext, patch_data: Dict[str, Any]
     ) -> HealingPlan:
         """Create a coordinated healing plan across environments"""
-        steps = []
-        rollback_steps = []
+        steps: List[HealingStep] = []
+        rollback_steps: List[HealingStep] = []
 
         # Determine healing strategy based on scope
         if context.scope == HealingScope.CROSS_ENVIRONMENT:
@@ -643,8 +648,8 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
         )
 
         # Execute steps
-        results = {}
-        executed_steps = []
+        results: Dict[str, Any] = {}
+        executed_steps: List[HealingStep] = []
 
         try:
             for step in plan.steps:
@@ -800,7 +805,7 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
 
     async def get_cross_environment_view(self) -> Dict[str, Any]:
         """Get comprehensive view of all environments and their relationships"""
-        view = {
+        view: Dict[str, Any] = {
             "environments": {},
             "connections": [],
             "active_healings": [],
@@ -874,7 +879,11 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
         return DeploymentResult(
             deployment_id=result.get("plan_id", ""),
             plan_id=result.get("plan_id", ""),
-            status=DeploymentStatus.COMPLETED if result.get("status") == "success" else DeploymentStatus.FAILED,
+            status=(
+                DeploymentStatus.COMPLETED
+                if result.get("status") == "success"
+                else DeploymentStatus.FAILED
+            ),
             start_time=datetime.now(),
             end_time=datetime.now(),
             deployed_resources=[],

@@ -7,7 +7,7 @@ import json
 import os
 import traceback
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Union
 
 from .rule_categories import EnhancedRule, RuleDependency, detect_rule_conflicts
 from .rule_confidence import ConfidenceScorer, ContextualRuleAnalyzer
@@ -274,7 +274,9 @@ class RuleTester:
         self.rules = rules or []
 
     def load_rules(
-        self, rule_ids: Optional[List[str]] = None, categories: Optional[List[str]] = None
+        self,
+        rule_ids: Optional[List[str]] = None,
+        categories: Optional[List[str]] = None,
     ) -> None:
         """
         Load rules for testing.

@@ -109,7 +109,7 @@ class PowerShellExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
             for rule in rule_list:
@@ -243,11 +243,11 @@ class PowerShellPatchGenerator:
         )
         self.powershell_template_dir = self.template_dir / "powershell"
         self.powershell_template_dir.mkdir(parents=True, exist_ok=True)
-        self.templates = self._load_templates()
+        self.templates: Dict[str, str] = self._load_templates()
 
     def _load_templates(self) -> Dict[str, str]:
         """Load PowerShell patch templates."""
-        templates = {}
+        templates: Dict[str, str] = {}
         if not self.powershell_template_dir.exists():
             return templates
 

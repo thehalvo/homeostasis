@@ -88,7 +88,9 @@ class CircleCIIntegration:
 
         return cast(List[Dict[str, Any]], response.json().get("items", []))
 
-    def get_project_pipelines(self, branch: Optional[str] = None) -> List[Dict[str, Any]]:
+    def get_project_pipelines(
+        self, branch: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """
         Get recent pipelines for the project
 

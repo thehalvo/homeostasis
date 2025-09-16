@@ -12,7 +12,15 @@ import time
 import traceback
 import uuid
 from datetime import datetime
-from typing import Any, Callable, Dict, Optional
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Optional,
+    TYPE_CHECKING,
+    Protocol,
+    runtime_checkable,
+)
 
 # from .extractor import extract_error_context  # TODO: implement extract_error_context
 from .logger import MonitoringLogger
@@ -273,7 +281,7 @@ class HomeostasisASGIMiddleware:
         """
         try:
             # Build response data
-            response_data = {
+            response_data: Dict[str, Any] = {
                 "request_id": request_id,
                 "status_code": status,
                 "duration": duration,
@@ -692,14 +700,10 @@ class HomeostasisASGIMiddleware:
         return False
 
 
-from typing import TYPE_CHECKING, Protocol, runtime_checkable
-
-if TYPE_CHECKING:
-    from tornado.web import RequestHandler
-
 @runtime_checkable
 class TornadoHandlerProtocol(Protocol):
     """Protocol defining the expected interface for Tornado RequestHandler."""
+
     request: Any
     _headers: Any
 
@@ -709,7 +713,8 @@ class TornadoHandlerProtocol(Protocol):
     def write(self, chunk: Any) -> None: ...
     def finish(self) -> None: ...
 
-class TornadoMonitoringMixin:
+
+class TornadoMonitoringMixin(TornadoHandlerProtocol):
     """
     Mixin for integrating Homeostasis monitoring into Tornado request handlers.
 

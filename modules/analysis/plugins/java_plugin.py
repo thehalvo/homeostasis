@@ -95,7 +95,7 @@ class JavaExceptionHandler:
             # Skip rules that don't apply to this category of exception
             if rule.get("applies_to") and error_type:
                 applies_to_patterns = rule.get("applies_to")
-                if not any(
+                if applies_to_patterns and not any(
                     re.search(pattern, error_type) for pattern in applies_to_patterns
                 ):
                     continue
@@ -672,7 +672,8 @@ class JavaExceptionHandler:
             try:
                 with open(rules_file, "r") as f:
                     rules_data = json.load(f)
-                    return rules_data.get("rules", [])
+                    rules = rules_data.get("rules", [])
+                    return list(rules) if isinstance(rules, list) else []
             except Exception as e:
                 logger.warning(f"Error loading Java stream rules: {e}")
 
@@ -705,7 +706,8 @@ class JavaExceptionHandler:
             try:
                 with open(rules_file, "r") as f:
                     rules_data = json.load(f)
-                    return rules_data.get("rules", [])
+                    rules = rules_data.get("rules", [])
+                    return list(rules) if isinstance(rules, list) else []
             except Exception as e:
                 logger.warning(f"Error loading Java generics rules: {e}")
 
@@ -725,6 +727,8 @@ class JavaExceptionHandler:
                 with open(rules_file, "r") as f:
                     rules_data = json.load(f)
                     rules = rules_data.get("rules", [])
+                    if not isinstance(rules, list):
+                        return []
                     # Update category for reflection rules to be security when appropriate
                     for rule in rules:
                         if rule.get("id") == "java_illegal_access_reflection":
@@ -818,7 +822,8 @@ class JavaExceptionHandler:
             try:
                 with open(rules_file, "r") as f:
                     data = json.load(f)
-                    return data.get("rules", [])
+                    rules = data.get("rules", [])
+                    return list(rules) if isinstance(rules, list) else []
             except Exception as e:
                 logger.error(f"Error loading concurrency rules from {rules_file}: {e}")
 
@@ -1007,7 +1012,8 @@ class JavaExceptionHandler:
             try:
                 with open(rules_file, "r") as f:
                     data = json.load(f)
-                    return data.get("rules", [])
+                    rules = data.get("rules", [])
+                    return list(rules) if isinstance(rules, list) else []
             except Exception as e:
                 logger.error(f"Error loading Spring rules from {rules_file}: {e}")
 
@@ -1089,7 +1095,8 @@ class JavaExceptionHandler:
             try:
                 with open(rules_file, "r") as f:
                     data = json.load(f)
-                    return data.get("rules", [])
+                    rules = data.get("rules", [])
+                    return list(rules) if isinstance(rules, list) else []
             except Exception as e:
                 logger.error(f"Error loading Hibernate rules from {rules_file}: {e}")
 
@@ -1119,7 +1126,8 @@ class JavaExceptionHandler:
             try:
                 with open(rules_file, "r") as f:
                     data = json.load(f)
-                    return data.get("rules", [])
+                    rules = data.get("rules", [])
+                    return list(rules) if isinstance(rules, list) else []
             except Exception as e:
                 logger.error(f"Error loading Android rules from {rules_file}: {e}")
 
@@ -1144,7 +1152,7 @@ class JavaPatchGenerator:
         self.templates_dir.mkdir(exist_ok=True, parents=True)
 
         # Cache for loaded templates
-        self.template_cache = {}
+        self.template_cache: Dict[str, str] = {}
 
     def generate_patch(
         self, analysis: Dict[str, Any], context: Dict[str, Any]
@@ -1355,7 +1363,7 @@ class JavaPatchGenerator:
         """Extract the likely null variable from an NPE."""
         # Check if variable_name is provided in context
         if "variable_name" in context:
-            return context["variable_name"]
+            return str(context["variable_name"])
 
         message = analysis.get("error_data", {}).get("message", "")
 
@@ -1366,7 +1374,7 @@ class JavaPatchGenerator:
             if len(parts) > 1:
                 parts = parts[1].split("of a null")
                 if len(parts) > 0:
-                    return parts[0].strip()
+                    return str(parts[0].strip())
 
         # Java 14+ helpful NPE message: "Cannot invoke "String.length()" because "str" is null"
         if "because" in message and "is null" in message:

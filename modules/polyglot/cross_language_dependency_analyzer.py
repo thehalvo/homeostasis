@@ -687,7 +687,7 @@ class CrossLanguageDependencyAnalyzer:
 
     def _find_version_mismatches(self) -> List[Dict[str, Any]]:
         """Find version mismatches in shared dependencies."""
-        mismatches = []
+        mismatches: List[Dict[str, Any]] = []
 
         # Check API contract versions
         for contract_id, contract in self.dependency_graph.api_contracts.items():

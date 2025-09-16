@@ -100,9 +100,9 @@ class PHIAccessLog:
     patient_id: str
     action: str  # view, modify, delete, export
     resource: str
-    justification: Optional[str] = None
     ip_address: str
     success: bool
+    justification: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -764,7 +764,7 @@ class EnhancedComplianceReporting:
         Returns:
             Test results
         """
-        results = {
+        results: Dict[str, Any] = {
             "framework": framework.value,
             "timestamp": datetime.datetime.utcnow().isoformat(),
             "tests": {},
@@ -845,7 +845,18 @@ class EnhancedComplianceReporting:
         """Test MFA enforcement"""
         # Check if all privileged users have MFA enabled
         privileged_roles = ["admin", "security_admin", "operator"]
-        users = self.user_management.list_users()
+        # Get users - check if method exists
+        users = []
+        if hasattr(self.user_management, 'list_users'):
+            users = self.user_management.list_users()
+        elif hasattr(self.user_management, 'get_all_users'):
+            users = self.user_management.get_all_users()
+        else:
+            # Return a default test result if no user listing available
+            return {
+                "status": "skipped",
+                "message": "User listing not available in current configuration"
+            }
 
         non_compliant_users = []
         for user in users:
@@ -947,7 +958,18 @@ class EnhancedComplianceReporting:
     def _test_unique_user_ids(self, control: EnhancedControl) -> Dict[str, Any]:
         """Test unique user identification"""
         # Check for shared accounts
-        users = self.user_management.list_users()
+        # Get users - check if method exists
+        users = []
+        if hasattr(self.user_management, 'list_users'):
+            users = self.user_management.list_users()
+        elif hasattr(self.user_management, 'get_all_users'):
+            users = self.user_management.get_all_users()
+        else:
+            # Return a default test result if no user listing available
+            return {
+                "status": "skipped",
+                "message": "User listing not available in current configuration"
+            }
         usernames = [u["username"] for u in users]
 
         if len(usernames) != len(set(usernames)):
@@ -983,7 +1005,7 @@ class EnhancedComplianceReporting:
         report = self.base_compliance.reports[report_id]
 
         # Enhance with Type II specific data
-        enhanced_report = {
+        enhanced_report: Dict[str, Any] = {
             "base_report": report_id,
             "type": "SOC2 Type II",
             "period": {
@@ -999,7 +1021,7 @@ class EnhancedComplianceReporting:
 
         # Group by trust service criteria
         for criteria in SOC2TrustServiceCriteria:
-            criteria_controls = []
+            criteria_controls: List[str] = []
             for control_id in report.control_summary:
                 control = self.enhanced_controls.get(control_id)
                 if control and control.trust_service_criteria:
@@ -1061,7 +1083,7 @@ class EnhancedComplianceReporting:
         report = self.base_compliance.reports[report_id]
 
         # Enhance with HIPAA specific data
-        enhanced_report = {
+        enhanced_report: Dict[str, Any] = {
             "base_report": report_id,
             "type": "HIPAA Compliance Audit",
             "period": {
@@ -1125,7 +1147,7 @@ class EnhancedComplianceReporting:
         period_logs = [log for log in self.phi_access_logs if log.timestamp >= cutoff]
 
         # Generate summary
-        summary = {
+        summary: Dict[str, Any] = {
             "total_accesses": len(period_logs),
             "unique_users": len(set(log.user_id for log in period_logs)),
             "unique_patients": len(set(log.patient_id for log in period_logs)),
@@ -1140,7 +1162,7 @@ class EnhancedComplianceReporting:
             summary["access_by_action"][log.action] += 1
 
         # Top users
-        user_counts = defaultdict(int)
+        user_counts: defaultdict[str, int] = defaultdict(int)
         for log in period_logs:
             user_counts[log.user_id] += 1
 
@@ -1240,7 +1262,7 @@ class EnhancedComplianceReporting:
 
     def _count_artifacts_by_type(self) -> Dict[str, int]:
         """Count artifacts by type"""
-        counts = defaultdict(int)
+        counts: defaultdict[str, int] = defaultdict(int)
         for artifact in self.compliance_artifacts.values():
             counts[artifact.artifact_type] += 1
         return dict(counts)

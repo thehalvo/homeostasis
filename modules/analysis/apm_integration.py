@@ -788,14 +788,8 @@ class ElasticAPMIntegration(APMIntegration):
             start_time = end_time - 3600000  # Last hour
 
         # Convert interval to Elastic format if provided
-        interval_param = "1m"  # Default
-        if interval:
-            if interval.endswith("s"):
-                interval_param = interval
-            elif interval.endswith("m"):
-                interval_param = interval
-            elif interval.endswith("h"):
-                interval_param = interval
+        # Note: interval parameter is currently not used in the query
+        # This may need to be implemented for time-based aggregations
 
         # Build query
         query: Dict[str, Any] = {
@@ -812,15 +806,11 @@ class ElasticAPMIntegration(APMIntegration):
         # Add service filter if available
         if self.config.service_name:
             must_list = cast(List[Dict[str, Any]], query["query"]["bool"]["must"])
-            must_list.append(
-                {"term": {"service.name": self.config.service_name}}
-            )
+            must_list.append({"term": {"service.name": self.config.service_name}})
 
         # Add aggregations for each metric
         for metric_name in metric_names:
-            query["aggs"][metric_name] = {
-                "avg": {"field": metric_name}
-            }
+            query["aggs"][metric_name] = {"avg": {"field": metric_name}}
 
         data = query
 
@@ -869,9 +859,7 @@ class ElasticAPMIntegration(APMIntegration):
         must_list = cast(List[Dict[str, Any]], query["query"]["bool"]["must"])
         if filter_params:
             if "service" in filter_params:
-                must_list.append(
-                    {"term": {"service.name": filter_params["service"]}}
-                )
+                must_list.append({"term": {"service.name": filter_params["service"]}})
             if "transaction_name" in filter_params:
                 must_list.append(
                     {"term": {"transaction.name": filter_params["transaction_name"]}}
@@ -888,9 +876,7 @@ class ElasticAPMIntegration(APMIntegration):
                     }
                 )
         elif self.config.service_name:
-            must_list.append(
-                {"term": {"service.name": self.config.service_name}}
-            )
+            must_list.append({"term": {"service.name": self.config.service_name}})
 
         data = query
 
@@ -941,21 +927,15 @@ class ElasticAPMIntegration(APMIntegration):
         must_list = cast(List[Dict[str, Any]], query["query"]["bool"]["must"])
         if filter_params:
             if "service" in filter_params:
-                must_list.append(
-                    {"term": {"service.name": filter_params["service"]}}
-                )
+                must_list.append({"term": {"service.name": filter_params["service"]}})
             if "error_type" in filter_params:
-                must_list.append(
-                    {"term": {"error.type": filter_params["error_type"]}}
-                )
+                must_list.append({"term": {"error.type": filter_params["error_type"]}})
             if "error_message" in filter_params:
                 must_list.append(
                     {"match_phrase": {"error.message": filter_params["error_message"]}}
                 )
         elif self.config.service_name:
-            must_list.append(
-                {"term": {"service.name": self.config.service_name}}
-            )
+            must_list.append({"term": {"service.name": self.config.service_name}})
 
         data = query
 

@@ -74,7 +74,9 @@ class CloudProviderFactory:
 _cloud_provider_factory = None
 
 
-def get_cloud_provider(config: Optional[Dict[str, Any]] = None) -> Optional[BaseCloudProvider]:
+def get_cloud_provider(
+    config: Optional[Dict[str, Any]] = None,
+) -> Optional[BaseCloudProvider]:
     """Get or create cloud provider instance based on configuration.
 
     Args:

@@ -102,8 +102,8 @@ class ConfidenceCalculator:
         self.base_threshold = base_threshold
         self.learning_rate = learning_rate
 
-        self.thresholds = {}
-        self.performance_history = defaultdict(lambda: deque(maxlen=100))
+        self.thresholds: Dict[str, ConfidenceThreshold] = {}
+        self.performance_history: Dict[str, deque] = defaultdict(lambda: deque(maxlen=100))
         self.context_weights = {
             "historical_success": 0.3,
             "system_criticality": 0.25,
@@ -381,8 +381,8 @@ class ContextualThresholds:
 
     def __init__(self, confidence_calculator: ConfidenceCalculator):
         self.confidence_calculator = confidence_calculator
-        self.threshold_groups = defaultdict(list)
-        self.group_performance = defaultdict(lambda: {"success": 0, "total": 0})
+        self.threshold_groups: Dict[str, List[str]] = defaultdict(list)
+        self.group_performance: Dict[str, Dict[str, int]] = defaultdict(lambda: {"success": 0, "total": 0})
 
     def get_threshold_for_context(
         self, error_type: str, system_component: str, deployment_context: Dict[str, Any]
@@ -539,8 +539,8 @@ class ReviewTrigger:
     ):
         self.confidence_calculator = confidence_calculator
         self.contextual_thresholds = contextual_thresholds
-        self.review_history = deque(maxlen=1000)
-        self.bypass_conditions = []
+        self.review_history: deque = deque(maxlen=1000)
+        self.bypass_conditions: List[Dict[str, Any]] = []
 
     def should_trigger_review(
         self,
@@ -578,7 +578,7 @@ class ReviewTrigger:
 
         # Record decision
         self._record_review_decision(
-            error_data.get("error_id"), bool(reasons), reasons, confidence_result
+            error_data.get("error_id", ""), bool(reasons), reasons, confidence_result
         )
 
         return bool(reasons), reasons
@@ -596,7 +596,7 @@ class ReviewTrigger:
         triggered = sum(1 for r in self.review_history if r["triggered"])
 
         # Analyze reasons
-        reason_counts = defaultdict(int)
+        reason_counts: Dict[str, int] = defaultdict(int)
         for record in self.review_history:
             for reason in record.get("reasons", []):
                 # Extract reason type

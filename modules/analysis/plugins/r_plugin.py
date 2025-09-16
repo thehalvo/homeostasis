@@ -204,7 +204,7 @@ class RExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -329,13 +329,19 @@ class RExceptionHandler:
                         "severity": best_match.get("severity", "medium"),
                         "rule_id": best_match.get("id", ""),
                         "tags": best_match.get("tags", []),
-                        "all_matches": matches,
+                        "all_matches": [
+                            f"{match.get('id', 'unknown')}: {match.get('description', 'No description')}"
+                            for match in matches
+                        ],
                     }
                 )
             else:
                 # Just add rule information without overriding the main analysis
                 analysis["rule_id"] = best_match.get("id", "")
-                analysis["all_matches"] = matches
+                analysis["all_matches"] = [
+                    f"{match.get('id', 'unknown')}: {match.get('description', 'No description')}"
+                    for match in matches
+                ]
 
         analysis["file_path"] = file_path
         analysis["line_number"] = line_number
@@ -697,11 +703,11 @@ class RPatchGenerator:
         self.r_template_dir.mkdir(parents=True, exist_ok=True)
 
         # Load patch templates
-        self.templates = self._load_templates()
+        self.templates: Dict[str, str] = self._load_templates()
 
     def _load_templates(self) -> Dict[str, str]:
         """Load R patch templates."""
-        templates = {}
+        templates: Dict[str, str] = {}
 
         if not self.r_template_dir.exists():
             logger.warning(f"R templates directory not found: {self.r_template_dir}")

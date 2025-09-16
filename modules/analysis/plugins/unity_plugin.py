@@ -1475,26 +1475,30 @@ class UnityLanguagePlugin(LanguagePlugin):
         )
 
     def generate_fix(
-        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
-    ) -> Optional[Dict[str, Any]]:
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a fix for the Unity error.
 
         Args:
-            error_data: The Unity error data
             analysis: Analysis results
-            source_code: Source code where the error occurred
+            context: Context dictionary containing error_data and source_code
 
         Returns:
-            Fix information or None if no fix can be generated
+            Fix information
         """
         try:
-            return self.patch_generator.generate_patch(
+            # Extract error_data and source_code from context
+            error_data = context.get("error_data", {})
+            source_code = context.get("source_code", "")
+
+            result = self.patch_generator.generate_patch(
                 error_data, analysis, source_code
             )
+            return result if result else {}
         except Exception as e:
             logger.error(f"Error generating Unity fix: {e}")
-            return None
+            return {}
 
     def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -1518,7 +1522,23 @@ class UnityLanguagePlugin(LanguagePlugin):
         Returns:
             Unity-specific error data
         """
-        return self.adapter.from_standard_format(standard_error)
+        # Convert standard format back to Unity-specific format
+        unity_error: Dict[str, Any] = {
+            "condition": standard_error.get("error_type", "Exception"),
+            "stackTrace": standard_error.get("stack_trace", ""),
+            "message": standard_error.get("message", ""),
+            "logType": "error"
+        }
+
+        # Add Unity-specific fields if available
+        if "file_path" in standard_error:
+            unity_error["file"] = standard_error["file_path"]
+        if "line_number" in standard_error:
+            unity_error["line"] = standard_error["line_number"]
+        if "context" in standard_error:
+            unity_error["context"] = standard_error["context"]
+
+        return unity_error
 
     def get_language_info(self) -> Dict[str, Any]:
         """

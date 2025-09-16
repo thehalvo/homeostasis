@@ -76,7 +76,7 @@ class RubyExceptionHandler:
             # Skip rules that don't apply to this category of exception
             if rule.get("applies_to") and error_type:
                 applies_to_patterns = rule.get("applies_to")
-                if not any(
+                if applies_to_patterns and not any(
                     re.search(pattern, error_type) for pattern in applies_to_patterns
                 ):
                     continue
@@ -756,7 +756,7 @@ class RubyPatchGenerator:
             else:
                 raise FileNotFoundError(f"Template not found: {template_path}")
 
-        return self.template_cache[path_str]
+        return str(self.template_cache[path_str])
 
     def _extract_variables(
         self, analysis: Dict[str, Any], context: Dict[str, Any]
@@ -848,8 +848,9 @@ class RubyPatchGenerator:
     ) -> str:
         """Generate a code snippet for nil checking in Ruby."""
         method = ""
-        if analysis.get("match_groups"):
-            method = analysis.get("match_groups")[0]
+        match_groups = analysis.get("match_groups")
+        if match_groups:
+            method = match_groups[0]
 
         return f"""# Option 1: Use safe navigation operator (Ruby 2.3+)
 object&.{method}
@@ -874,8 +875,9 @@ params.dig(:user, :name) # Instead of params[:user][:name]
     ) -> str:
         """Generate a code snippet for handling ActiveRecord::RecordNotFound."""
         model = ""
-        if analysis.get("match_groups"):
-            model = analysis.get("match_groups")[0]
+        match_groups = analysis.get("match_groups")
+        if match_groups:
+            model = match_groups[0]
 
         return f"""# Option 1: Use find_by instead of find (returns nil instead of raising exception)
 {model}.find_by(id: params[:id])
@@ -898,8 +900,9 @@ end
     ) -> str:
         """Generate a code snippet for handling LoadError."""
         gem_name = ""
-        if analysis.get("match_groups"):
-            gem_name = analysis.get("match_groups")[0]
+        match_groups = analysis.get("match_groups")
+        if match_groups:
+            gem_name = match_groups[0]
 
         return f"""# Add the gem to your Gemfile
 gem '{gem_name}'

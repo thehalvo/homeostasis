@@ -148,7 +148,7 @@ class EnterpriseOrchestrator(ABC):
         self.max_parallel_deployments = config.get("max_parallel_deployments", 10)
         self.default_timeout = config.get("default_timeout", 3600)
         self.enable_dry_run = config.get("enable_dry_run", True)
-        self._active_deployments = {}
+        self._active_deployments: Dict[str, DeploymentResult] = {}
 
     @abstractmethod
     async def validate_plan(self, plan: DeploymentPlan) -> Tuple[bool, List[str]]:
@@ -211,7 +211,7 @@ class EnterpriseOrchestrator(ABC):
     ) -> List[Dict[str, Any]]:
         """Create deployment stages based on dependencies"""
         stages = []
-        deployed = set()
+        deployed: set[str] = set()
         remaining = {r.resource_id: r for r in resources}
 
         stage_num = 0

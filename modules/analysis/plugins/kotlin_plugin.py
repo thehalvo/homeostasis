@@ -122,7 +122,7 @@ class KotlinExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -590,7 +590,7 @@ class KotlinPatchGenerator:
         self.templates_dir.mkdir(exist_ok=True, parents=True)
 
         # Cache for loaded templates
-        self.template_cache = {}
+        self.template_cache: Dict[str, str] = {}
 
     def generate_patch(
         self, analysis: Dict[str, Any], context: Dict[str, Any]

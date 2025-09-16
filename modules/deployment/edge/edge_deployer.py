@@ -6,7 +6,7 @@ at the edge (CDN, edge servers, etc.) for improved performance and resilience.
 """
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 from modules.security.audit import get_audit_logger
 
@@ -104,7 +104,9 @@ class EdgeDeployer:
 
         # Deploy to the edge
         options = options or {}
-        result: Dict[str, Any] = provider.deploy(service_name, fix_id, source_path, **options)
+        result: Dict[str, Any] = provider.deploy(
+            service_name, fix_id, source_path, **options
+        )
 
         # Log the deployment
         try:
@@ -151,7 +153,9 @@ class EdgeDeployer:
 
         # Update the deployment
         options = options or {}
-        result: Dict[str, Any] = provider.update(service_name, fix_id, source_path, **options)
+        result: Dict[str, Any] = provider.update(
+            service_name, fix_id, source_path, **options
+        )
 
         # Log the update
         try:
@@ -229,7 +233,7 @@ class EdgeDeployer:
             return {"success": False, "error": error_msg}
 
         # Get the status
-        return provider.get_status(service_name, fix_id)
+        return cast(Dict[str, Any], provider.get_status(service_name, fix_id))
 
     def purge_edge_cache(
         self,
@@ -347,7 +351,9 @@ class EdgeDeployer:
             return {"success": False, "error": error_msg}
 
         # Update canary
-        result: Dict[str, Any] = provider.update_canary(service_name, fix_id, percentage)
+        result: Dict[str, Any] = provider.update_canary(
+            service_name, fix_id, percentage
+        )
 
         # Log the canary update
         try:

@@ -173,7 +173,7 @@ class NimExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -588,11 +588,11 @@ class NimPatchGenerator:
         self.nim_template_dir.mkdir(parents=True, exist_ok=True)
 
         # Load patch templates
-        self.templates = self._load_templates()
+        self.templates: Dict[str, str] = self._load_templates()
 
     def _load_templates(self) -> Dict[str, str]:
         """Load Nim patch templates."""
-        templates = {}
+        templates: Dict[str, str] = {}
 
         if not self.nim_template_dir.exists():
             logger.warning(

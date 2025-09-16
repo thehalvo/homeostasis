@@ -6,7 +6,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 # Add parent directory to sys.path
 current_dir = Path(__file__).resolve().parent
@@ -81,7 +81,7 @@ def verify_rule_conflicts() -> List[Dict[str, Any]]:
         all_rules.extend(rule_set.rules)
 
     # Check for conflicts
-    conflicts = detect_rule_conflicts(all_rules)
+    conflicts = cast(List[Dict[str, Any]], detect_rule_conflicts(all_rules))
 
     if conflicts:
         print(f"  Found {len(conflicts)} potential conflicts:")
@@ -116,7 +116,7 @@ def verify_circular_dependencies() -> List[List[str]]:
 
     # Check for circular dependencies
     dependency_checker = RuleDependency(all_rules)
-    circular_deps = dependency_checker.detect_circular_dependencies()
+    circular_deps = cast(List[List[str]], dependency_checker.detect_circular_dependencies())
 
     if circular_deps:
         print(f"  Found {len(circular_deps)} circular dependency chains:")

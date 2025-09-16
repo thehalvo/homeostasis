@@ -4,15 +4,9 @@ Tests for the MATLAB language plugin.
 
 import pytest
 
-from modules.analysis.plugins.matlab_plugin import (
-    MATLABExceptionHandler as MatlabExceptionHandler,
-)
-from modules.analysis.plugins.matlab_plugin import (
-    MATLABLanguagePlugin as MatlabLanguagePlugin,
-)
-from modules.analysis.plugins.matlab_plugin import (
-    MATLABPatchGenerator as MatlabPatchGenerator,
-)
+from modules.analysis.plugins.matlab_plugin import MATLABExceptionHandler as MatlabExceptionHandler
+from modules.analysis.plugins.matlab_plugin import MATLABLanguagePlugin as MatlabLanguagePlugin
+from modules.analysis.plugins.matlab_plugin import MATLABPatchGenerator as MatlabPatchGenerator
 
 
 class TestMatlabExceptionHandler:

@@ -266,7 +266,7 @@ class ContainerSandbox(SandboxContext):
         super().__init__(plugin_id, permissions)
         self.docker_client = docker_client
         self.paranoid = paranoid
-        self.container = None
+        self.container: Optional[Any] = None
 
     def setup(self):
         """Set up container sandbox."""
@@ -289,8 +289,7 @@ class ContainerSandbox(SandboxContext):
 
         # Create container
         self.container = self.docker_client.containers.create(**config)
-        if self.container:
-            self.container.start()
+        self.container.start()
 
     def teardown(self):
         """Tear down container sandbox."""

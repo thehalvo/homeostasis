@@ -628,7 +628,7 @@ class AWSProvider(BaseCloudProvider):
             if not image:
                 return {
                     "success": False,
-                    "error": "Image parameter is required for EKS deployment"
+                    "error": "Image parameter is required for EKS deployment",
                 }
 
             deploy_result = k8s_deployment.deploy_service(

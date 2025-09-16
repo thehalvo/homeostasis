@@ -599,7 +599,9 @@ class RollbackManager:
     ) -> bool:
         """Check if error rate has spiked."""
         current_error_rate = current.get("error_rate", 0)
-        return bool(current_error_rate > self.monitoring_config.max_error_rate_threshold)
+        return bool(
+            current_error_rate > self.monitoring_config.max_error_rate_threshold
+        )
 
     def _load_rollback_data(self):
         """Load rollback data from storage."""

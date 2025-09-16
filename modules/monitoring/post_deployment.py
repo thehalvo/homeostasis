@@ -27,7 +27,9 @@ class PostDeploymentMonitor:
     Monitors service health after deployment.
     """
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None, log_level: str = "INFO"):
+    def __init__(
+        self, config: Optional[Dict[str, Any]] = None, log_level: str = "INFO"
+    ):
         """
         Initialize the post-deployment monitor.
 
@@ -528,7 +530,11 @@ class SuccessRateTracker:
             )
 
     def record_fix(
-        self, patch_id: str, bug_id: str, success: bool, metrics: Optional[Dict[str, Any]] = None
+        self,
+        patch_id: str,
+        bug_id: str,
+        success: bool,
+        metrics: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Record a fix and its success or failure.

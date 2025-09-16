@@ -189,8 +189,10 @@ class CanaryDeployment:
                 else:
                     # First iteration, use start_time
                     seconds_since_last = (
-                        current_time - self.start_time
-                    ).total_seconds() if self.start_time else 0
+                        (current_time - self.start_time).total_seconds()
+                        if self.start_time
+                        else 0
+                    )
 
                 if seconds_since_last >= self.interval_seconds:
                     # Check if metrics are healthy

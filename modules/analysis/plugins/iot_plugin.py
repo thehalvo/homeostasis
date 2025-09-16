@@ -7,7 +7,7 @@ Provides IoT-specific error detection and healing capabilities
 import json
 import os
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 from ...emerging_tech.iot import DeviceMetrics, IoTDeviceMonitor, IoTError, IoTPlatform
 from ..language_plugin_system import LanguagePlugin
@@ -67,10 +67,10 @@ class IoTPlugin(LanguagePlugin):
             metrics = DeviceMetrics(
                 cpu_usage=device_metrics.get("cpu_usage", 0),
                 memory_usage=device_metrics.get("memory_usage", 0),
+                disk_usage=device_metrics.get("disk_usage", 0),
                 temperature=device_metrics.get("temperature", 25),
                 battery_level=device_metrics.get("battery_level", 100),
                 network_latency=device_metrics.get("network_latency", 0),
-                signal_strength=device_metrics.get("signal_strength", -50),
             )
 
         iot_error = self.monitor.analyze_iot_error(
@@ -84,7 +84,6 @@ class IoTPlugin(LanguagePlugin):
                 "description": iot_error.description,
                 "suggested_fix": iot_error.suggested_fix,
                 "severity": iot_error.severity,
-                "resource_impact": iot_error.resource_impact,
             }
 
         return {"error_type": "unknown", "description": "Could not analyze IoT error"}
@@ -115,7 +114,7 @@ class IoTPlugin(LanguagePlugin):
     ) -> Dict[str, Any]:
         """Generate a fix for an IoT error based on the analysis."""
         error_type = analysis.get("error_type")
-        platform = analysis.get("platform")
+        platform = analysis.get("platform", "")
 
         # Generate platform-specific fixes
         if error_type == "memory_constraint":
@@ -168,7 +167,7 @@ class IoTPlugin(LanguagePlugin):
         else:
             self.rules = {"rules": [], "platform_specific": {}}
 
-    def detect_errors(self, code: str, file_path: str = None) -> List[Dict[str, Any]]:
+    def detect_errors(self, code: str, file_path: Optional[str] = None) -> List[Dict[str, Any]]:
         """Detect IoT-specific errors in code"""
         errors = []
 
@@ -356,7 +355,7 @@ class IoTPlugin(LanguagePlugin):
         self,
         error_message: str,
         code_context: str,
-        file_path: str = None,
+        file_path: Optional[str] = None,
         device_metrics: Optional[Dict] = None,
     ) -> Optional[Dict[str, Any]]:
         """Analyze IoT error and suggest fixes"""
@@ -485,7 +484,7 @@ class IoTPlugin(LanguagePlugin):
             device_id, device_metrics, historical_metrics
         )
 
-    def get_platform_info(self, code: str, file_path: str = None) -> Dict[str, Any]:
+    def get_platform_info(self, code: str, file_path: Optional[str] = None) -> Dict[str, Any]:
         """Get information about the IoT platform being used"""
         platform = self.monitor.detect_platform(code, file_path or "")
 
@@ -556,7 +555,13 @@ class IoTPlugin(LanguagePlugin):
 
     def _get_platform_constraints(self, platform: IoTPlatform) -> Dict[str, Any]:
         """Get resource constraints for platform"""
-        constraints = self.rules.get("platform_specific", {}).get(platform.value, {})
+        platform_specific = self.rules.get("platform_specific", {})
+        if not isinstance(platform_specific, dict):
+            platform_specific = {}
+
+        constraints = platform_specific.get(platform.value, {})
+        if not isinstance(constraints, dict):
+            constraints = {}
 
         # Add default constraints if not in rules
         if platform == IoTPlatform.ARDUINO and "memory_limits" not in constraints:
@@ -616,27 +621,21 @@ void reconnectMQTT() {
         }
         return handlers.get(platform, "// Add connectivity handler for your platform")
 
-    def get_capabilities(self) -> Dict[str, Any]:
+    def get_capabilities(self) -> Set[str]:
         """Return plugin capabilities"""
-        return {
-            "name": self.name,
-            "version": self.version,
-            "supported_platforms": self.supported_platforms,
-            "supported_extensions": self.supported_extensions,
-            "features": [
-                "error_detection",
-                "resource_monitoring",
-                "connectivity_healing",
-                "power_optimization",
-                "sensor_redundancy",
-                "edge_computing_support",
-            ],
-            "healing_strategies": [
-                "auto_reconnect",
-                "resource_optimization",
-                "power_saving_mode",
-                "sensor_redundancy",
-                "offline_mode",
-                "edge_offloading",
-            ],
-        }
+        # Return the standard capabilities plus IoT-specific ones
+        capabilities = super().get_capabilities()
+        capabilities.update({
+            "error_detection",
+            "resource_monitoring",
+            "connectivity_healing",
+            "power_optimization",
+            "sensor_redundancy",
+            "edge_computing_support",
+            "auto_reconnect",
+            "resource_optimization",
+            "power_saving_mode",
+            "offline_mode",
+            "edge_offloading",
+        })
+        return capabilities

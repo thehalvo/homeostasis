@@ -113,7 +113,7 @@ class IterativeRefiner:
         }
 
         # Refinement patterns learned from successful iterations
-        self.learned_patterns = []
+        self.learned_patterns: List[Dict[str, Any]] = []
 
         logger.info("Initialized Iterative Refiner")
 
@@ -416,7 +416,7 @@ OUTPUT FORMAT:
         test_command: Optional[str],
     ) -> Dict[str, Any]:
         """Validate a refined patch."""
-        validation_results = {
+        validation_results: Dict[str, Any] = {
             "tests_passed": False,
             "style_compliant": False,
             "no_errors": False,
@@ -735,11 +735,10 @@ OUTPUT FORMAT:
 
     def _is_validation_successful(self, validation_results: Dict[str, Any]) -> bool:
         """Check if validation is successful."""
-        return (
-            validation_results.get("tests_passed", False)
-            and validation_results.get("no_errors", False)
-            and validation_results.get("semantic_preserved", True)
-        )
+        tests_passed: bool = validation_results.get("tests_passed", False)
+        no_errors: bool = validation_results.get("no_errors", False)
+        semantic_preserved: bool = validation_results.get("semantic_preserved", True)
+        return tests_passed and no_errors and semantic_preserved
 
     def _has_converged(self, improvement_metrics: Dict[str, float]) -> bool:
         """Check if refinement has converged."""

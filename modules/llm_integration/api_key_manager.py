@@ -757,7 +757,10 @@ class APIKeyManager:
             List of provider names in fallback order
         """
         config = self._load_provider_config()
-        return cast(List[str], config.get("fallback_order", ["anthropic", "openai", "openrouter"]))
+        return cast(
+            List[str],
+            config.get("fallback_order", ["anthropic", "openai", "openrouter"]),
+        )
 
     def set_enable_fallback(self, enabled: bool) -> None:
         """
@@ -828,7 +831,9 @@ class APIKeyManager:
             OpenRouter unified configuration
         """
         config = self._load_provider_config()
-        return cast(Dict[str, Any], config.get("openrouter_unified_config", {"enabled": False}))
+        return cast(
+            Dict[str, Any], config.get("openrouter_unified_config", {"enabled": False})
+        )
 
     def set_provider_policies(
         self,
@@ -880,14 +885,17 @@ class APIKeyManager:
             Dictionary of provider policies
         """
         config = self._load_provider_config()
-        return cast(Dict[str, str], config.get(
-            "provider_policies",
-            {
-                "cost_preference": "balanced",
-                "latency_preference": "balanced",
-                "reliability_preference": "high",
-            },
-        ))
+        return cast(
+            Dict[str, str],
+            config.get(
+                "provider_policies",
+                {
+                    "cost_preference": "balanced",
+                    "latency_preference": "balanced",
+                    "reliability_preference": "high",
+                },
+            ),
+        )
 
     def get_provider_config_summary(self) -> Dict[str, Any]:
         """

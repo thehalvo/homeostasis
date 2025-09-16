@@ -48,6 +48,9 @@ try:
 except ImportError as e:
     logger.warning(f"Additional mobile framework plugins not available: {e}")
     ADDITIONAL_MOBILE_FRAMEWORKS_AVAILABLE = False
+    # Define placeholder types for type checking
+    AndroidJavaLanguagePlugin = Any  # type: ignore
+    CapacitorCordovaLanguagePlugin = Any  # type: ignore
 
 # Import styling and build system plugins
 try:
@@ -58,6 +61,9 @@ try:
 except ImportError as e:
     logger.warning(f"Styling and build framework plugins not available: {e}")
     STYLING_BUILD_FRAMEWORKS_AVAILABLE = False
+    # Define placeholder types for type checking
+    CSSLanguagePlugin = Any  # type: ignore
+    BuildFileAnalyzer = Any  # type: ignore
 
 # Import core language plugins
 try:
@@ -603,6 +609,7 @@ class JavaAndroidParser(LanguageSpecificParser):
 
     def __init__(self):
         super().__init__(LanguageType.JAVA)
+        self.plugin: Optional[AndroidJavaLanguagePlugin]
         if ADDITIONAL_MOBILE_FRAMEWORKS_AVAILABLE:
             self.plugin = AndroidJavaLanguagePlugin()
         else:
@@ -647,8 +654,8 @@ class JavaAndroidParser(LanguageSpecificParser):
             try:
                 error_data = {
                     "message": error_context.error_message,
-                    "error_type": error_context.error_type,
-                    "stack_trace": error_context.stack_trace_lines,
+                    "error_type": error_context.exception_type,
+                    "stack_trace": error_context.stack_trace,
                     "source_code": error_context.source_code_snippet,
                 }
                 analysis = self.plugin.analyze_error(error_data)
@@ -670,6 +677,7 @@ class CapacitorCordovaParser(LanguageSpecificParser):
 
     def __init__(self):
         super().__init__(LanguageType.JAVASCRIPT)
+        self.plugin: Optional[CapacitorCordovaLanguagePlugin]
         if ADDITIONAL_MOBILE_FRAMEWORKS_AVAILABLE:
             self.plugin = CapacitorCordovaLanguagePlugin()
         else:
@@ -714,8 +722,8 @@ class CapacitorCordovaParser(LanguageSpecificParser):
             try:
                 error_data = {
                     "message": error_context.error_message,
-                    "error_type": error_context.error_type,
-                    "stack_trace": error_context.stack_trace_lines,
+                    "error_type": error_context.exception_type,
+                    "stack_trace": error_context.stack_trace,
                     "source_code": error_context.source_code_snippet,
                 }
                 analysis = self.plugin.analyze_error(error_data)
@@ -737,6 +745,7 @@ class CSSParser(LanguageSpecificParser):
 
     def __init__(self):
         super().__init__(LanguageType.UNKNOWN)  # CSS not defined in LanguageType enum
+        self.plugin: Optional[CSSLanguagePlugin]
         if STYLING_BUILD_FRAMEWORKS_AVAILABLE:
             self.plugin = CSSLanguagePlugin()
         else:
@@ -781,8 +790,8 @@ class CSSParser(LanguageSpecificParser):
             try:
                 error_data = {
                     "message": error_context.error_message,
-                    "error_type": error_context.error_type,
-                    "stack_trace": error_context.stack_trace_lines,
+                    "error_type": error_context.exception_type,
+                    "stack_trace": error_context.stack_trace,
                     "source_code": error_context.source_code_snippet,
                 }
                 analysis = self.plugin.analyze_error(error_data)
@@ -848,8 +857,8 @@ class CPPParser(LanguageSpecificParser):
             try:
                 error_data = {
                     "message": error_context.error_message,
-                    "error_type": error_context.error_type,
-                    "stack_trace": error_context.stack_trace_lines,
+                    "error_type": error_context.exception_type,
+                    "stack_trace": error_context.stack_trace,
                     "source_code": error_context.source_code_snippet,
                 }
                 analysis = self.plugin.analyze_error(error_data)
@@ -915,8 +924,8 @@ class ObjCParser(LanguageSpecificParser):
             try:
                 error_data = {
                     "message": error_context.error_message,
-                    "error_type": error_context.error_type,
-                    "stack_trace": error_context.stack_trace_lines,
+                    "error_type": error_context.exception_type,
+                    "stack_trace": error_context.stack_trace,
                     "source_code": error_context.source_code_snippet,
                 }
                 analysis = self.plugin.analyze_error(error_data)

@@ -14,7 +14,7 @@ import uuid
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, DefaultDict, Dict, List, Optional
+from typing import Any, DefaultDict, Dict, List, Optional, cast
 
 from modules.monitoring.feedback_loop import FeedbackLoop
 from modules.monitoring.logger import MonitoringLogger
@@ -870,7 +870,7 @@ class TelemetryRuleEnhancementSystem:
 
         # Check cache
         if self._is_cache_valid(cache_key):
-            return self.analytics_cache[cache_key]["data"]
+            return cast(Dict[str, Any], self.analytics_cache[cache_key]["data"])
 
         # Load error data
         start_time = datetime.utcnow() - timedelta(days=days_back)
@@ -904,7 +904,7 @@ class TelemetryRuleEnhancementSystem:
 
         # Check cache
         if self._is_cache_valid(cache_key):
-            return self.analytics_cache[cache_key]["data"]
+            return cast(Dict[str, Any], self.analytics_cache[cache_key]["data"])
 
         # Load LLM interaction data
         start_time = datetime.utcnow() - timedelta(days=days_back)
@@ -939,7 +939,7 @@ class TelemetryRuleEnhancementSystem:
 
         # Check cache
         if self._is_cache_valid(cache_key):
-            return self.analytics_cache[cache_key]["data"]
+            return cast(Dict[str, Any], self.analytics_cache[cache_key]["data"])
 
         # Load rule execution data
         start_time = datetime.utcnow() - timedelta(days=days_back)
@@ -1158,7 +1158,7 @@ class TelemetryRuleEnhancementSystem:
         cache_time = self.analytics_cache[cache_key]["timestamp"]
         age_minutes = (datetime.utcnow() - cache_time).total_seconds() / 60
 
-        return age_minutes < self.cache_ttl
+        return bool(age_minutes < self.cache_ttl)
 
     def _cache_result(self, cache_key: str, data: Any) -> None:
         """Cache analysis result."""

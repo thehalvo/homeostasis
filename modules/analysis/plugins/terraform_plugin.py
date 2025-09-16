@@ -198,7 +198,7 @@ class TerraformExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -326,7 +326,7 @@ class TerraformExceptionHandler:
         # Check configuration content for provider blocks
         provider_matches = re.findall(r'provider\s+"([^"]+)"', config_lower)
         if provider_matches:
-            return provider_matches[0]
+            return str(provider_matches[0])
 
         return "unknown"
 
@@ -631,11 +631,11 @@ class TerraformPatchGenerator:
         self.terraform_template_dir.mkdir(parents=True, exist_ok=True)
 
         # Load patch templates
-        self.templates = self._load_templates()
+        self.templates: Dict[str, str] = self._load_templates()
 
     def _load_templates(self) -> Dict[str, str]:
         """Load Terraform patch templates."""
-        templates = {}
+        templates: Dict[str, str] = {}
 
         if not self.terraform_template_dir.exists():
             logger.warning(

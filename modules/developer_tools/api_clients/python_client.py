@@ -346,7 +346,9 @@ class HomeostasisClient:
                 on_error(error)
 
         def _on_close(ws, close_status_code, close_msg):
-            logger.info(f"WebSocket connection closed: {close_status_code} - {close_msg}")
+            logger.info(
+                f"WebSocket connection closed: {close_status_code} - {close_msg}"
+            )
             if on_close:
                 on_close()
 

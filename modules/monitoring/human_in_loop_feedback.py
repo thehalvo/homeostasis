@@ -15,7 +15,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional
 
 import requests
 
@@ -984,7 +984,9 @@ Please review this request urgently.
                 except ValueError:
                     continue
 
-    def get_pending_reviews(self, reviewer: Optional[str] = None) -> List[Dict[str, Any]]:
+    def get_pending_reviews(
+        self, reviewer: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """
         Get list of pending reviews.
 

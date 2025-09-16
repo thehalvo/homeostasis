@@ -291,7 +291,7 @@ class FlutterExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -638,7 +638,7 @@ class FlutterPatchGenerator:
 
     def _load_templates(self) -> Dict[str, str]:
         """Load Flutter patch templates."""
-        templates = {}
+        templates: Dict[str, str] = {}
 
         if not self.flutter_template_dir.exists():
             logger.warning(
@@ -1275,23 +1275,22 @@ class FlutterLanguagePlugin(LanguagePlugin):
         )
 
     def generate_fix(
-        self,
-        error_data: Dict[str, Any],
-        analysis: Dict[str, Any],
-        source_code: str = "",
-    ) -> Optional[Dict[str, Any]]:
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a fix for an error based on the analysis.
 
         Args:
-            error_data: Original error data
-            analysis: Error analysis
-            source_code: Source code context (optional)
+            analysis: Analysis results
+            context: Additional context containing error_data and source_code
 
         Returns:
-            Generated fix data
+            Generated fix data or empty dict if no fix can be generated
         """
         try:
+            # Extract error data and source code from context
+            error_data = context.get("error_data", {})
+            source_code = context.get("source_code", "")
 
             # Generate patch
             patch_result = self.patch_generator.generate_patch(

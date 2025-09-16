@@ -563,7 +563,9 @@ class TeamMetricsCollector:
 
     def __init__(self, config: Dict[str, Any]):
         self.config = config
-        self._metrics_store: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
+        self._metrics_store: Dict[str, Dict[str, int]] = defaultdict(
+            lambda: defaultdict(int)
+        )
         self._response_times: Dict[str, List[float]] = defaultdict(list)
         self._resolution_times: Dict[str, List[float]] = defaultdict(list)
 
@@ -757,7 +759,10 @@ class SlackIntegration:
 
         # Add action buttons if approval required
         if notification.metadata.get("approval_request_id"):
-            if isinstance(message["attachments"], list) and len(message["attachments"]) > 0:
+            if (
+                isinstance(message["attachments"], list)
+                and len(message["attachments"]) > 0
+            ):
                 attachment = message["attachments"][0]
                 if isinstance(attachment, dict):
                     attachment["actions"] = [

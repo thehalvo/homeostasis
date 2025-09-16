@@ -90,7 +90,7 @@ class GoErrorHandler:
             # Skip rules that don't apply to this category of error
             if rule.get("applies_to") and error_type:
                 applies_to_patterns = rule.get("applies_to")
-                if not any(
+                if applies_to_patterns and not any(
                     re.search(pattern, error_type) for pattern in applies_to_patterns
                 ):
                     continue
@@ -687,7 +687,7 @@ class GoPatchGenerator:
         self.templates_dir.mkdir(exist_ok=True, parents=True)
 
         # Cache for loaded templates
-        self.template_cache = {}
+        self.template_cache: Dict[str, str] = {}
 
     def generate_patch(
         self, analysis: Dict[str, Any], context: Dict[str, Any]
@@ -1175,7 +1175,7 @@ class GoLanguagePlugin(LanguagePlugin):
 
     def can_handle(self, error_data: Dict[str, Any]) -> bool:
         """Check if this plugin can handle the given error."""
-        language = error_data.get("language", "").lower()
+        language = str(error_data.get("language", "")).lower()
         return language == "go" or language == "golang"
 
     def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -1240,7 +1240,7 @@ class GoLanguagePlugin(LanguagePlugin):
         """
         # Check if framework is already specified
         if "framework" in error_data and error_data["framework"]:
-            return error_data["framework"]
+            return str(error_data["framework"])
 
         # Framework detection patterns
         framework_patterns = {
@@ -1288,7 +1288,8 @@ class GoLanguagePlugin(LanguagePlugin):
         Returns:
             Generated fix data
         """
-        return self.patch_generator.generate_patch(analysis, context)
+        patch_result = self.patch_generator.generate_patch(analysis, context)
+        return patch_result if patch_result is not None else {}
 
     def get_supported_frameworks(self) -> List[str]:
         """

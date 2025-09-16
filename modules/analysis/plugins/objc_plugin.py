@@ -233,7 +233,7 @@ class ObjCExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
             for rule in rule_list:
@@ -248,7 +248,7 @@ class ObjCExceptionHandler:
                     )
 
     def analyze_error(
-        self, error_message: str, context: Dict[str, Any] = None
+        self, error_message: str, context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Analyze an Objective-C error message and provide categorization and suggestions.
@@ -321,7 +321,7 @@ class ObjCExceptionHandler:
         self, error_message: str, context: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Analyze platform-specific context and provide additional insights."""
-        additional_context = {
+        additional_context: Dict[str, Any] = {
             "detected_platform": "unknown",
             "framework_detected": [],
             "arc_related": False,
@@ -721,6 +721,82 @@ class ObjCLanguagePlugin(LanguagePlugin):
 
         logger.info(f"Initialized {self.name} v{self.version}")
 
+    def get_language_id(self) -> str:
+        """Get the unique identifier for Objective-C."""
+        return "objc"
+
+    def get_language_name(self) -> str:
+        """Get the human-readable name of the language."""
+        return "Objective-C"
+
+    def get_language_version(self) -> str:
+        """Get the version of Objective-C supported by this plugin."""
+        return "2.0+"
+
+    def get_supported_frameworks(self) -> List[str]:
+        """Get the list of frameworks supported by this language plugin."""
+        return [
+            "Foundation",
+            "UIKit",
+            "AppKit",
+            "CoreData",
+            "CoreGraphics",
+            "AVFoundation",
+            "MapKit",
+            "CoreLocation",
+            "Photos",
+            "CloudKit",
+            "SwiftUI",
+            "Cocoa",
+            "CocoaTouch",
+        ]
+
+    def normalize_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Normalize error data to the standard Homeostasis format.
+
+        Args:
+            error_data: Objective-C error data
+
+        Returns:
+            Normalized error data
+        """
+        return {
+            "language": "objc",
+            "error_type": error_data.get("type", "UnknownError"),
+            "error_message": error_data.get("message", ""),
+            "file_path": error_data.get("file_path", ""),
+            "line_number": error_data.get("line_number", 0),
+            "column_number": error_data.get("column_number", 0),
+            "stack_trace": error_data.get("stack_trace", []),
+            "context": error_data.get("context", {}),
+            "severity": error_data.get("severity", "medium"),
+            "timestamp": self._get_current_timestamp(),
+        }
+
+    def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert standard format error data back to the Objective-C-specific format.
+
+        Args:
+            standard_error: Standard format error data
+
+        Returns:
+            Objective-C-specific error data
+        """
+        return {
+            "type": standard_error.get("error_type", "UnknownError"),
+            "message": standard_error.get("error_message", ""),
+            "file_path": standard_error.get("file_path", ""),
+            "line_number": standard_error.get("line_number", 0),
+            "column_number": standard_error.get("column_number", 0),
+            "stack_trace": standard_error.get("stack_trace", []),
+            "context": standard_error.get("context", {}),
+            "platform_info": standard_error.get("context", {}).get("platform_info", {}),
+            "xcode_version": standard_error.get("context", {}).get("xcode_version", "unknown"),
+            "ios_version": standard_error.get("context", {}).get("ios_version", "unknown"),
+        }
+
     def can_handle(self, language: str, file_path: Optional[str] = None) -> bool:
         """
         Check if this plugin can handle the given language or file.
@@ -744,21 +820,19 @@ class ObjCLanguagePlugin(LanguagePlugin):
 
         return False
 
-    def analyze_error(
-        self, error_message: str, context: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+    def analyze_error(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze an Objective-C error and provide comprehensive information.
 
         Args:
-            error_message: The error message to analyze
-            context: Optional context information
+            error_data: Error data in the Objective-C format
 
         Returns:
             Comprehensive error analysis results
         """
-        if context is None:
-            context = {}
+        # Extract error message and context from error_data
+        error_message = error_data.get("message", "")
+        context = error_data.get("context", {})
 
         # Use the exception handler to analyze the error
         analysis = self.exception_handler.analyze_error(error_message, context)
@@ -776,20 +850,23 @@ class ObjCLanguagePlugin(LanguagePlugin):
         return analysis
 
     def generate_fix(
-        self, error_analysis: Dict[str, Any], source_code: Optional[str] = None
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Generate a fix for the analyzed Objective-C error.
 
         Args:
-            error_analysis: Results from analyze_error
-            source_code: Optional source code context
+            analysis: Analysis results
+            context: Additional context containing error_data and source_code
 
         Returns:
             Generated fix information
         """
+        # Extract source code from context
+        source_code = context.get("source_code")
+
         # Use the patch generator to create a fix
-        patch_info = self.patch_generator.generate_patch(error_analysis, source_code)
+        patch_info = self.patch_generator.generate_patch(analysis, source_code)
 
         # Add plugin metadata
         patch_info.update(
@@ -797,7 +874,7 @@ class ObjCLanguagePlugin(LanguagePlugin):
                 "plugin_name": self.name,
                 "plugin_version": self.version,
                 "generation_timestamp": self._get_timestamp(),
-                "error_analysis": error_analysis,
+                "error_analysis": analysis,
             }
         )
 
@@ -978,10 +1055,7 @@ class ObjCLanguagePlugin(LanguagePlugin):
 
 
 # Register the plugin
-@register_plugin
-def create_objc_plugin():
-    """Factory function to create Objective-C plugin instance."""
-    return ObjCLanguagePlugin()
+register_plugin(ObjCLanguagePlugin())
 
 
 # Export the plugin class for direct usage

@@ -184,7 +184,7 @@ class HaskellExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -569,7 +569,7 @@ class HaskellPatchGenerator:
 
     def _load_templates(self) -> Dict[str, str]:
         """Load Haskell patch templates."""
-        templates = {}
+        templates: Dict[str, str] = {}
 
         if not self.haskell_template_dir.exists():
             logger.warning(

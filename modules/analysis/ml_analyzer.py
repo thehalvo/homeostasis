@@ -259,9 +259,16 @@ class MLAnalyzer:
         rule_result = self._rule_analysis(error_data)
         rule_confidence = rule_result.get("confidence_score", 0.0)
 
-        # For DISABLED mode, just return rule-based result
+        # For DISABLED mode, just return rule-based result with ML expected format
         if self.mode == MLAnalysisMode.DISABLED:
-            return rule_result
+            result = rule_result.copy()
+            # Map root_cause to error_type if it exists
+            if "root_cause" in result and "error_type" not in result:
+                result["error_type"] = result["root_cause"]
+            # Ensure analysis_method is set
+            if "analysis_method" not in result:
+                result["analysis_method"] = "rule"
+            return result
 
         # Determine if we need ML analysis based on mode
         perform_ml_analysis = False
@@ -295,8 +302,15 @@ class MLAnalyzer:
                         "fallback_reason": "low_rule_confidence",
                     }
 
-            # Use rule-based result
-            return rule_result
+            # Use rule-based result with ML expected format
+            result = rule_result.copy()
+            # Map root_cause to error_type if it exists
+            if "root_cause" in result and "error_type" not in result:
+                result["error_type"] = result["root_cause"]
+            # Ensure analysis_method is set
+            if "analysis_method" not in result:
+                result["analysis_method"] = "rule"
+            return result
 
         elif self.mode == MLAnalysisMode.PRIMARY:
             if ml_result and ml_result.get("success", False):
@@ -306,11 +320,16 @@ class MLAnalyzer:
                     return {**ml_result, "rule_analysis": rule_result}
 
             # Fallback to rule-based result
-            return {
-                **rule_result,
-                "ml_analysis": ml_result,
-                "fallback_reason": "low_ml_confidence",
-            }
+            result = rule_result.copy()
+            # Map root_cause to error_type if it exists
+            if "root_cause" in result and "error_type" not in result:
+                result["error_type"] = result["root_cause"]
+            # Ensure analysis_method is set
+            if "analysis_method" not in result:
+                result["analysis_method"] = "rule"
+            result["ml_analysis"] = ml_result
+            result["fallback_reason"] = "low_ml_confidence"
+            return result
 
         elif self.mode in [MLAnalysisMode.PARALLEL, MLAnalysisMode.ENSEMBLE]:
             # Combine results
@@ -318,10 +337,26 @@ class MLAnalyzer:
                 return self._combine_results(rule_result, ml_result)
             else:
                 # Fall back to rule result if ML failed
-                return rule_result
+                result = rule_result.copy()
+                # Map root_cause to error_type if it exists
+                if "root_cause" in result and "error_type" not in result:
+                    result["error_type"] = result["root_cause"]
+                # Ensure analysis_method is set
+                if "analysis_method" not in result:
+                    result["analysis_method"] = "rule"
+                # For parallel/ensemble modes, add primary_method
+                result["primary_method"] = "rule"
+                return result
 
         # Default to rule-based result if no other case matches
-        return rule_result
+        result = rule_result.copy()
+        # Map root_cause to error_type if it exists
+        if "root_cause" in result and "error_type" not in result:
+            result["error_type"] = result["root_cause"]
+        # Ensure analysis_method is set
+        if "analysis_method" not in result:
+            result["analysis_method"] = "rule"
+        return result
 
     def analyze_errors(
         self, error_data_list: List[Dict[str, Any]]
@@ -435,6 +470,13 @@ class HybridAnalyzer:
         ):
             # Add source information
             ml_result["sources"] = ["rule_based", "ml"]
+            # Ensure primary_method is present for hybrid mode
+            if "primary_method" not in ml_result:
+                # Determine primary based on confidence and available methods
+                if ml_confidence > 0 and ml_confidence >= rule_confidence:
+                    ml_result["primary_method"] = "ml"
+                else:
+                    ml_result["primary_method"] = "rule"
             return ml_result
 
         # Perform LLM analysis

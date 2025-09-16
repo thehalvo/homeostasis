@@ -510,7 +510,9 @@ class ServiceNowConnector(ITSMConnector):
             incident_id=data.get("sys_id"),
             short_description=data.get("short_description", ""),
             description=data.get("description", ""),
-            priority=priority_map.get(data.get("priority") or "", IncidentPriority.MEDIUM),
+            priority=priority_map.get(
+                data.get("priority") or "", IncidentPriority.MEDIUM
+            ),
             status=state_to_status.get(data.get("state") or "", IncidentStatus.NEW),
             assignment_group=data.get("assignment_group"),
             assigned_to=data.get("assigned_to"),
@@ -560,7 +562,9 @@ class ServiceNowConnector(ITSMConnector):
             implementation_plan=data.get("implementation_plan", ""),
             backout_plan=data.get("backout_plan", ""),
             test_plan=data.get("test_plan", ""),
-            status=state_to_status.get(data.get("state") or "", ChangeRequestStatus.NEW),
+            status=state_to_status.get(
+                data.get("state") or "", ChangeRequestStatus.NEW
+            ),
             type=data.get("type", "standard"),
             assignment_group=data.get("assignment_group"),
             assigned_to=data.get("assigned_to"),

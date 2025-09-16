@@ -9,7 +9,7 @@ import logging
 import re
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Any, Dict, List, Optional, Tuple
 
 from .rule_based import RuleBasedAnalyzer
 from .rule_confidence import ConfidenceLevel, ConfidenceScorer

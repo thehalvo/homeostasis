@@ -44,7 +44,9 @@ class GitLabCIIntegration:
         self.headers = {"PRIVATE-TOKEN": self.token, "Content-Type": "application/json"}
         self.api_url = f"{self.gitlab_url}/api/v4"
 
-    def get_pipelines(self, status: str = "failed", per_page: int = 20) -> List[Dict[str, Any]]:
+    def get_pipelines(
+        self, status: str = "failed", per_page: int = 20
+    ) -> List[Dict[str, Any]]:
         """
         Get pipelines for the project
 

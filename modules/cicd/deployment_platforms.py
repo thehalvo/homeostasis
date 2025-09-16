@@ -121,7 +121,9 @@ class VercelIntegration(DeploymentPlatformIntegration):
 
         return analysis
 
-    def _generate_vercel_suggestions(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _generate_vercel_suggestions(
+        self, analysis: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Generate Vercel-specific healing suggestions"""
         suggestions = []
 
@@ -269,7 +271,9 @@ class NetlifyIntegration(DeploymentPlatformIntegration):
 
         return list(set(patterns))
 
-    def _generate_netlify_suggestions(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _generate_netlify_suggestions(
+        self, analysis: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Generate Netlify-specific healing suggestions"""
         suggestions = []
 
@@ -398,7 +402,9 @@ class HerokuIntegration(DeploymentPlatformIntegration):
 
         return analysis
 
-    def _generate_heroku_suggestions(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _generate_heroku_suggestions(
+        self, analysis: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Generate Heroku-specific healing suggestions"""
         suggestions = []
 

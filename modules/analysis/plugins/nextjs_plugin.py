@@ -53,7 +53,7 @@ class NextjsExceptionHandler:
 
     def _load_rules(self) -> Dict[str, List[Dict[str, Any]]]:
         """Load Next.js error rules from rule files."""
-        rules = {}
+        rules: Dict[str, List[Dict[str, Any]]] = {}
         rules_dir = Path(__file__).parent.parent / "rules" / "nextjs"
 
         try:
@@ -120,7 +120,7 @@ class NextjsExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -544,11 +544,11 @@ class NextjsPatchGenerator:
         self.nextjs_template_dir.mkdir(parents=True, exist_ok=True)
 
         # Load patch templates
-        self.templates = self._load_templates()
+        self.templates: Dict[str, str] = self._load_templates()
 
     def _load_templates(self) -> Dict[str, str]:
         """Load Next.js patch templates."""
-        templates = {}
+        templates: Dict[str, str] = {}
 
         if not self.nextjs_template_dir.exists():
             logger.warning(
@@ -1359,26 +1359,30 @@ class NextjsLanguagePlugin(LanguagePlugin):
         )
 
     def generate_fix(
-        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
-    ) -> Optional[Dict[str, Any]]:
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a fix for the Next.js error.
 
         Args:
-            error_data: The Next.js error data
             analysis: Analysis results
-            source_code: Source code where the error occurred
+            context: Additional context containing error_data and source_code
 
         Returns:
-            Fix information or None if no fix can be generated
+            Fix information or empty dict if no fix can be generated
         """
         try:
-            return self.patch_generator.generate_patch(
+            # Extract error data and source code from context
+            error_data = context.get("error_data", {})
+            source_code = context.get("source_code", "")
+
+            result = self.patch_generator.generate_patch(
                 error_data, analysis, source_code
             )
+            return result if result is not None else {}
         except Exception as e:
             logger.error(f"Error generating Next.js fix: {e}")
-            return None
+            return {}
 
     def get_language_info(self) -> Dict[str, Any]:
         """

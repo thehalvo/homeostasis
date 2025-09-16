@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import yaml
 from cryptography.fernet import Fernet
@@ -316,7 +316,7 @@ class LocalConfigProvider(ConfigProvider):
             return
 
         # Convert ConfigValues back to plain dict
-        data = {}
+        data: Dict[str, Any] = {}
         for key, config_value in self.configs[environment].items():
             # Convert dot notation back to nested dict
             parts = key.split(".")
@@ -392,7 +392,7 @@ class ConfigValidator:
     """Validates configuration values against rules"""
 
     def __init__(self):
-        self.validators = {
+        self.validators: Dict[str, Callable[[Any, Any], Tuple[bool, str]]] = {
             "required": self._validate_required,
             "type": self._validate_type,
             "pattern": self._validate_pattern,
@@ -424,16 +424,16 @@ class ConfigValidator:
 
     def _validate_type(self, value: Any, expected_type: str) -> Tuple[bool, str]:
         """Validate value type"""
-        type_map = {
+        type_map: Dict[str, type] = {
             "string": str,
-            "number": (int, float),
+            "number": (int, float),  # type: ignore
             "boolean": bool,
             "array": list,
             "object": dict,
         }
 
         expected = type_map.get(expected_type)
-        if expected and not isinstance(value, expected):
+        if expected is not None and not isinstance(value, expected):
             return False, f"Expected type {expected_type}, got {type(value).__name__}"
         return True, ""
 
@@ -563,9 +563,10 @@ class MultiEnvironmentConfigManager:
                     # Handle references
                     if isinstance(value, dict) and value.get("_type") == "reference":
                         ref_key = value.get("_ref")
-                        value = await self.get_config(
-                            ref_key, environment, scope, decrypt_secrets
-                        )
+                        if ref_key is not None:
+                            value = await self.get_config(
+                                ref_key, environment, scope, decrypt_secrets
+                            )
 
                     # Handle secrets
                     if (
@@ -722,9 +723,10 @@ class MultiEnvironmentConfigManager:
         change.applied = success
 
         # Audit log
-        await self.auditor.log_event(
+        self.auditor.log_event(
             "config_change",
-            {
+            user=None,
+            details={
                 "change_id": change.change_id,
                 "action": change.action.value,
                 "key": config_value.key,
@@ -845,7 +847,7 @@ class MultiEnvironmentConfigManager:
                 detected_at=datetime.utcnow(),
                 auto_remediate=severity in ["low", "medium"]
                 and not any(
-                    d.get("key", "").endswith((".secret", ".password", ".key"))
+                    (d.get("key") or "").endswith((".secret", ".password", ".key"))
                     for d in differences
                 ),
             )
@@ -925,7 +927,7 @@ class MultiEnvironmentConfigManager:
                 "severity": drift.severity,
             }
 
-        results = {"status": "remediating", "changes": []}
+        results: Dict[str, Any] = {"status": "remediating", "changes": []}
 
         for diff in drift.differences:
             key = diff["key"]
@@ -993,7 +995,7 @@ class MultiEnvironmentConfigManager:
         dry_run: bool = False,
     ) -> Dict[str, Any]:
         """Promote configuration from one environment to another"""
-        results = {
+        results: Dict[str, Any] = {
             "from": from_environment,
             "to": to_environment,
             "changes": [],
@@ -1052,7 +1054,7 @@ class MultiEnvironmentConfigManager:
         self, environment: str, timestamp: datetime
     ) -> Dict[str, Any]:
         """Rollback configuration to a specific point in time"""
-        results = {
+        results: Dict[str, Any] = {
             "environment": environment,
             "target_timestamp": timestamp.isoformat(),
             "changes": [],
@@ -1128,7 +1130,7 @@ class MultiEnvironmentConfigManager:
         provider = list(self.providers.values())[0]
         keys = await provider.list_keys(environment=environment)
 
-        configs = {}
+        configs: Dict[str, Any] = {}
         for key in keys:
             value = await self.get_config(
                 key, environment, decrypt_secrets=include_secrets
@@ -1160,7 +1162,7 @@ class MultiEnvironmentConfigManager:
 
     async def get_config_summary(self) -> Dict[str, Any]:
         """Get summary of configuration state across environments"""
-        summary = {
+        summary: Dict[str, Any] = {
             "environments": {},
             "pending_changes": len(self.pending_changes),
             "templates": len(self.templates),

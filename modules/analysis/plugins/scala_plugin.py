@@ -78,7 +78,7 @@ class ScalaExceptionHandler:
             # Skip rules that don't apply to this category of exception
             if rule.get("applies_to") and error_type:
                 applies_to_patterns = rule.get("applies_to")
-                if not any(
+                if applies_to_patterns and not any(
                     re.search(pattern, error_type) for pattern in applies_to_patterns
                 ):
                     continue
@@ -589,7 +589,7 @@ class ScalaPatchGenerator:
             else:
                 raise FileNotFoundError(f"Template not found: {template_path}")
 
-        return self.template_cache[path_str]
+        return str(self.template_cache[path_str])
 
     def _extract_variables(
         self, analysis: Dict[str, Any], context: Dict[str, Any]

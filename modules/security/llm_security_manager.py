@@ -321,10 +321,13 @@ class LLMSecurityManager:
 
         # Sanitize stack trace
         if llm_context.error_context.stack_trace:
+            # Join stack trace lines for sanitization
+            stack_trace_str = "\n".join(llm_context.error_context.stack_trace)
             sanitized_trace, _ = self.scrub_sensitive_data(
-                llm_context.error_context.stack_trace, llm_context.context_id
+                stack_trace_str, llm_context.context_id
             )
-            sanitized_context.error_context.stack_trace = sanitized_trace
+            # Split back into lines
+            sanitized_context.error_context.stack_trace = sanitized_trace.split("\n")
 
         # Sanitize source code snippet
         if llm_context.error_context.source_code_snippet:
@@ -594,7 +597,7 @@ class LLMSecurityManager:
 
     def _extract_sensitive_data(self, text: str) -> Dict[str, Set[str]]:
         """Extract sensitive data from text."""
-        sensitive_data = {}
+        sensitive_data: Dict[str, Set[str]] = {}
 
         for pattern in self.sensitive_patterns:
             matches = re.findall(pattern.pattern, text, re.IGNORECASE)
@@ -804,7 +807,7 @@ class LLMSecurityManager:
 
     def _count_violations_by_type(self) -> Dict[str, int]:
         """Count violations by type."""
-        counts = {}
+        counts: Dict[str, int] = {}
         for violation in self.security_violations:
             counts[violation.violation_type] = (
                 counts.get(violation.violation_type, 0) + 1

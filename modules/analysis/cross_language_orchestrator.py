@@ -185,8 +185,11 @@ class CrossLanguageOrchestrator:
         # Get the appropriate analyzer
         analyzer = self.registry.get_analyzer(language)
 
+        if analyzer is None:
+            raise ValueError(f"No analyzer found for language: {language}")
+
         # Analyze the error
-        analysis_result = analyzer.analyze_error(error_data)
+        analysis_result: Dict[str, Any] = analyzer.analyze_error(error_data)
 
         # Store in history for learning
         self._store_error_analysis(error_data, analysis_result, language)
@@ -759,7 +762,8 @@ class CrossLanguageOrchestrator:
         """
         # If language is explicitly specified
         if "language" in error_data:
-            return error_data["language"].lower()
+            language: str = str(error_data["language"])
+            return language.lower()
 
         # Check for Java-style exceptions
         if "error_type" in error_data:
@@ -2883,8 +2887,9 @@ if __name__ == "__main__":
             f"Most similar error (similarity: {similar[0].get('similarity'):.2f}):"
         )
         logger.info(f"  Language: {similar[0].get('language')}")
-        logger.info(f"  Error type: {similar[0].get('error').get('error_type')}")
-        logger.info(f"  Message: {similar[0].get('error').get('message')}")
+        error_info = similar[0].get('error', {})
+        logger.info(f"  Error type: {error_info.get('error_type', 'N/A')}")
+        logger.info(f"  Message: {error_info.get('message', 'N/A')}")
 
     # Suggest cross-language fixes
     logger.info("Suggesting cross-language fixes...")

@@ -76,7 +76,7 @@ class PHPExceptionHandler:
             # Skip rules that don't apply to this category of exception
             if rule.get("applies_to") and error_type:
                 applies_to_patterns = rule.get("applies_to")
-                if not any(
+                if applies_to_patterns and not any(
                     re.search(pattern, error_type) for pattern in applies_to_patterns
                 ):
                     continue
@@ -620,7 +620,7 @@ class PHPPatchGenerator:
             else:
                 raise FileNotFoundError(f"Template not found: {template_path}")
 
-        return self.template_cache[path_str]
+        return str(self.template_cache[path_str])
 
     def _extract_variables(
         self, analysis: Dict[str, Any], context: Dict[str, Any]
@@ -721,8 +721,9 @@ class PHPPatchGenerator:
     ) -> str:
         """Generate a code snippet for undefined variable handling in PHP."""
         variable = ""
-        if analysis.get("match_groups"):
-            variable = analysis.get("match_groups")[0]
+        match_groups = analysis.get("match_groups")
+        if match_groups:
+            variable = match_groups[0]
         else:
             # Try to extract from error message
             message = analysis.get("error_data", {}).get("message", "")
@@ -760,8 +761,9 @@ $$var_name = 'some value';
     ) -> str:
         """Generate a code snippet for null checking in PHP."""
         method = ""
-        if analysis.get("match_groups"):
-            method = analysis.get("match_groups")[0]
+        match_groups = analysis.get("match_groups")
+        if match_groups:
+            method = match_groups[0]
 
         variable = "object"
 
@@ -797,8 +799,9 @@ try {{
     ) -> str:
         """Generate a code snippet for undefined array index in PHP."""
         index = ""
-        if analysis.get("match_groups"):
-            index = analysis.get("match_groups")[1]  # Typically the second match group
+        match_groups = analysis.get("match_groups")
+        if match_groups and len(match_groups) > 1:
+            index = match_groups[1]  # Typically the second match group
 
         if not index:
             index = "key"
@@ -832,8 +835,9 @@ if (is_array($array) && count($array) > {index}) {{
     ) -> str:
         """Generate a code snippet for Laravel ModelNotFoundException."""
         model = ""
-        if analysis.get("match_groups"):
-            model = analysis.get("match_groups")[0]
+        match_groups = analysis.get("match_groups")
+        if match_groups:
+            model = match_groups[0]
 
         if not model:
             model = "Model"

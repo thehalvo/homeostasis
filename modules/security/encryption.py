@@ -240,7 +240,9 @@ class EncryptionManager:
 _encryption_manager = None
 
 
-def get_encryption_manager(config: Optional[Dict[str, Any]] = None) -> EncryptionManager:
+def get_encryption_manager(
+    config: Optional[Dict[str, Any]] = None,
+) -> EncryptionManager:
     """Get or create the singleton EncryptionManager instance.
 
     Args:

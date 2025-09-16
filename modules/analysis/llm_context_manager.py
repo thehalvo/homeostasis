@@ -445,9 +445,9 @@ class LLMContextManager:
         Returns:
             Context statistics
         """
-        categories_count = defaultdict(int)
-        languages_count = defaultdict(int)
-        severities_count = defaultdict(int)
+        categories_count: defaultdict[str, int] = defaultdict(int)
+        languages_count: defaultdict[str, int] = defaultdict(int)
+        severities_count: defaultdict[str, int] = defaultdict(int)
 
         stats = {
             "total_contexts": len(self.contexts),
@@ -462,13 +462,13 @@ class LLMContextManager:
 
         for context in self.contexts.values():
             # Count by category
-            stats["categories"][context.error_classification.category.value] += 1
+            categories_count[context.error_classification.category.value] += 1
 
             # Count by language
-            stats["languages"][context.error_context.language.value] += 1
+            languages_count[context.error_context.language.value] += 1
 
             # Count by severity
-            stats["severities"][context.error_classification.severity.value] += 1
+            severities_count[context.error_classification.severity.value] += 1
 
             # Sum confidence for average
             total_confidence += context.error_classification.confidence
@@ -727,7 +727,11 @@ Please provide:
 4. Testing recommendations
 """,
             "context": context.to_dict(),
-            "max_tokens": context.provider_preferences.get("max_tokens", 2000) if context.provider_preferences else 2000,
+            "max_tokens": (
+                context.provider_preferences.get("max_tokens", 2000)
+                if context.provider_preferences
+                else 2000
+            ),
         }
 
     def _create_focused_prompt(self, context: LLMContext) -> Dict[str, Any]:
@@ -746,7 +750,11 @@ Line: {context.error_context.line_number or 'Unknown'}
 Provide only the corrected code with minimal explanation.
 """,
             "context": context.to_dict(),
-            "max_tokens": context.provider_preferences.get("max_tokens", 1000) if context.provider_preferences else 1000,
+            "max_tokens": (
+                context.provider_preferences.get("max_tokens", 1000)
+                if context.provider_preferences
+                else 1000
+            ),
         }
 
     def _create_patch_generation_prompt(self, context: LLMContext) -> Dict[str, Any]:
@@ -767,7 +775,11 @@ LANGUAGE: {context.error_context.language.value}
 Return the patch in unified diff format.
 """,
             "context": context.to_dict(),
-            "max_tokens": context.provider_preferences.get("max_tokens", 1500) if context.provider_preferences else 1500,
+            "max_tokens": (
+                context.provider_preferences.get("max_tokens", 1500)
+                if context.provider_preferences
+                else 1500
+            ),
         }
 
     def _format_additional_context(self, context: LLMContext) -> str:
@@ -929,8 +941,8 @@ Return the patch in unified diff format.
         patterns = []
 
         # Analyze LLM failures
-        llm_error_types = defaultdict(int)
-        llm_providers = defaultdict(int)
+        llm_error_types: defaultdict[str, int] = defaultdict(int)
+        llm_providers: defaultdict[str, int] = defaultdict(int)
 
         for ctx in similar_contexts:
             if ctx.llm_failures:
@@ -948,8 +960,8 @@ Return the patch in unified diff format.
             )
 
         # Analyze validation failures
-        validation_types = defaultdict(int)
-        validation_reasons = defaultdict(int)
+        validation_types: defaultdict[str, int] = defaultdict(int)
+        validation_reasons: defaultdict[str, int] = defaultdict(int)
 
         for ctx in similar_contexts:
             if ctx.validation_failures:

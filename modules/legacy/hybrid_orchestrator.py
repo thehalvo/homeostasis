@@ -80,6 +80,7 @@ class HybridTransaction:
     results: Dict[str, Any] = field(default_factory=dict)
     errors: List[str] = field(default_factory=list)
     compensation_actions: List[Dict[str, Any]] = field(default_factory=list)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -514,7 +515,7 @@ class HybridOrchestrator:
     def _convert_from_copybook(self, response: str) -> Dict[str, Any]:
         """Convert COBOL copybook format to JSON."""
         # Simplified example
-        result = {}
+        result: Dict[str, Any] = {}
 
         if len(response) >= 10:
             result["customer_id"] = response[0:10].strip()

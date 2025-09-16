@@ -447,7 +447,7 @@ class HumanFeedbackCollector:
         task_data = {
             "error": error_data,
             "patch": {
-                "file_path": generated_patch.file_path,
+                "file_path": error_data.get("file_path", "unknown"),
                 "original_code": generated_patch.original_code,
                 "patched_code": generated_patch.patched_code,
                 "patch_diff": generated_patch.get_diff(),
@@ -484,7 +484,7 @@ class HumanFeedbackCollector:
     ) -> List[str]:
         """Identify and collect edge cases for annotation."""
         # Query recent predictions with medium confidence
-        edge_cases = []
+        edge_cases: List[Any] = []
 
         # This would integrate with the model serving system
         # to identify predictions in the uncertainty range

@@ -936,7 +936,9 @@ class EnhancedMultiRegionFailover:
             }
 
         # Active traffic policy
-        active_policy = self.traffic_policies.get(self.active_policy_id)
+        active_policy = None
+        if self.active_policy_id is not None:
+            active_policy = self.traffic_policies.get(self.active_policy_id)
 
         # Recent failovers
         recent_failovers = sorted(

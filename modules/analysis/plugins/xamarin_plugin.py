@@ -1272,23 +1272,22 @@ class XamarinLanguagePlugin(LanguagePlugin):
         )
 
     def generate_fix(
-        self,
-        error_data: Dict[str, Any],
-        analysis: Dict[str, Any],
-        source_code: str = "",
-    ) -> Optional[Dict[str, Any]]:
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a fix for an error based on the analysis.
 
         Args:
-            error_data: Original error data
             analysis: Error analysis
-            source_code: Source code context (optional)
+            context: Context dictionary containing error_data and source_code
 
         Returns:
             Generated fix data
         """
         try:
+            # Extract error_data and source_code from context
+            error_data = context.get("error_data", {})
+            source_code = context.get("source_code", "")
 
             # Generate patch
             patch_result = self.patch_generator.generate_patch(

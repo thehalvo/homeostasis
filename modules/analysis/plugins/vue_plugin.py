@@ -1099,26 +1099,30 @@ class VueLanguagePlugin(LanguagePlugin):
         )
 
     def generate_fix(
-        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
-    ) -> Optional[Dict[str, Any]]:
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a fix for the Vue error.
 
         Args:
-            error_data: The Vue error data
             analysis: Analysis results
-            source_code: Source code where the error occurred
+            context: Context dictionary containing error_data and source_code
 
         Returns:
-            Fix information or None if no fix can be generated
+            Fix information
         """
         try:
-            return self.patch_generator.generate_patch(
+            # Extract error_data and source_code from context
+            error_data = context.get("error_data", {})
+            source_code = context.get("source_code", "")
+
+            result = self.patch_generator.generate_patch(
                 error_data, analysis, source_code
             )
+            return result if result else {}
         except Exception as e:
             logger.error(f"Error generating Vue fix: {e}")
-            return None
+            return {}
 
     def get_language_info(self) -> Dict[str, Any]:
         """

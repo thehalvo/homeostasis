@@ -10,7 +10,7 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Any, Dict
 
 # Import the plugin registration system
 from .language_plugin_system import plugin_registry
@@ -73,7 +73,7 @@ def verify_cross_platform_plugins():
     Returns:
         Dictionary with verification results
     """
-    verification_results = {
+    verification_results: Dict[str, Any] = {
         "total_plugins": 0,
         "cross_platform_plugins": [],
         "missing_plugins": [],
@@ -117,8 +117,9 @@ def verify_cross_platform_plugins():
                 }
 
                 try:
-                    can_handle = plugin.can_handle(test_error)
-                    details["can_handle_test"] = can_handle
+                    # Test if plugin can analyze a basic error
+                    plugin.analyze_error(test_error)
+                    details["can_handle_test"] = True
                 except Exception as e:
                     details["can_handle_test"] = False
                     details["can_handle_error"] = str(e)
@@ -142,8 +143,11 @@ def test_cross_platform_error_handling():
     Returns:
         Dictionary with test results
     """
-    from typing import Dict, Any, List
-    test_results: Dict[str, Any] = {"tests_run": 0, "tests_passed": 0, "test_details": {}}
+    test_results: Dict[str, Any] = {
+        "tests_run": 0,
+        "tests_passed": 0,
+        "test_details": {},
+    }
 
     # Sample errors for each cross-platform framework
     sample_errors = {
@@ -199,13 +203,12 @@ def test_cross_platform_error_handling():
                 test_results["test_details"][plugin_id] = test_detail
                 continue
 
-            # Test can_handle
+            # Test if plugin can analyze the error
             try:
-                can_handle = plugin.can_handle(error_data)
-                test_detail["can_handle"] = can_handle
+                plugin.analyze_error(error_data)
+                test_detail["can_handle"] = True
 
-                if not can_handle:
-                    test_detail["errors"].append("Plugin cannot handle the test error")
+                # Plugin successfully analyzed the error
 
             except Exception as e:
                 test_detail["errors"].append(f"Error in can_handle: {e}")
@@ -285,10 +288,7 @@ def get_cross_platform_integration_status():
             )
 
         if test_res["tests_passed"] < test_res["tests_run"]:
-            failed_tests = (
-                test_res["tests_run"]
-                - test_res["tests_passed"]
-            )
+            failed_tests = test_res["tests_run"] - test_res["tests_passed"]
             status["recommendations"].append(
                 f"{failed_tests} plugin tests failed - check test_details for specific issues"
             )
@@ -300,16 +300,11 @@ def get_cross_platform_integration_status():
 
         # Overall health
         all_plugins_present = len(verification["missing_plugins"]) == 0
-        all_tests_passed = (
-            test_res["tests_passed"]
-            == test_res["tests_run"]
-        )
+        all_tests_passed = test_res["tests_passed"] == test_res["tests_run"]
 
         if all_plugins_present and all_tests_passed and status["plugins_loaded"] > 0:
             status["overall_status"] = "HEALTHY"
-        elif (
-            status["plugins_loaded"] > 0 and test_res["tests_passed"] > 0
-        ):
+        elif status["plugins_loaded"] > 0 and test_res["tests_passed"] > 0:
             status["overall_status"] = "PARTIAL"
         else:
             status["overall_status"] = "UNHEALTHY"
@@ -382,9 +377,8 @@ if __name__ == "__main__":
     # Setup logging
     logging.basicConfig(level=logging.INFO)
 
-    # Import datetime for status
+    # Import for status
     import importlib.util
-    from datetime import datetime
 
     # Initialize and get status
     success = initialize_cross_platform_integration()

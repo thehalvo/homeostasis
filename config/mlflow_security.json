@@ -1,0 +1,30 @@
+{
+  "trusted_sources": [
+    "file:///var/mlflow/trusted-models/",
+    "s3://homeostasis-prod-models/",
+    "models:/production/",
+    "models:/staging/"
+  ],
+  "allowed_hashes": {
+    "error_classifier.pkl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "production_model_v1.pkl": "d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2"
+  },
+  "max_model_size_mb": 1000,
+  "security_checks": {
+    "validate_signatures": true,
+    "check_file_size": true,
+    "verify_hashes": true,
+    "scan_for_pickle_exploits": true
+  },
+  "sandbox_config": {
+    "enable_network": false,
+    "memory_limit_mb": 2048,
+    "cpu_limit": 2,
+    "timeout_seconds": 300
+  },
+  "audit": {
+    "log_all_loads": true,
+    "log_failures": true,
+    "alert_on_violations": true
+  }
+}

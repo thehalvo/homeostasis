@@ -517,11 +517,14 @@ class PythonLanguagePlugin(LanguagePlugin):
     ) -> Dict[str, Any]:
         """Generate a fix for a Python error."""
         # Import required modules lazily
-        from .patch_generation.patcher import PatchGenerator
+        from ..patch_generation.patcher import PatchGenerator
 
         patch_generator = PatchGenerator()
-        patch = patch_generator.generate_patch_from_analysis(analysis)
+        patch: Optional[Dict[str, Any]] = patch_generator.generate_patch_from_analysis(analysis)
 
+        # Ensure we always return a dict, even if patch is None
+        if patch is None:
+            return {}
         return patch
 
     def get_supported_frameworks(self) -> List[str]:
