@@ -76,7 +76,7 @@ class CSharpExceptionHandler:
             # Skip rules that don't apply to this category of exception
             if rule.get("applies_to") and error_type:
                 applies_to_patterns = rule.get("applies_to")
-                if not any(
+                if applies_to_patterns and not any(
                     re.search(pattern, error_type) for pattern in applies_to_patterns
                 ):
                     continue
@@ -595,7 +595,7 @@ class CSharpPatchGenerator:
         self.templates_dir.mkdir(exist_ok=True, parents=True)
 
         # Cache for loaded templates
-        self.template_cache = {}
+        self.template_cache: Dict[str, str] = {}
 
     def generate_patch(
         self, analysis: Dict[str, Any], context: Dict[str, Any]
@@ -827,8 +827,9 @@ public void ProcessObject(MyClass obj)
     ) -> str:
         """Generate a code snippet for handling ArgumentNullException."""
         param = ""
-        if analysis.get("match_groups") and len(analysis.get("match_groups")) > 0:
-            param = analysis.get("match_groups")[0]
+        match_groups = analysis.get("match_groups")
+        if match_groups and len(match_groups) > 0:
+            param = match_groups[0]
 
         return f"""// Option 1: Add guard clause at the beginning of the method
 public void MyMethod({param} value)

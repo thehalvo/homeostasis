@@ -12,9 +12,8 @@ import traceback
 import uuid
 from datetime import datetime
 from functools import wraps
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, cast
 
-from .extractor import extract_error_context
 from .logger import MonitoringLogger
 
 # Check if Flask is available
@@ -26,21 +25,47 @@ try:
 except ImportError:
     FLASK_AVAILABLE = False
     # Create dummy classes for type hints
-
-    class Flask:
-        pass
-
-    class Blueprint:
-        pass
-
-    class Request:
-        pass
-
-    class Response:
-        pass
+    Flask = Any  # type: ignore
+    Blueprint = Any  # type: ignore
+    Request = Any  # type: ignore
+    Response = Any  # type: ignore
+    HTTPException = Exception  # type: ignore
 
 
 logger = logging.getLogger(__name__)
+
+
+def extract_error_context(exc: Exception, error_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """Extract additional context from an error for enhanced debugging.
+
+    Args:
+        exc: The exception that was raised
+        error_data: The current error data dictionary
+
+    Returns:
+        Additional context data if available, None otherwise
+    """
+    context = {}
+
+    # Extract exception attributes if available
+    if hasattr(exc, '__dict__'):
+        for key, value in exc.__dict__.items():
+            if not key.startswith('_'):
+                try:
+                    # Only include JSON-serializable values
+                    json.dumps(value)
+                    context[key] = value
+                except (TypeError, ValueError):
+                    context[key] = str(value)
+
+    # Extract HTTP status code if it's an HTTPException
+    if hasattr(exc, 'code'):
+        context['http_status_code'] = getattr(exc, 'code', None)
+
+    if hasattr(exc, 'description'):
+        context['description'] = getattr(exc, 'description', None)
+
+    return context if context else None
 
 
 class Homeostasis:
@@ -60,10 +85,10 @@ class Homeostasis:
             app: Optional Flask application instance
         """
         self.app = app
-        self.monitoring_logger = None
+        self.monitoring_logger: Optional[MonitoringLogger] = None
 
         # Configuration defaults
-        self.config = {
+        self.config: Dict[str, Any] = {
             "ENABLED": True,
             "LOG_LEVEL": "INFO",
             "LOG_REQUESTS": True,
@@ -137,7 +162,8 @@ class Homeostasis:
         # Register error handlers
         if self.config["BLUEPRINT_SPECIFIC_HANDLERS"]:
             # Register a blueprint-specific handler setup function
-            app.register_blueprint_handlers = self.register_blueprint_handlers
+            # Note: Adding custom method to Flask app for blueprint handler registration
+            setattr(app, 'register_blueprint_handlers', self.register_blueprint_handlers)
 
             # Update any existing blueprints
             for bp_name, bp in app.blueprints.items():
@@ -259,9 +285,7 @@ class Homeostasis:
         """
         if not self.config["ENABLED"]:
             # Re-raise the exception for Flask's normal exception handling
-            if not isinstance(error, HTTPException):
-                raise error
-            return error
+            raise error
 
         try:
             # Calculate request duration
@@ -272,9 +296,7 @@ class Homeostasis:
             # Check if we should ignore this exception
             if self._should_ignore_exception(error):
                 # Let Flask handle it
-                if not isinstance(error, HTTPException):
-                    raise error
-                return error
+                raise error
 
             # Get the request ID
             request_id = getattr(g, "homeostasis_request_id", str(uuid.uuid4()))
@@ -298,7 +320,7 @@ class Homeostasis:
                 # Add Homeostasis request ID to response headers
                 original_response = error.get_response()
                 original_response.headers["X-Homeostasis-Request-ID"] = request_id
-                return original_response
+                return cast(Response, original_response)
 
             # Re-raise the exception for Flask's normal exception handling
             raise error
@@ -371,9 +393,10 @@ class Homeostasis:
                     request_data["body_error"] = str(e)
 
             # Log the request
-            self.monitoring_logger.info(
-                f"Request: {request.method} {request.path}", request=request_data
-            )
+            if self.monitoring_logger:
+                self.monitoring_logger.info(
+                    f"Request: {request.method} {request.path}", request=request_data
+                )
 
         except Exception as e:
             logger.exception(f"Error logging request: {e}")
@@ -463,10 +486,11 @@ class Homeostasis:
             }
 
             # Log the slow request
-            self.monitoring_logger.warning(
-                f"Slow request: {request.method} {request.path} ({duration:.3f}s)",
-                slow_request=request_data,
-            )
+            if self.monitoring_logger:
+                self.monitoring_logger.warning(
+                    f"Slow request: {request.method} {request.path} ({duration:.3f}s)",
+                    slow_request=request_data,
+                )
 
         except Exception as e:
             logger.exception(f"Error logging slow request: {e}")
@@ -499,7 +523,7 @@ class Homeostasis:
             )
 
             # Create error data structure
-            error_data = {
+            error_data: Dict[str, Any] = {
                 "request_id": getattr(g, "homeostasis_request_id", str(uuid.uuid4())),
                 "timestamp": datetime.now().isoformat(),
                 "exception_type": exc_type,
@@ -548,9 +572,10 @@ class Homeostasis:
                 error_data["error_details"] = error_context
 
             # Log the exception
-            self.monitoring_logger.error(
-                f"Exception in request: {exc_type}: {exc_message}", exception=error_data
-            )
+            if self.monitoring_logger:
+                self.monitoring_logger.error(
+                    f"Exception in request: {exc_type}: {exc_message}", exception=error_data
+                )
 
             return error_data
 
@@ -611,11 +636,12 @@ class Homeostasis:
                 error_message = recovery.get("error_message", "An error occurred")
 
                 # Log the recovery attempt
-                self.monitoring_logger.info(
-                    f"Recovered from {type(exc).__name__} with status {status_code}",
-                    recovery=recovery,
-                    analysis=analysis,
-                )
+                if self.monitoring_logger:
+                    self.monitoring_logger.info(
+                        f"Recovered from {type(exc).__name__} with status {status_code}",
+                        recovery=recovery,
+                        analysis=analysis,
+                    )
 
                 # Import Flask response creation function here to avoid circular imports
                 from flask import jsonify
@@ -838,16 +864,17 @@ def monitor(
                     result_context["result"] = result
 
                 # Log performance if slow
-                if threshold and duration > threshold:
-                    homeostasis.monitoring_logger.warning(
-                        f"Slow function: {f.__name__} ({duration:.3f}s)",
-                        slow_function=result_context,
-                    )
-                else:
-                    homeostasis.monitoring_logger.debug(
-                        f"Function exit: {f.__name__} ({duration:.3f}s)",
-                        function_exit=result_context,
-                    )
+                if homeostasis.monitoring_logger:
+                    if threshold and duration > threshold:
+                        homeostasis.monitoring_logger.warning(
+                            f"Slow function: {f.__name__} ({duration:.3f}s)",
+                            slow_function=result_context,
+                        )
+                    else:
+                        homeostasis.monitoring_logger.debug(
+                            f"Function exit: {f.__name__} ({duration:.3f}s)",
+                            function_exit=result_context,
+                        )
 
                 return result
 
@@ -869,10 +896,11 @@ def monitor(
                 }
 
                 # Log the exception
-                homeostasis.monitoring_logger.error(
-                    f"Exception in function: {f.__name__}: {type(e).__name__}: {str(e)}",
-                    function_exception=error_context,
-                )
+                if homeostasis.monitoring_logger:
+                    homeostasis.monitoring_logger.error(
+                        f"Exception in function: {f.__name__}: {type(e).__name__}: {str(e)}",
+                        function_exception=error_context,
+                    )
 
                 # Re-raise the exception
                 raise

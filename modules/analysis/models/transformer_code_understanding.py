@@ -8,7 +8,7 @@ relationships, and semantics to improve error analysis and patch generation.
 import logging
 import re
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
 import numpy as np
@@ -51,17 +51,9 @@ class CodeContext:
     line_number: Optional[int] = None
     function_name: Optional[str] = None
     class_name: Optional[str] = None
-    imports: List[str] = None
-    variables: List[str] = None
-    called_functions: List[str] = None
-
-    def __post_init__(self):
-        if self.imports is None:
-            self.imports = []
-        if self.variables is None:
-            self.variables = []
-        if self.called_functions is None:
-            self.called_functions = []
+    imports: List[str] = field(default_factory=list)
+    variables: List[str] = field(default_factory=list)
+    called_functions: List[str] = field(default_factory=list)
 
 
 class CodeContextExtractor:
@@ -315,7 +307,7 @@ class TransformerCodeAnalyzer:
                 if "code_context" in last_frame:
                     return "\n".join(last_frame["code_context"])
                 elif "code" in last_frame:
-                    return last_frame["code"]
+                    return str(last_frame["code"])
 
         # Try to extract from traceback
         if "traceback" in error_data:
@@ -343,7 +335,8 @@ class TransformerCodeAnalyzer:
         ):
             frames = error_data["error_details"]["detailed_frames"]
             if frames:
-                return frames[-1].get("line")
+                line = frames[-1].get("line")
+                return int(line) if line is not None else None
         return None
 
     def _analyze_relationships(
@@ -438,7 +431,7 @@ class TransformerCodeAnalyzer:
             )
 
         # Sort by score
-        scored_fixes.sort(key=lambda x: x["score"], reverse=True)
+        scored_fixes.sort(key=lambda x: float(x["score"]), reverse=True)
 
         return scored_fixes
 
@@ -499,7 +492,7 @@ class CodeT5Analyzer:
         # Decode output
         fix = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-        return fix
+        return str(fix)
 
     def explain_error(self, error_data: Dict[str, Any]) -> str:
         """
@@ -534,7 +527,7 @@ class CodeT5Analyzer:
 
         explanation = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-        return explanation
+        return str(explanation)
 
     def _extract_relevant_code(self, error_data: Dict[str, Any]) -> str:
         """Extract relevant code from error data."""
@@ -546,7 +539,7 @@ class CodeT5Analyzer:
             if frames:
                 last_frame = frames[-1]
                 if "code" in last_frame:
-                    return last_frame["code"]
+                    return str(last_frame["code"])
         return ""
 
 

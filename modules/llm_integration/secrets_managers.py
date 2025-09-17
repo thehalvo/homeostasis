@@ -8,7 +8,7 @@ to securely store and retrieve API keys.
 
 import os
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 class SecretsManagerError(Exception):
@@ -284,7 +284,7 @@ class HashiCorpVault(SecretsManagerBase):
         self, vault_url: Optional[str] = None, vault_token: Optional[str] = None
     ):
         """Initialize HashiCorp Vault client."""
-        self._client = None
+        self._client: Optional[Any] = None
         self._vault_url = vault_url or os.getenv("VAULT_ADDR", "http://localhost:8200")
         self._vault_token = vault_token or os.getenv("VAULT_TOKEN")
         self._secret_path = "secret/homeostasis/llm"
@@ -294,7 +294,7 @@ class HashiCorpVault(SecretsManagerBase):
                 "HashiCorp Vault token not provided. Set VAULT_TOKEN environment variable."
             )
 
-    def _get_client(self):
+    def _get_client(self) -> Any:
         """Get or create HashiCorp Vault client."""
         if self._client is None:
             try:
@@ -302,7 +302,10 @@ class HashiCorpVault(SecretsManagerBase):
 
                 self._client = hvac.Client(url=self._vault_url, token=self._vault_token)
 
-                if self._client is None or not self._client.is_authenticated():
+                if self._client is None:
+                    raise SecretsManagerError("Failed to create HashiCorp Vault client")
+
+                if not self._client.is_authenticated():
                     raise SecretsManagerError("HashiCorp Vault authentication failed")
 
             except ImportError:

@@ -244,7 +244,7 @@ class LanguageTestRunner:
         self.orchestrator = CrossLanguageOrchestrator()
 
         # Cache for loaded plugins
-        self.plugins = {}
+        self.plugins: Dict[str, LanguagePlugin] = {}
 
         if load_plugins:
             # Load and register all available plugins
@@ -399,7 +399,7 @@ class LanguageTestRunner:
         Returns:
             Dictionary with test results
         """
-        results = {
+        results: Dict[str, List[Any]] = {
             "conversion_tests": [],
             "pattern_detection_tests": [],
             "cross_suggestion_tests": [],

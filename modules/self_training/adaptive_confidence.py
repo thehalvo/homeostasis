@@ -103,7 +103,9 @@ class ConfidenceCalculator:
         self.learning_rate = learning_rate
 
         self.thresholds: Dict[str, ConfidenceThreshold] = {}
-        self.performance_history: Dict[str, deque] = defaultdict(lambda: deque(maxlen=100))
+        self.performance_history: Dict[str, deque] = defaultdict(
+            lambda: deque(maxlen=100)
+        )
         self.context_weights = {
             "historical_success": 0.3,
             "system_criticality": 0.25,
@@ -382,7 +384,9 @@ class ContextualThresholds:
     def __init__(self, confidence_calculator: ConfidenceCalculator):
         self.confidence_calculator = confidence_calculator
         self.threshold_groups: Dict[str, List[str]] = defaultdict(list)
-        self.group_performance: Dict[str, Dict[str, int]] = defaultdict(lambda: {"success": 0, "total": 0})
+        self.group_performance: Dict[str, Dict[str, int]] = defaultdict(
+            lambda: {"success": 0, "total": 0}
+        )
 
     def get_threshold_for_context(
         self, error_type: str, system_component: str, deployment_context: Dict[str, Any]

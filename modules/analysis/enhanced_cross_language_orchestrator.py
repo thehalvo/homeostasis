@@ -52,7 +52,7 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
         self.shared_schema = SharedErrorSchema()
 
         # Additional performance metrics
-        self.metrics = {
+        self.metrics: Dict[str, Any] = {
             "language_detections": 0,
             "language_detection_times": [],
             "analysis_times": {},
@@ -66,9 +66,9 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
         self.cache_ttl = cache_ttl
 
         # Cache for analysis results and fix suggestions
-        self.analysis_cache = {}
-        self.fix_cache = {}
-        self.cache_timestamps = {}
+        self.analysis_cache: Dict[str, Any] = {}
+        self.fix_cache: Dict[str, Any] = {}
+        self.cache_timestamps: Dict[str, float] = {}
 
         # Load word embeddings for better similarity scoring
         self._load_word_embeddings()
@@ -98,7 +98,7 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
             # If cache entry is still valid
             if time.time() - timestamp < self.cache_ttl:
                 logger.debug(f"Using cached analysis for {cache_key}")
-                return cache_entry
+                return dict(cache_entry)
 
         # Detect language if not provided, using enhanced detection
         start_time = time.time()
@@ -121,11 +121,14 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
         # Get the appropriate analyzer
         analyzer = self.registry.get_analyzer(language)
 
+        if not analyzer:
+            raise ValueError(f"No analyzer available for language: {language}")
+
         # Track analysis time
         start_time = time.time()
 
         # Analyze the error
-        analysis_result = analyzer.analyze_error(error_data)
+        analysis_result = dict(analyzer.analyze_error(error_data))
 
         # Update metrics
         analysis_time = time.time() - start_time
@@ -188,7 +191,7 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
             # If cache entry is still valid
             if time.time() - timestamp < self.cache_ttl:
                 logger.debug(f"Using cached fix for {cache_key}")
-                return cache_entry
+                return dict(cache_entry)
 
         # Track fix generation time
         start_time = time.time()
@@ -378,7 +381,7 @@ class EnhancedCrossLanguageOrchestrator(CrossLanguageOrchestrator):
         """
         # Try direct language field
         if "language" in error_data:
-            return error_data["language"].lower()
+            return str(error_data["language"]).lower()
 
         # Try using the shared schema detector
         language = detect_language(error_data)
@@ -742,7 +745,7 @@ if __name__ == "__main__":
     logger.info(f"Supported languages: {', '.join(languages)}")
 
     # Test the orchestrator with examples from each supported language
-    examples = {
+    examples: Dict[str, Dict[str, Any]] = {
         "python": {
             "exception_type": "KeyError",
             "message": "'user_id'",

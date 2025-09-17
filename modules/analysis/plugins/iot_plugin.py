@@ -167,7 +167,9 @@ class IoTPlugin(LanguagePlugin):
         else:
             self.rules = {"rules": [], "platform_specific": {}}
 
-    def detect_errors(self, code: str, file_path: Optional[str] = None) -> List[Dict[str, Any]]:
+    def detect_errors(
+        self, code: str, file_path: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """Detect IoT-specific errors in code"""
         errors = []
 
@@ -484,7 +486,9 @@ class IoTPlugin(LanguagePlugin):
             device_id, device_metrics, historical_metrics
         )
 
-    def get_platform_info(self, code: str, file_path: Optional[str] = None) -> Dict[str, Any]:
+    def get_platform_info(
+        self, code: str, file_path: Optional[str] = None
+    ) -> Dict[str, Any]:
         """Get information about the IoT platform being used"""
         platform = self.monitor.detect_platform(code, file_path or "")
 
@@ -625,17 +629,19 @@ void reconnectMQTT() {
         """Return plugin capabilities"""
         # Return the standard capabilities plus IoT-specific ones
         capabilities = super().get_capabilities()
-        capabilities.update({
-            "error_detection",
-            "resource_monitoring",
-            "connectivity_healing",
-            "power_optimization",
-            "sensor_redundancy",
-            "edge_computing_support",
-            "auto_reconnect",
-            "resource_optimization",
-            "power_saving_mode",
-            "offline_mode",
-            "edge_offloading",
-        })
+        capabilities.update(
+            {
+                "error_detection",
+                "resource_monitoring",
+                "connectivity_healing",
+                "power_optimization",
+                "sensor_redundancy",
+                "edge_computing_support",
+                "auto_reconnect",
+                "resource_optimization",
+                "power_saving_mode",
+                "offline_mode",
+                "edge_offloading",
+            }
+        )
         return capabilities

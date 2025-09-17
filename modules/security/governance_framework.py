@@ -12,9 +12,9 @@ import datetime
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
-from .approval import ApprovalType, get_approval_manager
+from .approval import ApprovalStatus, ApprovalType, get_approval_manager
 from .approval_workflow import get_workflow_engine
 from .audit import get_audit_logger
 from .auth import get_auth_manager
@@ -100,7 +100,7 @@ class EnterpriseGovernanceFramework:
     control over healing actions in enterprise and regulated environments.
     """
 
-    def __init__(self, config: Union[Dict, GovernanceConfig] = None):
+    def __init__(self, config: Optional[Union[Dict, GovernanceConfig]] = None):
         """Initialize the governance framework.
 
         Args:
@@ -257,7 +257,7 @@ class EnterpriseGovernanceFramework:
         elif method == "sso":
             # Handle SSO callback
             return self.identity_integration.complete_authentication(
-                session_id=kwargs.get("session_id"), callback_data=kwargs
+                session_id=str(kwargs.get("session_id", "")), callback_data=kwargs
             )
         else:
             raise ValueError(f"Unsupported authentication method: {method}")
@@ -350,7 +350,7 @@ class EnterpriseGovernanceFramework:
             framework=framework, report_type=report_type
         )
 
-    def manage_user(self, action: str, user_id: str = None, **params) -> Dict:
+    def manage_user(self, action: str, user_id: Optional[str] = None, **params) -> Dict:
         """Manage users (create, update, deactivate).
 
         Args:
@@ -460,7 +460,7 @@ class EnterpriseGovernanceFramework:
                 ),
             },
             "approvals": {
-                "pending": len(self.approval_manager.list_requests(status="pending")),
+                "pending": len(self.approval_manager.list_requests(status=ApprovalStatus.PENDING)),
                 "total": len(self.approval_manager.requests),
             },
             "compliance": {},
@@ -519,7 +519,8 @@ class EnterpriseGovernanceFramework:
             self.identity_integration = get_identity_integration(base_config)
 
         # LLM governance manager (always needed)
-        self.governance_manager = GovernanceManager(base_config)
+        # GovernanceManager expects SecurityConfig or None, not a dict
+        self.governance_manager = GovernanceManager()
 
         # Regulated industries support
         if (
@@ -597,7 +598,11 @@ class EnterpriseGovernanceFramework:
             metadata=request.metadata,
         )
 
-        return self.policy_engine.enforce_healing_policy(context)
+        result = self.policy_engine.enforce_healing_policy(context)
+        # Ensure we always return a string for the second element
+        if len(result) == 3 and result[1] is None:
+            return (result[0], "", result[2])
+        return result
 
     def _check_compliance_requirements(
         self, request: HealingActionRequest
@@ -770,7 +775,7 @@ class EnterpriseGovernanceFramework:
         validation = self.regulated_industries.validate_healing_action(action, context)
 
         # Build result
-        result = {"passed": validation.passed, "issues": [], "approval_allowed": False}
+        result: Dict[str, Any] = {"passed": validation.passed, "issues": [], "approval_allowed": False}
 
         # Add failures as issues
         for failure in validation.failures:
@@ -801,7 +806,7 @@ class EnterpriseGovernanceFramework:
 
         user = self.user_management.users.get(user_id)
         if user and user.get("roles"):
-            return user["roles"][0]
+            return str(user["roles"][0])
 
         return "user"
 
@@ -881,7 +886,7 @@ _governance_framework = None
 
 
 def get_governance_framework(
-    config: Union[Dict, GovernanceConfig] = None,
+    config: Optional[Union[Dict, GovernanceConfig]] = None,
 ) -> EnterpriseGovernanceFramework:
     """Get or create the singleton EnterpriseGovernanceFramework instance."""
     global _governance_framework

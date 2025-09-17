@@ -83,7 +83,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
                 return None
 
             if "application/json" in content_type:
-                return json.loads(body)
+                return dict(json.loads(body))
             elif "application/x-www-form-urlencoded" in content_type:
                 form_data = parse_qs(body.decode("utf-8"))
                 # Convert lists with single items to just the item
@@ -128,7 +128,8 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         path = request.url.path
         for exclude_path in self.exclude_paths:
             if path.startswith(exclude_path):
-                return await call_next(request)
+                exclude_response: Response = await call_next(request)
+                return exclude_response
 
         # Generate a unique request ID
         request_id = str(uuid.uuid4())
@@ -169,7 +170,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
         try:
             # Process request
-            response = await call_next(request)
+            response: Response = await call_next(request)
 
             # Calculate processing time
             process_time = time.time() - start_time

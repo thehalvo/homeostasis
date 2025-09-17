@@ -12,7 +12,7 @@ import shutil
 import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Type
 
 import jwt
 import redis
@@ -28,6 +28,7 @@ from sqlalchemy import (
     String,
     Text,
     create_engine,
+    text,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
@@ -41,7 +42,7 @@ from .plugin_storage import PluginStorage
 logger = logging.getLogger(__name__)
 
 # Database setup
-Base = declarative_base()
+Base: Any = declarative_base()
 
 
 class Plugin(Base):
@@ -461,7 +462,7 @@ class MarketplaceAPI:
             # Save uploaded file temporarily
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_path = Path(temp_dir)
-                package_path = temp_path / secure_filename(package_file.filename)
+                package_path = temp_path / secure_filename(package_file.filename or "package.tar.gz")
                 package_file.save(package_path)
 
                 # Extract and validate
@@ -903,7 +904,7 @@ class MarketplaceAPI:
         try:
             session = self.Session()
 
-            stats = {
+            stats: Dict[str, Any] = {
                 "total_plugins": session.query(Plugin)
                 .filter(Plugin.status == "approved")
                 .count(),
@@ -981,7 +982,7 @@ class MarketplaceAPI:
         try:
             # Check database
             session = self.Session()
-            session.execute("SELECT 1")
+            session.execute(text("SELECT 1"))
             session.close()
 
             # Check cache
@@ -1013,7 +1014,8 @@ class MarketplaceAPI:
 
         try:
             payload = jwt.decode(token, self.config["jwt_secret"], algorithms=["HS256"])
-            return payload.get("author_id")
+            author_id = payload.get("author_id")
+            return str(author_id) if author_id is not None else None
         except jwt.InvalidTokenError:
             return None
 

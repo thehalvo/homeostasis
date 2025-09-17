@@ -87,7 +87,9 @@ class ReactExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
+        self.compiled_patterns: Dict[
+            str, List[tuple[re.Pattern[str], Dict[str, Any]]]
+        ] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []

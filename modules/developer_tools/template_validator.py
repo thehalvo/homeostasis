@@ -152,6 +152,7 @@ class TemplateValidator:
                 )
             except Exception as e:
                 result.warnings.append(f"Failed to parse metadata: {str(e)}")
+                return None
         else:
             # Try to infer from path and content
             language = self._infer_language(template_path)

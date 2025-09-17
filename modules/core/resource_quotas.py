@@ -406,7 +406,7 @@ class ResourceQuotaManager:
         usage_key = f"{level.value}:{entity_id or 'default'}"
         policy = self._get_applicable_policy(entity_id, level)
 
-        summary = {
+        summary: Dict[str, Any] = {
             "entity_id": entity_id,
             "level": level.value,
             "timestamp": datetime.utcnow().isoformat(),
@@ -425,7 +425,7 @@ class ResourceQuotaManager:
                     quota = policy.quotas[resource_type]
 
                 if usage or quota:
-                    resource_summary = {
+                    resource_summary: Dict[str, Any] = {
                         "current_usage": usage.current_usage if usage else 0,
                         "limit": quota.limit if quota else None,
                         "period_seconds": quota.period_seconds if quota else None,
@@ -512,7 +512,7 @@ class ResourceQuotaManager:
     ) -> Dict[ResourceType, Dict[str, Any]]:
         """Get quota recommendations based on historical usage"""
         usage_key = f"{level.value}:{entity_id or 'default'}"
-        recommendations = {}
+        recommendations: Dict[ResourceType, Dict[str, Any]] = {}
 
         with self._usage_lock:
             if usage_key not in self._usage:
@@ -745,15 +745,9 @@ class ResourceQuotaManager:
                     remaining_quota=remaining - granted_amount,
                 )
 
-        # Default deny
-        return QuotaAllocation(
-            granted=False,
-            resource_type=quota.resource_type,
-            requested_amount=amount,
-            granted_amount=0,
-            remaining_quota=remaining,
-            reason="Unknown enforcement mode",
-        )
+        # This should never be reached due to exhaustive if/elif above
+        # but included for type checker completeness
+        raise ValueError(f"Unknown enforcement mode: {quota.enforcement_mode}")
 
     def _reset_usage_if_needed(self, usage: ResourceUsage, quota: ResourceQuota):
         """Reset usage if quota period has expired"""
@@ -951,7 +945,7 @@ class ResourceQuotaManager:
         )
 
         with self._usage_lock:
-            usage_data = {}
+            usage_data: Dict[str, Dict] = {}
 
             for usage_key, resources in self._usage.items():
                 usage_data[usage_key] = {}

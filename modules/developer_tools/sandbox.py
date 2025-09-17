@@ -69,7 +69,7 @@ class SandboxEnvironment:
         )
         self.use_docker = use_docker and self._check_docker_available()
         self.docker_client = docker.from_env() if self.use_docker else None
-        self.active_containers = []
+        self.active_containers: List[Any] = []  # Docker container objects
         self.environment_id = str(uuid.uuid4())
 
     def _check_docker_available(self) -> bool:
@@ -172,6 +172,7 @@ class SandboxEnvironment:
 
         try:
             # Create container
+            assert self.docker_client is not None  # Guaranteed by use_docker check
             container = self.docker_client.containers.run(
                 docker_image,
                 command="sleep infinity",
@@ -290,7 +291,7 @@ class HealingSimulator:
             orchestrator_path or Path(__file__).parent.parent.parent / "orchestrator"
         )
         self.simulations: Dict[str, SimulationResult] = {}
-        self.sandbox = None
+        self.sandbox: Optional[SandboxEnvironment] = None
 
     @contextmanager
     def simulation_context(self, use_docker: bool = True):
@@ -316,6 +317,8 @@ class HealingSimulator:
 
         try:
             # Set up environment
+            if not self.sandbox:
+                raise RuntimeError("simulate() must be called within simulation_context()")
             env_path = self.sandbox.setup_environment(config)
             result.artifacts_path = env_path
 
@@ -379,11 +382,11 @@ class HealingSimulator:
         """Trigger the healing process"""
         # Import healing modules
         try:
-            from modules.analysis.analyzer import ErrorAnalyzer
-            from modules.patch_generation.patcher import Patcher
+            from modules.analysis.analyzer import Analyzer
+            from modules.patch_generation.patcher import PatchGenerator
 
             # Analyze error
-            analyzer = ErrorAnalyzer()
+            analyzer = Analyzer()
             analysis_result = analyzer.analyze_error(
                 error_output, language=config.language, framework=config.framework
             )
@@ -392,7 +395,7 @@ class HealingSimulator:
                 return {"success": False, "patches": []}
 
             # Generate patch
-            patcher = Patcher()
+            patcher = PatchGenerator(Path(env_path) / ".homeostasis" / "templates")
             patches = patcher.generate_patches(analysis_result, str(env_path / "src"))
 
             return {"success": len(patches) > 0, "patches": patches}
@@ -473,7 +476,7 @@ class HealingSimulator:
         self, configs: List[SimulationConfig]
     ) -> List[SimulationResult]:
         """Run multiple simulations in parallel"""
-        results = []
+        results: List[SimulationResult] = []
         threads = []
 
         def run_simulation(config: SimulationConfig, results_list: List):

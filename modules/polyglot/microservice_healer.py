@@ -190,7 +190,8 @@ class MicroserviceHealer:
                 continue
 
             # Generate language-specific fix
-            fix = plugin.generate_fix(self._convert_to_plugin_error(service_error))
+            error_data = self._convert_to_plugin_error(service_error)
+            fix = plugin.generate_fix(error_data, {"service_id": service_id})
 
             if fix:
                 patches[service_id] = [
@@ -235,7 +236,7 @@ class MicroserviceHealer:
         Execute a healing strategy across multiple services.
         Coordinates deployment to minimize downtime and risk.
         """
-        execution_result = {
+        execution_result: Dict[str, Any] = {
             "strategy_id": strategy.strategy_id,
             "success": True,
             "services_healed": [],
@@ -345,13 +346,16 @@ class MicroserviceHealer:
             service_id = strategy.target_services[i]
             if isinstance(result, Exception):
                 errors.append({"service_id": service_id, "error": str(result)})
-            elif result.get("success"):
+            elif isinstance(result, dict) and result.get("success"):
                 services_healed.append(service_id)
             else:
+                error_msg = "Unknown error"
+                if isinstance(result, dict):
+                    error_msg = result.get("error", "Unknown error")
                 errors.append(
                     {
                         "service_id": service_id,
-                        "error": result.get("error", "Unknown error"),
+                        "error": error_msg,
                     }
                 )
 

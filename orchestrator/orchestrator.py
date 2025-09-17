@@ -88,6 +88,9 @@ class Orchestrator:
         # Set up logging
         self.logger = MonitoringLogger("orchestrator", log_level=log_level)
 
+        # Type declarations for optional components
+        self.rate_limiter: Optional[Any] = None
+
         # Initialize components
         # Convert boolean to strategy string
         strategy = (
@@ -299,7 +302,7 @@ class Orchestrator:
         self._create_directories()
 
         # Service process
-        self.service_process = None
+        self.service_process: Optional[subprocess.Popen] = None
 
         self.logger.info("Orchestrator initialized")
 
@@ -313,7 +316,7 @@ class Orchestrator:
         with open(self.config_path, "r") as f:
             config = yaml.safe_load(f)
 
-        return config
+        return dict(config)
 
     def _create_directories(self) -> None:
         """Create necessary directories."""
@@ -360,7 +363,9 @@ class Orchestrator:
 
             # Check if the service started successfully
             if self.service_process.poll() is not None:
-                stderr = self.service_process.stderr.read()
+                stderr = ""
+                if self.service_process.stderr:
+                    stderr = self.service_process.stderr.read()
                 self.logger.error(f"Service failed to start: {stderr}")
                 return
 
@@ -643,7 +648,7 @@ class Orchestrator:
 
         return applied_patches
 
-    def run_tests(self, patches: List[Dict[str, Any]] = None) -> bool:
+    def run_tests(self, patches: Optional[List[Dict[str, Any]]] = None) -> bool:
         """
         Run tests to validate the applied patches.
 
@@ -747,7 +752,7 @@ class Orchestrator:
         # Use simple test runner if not using advanced features
         try:
             # Run tests
-            result = subprocess.run(
+            test_result = subprocess.run(
                 test_command,
                 shell=True,
                 cwd=project_root,
@@ -758,7 +763,7 @@ class Orchestrator:
             )
 
             # Check if tests passed
-            success = result.returncode == 0
+            success = test_result.returncode == 0
 
             # Record metrics if patches are provided
             if patches:
@@ -776,7 +781,7 @@ class Orchestrator:
                 self.logger.info("Tests passed")
                 return True
             else:
-                self.logger.error(f"Tests failed: {result.stderr}")
+                self.logger.error(f"Tests failed: {test_result.stderr}")
                 return False
         except subprocess.TimeoutExpired:
             self.logger.error(f"Tests timed out after {test_timeout} seconds")
@@ -892,7 +897,7 @@ class Orchestrator:
             return False, "Pending approval"
 
     def deploy_changes(
-        self, patches: List[Dict[str, Any]] = None, requester: str = "system"
+        self, patches: Optional[List[Dict[str, Any]]] = None, requester: str = "system"
     ) -> bool:
         """
         Deploy the changes by restarting the service.
@@ -1692,7 +1697,7 @@ class Orchestrator:
         Returns:
             Health data with metrics
         """
-        metrics = {"timestamp": time.time()}
+        metrics: Dict[str, Any] = {"timestamp": time.time()}
 
         try:
             # Response time (health check)
@@ -1824,7 +1829,7 @@ class Orchestrator:
         try:
             with open(session_files[0], "r") as f:
                 session_data = json.load(f)
-            return session_data
+            return dict(session_data)
         except Exception as e:
             self.logger.exception(
                 e, message=f"Failed to read session information from {session_files[0]}"
@@ -1856,6 +1861,13 @@ class Orchestrator:
             if not backup_path or not Path(backup_path).exists():
                 self.logger.warning(
                     f"No backup found for patch {patch_id}, cannot roll back"
+                )
+                success = False
+                continue
+
+            if not file_path:
+                self.logger.warning(
+                    f"No file path found for patch {patch_id}, cannot roll back"
                 )
                 success = False
                 continue
@@ -2406,25 +2418,25 @@ def main():
 
         if args.canary_status:
             # Show status of active canary deployments
-            status = canary_deployment.get_status()
+            canary_status: Dict[str, Any] = canary_deployment.get_status()
 
-            if status["status"] is None:
+            if canary_status["status"] is None:
                 print("No active canary deployments.")
             else:
                 print(
-                    f"Canary Deployment Status for {status['service_name']} ({status['fix_id']}):"
+                    f"Canary Deployment Status for {canary_status['service_name']} ({canary_status['fix_id']}):"
                 )
-                print(f"  Status: {status['status']}")
-                print(f"  Current percentage: {status['current_percentage']}%")
-                print(f"  Start time: {status['start_time']}")
-                if status["completion_time"]:
-                    print(f"  Completion time: {status['completion_time']}")
+                print(f"  Status: {canary_status['status']}")
+                print(f"  Current percentage: {canary_status['current_percentage']}%")
+                print(f"  Start time: {canary_status['start_time']}")
+                if canary_status["completion_time"]:
+                    print(f"  Completion time: {canary_status['completion_time']}")
                 else:
-                    print(f"  Elapsed time: {status['elapsed_time']:.2f} seconds")
+                    print(f"  Elapsed time: {canary_status['elapsed_time']:.2f} seconds")
                 print("\nMetrics:")
-                print(f"  Error rate: {status['metrics']['error_rate']:.3f}")
-                print(f"  Success rate: {status['metrics']['success_rate']:.3f}")
-                print(f"  Response time: {status['metrics']['response_time']:.3f} ms")
+                print(f"  Error rate: {canary_status['metrics']['error_rate']:.3f}")
+                print(f"  Success rate: {canary_status['metrics']['success_rate']:.3f}")
+                print(f"  Response time: {canary_status['metrics']['response_time']:.3f} ms")
             exit(0)
 
         elif args.canary_promote:
@@ -2475,9 +2487,10 @@ def main():
 
             if canary_deployment.complete():
                 print("Successfully completed canary deployment")
-                print(
-                    f"Time taken: {(canary_deployment.completion_time - canary_deployment.start_time).total_seconds():.2f} seconds"
-                )
+                if canary_deployment.completion_time and canary_deployment.start_time:
+                    print(
+                        f"Time taken: {(canary_deployment.completion_time - canary_deployment.start_time).total_seconds():.2f} seconds"
+                    )
                 exit(0)
             else:
                 print("Failed to complete canary deployment")

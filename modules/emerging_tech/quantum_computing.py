@@ -410,7 +410,7 @@ print(f"Optimized depth: {optimized_circuit.depth()}")
         }
 
         strategy_name = strategy.get("name")
-        return mitigation_templates.get(strategy_name)
+        return mitigation_templates.get(strategy_name) if strategy_name else None
 
     def _generate_cirq_mitigation(
         self, error: QuantumError, strategy: Dict[str, Any]
@@ -487,7 +487,7 @@ corrected_counts = apply_correction(raw_counts, confusion_matrix)
         }
 
         strategy_name = strategy.get("name")
-        return mitigation_templates.get(strategy_name)
+        return mitigation_templates.get(strategy_name) if strategy_name else None
 
     def _generate_qsharp_mitigation(
         self, error: QuantumError, strategy: Dict[str, Any]
@@ -532,7 +532,7 @@ corrected_counts = apply_correction(raw_counts, confusion_matrix)
         self, circuit_data: Dict[str, Any], backend_info: Dict[str, Any]
     ) -> Dict[str, float]:
         """Estimate error rates for quantum circuit"""
-        error_rates = {}
+        error_rates: Dict[str, float] = {}
 
         # Gate errors
         gate_errors = backend_info.get("gate_errors", {})

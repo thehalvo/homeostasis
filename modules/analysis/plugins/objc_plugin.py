@@ -12,6 +12,7 @@ import os
 import re
 import subprocess
 import tempfile
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -233,7 +234,9 @@ class ObjCExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
+        self.compiled_patterns: Dict[
+            str, List[tuple[re.Pattern[str], Dict[str, Any]]]
+        ] = {}
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
             for rule in rule_list:
@@ -771,7 +774,7 @@ class ObjCLanguagePlugin(LanguagePlugin):
             "stack_trace": error_data.get("stack_trace", []),
             "context": error_data.get("context", {}),
             "severity": error_data.get("severity", "medium"),
-            "timestamp": self._get_current_timestamp(),
+            "timestamp": datetime.now().isoformat(),
         }
 
     def denormalize_error(self, standard_error: Dict[str, Any]) -> Dict[str, Any]:
@@ -793,8 +796,12 @@ class ObjCLanguagePlugin(LanguagePlugin):
             "stack_trace": standard_error.get("stack_trace", []),
             "context": standard_error.get("context", {}),
             "platform_info": standard_error.get("context", {}).get("platform_info", {}),
-            "xcode_version": standard_error.get("context", {}).get("xcode_version", "unknown"),
-            "ios_version": standard_error.get("context", {}).get("ios_version", "unknown"),
+            "xcode_version": standard_error.get("context", {}).get(
+                "xcode_version", "unknown"
+            ),
+            "ios_version": standard_error.get("context", {}).get(
+                "ios_version", "unknown"
+            ),
         }
 
     def can_handle(self, language: str, file_path: Optional[str] = None) -> bool:

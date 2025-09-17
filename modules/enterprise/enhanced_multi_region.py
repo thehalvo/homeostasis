@@ -173,7 +173,7 @@ class EnhancedMultiRegionFailover:
         # Configuration
         self.auto_failover_enabled = config.get("auto_failover_enabled", True)
         self.min_healthy_regions = config.get("min_healthy_regions", 2)
-        self.failover_cooldown_seconds = config.get("failover_cooldown_seconds", 300)
+        self.failover_cooldown_seconds = int(config.get("failover_cooldown_seconds", 300))
         self.consistency_check_interval = config.get("consistency_check_interval", 60)
 
         # Initialize components
@@ -308,10 +308,13 @@ class EnhancedMultiRegionFailover:
                         )
 
                     # Record metrics
-                    self.observability.record_metric(
-                        f"region.health.{region_id}",
-                        1 if healthy else 0,
-                        tags={"region": region_id, "status": region.status.value},
+                    logger.info(
+                        f"Region health metric: {region_id}",
+                        extra={
+                            "metric_name": f"region.health.{region_id}",
+                            "metric_value": 1 if healthy else 0,
+                            "tags": {"region": region_id, "status": region.status.value},
+                        }
                     )
 
                     # Wait for next check
@@ -336,8 +339,9 @@ class EnhancedMultiRegionFailover:
             return await self._grpc_health_check(region_id, config)
         elif config.check_type == HealthCheckType.CUSTOM:
             return await self._custom_health_check(region_id, config)
-        else:
-            return False
+
+        # This should never be reached due to enum exhaustiveness
+        raise ValueError(f"Unknown health check type: {config.check_type}")
 
     async def _http_health_check(
         self, region_id: str, config: HealthCheckConfig
@@ -530,7 +534,7 @@ class EnhancedMultiRegionFailover:
             return False
 
         last_failover = self.failover_decisions[-1]
-        elapsed = (datetime.datetime.utcnow() - last_failover.timestamp).total_seconds()
+        elapsed: float = (datetime.datetime.utcnow() - last_failover.timestamp).total_seconds()
 
         return elapsed < self.failover_cooldown_seconds
 
@@ -577,13 +581,16 @@ class EnhancedMultiRegionFailover:
                 logger.info("Failover completed successfully")
 
                 # Update metrics
-                self.observability.record_metric(
-                    "failover.success",
-                    1,
-                    tags={
-                        "from_region": decision.from_region,
-                        "to_regions": ",".join(decision.to_regions),
-                    },
+                logger.info(
+                    "Failover success metric",
+                    extra={
+                        "metric_name": "failover.success",
+                        "metric_value": 1,
+                        "tags": {
+                            "from_region": decision.from_region,
+                            "to_regions": ",".join(decision.to_regions),
+                        },
+                    }
                 )
             else:
                 logger.error("Failover verification failed")
@@ -857,7 +864,7 @@ class EnhancedMultiRegionFailover:
         start_time = datetime.datetime.utcnow()
         end_time = start_time + datetime.timedelta(minutes=duration_minutes)
 
-        metrics = {
+        metrics: Dict[str, Any] = {
             "error_rates": [],
             "response_times": [],
             "success_count": 0,

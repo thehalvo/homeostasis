@@ -74,6 +74,9 @@ try:
 except ImportError as e:
     logger.warning(f"Core language framework plugins not available: {e}")
     CORE_LANGUAGE_FRAMEWORKS_AVAILABLE = False
+    # Define placeholder types for type checking
+    CPPLanguagePlugin = Any  # type: ignore
+    ObjCLanguagePlugin = Any  # type: ignore
 
 
 class FrameworkType:
@@ -811,6 +814,8 @@ class CSSParser(LanguageSpecificParser):
 class CPPParser(LanguageSpecificParser):
     """C/C++ parser wrapper for plugin integration."""
 
+    plugin: Optional[Any]
+
     def __init__(self):
         super().__init__(LanguageType.CPP)
         if CORE_LANGUAGE_FRAMEWORKS_AVAILABLE:
@@ -878,6 +883,8 @@ class CPPParser(LanguageSpecificParser):
 class ObjCParser(LanguageSpecificParser):
     """Objective-C parser wrapper for plugin integration."""
 
+    plugin: Optional[Any]
+
     def __init__(self):
         super().__init__(LanguageType.UNKNOWN)  # OBJC not defined in LanguageType enum
         if CORE_LANGUAGE_FRAMEWORKS_AVAILABLE:
@@ -944,6 +951,8 @@ class ObjCParser(LanguageSpecificParser):
 
 class BuildSystemsParser(LanguageSpecificParser):
     """Build Systems parser wrapper for build analyzer integration."""
+
+    analyzer: Optional[Any]
 
     def __init__(self):
         super().__init__(LanguageType.JSON)  # JSON for package.json, pom.xml analysis
@@ -1168,7 +1177,7 @@ class UnifiedFrameworkParserFactory:
         parser = self.create_parser(error_context, project_root)
 
         # Initialize results
-        analysis_result = {
+        analysis_result: Dict[str, Any] = {
             "detected_framework": framework,
             "language": error_context.language.value,
             "parser_type": type(parser).__name__ if parser else None,

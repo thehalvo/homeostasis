@@ -18,7 +18,7 @@ import secrets
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 
 from .audit import get_audit_logger
 from .auth import get_auth_manager
@@ -62,7 +62,7 @@ class UserProfile:
     location: str = ""
     timezone: str = "UTC"
     language: str = "en"
-    metadata: Dict[str, any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -77,7 +77,7 @@ class UserSession:
     user_agent: str
     expires_at: datetime.datetime
     is_active: bool = True
-    metadata: Dict[str, any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -108,7 +108,7 @@ class UserManagementSystem:
     - Integration with external identity providers
     """
 
-    def __init__(self, config: Dict = None, storage_path: str = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None, storage_path: Optional[str] = None):
         """Initialize the user management system.
 
         Args:
@@ -152,8 +152,8 @@ class UserManagementSystem:
         email: str,
         password: str,
         full_name: str,
-        roles: List[str] = None,
-        groups: List[str] = None,
+        roles: Optional[List[str]] = None,
+        groups: Optional[List[str]] = None,
         **profile_data,
     ) -> str:
         """Create a new user account.
@@ -296,7 +296,7 @@ class UserManagementSystem:
 
         return True
 
-    def deactivate_user(self, user_id: str, reason: str = None) -> bool:
+    def deactivate_user(self, user_id: str, reason: Optional[str] = None) -> bool:
         """Deactivate a user account.
 
         Args:
@@ -328,8 +328,8 @@ class UserManagementSystem:
         self,
         username: str,
         password: str,
-        ip_address: str = None,
-        user_agent: str = None,
+        ip_address: Optional[str] = None,
+        user_agent: Optional[str] = None,
     ) -> Optional[Dict]:
         """Authenticate a user and create a session.
 
@@ -464,7 +464,7 @@ class UserManagementSystem:
         return True
 
     def create_group(
-        self, group_name: str, description: str, permissions: List[str] = None
+        self, group_name: str, description: str, permissions: Optional[List[str]] = None
     ) -> str:
         """Create a user group.
 
@@ -716,6 +716,17 @@ class UserManagementSystem:
             if user["username"] == username:
                 return user
         return None
+
+    def get_user(self, user_id: str) -> Optional[Dict[str, Any]]:
+        """Get user by user ID.
+
+        Args:
+            user_id: User ID
+
+        Returns:
+            User data dictionary or None if not found
+        """
+        return self.users.get(user_id)
 
     def _generate_user_id(self) -> str:
         """Generate unique user ID."""

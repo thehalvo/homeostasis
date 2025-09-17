@@ -143,7 +143,7 @@ class ApprovalWorkflowEngine:
     escalation, and SLA management.
     """
 
-    def __init__(self, config: Dict = None, storage_path: str = None):
+    def __init__(self, config: Optional[Dict] = None, storage_path: Optional[str] = None):
         """Initialize the workflow engine.
 
         Args:
@@ -236,7 +236,7 @@ class ApprovalWorkflowEngine:
             description=description,
             category=category,
             stages=workflow_stages,
-            initial_stage=workflow_stages[0].stage_id if workflow_stages else None,
+            initial_stage=workflow_stages[0].stage_id if workflow_stages else "",
         )
 
         self.templates[template_id] = template
@@ -261,7 +261,7 @@ class ApprovalWorkflowEngine:
         template_id: str,
         request_id: str,
         initiated_by: str,
-        metadata: Dict = None,
+        metadata: Optional[Dict] = None,
     ) -> str:
         """Initiate a workflow instance.
 
@@ -326,7 +326,7 @@ class ApprovalWorkflowEngine:
         return instance_id
 
     def process_approval_decision(
-        self, instance_id: str, approver_id: str, decision: str, comments: str = None
+        self, instance_id: str, approver_id: str, decision: str, comments: Optional[str] = None
     ) -> bool:
         """Process an approval decision for a workflow stage.
 
@@ -682,7 +682,7 @@ class ApprovalWorkflowEngine:
         if not evaluator:
             return True
 
-        return evaluator(instance_id, stage)
+        return bool(evaluator(instance_id, stage))
 
     def _evaluate_always(self, instance_id: str, stage: WorkflowStage) -> bool:
         """Always true condition."""
@@ -718,7 +718,7 @@ class ApprovalWorkflowEngine:
         request_metadata = (
             approval_request.data if hasattr(approval_request, "data") else {}
         )
-        patch_size = request_metadata.get("patch_size", 0)
+        patch_size = int(request_metadata.get("patch_size", 0))
 
         return min_size <= patch_size <= max_size
 
@@ -1036,7 +1036,7 @@ class ApprovalWorkflowEngine:
 _workflow_engine = None
 
 
-def get_workflow_engine(config: Dict = None) -> ApprovalWorkflowEngine:
+def get_workflow_engine(config: Optional[Dict] = None) -> ApprovalWorkflowEngine:
     """Get or create the singleton ApprovalWorkflowEngine instance."""
     global _workflow_engine
     if _workflow_engine is None:

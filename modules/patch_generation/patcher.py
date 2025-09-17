@@ -6,7 +6,7 @@ import re
 import shutil
 import uuid
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 # Import diff utilities
 from modules.patch_generation.diff_utils import (
@@ -322,7 +322,7 @@ class PatchGenerator:
                 print(f"LLM patch generation failed: {e}, falling back to templates")
 
         # Fall back to template-based patch generation
-        template_name = self.error_template_mapping.get(root_cause)
+        template_name = self.error_template_mapping.get(root_cause) if root_cause else None
         if not template_name:
             # If no template and LLM is disabled/failed, return None
             return None
@@ -333,7 +333,7 @@ class PatchGenerator:
             framework = self.detect_framework(Path(file_path))
 
         # Try to find the most appropriate template using the template manager
-        template = None
+        template: Optional[Union[BaseTemplate, PatchTemplate]] = None
 
         if framework:
             # Try framework-specific template first
@@ -396,11 +396,11 @@ class PatchGenerator:
             return None
 
         bug_info = self.known_bugs_mapping[bug_id]
-        template_name = bug_info["template"]
+        template_name = str(bug_info["template"])
         framework = bug_info.get("framework")
 
         # Try to find the template using the hierarchical template system
-        template = self.template_manager.get_template(template_name)
+        template: Optional[Union[BaseTemplate, PatchTemplate]] = self.template_manager.get_template(template_name)
 
         # If not found and it's a legacy template name, try the legacy templates
         if (
@@ -413,10 +413,11 @@ class PatchGenerator:
             return None
 
         # Render the template with the provided variables
+        variables = dict(bug_info["variables"]) if bug_info.get("variables") else {}
         if isinstance(template, BaseTemplate):
-            rendered_code = template.render(bug_info["variables"])
+            rendered_code = template.render(variables)
         else:
-            rendered_code = template.render(bug_info["variables"])
+            rendered_code = template.render(variables)
 
         # Build the patch information
         patch = {
@@ -756,7 +757,7 @@ class PatchGenerator:
         framework = self.detect_framework(file_path)
 
         # Try to get the most appropriate template using the hierarchical template system
-        template = None
+        template: Optional[Union[BaseTemplate, PatchTemplate]] = None
         template_id = template_name
 
         if framework:

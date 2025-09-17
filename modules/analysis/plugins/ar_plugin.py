@@ -109,7 +109,7 @@ class ARPlugin(LanguagePlugin):
     ) -> Dict[str, Any]:
         """Generate a fix for an AR error based on the analysis."""
         error_type = analysis.get("error_type")
-        platform = analysis.get("platform")
+        platform = analysis.get("platform", "arcore")
 
         # Generate platform-specific fixes
         if error_type == "tracking_lost":
@@ -156,7 +156,7 @@ class ARPlugin(LanguagePlugin):
         else:
             self.rules = {"rules": [], "platform_specific": {}}
 
-    def detect_errors(self, code: str, file_path: str = None) -> List[Dict[str, Any]]:
+    def detect_errors(self, code: str, file_path: Optional[str] = None) -> List[Dict[str, Any]]:
         """Detect AR-specific errors in code"""
         errors = []
 
@@ -382,7 +382,7 @@ class ARPlugin(LanguagePlugin):
         self,
         error_message: str,
         code_context: str,
-        file_path: str = None,
+        file_path: Optional[str] = None,
         performance_metrics: Optional[Dict] = None,
     ) -> Optional[Dict[str, Any]]:
         """Analyze AR error and suggest fixes"""
@@ -485,7 +485,7 @@ class ARPlugin(LanguagePlugin):
             gpu_usage=metrics.get("gpu_usage", 0),
             memory_usage=metrics.get("memory_usage", 0),
             battery_drain=metrics.get("battery_drain", 0),
-            thermal_state=metrics.get("thermal_state", "nominal"),
+            thermal_state=str(metrics.get("thermal_state", "nominal")),
             tracking_quality=metrics.get("tracking_quality", 1.0),
             rendering_latency_ms=metrics.get("rendering_latency_ms", 0),
             motion_to_photon_latency_ms=metrics.get("motion_to_photon_latency_ms"),
@@ -497,7 +497,7 @@ class ARPlugin(LanguagePlugin):
         """Check for comfort violations"""
         return self.resilience_manager.check_comfort_violations(motion_data)
 
-    def get_platform_info(self, code: str, file_path: str = None) -> Dict[str, Any]:
+    def get_platform_info(self, code: str, file_path: Optional[str] = None) -> Dict[str, Any]:
         """Get information about the AR platform being used"""
         platform = self.resilience_manager.detect_platform(code, file_path or "")
 
@@ -619,34 +619,34 @@ class ARPlugin(LanguagePlugin):
         }
         return handlers.get(platform, "// Add tracking loss handling for your platform")
 
-    def get_capabilities(self) -> Dict[str, Any]:
+    def get_capabilities(self) -> set[str]:
         """Return plugin capabilities"""
-        return {
-            "name": self.name,
-            "version": self.version,
-            "supported_platforms": self.supported_platforms,
-            "supported_extensions": self.supported_extensions,
-            "features": [
-                "error_detection",
-                "performance_analysis",
-                "tracking_recovery",
-                "comfort_optimization",
-                "thermal_management",
-                "multi_platform_support",
-            ],
-            "healing_strategies": [
-                "tracking_recovery_ui",
-                "dynamic_lod",
-                "render_scale_adjustment",
-                "comfort_mode",
-                "thermal_management",
-                "anchor_stabilization",
-            ],
-            "comfort_features": [
-                "motion_smoothing",
-                "vignetting",
-                "teleportation",
-                "snap_rotation",
-                "horizon_locking",
-            ],
-        }
+        # Start with base capabilities from parent class
+        capabilities = super().get_capabilities()
+
+        # Add AR-specific capabilities
+        capabilities.update({
+            "detect_errors",
+            "analyze_performance",
+            "check_comfort_violations",
+            "get_platform_info",
+            "analyze_error_detailed",
+            "error_detection",
+            "performance_analysis",
+            "tracking_recovery",
+            "comfort_optimization",
+            "thermal_management",
+            "multi_platform_support",
+            "tracking_recovery_ui",
+            "dynamic_lod",
+            "render_scale_adjustment",
+            "comfort_mode",
+            "anchor_stabilization",
+            "motion_smoothing",
+            "vignetting",
+            "teleportation",
+            "snap_rotation",
+            "horizon_locking",
+        })
+
+        return capabilities

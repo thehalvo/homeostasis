@@ -42,8 +42,8 @@ try:
     OTEL_AVAILABLE = True
 except ImportError:
     OTEL_AVAILABLE = False
-    trace = None
-    metrics = None
+    trace = None  # type: ignore
+    metrics = None  # type: ignore
 
 from modules.monitoring.monitoring_adapters import (
     AlertSeverity,
@@ -137,19 +137,27 @@ class ObservabilityHooks:
                 self.monitoring_adapters.append(adapter)
 
         # Initialize OpenTelemetry if available
-        self.tracer = None
-        self.meter = None
+        self.tracer: Optional[Any] = None
+        self.meter: Optional[Any] = None
         if OTEL_AVAILABLE and config.get("opentelemetry", {}).get("enabled", True):
             self._init_opentelemetry()
+
+        # Initialize metric counter attributes
+        self.healing_cycles_counter: Optional[Any] = None
+        self.patches_generated_counter: Optional[Any] = None
+        self.errors_detected_counter: Optional[Any] = None
+        self.healing_success_counter: Optional[Any] = None
+        self.healing_duration_histogram: Optional[Any] = None
+        self.error_severity_counter: Optional[Any] = None
 
         # Initialize metrics collectors
         self._init_metrics_collectors()
 
         # Context storage
-        self._context_stack = []
+        self._context_stack: List[ObservabilityContext] = []
 
         # Performance tracking
-        self.performance_stats = {}
+        self.performance_stats: Dict[str, Any] = {}
 
     def _init_opentelemetry(self):
         """Initialize OpenTelemetry components"""

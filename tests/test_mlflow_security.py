@@ -2,20 +2,21 @@
 Tests for MLflow security measures.
 """
 
-import os
 import json
+import os
 import tempfile
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from modules.security.mlflow_security import (
     MLflowSecurityConfig,
-    secure_model_loader,
-    SecurityError,
     ModelSandbox,
+    SecurityError,
     create_secure_mlflow_config,
     load_model_securely,
+    secure_model_loader,
 )
 
 
@@ -31,7 +32,9 @@ class TestMLflowSecurityConfig:
 
     def test_load_from_env(self):
         """Test loading trusted sources from environment."""
-        with patch.dict(os.environ, {"MLFLOW_TRUSTED_SOURCES": "s3://bucket1,file:///trusted/"}):
+        with patch.dict(
+            os.environ, {"MLFLOW_TRUSTED_SOURCES": "s3://bucket1,file:///trusted/"}
+        ):
             config = MLflowSecurityConfig()
             assert "s3://bucket1" in config.trusted_model_sources
             assert "file:///trusted/" in config.trusted_model_sources
@@ -274,7 +277,7 @@ class TestSecurityHelpers:
         config.trusted_model_sources = ["s3://trusted/"]
 
         # Should work with trusted source
-        model = load_model_securely("s3://trusted/model", config)
+        load_model_securely("s3://trusted/model", config)
         assert mock_pyfunc.load_model.called
 
         # Should fail with untrusted source

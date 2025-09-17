@@ -235,7 +235,7 @@ class TwoPhaseCommitCoordinator(TransactionCoordinator):
             p for p in transaction.participants if p.state != TransactionState.COMMITTED
         ]
 
-        recovery_steps = []
+        recovery_steps: List[Dict[str, Any]] = []
         if transaction.state == TransactionState.PREPARING:
             # Failed during prepare - abort all
             recovery_steps.append(
@@ -387,7 +387,7 @@ class SagaCoordinator(TransactionCoordinator):
                 failed_index = i
                 break
 
-        recovery_steps = []
+        recovery_steps: List[Dict[str, Any]] = []
 
         # Compensate in reverse order
         for i in range(failed_index - 1, -1, -1):
@@ -636,7 +636,7 @@ class DistributedTransactionHealer:
             )
 
         # Check for language-specific issues
-        language_errors = {}
+        language_errors: Dict[str, List[ErrorContext]] = {}
         for participant in transaction.participants:
             if participant.error:
                 lang = participant.language
@@ -822,8 +822,8 @@ class DistributedTransactionHealer:
             1 for t in self.transaction_history if t.state == TransactionState.COMMITTED
         )
 
-        patterns_used = {}
-        languages = set()
+        patterns_used: Dict[str, int] = {}
+        languages: Set[str] = set()
         total_participants = 0
 
         for transaction in self.transaction_history:

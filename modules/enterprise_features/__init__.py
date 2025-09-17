@@ -116,7 +116,7 @@ class EnterpriseFeatures:
         Returns:
             Dictionary containing status of each enterprise component
         """
-        status = {"enabled_features": [], "component_status": {}}
+        status: Dict[str, Any] = {"enabled_features": [], "component_status": {}}
 
         # Check SAML
         if self.saml_manager:
@@ -240,7 +240,7 @@ class EnterpriseFeatures:
         """
         import datetime
 
-        report = {
+        report: Dict[str, Any] = {
             "generated_at": datetime.datetime.utcnow().isoformat(),
             "report_type": report_type,
             "sections": {},
@@ -343,7 +343,7 @@ class EnterpriseFeatures:
         Returns:
             Health check results
         """
-        health = {"overall_status": "healthy", "components": {}, "issues": []}
+        health: Dict[str, Any] = {"overall_status": "healthy", "components": {}, "issues": []}
 
         # Check each component
         if self.saml_manager:

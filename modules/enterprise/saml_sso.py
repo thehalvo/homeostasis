@@ -283,7 +283,8 @@ class SAMLAuthenticationManager:
             "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
         )
 
-        return etree.tostring(root, encoding="unicode", pretty_print=True)
+        result = etree.tostring(root, encoding="unicode", pretty_print=True)
+        return str(result) if result else ""
 
     def _sign_request(self, request_xml: str) -> str:
         """Sign SAML request with SP private key"""
@@ -324,7 +325,8 @@ class SAMLAuthenticationManager:
         # Sign the document
         ctx.sign(signature)
 
-        return etree.tostring(doc, encoding="unicode", pretty_print=True)
+        result = etree.tostring(doc, encoding="unicode", pretty_print=True)
+        return str(result) if result else ""
 
     def process_saml_response(
         self, saml_response: str, relay_state: Optional[str] = None
@@ -360,10 +362,14 @@ class SAMLAuthenticationManager:
             )
 
             # Store SAML session
+            idp = self._get_idp_by_issuer(assertion.issuer)
+            if not idp:
+                raise AuthenticationError(f"Unknown issuer: {assertion.issuer}")
+
             self.saml_sessions[user["username"]] = {
                 "session_index": assertion.session_index,
                 "name_id": assertion.name_id,
-                "idp_id": self._get_idp_by_issuer(assertion.issuer).idp_id,
+                "idp_id": idp.idp_id,
                 "login_time": datetime.datetime.utcnow().isoformat(),
             }
 
@@ -492,6 +498,8 @@ class SAMLAuthenticationManager:
         # Get issuer to find the right certificate
         issuer = assertion_elem.find(".//{%s}Issuer" % SAML_NAMESPACE).text
         idp = self._get_idp_by_issuer(issuer)
+        if not idp:
+            raise AuthenticationError(f"Unknown issuer: {issuer}")
 
         # Load IdP certificate
         cert_pem = base64.b64decode(idp.certificate)
@@ -519,6 +527,8 @@ class SAMLAuthenticationManager:
     def _map_assertion_to_user(self, assertion: SAMLAssertion) -> Dict[str, Any]:
         """Map SAML assertion attributes to user info"""
         idp = self._get_idp_by_issuer(assertion.issuer)
+        if not idp:
+            raise AuthenticationError(f"Unknown issuer: {assertion.issuer}")
 
         # Default mapping
         user_info = {
@@ -557,29 +567,31 @@ class SAMLAuthenticationManager:
         username = user_info["username"]
 
         # Check if user exists
-        existing_user = self.user_management.get_user(username)
+        existing_user = self.user_management._get_user_by_username(username)
 
         if existing_user:
             # Update user attributes
-            updates = {
-                "email": user_info.get("email"),
-                "metadata": {
-                    "saml_attributes": user_info.get("attributes", {}),
-                    "last_login": datetime.datetime.utcnow().isoformat(),
-                    "auth_method": "saml",
-                    "idp": assertion.issuer,
-                },
+            metadata: Dict[str, Any] = {
+                "saml_attributes": user_info.get("attributes", {}),
+                "last_login": datetime.datetime.utcnow().isoformat(),
+                "auth_method": "saml",
+                "idp": assertion.issuer,
             }
 
             # Update name if provided
             if "first_name" in user_info or "last_name" in user_info:
-                updates["metadata"]["first_name"] = user_info.get("first_name")
-                updates["metadata"]["last_name"] = user_info.get("last_name")
+                metadata["first_name"] = user_info.get("first_name")
+                metadata["last_name"] = user_info.get("last_name")
+
+            updates = {
+                "email": user_info.get("email"),
+                "metadata": metadata,
+            }
 
             self.user_management.update_user(username, **updates)
 
             # Get updated user
-            user = self.user_management.get_user(username)
+            user = self.user_management._get_user_by_username(username)
 
         else:
             # Create new user
@@ -590,9 +602,20 @@ class SAMLAuthenticationManager:
             if not roles:
                 roles = ["user"]  # Default role
 
+            # Generate a random password for SAML users (they don't use it)
+            import secrets
+            password = secrets.token_urlsafe(32)
+
+            # Build full name from parts
+            first_name = user_info.get("first_name", "")
+            last_name = user_info.get("last_name", "")
+            full_name = f"{first_name} {last_name}".strip() or username
+
             self.user_management.create_user(
                 username=username,
                 email=email,
+                password=password,
+                full_name=full_name,
                 roles=roles,
                 metadata={
                     "saml_attributes": user_info.get("attributes", {}),
@@ -603,7 +626,10 @@ class SAMLAuthenticationManager:
                 },
             )
 
-            user = self.user_management.get_user(username)
+            user = self.user_management._get_user_by_username(username)
+
+        if not user:
+            raise AuthenticationError(f"Failed to create or retrieve user: {username}")
 
         return user
 
@@ -730,7 +756,8 @@ class SAMLAuthenticationManager:
         )
         session_index_elem.text = session_index
 
-        return etree.tostring(root, encoding="unicode", pretty_print=True)
+        result = etree.tostring(root, encoding="unicode", pretty_print=True)
+        return str(result) if result else ""
 
     def process_logout_response(self, saml_response: str) -> bool:
         """Process SAML Logout Response.
@@ -831,7 +858,8 @@ class SAMLAuthenticationManager:
             slo.set("Binding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect")
             slo.set("Location", self.sp_config.slo_url)
 
-        return etree.tostring(root, encoding="unicode", pretty_print=True)
+        result = etree.tostring(root, encoding="unicode", pretty_print=True)
+        return str(result) if result else ""
 
     def validate_metadata(self, metadata_xml: str) -> bool:
         """Validate IdP metadata"""

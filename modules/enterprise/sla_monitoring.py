@@ -484,9 +484,10 @@ class SLAMonitoringSystem:
                 )
 
         # Update observability metrics
-        self.observability.record_metric(
-            f"sla.{sla.type.value}.current",
-            current_value,
+        self.monitoring_logger.info(
+            f"SLA metric update: {sla.type.value}",
+            metric_name=f"sla.{sla.type.value}.current",
+            metric_value=current_value,
             tags={"sla_id": sla_id, "service": target.service, "status": status.value},
         )
 
@@ -908,7 +909,7 @@ class SLAMonitoringSystem:
                 )
 
         # Check for repeated violations
-        violation_counts = defaultdict(int)
+        violation_counts: Dict[str, int] = defaultdict(int)
         for violation in violations:
             violation_counts[violation.sla_id] += 1
 

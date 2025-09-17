@@ -91,7 +91,7 @@ class AngularExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -500,7 +500,7 @@ class AngularPatchGenerator:
 
     def _load_templates(self) -> Dict[str, str]:
         """Load Angular patch templates."""
-        templates = {}
+        templates: Dict[str, str] = {}
 
         if not self.angular_template_dir.exists():
             logger.warning(
@@ -1122,26 +1122,41 @@ class AngularLanguagePlugin(LanguagePlugin):
         return any(pattern in message for pattern in template_patterns)
 
     def generate_fix(
-        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
-    ) -> Optional[Dict[str, Any]]:
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a fix for the Angular error.
 
         Args:
-            error_data: The Angular error data
             analysis: Analysis results
-            source_code: Source code where the error occurred
+            context: Additional context information
 
         Returns:
-            Fix information or None if no fix can be generated
+            Fix information
         """
         try:
-            return self.patch_generator.generate_patch(
+            # Extract error_data and source_code from context if available
+            error_data = context.get("error_data", {})
+            source_code = context.get("source_code", "")
+
+            patch_result = self.patch_generator.generate_patch(
                 error_data, analysis, source_code
             )
+
+            if patch_result is None:
+                return {
+                    "patch_type": "no_fix_available",
+                    "patches": []
+                }
+
+            return patch_result
         except Exception as e:
             logger.error(f"Error generating Angular fix: {e}")
-            return None
+            return {
+                "patch_type": "error",
+                "error": str(e),
+                "patches": []
+            }
 
     def get_language_info(self) -> Dict[str, Any]:
         """

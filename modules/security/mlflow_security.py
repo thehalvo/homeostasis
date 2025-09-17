@@ -5,13 +5,13 @@ This module implements security measures to mitigate known CVEs in MLflow
 (CVE-2024-37052 to CVE-2024-37060) related to unsafe deserialization.
 """
 
-import os
-import logging
-from pathlib import Path
-from typing import Dict, List, Optional, Any
-from functools import wraps
 import hashlib
 import json
+import logging
+import os
+from functools import wraps
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -48,10 +48,14 @@ class MLflowSecurityConfig:
     def is_trusted_source(self, model_uri: str) -> bool:
         """Check if a model URI is from a trusted source."""
         if not self.trusted_model_sources:
-            logger.warning("No trusted sources configured - all models will be rejected")
+            logger.warning(
+                "No trusted sources configured - all models will be rejected"
+            )
             return False
 
-        return any(model_uri.startswith(source) for source in self.trusted_model_sources)
+        return any(
+            model_uri.startswith(source) for source in self.trusted_model_sources
+        )
 
     def calculate_model_hash(self, model_path: str) -> str:
         """Calculate SHA256 hash of a model file."""
@@ -61,7 +65,9 @@ class MLflowSecurityConfig:
                 sha256_hash.update(byte_block)
         return sha256_hash.hexdigest()
 
-    def validate_model_hash(self, model_path: str, expected_hash: Optional[str] = None) -> bool:
+    def validate_model_hash(
+        self, model_path: str, expected_hash: Optional[str] = None
+    ) -> bool:
         """Validate model file against known good hash."""
         actual_hash = self.calculate_model_hash(model_path)
 
@@ -126,11 +132,13 @@ def secure_model_loader(security_config: Optional[MLflowSecurityConfig] = None):
                 raise
 
         return wrapper
+
     return decorator
 
 
 class SecurityError(Exception):
     """Exception raised for security policy violations."""
+
     pass
 
 
@@ -159,10 +167,14 @@ class ModelSandbox:
 
         # Set resource limits (simplified - use proper OS-level limits in production)
         import resource
-        if hasattr(resource, 'RLIMIT_AS'):
+
+        if hasattr(resource, "RLIMIT_AS"):
             resource.setrlimit(
                 resource.RLIMIT_AS,
-                (self.memory_limit_mb * 1024 * 1024, self.memory_limit_mb * 1024 * 1024)
+                (
+                    self.memory_limit_mb * 1024 * 1024,
+                    self.memory_limit_mb * 1024 * 1024,
+                ),
             )
 
         try:
@@ -182,33 +194,29 @@ def create_secure_mlflow_config() -> Dict[str, Any]:
     return {
         # Disable automatic model registry access
         "mlflow.disable_auto_logging": True,
-
         # Enable authentication (requires MLflow server setup)
         "mlflow.authentication.enabled": True,
-
         # Restrict model sources
         "mlflow.models.trusted_sources": [
             "file:///var/mlflow/trusted-models/",
             "s3://my-secure-bucket/models/",
             "models:/production/",
         ],
-
         # Enable model signature validation
         "mlflow.models.validate_signature": True,
-
         # Disable dangerous features
         "mlflow.recipes.enabled": False,  # Disable recipes to prevent CVE-2024-37060
-
         # Set strict permissions
         "mlflow.server.default_artifact_permission": "READ",
-
         # Enable audit logging
         "mlflow.server.audit_log_enabled": True,
     }
 
 
 # Example usage functions
-def load_model_securely(model_uri: str, security_config: Optional[MLflowSecurityConfig] = None):
+def load_model_securely(
+    model_uri: str, security_config: Optional[MLflowSecurityConfig] = None
+):
     """
     Securely load an MLflow model with all security checks.
 

@@ -6,11 +6,15 @@ Provides algorithms for ranking and scoring fix suggestions based on various fac
 
 import logging
 import re
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from modules.suggestion.suggestion_manager import FixSuggestion
 
 logger = logging.getLogger(__name__)
 
 
-def rank_suggestions(suggestions):
+def rank_suggestions(suggestions: List['FixSuggestion']) -> List['FixSuggestion']:
     """Rank a list of fix suggestions.
 
     Args:
@@ -27,7 +31,7 @@ def rank_suggestions(suggestions):
     return sorted(suggestions, key=lambda s: s.ranking_score, reverse=True)
 
 
-def calculate_ranking_score(suggestion) -> float:
+def calculate_ranking_score(suggestion: 'FixSuggestion') -> float:
     """Calculate a ranking score for a fix suggestion.
 
     Args:

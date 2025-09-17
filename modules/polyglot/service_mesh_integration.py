@@ -21,7 +21,7 @@ class ServiceMeshConfig:
     namespace: str
     auth_token: Optional[str] = None
     tls_config: Optional[Dict[str, str]] = None
-    custom_headers: Dict[str, str] = None
+    custom_headers: Optional[Dict[str, str]] = None
 
 
 @dataclass
@@ -92,6 +92,10 @@ class ServiceMeshAdapter(ABC):
 
 class IstioAdapter(ServiceMeshAdapter):
     """Adapter for Istio service mesh."""
+
+    def __init__(self, config: ServiceMeshConfig):
+        super().__init__(config)
+        self.applied_configurations: List[Dict[str, Any]] = []
 
     async def get_service_topology(self) -> Dict[str, List[str]]:
         """Get service topology from Istio."""
@@ -179,7 +183,7 @@ class IstioAdapter(ServiceMeshAdapter):
         self.logger.debug(f"Applying VirtualService configuration: {virtual_service}")
         # In production, this would apply via Istio API or kubectl
         # For now, log the configuration that would be applied
-        self.config.applied_configurations.append(
+        self.applied_configurations.append(
             {
                 "type": "VirtualService",
                 "name": f"{service_name}-canary",
@@ -256,7 +260,7 @@ class IstioAdapter(ServiceMeshAdapter):
         }
 
         self.logger.debug(f"Applying fault injection configuration: {virtual_service}")
-        self.config.applied_configurations.append(
+        self.applied_configurations.append(
             {
                 "type": "VirtualService",
                 "name": f"{service_name}-fault",
@@ -313,7 +317,7 @@ class LinkerdAdapter(ServiceMeshAdapter):
 
         # Apply the ServiceProfile
         self.logger.debug(f"Applying ServiceProfile configuration: {service_profile}")
-        self.config.applied_configurations.append(
+        self.applied_configurations.append(
             {
                 "type": "ServiceProfile",
                 "name": f"{policy.service_name}.{self.config.namespace}.svc.cluster.local",
@@ -348,7 +352,7 @@ class LinkerdAdapter(ServiceMeshAdapter):
 
         # Apply the TrafficSplit configuration
         self.logger.debug(f"Applying TrafficSplit configuration: {traffic_split}")
-        self.config.applied_configurations.append(
+        self.applied_configurations.append(
             {
                 "type": "TrafficSplit",
                 "name": f"{service_name}-canary",

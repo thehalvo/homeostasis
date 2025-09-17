@@ -111,7 +111,9 @@ class EmberExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
+        self.compiled_patterns: Dict[
+            str, List[tuple[re.Pattern[str], Dict[str, Any]]]
+        ] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -1214,26 +1216,36 @@ class EmberLanguagePlugin(LanguagePlugin):
         )
 
     def generate_fix(
-        self, error_data: Dict[str, Any], analysis: Dict[str, Any], source_code: str
-    ) -> Optional[Dict[str, Any]]:
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a fix for the Ember error.
 
         Args:
-            error_data: The Ember error data
             analysis: Analysis results
-            source_code: Source code where the error occurred
+            context: Context information including error data and source code
 
         Returns:
-            Fix information or None if no fix can be generated
+            Fix information as a dictionary
         """
         try:
-            return self.patch_generator.generate_patch(
-                error_data, analysis, source_code
-            )
+            error_data = context.get("error_data", {})
+            source_code = context.get("source_code", "")
+
+            if self.patch_generator:
+                return self.patch_generator.generate_patch(
+                    error_data, analysis, source_code
+                )
+            return {
+                "type": "suggestion",
+                "description": "Unable to generate automatic fix"
+            }
         except Exception as e:
             logger.error(f"Error generating Ember fix: {e}")
-            return None
+            return {
+                "type": "error",
+                "description": f"Failed to generate fix: {str(e)}"
+            }
 
     def get_language_info(self) -> Dict[str, Any]:
         """

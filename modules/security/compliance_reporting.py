@@ -139,7 +139,7 @@ class ComplianceReportingSystem:
     for various regulatory frameworks.
     """
 
-    def __init__(self, config: Dict = None, storage_path: str = None):
+    def __init__(self, config: Optional[Dict[Any, Any]] = None, storage_path: Optional[str] = None):
         """Initialize the compliance reporting system.
 
         Args:
@@ -223,7 +223,7 @@ class ComplianceReportingSystem:
         framework: ComplianceFramework,
         report_type: str,
         period_days: int = 30,
-        requested_by: str = None,
+        requested_by: Optional[str] = None,
     ) -> str:
         """Generate a compliance report.
 

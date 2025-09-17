@@ -329,7 +329,9 @@ class HybridCloudOrchestrator(EnterpriseOrchestrator):
                 for env_id, env in self.environments.items():
                     if env_id != source_env_id:
                         # Check if environments are connected
-                        if await self._are_environments_connected(source_env_id, env_id):
+                        if await self._are_environments_connected(
+                            source_env_id, env_id
+                        ):
                             affected.append(env)
 
         return affected

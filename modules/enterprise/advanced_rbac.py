@@ -108,7 +108,7 @@ class AdvancedRBACManager:
     - Contextual permissions
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize advanced RBAC manager.
 
         Args:
@@ -293,7 +293,7 @@ class AdvancedRBACManager:
         permissions: List[str],
         parent_roles: Optional[List[str]] = None,
         conditions: Optional[Dict[str, Any]] = None,
-        created_by: str = None,
+        created_by: Optional[str] = None,
     ) -> bool:
         """Create a custom role.
 
@@ -361,7 +361,7 @@ class AdvancedRBACManager:
         permissions: Optional[List[str]] = None,
         parent_roles: Optional[List[str]] = None,
         conditions: Optional[Dict[str, Any]] = None,
-        modified_by: str = None,
+        modified_by: Optional[str] = None,
     ) -> bool:
         """Update a custom role.
 
@@ -439,7 +439,7 @@ class AdvancedRBACManager:
 
         return True
 
-    def delete_custom_role(self, name: str, deleted_by: str = None) -> bool:
+    def delete_custom_role(self, name: str, deleted_by: Optional[str] = None) -> bool:
         """Delete a custom role.
 
         Args:
@@ -516,7 +516,7 @@ class AdvancedRBACManager:
             user_id=user_id,
             role_name=role_name,
             assigned_at=datetime.utcnow(),
-            assigned_by=assigned_by,
+            assigned_by=assigned_by or "system",
             expires_at=expires_at,
             context=context or {},
             conditions=conditions or {},
@@ -605,7 +605,10 @@ class AdvancedRBACManager:
         permissions = set()
 
         # Get active role assignments
-        active_roles = self._get_active_roles(user_id, context)
+        if user_id:
+            active_roles = self._get_active_roles(user_id, context)
+        else:
+            active_roles = set()
 
         # Collect permissions from all active roles
         for role_name in active_roles:
@@ -740,7 +743,7 @@ class AdvancedRBACManager:
         conditions: List[Dict[str, Any]],
         effect: str = "allow",
         priority: int = 0,
-        created_by: str = None,
+        created_by: Optional[str] = None,
     ) -> str:
         """Create an access policy for ABAC.
 
@@ -825,7 +828,7 @@ class AdvancedRBACManager:
     def register_condition_evaluator(
         self,
         condition_type: str,
-        evaluator: Callable[[Dict[str, Any], Dict[str, Any]], bool],
+        evaluator: Callable[[Any, Dict[str, Any]], bool],
     ):
         """Register a custom condition evaluator.
 
@@ -916,7 +919,7 @@ class AdvancedRBACManager:
         if not user_id or not resource:
             return False
 
-        return resource.get(owner_field) == user_id
+        return bool(resource.get(owner_field) == user_id)
 
     def _evaluate_department(
         self, departments: List[str], context: Dict[str, Any]
@@ -940,7 +943,7 @@ class AdvancedRBACManager:
 
     def export_roles(self) -> Dict[str, Any]:
         """Export all roles configuration."""
-        export_data = {"roles": {}, "permissions": {}, "policies": {}}
+        export_data: Dict[str, Any] = {"roles": {}, "permissions": {}, "policies": {}}
 
         # Export roles
         for role_name, role in self.roles.items():
@@ -978,8 +981,8 @@ class AdvancedRBACManager:
         return export_data
 
     def import_roles(
-        self, import_data: Dict[str, Any], imported_by: str = None
-    ) -> Dict[str, int]:
+        self, import_data: Dict[str, Any], imported_by: Optional[str] = None
+    ) -> Dict[str, Any]:
         """Import roles configuration.
 
         Args:
@@ -989,7 +992,7 @@ class AdvancedRBACManager:
         Returns:
             Statistics of imported items
         """
-        stats = {
+        stats: Dict[str, Any] = {
             "roles_imported": 0,
             "permissions_imported": 0,
             "policies_imported": 0,
@@ -1048,6 +1051,6 @@ class AdvancedRBACManager:
 
 
 # Factory function
-def create_advanced_rbac_manager(config: Dict[str, Any] = None) -> AdvancedRBACManager:
+def create_advanced_rbac_manager(config: Optional[Dict[str, Any]] = None) -> AdvancedRBACManager:
     """Create advanced RBAC manager"""
     return AdvancedRBACManager(config)

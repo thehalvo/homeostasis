@@ -76,11 +76,11 @@ class BackendTestingManager:
         self.test_runner = LanguageTestRunner(load_plugins=False)
 
         # Initialize test suites
-        self.test_suites = {}
+        self.test_suites: Dict[str, LanguageTestSuite] = {}
         self._load_test_suites()
 
         # Metrics tracking
-        self.metrics = {
+        self.metrics: Dict[str, Any] = {
             "languages": {},
             "fixes": {"total_attempted": 0, "successful": 0, "by_language": {}},
             "cross_language": {
@@ -145,7 +145,7 @@ class BackendTestingManager:
             Test results
         """
         start_time = time.time()
-        results = {"suites": {}, "summary": {}}
+        results: Dict[str, Any] = {"suites": {}, "summary": {}}
 
         # Determine suites to run
         if suite_name:
@@ -243,7 +243,7 @@ class BackendTestingManager:
             Test results
         """
         start_time = time.time()
-        results = {"suites": {}, "summary": {}}
+        results: Dict[str, Any] = {"suites": {}, "summary": {}}
 
         # Determine suites to run
         if suite_name:
@@ -367,7 +367,7 @@ class BackendTestingManager:
         Returns:
             Tuple of (is_valid, validation_details)
         """
-        validation = {"is_valid": False, "details": {}, "messages": []}
+        validation: Dict[str, Any] = {"is_valid": False, "details": {}, "messages": []}
 
         # Check that the fix is for the correct language
         if fix_data.get("language") != language:
@@ -692,15 +692,15 @@ class BackendTestingManager:
             Error type
         """
         if language == "python":
-            return error_data.get("exception_type", "Unknown")
+            return str(error_data.get("exception_type", "Unknown"))
         elif language == "javascript":
-            return error_data.get("name", "Unknown")
+            return str(error_data.get("name", "Unknown"))
         elif language == "java":
-            return error_data.get("exception_class", "Unknown")
+            return str(error_data.get("exception_class", "Unknown"))
         elif language == "go":
-            return error_data.get("error_type", "Unknown")
+            return str(error_data.get("error_type", "Unknown"))
         else:
-            return error_data.get("error_type", "Unknown")
+            return str(error_data.get("error_type", "Unknown"))
 
     def _check_suggestion_relevance(
         self, suggestion: str, error_type: str, language: str
@@ -782,7 +782,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     # Create orchestrator
-    orchestrator = Orchestrator(config_path=None)
+    orchestrator = Orchestrator(config_path=Path("config.yaml"))
 
     # Integrate backend testing
     testing_manager = integrate_backend_testing(orchestrator)

@@ -75,8 +75,10 @@ class BlockchainPlugin(LanguagePlugin):
                 "description": blockchain_error.description,
                 "suggested_fix": blockchain_error.suggested_fix,
                 "severity": blockchain_error.severity,
-                "gas_cost_impact": blockchain_error.gas_cost_impact,
-                "security_impact": blockchain_error.security_impact,
+                "confidence": blockchain_error.confidence,
+                "transaction_info": blockchain_error.transaction_info,
+                "contract_address": blockchain_error.contract_address,
+                "block_info": blockchain_error.block_info,
             }
 
         return {
@@ -111,7 +113,7 @@ class BlockchainPlugin(LanguagePlugin):
     ) -> Dict[str, Any]:
         """Generate a fix for a blockchain error based on the analysis."""
         error_type = analysis.get("error_type")
-        platform = analysis.get("platform")
+        platform = analysis.get("platform", "ethereum")
 
         # Generate platform-specific fixes
         if error_type == "gas_optimization":
@@ -163,9 +165,9 @@ class BlockchainPlugin(LanguagePlugin):
         else:
             self.rules = {"rules": [], "platform_specific": {}}
 
-    def detect_errors(self, code: str, file_path: str = None) -> List[Dict[str, Any]]:
+    def detect_errors(self, code: str, file_path: Optional[str] = None) -> List[Dict[str, Any]]:
         """Detect blockchain-specific errors in code"""
-        errors = []
+        errors: List[Dict[str, Any]] = []
 
         # Detect platform
         platform = self.healer.detect_platform(code, file_path or "")
@@ -262,7 +264,7 @@ class BlockchainPlugin(LanguagePlugin):
         return patterns
 
     def analyze_error_detailed(
-        self, error_message: str, code_context: str, file_path: str = None
+        self, error_message: str, code_context: str, file_path: Optional[str] = None
     ) -> Optional[Dict[str, Any]]:
         """Analyze blockchain error and suggest fixes"""
         blockchain_error = self.healer.analyze_blockchain_error(
@@ -338,7 +340,7 @@ class BlockchainPlugin(LanguagePlugin):
         self, contract_code: str, platform: BlockchainPlatform
     ) -> Dict[str, Any]:
         """Analyze smart contract for potential issues"""
-        analysis = {
+        analysis: Dict[str, Any] = {
             "platform": platform.value,
             "security_issues": [],
             "gas_optimizations": [],
@@ -393,7 +395,7 @@ class BlockchainPlugin(LanguagePlugin):
         except ValueError:
             return [f"Unknown platform: {platform}"]
 
-    def get_platform_info(self, code: str, file_path: str = None) -> Dict[str, Any]:
+    def get_platform_info(self, code: str, file_path: Optional[str] = None) -> Dict[str, Any]:
         """Get information about the blockchain platform being used"""
         platform = self.healer.detect_platform(code, file_path or "")
 
@@ -455,7 +457,7 @@ class BlockchainPlugin(LanguagePlugin):
         return standards
 
     def _detect_deployment_config(
-        self, code: str, file_path: str
+        self, code: str, file_path: Optional[str]
     ) -> Optional[Dict[str, Any]]:
         """Detect deployment configuration"""
         if not file_path:
@@ -509,26 +511,27 @@ pub state: Account<'info, State>,""",
         }
         return guards.get(platform, "// Add reentrancy protection for your platform")
 
-    def get_capabilities(self) -> Dict[str, Any]:
+    def get_capabilities(self) -> set[str]:
         """Return plugin capabilities"""
-        return {
-            "name": self.name,
-            "version": self.version,
-            "supported_platforms": self.supported_platforms,
-            "supported_extensions": self.supported_extensions,
-            "features": [
-                "error_detection",
-                "security_analysis",
-                "gas_optimization",
-                "transaction_validation",
-                "cost_estimation",
-                "multi_node_support",
-            ],
-            "healing_strategies": [
-                "dynamic_gas_adjustment",
-                "retry_with_backoff",
-                "multi_node_fallback",
-                "contract_optimization",
-                "input_validation",
-            ],
-        }
+        # Start with base capabilities from parent class
+        capabilities = super().get_capabilities()
+
+        # Add blockchain-specific capabilities
+        capabilities.update({
+            "detect_errors",
+            "analyze_smart_contract",
+            "validate_transaction",
+            "get_platform_info",
+            "analyze_error_detailed",
+            "gas_optimization",
+            "transaction_validation",
+            "cost_estimation",
+            "multi_node_support",
+            "dynamic_gas_adjustment",
+            "retry_with_backoff",
+            "multi_node_fallback",
+            "contract_optimization",
+            "input_validation",
+        })
+
+        return capabilities

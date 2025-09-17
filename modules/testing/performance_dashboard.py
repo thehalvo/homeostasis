@@ -226,7 +226,7 @@ class PerformanceDashboard:
             return {"error": "No metrics found"}
 
         # Group by day
-        daily_stats = {}
+        daily_stats: Dict[str, Dict[str, List[float]]] = {}
         for metric in metrics:
             date = metric["timestamp"][:10]  # YYYY-MM-DD
             if date not in daily_stats:

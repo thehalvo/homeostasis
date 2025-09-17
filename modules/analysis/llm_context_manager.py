@@ -947,8 +947,10 @@ Return the patch in unified diff format.
         for ctx in similar_contexts:
             if ctx.llm_failures:
                 for failure in ctx.llm_failures:
-                    llm_error_types[failure.error_type] += 1
-                    llm_providers[failure.provider] += 1
+                    if failure.error_type:
+                        llm_error_types[failure.error_type] += 1
+                    if failure.provider:
+                        llm_providers[failure.provider] += 1
 
         if llm_error_types:
             patterns.append(
@@ -966,8 +968,10 @@ Return the patch in unified diff format.
         for ctx in similar_contexts:
             if ctx.validation_failures:
                 for failure in ctx.validation_failures:
-                    validation_types[failure.validation_type] += 1
-                    validation_reasons[failure.failure_reason] += 1
+                    if failure.validation_type:
+                        validation_types[failure.validation_type] += 1
+                    if failure.failure_reason:
+                        validation_reasons[failure.failure_reason] += 1
 
         if validation_types:
             patterns.append(

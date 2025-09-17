@@ -8,7 +8,7 @@ similarity-based approaches.
 
 import logging
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
 import faiss
@@ -29,17 +29,9 @@ class ErrorPrototype:
     description: str
     examples: List[str]
     semantic_embedding: Optional[np.ndarray] = None
-    syntactic_patterns: List[str] = None
-    typical_causes: List[str] = None
-    fix_strategies: List[str] = None
-
-    def __post_init__(self):
-        if self.syntactic_patterns is None:
-            self.syntactic_patterns = []
-        if self.typical_causes is None:
-            self.typical_causes = []
-        if self.fix_strategies is None:
-            self.fix_strategies = []
+    syntactic_patterns: List[str] = field(default_factory=list)
+    typical_causes: List[str] = field(default_factory=list)
+    fix_strategies: List[str] = field(default_factory=list)
 
 
 class SemanticErrorEmbedder:
@@ -93,7 +85,7 @@ class SemanticErrorEmbedder:
         text = " ".join(text_parts)
         embedding = self.model.encode(text)
 
-        return embedding
+        return np.array(embedding)
 
     def embed_prototype(self, prototype: ErrorPrototype) -> np.ndarray:
         """
@@ -123,7 +115,7 @@ class SemanticErrorEmbedder:
         text = " ".join(text_parts)
         embedding = self.model.encode(text)
 
-        return embedding
+        return np.array(embedding)
 
 
 class ZeroShotErrorClassifier:
@@ -287,13 +279,13 @@ class ZeroShotErrorClassifier:
             embeddings.append(prototype.semantic_embedding)
             self.prototype_names.append(name)
 
-        embeddings = np.array(embeddings).astype("float32")
+        embeddings_array: np.ndarray = np.array(embeddings).astype("float32")
 
         # Build FAISS index
         self.prototype_index = faiss.IndexFlatIP(self.embedder.embedding_dim)
         # Normalize embeddings for cosine similarity
-        faiss.normalize_L2(embeddings)
-        self.prototype_index.add(embeddings)
+        faiss.normalize_L2(embeddings_array)
+        self.prototype_index.add(embeddings_array)
 
     def classify_zero_shot(
         self, error_data: Dict[str, Any], k: int = 3
@@ -339,6 +331,8 @@ class ZeroShotErrorClassifier:
         faiss.normalize_L2(error_embedding)
 
         # Search for nearest prototypes
+        if self.prototype_index is None:
+            raise ValueError("Prototype index not built")
         distances, indices = self.prototype_index.search(error_embedding, k)
 
         # Convert to similarity scores (cosine similarity)
@@ -609,7 +603,7 @@ class AdaptiveZeroShotClassifier:
         """Initialize adaptive classifier."""
         self.base_classifier = ZeroShotErrorClassifier()
         self.usage_history = []
-        self.performance_metrics = defaultdict(lambda: {"correct": 0, "total": 0})
+        self.performance_metrics: Dict[str, Dict[str, int]] = defaultdict(lambda: {"correct": 0, "total": 0})
 
     def classify(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """

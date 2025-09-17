@@ -22,7 +22,7 @@ class ASTPatcher:
     Enhanced patch generator that uses AST analysis for more precise patches.
     """
 
-    def __init__(self, templates_dir: Path, patch_generator: PatchGenerator = None):
+    def __init__(self, templates_dir: Path, patch_generator: Optional[PatchGenerator] = None):
         """
         Initialize the AST patcher.
 
@@ -211,7 +211,7 @@ class ASTPatcher:
             "line_range": (start_line, end_line),
             "variables": variables,
             "patch_type": "specific",
-            "patch_code": template.render(variables),
+            "patch_code": template.render({k: v for k, v in variables.items() if v is not None}),
             "is_multiline": True,
             "ast_analyzed": True,
         }
@@ -258,7 +258,7 @@ class ASTPatcher:
             # Fall back to regular dictionary check if template not found
             return self.patch_generator.generate_multiline_patch(
                 "dict_key_not_exists",
-                Path(self.analyzer.file_path),
+                Path(self.analyzer.file_path) if self.analyzer.file_path else Path(),
                 (function_info.node.lineno, function_info.node.lineno + 1),
                 {
                     "key_name": parameter_name,
@@ -342,7 +342,8 @@ class ASTPatcher:
 
         # Generate patch
         code_block = self.analyzer.extract_code_at_lines(insert_line, insert_line)
-        indentation = re.match(r"^(\s*)", code_block).group(1)
+        match = re.match(r"^(\s*)", code_block)
+        indentation = match.group(1) if match else ""
 
         variables["__indentation__"] = indentation
 
@@ -389,7 +390,8 @@ class ASTPatcher:
 
         # Extract the code and indentation
         code_block = self.analyzer.extract_code_at_lines(line_number, line_number)
-        indentation = re.match(r"^(\s*)", code_block).group(1)
+        match = re.match(r"^(\s*)", code_block)
+        indentation = match.group(1) if match else ""
 
         # Prepare template variables
         template_variables = {
@@ -466,8 +468,9 @@ class ASTPatcher:
         last_import_line = 0
 
         for import_info in self.analyzer.get_imports():
-            if hasattr(import_info, "lineno"):
-                last_import_line = max(last_import_line, import_info.lineno)
+            # ImportInfo doesn't have lineno, so we can't determine the line
+            # We'll use line 1 as a fallback
+            pass
 
         if last_import_line > 0:
             # Insert after the last import
@@ -526,7 +529,8 @@ class ASTPatcher:
 
         # Extract the code and indentation
         code_block = self.analyzer.extract_code_at_lines(line_number, line_number)
-        indentation = re.match(r"^(\s*)", code_block).group(1)
+        match = re.match(r"^(\s*)", code_block)
+        indentation = match.group(1) if match else ""
 
         # Find a class definition matching the object type if available
         class_info = None

@@ -15,10 +15,12 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
-from modules.analysis.language_adapters import LanguageAdapterManager
+# LanguageAdapterManager doesn't exist, using language plugin system instead
+from modules.analysis.language_plugin_system import LanguagePlugin, LanguagePluginRegistry
+from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
 from modules.analysis.rule_based import RuleBasedAnalyzer
 from modules.monitoring.logger import MonitoringLogger
-from modules.patch_generation.patcher import Patcher
+from modules.patch_generation.patcher import PatchGenerator
 
 
 @dataclass
@@ -64,8 +66,9 @@ class PRAnalyzer:
 
         # Initialize analysis components
         self.analyzer = RuleBasedAnalyzer()
-        self.language_manager = LanguageAdapterManager()
-        self.patcher = Patcher()
+        # Use CrossLanguageOrchestrator instead of LanguageAdapterManager
+        self.orchestrator = CrossLanguageOrchestrator()
+        self.patcher = PatchGenerator(Path(repo_path) / ".homeostasis" / "templates")
 
         # GitHub/GitLab API configuration
         self.github_token = self.config.get("github_token", os.getenv("GITHUB_TOKEN"))
@@ -279,7 +282,7 @@ class PRAnalyzer:
             for file_data in files_data:
                 change = PRChange(
                     file_path=file_data["filename"],
-                    language=self.language_manager.detect_language(
+                    language=self._detect_language_from_file(
                         file_data["filename"]
                     ),
                     additions=file_data["additions"],
@@ -321,7 +324,7 @@ class PRAnalyzer:
             for file_data in changes_data.get("changes", []):
                 change = PRChange(
                     file_path=file_data["new_path"] or file_data["old_path"],
-                    language=self.language_manager.detect_language(
+                    language=self._detect_language_from_file(
                         file_data["new_path"] or file_data["old_path"]
                     ),
                     additions=file_data.get("additions", 0),
@@ -374,7 +377,7 @@ class PRAnalyzer:
 
                 change = PRChange(
                     file_path=file_path,
-                    language=self.language_manager.detect_language(file_path),
+                    language=self._detect_language_from_file(file_path),
                     additions=0,  # Would need to parse diff to get accurate counts
                     deletions=0,
                     changes_type=self._map_git_status(status),
@@ -422,9 +425,18 @@ class PRAnalyzer:
                     content = f.read()
 
                 # Run analysis
-                issues = self.analyzer.analyze_code(
-                    content=content, language=change.language, file_path=str(full_path)
-                )
+                # RuleBasedAnalyzer expects error data, so we need to format the code for analysis
+                error_data = {
+                    "error_message": "Code analysis",
+                    "error_type": "code_check",
+                    "file_path": str(full_path),
+                    "language": change.language,
+                    "code_context": content,
+                    "timestamp": datetime.now().isoformat()
+                }
+
+                analysis_result = self.analyzer.analyze_error(error_data)
+                issues = analysis_result.get("issues", [])
 
                 # Add change context to issues
                 for issue in issues:
@@ -492,14 +504,14 @@ class PRAnalyzer:
         files_changed = len(changes)
 
         # Language distribution
-        languages = {}
+        languages: Dict[str, int] = {}
         for change in changes:
             lang = change.language
             if lang:
                 languages[lang] = languages.get(lang, 0) + 1
 
         # Change type distribution
-        change_types = {}
+        change_types: Dict[str, int] = {}
         for change in changes:
             change_type = change.changes_type
             change_types[change_type] = change_types.get(change_type, 0) + 1
@@ -552,7 +564,7 @@ class PRAnalyzer:
         self, issues: List[Dict[str, Any]], changes: List[PRChange], risk_score: float
     ) -> List[Dict[str, Any]]:
         """Generate healing recommendations for the PR."""
-        recommendations = []
+        recommendations: List[Dict[str, Any]] = []
 
         # Auto-fix recommendations
         fixable_issues = [i for i in issues if i.get("fixable", False)]
@@ -595,6 +607,40 @@ class PRAnalyzer:
             )
 
         return recommendations
+
+    def _detect_language_from_file(self, file_path: str) -> str:
+        """Detect programming language from file extension."""
+        ext_to_language = {
+            '.py': 'python',
+            '.js': 'javascript',
+            '.jsx': 'javascript',
+            '.ts': 'typescript',
+            '.tsx': 'typescript',
+            '.java': 'java',
+            '.cpp': 'cpp',
+            '.cc': 'cpp',
+            '.c': 'c',
+            '.h': 'c',
+            '.hpp': 'cpp',
+            '.cs': 'csharp',
+            '.rb': 'ruby',
+            '.go': 'go',
+            '.rs': 'rust',
+            '.php': 'php',
+            '.swift': 'swift',
+            '.kt': 'kotlin',
+            '.scala': 'scala',
+            '.r': 'r',
+            '.R': 'r',
+            '.m': 'objc',
+            '.mm': 'objc',
+            '.sh': 'bash',
+            '.bash': 'bash',
+            '.zsh': 'bash',
+        }
+
+        file_ext = Path(file_path).suffix.lower()
+        return ext_to_language.get(file_ext, 'unknown')
 
     def _create_empty_result(self, pr_number: int) -> PRAnalysisResult:
         """Create an empty analysis result."""

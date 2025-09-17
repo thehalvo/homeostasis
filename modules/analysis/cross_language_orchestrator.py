@@ -2887,7 +2887,7 @@ if __name__ == "__main__":
             f"Most similar error (similarity: {similar[0].get('similarity'):.2f}):"
         )
         logger.info(f"  Language: {similar[0].get('language')}")
-        error_info = similar[0].get('error', {})
+        error_info = similar[0].get("error", {})
         logger.info(f"  Error type: {error_info.get('error_type', 'N/A')}")
         logger.info(f"  Message: {error_info.get('message', 'N/A')}")
 

@@ -67,8 +67,12 @@ class PatchValidationConfig:
     retry_on_test_failure: bool = True
     require_all_tests_pass: bool = False  # If True, all tests must pass
     test_command: Optional[str] = None  # Custom test command
-    pre_validation_commands: Optional[List[str]] = None  # Commands to run before validation
-    post_validation_commands: Optional[List[str]] = None  # Commands to run after validation
+    pre_validation_commands: Optional[List[str]] = (
+        None  # Commands to run before validation
+    )
+    post_validation_commands: Optional[List[str]] = (
+        None  # Commands to run after validation
+    )
 
 
 class LLMPatchGenerator:
@@ -307,7 +311,7 @@ class LLMPatchGenerator:
                 exception_type=error_context.get("exception_type"),
                 stack_trace=error_context.get("stack_trace"),
                 file_path=error_context.get("file_path"),
-                line_number=error_context.get("line_number")
+                line_number=error_context.get("line_number"),
             )
 
             # Store the error context for LLM processing

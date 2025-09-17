@@ -520,7 +520,9 @@ class PythonLanguagePlugin(LanguagePlugin):
         from ..patch_generation.patcher import PatchGenerator
 
         patch_generator = PatchGenerator()
-        patch: Optional[Dict[str, Any]] = patch_generator.generate_patch_from_analysis(analysis)
+        patch: Optional[Dict[str, Any]] = patch_generator.generate_patch_from_analysis(
+            analysis
+        )
 
         # Ensure we always return a dict, even if patch is None
         if patch is None:

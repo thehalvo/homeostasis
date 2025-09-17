@@ -179,8 +179,8 @@ class AnomalyDetectionModel(PredictiveModel):
         self.model = IsolationForest(contamination=contamination, random_state=42)
         self.scaler = StandardScaler()
         self.is_trained = False
-        self.feature_names = []
-        self.training_data = deque(maxlen=10000)
+        self.feature_names: List[str] = []
+        self.training_data: deque[ComponentMetrics] = deque(maxlen=10000)
 
     def train(
         self,
@@ -323,7 +323,7 @@ class TimeSeriesPredictor(PredictiveModel):
         self.window_size = window_size
         self.model = RandomForestRegressor(n_estimators=100, random_state=42)
         self.is_trained = False
-        self.time_series_data = {}
+        self.time_series_data: Dict[str, Any] = {}
 
     def train(
         self,
@@ -335,7 +335,7 @@ class TimeSeriesPredictor(PredictiveModel):
             return
 
         # Group by component
-        component_data = {}
+        component_data: Dict[str, List[ComponentMetrics]] = {}
         for metrics in historical_data:
             if metrics.component_id not in component_data:
                 component_data[metrics.component_id] = []

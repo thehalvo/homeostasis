@@ -5,14 +5,14 @@ Provides API security features including rate limiting, token validation,
 and protection against common API attacks.
 """
 
-import collections
+from collections import defaultdict
 import hashlib
 import hmac
 import logging
 import re
 import time
 from functools import wraps
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from modules.security.auth import AuthenticationError, get_auth_manager
 from modules.security.rbac import PermissionDeniedError, require_permission
@@ -29,7 +29,7 @@ class RateLimitExceededError(Exception):
 class RateLimiter:
     """Rate limiter for API endpoints."""
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize the rate limiter.
 
         Args:
@@ -50,21 +50,21 @@ class RateLimiter:
 
         # Initialize storage for request counts
         # In a production environment, this should use Redis or a similar distributed store
-        self.request_counts = {
-            "global": collections.defaultdict(int),
-            "user": collections.defaultdict(lambda: collections.defaultdict(int)),
-            "ip": collections.defaultdict(lambda: collections.defaultdict(int)),
+        self.request_counts: Dict[str, Any] = {
+            "global": defaultdict(int),
+            "user": defaultdict(lambda: defaultdict(int)),
+            "ip": defaultdict(lambda: defaultdict(int)),
         }
 
         # Store time windows
-        self.time_windows = {
-            "global": collections.defaultdict(float),
-            "user": collections.defaultdict(lambda: collections.defaultdict(float)),
-            "ip": collections.defaultdict(lambda: collections.defaultdict(float)),
+        self.time_windows: Dict[str, Any] = {
+            "global": defaultdict(float),
+            "user": defaultdict(lambda: defaultdict(float)),
+            "ip": defaultdict(lambda: defaultdict(float)),
         }
 
     def check_rate_limit(
-        self, scope: str, identifier: str = None, endpoint: str = None
+        self, scope: str, identifier: Optional[str] = None, endpoint: Optional[str] = None
     ) -> bool:
         """Check if a request is within rate limits.
 
@@ -89,7 +89,7 @@ class RateLimiter:
                 scope, identifier, endpoint, limit, window, now
             )
 
-    def _get_rate_limit(self, scope: str, endpoint: str = None) -> Tuple[int, int]:
+    def _get_rate_limit(self, scope: str, endpoint: Optional[str] = None) -> Tuple[int, int]:
         """Get the rate limit for a specific scope and endpoint.
 
         Args:
@@ -103,7 +103,9 @@ class RateLimiter:
         if endpoint and "endpoint_limits" in self.config:
             endpoint_limits = self.config["endpoint_limits"]
             if endpoint in endpoint_limits and scope in endpoint_limits[endpoint]:
-                return endpoint_limits[endpoint][scope]
+                limit_config = endpoint_limits[endpoint][scope]
+                if isinstance(limit_config, tuple) and len(limit_config) == 2:
+                    return limit_config
 
         # Fall back to default for this scope
         return self.default_rate_limits.get(scope, (100, 60))
@@ -134,7 +136,7 @@ class RateLimiter:
         self.request_counts["global"][key] += 1
 
         # Check if limit exceeded
-        return self.request_counts["global"][key] <= limit
+        return bool(self.request_counts["global"][key] <= limit)
 
     def _check_scoped_limit(
         self,
@@ -170,7 +172,7 @@ class RateLimiter:
         self.request_counts[scope][identifier][key] += 1
 
         # Check if limit exceeded
-        return self.request_counts[scope][identifier][key] <= limit
+        return bool(self.request_counts[scope][identifier][key] <= limit)
 
     def reset_counters(self):
         """Reset all rate limit counters."""
@@ -189,7 +191,7 @@ class RateLimiter:
 class APISecurityManager:
     """Manages API security for Homeostasis."""
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize the API security manager.
 
         Args:
@@ -286,7 +288,7 @@ class APISecurityManager:
         return self.auth_manager.verify_token(token)
 
     def check_rate_limit(
-        self, scope: str, identifier: str = None, endpoint: str = None
+        self, scope: str, identifier: Optional[str] = None, endpoint: Optional[str] = None
     ) -> bool:
         """Check if a request is within rate limits.
 
@@ -349,15 +351,15 @@ class APISecurityManager:
             bool: True if token is valid, False otherwise
         """
         try:
-            hmac_token, timestamp = token.split(":", 1)
-            timestamp = int(timestamp)
+            hmac_token, timestamp_str = token.split(":", 1)
+            timestamp = int(timestamp_str)
 
             # Check if token has expired
             if int(time.time()) - timestamp > max_age:
                 return False
 
             # Recreate token for comparison
-            token_data = f"{user_id}:{timestamp}"
+            token_data = f"{user_id}:{timestamp_str}"
             expected_token = hashlib.sha256(
                 (token_data + self.auth_manager.secret_key.decode("utf-8")).encode(
                     "utf-8"
@@ -374,7 +376,7 @@ class APISecurityManager:
 _api_security_manager = None
 
 
-def get_api_security_manager(config: Dict = None) -> APISecurityManager:
+def get_api_security_manager(config: Optional[Dict[str, Any]] = None) -> APISecurityManager:
     """Get or create the singleton APISecurityManager instance.
 
     Args:
@@ -389,7 +391,7 @@ def get_api_security_manager(config: Dict = None) -> APISecurityManager:
     return _api_security_manager
 
 
-def secure_endpoint(permission: str = None, rate_limit: bool = True):
+def secure_endpoint(permission: Optional[str] = None, rate_limit: bool = True):
     """Decorator for securing API endpoints.
 
     Args:

@@ -79,7 +79,7 @@ class ClojureExceptionHandler:
             # Skip rules that don't apply to this category of exception
             if rule.get("applies_to") and error_type:
                 applies_to_patterns = rule.get("applies_to")
-                if not any(
+                if applies_to_patterns and not any(
                     re.search(pattern, error_type) for pattern in applies_to_patterns
                 ):
                     continue
@@ -137,7 +137,7 @@ class ClojureExceptionHandler:
         Returns:
             List of all loaded rules
         """
-        rules = []
+        rules: List[Dict[str, Any]] = []
         rules_dir = Path(__file__).parent.parent / "rules" / "clojure"
 
         if not rules_dir.exists():
@@ -454,7 +454,14 @@ class ClojurePatchGenerator:
 
         except Exception as e:
             logger.error(f"Error generating patch from template {template_path}: {e}")
-            return None
+            return {
+                "patch_type": "error",
+                "error": str(e),
+                "patch_content": "",
+                "context": {},
+                "confidence": 0.0,
+                "description": f"Failed to generate patch from template {template_path.name}"
+            }
 
     def _generate_generic_patch(
         self, analysis_result: Dict[str, Any]

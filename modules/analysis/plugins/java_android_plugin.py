@@ -294,7 +294,9 @@ class AndroidJavaExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
+        self.compiled_patterns: Dict[
+            str, List[tuple[re.Pattern[str], Dict[str, Any]]]
+        ] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -1681,7 +1683,9 @@ class AndroidJavaLanguagePlugin(LanguagePlugin):
 
         return any(pattern in message for pattern in memory_patterns)
 
-    def generate_fix(self, analysis: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+    def generate_fix(
+        self, analysis: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Generate a fix for the Android Java error.
 

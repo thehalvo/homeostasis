@@ -418,7 +418,11 @@ class OpenTelemetryPlugin(LoggingPlugin):
 
                 otlp_exporter = OTLPSpanExporter(endpoint=exporter_endpoint)
                 span_processor = BatchSpanProcessor(otlp_exporter)
-                trace.get_tracer_provider().add_span_processor(span_processor)
+                provider = trace.get_tracer_provider()
+                if hasattr(provider, 'add_span_processor'):
+                    provider.add_span_processor(span_processor)
+                else:
+                    print("Warning: Tracer provider does not support adding span processors")
             except ImportError:
                 print(
                     "OTLP exporter not available. Install it with 'pip install opentelemetry-exporter-otlp'"

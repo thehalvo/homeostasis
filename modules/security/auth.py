@@ -13,7 +13,7 @@ import json
 import logging
 import os
 import time
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import jwt
 from cryptography.fernet import Fernet
@@ -34,7 +34,7 @@ class AuthenticationError(Exception):
 class AuthenticationManager:
     """Manages authentication for Homeostasis."""
 
-    def __init__(self, config: Dict = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize the authentication manager.
 
         Args:
@@ -51,10 +51,10 @@ class AuthenticationManager:
 
         # User store - in production this would be a database
         # For this implementation, we use an in-memory store as a placeholder
-        self.users = {}
+        self.users: Dict[str, Dict[str, Any]] = {}
 
         # Token blacklist for revoked tokens
-        self.token_blacklist = set()
+        self.token_blacklist: Set[str] = set()
 
     def _get_secret_key(self) -> bytes:
         """Get or generate a secret key for JWT signing.
@@ -67,7 +67,7 @@ class AuthenticationManager:
             secret = self.config["jwt_secret"]
             if isinstance(secret, str):
                 return secret.encode("utf-8")
-            return secret
+            return bytes(secret) if isinstance(secret, (bytes, bytearray)) else secret.encode('utf-8')
 
         # Try to get from environment
         env_secret = os.environ.get("HOMEOSTASIS_JWT_SECRET")
@@ -116,7 +116,7 @@ class AuthenticationManager:
         return Fernet.generate_key()
 
     def register_user(
-        self, username: str, password: str, roles: List[str] = None
+        self, username: str, password: str, roles: Optional[List[str]] = None
     ) -> bool:
         """Register a new user.
 
@@ -211,7 +211,7 @@ class AuthenticationManager:
 
         return access_token, refresh_token
 
-    def verify_token(self, token: str) -> Dict:
+    def verify_token(self, token: str) -> Dict[str, Any]:
         """Verify a JWT token.
 
         Args:
@@ -233,7 +233,7 @@ class AuthenticationManager:
             if payload.get("type") != "access":
                 raise AuthenticationError("Invalid token type")
 
-            return payload
+            return dict(payload) if isinstance(payload, dict) else {}
         except jwt.ExpiredSignatureError:
             raise AuthenticationError("Token has expired")
         except jwt.InvalidTokenError as e:
@@ -312,11 +312,13 @@ class AuthenticationManager:
             Exception: If decryption fails
         """
         if isinstance(encrypted_data, str):
-            encrypted_data = encrypted_data.encode("utf-8")
+            encrypted_data_bytes = encrypted_data.encode("utf-8")
+        else:
+            encrypted_data_bytes = encrypted_data
 
-        return self.fernet.decrypt(encrypted_data)
+        return self.fernet.decrypt(encrypted_data_bytes)
 
-    def decrypt_json(self, encrypted_data: str) -> Dict:
+    def decrypt_json(self, encrypted_data: str) -> Dict[str, Any]:
         """Decrypt encrypted JSON data.
 
         Args:
@@ -329,14 +331,15 @@ class AuthenticationManager:
             Exception: If decryption or JSON parsing fails
         """
         decrypted = self.decrypt_data(encrypted_data)
-        return json.loads(decrypted)
+        result = json.loads(decrypted)
+        return result if isinstance(result, dict) else {}
 
 
 # Singleton instance for app-wide use
 _auth_manager = None
 
 
-def get_auth_manager(config: Dict = None) -> AuthenticationManager:
+def get_auth_manager(config: Optional[Dict[str, Any]] = None) -> AuthenticationManager:
     """Get or create the singleton AuthenticationManager instance.
 
     Args:

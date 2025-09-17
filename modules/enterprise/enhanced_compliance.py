@@ -847,15 +847,15 @@ class EnhancedComplianceReporting:
         privileged_roles = ["admin", "security_admin", "operator"]
         # Get users - check if method exists
         users = []
-        if hasattr(self.user_management, 'list_users'):
+        if hasattr(self.user_management, "list_users"):
             users = self.user_management.list_users()
-        elif hasattr(self.user_management, 'get_all_users'):
+        elif hasattr(self.user_management, "get_all_users"):
             users = self.user_management.get_all_users()
         else:
             # Return a default test result if no user listing available
             return {
                 "status": "skipped",
-                "message": "User listing not available in current configuration"
+                "message": "User listing not available in current configuration",
             }
 
         non_compliant_users = []
@@ -960,15 +960,15 @@ class EnhancedComplianceReporting:
         # Check for shared accounts
         # Get users - check if method exists
         users = []
-        if hasattr(self.user_management, 'list_users'):
+        if hasattr(self.user_management, "list_users"):
             users = self.user_management.list_users()
-        elif hasattr(self.user_management, 'get_all_users'):
+        elif hasattr(self.user_management, "get_all_users"):
             users = self.user_management.get_all_users()
         else:
             # Return a default test result if no user listing available
             return {
                 "status": "skipped",
-                "message": "User listing not available in current configuration"
+                "message": "User listing not available in current configuration",
             }
         usernames = [u["username"] for u in users]
 

@@ -127,8 +127,8 @@ class RegionHealthMonitor:
             # Aggregate health from all environments in region
             env_healths = []
             for env in region.environments:
-                health = await self._check_environment_health(env)
-                env_healths.append(health)
+                env_health = await self._check_environment_health(env)
+                env_healths.append(env_health)
 
             # Calculate region metrics
             availability = self._calculate_availability(env_healths)
@@ -191,19 +191,19 @@ class RegionHealthMonitor:
         """Calculate average availability across environments"""
         if not env_healths:
             return 0.0
-        return sum(h.get("availability", 0) for h in env_healths) / len(env_healths)
+        return sum(float(h.get("availability", 0)) for h in env_healths) / len(env_healths)
 
     def _calculate_average_latency(self, env_healths: List[Dict[str, Any]]) -> float:
         """Calculate average latency across environments"""
         if not env_healths:
             return 99999.0
-        return sum(h.get("latency_ms", 99999) for h in env_healths) / len(env_healths)
+        return sum(float(h.get("latency_ms", 99999)) for h in env_healths) / len(env_healths)
 
     def _calculate_error_rate(self, env_healths: List[Dict[str, Any]]) -> float:
         """Calculate average error rate across environments"""
         if not env_healths:
             return 1.0
-        return sum(h.get("error_rate", 1.0) for h in env_healths) / len(env_healths)
+        return sum(float(h.get("error_rate", 1.0)) for h in env_healths) / len(env_healths)
 
     def _calculate_capacity_usage(
         self, region: Region, env_healths: List[Dict[str, Any]]
@@ -660,7 +660,7 @@ class MultiRegionResilienceStrategy:
     ) -> Dict[str, Any]:
         """Coordinate synchronous healing across regions"""
         # Execute healing steps in lock-step across regions
-        results = {"status": "synchronous", "regions": {}}
+        results: Dict[str, Any] = {"status": "synchronous", "regions": {}}
 
         # Group steps by phase
         phases = self._group_steps_by_phase(plan.steps)
@@ -809,7 +809,7 @@ class MultiRegionResilienceStrategy:
         if not region1 or not region2:
             return float("inf")
 
-        return geopy.distance.distance(region1.location, region2.location).km
+        return float(geopy.distance.distance(region1.location, region2.location).km)
 
     def get_optimal_region_for_location(
         self,
@@ -835,7 +835,7 @@ class MultiRegionResilienceStrategy:
 
     async def get_resilience_status(self) -> Dict[str, Any]:
         """Get comprehensive resilience status across all regions"""
-        status = {
+        status: Dict[str, Any] = {
             "regions": {},
             "policies": {},
             "failover_history": [],

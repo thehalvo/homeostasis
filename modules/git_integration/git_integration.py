@@ -68,9 +68,11 @@ class GitIntegration:
             try:
                 with open(config_path, "r") as f:
                     if config_path.endswith(".yaml") or config_path.endswith(".yml"):
-                        return yaml.safe_load(f)
+                        loaded_config = yaml.safe_load(f)
+                        return loaded_config if isinstance(loaded_config, dict) else {}
                     else:
-                        return json.load(f)
+                        loaded_config = json.load(f)
+                        return loaded_config if isinstance(loaded_config, dict) else {}
             except Exception as e:
                 self.logger.error(f"Error loading config from {config_path}: {e}")
 
@@ -80,7 +82,10 @@ class GitIntegration:
             try:
                 with open(orchestrator_config_path, "r") as f:
                     config = yaml.safe_load(f)
-                    return config.get("git_integration", {})
+                    if isinstance(config, dict):
+                        git_config = config.get("git_integration", {})
+                        return git_config if isinstance(git_config, dict) else {}
+                    return {}
             except Exception as e:
                 self.logger.warning(f"Could not load orchestrator config: {e}")
 
@@ -376,12 +381,14 @@ class GitIntegration:
         """
         try:
             if not config_path:
-                config_path = self.repo_path / ".homeostasis-git-config.yaml"
+                save_path = self.repo_path / ".homeostasis-git-config.yaml"
+            else:
+                save_path = Path(config_path)
 
-            with open(config_path, "w") as f:
+            with open(save_path, "w") as f:
                 yaml.dump(self.config, f, default_flow_style=False, indent=2)
 
-            self.logger.info(f"Configuration saved to {config_path}")
+            self.logger.info(f"Configuration saved to {save_path}")
             return True
 
         except Exception as e:
@@ -395,7 +402,7 @@ class GitIntegration:
         Returns:
             Validation results with any issues found
         """
-        validation_results = {
+        validation_results: Dict[str, Any] = {
             "valid": True,
             "warnings": [],
             "errors": [],

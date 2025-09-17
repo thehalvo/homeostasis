@@ -104,7 +104,7 @@ class QuantumPlugin(LanguagePlugin):
             return {
                 "type": "gate_optimization",
                 "description": "Optimize gate implementation",
-                "code": self._get_optimized_gate(framework, context.get("gate_type")),
+                "code": self._get_optimized_gate(framework, context.get("gate_type", "")),
             }
 
         return {
@@ -128,9 +128,9 @@ class QuantumPlugin(LanguagePlugin):
         else:
             self.rules = {"rules": [], "framework_specific": {}}
 
-    def detect_errors(self, code: str, file_path: str = None) -> List[Dict[str, Any]]:
+    def detect_errors(self, code: str, file_path: Optional[str] = None) -> List[Dict[str, Any]]:
         """Detect quantum-specific errors in code"""
-        errors = []
+        errors: List[Dict[str, Any]] = []
 
         # Check for framework
         framework = self.error_mitigator.detect_framework(code, file_path or "")
@@ -189,7 +189,10 @@ class QuantumPlugin(LanguagePlugin):
                 "suggested_mitigation": quantum_error.suggested_mitigation,
                 "confidence": quantum_error.confidence,
                 "mitigation_strategies": [
-                    {"name": s.name, "effectiveness": s.effectiveness}
+                    {
+                        "name": s.get("name") if isinstance(s, dict) else getattr(s, "name", ""),
+                        "effectiveness": s.get("effectiveness") if isinstance(s, dict) else getattr(s, "effectiveness", 0)
+                    }
                     for s in mitigation_strategies
                 ],
             }
@@ -200,7 +203,7 @@ class QuantumPlugin(LanguagePlugin):
         }
 
     def _analyze_quantum_error(
-        self, error_message: str, code_context: str, file_path: str = None
+        self, error_message: str, code_context: str, file_path: Optional[str] = None
     ) -> Optional[Dict[str, Any]]:
         """Legacy method for backward compatibility"""
         quantum_error = self.error_mitigator.analyze_quantum_error(
@@ -275,7 +278,7 @@ class QuantumPlugin(LanguagePlugin):
 
         return True
 
-    def get_framework_info(self, code: str, file_path: str = None) -> Dict[str, Any]:
+    def get_framework_info(self, code: str, file_path: Optional[str] = None) -> Dict[str, Any]:
         """Get information about the quantum framework being used"""
         framework = self.error_mitigator.detect_framework(code, file_path or "")
 

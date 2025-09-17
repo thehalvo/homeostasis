@@ -116,7 +116,9 @@ def verify_circular_dependencies() -> List[List[str]]:
 
     # Check for circular dependencies
     dependency_checker = RuleDependency(all_rules)
-    circular_deps = cast(List[List[str]], dependency_checker.detect_circular_dependencies())
+    circular_deps = cast(
+        List[List[str]], dependency_checker.detect_circular_dependencies()
+    )
 
     if circular_deps:
         print(f"  Found {len(circular_deps)} circular dependency chains:")

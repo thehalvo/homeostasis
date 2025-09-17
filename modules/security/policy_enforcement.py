@@ -177,7 +177,7 @@ class PolicyEnforcementEngine:
     and regulatory requirements.
     """
 
-    def __init__(self, config: Dict = None, storage_path: str = None):
+    def __init__(self, config: Optional[Dict[Any, Any]] = None, storage_path: Optional[str] = None):
         """Initialize the policy enforcement engine.
 
         Args:
@@ -323,8 +323,9 @@ class PolicyEnforcementEngine:
         type: PolicyType,
         scope: PolicyScope,
         rules: List[Dict],
-        compliance_frameworks: List[ComplianceFramework] = None,
+        compliance_frameworks: Optional[List[ComplianceFramework]] = None,
         created_by: str = "system",
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
         """Create a new policy.
 
@@ -383,6 +384,7 @@ class PolicyEnforcementEngine:
             rules=policy_rules,
             compliance_frameworks=compliance_frameworks or [],
             created_by=created_by,
+            metadata=metadata or {},
         )
 
         self.policies[policy_id] = policy
@@ -496,9 +498,9 @@ class PolicyEnforcementEngine:
 
     def get_policy_violations(
         self,
-        start_date: datetime.datetime = None,
-        end_date: datetime.datetime = None,
-        policy_id: str = None,
+        start_date: Optional[datetime.datetime] = None,
+        end_date: Optional[datetime.datetime] = None,
+        policy_id: Optional[str] = None,
     ) -> List[PolicyViolation]:
         """Get policy violations.
 
@@ -549,7 +551,7 @@ class PolicyEnforcementEngine:
 
         # Policy metrics
         enabled_policies = len([p for p in self.policies.values() if p.enabled])
-        policies_by_type = {}
+        policies_by_type: Dict[str, int] = {}
         for policy in self.policies.values():
             if policy.enabled:
                 policies_by_type[policy.type.value] = (
@@ -663,7 +665,7 @@ class PolicyEnforcementEngine:
             return False
 
         # Evaluate condition
-        result = evaluator(field_value, condition.value, condition.case_sensitive)
+        result = bool(evaluator(field_value, condition.value, condition.case_sensitive))
 
         # Apply negation if needed
         if condition.negate:
@@ -697,7 +699,7 @@ class PolicyEnforcementEngine:
             and not case_sensitive
         ):
             return field_value.lower() == condition_value.lower()
-        return field_value == condition_value
+        return bool(field_value == condition_value)
 
     def _evaluate_not_equals(
         self, field_value: Any, condition_value: Any, case_sensitive: bool
@@ -818,7 +820,7 @@ class PolicyEnforcementEngine:
         violation = PolicyViolation(
             violation_id=violation_id,
             policy_id=policy.policy_id,
-            rule_id=result.rule_id,
+            rule_id=result.rule_id or "",
             context=context,
             detected_at=datetime.datetime.utcnow().isoformat(),
             severity=severity,
@@ -1207,7 +1209,7 @@ class PolicyEnforcementEngine:
 _policy_engine = None
 
 
-def get_policy_engine(config: Dict = None) -> PolicyEnforcementEngine:
+def get_policy_engine(config: Optional[Dict[Any, Any]] = None) -> PolicyEnforcementEngine:
     """Get or create the singleton PolicyEnforcementEngine instance."""
     global _policy_engine
     if _policy_engine is None:

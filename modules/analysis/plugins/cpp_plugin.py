@@ -343,7 +343,7 @@ class CPPExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns = {}
+        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
             for rule in rule_list:
@@ -373,7 +373,7 @@ class CPPExceptionHandler:
         return self.analyze_error(error_message, context)
 
     def analyze_error(
-        self, error_message: Union[str, Dict[str, Any]], context: Dict[str, Any] = None
+        self, error_message: Union[str, Dict[str, Any]], context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Analyze a C/C++ error message and provide categorization and suggestions.
@@ -385,9 +385,9 @@ class CPPExceptionHandler:
         Returns:
             Analysis results with error type, category, and suggestions
         """
-        # Handle dict input by delegating to exception handler
+        # Handle dict input by delegating to analyze_exception
         if isinstance(error_message, dict):
-            return self.exception_handler.analyze_exception(error_message)
+            return self.analyze_exception(error_message)
 
         if context is None:
             context = {}
@@ -607,9 +607,10 @@ class CPPExceptionHandler:
         if analysis.get("matches"):
             # Use the root_cause field from the first match if available
             first_match = analysis["matches"][0]
-            return first_match.get(
+            root_cause = first_match.get(
                 "root_cause", first_match.get("rule_id", "cpp_unknown")
             )
+            return str(root_cause) if root_cause else "cpp_unknown"
 
         # Check error_data for specific error types
         error_data = analysis.get("error_data", {})
@@ -844,10 +845,15 @@ target_include_directories({target_name} PRIVATE {include_dirs})
 
         # Handle context if passed as source_code
         context = None
-        code_snippet = source_code
+        code_snippet = ""
         if isinstance(source_code, dict):
             context = source_code
-            code_snippet = context.get("code_snippet", "")
+            code_snippet_value = context.get("code_snippet", "")
+            code_snippet = str(code_snippet_value) if code_snippet_value else ""
+        elif isinstance(source_code, str):
+            code_snippet = source_code
+        else:
+            code_snippet = ""
 
         # Generate specific patch based on the error
         patch_content = template["template"]
@@ -893,7 +899,7 @@ dest[{dest_size - 1}] = '\\0';  // Ensure null termination"""
                 # Extract the array access pattern
                 import re
 
-                match = re.search(r"(\w+)\[(\w+)\]", code_snippet)
+                match = re.search(r"(\w+)\[(\w+)\]", str(code_snippet) if code_snippet else "")
                 if match:
                     index_name = match.group(2)
                     patch_content = f"""// Add bounds check before array access
@@ -1400,9 +1406,10 @@ class CPPLanguagePlugin(LanguagePlugin):
         if analysis.get("matches"):
             # Use the root_cause from the first match
             first_match = analysis["matches"][0]
-            root_cause = first_match.get(
+            root_cause_value = first_match.get(
                 "root_cause", first_match.get("rule_id", "cpp_unknown")
             )
+            root_cause = str(root_cause_value) if root_cause_value else "cpp_unknown"
 
             # Map C-specific root causes to C++ equivalents for backward compatibility
             c_to_cpp_mapping = {
@@ -1484,7 +1491,8 @@ class CPPLanguagePlugin(LanguagePlugin):
             "templates": "templates",
         }
 
-        return category_map.get(primary_cat, primary_cat)
+        result = category_map.get(primary_cat, primary_cat)
+        return str(result) if result else "unknown"
 
     def _extract_suggestion(self, analysis: Dict[str, Any]) -> str:
         """Extract a single suggestion from analysis results."""
@@ -1503,7 +1511,7 @@ class CPPLanguagePlugin(LanguagePlugin):
                 if match.get("fix_suggestions"):
                     suggestions = match["fix_suggestions"]
                     if isinstance(suggestions, list) and suggestions:
-                        return suggestions[0]
+                        return str(suggestions[0])
                     elif isinstance(suggestions, str):
                         return suggestions
 

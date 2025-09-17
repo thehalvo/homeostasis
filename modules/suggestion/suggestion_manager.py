@@ -121,7 +121,7 @@ class SuggestionManager:
     """
 
     def __init__(
-        self, storage_dir: Optional[str] = None, config: Dict[str, Any] = None
+        self, storage_dir: Optional[str] = None, config: Optional[Dict[str, Any]] = None
     ):
         """Initialize the suggestion manager.
 
@@ -137,7 +137,7 @@ class SuggestionManager:
         self.patch_generator = PatchGenerator()
 
         # Load existing suggestions
-        self.suggestions = {}  # error_id -> List[FixSuggestion]
+        self.suggestions: Dict[str, List[FixSuggestion]] = {}  # error_id -> List[FixSuggestion]
         self._load_suggestions()
 
         logger.info(
@@ -580,7 +580,7 @@ _suggestion_manager = None
 
 
 def get_suggestion_manager(
-    storage_dir: Optional[str] = None, config: Dict[str, Any] = None
+    storage_dir: Optional[str] = None, config: Optional[Dict[str, Any]] = None
 ) -> SuggestionManager:
     """Get or create the singleton SuggestionManager.
 

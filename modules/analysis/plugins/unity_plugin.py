@@ -1527,7 +1527,7 @@ class UnityLanguagePlugin(LanguagePlugin):
             "condition": standard_error.get("error_type", "Exception"),
             "stackTrace": standard_error.get("stack_trace", ""),
             "message": standard_error.get("message", ""),
-            "logType": "error"
+            "logType": "error",
         }
 
         # Add Unity-specific fields if available

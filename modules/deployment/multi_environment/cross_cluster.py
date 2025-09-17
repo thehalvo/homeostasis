@@ -161,7 +161,7 @@ class KubernetesConnector(ClusterConnector):
 
     def __init__(self, cluster_id: str):
         self.cluster_id = cluster_id
-        self.k8s_manager = None
+        self.k8s_manager: Optional[KubernetesManager] = None
         self.logger = logging.getLogger(f"{__name__}.K8sConnector.{cluster_id}")
 
     async def connect(self, endpoint: str, auth_config: Dict[str, Any]) -> bool:
@@ -174,16 +174,16 @@ class KubernetesConnector(ClusterConnector):
             }
             self.k8s_manager = KubernetesManager(config)
             # Test connection by checking if kubectl is available
-            if hasattr(self.k8s_manager, '_check_kubectl_available'):
+            if hasattr(self.k8s_manager, "_check_kubectl_available") and self.k8s_manager is not None:
                 if self.k8s_manager._check_kubectl_available():
-                    self.logger.info(f"Connected to Kubernetes cluster")
+                    self.logger.info("Connected to Kubernetes cluster")
                     return True
                 else:
                     self.logger.error("kubectl not available")
                     return False
             else:
                 # Assume connection is successful if manager was created
-                self.logger.info(f"Connected to Kubernetes cluster")
+                self.logger.info("Connected to Kubernetes cluster")
                 return True
         except Exception as e:
             self.logger.error(f"Failed to connect to cluster: {e}")
@@ -196,45 +196,47 @@ class KubernetesConnector(ClusterConnector):
                 return ClusterHealth(
                     cluster_id=self.cluster_id,
                     timestamp=datetime.utcnow(),
-                    healthy=False,
                     node_count=0,
                     ready_nodes=0,
                     cpu_usage_percent=0,
                     memory_usage_percent=0,
                     pod_count=0,
                     service_count=0,
-                    error_count=0
+                    error_rate=0.0,
+                    latency_p99_ms=0.0,
+                    issues=[],
                 )
 
             # Since KubernetesDeployment doesn't have these methods,
             # return a basic health status
             # In a real implementation, these would call actual k8s APIs
-
             return ClusterHealth(
                 cluster_id=self.cluster_id,
                 timestamp=datetime.utcnow(),
-                healthy=True,
                 node_count=1,  # Default values
                 ready_nodes=1,
                 cpu_usage_percent=50.0,
                 memory_usage_percent=60.0,
                 pod_count=10,
                 service_count=5,
-                error_count=0
+                error_rate=0.0,
+                latency_p99_ms=100.0,
+                issues=[],
             )
         except Exception as e:
             self.logger.error(f"Failed to get cluster health: {e}")
             return ClusterHealth(
                 cluster_id=self.cluster_id,
                 timestamp=datetime.utcnow(),
-                healthy=False,
                 node_count=0,
                 ready_nodes=0,
                 cpu_usage_percent=100.0,
                 memory_usage_percent=100.0,
                 pod_count=0,
                 service_count=0,
-                error_count=1
+                error_rate=1.0,
+                latency_p99_ms=0.0,
+                issues=[{"type": "error", "message": str(e)}],
             )
 
     async def deploy_service(self, service: Service, config: Dict[str, Any]) -> bool:
@@ -280,6 +282,7 @@ class KubernetesConnector(ClusterConnector):
 
             # Convert manifest to YAML and apply
             import yaml
+
             deployment_yaml = yaml.dump(deployment)
             result = self.k8s_manager.apply_yaml(deployment_yaml)
 
@@ -312,15 +315,8 @@ class KubernetesConnector(ClusterConnector):
                 self.logger.error("K8s manager not initialized")
                 return False
 
-            # Since scale_deployment doesn't exist, we need to patch the deployment
-            # to update replicas count
-            patch = {
-                "spec": {
-                    "replicas": replicas
-                }
-            }
-
-            # Use apply_yaml to update the deployment
+            # Since scale_deployment doesn't exist, we need to use apply_yaml
+            # to update the deployment replicas count
             deployment_yaml = f"""
 apiVersion: apps/v1
 kind: Deployment
@@ -384,15 +380,15 @@ spec:
             # Since patch_resource doesn't exist, we'll use apply_yaml
             # to update the resource
             import yaml
-            patch_yaml = yaml.dump({
-                "apiVersion": "apps/v1" if resource_type == "deployment" else "v1",
-                "kind": resource_type.title(),
-                "metadata": {
-                    "name": name,
-                    "namespace": namespace
-                },
-                **patch
-            })
+
+            patch_yaml = yaml.dump(
+                {
+                    "apiVersion": "apps/v1" if resource_type == "deployment" else "v1",
+                    "kind": resource_type.title(),
+                    "metadata": {"name": name, "namespace": namespace},
+                    **patch,
+                }
+            )
             result = self.k8s_manager.apply_yaml(patch_yaml)
             return bool(result.get("success", False))
         except Exception as e:
@@ -943,7 +939,7 @@ class CrossClusterOrchestrator:
         if not affected_services or not affected_clusters:
             return {"status": "no_cluster_healing_needed"}
 
-        results = {"services": {}, "clusters": list(affected_clusters)}
+        results: Dict[str, Any] = {"services": {}, "clusters": list(affected_clusters)}
 
         for service in affected_services:
             service_results = {}
@@ -1031,7 +1027,7 @@ class CrossClusterOrchestrator:
 
     async def get_cross_cluster_view(self) -> Dict[str, Any]:
         """Get comprehensive view across all clusters"""
-        view = {
+        view: Dict[str, Any] = {
             "clusters": {},
             "services": {},
             "policies": {},
@@ -1049,7 +1045,9 @@ class CrossClusterOrchestrator:
             view["clusters"][cluster_id] = status
 
             if self.clusters[cluster_id].state == ClusterState.ACTIVE:
-                view["health_summary"]["active_clusters"] += 1
+                active_clusters = view["health_summary"]["active_clusters"]
+                if isinstance(active_clusters, int):
+                    view["health_summary"]["active_clusters"] = active_clusters + 1
 
         # Gather service distributions
         for service_name, service in self.services.items():
@@ -1060,13 +1058,15 @@ class CrossClusterOrchestrator:
                 "endpoints": service.endpoints,
                 "dependencies": service.dependencies,
             }
-            view["health_summary"]["total_replicas"] += sum(service.replicas.values())
+            total_replicas = view["health_summary"]["total_replicas"]
+            if isinstance(total_replicas, int):
+                view["health_summary"]["total_replicas"] = total_replicas + sum(service.replicas.values())
 
         # Include policies
         for policy_name, policy in self.policies.items():
             view["policies"][policy_name] = {
                 "distribution_strategy": policy.distribution_strategy,
-                "traffic_split": policy.traffic_split,
+                "traffic_split": dict(policy.traffic_split),  # Ensure it's a dict
                 "failover_enabled": policy.failover_enabled,
                 "auto_scaling_enabled": policy.auto_scaling_enabled,
             }

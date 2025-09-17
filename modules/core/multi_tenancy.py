@@ -66,8 +66,8 @@ class TenantQuota:
     max_deployments_per_day: int = 20
     max_file_modifications_per_hour: int = 50
     max_concurrent_operations: int = 5
-    max_storage_mb: int = 1000
-    max_cpu_seconds_per_hour: int = 3600
+    max_storage_mb: float = 1000
+    max_cpu_seconds_per_hour: float = 3600
     max_api_calls_per_minute: int = 100
     max_users: int = 10
     custom_limits: Dict[str, Any] = field(default_factory=dict)
@@ -410,6 +410,8 @@ class MultiTenancyManager:
         self._reset_usage_if_needed(tenant)
 
         # Check specific resource types
+        current: float = 0
+        limit: float = 0
         if resource_type == "healing_cycle":
             current = tenant.usage.healing_cycles_count
             limit = tenant.quota.max_healing_cycles_per_hour

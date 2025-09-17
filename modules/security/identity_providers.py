@@ -20,7 +20,7 @@ import secrets
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlencode
 
 # Always import defusedxml for security
@@ -106,7 +106,7 @@ class IdentityProviderIntegration:
     Supports OAuth 2.0, SAML 2.0, LDAP, and OpenID Connect.
     """
 
-    def __init__(self, config: Dict = None, storage_path: str = None):
+    def __init__(self, config: Optional[Dict[Any, Any]] = None, storage_path: Optional[str] = None):
         """Initialize the identity provider integration.
 
         Args:
@@ -128,7 +128,7 @@ class IdentityProviderIntegration:
         self.user_identities: Dict[str, UserIdentity] = {}
 
         # Provider handlers
-        self.provider_handlers = {
+        self.provider_handlers: Dict[IdentityProviderType, Union[OAuth2Handler, SAML2Handler, LDAPHandler, OIDCHandler]] = {
             IdentityProviderType.OAUTH2: OAuth2Handler(self),
             IdentityProviderType.SAML2: SAML2Handler(self),
             IdentityProviderType.LDAP: LDAPHandler(self),
@@ -146,7 +146,7 @@ class IdentityProviderIntegration:
         name: str,
         type: IdentityProviderType,
         config: Dict,
-        attribute_mapping: Dict = None,
+        attribute_mapping: Optional[Dict[Any, Any]] = None,
     ) -> str:
         """Configure an identity provider.
 
@@ -172,7 +172,7 @@ class IdentityProviderIntegration:
 
         # Validate configuration
         handler = self.provider_handlers.get(type)
-        if handler:
+        if handler and hasattr(handler, 'validate_config'):
             handler.validate_config(config)
 
         self.providers[provider_id] = provider
@@ -188,7 +188,7 @@ class IdentityProviderIntegration:
         return provider_id
 
     def initiate_authentication(
-        self, provider_id: str, redirect_uri: str, scope: List[str] = None
+        self, provider_id: str, redirect_uri: str, scope: Optional[List[str]] = None
     ) -> Dict[str, str]:
         """Initiate authentication with a provider.
 
@@ -223,7 +223,10 @@ class IdentityProviderIntegration:
         self.sessions[session.session_id] = session
 
         # Initiate authentication
-        auth_url, additional_params = handler.initiate_auth(provider, session, scope)
+        if hasattr(handler, 'initiate_auth'):
+            auth_url, additional_params = handler.initiate_auth(provider, session, scope)
+        else:
+            raise ValueError(f"Handler for {provider.type.value} does not support initiate_auth")
 
         return {
             "auth_url": auth_url,
@@ -262,7 +265,10 @@ class IdentityProviderIntegration:
             raise ValueError(f"No handler for provider type {provider.type.value}")
 
         # Complete authentication
-        user_identity = handler.complete_auth(provider, session, callback_data)
+        if hasattr(handler, 'complete_auth'):
+            user_identity = handler.complete_auth(provider, session, callback_data)
+        else:
+            raise ValueError(f"Handler for {provider.type.value} does not support complete_auth")
 
         # Map user identity to local user
         local_user = self._map_user_identity(user_identity, provider)
@@ -271,8 +277,8 @@ class IdentityProviderIntegration:
         auth_result = self.user_management.authenticate_user(
             local_user["username"],
             "sso_authenticated",  # Special marker for SSO auth
-            ip_address=callback_data.get("ip_address"),
-            user_agent=callback_data.get("user_agent"),
+            ip_address=str(callback_data.get("ip_address", "")),
+            user_agent=str(callback_data.get("user_agent", "")),
         )
 
         # Clean up authentication session
@@ -282,7 +288,7 @@ class IdentityProviderIntegration:
         self.audit_logger.log_login(
             username=local_user["username"],
             status="success",
-            source_ip=callback_data.get("ip_address"),
+            source_ip=str(callback_data.get("ip_address", "")),
             details={
                 "provider": provider.name,
                 "external_id": user_identity.external_id,
@@ -290,16 +296,18 @@ class IdentityProviderIntegration:
             },
         )
 
-        return {
+        result = {
             "user_id": local_user["user_id"],
             "username": local_user["username"],
             "roles": local_user["roles"],
             "provider": provider.name,
-            **auth_result,
         }
+        if auth_result:
+            result.update(auth_result)
+        return result
 
     def authenticate_ldap(
-        self, username: str, password: str, provider_id: str = None
+        self, username: str, password: str, provider_id: Optional[str] = None
     ) -> Optional[Dict[str, Any]]:
         """Authenticate using LDAP.
 
@@ -329,7 +337,10 @@ class IdentityProviderIntegration:
             handler = self.provider_handlers[IdentityProviderType.LDAP]
 
             try:
-                user_identity = handler.authenticate(provider, username, password)
+                if hasattr(handler, 'authenticate'):
+                    user_identity = handler.authenticate(provider, username, password)
+                else:
+                    raise ValueError(f"Handler for {provider.type.value} does not support authenticate")
                 if user_identity:
                     # Map user identity to local user
                     local_user = self._map_user_identity(user_identity, provider)
@@ -346,13 +357,15 @@ class IdentityProviderIntegration:
                         details={"provider": provider.name, "method": "ldap"},
                     )
 
-                    return {
+                    result = {
                         "user_id": local_user["user_id"],
                         "username": local_user["username"],
                         "roles": local_user["roles"],
                         "provider": provider.name,
-                        **auth_result,
                     }
+                    if auth_result:
+                        result.update(auth_result)
+                    return result
             except Exception as e:
                 logger.warning(
                     f"LDAP authentication failed with provider {provider.name}: {str(e)}"
@@ -646,7 +659,7 @@ class OAuth2Handler:
         self,
         provider: IdentityProviderConfig,
         session: AuthenticationSession,
-        scope: List[str] = None,
+        scope: Optional[List[str]] = None,
     ) -> Tuple[str, Dict]:
         """Initiate OAuth2 authentication."""
         config = provider.config
@@ -739,7 +752,7 @@ class SAML2Handler:
         self,
         provider: IdentityProviderConfig,
         session: AuthenticationSession,
-        scope: List[str] = None,
+        scope: Optional[List[str]] = None,
     ) -> Tuple[str, Dict]:
         """Initiate SAML2 authentication."""
         config = provider.config
@@ -813,13 +826,28 @@ class SAML2Handler:
 
         # Map user attributes
         mapping = provider.attribute_mapping
+
+        # Helper function to ensure string values
+        def get_string_attribute(key: str, default: str = "") -> str:
+            value = attributes.get(key, default)
+            if isinstance(value, list):
+                return str(value[0]) if value else default
+            return str(value) if value else default
+
+        # Helper function to ensure list values
+        def get_list_attribute(key: str) -> List[str]:
+            value = attributes.get(key, [])
+            if isinstance(value, list):
+                return [str(v) for v in value]
+            return [str(value)] if value else []
+
         identity = UserIdentity(
             provider_id=provider.provider_id,
-            external_id=attributes.get("NameID", ""),
-            username=attributes.get(mapping.get("username", "name"), ""),
-            email=attributes.get(mapping.get("email", "email"), ""),
-            full_name=attributes.get(mapping.get("full_name", "displayName"), ""),
-            groups=attributes.get(mapping.get("groups", "groups"), []),
+            external_id=get_string_attribute("NameID"),
+            username=get_string_attribute(mapping.get("username", "name")),
+            email=get_string_attribute(mapping.get("email", "email")),
+            full_name=get_string_attribute(mapping.get("full_name", "displayName")),
+            groups=get_list_attribute(mapping.get("groups", "groups")),
             attributes=attributes,
         )
 
@@ -929,7 +957,7 @@ class OIDCHandler(OAuth2Handler):
         self,
         provider: IdentityProviderConfig,
         session: AuthenticationSession,
-        scope: List[str] = None,
+        scope: Optional[List[str]] = None,
     ) -> Tuple[str, Dict]:
         """Initiate OIDC authentication."""
         config = provider.config
@@ -987,7 +1015,7 @@ class OIDCHandler(OAuth2Handler):
 _identity_integration = None
 
 
-def get_identity_integration(config: Dict = None) -> IdentityProviderIntegration:
+def get_identity_integration(config: Optional[Dict[Any, Any]] = None) -> IdentityProviderIntegration:
     """Get or create the singleton IdentityProviderIntegration instance."""
     global _identity_integration
     if _identity_integration is None:

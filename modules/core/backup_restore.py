@@ -971,6 +971,9 @@ class BackupRestoreManager:
                     data.write(blob_client.download_blob().readall())
                 return target_path
 
+            # No matching destination
+            return None
+
         except Exception as e:
             logger.error(f"Failed to download backup from {destination.value}: {e}")
             return None

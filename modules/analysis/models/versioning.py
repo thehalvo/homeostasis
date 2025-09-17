@@ -393,7 +393,7 @@ class ModelVersionControl:
         if JOBLIB_AVAILABLE:
             return joblib.load(model_path)
         else:
-            return secure_pickle_load(model_path)
+            return secure_pickle_load(str(model_path))
 
     def list_versions(
         self,
@@ -589,7 +589,7 @@ class ModelEvaluator:
     def __init__(self, version_control: ModelVersionControl):
         """Initialize the evaluator."""
         self.version_control = version_control
-        self.evaluation_cache = {}
+        self.evaluation_cache: Dict[str, EvaluationResult] = {}
 
     def evaluate_model(
         self,
@@ -958,9 +958,10 @@ class ModelEvaluator:
                 or {}
             )
 
+            version = self.version_control.get_version(version_id)
             row = {
                 "version_id": version_id,
-                "model_name": self.version_control.get_version(version_id).model_name,
+                "model_name": version.model_name if version else "unknown",
                 "primary_metric": eval_result.primary_metric,
                 "primary_score": eval_result.primary_score,
                 "inference_time_ms": eval_result.inference_time_ms,
@@ -1128,7 +1129,7 @@ class AutoModelSelector:
         # Find best candidate
         best_candidate = self.select_best_model(model_name, X_val, y_val)
 
-        recommendation = {
+        recommendation: Dict[str, Any] = {
             "candidate_version": best_candidate,
             "current_production": current_production,
             "recommendation": "deploy",

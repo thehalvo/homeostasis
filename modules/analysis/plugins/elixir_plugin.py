@@ -70,7 +70,8 @@ class ElixirExceptionHandler:
         # Check if we have previously analyzed this error
         error_signature = f"{exception_type}:{message[:100]}"
         if error_signature in self.rule_match_cache:
-            return self.rule_match_cache[error_signature]
+            cached_result = self.rule_match_cache[error_signature]
+            return cached_result if isinstance(cached_result, dict) else {}
 
         # Try to match against known rules
         for rule in self.rules:
@@ -80,8 +81,8 @@ class ElixirExceptionHandler:
 
             # Skip rules that don't apply to this category of exception
             if rule.get("applies_to") and exception_type:
-                applies_to_patterns = rule.get("applies_to")
-                if not any(
+                applies_to_patterns = rule.get("applies_to", [])
+                if isinstance(applies_to_patterns, list) and not any(
                     re.search(pattern, exception_type)
                     for pattern in applies_to_patterns
                 ):
@@ -691,7 +692,8 @@ class ElixirPatchGenerator:
             else:
                 raise FileNotFoundError(f"Template not found: {template_path}")
 
-        return self.template_cache[path_str]
+        cached_template = self.template_cache[path_str]
+        return str(cached_template) if cached_template is not None else ""
 
     def _extract_variables(
         self, analysis: Dict[str, Any], context: Dict[str, Any]

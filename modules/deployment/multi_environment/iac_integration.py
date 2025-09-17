@@ -250,7 +250,7 @@ class TerraformProvider(IaCProvider):
             output = await self._run_command(cmd, working_dir)
 
             # Parse output
-            results = {
+            results: Dict[str, Any] = {
                 "success": True,
                 "resources_created": 0,
                 "resources_updated": 0,
@@ -515,11 +515,14 @@ class HelmProvider(IaCProvider):
                     if "MANIFEST:" in line or "create" in line.lower():
                         changes.append(
                             InfrastructureChange(
-                                resource_type="kubernetes",
+                                resource_type=ResourceType.CONTAINER,
                                 resource_id=release_name,
-                                action=ChangeAction.CREATE,
-                                before_state={},
-                                after_state={"raw": line},
+                                change_type=ChangeType.CREATE,
+                                current_state=None,
+                                desired_state={"raw": line},
+                                impact_analysis={},
+                                estimated_duration=300,
+                                risk_score=0.3,
                             )
                         )
             return changes
@@ -874,9 +877,10 @@ class InfrastructureAsCodeIntegration:
         self.active_executions[execution.execution_id] = execution
 
         # Log execution start
-        await self.auditor.log_event(
+        self.auditor.log_event(
             "iac_execution_started",
-            {
+            user=None,
+            details={
                 "execution_id": execution.execution_id,
                 "repository": repo_id,
                 "environment": environment.name,
@@ -918,9 +922,10 @@ class InfrastructureAsCodeIntegration:
             execution.completed_at = datetime.now(timezone.utc)
 
             # Log execution completion
-            await self.auditor.log_event(
+            self.auditor.log_event(
                 "iac_execution_completed",
-                {
+                user=None,
+                details={
                     "execution_id": execution.execution_id,
                     "status": execution.status,
                     "duration": (
@@ -954,7 +959,7 @@ class InfrastructureAsCodeIntegration:
         self, healing_context: HealingContext, healing_plan: HealingPlan
     ) -> Dict[str, Any]:
         """Handle infrastructure healing through IaC"""
-        results = {"executions": [], "status": "pending"}
+        results: Dict[str, Any] = {"executions": [], "status": "pending"}
 
         # Find relevant IaC repositories for affected environments
         for env in healing_context.affected_environments:

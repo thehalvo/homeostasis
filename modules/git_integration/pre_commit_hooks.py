@@ -10,13 +10,16 @@ import json
 import os
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from modules.analysis.language_adapters import LanguageAdapterManager
+# LanguageAdapterManager doesn't exist, using language plugin system instead
+from modules.analysis.language_plugin_system import LanguagePlugin, LanguagePluginRegistry
+from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
 from modules.analysis.rule_based import RuleBasedAnalyzer
 from modules.monitoring.logger import MonitoringLogger
-from modules.patch_generation.patcher import Patcher
+from modules.patch_generation.patcher import PatchGenerator
 
 
 class PreCommitHooks:
@@ -36,8 +39,9 @@ class PreCommitHooks:
 
         # Initialize analysis components
         self.analyzer = RuleBasedAnalyzer()
-        self.language_manager = LanguageAdapterManager()
-        self.patcher = Patcher()
+        # Use CrossLanguageOrchestrator instead of LanguageAdapterManager
+        self.orchestrator = CrossLanguageOrchestrator()
+        self.patcher = PatchGenerator(Path(repo_path) / ".homeostasis" / "templates")
 
         # Track hook installation status
         self.hooks_installed = self._check_hooks_installed()
@@ -277,10 +281,44 @@ exit $exit_code
 
         return fnmatch.fnmatch(file_path, pattern) or pattern in file_path
 
+    def _detect_language_from_file(self, file_path: str) -> str:
+        """Detect programming language from file extension."""
+        ext_to_language = {
+            '.py': 'python',
+            '.js': 'javascript',
+            '.jsx': 'javascript',
+            '.ts': 'typescript',
+            '.tsx': 'typescript',
+            '.java': 'java',
+            '.cpp': 'cpp',
+            '.cc': 'cpp',
+            '.c': 'c',
+            '.h': 'c',
+            '.hpp': 'cpp',
+            '.cs': 'csharp',
+            '.rb': 'ruby',
+            '.go': 'go',
+            '.rs': 'rust',
+            '.php': 'php',
+            '.swift': 'swift',
+            '.kt': 'kotlin',
+            '.scala': 'scala',
+            '.r': 'r',
+            '.R': 'r',
+            '.m': 'objc',
+            '.mm': 'objc',
+            '.sh': 'bash',
+            '.bash': 'bash',
+            '.zsh': 'bash',
+        }
+
+        file_ext = Path(file_path).suffix.lower()
+        return ext_to_language.get(file_ext, 'unknown')
+
     def _is_supported_language(self, file_path: str) -> bool:
         """Check if file language is supported for analysis."""
         try:
-            language = self.language_manager.detect_language(file_path)
+            language = self._detect_language_from_file(file_path)
             return language in self.config.get("supported_languages", [])
         except Exception:
             return False
@@ -303,12 +341,21 @@ exit $exit_code
                 content = f.read()
 
             # Detect language
-            language = self.language_manager.detect_language(file_path)
+            language = self._detect_language_from_file(file_path)
 
             # Run analysis
-            issues = self.analyzer.analyze_code(
-                content=content, language=language, file_path=str(full_path)
-            )
+            # RuleBasedAnalyzer expects error data, so we need to format the code for analysis
+            error_data = {
+                "error_message": "Code analysis",
+                "error_type": "code_check",
+                "file_path": str(full_path),
+                "language": language,
+                "code_context": content,
+                "timestamp": datetime.now().isoformat()
+            }
+
+            analysis_result = self.analyzer.analyze_error(error_data)
+            issues = analysis_result.get("issues", [])
 
             # Add file context to issues
             for issue in issues:
