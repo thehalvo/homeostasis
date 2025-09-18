@@ -784,7 +784,7 @@ class MarketplaceAPI:
             )
 
             plugin.rating = float(avg_rating or 0)  # type: ignore[assignment]
-            plugin.rating_count = rating_count  # type: ignore[assignment]
+            plugin.rating_count = rating_count
 
             session.commit()
 
@@ -878,7 +878,7 @@ class MarketplaceAPI:
                         data["gpg_public_key"]
                     )
                     author.gpg_fingerprint = fingerprint  # type: ignore[assignment]
-                    author.gpg_public_key = data["gpg_public_key"]  # type: ignore[assignment]
+                    author.gpg_public_key = data["gpg_public_key"]
                 except Exception as e:
                     logger.warning(f"Failed to import GPG key: {e}")
 

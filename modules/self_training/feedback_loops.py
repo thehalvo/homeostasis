@@ -11,7 +11,7 @@ from collections import defaultdict
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Any, Dict, List, Optional, cast
 
 import numpy as np
 from sklearn.metrics import (
@@ -23,9 +23,8 @@ from sklearn.metrics import (
     recall_score,
 )
 
-from ..analysis.healing_metrics import HealingMetricsCollector as HealingMetrics
 from ..analysis.models.data_collector import ErrorDataCollector
-from ..analysis.models.serving import ModelServer, InferenceRequest, InferenceResponse
+from ..analysis.models.serving import InferenceRequest, InferenceResponse, ModelServer
 from ..analysis.models.trainer import ModelTrainer, TrainingConfig
 
 logger = logging.getLogger(__name__)
@@ -227,7 +226,9 @@ class ModelPerformanceTracker:
 
     def __init__(self):
         self.metrics: Dict[str, Dict[str, Any]] = {}
-        self.prediction_pairs: defaultdict[str, List[Tuple[Any, Any]]] = defaultdict(list)
+        self.prediction_pairs: defaultdict[str, List[Dict[str, Any]]] = defaultdict(
+            list
+        )
 
     def update(
         self,
@@ -377,25 +378,27 @@ class AutomatedRetrainer:
             training_data = data_collector.get_training_data()
             # Convert to features and labels
             features = [item[0] for item in training_data]
-            labels = [item[1] for item in training_data]
+            # labels = [item[1] for item in training_data]  # Currently unused
 
             # Train model
             train_result = trainer.train()
 
             # Update model registry
             version = f"v{int(time.time())}"
-            # Use the training result model
-            if hasattr(trainer, 'register_model'):
+            # Use the training result model_id
+            if hasattr(trainer, "register_model"):
                 trainer.register_model(
-                    train_result.model,
-                    model_name=task["model_name"],
-                    version=version,
-                metadata={
-                    "retrain_id": task["id"],
-                    "trigger": "automated_feedback_loop",
-                    "training_samples": len(features),
-                },
-            )
+                    train_result.model_id,
+                    {
+                        "model_name": task["model_name"],
+                        "model_path": train_result.model_path,
+                        "version": version,
+                        "metrics": train_result.metrics,
+                        "retrain_id": task["id"],
+                        "trigger": "automated_feedback_loop",
+                        "training_samples": len(features),
+                    },
+                )
 
             logger.info(
                 f"Completed retrain {task['id']}: {task['model_name']} {version}"
@@ -428,7 +431,7 @@ def integrate_with_existing_systems() -> None:
     """Integration function to connect feedback loops with existing Homeostasis components."""
 
     # Initialize feedback loop
-    ml_feedback_loop = MLFeedbackLoop()
+    # ml_feedback_loop = MLFeedbackLoop()  # Currently unused
 
     # Extend ModelServer to collect feedback
     original_predict = ModelServer.predict
@@ -446,11 +449,11 @@ def integrate_with_existing_systems() -> None:
             model_version=result.model_version,
             input_data=request.data,
             prediction=result.prediction,
-            confidence=getattr(result, 'confidence', None),
+            confidence=getattr(result, "confidence", None),
         )
 
         # Store for later outcome collection
-        if not hasattr(self, '_pending_feedback'):
+        if not hasattr(self, "_pending_feedback"):
             self._pending_feedback = {}
         self._pending_feedback[feedback.prediction_id] = feedback
 

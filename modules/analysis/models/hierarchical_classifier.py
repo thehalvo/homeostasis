@@ -137,12 +137,10 @@ def secure_torch_load(
     with open(filepath, "rb") as f:
         # Use weights_only=True for additional security when possible
         try:
-            return torch.load(
-                filepath, map_location=map_location, weights_only=True
-            )
+            return torch.load(filepath, map_location=map_location, weights_only=True)
         except (TypeError, pickle.UnpicklingError):
             # Fallback with custom unpickler if weights_only fails
-            with open(filepath, 'rb') as f:
+            with open(filepath, "rb") as f:
                 return RestrictedUnpickler(f).load()
 
 
@@ -530,10 +528,12 @@ class HierarchicalClassificationPipeline:
         return " ".join(parts)
 
     def _process_outputs(
-        self, outputs: Dict[str, torch.Tensor], error_data: Dict[str, Any]
+        self, outputs: Dict[str, Any], error_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Process model outputs into classification results."""
-        results = {"confidence": float(outputs["confidence"].squeeze().cpu().item())}
+        results: Dict[str, Any] = {
+            "confidence": float(outputs["confidence"].squeeze().cpu().item())
+        }
 
         # Level 1 prediction
         level1_probs = outputs["level1"]["probs"][0].cpu().numpy()

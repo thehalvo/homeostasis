@@ -837,7 +837,9 @@ class ResourceQuotaManager:
         with self._usage_lock:
             for usage_key, resources in self._usage.items():
                 level, entity_id_str = usage_key.split(":", 1)
-                entity_id: Optional[str] = entity_id_str if entity_id_str != "default" else None
+                entity_id: Optional[str] = (
+                    entity_id_str if entity_id_str != "default" else None
+                )
 
                 policy = self._get_applicable_policy(entity_id, QuotaLevel(level))
                 if not policy:

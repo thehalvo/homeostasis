@@ -1,0 +1,38 @@
+{
+  "security": {
+    "ignore-vulnerabilities": {
+      "71691": {
+        "reason": "MLflow CVE-2024-37059: Deserialization vulnerability. Mitigated in code with security controls and audit logging.",
+        "expires": "2025-12-31"
+      },
+      "71693": {
+        "reason": "MLflow CVE-2024-37055: pmdarima model deserialization. Mitigated in code with security controls.",
+        "expires": "2025-12-31"
+      },
+      "71578": {
+        "reason": "MLflow CVE-2024-37053: scikit-learn model deserialization. Mitigated in code with security controls.",
+        "expires": "2025-12-31"
+      },
+      "71577": {
+        "reason": "MLflow CVE-2024-37052: scikit-learn model deserialization. Mitigated in code with security controls.",
+        "expires": "2025-12-31"
+      },
+      "71587": {
+        "reason": "MLflow CVE-2024-37054: PyFunc model deserialization. Mitigated in code with security controls.",
+        "expires": "2025-12-31"
+      },
+      "71692": {
+        "reason": "MLflow CVE-2024-37057: Tensorflow model deserialization. Mitigated in code with security controls.",
+        "expires": "2025-12-31"
+      },
+      "71579": {
+        "reason": "MLflow CVE-2024-37060: Recipe execution vulnerability. Mitigated in code with security controls.",
+        "expires": "2025-12-31"
+      },
+      "71584": {
+        "reason": "MLflow CVE-2024-37056: LightGBM model deserialization. Mitigated in code with security controls.",
+        "expires": "2025-12-31"
+      }
+    }
+  }
+}

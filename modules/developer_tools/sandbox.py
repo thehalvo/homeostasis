@@ -17,7 +17,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import docker
 
@@ -379,7 +379,10 @@ class HealingSimulator:
         pass
 
     def _trigger_healing(
-        self, env_path: Path, config: SimulationConfig, error_output: str
+        self,
+        env_path: Path,
+        config: SimulationConfig,
+        error_output: Union[str, Dict[str, Any]],
     ) -> Dict[str, Any]:
         """Trigger the healing process"""
         # Import healing modules
@@ -396,7 +399,7 @@ class HealingSimulator:
                 else {"error_message": str(error_output)}
             )
             error_data["language"] = config.language
-            error_data["framework"] = config.framework
+            error_data["framework"] = config.framework or ""
             analysis_result = analyzer.analyze_error(error_data)
 
             if not analysis_result:

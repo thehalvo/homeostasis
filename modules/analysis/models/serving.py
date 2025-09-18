@@ -133,10 +133,12 @@ class ModelCache:
         """Initialize the cache."""
         self.config = config
         self.backend = config.cache_backend
+        self.cache: Dict[str, Any] = {}
+        self.cache_times: Dict[str, float] = {}
 
         if self.backend == "memory":
-            self.cache: Dict[str, Any] = {}
-            self.cache_times: Dict[str, float] = {}
+            # Already initialized above
+            pass
         elif self.backend == "redis" and REDIS_AVAILABLE:
             self.redis_client = redis.Redis(
                 host="localhost", port=6379, decode_responses=True
@@ -145,8 +147,6 @@ class ModelCache:
             logger.warning(
                 f"Cache backend {self.backend} not available, using memory cache"
             )
-            self.cache: Dict[str, Any] = {}
-            self.cache_times: Dict[str, float] = {}
             self.backend = "memory"
 
     def _generate_cache_key(self, data: Dict[str, Any], model_version: str) -> str:
@@ -230,12 +230,16 @@ class ModelCache:
 class BatchProcessor:
     """Batch processing for efficient inference."""
 
-    def __init__(self, model: Any, config: ServingConfig, model_version: Optional[str] = None):
+    def __init__(
+        self, model: Any, config: ServingConfig, model_version: Optional[str] = None
+    ):
         """Initialize the batch processor."""
         self.model = model
         self.config = config
         self.model_version = model_version
-        self.request_queue: queue.Queue[Tuple[InferenceRequest, asyncio.Future[InferenceResponse]]] = queue.Queue()
+        self.request_queue: queue.Queue[
+            Tuple[InferenceRequest, asyncio.Future[InferenceResponse]]
+        ] = queue.Queue()
         self.processing = True
         self.executor = ThreadPoolExecutor(max_workers=config.num_worker_threads)
 
@@ -290,7 +294,7 @@ class BatchProcessor:
                 response = InferenceResponse(
                     request_id=request.request_id,
                     prediction=predictions[i],
-                    model_version=self.model_version,
+                    model_version=self.model_version or "unknown",
                     inference_time_ms=inference_time / len(batch),
                     cached=False,
                 )
@@ -388,7 +392,9 @@ class ModelServer:
         self.models[version_id] = model
 
         # Create batch processor
-        self.batch_processors[version_id] = BatchProcessor(model, self.config, version_id)
+        self.batch_processors[version_id] = BatchProcessor(
+            model, self.config, version_id
+        )
 
     def _init_metrics(self):
         """Initialize Prometheus metrics."""

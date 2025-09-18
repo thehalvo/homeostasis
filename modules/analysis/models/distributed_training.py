@@ -13,7 +13,7 @@ import logging
 import time
 from concurrent.futures import as_completed
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
@@ -138,7 +138,7 @@ class DaskDistributedTrainer:
     def __init__(self, config: DistributedConfig):
         """Initialize Dask distributed trainer."""
         self.config = config
-        self.client = None
+        self.client: Optional[Any] = None
         self._setup_client()
 
     def _setup_client(self):
@@ -163,8 +163,7 @@ class DaskDistributedTrainer:
                 self.client = Client()
 
             logger.info(f"Dask client initialized: {self.client}")
-            if self.client:
-                logger.info(f"Dashboard: {self.client.dashboard_link}")
+            logger.info(f"Dashboard: {self.client.dashboard_link}")
         except Exception as e:
             logger.error(f"Failed to initialize Dask client: {e}")
             self.client = None
@@ -181,6 +180,7 @@ class DaskDistributedTrainer:
         if not self.client:
             raise RuntimeError("Dask client not initialized")
 
+        assert self.client is not None
         num_workers = len(self.client.scheduler_info()["workers"])
         logger.info(f"Training on {num_workers} Dask workers")
 
@@ -452,7 +452,11 @@ class HorovodDistributedTrainer:
         )
 
         # Training loop
-        results: Dict[str, List[float]] = {"losses": [], "accuracies": [], "epoch_times": []}
+        results: Dict[str, List[float]] = {
+            "losses": [],
+            "accuracies": [],
+            "epoch_times": [],
+        }
 
         for epoch in range(num_epochs):
             epoch_start = time.time()
@@ -637,7 +641,7 @@ class TorchDDPTrainer:
         """Save training checkpoint."""
         if self.rank == 0:  # Only save on rank 0
             # Get the actual model (unwrap DDP if needed)
-            actual_model = model.module if hasattr(model, 'module') else model
+            actual_model = model.module if hasattr(model, "module") else model
 
             # Ensure we have a Module, not a Tensor
             if not isinstance(actual_model, nn.Module):

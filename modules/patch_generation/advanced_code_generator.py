@@ -18,12 +18,14 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 import networkx as nx
 
 from ..analysis.llm_context_manager import LLMContextManager
-from ..analysis.models.transformer_code_understanding import TransformerCodeAnalyzer as TransformerCodeUnderstanding
+from ..analysis.models.transformer_code_understanding import (
+    TransformerCodeAnalyzer as TransformerCodeUnderstanding,
+)
 from ..llm_integration.provider_abstraction import LLMManager, LLMMessage, LLMRequest
 from .code_style_analyzer import CodeStyleAnalyzer
 from .multi_language_framework_detector import MultiLanguageFrameworkDetector
@@ -259,7 +261,9 @@ class AdvancedCodeGenerator:
             "error_type": error_context.get("error_type", "unknown"),
             "error_message": error_context.get("error_message", ""),
         }
-        transformer_analysis = self.transformer_analyzer.analyze_error_context(error_data)
+        transformer_analysis = self.transformer_analyzer.analyze_error_context(
+            error_data
+        )
 
         # Analyze data flow
         data_flow = self._analyze_data_flow(code_context, source_code)
@@ -511,7 +515,7 @@ Think through this problem step by step:
         if self.use_few_shot:
             examples = self._get_few_shot_examples(
                 error_context.get("error_type", "unknown"),
-                error_context.get("language", "python")
+                error_context.get("language", "python"),
             )
             if examples:
                 prompt_parts.append("\nHere are some examples of similar fixes:")
@@ -813,7 +817,7 @@ OUTPUT FORMAT:
         self, code_context: CodeContext, source_code: str
     ) -> Dict[str, Any]:
         """Analyze data flow in the code."""
-        data_flow: Dict[str, List[str]] = {
+        data_flow: Dict[str, List[Any]] = {
             "inputs": [],
             "outputs": [],
             "transformations": [],
@@ -1020,8 +1024,7 @@ OUTPUT FORMAT:
                 return parsed_json
 
             # Try direct JSON parsing
-            parsed_json: Dict[str, Any] = json.loads(response)
-            return parsed_json
+            return cast(Dict[str, Any], json.loads(response))
         except (json.JSONDecodeError, ValueError, AttributeError):
             # Fallback parsing
             return {"changes": [], "reasoning": response, "confidence": 0.3}
@@ -1058,7 +1061,10 @@ OUTPUT FORMAT:
         semantic_analysis: Dict[str, Any],
     ) -> Dict[str, Any]:
         """Validate semantic correctness of generated changes."""
-        validation_result: Dict[str, Union[bool, List[str]]] = {"valid": True, "warnings": []}
+        validation_result: Dict[str, Union[bool, List[str]]] = {
+            "valid": True,
+            "warnings": [],
+        }
 
         # Check if changes preserve function signatures
         for change in changes:
@@ -1329,10 +1335,14 @@ OUTPUT FORMAT:
         semantic_analysis: Dict[str, Any],
     ) -> Dict[str, Any]:
         """Validate consistency across multi-file changes."""
-        validation_result = {"valid": True, "warnings": [], "confidence": 0.8}
+        validation_result: Dict[str, Any] = {
+            "valid": True,
+            "warnings": [],
+            "confidence": 0.8,
+        }
 
         # Check for conflicting changes
-        all_changes = []
+        all_changes: List[Dict[str, Any]] = []
         for file_path, changes in multi_file_changes.items():
             for change in changes:
                 all_changes.append({"file": file_path, "change": change})
@@ -1341,6 +1351,7 @@ OUTPUT FORMAT:
         interface_changes = {}
         for change_info in all_changes:
             change = change_info["change"]
+            assert isinstance(change, dict)  # We only append dicts to all_changes
             # Look for function/class definition changes
             if "def " in change.get("original_code", "") or "class " in change.get(
                 "original_code", ""
@@ -1443,7 +1454,11 @@ OUTPUT FORMAT:
         code_context: CodeContext,
     ) -> Dict[str, Any]:
         """Identify required dependency updates."""
-        updates: Dict[str, List[str]] = {"imports": [], "exports": [], "version_bumps": []}
+        updates: Dict[str, List[Any]] = {
+            "imports": [],
+            "exports": [],
+            "version_bumps": [],
+        }
 
         # Check for new imports
         for file_path, changes in multi_file_changes.items():

@@ -1665,7 +1665,7 @@ class RegulatedIndustriesSupport:
         # Collect audit logs
         # TODO: Implement search_events method in AuditLogger for production use
         # For now, we'll collect evidence through direct log access
-        audit_evidence = []
+        audit_evidence: List[Dict[str, Any]] = []
         # audit_evidence = self.audit_logger.search_events(
         #     start_time=datetime.datetime.utcnow() - datetime.timedelta(hours=1),
         #     filters={"action_id": action.get("id")},
@@ -2171,7 +2171,7 @@ class RegulatedIndustriesSupport:
 
 
 # Singleton instance
-_regulated_industries = None
+_regulated_industries: Optional[RegulatedIndustriesSupport] = None
 
 
 def get_regulated_industries(

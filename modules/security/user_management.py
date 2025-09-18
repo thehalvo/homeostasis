@@ -835,7 +835,7 @@ class UserManagementSystem:
 
     def _create_default_groups(self):
         """Create default user groups."""
-        default_groups = [
+        default_groups: List[Dict[str, Any]] = [
             {
                 "name": "administrators",
                 "description": "System administrators with full access",

@@ -210,7 +210,9 @@ class ObservabilityHooks:
                     ),
                 )
 
-                meter_provider = MeterProvider(resource=resource, metric_readers=[reader])
+                meter_provider = MeterProvider(
+                    resource=resource, metric_readers=[reader]
+                )
                 metrics.set_meter_provider(meter_provider)
 
                 self.meter = metrics.get_meter(__name__)

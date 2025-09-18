@@ -16,7 +16,6 @@ import json
 import logging
 import os
 import sys
-import tempfile
 import threading
 from contextlib import contextmanager
 from datetime import datetime
@@ -34,13 +33,20 @@ class MLflowSecurityConfig:
         self.trusted_model_sources: List[str] = []
         self.allowed_model_hashes: Dict[str, str] = {}
         self.allowed_model_flavors: Set[str] = {
-            "python_function", "sklearn", "tensorflow", "pytorch",
-            "lightgbm", "xgboost", "catboost", "h2o", "spark"
+            "python_function",
+            "sklearn",
+            "tensorflow",
+            "pytorch",
+            "lightgbm",
+            "xgboost",
+            "catboost",
+            "h2o",
+            "spark",
         }
         self.blocked_model_flavors: Set[str] = {
             "pmdarima",  # CVE-2024-37055
-            "diviner",   # Potential risk
-            "prophet"    # Potential risk
+            "diviner",  # Potential risk
+            "prophet",  # Potential risk
         }
         self.enable_model_validation = True
         self.enable_sandboxing = True
@@ -124,7 +130,7 @@ class MLflowSecurityConfig:
                     "success": success,
                     "user": os.environ.get("USER", "unknown"),
                     "pid": os.getpid(),
-                    "details": details
+                    "details": details,
                 }
 
                 with open(self.audit_log_path, "a") as f:
@@ -133,7 +139,9 @@ class MLflowSecurityConfig:
             except Exception as e:
                 logger.error(f"Failed to write audit log: {e}")
 
-    def validate_model_flavors(self, model_metadata: Dict[str, Any]) -> Tuple[bool, str]:
+    def validate_model_flavors(
+        self, model_metadata: Dict[str, Any]
+    ) -> Tuple[bool, str]:
         """Validate model flavors against security policy."""
         flavors = model_metadata.get("flavors", {})
 
@@ -175,35 +183,41 @@ def secure_model_loader(security_config: Optional[MLflowSecurityConfig] = None):
                     security_config.audit_log(
                         "model_load_blocked_untrusted_source",
                         audit_details,
-                        success=False
+                        success=False,
                     )
                     raise SecurityError(error_msg)
 
                 # Security check 2: Get model metadata for validation
                 try:
                     import mlflow
+
                     model_info = mlflow.models.get_model_info(model_uri)
 
                     # Check model flavors
-                    valid, msg = security_config.validate_model_flavors(model_info.to_dict())
+                    # ModelInfo doesn't have to_dict, use flavors directly
+                    model_metadata = {"flavors": model_info.flavors}
+                    valid, msg = security_config.validate_model_flavors(model_metadata)
                     if not valid:
                         audit_details["validation_error"] = msg
                         security_config.audit_log(
-                            "model_load_blocked_flavor",
-                            audit_details,
-                            success=False
+                            "model_load_blocked_flavor", audit_details, success=False
                         )
                         raise SecurityError(f"Model validation failed: {msg}")
 
                     # Check model signature if required
-                    if security_config.require_model_signature and not model_info.signature:
+                    if (
+                        security_config.require_model_signature
+                        and not model_info.signature
+                    ):
                         audit_details["validation_error"] = "Missing model signature"
                         security_config.audit_log(
                             "model_load_blocked_no_signature",
                             audit_details,
-                            success=False
+                            success=False,
                         )
-                        raise SecurityError("Model must have a signature for security validation")
+                        raise SecurityError(
+                            "Model must have a signature for security validation"
+                        )
 
                 except Exception as e:
                     if isinstance(e, SecurityError):
@@ -218,9 +232,7 @@ def secure_model_loader(security_config: Optional[MLflowSecurityConfig] = None):
                     if not security_config.check_model_size(model_path):
                         audit_details["validation_error"] = "Model size exceeds limit"
                         security_config.audit_log(
-                            "model_load_blocked_size",
-                            audit_details,
-                            success=False
+                            "model_load_blocked_size", audit_details, success=False
                         )
                         raise SecurityError(
                             f"Model size exceeds limit of {security_config.max_model_size_mb}MB"
@@ -231,9 +243,7 @@ def secure_model_loader(security_config: Optional[MLflowSecurityConfig] = None):
                         if not security_config.validate_model_hash(model_path):
                             audit_details["validation_error"] = "Hash validation failed"
                             security_config.audit_log(
-                                "model_load_blocked_hash",
-                                audit_details,
-                                success=False
+                                "model_load_blocked_hash", audit_details, success=False
                             )
                             raise SecurityError("Model hash validation failed")
 
@@ -255,7 +265,9 @@ def secure_model_loader(security_config: Optional[MLflowSecurityConfig] = None):
                 # Log failure
                 audit_details["error"] = str(e)
                 audit_details["error_type"] = type(e).__name__
-                security_config.audit_log("model_load_failed", audit_details, success=False)
+                security_config.audit_log(
+                    "model_load_failed", audit_details, success=False
+                )
 
                 logger.error(f"Error loading model from {model_uri}: {e}")
                 raise
@@ -283,27 +295,42 @@ class ModelSandbox:
     - Network namespace isolation
     """
 
-    def __init__(self,
-                 enable_network: bool = False,
-                 memory_limit_mb: int = 2048,
-                 cpu_limit: float = 1.0,
-                 timeout_seconds: int = 300,
-                 allowed_imports: Optional[Set[str]] = None):
+    def __init__(
+        self,
+        enable_network: bool = False,
+        memory_limit_mb: int = 2048,
+        cpu_limit: float = 1.0,
+        timeout_seconds: int = 300,
+        allowed_imports: Optional[Set[str]] = None,
+    ):
         self.enable_network = enable_network
         self.memory_limit_mb = memory_limit_mb
         self.cpu_limit = cpu_limit
         self.timeout_seconds = timeout_seconds
         self.allowed_imports = allowed_imports or {
-            "numpy", "pandas", "sklearn", "scipy", "tensorflow",
-            "torch", "lightgbm", "xgboost", "catboost"
+            "numpy",
+            "pandas",
+            "sklearn",
+            "scipy",
+            "tensorflow",
+            "torch",
+            "lightgbm",
+            "xgboost",
+            "catboost",
         }
 
     @contextmanager
     def sandboxed_environment(self):
         """Create a sandboxed environment context."""
         # Save original values
-        original_modules = dict(sys.modules) if 'sys' in globals() else {}
-        original_builtins = dict(__builtins__) if '__builtins__' in globals() else {}
+        original_modules = dict(sys.modules) if "sys" in globals() else {}
+        original_builtins: Dict[str, Any] = {}
+        if "__builtins__" in globals():
+            if isinstance(__builtins__, dict):
+                original_builtins = dict(__builtins__)
+            else:
+                # __builtins__ is a module
+                original_builtins = dict(vars(__builtins__))
 
         try:
             # Restrict imports (simplified - use import hooks in production)
@@ -324,18 +351,28 @@ class ModelSandbox:
 
             # Apply restrictions
             for key, value in restricted_builtins.items():
-                if key in __builtins__:
-                    __builtins__[key] = value
+                if isinstance(__builtins__, dict):
+                    if key in __builtins__:
+                        __builtins__[key] = value
+                else:
+                    # __builtins__ is a module
+                    if hasattr(__builtins__, key):
+                        setattr(__builtins__, key, value)
 
             yield
 
         finally:
             # Restore original environment
-            if 'sys' in globals():
+            if "sys" in globals():
                 sys.modules.clear()
                 sys.modules.update(original_modules)
 
-            __builtins__.update(original_builtins)
+            if isinstance(__builtins__, dict):
+                __builtins__.update(original_builtins)
+            else:
+                # __builtins__ is a module
+                for key, value in original_builtins.items():
+                    setattr(__builtins__, key, value)
 
     def _restricted_import(self, name, *args, **kwargs):
         """Restricted import function that only allows safe modules."""
@@ -343,7 +380,7 @@ class ModelSandbox:
             raise SecurityError(f"Import of '{name}' is not allowed in sandbox")
         return __import__(name, *args, **kwargs)
 
-    def _restricted_open(self, file, mode='r', *args, **kwargs):
+    def _restricted_open(self, file, mode="r", *args, **kwargs):
         """Restricted open that prevents file system access."""
         raise SecurityError("File system access is not allowed in sandbox")
 
@@ -361,7 +398,9 @@ class ModelSandbox:
 
         # Set up timeout
         def timeout_handler(signum, frame):
-            raise TimeoutError(f"Model execution exceeded {self.timeout_seconds}s timeout")
+            raise TimeoutError(
+                f"Model execution exceeded {self.timeout_seconds}s timeout"
+            )
 
         signal.signal(signal.SIGALRM, timeout_handler)
         signal.alarm(self.timeout_seconds)
@@ -374,14 +413,17 @@ class ModelSandbox:
                     (
                         self.memory_limit_mb * 1024 * 1024,
                         self.memory_limit_mb * 1024 * 1024,
-                    )
+                    ),
                 )
 
             # Set CPU limit (simplified - use cgroups in production)
             if hasattr(resource, "RLIMIT_CPU"):
                 resource.setrlimit(
                     resource.RLIMIT_CPU,
-                    (int(self.timeout_seconds * self.cpu_limit), resource.RLIM_INFINITY)
+                    (
+                        int(self.timeout_seconds * self.cpu_limit),
+                        resource.RLIM_INFINITY,
+                    ),
                 )
 
             # Run in restricted environment
@@ -428,7 +470,7 @@ def create_secure_mlflow_config() -> Dict[str, Any]:
 def load_model_securely(
     model_uri: str,
     security_config: Optional[MLflowSecurityConfig] = None,
-    use_sandbox: bool = True
+    use_sandbox: bool = True,
 ) -> Any:
     """
     Securely load an MLflow model with all security checks.
@@ -469,7 +511,7 @@ def predict_securely(
     data: Any,
     security_config: Optional[MLflowSecurityConfig] = None,
     use_sandbox: bool = True,
-    validate_inputs: bool = True
+    validate_inputs: bool = True,
 ) -> Any:
     """
     Perform secure model prediction with input validation and sandboxing.
@@ -498,12 +540,13 @@ def predict_securely(
                 try:
                     # MLflow's built-in validation
                     import mlflow
+
                     mlflow.models.validate_serving_input(data, signature.inputs)
                 except Exception as e:
                     security_config.audit_log(
                         "prediction_input_validation_failed",
                         {"error": str(e)},
-                        success=False
+                        success=False,
                     )
                     raise SecurityError(f"Input validation failed: {e}")
 
@@ -516,8 +559,7 @@ def predict_securely(
 
     # Audit successful prediction
     security_config.audit_log(
-        "prediction_completed",
-        {"input_shape": str(getattr(data, "shape", len(data)))}
+        "prediction_completed", {"input_shape": str(getattr(data, "shape", len(data)))}
     )
 
     return result

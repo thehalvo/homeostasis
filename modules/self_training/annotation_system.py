@@ -46,9 +46,9 @@ class AnnotationType(Enum):
 class AnnotationTask:
     """Represents a single annotation task."""
 
-    task_id: Optional[str] = None
     task_type: AnnotationType
     data: Dict[str, Any]
+    task_id: Optional[str] = None
     model_prediction: Optional[Any] = None
     model_confidence: Optional[float] = None
     created_at: Optional[float] = None
@@ -82,7 +82,6 @@ class AnnotationTask:
 class Annotation:
     """Represents a completed annotation."""
 
-    annotation_id: Optional[str] = None
     task_id: str
     annotator_id: str
     annotation_type: AnnotationType
@@ -91,6 +90,7 @@ class Annotation:
     human_label: Any
     confidence: float  # Annotator's confidence in their label
     time_taken: float  # Seconds to complete
+    annotation_id: Optional[str] = None
     notes: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
     created_at: Optional[float] = None
@@ -123,7 +123,9 @@ class AnnotationInterface:
         self.annotator_stats: defaultdict[str, Dict[str, Any]] = defaultdict(dict)
 
         # Callbacks for different annotation types
-        self.annotation_callbacks: Dict[AnnotationType, Callable[[Annotation], None]] = {}
+        self.annotation_callbacks: Dict[
+            AnnotationType, Callable[[List[Annotation]], None]
+        ] = {}
 
         # Load existing data
         self._load_data()
@@ -147,6 +149,7 @@ class AnnotationInterface:
             expires_at=time.time() + self.task_expiry_seconds,
         )
 
+        assert task.task_id is not None  # Set in __post_init__
         self.tasks[task.task_id] = task
         self._save_task(task)
 
@@ -229,6 +232,7 @@ class AnnotationInterface:
 
         self._save_task(task)
 
+        assert annotation.annotation_id is not None  # Set in __post_init__
         logger.info(
             f"Received annotation {annotation.annotation_id} for task {task_id}"
         )
@@ -280,6 +284,7 @@ class AnnotationInterface:
 
     def _process_completed_task(self, task: AnnotationTask) -> None:
         """Process a completed annotation task."""
+        assert task.task_id is not None  # Set in __post_init__
         task_annotations = self.annotations[task.task_id]
 
         # Calculate agreement if multiple annotations
@@ -316,6 +321,7 @@ class AnnotationInterface:
         human_label = self._aggregate_annotations(annotations)
 
         if task.model_prediction is not None:
+            assert task.task_id is not None  # Set in __post_init__
             feedback = PredictionFeedback(
                 prediction_id=task.task_id,
                 model_name=f"{task.task_type.value}_model",
@@ -381,6 +387,7 @@ class AnnotationInterface:
 
     def _save_annotation(self, annotation: Annotation) -> None:
         """Save annotation to disk."""
+        assert annotation.created_at is not None  # Set in __post_init__
         date_str = datetime.fromtimestamp(annotation.created_at).strftime("%Y-%m-%d")
         annotation_file = self.storage_dir / "annotations" / f"{date_str}.jsonl"
         annotation_file.parent.mkdir(exist_ok=True)
@@ -413,6 +420,7 @@ class AnnotationInterface:
                 with open(task_file, "r") as f:
                     task_data = json.load(f)
                     task = AnnotationTask.from_dict(task_data)
+                    assert task.task_id is not None  # Set in __post_init__
                     self.tasks[task.task_id] = task
 
         # Load annotations
@@ -530,6 +538,7 @@ class AnnotationQualityScorer:
         score *= max(0.5, time_factor)
 
         # Factor 3: Agreement with other annotations
+        assert task.task_id is not None  # Set in __post_init__
         task_annotations = self._get_task_annotations(task.task_id)
         if len(task_annotations) > 1:
             agreement = self._calculate_agreement_score(annotation, task_annotations)

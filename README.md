@@ -109,6 +109,13 @@ homeostasis provider-status --verbose
 - **Format Validation**: Provider-specific key format checking with correction suggestions
 - **API Validation**: Live endpoint testing during key setup
 - **Secure Display**: Keys are masked in all CLI output and logs
+- **MLflow Security**: Mitigations for CVE-2024-37052 through CVE-2024-37060 (deserialization vulnerabilities) via the security module:
+  - Model source validation and trusted source enforcement
+  - Model hash verification and integrity checks
+  - High-risk model flavor blocking (pmdarima, diviner, prophet)
+  - Audit logging of all model operations
+  - Model size limits and signature requirements
+  - Sandboxing capabilities for isolated model execution
 
 #### Storage Options
 

@@ -237,7 +237,7 @@ class PerformanceDashboard:
             daily_stats[date]["cpus"].append(metric["cpu"])
 
         # Calculate daily averages
-        trend_data = []
+        trend_data: List[Dict[str, Any]] = []
         for date, stats in sorted(daily_stats.items()):
             trend_data.append(
                 {

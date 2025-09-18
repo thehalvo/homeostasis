@@ -16,7 +16,7 @@ import re
 from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union, Counter as CounterType
+from typing import Any, Dict, List, Optional, Union, cast
 
 import numpy as np
 
@@ -118,8 +118,9 @@ class PythonAnalyzer(LanguageAnalyzer):
         try:
             tree = ast.parse(code)
 
-            features: Dict[str, Union[Counter, int]] = {
-                "node_types": Counter(),
+            node_types_counter: Counter[str] = Counter()
+            features: Dict[str, Any] = {
+                "node_types": node_types_counter,
                 "function_count": 0,
                 "class_count": 0,
                 "import_count": 0,
@@ -132,42 +133,40 @@ class PythonAnalyzer(LanguageAnalyzer):
                 "async_count": 0,
             }
 
-            # Get node_types counter directly
-            node_types_counter = features["node_types"]
-            assert isinstance(node_types_counter, Counter)
+            # node_types_counter is already defined above
 
             for node in ast.walk(tree):
                 node_type = type(node).__name__
                 node_types_counter[node_type] += 1
 
                 if isinstance(node, ast.FunctionDef):
-                    features["function_count"] = int(features["function_count"]) + 1
+                    features["function_count"] += 1
                     if node.decorator_list:
-                        features["decorator_count"] = int(features["decorator_count"]) + len(node.decorator_list)
+                        features["decorator_count"] += len(node.decorator_list)
                 elif isinstance(node, ast.AsyncFunctionDef):
-                    features["function_count"] = int(features["function_count"]) + 1
-                    features["async_count"] = int(features["async_count"]) + 1
+                    features["function_count"] += 1
+                    features["async_count"] += 1
                 elif isinstance(node, ast.ClassDef):
-                    features["class_count"] = int(features["class_count"]) + 1
+                    features["class_count"] += 1
                 elif isinstance(node, (ast.Import, ast.ImportFrom)):
-                    features["import_count"] = int(features["import_count"]) + 1
+                    features["import_count"] += 1
                 elif isinstance(node, (ast.For, ast.While, ast.AsyncFor)):
-                    features["loop_count"] = int(features["loop_count"]) + 1
+                    features["loop_count"] += 1
                 elif isinstance(node, (ast.If, ast.IfExp)):
-                    features["conditional_count"] = int(features["conditional_count"]) + 1
+                    features["conditional_count"] += 1
                 elif isinstance(node, (ast.Try, ast.ExceptHandler)):
-                    features["exception_count"] = int(features["exception_count"]) + 1
+                    features["exception_count"] += 1
                 elif isinstance(
                     node, (ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp)
                 ):
-                    features["comprehension_count"] = int(features["comprehension_count"]) + 1
+                    features["comprehension_count"] += 1
                 elif isinstance(node, ast.Lambda):
-                    features["lambda_count"] = int(features["lambda_count"]) + 1
+                    features["lambda_count"] += 1
                 elif isinstance(node, (ast.Await, ast.AsyncWith)):
-                    features["async_count"] = int(features["async_count"]) + 1
+                    features["async_count"] += 1
 
             # Convert Counter to dict for JSON serialization
-            features["node_types"] = dict(features["node_types"])
+            features["node_types"] = dict(node_types_counter)
 
             return features
 
@@ -501,7 +500,7 @@ class MultiLanguageFeatureExtractor:
                 outputs = self.semantic_model(**inputs)
                 embeddings = outputs.last_hidden_state.mean(dim=1).numpy()
 
-            return embeddings[0].astype(np.float32)
+            return cast(np.ndarray, embeddings[0].astype(np.float32))
 
         except Exception as e:
             print(f"Failed to extract embeddings: {e}")
@@ -509,7 +508,7 @@ class MultiLanguageFeatureExtractor:
 
     def extract_dependency_features(self, code: str, language: str) -> Dict[str, Any]:
         """Extract dependency and import features."""
-        features: Dict[str, Union[int, List[str], bool]] = {
+        features: Dict[str, Any] = {
             "import_count": 0,
             "external_dependencies": [],
             "internal_dependencies": [],
@@ -520,7 +519,7 @@ class MultiLanguageFeatureExtractor:
             # Extract Python imports
             import_pattern = r"(?:from\s+([\w.]+)\s+)?import\s+([\w,\s*]+)"
             for match in re.finditer(import_pattern, code):
-                features["import_count"] = int(features["import_count"]) + 1
+                features["import_count"] += 1
                 module = match.group(1) or match.group(2).split(",")[0].strip()
                 if "." in module:
                     internal_deps = features["internal_dependencies"]
@@ -537,7 +536,7 @@ class MultiLanguageFeatureExtractor:
                 r'import\s+.*?from\s+[\'"](.+?)[\'"]|require\s*\([\'"](.+?)[\'"]\)'
             )
             for match in re.finditer(import_pattern, code):
-                features["import_count"] = int(features["import_count"]) + 1
+                features["import_count"] += 1
                 module = match.group(1) or match.group(2)
                 if module.startswith("."):
                     internal_deps = features["internal_dependencies"]
@@ -552,7 +551,10 @@ class MultiLanguageFeatureExtractor:
 
     def extract_framework_features(self, code: str, language: str) -> Dict[str, Any]:
         """Extract framework-specific features."""
-        features: Dict[str, Union[Optional[str], Dict[str, Any]]] = {"framework": None, "framework_patterns": {}}
+        features: Dict[str, Union[Optional[str], Dict[str, Any]]] = {
+            "framework": None,
+            "framework_patterns": {},
+        }
 
         if language == "python":
             # Django detection
@@ -660,7 +662,10 @@ class MultiLanguageFeatureExtractor:
             function_name=error_context["error_location"].get("function", ""),
             class_name=None,  # TODO: Extract from AST
             # Complexity metrics
-            **complexity_metrics,
+            cyclomatic_complexity=complexity_metrics["cyclomatic_complexity"],
+            cognitive_complexity=complexity_metrics["cognitive_complexity"],
+            lines_of_code=complexity_metrics["lines_of_code"],
+            nesting_depth=complexity_metrics["nesting_depth"],
             # Error features
             error_type=error_context["error_type"],
             error_message=error_context["error_message"],
@@ -1026,7 +1031,9 @@ if __name__ == "__main__":
 
     # Get sample error data
     # sample_errors = get_sample_data()
-    sample_errors = [{"code": "print('hello')", "language": "python", "error_type": "syntax_error"}]
+    sample_errors = [
+        {"code": "print('hello')", "language": "python", "error_type": "syntax_error"}
+    ]
 
     # Extract features from first error
     features = extractor.extract_features(sample_errors[0])

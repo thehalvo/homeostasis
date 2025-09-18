@@ -140,9 +140,7 @@ def secure_torch_load(
     # Fall back to restricted unpickler for checkpoints with non-tensor data
     # Use weights_only=True for additional security when possible
     try:
-        return torch.load(
-            filepath, map_location=map_location, weights_only=True
-        )
+        return torch.load(filepath, map_location=map_location, weights_only=True)
     except (TypeError, pickle.UnpicklingError):
         # Fallback to custom loading with RestrictedUnpickler if weights_only fails
         with open(filepath, "rb") as f:
@@ -591,12 +589,12 @@ class ErrorPatternRecognizer:
                 # Move batch to device
                 input_ids = batch["input_ids"].to(self.device)
                 attention_mask = batch["attention_mask"].to(self.device)
-                labels = batch["labels"].to(self.device)
+                batch_labels = batch["labels"].to(self.device)
 
                 # Forward pass
                 optimizer.zero_grad()
                 outputs = self.model(input_ids, attention_mask)
-                loss = criterion(outputs["logits"], labels)
+                loss = criterion(outputs["logits"], batch_labels)
 
                 # Add auxiliary losses
                 syntax_labels = self._get_syntax_labels(batch, dataset)
@@ -623,8 +621,8 @@ class ErrorPatternRecognizer:
                 # Update metrics
                 epoch_loss += loss.item()
                 _, predicted = torch.max(outputs["logits"], 1)
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
+                total += batch_labels.size(0)
+                correct += (predicted == batch_labels).sum().item()
 
             # Calculate epoch metrics
             avg_loss = epoch_loss / len(dataloader)
@@ -643,7 +641,9 @@ class ErrorPatternRecognizer:
             "train_losses": train_losses,
             "train_accuracies": train_accuracies,
             "num_classes": num_classes,
-            "classes": self.label_encoder.classes_.tolist() if self.label_encoder else [],
+            "classes": (
+                self.label_encoder.classes_.tolist() if self.label_encoder else []
+            ),
         }
 
     def _get_syntax_labels(self, batch, dataset):
@@ -692,6 +692,10 @@ class ErrorPatternRecognizer:
 
             # Get top prediction
             confidence, predicted_idx = torch.max(probs, dim=-1)
+
+            if self.label_encoder is None:
+                raise ValueError("Model not trained yet - label_encoder is None")
+
             predicted_class = self.label_encoder.inverse_transform(
                 [predicted_idx.cpu().item()]
             )[0]
@@ -744,7 +748,10 @@ class ErrorPatternRecognizer:
             logger.error("No model to save")
             return False
 
-        save_path = Path(path or self.model_path)
+        resolved_path = path if path is not None else self.model_path
+        if resolved_path is None:
+            raise ValueError("No save path specified")
+        save_path = Path(resolved_path)
         save_path.parent.mkdir(parents=True, exist_ok=True)
 
         # Save model state and configuration
@@ -753,7 +760,9 @@ class ErrorPatternRecognizer:
                 "model_state_dict": self.model.state_dict(),
                 "label_encoder": self.label_encoder,
                 "model_config": {
-                    "num_classes": len(self.label_encoder.classes_) if self.label_encoder else 0,
+                    "num_classes": (
+                        len(self.label_encoder.classes_) if self.label_encoder else 0
+                    ),
                     "hidden_dim": 768,
                     "dropout_rate": 0.3,
                 },
@@ -766,7 +775,10 @@ class ErrorPatternRecognizer:
 
     def load(self, path: Optional[Union[str, Path]] = None) -> bool:
         """Load a trained model."""
-        load_path = Path(path or self.model_path)
+        resolved_path = path if path is not None else self.model_path
+        if resolved_path is None:
+            raise ValueError("No load path specified")
+        load_path = Path(resolved_path)
 
         if not load_path.exists():
             logger.error(f"Model file not found: {load_path}")

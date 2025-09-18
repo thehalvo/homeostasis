@@ -9,7 +9,7 @@ import logging
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -123,7 +123,7 @@ class MetricsEncoder(nn.Module):
         combined = torch.cat(encoded_metrics, dim=-1)
         fused = self.metric_fusion(combined)
 
-        return fused
+        return cast(torch.Tensor, fused)
 
 
 class LogPatternEncoder(nn.Module):
@@ -179,7 +179,7 @@ class LogPatternEncoder(nn.Module):
             pattern_encoding = self.pattern_encoder(log_data["pattern_frequencies"])
             log_encoding = log_encoding + pattern_encoding
 
-        return log_encoding
+        return cast(torch.Tensor, log_encoding)
 
 
 class TemporalEncoder(nn.Module):
@@ -316,7 +316,7 @@ class MultimodalFusionNetwork(nn.Module):
         self.category_head = nn.Linear(hidden_dim, 8)  # 8 error categories
         self.resolution_head = nn.Linear(hidden_dim, 3)  # 3 resolution types
 
-    def forward(self, inputs: Dict[str, Any]) -> Dict[str, torch.Tensor]:
+    def forward(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
         Forward pass through multimodal network.
 
@@ -408,16 +408,16 @@ class MultimodalErrorAnalyzer:
     def load(self, model_path: str) -> None:
         """Load model from path."""
         checkpoint = torch.load(model_path, map_location=self.device)
-        self.model.load_state_dict(checkpoint['model_state_dict'])
-        if 'scaler_state' in checkpoint:
-            self.scaler = checkpoint['scaler_state']
+        self.model.load_state_dict(checkpoint["model_state_dict"])
+        if "scaler_state" in checkpoint:
+            self.scaler = checkpoint["scaler_state"]
         logger.info(f"Loaded model from {model_path}")
 
     def save(self, model_path: str) -> None:
         """Save model to path."""
         checkpoint = {
-            'model_state_dict': self.model.state_dict(),
-            'scaler_state': self.scaler,
+            "model_state_dict": self.model.state_dict(),
+            "scaler_state": self.scaler,
         }
         torch.save(checkpoint, model_path)
         logger.info(f"Saved model to {model_path}")
@@ -434,7 +434,7 @@ class MultimodalErrorAnalyzer:
         Returns:
             Preprocessed inputs
         """
-        inputs = {"batch_size": 1}
+        inputs: Dict[str, Any] = {"batch_size": 1}
 
         # Process text
         text = f"{error_data.error_message} {' '.join(error_data.traceback[:3])}"
@@ -547,7 +547,7 @@ class MultimodalErrorAnalyzer:
         return results
 
     def _process_outputs(
-        self, outputs: Dict[str, torch.Tensor], error_data: MultimodalErrorData
+        self, outputs: Dict[str, Any], error_data: MultimodalErrorData
     ) -> Dict[str, Any]:
         """Process model outputs into interpretable results."""
         # Main classification
@@ -640,7 +640,7 @@ class MultimodalErrorAnalyzer:
         return insights
 
     def _create_visualizations(
-        self, error_data: MultimodalErrorData, outputs: Dict[str, torch.Tensor]
+        self, error_data: MultimodalErrorData, outputs: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Create visualizations for multimodal analysis."""
         visualizations = {}

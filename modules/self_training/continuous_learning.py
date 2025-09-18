@@ -205,9 +205,11 @@ class DeploymentMonitor:
     def get_deployment_stats(self) -> Dict[str, Any]:
         """Get statistics on deployment outcomes."""
         outcome_distribution: defaultdict[str, int] = defaultdict(int)
-        fix_type_success_rates: defaultdict[str, Dict[str, int]] = defaultdict(lambda: {"success": 0, "total": 0})
+        fix_type_success_rates: defaultdict[str, Dict[str, int]] = defaultdict(
+            lambda: {"success": 0, "total": 0}
+        )
 
-        stats = {
+        stats: Dict[str, Any] = {
             "active_deployments": len(self.active_deployments),
             "completed_deployments": len(self.completed_deployments),
             "success_rate": 0.0,
@@ -256,7 +258,7 @@ class DeploymentMonitor:
         deployment.error_recurrence_count = error_recurrence
 
         # Check system health
-        health_metrics = health_checker.check_health()
+        health_metrics = health_checker.run_checks()
 
         # Check performance impact
         perf_impact = self._calculate_performance_impact(deployment, health_metrics)
@@ -345,7 +347,7 @@ class DeploymentMonitor:
             outcome=final_outcome,
             duration_hours=duration_hours,
             error_recurrence_rate=recurrence_rate,
-            performance_impact=deployment.performance_metrics,
+            performance_impact=deployment.performance_metrics or {},
             stability_trend=[deployment.stability_score],  # Would have historical data
             confidence_calibration=confidence_calibration,
             lessons_learned=lessons,
@@ -371,10 +373,13 @@ class DeploymentMonitor:
 
         elif outcome == FixOutcome.REGRESSION:
             lessons.append("Fix caused performance regression")
-            worst_metric = max(
-                deployment.performance_metrics.items(), key=lambda x: abs(x[1])
-            )
-            lessons.append(f"Worst impact on {worst_metric[0]}: {worst_metric[1]:.1f}%")
+            if deployment.performance_metrics:
+                worst_metric = max(
+                    deployment.performance_metrics.items(), key=lambda x: abs(x[1])
+                )
+                lessons.append(
+                    f"Worst impact on {worst_metric[0]}: {worst_metric[1]:.1f}%"
+                )
 
         elif outcome == FixOutcome.SUCCESS:
             if deployment.fix_type == "ml_generated":
@@ -446,7 +451,7 @@ class OutcomeTracker:
 
     def analyze_outcome_patterns(self) -> Dict[str, Any]:
         """Analyze patterns in fix outcomes."""
-        patterns = {
+        patterns: Dict[str, Any] = {
             "error_type_success": defaultdict(lambda: {"success": 0, "total": 0}),
             "confidence_accuracy": self._analyze_confidence_accuracy(),
             "time_to_failure": self._analyze_time_to_failure(),
@@ -507,7 +512,7 @@ class OutcomeTracker:
 
         return min(0.95, max(0.05, base_rate))
 
-    def _analyze_confidence_accuracy(self) -> Dict[str, float]:
+    def _analyze_confidence_accuracy(self) -> Dict[str, Any]:
         """Analyze how accurate confidence scores are."""
         confidence_bins: Dict[float, Dict[str, List[float]]] = defaultdict(
             lambda: {"predicted": [], "actual": []}
@@ -627,7 +632,7 @@ class LearningPipeline:
         """Run a complete learning cycle."""
         logger.info(f"Starting learning cycle {self.learning_cycles + 1}")
 
-        results = {
+        results: Dict[str, Any] = {
             "cycle": self.learning_cycles + 1,
             "timestamp": time.time(),
             "outcomes_processed": 0,

@@ -1237,7 +1237,9 @@ class ComplianceReportingSystem:
 _compliance_reporting = None
 
 
-def get_compliance_reporting(config: Optional[Dict] = None) -> ComplianceReportingSystem:
+def get_compliance_reporting(
+    config: Optional[Dict] = None,
+) -> ComplianceReportingSystem:
     """Get or create the singleton ComplianceReportingSystem instance."""
     global _compliance_reporting
     if _compliance_reporting is None:

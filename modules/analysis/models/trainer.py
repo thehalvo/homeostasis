@@ -674,8 +674,8 @@ class ModelTrainer:
         if hasattr(model, "feature_importances_"):
             feature_importance = dict(
                 zip(
-                    range(len(model.feature_importances_)),
-                    model.feature_importances_.tolist(),
+                    [str(i) for i in range(len(model.feature_importances_))],
+                    [float(x) for x in model.feature_importances_.tolist()],
                 )
             )
         elif hasattr(model, "named_steps") and hasattr(
@@ -683,8 +683,18 @@ class ModelTrainer:
         ):
             feature_importance = dict(
                 zip(
-                    range(len(model.named_steps["model"].feature_importances_)),
-                    model.named_steps["model"].feature_importances_.tolist(),
+                    [
+                        str(i)
+                        for i in range(
+                            len(model.named_steps["model"].feature_importances_)
+                        )
+                    ],
+                    [
+                        float(x)
+                        for x in model.named_steps[
+                            "model"
+                        ].feature_importances_.tolist()
+                    ],
                 )
             )
 
