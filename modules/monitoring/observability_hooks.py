@@ -210,8 +210,8 @@ class ObservabilityHooks:
                     ),
                 )
 
-                provider = MeterProvider(resource=resource, metric_readers=[reader])
-                metrics.set_meter_provider(provider)
+                meter_provider = MeterProvider(resource=resource, metric_readers=[reader])
+                metrics.set_meter_provider(meter_provider)
 
                 self.meter = metrics.get_meter(__name__)
 
@@ -637,15 +637,16 @@ class ObservabilityHooks:
             )
 
         # Update performance stats
-        if operation_type not in self.performance_stats:
-            self.performance_stats[operation_type] = {
+        operation_type_str = operation_type.value
+        if operation_type_str not in self.performance_stats:
+            self.performance_stats[operation_type_str] = {
                 "count": 0,
                 "total_duration": 0,
                 "min_duration": float("inf"),
                 "max_duration": 0,
             }
 
-        stats = self.performance_stats[operation_type]
+        stats = self.performance_stats[operation_type_str]
         stats["count"] += 1
         stats["total_duration"] += duration_ms
         stats["min_duration"] = min(stats["min_duration"], duration_ms)
@@ -749,7 +750,7 @@ class ObservabilityHooks:
 
         for op_type, stats in self.performance_stats.items():
             if stats["count"] > 0:
-                summary[op_type.value] = {
+                summary[op_type] = {
                     "count": stats["count"],
                     "avg_duration_ms": stats["total_duration"] / stats["count"],
                     "min_duration_ms": stats["min_duration"],

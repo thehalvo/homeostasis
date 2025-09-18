@@ -16,7 +16,7 @@ import re
 from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union, Counter as CounterType
 
 import numpy as np
 
@@ -118,7 +118,7 @@ class PythonAnalyzer(LanguageAnalyzer):
         try:
             tree = ast.parse(code)
 
-            features = {
+            features: Dict[str, Union[Counter, int]] = {
                 "node_types": Counter(),
                 "function_count": 0,
                 "class_count": 0,
@@ -132,35 +132,39 @@ class PythonAnalyzer(LanguageAnalyzer):
                 "async_count": 0,
             }
 
+            # Get node_types counter directly
+            node_types_counter = features["node_types"]
+            assert isinstance(node_types_counter, Counter)
+
             for node in ast.walk(tree):
                 node_type = type(node).__name__
-                features["node_types"][node_type] += 1
+                node_types_counter[node_type] += 1
 
                 if isinstance(node, ast.FunctionDef):
-                    features["function_count"] += 1
+                    features["function_count"] = int(features["function_count"]) + 1
                     if node.decorator_list:
-                        features["decorator_count"] += len(node.decorator_list)
+                        features["decorator_count"] = int(features["decorator_count"]) + len(node.decorator_list)
                 elif isinstance(node, ast.AsyncFunctionDef):
-                    features["function_count"] += 1
-                    features["async_count"] += 1
+                    features["function_count"] = int(features["function_count"]) + 1
+                    features["async_count"] = int(features["async_count"]) + 1
                 elif isinstance(node, ast.ClassDef):
-                    features["class_count"] += 1
+                    features["class_count"] = int(features["class_count"]) + 1
                 elif isinstance(node, (ast.Import, ast.ImportFrom)):
-                    features["import_count"] += 1
+                    features["import_count"] = int(features["import_count"]) + 1
                 elif isinstance(node, (ast.For, ast.While, ast.AsyncFor)):
-                    features["loop_count"] += 1
+                    features["loop_count"] = int(features["loop_count"]) + 1
                 elif isinstance(node, (ast.If, ast.IfExp)):
-                    features["conditional_count"] += 1
+                    features["conditional_count"] = int(features["conditional_count"]) + 1
                 elif isinstance(node, (ast.Try, ast.ExceptHandler)):
-                    features["exception_count"] += 1
+                    features["exception_count"] = int(features["exception_count"]) + 1
                 elif isinstance(
                     node, (ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp)
                 ):
-                    features["comprehension_count"] += 1
+                    features["comprehension_count"] = int(features["comprehension_count"]) + 1
                 elif isinstance(node, ast.Lambda):
-                    features["lambda_count"] += 1
+                    features["lambda_count"] = int(features["lambda_count"]) + 1
                 elif isinstance(node, (ast.Await, ast.AsyncWith)):
-                    features["async_count"] += 1
+                    features["async_count"] = int(features["async_count"]) + 1
 
             # Convert Counter to dict for JSON serialization
             features["node_types"] = dict(features["node_types"])
@@ -497,7 +501,7 @@ class MultiLanguageFeatureExtractor:
                 outputs = self.semantic_model(**inputs)
                 embeddings = outputs.last_hidden_state.mean(dim=1).numpy()
 
-            return embeddings[0]
+            return embeddings[0].astype(np.float32)
 
         except Exception as e:
             print(f"Failed to extract embeddings: {e}")
@@ -505,7 +509,7 @@ class MultiLanguageFeatureExtractor:
 
     def extract_dependency_features(self, code: str, language: str) -> Dict[str, Any]:
         """Extract dependency and import features."""
-        features = {
+        features: Dict[str, Union[int, List[str], bool]] = {
             "import_count": 0,
             "external_dependencies": [],
             "internal_dependencies": [],
@@ -516,12 +520,16 @@ class MultiLanguageFeatureExtractor:
             # Extract Python imports
             import_pattern = r"(?:from\s+([\w.]+)\s+)?import\s+([\w,\s*]+)"
             for match in re.finditer(import_pattern, code):
-                features["import_count"] += 1
+                features["import_count"] = int(features["import_count"]) + 1
                 module = match.group(1) or match.group(2).split(",")[0].strip()
                 if "." in module:
-                    features["internal_dependencies"].append(module)
+                    internal_deps = features["internal_dependencies"]
+                    assert isinstance(internal_deps, list)
+                    internal_deps.append(module)
                 else:
-                    features["external_dependencies"].append(module)
+                    external_deps = features["external_dependencies"]
+                    assert isinstance(external_deps, list)
+                    external_deps.append(module)
 
         elif language in ["javascript", "typescript"]:
             # Extract JS/TS imports
@@ -529,65 +537,74 @@ class MultiLanguageFeatureExtractor:
                 r'import\s+.*?from\s+[\'"](.+?)[\'"]|require\s*\([\'"](.+?)[\'"]\)'
             )
             for match in re.finditer(import_pattern, code):
-                features["import_count"] += 1
+                features["import_count"] = int(features["import_count"]) + 1
                 module = match.group(1) or match.group(2)
                 if module.startswith("."):
-                    features["internal_dependencies"].append(module)
+                    internal_deps = features["internal_dependencies"]
+                    assert isinstance(internal_deps, list)
+                    internal_deps.append(module)
                 else:
-                    features["external_dependencies"].append(module)
+                    external_deps = features["external_dependencies"]
+                    assert isinstance(external_deps, list)
+                    external_deps.append(module)
 
         return features
 
     def extract_framework_features(self, code: str, language: str) -> Dict[str, Any]:
         """Extract framework-specific features."""
-        features = {"framework": None, "framework_patterns": {}}
+        features: Dict[str, Union[Optional[str], Dict[str, Any]]] = {"framework": None, "framework_patterns": {}}
 
         if language == "python":
             # Django detection
             if "django" in code.lower() or "models.Model" in code:
                 features["framework"] = "django"
-                features["framework_patterns"] = {
+                framework_patterns: Dict[str, Any] = {
                     "uses_models": bool(re.search(r"models\.Model", code)),
                     "uses_views": bool(re.search(r"django\.views|View", code)),
                     "uses_forms": bool(re.search(r"forms\.Form|ModelForm", code)),
                     "uses_serializers": bool(re.search(r"serializers\.", code)),
                 }
+                features["framework_patterns"] = framework_patterns
             # Flask detection
             elif "flask" in code.lower() or "@app.route" in code:
                 features["framework"] = "flask"
-                features["framework_patterns"] = {
+                framework_patterns = {
                     "uses_routes": bool(re.search(r"@app\.route", code)),
                     "uses_blueprints": bool(re.search(r"Blueprint", code)),
                     "uses_request": bool(re.search(r"request\.", code)),
                 }
+                features["framework_patterns"] = framework_patterns
             # FastAPI detection
             elif "fastapi" in code.lower() or "APIRouter" in code:
                 features["framework"] = "fastapi"
-                features["framework_patterns"] = {
+                framework_patterns = {
                     "uses_routers": bool(re.search(r"APIRouter", code)),
                     "uses_pydantic": bool(re.search(r"BaseModel", code)),
                     "uses_dependencies": bool(re.search(r"Depends", code)),
                 }
+                features["framework_patterns"] = framework_patterns
 
         elif language in ["javascript", "typescript"]:
             # React detection
             if "react" in code.lower() or "useState" in code or "jsx" in code:
                 features["framework"] = "react"
-                features["framework_patterns"] = {
+                framework_patterns = {
                     "uses_hooks": bool(re.search(r"use[A-Z]\w+", code)),
                     "uses_jsx": bool(re.search(r"<[A-Z]\w+", code)),
                     "uses_components": bool(
                         re.search(r"export.*function.*return.*<", code, re.DOTALL)
                     ),
                 }
+                features["framework_patterns"] = framework_patterns
             # Express detection
             elif "express" in code.lower() or "app.get(" in code:
                 features["framework"] = "express"
-                features["framework_patterns"] = {
+                framework_patterns = {
                     "uses_routes": bool(re.search(r"app\.(get|post|put|delete)", code)),
                     "uses_middleware": bool(re.search(r"app\.use", code)),
                     "uses_router": bool(re.search(r"Router\(\)", code)),
                 }
+                features["framework_patterns"] = framework_patterns
 
         return features
 
@@ -786,7 +803,7 @@ class MultiLanguageFeatureExtractor:
         else:
             vector_components.extend([0] * 50)
 
-        return np.array(vector_components)
+        return np.array(vector_components, dtype=np.float32)
 
 
 class FeaturePipeline:
@@ -795,7 +812,7 @@ class FeaturePipeline:
     def __init__(self, cache_features: bool = True):
         self.extractor = MultiLanguageFeatureExtractor()
         self.cache_features = cache_features
-        self.feature_cache = {}
+        self.feature_cache: Dict[str, np.ndarray] = {}
 
     def process_error(self, error_data: Dict[str, Any]) -> np.ndarray:
         """Process a single error and return feature vector."""
@@ -1002,13 +1019,14 @@ class FeaturePipeline:
 
 if __name__ == "__main__":
     # Example usage
-    from .data_collector import get_sample_data
+    # from .data_collector import get_sample_data
 
     # Create feature extractor
     extractor = MultiLanguageFeatureExtractor()
 
     # Get sample error data
-    sample_errors = get_sample_data()
+    # sample_errors = get_sample_data()
+    sample_errors = [{"code": "print('hello')", "language": "python", "error_type": "syntax_error"}]
 
     # Extract features from first error
     features = extractor.extract_features(sample_errors[0])

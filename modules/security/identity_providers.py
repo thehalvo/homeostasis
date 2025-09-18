@@ -106,7 +106,11 @@ class IdentityProviderIntegration:
     Supports OAuth 2.0, SAML 2.0, LDAP, and OpenID Connect.
     """
 
-    def __init__(self, config: Optional[Dict[Any, Any]] = None, storage_path: Optional[str] = None):
+    def __init__(
+        self,
+        config: Optional[Dict[Any, Any]] = None,
+        storage_path: Optional[str] = None,
+    ):
         """Initialize the identity provider integration.
 
         Args:
@@ -128,7 +132,10 @@ class IdentityProviderIntegration:
         self.user_identities: Dict[str, UserIdentity] = {}
 
         # Provider handlers
-        self.provider_handlers: Dict[IdentityProviderType, Union[OAuth2Handler, SAML2Handler, LDAPHandler, OIDCHandler]] = {
+        self.provider_handlers: Dict[
+            IdentityProviderType,
+            Union[OAuth2Handler, SAML2Handler, LDAPHandler, OIDCHandler],
+        ] = {
             IdentityProviderType.OAUTH2: OAuth2Handler(self),
             IdentityProviderType.SAML2: SAML2Handler(self),
             IdentityProviderType.LDAP: LDAPHandler(self),
@@ -172,7 +179,7 @@ class IdentityProviderIntegration:
 
         # Validate configuration
         handler = self.provider_handlers.get(type)
-        if handler and hasattr(handler, 'validate_config'):
+        if handler and hasattr(handler, "validate_config"):
             handler.validate_config(config)
 
         self.providers[provider_id] = provider
@@ -223,10 +230,14 @@ class IdentityProviderIntegration:
         self.sessions[session.session_id] = session
 
         # Initiate authentication
-        if hasattr(handler, 'initiate_auth'):
-            auth_url, additional_params = handler.initiate_auth(provider, session, scope)
+        if hasattr(handler, "initiate_auth"):
+            auth_url, additional_params = handler.initiate_auth(
+                provider, session, scope
+            )
         else:
-            raise ValueError(f"Handler for {provider.type.value} does not support initiate_auth")
+            raise ValueError(
+                f"Handler for {provider.type.value} does not support initiate_auth"
+            )
 
         return {
             "auth_url": auth_url,
@@ -265,10 +276,12 @@ class IdentityProviderIntegration:
             raise ValueError(f"No handler for provider type {provider.type.value}")
 
         # Complete authentication
-        if hasattr(handler, 'complete_auth'):
+        if hasattr(handler, "complete_auth"):
             user_identity = handler.complete_auth(provider, session, callback_data)
         else:
-            raise ValueError(f"Handler for {provider.type.value} does not support complete_auth")
+            raise ValueError(
+                f"Handler for {provider.type.value} does not support complete_auth"
+            )
 
         # Map user identity to local user
         local_user = self._map_user_identity(user_identity, provider)
@@ -337,10 +350,12 @@ class IdentityProviderIntegration:
             handler = self.provider_handlers[IdentityProviderType.LDAP]
 
             try:
-                if hasattr(handler, 'authenticate'):
+                if hasattr(handler, "authenticate"):
                     user_identity = handler.authenticate(provider, username, password)
                 else:
-                    raise ValueError(f"Handler for {provider.type.value} does not support authenticate")
+                    raise ValueError(
+                        f"Handler for {provider.type.value} does not support authenticate"
+                    )
                 if user_identity:
                     # Map user identity to local user
                     local_user = self._map_user_identity(user_identity, provider)
@@ -1015,7 +1030,9 @@ class OIDCHandler(OAuth2Handler):
 _identity_integration = None
 
 
-def get_identity_integration(config: Optional[Dict[Any, Any]] = None) -> IdentityProviderIntegration:
+def get_identity_integration(
+    config: Optional[Dict[Any, Any]] = None,
+) -> IdentityProviderIntegration:
     """Get or create the singleton IdentityProviderIntegration instance."""
     global _identity_integration
     if _identity_integration is None:

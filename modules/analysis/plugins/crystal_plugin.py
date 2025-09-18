@@ -195,7 +195,9 @@ class CrystalExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
+        self.compiled_patterns: Dict[
+            str, List[tuple[re.Pattern[str], Dict[str, Any]]]
+        ] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -582,7 +584,9 @@ class CrystalExceptionHandler:
             return subcategory
 
         # Fall back to analysis subcategory or rule type
-        subcategory_value = analysis.get("subcategory", rule_type.lower().replace("error", ""))
+        subcategory_value = analysis.get(
+            "subcategory", rule_type.lower().replace("error", "")
+        )
         return str(subcategory_value) if subcategory_value else ""
 
 

@@ -46,12 +46,12 @@ class AnnotationType(Enum):
 class AnnotationTask:
     """Represents a single annotation task."""
 
-    task_id: str
+    task_id: Optional[str] = None
     task_type: AnnotationType
     data: Dict[str, Any]
     model_prediction: Optional[Any] = None
     model_confidence: Optional[float] = None
-    created_at: float = None
+    created_at: Optional[float] = None
     expires_at: Optional[float] = None
     status: AnnotationStatus = AnnotationStatus.PENDING
     assigned_to: Optional[str] = None
@@ -82,7 +82,7 @@ class AnnotationTask:
 class Annotation:
     """Represents a completed annotation."""
 
-    annotation_id: str
+    annotation_id: Optional[str] = None
     task_id: str
     annotator_id: str
     annotation_type: AnnotationType
@@ -93,7 +93,7 @@ class Annotation:
     time_taken: float  # Seconds to complete
     notes: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
-    created_at: float = None
+    created_at: Optional[float] = None
 
     def __post_init__(self):
         if self.created_at is None:
@@ -118,12 +118,12 @@ class AnnotationInterface:
         self.min_annotations_per_task = min_annotations_per_task
         self.agreement_threshold = agreement_threshold
 
-        self.tasks = {}
-        self.annotations = defaultdict(list)
-        self.annotator_stats = defaultdict(dict)
+        self.tasks: Dict[str, AnnotationTask] = {}
+        self.annotations: defaultdict[str, List[Annotation]] = defaultdict(list)
+        self.annotator_stats: defaultdict[str, Dict[str, Any]] = defaultdict(dict)
 
         # Callbacks for different annotation types
-        self.annotation_callbacks = {}
+        self.annotation_callbacks: Dict[AnnotationType, Callable[[Annotation], None]] = {}
 
         # Load existing data
         self._load_data()
@@ -301,7 +301,7 @@ class AnnotationInterface:
 
         # Simple agreement: fraction of annotators with same label
         labels = [a.human_label for a in annotations]
-        label_counts = defaultdict(int)
+        label_counts: defaultdict[Any, int] = defaultdict(int)
         for label in labels:
             label_counts[label] += 1
 
@@ -336,7 +336,7 @@ class AnnotationInterface:
             return None
 
         # For classification, use majority vote weighted by confidence
-        label_scores = defaultdict(float)
+        label_scores: defaultdict[Any, float] = defaultdict(float)
         for annotation in annotations:
             label_scores[annotation.human_label] += annotation.confidence
 

@@ -91,7 +91,9 @@ class AngularExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
+        self.compiled_patterns: Dict[
+            str, List[tuple[re.Pattern[str], Dict[str, Any]]]
+        ] = {}
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -1144,19 +1146,12 @@ class AngularLanguagePlugin(LanguagePlugin):
             )
 
             if patch_result is None:
-                return {
-                    "patch_type": "no_fix_available",
-                    "patches": []
-                }
+                return {"patch_type": "no_fix_available", "patches": []}
 
             return patch_result
         except Exception as e:
             logger.error(f"Error generating Angular fix: {e}")
-            return {
-                "patch_type": "error",
-                "error": str(e),
-                "patches": []
-            }
+            return {"patch_type": "error", "error": str(e), "patches": []}
 
     def get_language_info(self) -> Dict[str, Any]:
         """

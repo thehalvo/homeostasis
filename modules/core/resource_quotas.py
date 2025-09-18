@@ -562,7 +562,7 @@ class ResourceQuotaManager:
         """Create a HealingRateLimiter configured from quotas"""
         policy = self._get_applicable_policy(entity_id, level)
 
-        config = {"enabled": True, "limits": {}}
+        config: Dict[str, Any] = {"enabled": True, "limits": {}}
 
         if policy:
             # Map quota types to rate limiter types
@@ -836,8 +836,8 @@ class ResourceQuotaManager:
         """Check for any quota violations and take action"""
         with self._usage_lock:
             for usage_key, resources in self._usage.items():
-                level, entity_id = usage_key.split(":", 1)
-                entity_id = entity_id if entity_id != "default" else None
+                level, entity_id_str = usage_key.split(":", 1)
+                entity_id: Optional[str] = entity_id_str if entity_id_str != "default" else None
 
                 policy = self._get_applicable_policy(entity_id, QuotaLevel(level))
                 if not policy:

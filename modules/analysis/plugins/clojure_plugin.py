@@ -460,7 +460,7 @@ class ClojurePatchGenerator:
                 "patch_content": "",
                 "context": {},
                 "confidence": 0.0,
-                "description": f"Failed to generate patch from template {template_path.name}"
+                "description": f"Failed to generate patch from template {template_path.name}",
             }
 
     def _generate_generic_patch(

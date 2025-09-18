@@ -15,7 +15,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 # LanguageAdapterManager doesn't exist, using language plugin system instead
-from modules.analysis.language_plugin_system import LanguagePlugin, LanguagePluginRegistry
 from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
 from modules.analysis.rule_based import RuleBasedAnalyzer
 from modules.monitoring.logger import MonitoringLogger
@@ -284,36 +283,36 @@ exit $exit_code
     def _detect_language_from_file(self, file_path: str) -> str:
         """Detect programming language from file extension."""
         ext_to_language = {
-            '.py': 'python',
-            '.js': 'javascript',
-            '.jsx': 'javascript',
-            '.ts': 'typescript',
-            '.tsx': 'typescript',
-            '.java': 'java',
-            '.cpp': 'cpp',
-            '.cc': 'cpp',
-            '.c': 'c',
-            '.h': 'c',
-            '.hpp': 'cpp',
-            '.cs': 'csharp',
-            '.rb': 'ruby',
-            '.go': 'go',
-            '.rs': 'rust',
-            '.php': 'php',
-            '.swift': 'swift',
-            '.kt': 'kotlin',
-            '.scala': 'scala',
-            '.r': 'r',
-            '.R': 'r',
-            '.m': 'objc',
-            '.mm': 'objc',
-            '.sh': 'bash',
-            '.bash': 'bash',
-            '.zsh': 'bash',
+            ".py": "python",
+            ".js": "javascript",
+            ".jsx": "javascript",
+            ".ts": "typescript",
+            ".tsx": "typescript",
+            ".java": "java",
+            ".cpp": "cpp",
+            ".cc": "cpp",
+            ".c": "c",
+            ".h": "c",
+            ".hpp": "cpp",
+            ".cs": "csharp",
+            ".rb": "ruby",
+            ".go": "go",
+            ".rs": "rust",
+            ".php": "php",
+            ".swift": "swift",
+            ".kt": "kotlin",
+            ".scala": "scala",
+            ".r": "r",
+            ".R": "r",
+            ".m": "objc",
+            ".mm": "objc",
+            ".sh": "bash",
+            ".bash": "bash",
+            ".zsh": "bash",
         }
 
         file_ext = Path(file_path).suffix.lower()
-        return ext_to_language.get(file_ext, 'unknown')
+        return ext_to_language.get(file_ext, "unknown")
 
     def _is_supported_language(self, file_path: str) -> bool:
         """Check if file language is supported for analysis."""
@@ -351,11 +350,11 @@ exit $exit_code
                 "file_path": str(full_path),
                 "language": language,
                 "code_context": content,
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             }
 
             analysis_result = self.analyzer.analyze_error(error_data)
-            issues = analysis_result.get("issues", [])
+            issues: List[Dict[str, Any]] = analysis_result.get("issues", [])
 
             # Add file context to issues
             for issue in issues:

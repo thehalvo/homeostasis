@@ -177,7 +177,11 @@ class PolicyEnforcementEngine:
     and regulatory requirements.
     """
 
-    def __init__(self, config: Optional[Dict[Any, Any]] = None, storage_path: Optional[str] = None):
+    def __init__(
+        self,
+        config: Optional[Dict[Any, Any]] = None,
+        storage_path: Optional[str] = None,
+    ):
         """Initialize the policy enforcement engine.
 
         Args:
@@ -1209,7 +1213,9 @@ class PolicyEnforcementEngine:
 _policy_engine = None
 
 
-def get_policy_engine(config: Optional[Dict[Any, Any]] = None) -> PolicyEnforcementEngine:
+def get_policy_engine(
+    config: Optional[Dict[Any, Any]] = None,
+) -> PolicyEnforcementEngine:
     """Get or create the singleton PolicyEnforcementEngine instance."""
     global _policy_engine
     if _policy_engine is None:

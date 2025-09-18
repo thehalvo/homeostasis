@@ -384,8 +384,8 @@ class ContextualThresholds:
     def __init__(self, confidence_calculator: ConfidenceCalculator):
         self.confidence_calculator = confidence_calculator
         self.threshold_groups: Dict[str, List[str]] = defaultdict(list)
-        self.group_performance: Dict[str, Dict[str, int]] = defaultdict(
-            lambda: {"success": 0, "total": 0}
+        self.group_performance: Dict[str, Dict[str, Any]] = defaultdict(
+            lambda: {"success": 0, "total": 0, "success_rate": 0.0}
         )
 
     def get_threshold_for_context(
@@ -424,7 +424,7 @@ class ContextualThresholds:
             deployment_context.get("model_confidence", 0.5), context
         )
 
-        return result["threshold"]
+        return float(result["threshold"])
 
     def update_group_performance(
         self, group_name: str, context_hash: str, success: bool

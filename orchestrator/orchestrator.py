@@ -2432,11 +2432,15 @@ def main():
                 if canary_status["completion_time"]:
                     print(f"  Completion time: {canary_status['completion_time']}")
                 else:
-                    print(f"  Elapsed time: {canary_status['elapsed_time']:.2f} seconds")
+                    print(
+                        f"  Elapsed time: {canary_status['elapsed_time']:.2f} seconds"
+                    )
                 print("\nMetrics:")
                 print(f"  Error rate: {canary_status['metrics']['error_rate']:.3f}")
                 print(f"  Success rate: {canary_status['metrics']['success_rate']:.3f}")
-                print(f"  Response time: {canary_status['metrics']['response_time']:.3f} ms")
+                print(
+                    f"  Response time: {canary_status['metrics']['response_time']:.3f} ms"
+                )
             exit(0)
 
         elif args.canary_promote:

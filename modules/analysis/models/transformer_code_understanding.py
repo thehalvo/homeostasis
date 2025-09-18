@@ -431,7 +431,7 @@ class TransformerCodeAnalyzer:
             )
 
         # Sort by score
-        scored_fixes.sort(key=lambda x: float(x["score"]), reverse=True)
+        scored_fixes.sort(key=lambda x: float(str(x["score"])), reverse=True)
 
         return scored_fixes
 

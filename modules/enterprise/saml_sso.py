@@ -604,6 +604,7 @@ class SAMLAuthenticationManager:
 
             # Generate a random password for SAML users (they don't use it)
             import secrets
+
             password = secrets.token_urlsafe(32)
 
             # Build full name from parts

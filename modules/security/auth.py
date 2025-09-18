@@ -67,7 +67,11 @@ class AuthenticationManager:
             secret = self.config["jwt_secret"]
             if isinstance(secret, str):
                 return secret.encode("utf-8")
-            return bytes(secret) if isinstance(secret, (bytes, bytearray)) else secret.encode('utf-8')
+            return (
+                bytes(secret)
+                if isinstance(secret, (bytes, bytearray))
+                else secret.encode("utf-8")
+            )
 
         # Try to get from environment
         env_secret = os.environ.get("HOMEOSTASIS_JWT_SECRET")
@@ -311,11 +315,7 @@ class AuthenticationManager:
         Raises:
             Exception: If decryption fails
         """
-        if isinstance(encrypted_data, str):
-            encrypted_data_bytes = encrypted_data.encode("utf-8")
-        else:
-            encrypted_data_bytes = encrypted_data
-
+        encrypted_data_bytes = encrypted_data.encode("utf-8")
         return self.fernet.decrypt(encrypted_data_bytes)
 
     def decrypt_json(self, encrypted_data: str) -> Dict[str, Any]:

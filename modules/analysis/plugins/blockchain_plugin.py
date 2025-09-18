@@ -165,7 +165,9 @@ class BlockchainPlugin(LanguagePlugin):
         else:
             self.rules = {"rules": [], "platform_specific": {}}
 
-    def detect_errors(self, code: str, file_path: Optional[str] = None) -> List[Dict[str, Any]]:
+    def detect_errors(
+        self, code: str, file_path: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """Detect blockchain-specific errors in code"""
         errors: List[Dict[str, Any]] = []
 
@@ -395,7 +397,9 @@ class BlockchainPlugin(LanguagePlugin):
         except ValueError:
             return [f"Unknown platform: {platform}"]
 
-    def get_platform_info(self, code: str, file_path: Optional[str] = None) -> Dict[str, Any]:
+    def get_platform_info(
+        self, code: str, file_path: Optional[str] = None
+    ) -> Dict[str, Any]:
         """Get information about the blockchain platform being used"""
         platform = self.healer.detect_platform(code, file_path or "")
 
@@ -517,21 +521,23 @@ pub state: Account<'info, State>,""",
         capabilities = super().get_capabilities()
 
         # Add blockchain-specific capabilities
-        capabilities.update({
-            "detect_errors",
-            "analyze_smart_contract",
-            "validate_transaction",
-            "get_platform_info",
-            "analyze_error_detailed",
-            "gas_optimization",
-            "transaction_validation",
-            "cost_estimation",
-            "multi_node_support",
-            "dynamic_gas_adjustment",
-            "retry_with_backoff",
-            "multi_node_fallback",
-            "contract_optimization",
-            "input_validation",
-        })
+        capabilities.update(
+            {
+                "detect_errors",
+                "analyze_smart_contract",
+                "validate_transaction",
+                "get_platform_info",
+                "analyze_error_detailed",
+                "gas_optimization",
+                "transaction_validation",
+                "cost_estimation",
+                "multi_node_support",
+                "dynamic_gas_adjustment",
+                "retry_with_backoff",
+                "multi_node_fallback",
+                "contract_optimization",
+                "input_validation",
+            }
+        )
 
         return capabilities

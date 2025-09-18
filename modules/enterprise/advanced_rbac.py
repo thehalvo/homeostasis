@@ -1051,6 +1051,8 @@ class AdvancedRBACManager:
 
 
 # Factory function
-def create_advanced_rbac_manager(config: Optional[Dict[str, Any]] = None) -> AdvancedRBACManager:
+def create_advanced_rbac_manager(
+    config: Optional[Dict[str, Any]] = None,
+) -> AdvancedRBACManager:
     """Create advanced RBAC manager"""
     return AdvancedRBACManager(config)

@@ -16,7 +16,6 @@ from typing import Any, Dict, List, Optional
 import requests
 
 # LanguageAdapterManager doesn't exist, using language plugin system instead
-from modules.analysis.language_plugin_system import LanguagePlugin, LanguagePluginRegistry
 from modules.analysis.cross_language_orchestrator import CrossLanguageOrchestrator
 from modules.analysis.rule_based import RuleBasedAnalyzer
 from modules.monitoring.logger import MonitoringLogger
@@ -282,9 +281,7 @@ class PRAnalyzer:
             for file_data in files_data:
                 change = PRChange(
                     file_path=file_data["filename"],
-                    language=self._detect_language_from_file(
-                        file_data["filename"]
-                    ),
+                    language=self._detect_language_from_file(file_data["filename"]),
                     additions=file_data["additions"],
                     deletions=file_data["deletions"],
                     changes_type=file_data["status"],
@@ -432,11 +429,11 @@ class PRAnalyzer:
                     "file_path": str(full_path),
                     "language": change.language,
                     "code_context": content,
-                    "timestamp": datetime.now().isoformat()
+                    "timestamp": datetime.now().isoformat(),
                 }
 
                 analysis_result = self.analyzer.analyze_error(error_data)
-                issues = analysis_result.get("issues", [])
+                issues: List[Dict[str, Any]] = analysis_result.get("issues", [])
 
                 # Add change context to issues
                 for issue in issues:
@@ -611,36 +608,36 @@ class PRAnalyzer:
     def _detect_language_from_file(self, file_path: str) -> str:
         """Detect programming language from file extension."""
         ext_to_language = {
-            '.py': 'python',
-            '.js': 'javascript',
-            '.jsx': 'javascript',
-            '.ts': 'typescript',
-            '.tsx': 'typescript',
-            '.java': 'java',
-            '.cpp': 'cpp',
-            '.cc': 'cpp',
-            '.c': 'c',
-            '.h': 'c',
-            '.hpp': 'cpp',
-            '.cs': 'csharp',
-            '.rb': 'ruby',
-            '.go': 'go',
-            '.rs': 'rust',
-            '.php': 'php',
-            '.swift': 'swift',
-            '.kt': 'kotlin',
-            '.scala': 'scala',
-            '.r': 'r',
-            '.R': 'r',
-            '.m': 'objc',
-            '.mm': 'objc',
-            '.sh': 'bash',
-            '.bash': 'bash',
-            '.zsh': 'bash',
+            ".py": "python",
+            ".js": "javascript",
+            ".jsx": "javascript",
+            ".ts": "typescript",
+            ".tsx": "typescript",
+            ".java": "java",
+            ".cpp": "cpp",
+            ".cc": "cpp",
+            ".c": "c",
+            ".h": "c",
+            ".hpp": "cpp",
+            ".cs": "csharp",
+            ".rb": "ruby",
+            ".go": "go",
+            ".rs": "rust",
+            ".php": "php",
+            ".swift": "swift",
+            ".kt": "kotlin",
+            ".scala": "scala",
+            ".r": "r",
+            ".R": "r",
+            ".m": "objc",
+            ".mm": "objc",
+            ".sh": "bash",
+            ".bash": "bash",
+            ".zsh": "bash",
         }
 
         file_ext = Path(file_path).suffix.lower()
-        return ext_to_language.get(file_ext, 'unknown')
+        return ext_to_language.get(file_ext, "unknown")
 
     def _create_empty_result(self, pr_number: int) -> PRAnalysisResult:
         """Create an empty analysis result."""

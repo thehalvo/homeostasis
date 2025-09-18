@@ -318,7 +318,9 @@ class HealingSimulator:
         try:
             # Set up environment
             if not self.sandbox:
-                raise RuntimeError("simulate() must be called within simulation_context()")
+                raise RuntimeError(
+                    "simulate() must be called within simulation_context()"
+                )
             env_path = self.sandbox.setup_environment(config)
             result.artifacts_path = env_path
 
@@ -387,17 +389,25 @@ class HealingSimulator:
 
             # Analyze error
             analyzer = Analyzer()
-            analysis_result = analyzer.analyze_error(
-                error_output, language=config.language, framework=config.framework
+            # Prepare error data as a dictionary
+            error_data = (
+                error_output
+                if isinstance(error_output, dict)
+                else {"error_message": str(error_output)}
             )
+            error_data["language"] = config.language
+            error_data["framework"] = config.framework
+            analysis_result = analyzer.analyze_error(error_data)
 
             if not analysis_result:
                 return {"success": False, "patches": []}
 
             # Generate patch
             patcher = PatchGenerator(Path(env_path) / ".homeostasis" / "templates")
-            patches = patcher.generate_patches(analysis_result, str(env_path / "src"))
+            patch = patcher.generate_patch_from_analysis(analysis_result)
 
+            # Return as a list to maintain compatibility
+            patches = [patch] if patch else []
             return {"success": len(patches) > 0, "patches": patches}
 
         except Exception as e:

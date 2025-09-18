@@ -343,7 +343,11 @@ class EnterpriseFeatures:
         Returns:
             Health check results
         """
-        health: Dict[str, Any] = {"overall_status": "healthy", "components": {}, "issues": []}
+        health: Dict[str, Any] = {
+            "overall_status": "healthy",
+            "components": {},
+            "issues": [],
+        }
 
         # Check each component
         if self.saml_manager:

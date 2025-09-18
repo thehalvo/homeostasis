@@ -156,7 +156,9 @@ class ARPlugin(LanguagePlugin):
         else:
             self.rules = {"rules": [], "platform_specific": {}}
 
-    def detect_errors(self, code: str, file_path: Optional[str] = None) -> List[Dict[str, Any]]:
+    def detect_errors(
+        self, code: str, file_path: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """Detect AR-specific errors in code"""
         errors = []
 
@@ -497,7 +499,9 @@ class ARPlugin(LanguagePlugin):
         """Check for comfort violations"""
         return self.resilience_manager.check_comfort_violations(motion_data)
 
-    def get_platform_info(self, code: str, file_path: Optional[str] = None) -> Dict[str, Any]:
+    def get_platform_info(
+        self, code: str, file_path: Optional[str] = None
+    ) -> Dict[str, Any]:
         """Get information about the AR platform being used"""
         platform = self.resilience_manager.detect_platform(code, file_path or "")
 
@@ -625,28 +629,30 @@ class ARPlugin(LanguagePlugin):
         capabilities = super().get_capabilities()
 
         # Add AR-specific capabilities
-        capabilities.update({
-            "detect_errors",
-            "analyze_performance",
-            "check_comfort_violations",
-            "get_platform_info",
-            "analyze_error_detailed",
-            "error_detection",
-            "performance_analysis",
-            "tracking_recovery",
-            "comfort_optimization",
-            "thermal_management",
-            "multi_platform_support",
-            "tracking_recovery_ui",
-            "dynamic_lod",
-            "render_scale_adjustment",
-            "comfort_mode",
-            "anchor_stabilization",
-            "motion_smoothing",
-            "vignetting",
-            "teleportation",
-            "snap_rotation",
-            "horizon_locking",
-        })
+        capabilities.update(
+            {
+                "detect_errors",
+                "analyze_performance",
+                "check_comfort_violations",
+                "get_platform_info",
+                "analyze_error_detailed",
+                "error_detection",
+                "performance_analysis",
+                "tracking_recovery",
+                "comfort_optimization",
+                "thermal_management",
+                "multi_platform_support",
+                "tracking_recovery_ui",
+                "dynamic_lod",
+                "render_scale_adjustment",
+                "comfort_mode",
+                "anchor_stabilization",
+                "motion_smoothing",
+                "vignetting",
+                "teleportation",
+                "snap_rotation",
+                "horizon_locking",
+            }
+        )
 
         return capabilities

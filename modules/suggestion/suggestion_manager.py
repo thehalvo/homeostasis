@@ -137,7 +137,9 @@ class SuggestionManager:
         self.patch_generator = PatchGenerator()
 
         # Load existing suggestions
-        self.suggestions: Dict[str, List[FixSuggestion]] = {}  # error_id -> List[FixSuggestion]
+        self.suggestions: Dict[str, List[FixSuggestion]] = (
+            {}
+        )  # error_id -> List[FixSuggestion]
         self._load_suggestions()
 
         logger.info(

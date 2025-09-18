@@ -343,7 +343,9 @@ class CPPExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns: Dict[str, List[tuple[re.Pattern[str], Dict[str, Any]]]] = {}
+        self.compiled_patterns: Dict[
+            str, List[tuple[re.Pattern[str], Dict[str, Any]]]
+        ] = {}
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
             for rule in rule_list:
@@ -373,7 +375,9 @@ class CPPExceptionHandler:
         return self.analyze_error(error_message, context)
 
     def analyze_error(
-        self, error_message: Union[str, Dict[str, Any]], context: Optional[Dict[str, Any]] = None
+        self,
+        error_message: Union[str, Dict[str, Any]],
+        context: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Analyze a C/C++ error message and provide categorization and suggestions.
@@ -899,7 +903,9 @@ dest[{dest_size - 1}] = '\\0';  // Ensure null termination"""
                 # Extract the array access pattern
                 import re
 
-                match = re.search(r"(\w+)\[(\w+)\]", str(code_snippet) if code_snippet else "")
+                match = re.search(
+                    r"(\w+)\[(\w+)\]", str(code_snippet) if code_snippet else ""
+                )
                 if match:
                     index_name = match.group(2)
                     patch_content = f"""// Add bounds check before array access

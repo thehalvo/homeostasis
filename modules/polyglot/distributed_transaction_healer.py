@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 from .microservice_healer import ServiceError
 from .unified_error_taxonomy import UnifiedErrorTaxonomy
@@ -636,7 +636,7 @@ class DistributedTransactionHealer:
             )
 
         # Check for language-specific issues
-        language_errors: Dict[str, List[ErrorContext]] = {}
+        language_errors: Dict[str, List[ServiceError]] = {}
         for participant in transaction.participants:
             if participant.error:
                 lang = participant.language
@@ -847,7 +847,7 @@ class DistributedTransactionHealer:
 
     def _analyze_failure_reasons(self) -> Dict[str, int]:
         """Analyze common failure reasons."""
-        reasons = {}
+        reasons: Dict[str, int] = {}
 
         for transaction in self.transaction_history:
             if transaction.state == TransactionState.FAILED:

@@ -139,7 +139,11 @@ class ComplianceReportingSystem:
     for various regulatory frameworks.
     """
 
-    def __init__(self, config: Optional[Dict[Any, Any]] = None, storage_path: Optional[str] = None):
+    def __init__(
+        self,
+        config: Optional[Dict[Any, Any]] = None,
+        storage_path: Optional[str] = None,
+    ):
         """Initialize the compliance reporting system.
 
         Args:
@@ -969,7 +973,7 @@ class ComplianceReportingSystem:
     def _initialize_default_controls(self):
         """Initialize default compliance controls."""
         # SOC2 Controls
-        soc2_controls = [
+        soc2_controls: List[Dict[str, Any]] = [
             {
                 "control_id": "soc2_cc1.1",
                 "title": "Logical Access Controls",
@@ -1004,7 +1008,7 @@ class ComplianceReportingSystem:
             self.framework_controls[ComplianceFramework.SOC2].append(control.control_id)
 
         # HIPAA Controls
-        hipaa_controls = [
+        hipaa_controls: List[Dict[str, Any]] = [
             {
                 "control_id": "hipaa_164.308",
                 "title": "Administrative Safeguards",
@@ -1037,7 +1041,7 @@ class ComplianceReportingSystem:
             )
 
         # PCI-DSS Controls
-        pci_controls = [
+        pci_controls: List[Dict[str, Any]] = [
             {
                 "control_id": "pci_3.4",
                 "title": "Cardholder Data Protection",
@@ -1233,7 +1237,7 @@ class ComplianceReportingSystem:
 _compliance_reporting = None
 
 
-def get_compliance_reporting(config: Dict = None) -> ComplianceReportingSystem:
+def get_compliance_reporting(config: Optional[Dict] = None) -> ComplianceReportingSystem:
     """Get or create the singleton ComplianceReportingSystem instance."""
     global _compliance_reporting
     if _compliance_reporting is None:

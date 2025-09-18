@@ -252,7 +252,7 @@ class PerformanceDashboard:
         # Calculate trend line (simple linear regression)
         if len(trend_data) > 1:
             x_values = list(range(len(trend_data)))
-            y_values = [d["duration"] for d in trend_data]
+            y_values: List[float] = [float(d["duration"]) for d in trend_data]
 
             n = len(x_values)
             x_mean = sum(x_values) / n

@@ -274,6 +274,10 @@ class IstioAdapter(ServiceMeshAdapter):
 class LinkerdAdapter(ServiceMeshAdapter):
     """Adapter for Linkerd service mesh."""
 
+    def __init__(self, config: ServiceMeshConfig):
+        super().__init__(config)
+        self.applied_configurations: List[Dict[str, Any]] = []
+
     async def get_service_topology(self) -> Dict[str, List[str]]:
         """Get service topology from Linkerd."""
         # Would use Linkerd API

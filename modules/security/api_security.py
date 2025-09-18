@@ -5,12 +5,12 @@ Provides API security features including rate limiting, token validation,
 and protection against common API attacks.
 """
 
-from collections import defaultdict
 import hashlib
 import hmac
 import logging
 import re
 import time
+from collections import defaultdict
 from functools import wraps
 from typing import Any, Dict, Optional, Tuple
 
@@ -64,7 +64,10 @@ class RateLimiter:
         }
 
     def check_rate_limit(
-        self, scope: str, identifier: Optional[str] = None, endpoint: Optional[str] = None
+        self,
+        scope: str,
+        identifier: Optional[str] = None,
+        endpoint: Optional[str] = None,
     ) -> bool:
         """Check if a request is within rate limits.
 
@@ -83,13 +86,18 @@ class RateLimiter:
 
         # Update counts based on scope
         if scope == "global":
-            return self._check_global_limit(endpoint, limit, window, now)
+            return self._check_global_limit(endpoint or "default", limit, window, now)
         else:
+            # Ensure we have an identifier for scoped limits
+            if identifier is None:
+                return False  # Reject if no identifier provided for scoped limit
             return self._check_scoped_limit(
-                scope, identifier, endpoint, limit, window, now
+                scope, identifier, endpoint or "default", limit, window, now
             )
 
-    def _get_rate_limit(self, scope: str, endpoint: Optional[str] = None) -> Tuple[int, int]:
+    def _get_rate_limit(
+        self, scope: str, endpoint: Optional[str] = None
+    ) -> Tuple[int, int]:
         """Get the rate limit for a specific scope and endpoint.
 
         Args:
@@ -177,14 +185,14 @@ class RateLimiter:
     def reset_counters(self):
         """Reset all rate limit counters."""
         self.request_counts = {
-            "global": collections.defaultdict(int),
-            "user": collections.defaultdict(lambda: collections.defaultdict(int)),
-            "ip": collections.defaultdict(lambda: collections.defaultdict(int)),
+            "global": defaultdict(int),
+            "user": defaultdict(lambda: defaultdict(int)),
+            "ip": defaultdict(lambda: defaultdict(int)),
         }
         self.time_windows = {
-            "global": collections.defaultdict(float),
-            "user": collections.defaultdict(lambda: collections.defaultdict(float)),
-            "ip": collections.defaultdict(lambda: collections.defaultdict(float)),
+            "global": defaultdict(float),
+            "user": defaultdict(lambda: defaultdict(float)),
+            "ip": defaultdict(lambda: defaultdict(float)),
         }
 
 
@@ -288,7 +296,10 @@ class APISecurityManager:
         return self.auth_manager.verify_token(token)
 
     def check_rate_limit(
-        self, scope: str, identifier: Optional[str] = None, endpoint: Optional[str] = None
+        self,
+        scope: str,
+        identifier: Optional[str] = None,
+        endpoint: Optional[str] = None,
     ) -> bool:
         """Check if a request is within rate limits.
 
@@ -376,7 +387,9 @@ class APISecurityManager:
 _api_security_manager = None
 
 
-def get_api_security_manager(config: Optional[Dict[str, Any]] = None) -> APISecurityManager:
+def get_api_security_manager(
+    config: Optional[Dict[str, Any]] = None,
+) -> APISecurityManager:
     """Get or create the singleton APISecurityManager instance.
 
     Args:

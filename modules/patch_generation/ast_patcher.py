@@ -22,7 +22,9 @@ class ASTPatcher:
     Enhanced patch generator that uses AST analysis for more precise patches.
     """
 
-    def __init__(self, templates_dir: Path, patch_generator: Optional[PatchGenerator] = None):
+    def __init__(
+        self, templates_dir: Path, patch_generator: Optional[PatchGenerator] = None
+    ):
         """
         Initialize the AST patcher.
 
@@ -211,7 +213,9 @@ class ASTPatcher:
             "line_range": (start_line, end_line),
             "variables": variables,
             "patch_type": "specific",
-            "patch_code": template.render({k: v for k, v in variables.items() if v is not None}),
+            "patch_code": template.render(
+                {k: v for k, v in variables.items() if v is not None}
+            ),
             "is_multiline": True,
             "ast_analyzed": True,
         }

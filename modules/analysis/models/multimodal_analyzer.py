@@ -101,7 +101,7 @@ class MetricsEncoder(nn.Module):
             _, (cpu_hidden, _) = self.cpu_encoder(cpu_tensor)
             encoded_metrics.append(cpu_hidden.squeeze(0))
         else:
-            encoded_metrics.append(torch.zeros(metrics_data["batch_size"], 64))
+            encoded_metrics.append(torch.zeros(int(metrics_data["batch_size"]), 64))
 
         # Encode memory usage
         if "memory_usage" in metrics_data:
@@ -109,7 +109,7 @@ class MetricsEncoder(nn.Module):
             _, (mem_hidden, _) = self.memory_encoder(mem_tensor)
             encoded_metrics.append(mem_hidden.squeeze(0))
         else:
-            encoded_metrics.append(torch.zeros(metrics_data["batch_size"], 64))
+            encoded_metrics.append(torch.zeros(int(metrics_data["batch_size"]), 64))
 
         # Encode response times
         if "response_times" in metrics_data:
@@ -117,7 +117,7 @@ class MetricsEncoder(nn.Module):
             _, (resp_hidden, _) = self.response_encoder(resp_tensor)
             encoded_metrics.append(resp_hidden.squeeze(0))
         else:
-            encoded_metrics.append(torch.zeros(metrics_data["batch_size"], 64))
+            encoded_metrics.append(torch.zeros(int(metrics_data["batch_size"]), 64))
 
         # Concatenate and fuse
         combined = torch.cat(encoded_metrics, dim=-1)
@@ -172,7 +172,7 @@ class LogPatternEncoder(nn.Module):
             log_encoding = self.output_proj(hidden)
         else:
             batch_size = log_data.get("batch_size", 1)
-            log_encoding = torch.zeros(batch_size, 128)
+            log_encoding = torch.zeros(int(batch_size), 128)
 
         # Encode pattern frequencies if available
         if "pattern_frequencies" in log_data:
@@ -218,13 +218,13 @@ class TemporalEncoder(nn.Module):
         if "time_features" in temporal_data:
             time_encoding = self.time_encoder(temporal_data["time_features"])
         else:
-            time_encoding = torch.zeros(batch_size, 32)
+            time_encoding = torch.zeros(int(batch_size), 32)
 
         # Encode trend features
         if "trend_features" in temporal_data:
             trend_encoding = self.trend_encoder(temporal_data["trend_features"])
         else:
-            trend_encoding = torch.zeros(batch_size, 32)
+            trend_encoding = torch.zeros(int(batch_size), 32)
 
         # Combine
         temporal_encoding = torch.cat([time_encoding, trend_encoding], dim=-1)
@@ -267,7 +267,7 @@ class CrossModalAttention(nn.Module):
         # Apply attention
         attended = torch.matmul(attention_weights, V)
 
-        return attended, attention_weights
+        return attended
 
 
 class MultimodalFusionNetwork(nn.Module):
@@ -404,6 +404,23 @@ class MultimodalErrorAnalyzer:
 
         if model_path and Path(model_path).exists():
             self.load(model_path)
+
+    def load(self, model_path: str) -> None:
+        """Load model from path."""
+        checkpoint = torch.load(model_path, map_location=self.device)
+        self.model.load_state_dict(checkpoint['model_state_dict'])
+        if 'scaler_state' in checkpoint:
+            self.scaler = checkpoint['scaler_state']
+        logger.info(f"Loaded model from {model_path}")
+
+    def save(self, model_path: str) -> None:
+        """Save model to path."""
+        checkpoint = {
+            'model_state_dict': self.model.state_dict(),
+            'scaler_state': self.scaler,
+        }
+        torch.save(checkpoint, model_path)
+        logger.info(f"Saved model to {model_path}")
 
     def preprocess_multimodal_data(
         self, error_data: MultimodalErrorData

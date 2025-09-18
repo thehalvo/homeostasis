@@ -19,7 +19,7 @@ import time
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 import numpy as np
 
@@ -135,8 +135,8 @@ class ModelCache:
         self.backend = config.cache_backend
 
         if self.backend == "memory":
-            self.cache = {}
-            self.cache_times = {}
+            self.cache: Dict[str, Any] = {}
+            self.cache_times: Dict[str, float] = {}
         elif self.backend == "redis" and REDIS_AVAILABLE:
             self.redis_client = redis.Redis(
                 host="localhost", port=6379, decode_responses=True
@@ -145,8 +145,8 @@ class ModelCache:
             logger.warning(
                 f"Cache backend {self.backend} not available, using memory cache"
             )
-            self.cache = {}
-            self.cache_times = {}
+            self.cache: Dict[str, Any] = {}
+            self.cache_times: Dict[str, float] = {}
             self.backend = "memory"
 
     def _generate_cache_key(self, data: Dict[str, Any], model_version: str) -> str:
@@ -230,11 +230,12 @@ class ModelCache:
 class BatchProcessor:
     """Batch processing for efficient inference."""
 
-    def __init__(self, model: Any, config: ServingConfig):
+    def __init__(self, model: Any, config: ServingConfig, model_version: Optional[str] = None):
         """Initialize the batch processor."""
         self.model = model
         self.config = config
-        self.request_queue = queue.Queue()
+        self.model_version = model_version
+        self.request_queue: queue.Queue[Tuple[InferenceRequest, asyncio.Future[InferenceResponse]]] = queue.Queue()
         self.processing = True
         self.executor = ThreadPoolExecutor(max_workers=config.num_worker_threads)
 
@@ -246,7 +247,7 @@ class BatchProcessor:
     def _batch_processing_loop(self):
         """Main batch processing loop."""
         while self.processing:
-            batch = []
+            batch: List[Tuple[InferenceRequest, asyncio.Future[InferenceResponse]]] = []
             batch_start_time = time.time()
 
             # Collect requests up to batch size or timeout
@@ -309,14 +310,16 @@ class BatchProcessor:
         # Convert batch data to appropriate format
         if hasattr(self.model, "predict_proba"):
             # Classification model
-            return self.model.predict_proba(batch_data).tolist()
+            predictions = self.model.predict_proba(batch_data).tolist()
+            return cast(List[Any], predictions)
         else:
             # Regression or other model
-            return self.model.predict(batch_data).tolist()
+            predictions = self.model.predict(batch_data).tolist()
+            return cast(List[Any], predictions)
 
     async def process_request(self, request: InferenceRequest) -> InferenceResponse:
         """Process a single request (may be batched)."""
-        future = asyncio.Future()
+        future: asyncio.Future[InferenceResponse] = asyncio.Future()
         self.request_queue.put((request, future))
         return await future
 
@@ -338,8 +341,8 @@ class ModelServer:
         self.cache = ModelCache(config)
 
         # Load model(s)
-        self.models = {}
-        self.batch_processors = {}
+        self.models: Dict[str, Any] = {}
+        self.batch_processors: Dict[str, BatchProcessor] = {}
         self._load_models()
 
         # Initialize metrics if enabled
@@ -349,7 +352,7 @@ class ModelServer:
         # Request tracking
         self.active_requests = 0
         self.total_requests = 0
-        self.request_history = deque(maxlen=1000)
+        self.request_history: deque[Dict[str, Any]] = deque(maxlen=1000)
 
     def _load_models(self):
         """Load models based on configuration."""
@@ -385,7 +388,7 @@ class ModelServer:
         self.models[version_id] = model
 
         # Create batch processor
-        self.batch_processors[version_id] = BatchProcessor(model, self.config)
+        self.batch_processors[version_id] = BatchProcessor(model, self.config, version_id)
 
     def _init_metrics(self):
         """Initialize Prometheus metrics."""
@@ -437,7 +440,8 @@ class ModelServer:
             return random.choices(self.config.ab_test_versions, weights=weights)[0]
 
         # Return first (or only) loaded model
-        return list(self.models.keys())[0]
+        model_keys = list(self.models.keys())
+        return model_keys[0]
 
     async def predict(self, request: InferenceRequest) -> InferenceResponse:
         """Perform prediction for a request."""
@@ -772,9 +776,9 @@ class AutoScaler:
     def __init__(self, orchestrator: ModelServingOrchestrator):
         """Initialize the auto-scaler."""
         self.orchestrator = orchestrator
-        self.scaling_policies = {}
+        self.scaling_policies: Dict[str, Dict[str, Any]] = {}
         self.monitoring = True
-        self.monitor_thread = None
+        self.monitor_thread: Optional[threading.Thread] = None
 
     def add_scaling_policy(self, model_name: str, config: ServingConfig):
         """Add scaling policy for a model."""
@@ -787,9 +791,10 @@ class AutoScaler:
 
     def start_monitoring(self):
         """Start monitoring loop."""
-        self.monitor_thread = threading.Thread(target=self._monitoring_loop)
-        self.monitor_thread.daemon = True
-        self.monitor_thread.start()
+        thread = threading.Thread(target=self._monitoring_loop)
+        thread.daemon = True
+        thread.start()
+        self.monitor_thread = thread
 
     def _monitoring_loop(self):
         """Main monitoring loop."""

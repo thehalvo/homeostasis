@@ -11,7 +11,7 @@ import logging
 import pickle
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -95,7 +95,7 @@ class RestrictedUnpickler(pickle.Unpickler):
 
 
 def secure_torch_load(
-    filepath: str, map_location=None, expected_hash: Optional[str] = None
+    filepath: Union[str, Path], map_location=None, expected_hash: Optional[str] = None
 ):
     """
     Securely load a PyTorch checkpoint with validation.
@@ -138,23 +138,16 @@ def secure_torch_load(
         logger.info(f"weights_only load failed, using restricted unpickler: {str(e)}")
 
     # Fall back to restricted unpickler for checkpoints with non-tensor data
-    with open(filepath, "rb") as f:
-        # Override the default unpickler used by torch.load
-        original_unpickler = pickle.Unpickler
-        try:
-            pickle.Unpickler = RestrictedUnpickler
-            # Use weights_only=True for additional security when possible
-            try:
-                return torch.load(
-                    filepath, map_location=map_location, weights_only=True
-                )
-            except (TypeError, pickle.UnpicklingError):
-                # Fallback to restricted unpickler if weights_only fails
-                return torch.load(
-                    filepath, map_location=map_location
-                )  # nosec: B614 - Using RestrictedUnpickler for safety
-        finally:
-            pickle.Unpickler = original_unpickler
+    # Use weights_only=True for additional security when possible
+    try:
+        return torch.load(
+            filepath, map_location=map_location, weights_only=True
+        )
+    except (TypeError, pickle.UnpicklingError):
+        # Fallback to custom loading with RestrictedUnpickler if weights_only fails
+        with open(filepath, "rb") as f:
+            unpickler = RestrictedUnpickler(f)
+            return unpickler.load()
 
 
 class ErrorDataset(Dataset):
@@ -424,6 +417,9 @@ class HierarchicalErrorClassifier(nn.Module):
 class ErrorPatternRecognizer:
     """High-level interface for deep learning-based error pattern recognition."""
 
+    model: Optional[DeepErrorClassifier]
+    label_encoder: Optional[LabelEncoder]
+
     def __init__(self, model_path: Optional[str] = None, device: Optional[str] = None):
         """
         Initialize the error pattern recognizer.
@@ -647,7 +643,7 @@ class ErrorPatternRecognizer:
             "train_losses": train_losses,
             "train_accuracies": train_accuracies,
             "num_classes": num_classes,
-            "classes": self.label_encoder.classes_.tolist(),
+            "classes": self.label_encoder.classes_.tolist() if self.label_encoder else [],
         }
 
     def _get_syntax_labels(self, batch, dataset):
@@ -742,7 +738,7 @@ class ErrorPatternRecognizer:
             )
         return matches
 
-    def save(self, path: Optional[str] = None) -> bool:
+    def save(self, path: Optional[Union[str, Path]] = None) -> bool:
         """Save the trained model."""
         if self.model is None:
             logger.error("No model to save")
@@ -757,7 +753,7 @@ class ErrorPatternRecognizer:
                 "model_state_dict": self.model.state_dict(),
                 "label_encoder": self.label_encoder,
                 "model_config": {
-                    "num_classes": len(self.label_encoder.classes_),
+                    "num_classes": len(self.label_encoder.classes_) if self.label_encoder else 0,
                     "hidden_dim": 768,
                     "dropout_rate": 0.3,
                 },
@@ -768,7 +764,7 @@ class ErrorPatternRecognizer:
         logger.info(f"Model saved to {save_path}")
         return True
 
-    def load(self, path: Optional[str] = None) -> bool:
+    def load(self, path: Optional[Union[str, Path]] = None) -> bool:
         """Load a trained model."""
         load_path = Path(path or self.model_path)
 
@@ -968,7 +964,7 @@ if __name__ == "__main__":
 
     # Save model
     model_path = Path(__file__).parent / "deep_error_classifier.pt"
-    recognizer.save(model_path)
+    recognizer.save(str(model_path))
 
     # Test predictions
     logger.info("\nTesting predictions...")

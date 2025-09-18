@@ -18,14 +18,12 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import networkx as nx
 
 from ..analysis.llm_context_manager import LLMContextManager
-from ..analysis.models.transformer_code_understanding import (
-    TransformerCodeAnalyzer as TransformerCodeUnderstanding,
-)
+from ..analysis.models.transformer_code_understanding import TransformerCodeAnalyzer as TransformerCodeUnderstanding
 from ..llm_integration.provider_abstraction import LLMManager, LLMMessage, LLMRequest
 from .code_style_analyzer import CodeStyleAnalyzer
 from .multi_language_framework_detector import MultiLanguageFrameworkDetector
@@ -254,9 +252,14 @@ class AdvancedCodeGenerator:
             Semantic analysis results
         """
         # Use transformer model for code understanding
-        transformer_analysis = self.transformer_analyzer.analyze_code(
-            source_code, error_context.get("language", "python")
-        )
+        # Create error data structure for transformer analyzer
+        error_data = {
+            "code": source_code,
+            "language": error_context.get("language", "python"),
+            "error_type": error_context.get("error_type", "unknown"),
+            "error_message": error_context.get("error_message", ""),
+        }
+        transformer_analysis = self.transformer_analyzer.analyze_error_context(error_data)
 
         # Analyze data flow
         data_flow = self._analyze_data_flow(code_context, source_code)
@@ -507,7 +510,8 @@ Think through this problem step by step:
         # Add few-shot examples if enabled
         if self.use_few_shot:
             examples = self._get_few_shot_examples(
-                error_context.get("error_type"), error_context.get("language")
+                error_context.get("error_type", "unknown"),
+                error_context.get("language", "python")
             )
             if examples:
                 prompt_parts.append("\nHere are some examples of similar fixes:")
@@ -616,7 +620,7 @@ OUTPUT FORMAT:
         self, file_path: str, imports_map: Dict[str, List[str]], language_info: Any
     ) -> List[str]:
         """Find files related to the target file."""
-        related = []
+        related: List[str] = []
         base_dir = Path(file_path).parent
 
         # Find imported files
@@ -707,7 +711,7 @@ OUTPUT FORMAT:
         self, source_code: str, language: str
     ) -> Dict[str, Dict[str, Any]]:
         """Analyze variable scopes in the code."""
-        scopes = defaultdict(dict)
+        scopes: Dict[str, Dict[str, Any]] = defaultdict(dict)
 
         if language == "python":
             try:
@@ -809,7 +813,7 @@ OUTPUT FORMAT:
         self, code_context: CodeContext, source_code: str
     ) -> Dict[str, Any]:
         """Analyze data flow in the code."""
-        data_flow = {
+        data_flow: Dict[str, List[str]] = {
             "inputs": [],
             "outputs": [],
             "transformations": [],
@@ -885,7 +889,7 @@ OUTPUT FORMAT:
         self, code_context: CodeContext, error_context: Dict[str, Any], source_code: str
     ) -> List[List[Dict[str, Any]]]:
         """Analyze how errors propagate through the code."""
-        propagation_paths = []
+        propagation_paths: List[List[Dict[str, Any]]] = []
 
         # Get error location
         error_line = error_context.get("line_number", 0)
@@ -899,8 +903,8 @@ OUTPUT FORMAT:
             lines = source_code.split("\n")
             current_function = None
             for i, line in enumerate(lines):
-                if re.match(r"def\s+(\w+)", line):
-                    match = re.match(r"def\s+(\w+)", line)
+                match = re.match(r"def\s+(\w+)", line)
+                if match:
                     current_function = match.group(1)
                 if i + 1 == error_line:
                     error_function = current_function
@@ -932,7 +936,7 @@ OUTPUT FORMAT:
         self, code_context: CodeContext, error_context: Dict[str, Any], source_code: str
     ) -> Dict[str, Any]:
         """Analyze the potential impact of fixing the error."""
-        impact = {
+        impact: Dict[str, Union[List[str], bool]] = {
             "affected_functions": [],
             "affected_classes": [],
             "cross_file_impact": False,
@@ -946,7 +950,9 @@ OUTPUT FORMAT:
             # Find functions that might be affected
             for func in code_context.function_signatures:
                 if func in code_context.call_graph:
-                    impact["affected_functions"].append(func)
+                    affected_funcs = impact["affected_functions"]
+                    assert isinstance(affected_funcs, list)
+                    affected_funcs.append(func)
 
         # Check if error is in a public interface
         error_in_public_interface = False
@@ -1001,7 +1007,7 @@ OUTPUT FORMAT:
 
         # Calculate overall confidence
         if confidence_factors:
-            return sum(confidence_factors) / len(confidence_factors)
+            return float(sum(confidence_factors) / len(confidence_factors))
         return 0.5
 
     def _parse_generation_response(self, response: str) -> Dict[str, Any]:
@@ -1010,10 +1016,12 @@ OUTPUT FORMAT:
             # Try to extract JSON from response
             json_match = re.search(r"```json\s*(.*?)\s*```", response, re.DOTALL)
             if json_match:
-                return json.loads(json_match.group(1))
+                parsed_json: Dict[str, Any] = json.loads(json_match.group(1))
+                return parsed_json
 
             # Try direct JSON parsing
-            return json.loads(response)
+            parsed_json: Dict[str, Any] = json.loads(response)
+            return parsed_json
         except (json.JSONDecodeError, ValueError, AttributeError):
             # Fallback parsing
             return {"changes": [], "reasoning": response, "confidence": 0.3}
@@ -1050,7 +1058,7 @@ OUTPUT FORMAT:
         semantic_analysis: Dict[str, Any],
     ) -> Dict[str, Any]:
         """Validate semantic correctness of generated changes."""
-        validation_result = {"valid": True, "warnings": []}
+        validation_result: Dict[str, Union[bool, List[str]]] = {"valid": True, "warnings": []}
 
         # Check if changes preserve function signatures
         for change in changes:
@@ -1065,11 +1073,15 @@ OUTPUT FORMAT:
 
                 if original_sig and new_sig:
                     if original_sig.group(1) != new_sig.group(1):
-                        validation_result["warnings"].append(
+                        warnings = validation_result["warnings"]
+                        assert isinstance(warnings, list)
+                        warnings.append(
                             f"Function name changed: {original_sig.group(1)} -> {new_sig.group(1)}"
                         )
                     if original_sig.group(2) != new_sig.group(2):
-                        validation_result["warnings"].append(
+                        warnings = validation_result["warnings"]
+                        assert isinstance(warnings, list)
+                        warnings.append(
                             f"Function signature changed for {original_sig.group(1)}"
                         )
 
@@ -1086,13 +1098,17 @@ OUTPUT FORMAT:
                 new_side_effects.append("Network request")
 
         if new_side_effects:
-            validation_result["warnings"].append(
+            warnings = validation_result["warnings"]
+            assert isinstance(warnings, list)
+            warnings.append(
                 f"New side effects introduced: {', '.join(new_side_effects)}"
             )
 
         # Validate against semantic analysis results
         if semantic_analysis.get("semantic_confidence", 0) < self.confidence_threshold:
-            validation_result["warnings"].append(
+            warnings = validation_result["warnings"]
+            assert isinstance(warnings, list)
+            warnings.append(
                 f"Low semantic confidence: {semantic_analysis.get('semantic_confidence', 0):.2f}"
             )
 
@@ -1353,7 +1369,9 @@ OUTPUT FORMAT:
                         for change in changes
                     )
                     if not has_update:
-                        validation_result["warnings"].append(
+                        warnings = validation_result["warnings"]
+                        assert isinstance(warnings, list)
+                        warnings.append(
                             f"File {file_path} may need updates for {old_name} -> {new_name}"
                         )
                         validation_result["confidence"] *= 0.9
@@ -1425,7 +1443,7 @@ OUTPUT FORMAT:
         code_context: CodeContext,
     ) -> Dict[str, Any]:
         """Identify required dependency updates."""
-        updates = {"imports": [], "exports": [], "version_bumps": []}
+        updates: Dict[str, List[str]] = {"imports": [], "exports": [], "version_bumps": []}
 
         # Check for new imports
         for file_path, changes in multi_file_changes.items():
@@ -1485,7 +1503,7 @@ Fix: value = getattr(obj, 'non_existent_attr', default_value)  # Safe access wit
         self, import_name: str, base_dir: Path, language: str
     ) -> List[str]:
         """Resolve import name to potential file paths."""
-        paths = []
+        paths: List[str] = []
 
         if language == "python":
             # Convert module name to path

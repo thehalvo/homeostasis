@@ -149,20 +149,25 @@ class DaskDistributedTrainer:
             )
 
         # Set up client with appropriate configuration
-        if self.config.num_workers == -1:
-            # Use local cluster with auto-detected workers
-            from dask.distributed import LocalCluster
+        try:
+            if self.config.num_workers == -1:
+                # Use local cluster with auto-detected workers
+                from dask.distributed import LocalCluster
 
-            cluster = LocalCluster(
-                n_workers=None, threads_per_worker=1, processes=True  # Auto-detect
-            )
-            self.client = Client(cluster)
-        else:
-            # Assume scheduler is already running
-            self.client = Client()
+                cluster = LocalCluster(
+                    n_workers=None, threads_per_worker=1, processes=True  # Auto-detect
+                )
+                self.client = Client(cluster)
+            else:
+                # Assume scheduler is already running
+                self.client = Client()
 
-        logger.info(f"Dask client initialized: {self.client}")
-        logger.info(f"Dashboard: {self.client.dashboard_link}")
+            logger.info(f"Dask client initialized: {self.client}")
+            if self.client:
+                logger.info(f"Dashboard: {self.client.dashboard_link}")
+        except Exception as e:
+            logger.error(f"Failed to initialize Dask client: {e}")
+            self.client = None
 
     def train_distributed(
         self,
@@ -173,6 +178,9 @@ class DaskDistributedTrainer:
     ) -> Dict[str, Any]:
         """Execute distributed training with Dask."""
         # Get number of workers
+        if not self.client:
+            raise RuntimeError("Dask client not initialized")
+
         num_workers = len(self.client.scheduler_info()["workers"])
         logger.info(f"Training on {num_workers} Dask workers")
 
@@ -444,7 +452,7 @@ class HorovodDistributedTrainer:
         )
 
         # Training loop
-        results = {"losses": [], "accuracies": [], "epoch_times": []}
+        results: Dict[str, List[float]] = {"losses": [], "accuracies": [], "epoch_times": []}
 
         for epoch in range(num_epochs):
             epoch_start = time.time()
@@ -559,7 +567,7 @@ class TorchDDPTrainer:
 
     def get_data_loader(self, dataset: Any, batch_size: int) -> Any:
         """Get distributed data loader."""
-        sampler = DistributedSampler(
+        sampler: DistributedSampler = DistributedSampler(
             dataset, num_replicas=self.world_size, rank=self.rank, shuffle=True
         )
 
@@ -628,9 +636,17 @@ class TorchDDPTrainer:
     ):
         """Save training checkpoint."""
         if self.rank == 0:  # Only save on rank 0
+            # Get the actual model (unwrap DDP if needed)
+            actual_model = model.module if hasattr(model, 'module') else model
+
+            # Ensure we have a Module, not a Tensor
+            if not isinstance(actual_model, nn.Module):
+                logger.error(f"Expected nn.Module but got {type(actual_model)}")
+                return
+
             checkpoint = {
                 "epoch": epoch,
-                "model_state_dict": model.module.state_dict(),  # .module to unwrap DDP
+                "model_state_dict": actual_model.state_dict(),
                 "optimizer_state_dict": optimizer.state_dict(),
                 "metrics": metrics,
                 "config": self.config.__dict__,
@@ -742,7 +758,7 @@ class DistributedTrainingOrchestrator:
             optimizer = torch.optim.Adam(model.parameters())
 
             # Training loop
-            results = {"losses": [], "accuracies": []}
+            results: Dict[str, List[float]] = {"losses": [], "accuracies": []}
 
             for epoch in range(num_epochs):
                 if hasattr(self.trainer, "train_epoch"):

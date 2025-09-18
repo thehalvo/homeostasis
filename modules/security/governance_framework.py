@@ -286,7 +286,7 @@ class EnterpriseGovernanceFramework:
             provider_id=provider_id, redirect_uri=redirect_uri
         )
 
-    def get_user_dashboard(self, user_id: str) -> Dict:
+    def get_user_dashboard(self, user_id: str) -> Dict[str, Any]:
         """Get governance dashboard for a user.
 
         Args:
@@ -299,7 +299,7 @@ class EnterpriseGovernanceFramework:
         if not user:
             raise ValueError(f"User {user_id} not found")
 
-        dashboard = {
+        dashboard: Dict[str, Any] = {
             "user": {
                 "user_id": user_id,
                 "username": user["username"],
@@ -460,7 +460,9 @@ class EnterpriseGovernanceFramework:
                 ),
             },
             "approvals": {
-                "pending": len(self.approval_manager.list_requests(status=ApprovalStatus.PENDING)),
+                "pending": len(
+                    self.approval_manager.list_requests(status=ApprovalStatus.PENDING)
+                ),
                 "total": len(self.approval_manager.requests),
             },
             "compliance": {},
@@ -602,7 +604,7 @@ class EnterpriseGovernanceFramework:
         # Ensure we always return a string for the second element
         if len(result) == 3 and result[1] is None:
             return (result[0], "", result[2])
-        return result
+        return (result[0], str(result[1]), result[2])
 
     def _check_compliance_requirements(
         self, request: HealingActionRequest
@@ -775,7 +777,11 @@ class EnterpriseGovernanceFramework:
         validation = self.regulated_industries.validate_healing_action(action, context)
 
         # Build result
-        result: Dict[str, Any] = {"passed": validation.passed, "issues": [], "approval_allowed": False}
+        result: Dict[str, Any] = {
+            "passed": validation.passed,
+            "issues": [],
+            "approval_allowed": False,
+        }
 
         # Add failures as issues
         for failure in validation.failures:

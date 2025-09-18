@@ -143,7 +143,9 @@ class ApprovalWorkflowEngine:
     escalation, and SLA management.
     """
 
-    def __init__(self, config: Optional[Dict] = None, storage_path: Optional[str] = None):
+    def __init__(
+        self, config: Optional[Dict] = None, storage_path: Optional[str] = None
+    ):
         """Initialize the workflow engine.
 
         Args:
@@ -326,7 +328,11 @@ class ApprovalWorkflowEngine:
         return instance_id
 
     def process_approval_decision(
-        self, instance_id: str, approver_id: str, decision: str, comments: Optional[str] = None
+        self,
+        instance_id: str,
+        approver_id: str,
+        decision: str,
+        comments: Optional[str] = None,
     ) -> bool:
         """Process an approval decision for a workflow stage.
 
@@ -720,7 +726,7 @@ class ApprovalWorkflowEngine:
         )
         patch_size = int(request_metadata.get("patch_size", 0))
 
-        return min_size <= patch_size <= max_size
+        return bool(min_size <= patch_size <= max_size)
 
     def _evaluate_error_type(self, instance_id: str, stage: WorkflowStage) -> bool:
         """Evaluate error type condition."""

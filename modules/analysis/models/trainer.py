@@ -99,7 +99,8 @@ class ModelRegistry:
         """Load the model registry from disk."""
         if self.registry_file.exists():
             with open(self.registry_file, "r") as f:
-                return json.load(f)
+                data: Dict[str, Any] = json.load(f)
+                return data
         return {"models": {}, "latest": {}}
 
     def _save_registry(self):
@@ -123,11 +124,13 @@ class ModelRegistry:
 
     def get_model(self, model_id: str) -> Optional[Dict[str, Any]]:
         """Get model information by ID."""
-        return self.models["models"].get(model_id)
+        result = self.models["models"].get(model_id)
+        return result if isinstance(result, dict) else None
 
     def get_latest_model(self, model_type: str) -> Optional[str]:
         """Get the latest model ID for a given type."""
-        return self.models["latest"].get(model_type)
+        result = self.models["latest"].get(model_type)
+        return str(result) if result is not None else None
 
     def list_models(self, model_type: Optional[str] = None) -> List[Dict[str, Any]]:
         """List all models, optionally filtered by type."""
@@ -144,8 +147,8 @@ class FeatureEngineer:
     def __init__(self, feature_config: Optional[Dict[str, Any]] = None):
         """Initialize the feature engineer."""
         self.feature_config = feature_config or {}
-        self.transformers = {}
-        self.feature_names = []
+        self.transformers: Dict[str, Any] = {}
+        self.feature_names: List[str] = []
 
     def fit_transform(
         self, X: np.ndarray, y: Optional[np.ndarray] = None
@@ -162,7 +165,7 @@ class FeatureEngineer:
             poly = PolynomialFeatures(degree=2, include_bias=False)
             X_poly = poly.fit_transform(X)
             self.transformers["polynomial"] = poly
-            return X_poly
+            return np.asarray(X_poly)
 
         return X
 
@@ -555,6 +558,9 @@ class ModelTrainer:
 
             return {"metrics": metrics, "predictions": y_pred}
 
+        # Default return for unsupported model types
+        return {"metrics": {}, "predictions": y_pred}
+
     def _save_model(self, model: Any, model_id: str) -> str:
         """Save the trained model."""
         model_dir = Path(self.config.output_dir) / "models" / model_id
@@ -703,7 +709,7 @@ class ModelTrainer:
         result = TrainingResult(
             model_id=model_id,
             model_path=model_path,
-            metrics=evaluation["metrics"],
+            metrics={k: float(v) for k, v in evaluation["metrics"].items()},
             best_params=best_params,
             feature_importance=feature_importance,
             training_time=training_time,
@@ -840,7 +846,7 @@ class EnsembleTrainer(ModelTrainer):
         result = TrainingResult(
             model_id=model_id,
             model_path=model_path,
-            metrics=evaluation["metrics"],
+            metrics={k: float(v) for k, v in evaluation["metrics"].items()},
             best_params={"base_models": self.config.ensemble_models},
             feature_importance=None,
             training_time=sum(r.training_time for r in base_results),
@@ -848,7 +854,7 @@ class EnsembleTrainer(ModelTrainer):
             test_predictions=evaluation.get("predictions"),
             confusion_matrix=evaluation.get("confusion_matrix"),
             classification_report=evaluation.get("classification_report"),
-            artifacts={"base_models": [r.model_path for r in base_results]},
+            artifacts={"base_models": ", ".join([r.model_path for r in base_results])},
         )
 
         # Register ensemble model
@@ -892,7 +898,7 @@ def train_error_classifier(
 def train_ensemble_classifier(
     data_path: str,
     output_dir: str = "models",
-    ensemble_models: List[str] = None,
+    ensemble_models: Optional[List[str]] = None,
     distributed: bool = False,
 ) -> TrainingResult:
     """Train an ensemble error classifier."""

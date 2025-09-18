@@ -108,7 +108,11 @@ class UserManagementSystem:
     - Integration with external identity providers
     """
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None, storage_path: Optional[str] = None):
+    def __init__(
+        self,
+        config: Optional[Dict[str, Any]] = None,
+        storage_path: Optional[str] = None,
+    ):
         """Initialize the user management system.
 
         Args:
@@ -345,7 +349,10 @@ class UserManagementSystem:
         # Check if account is locked
         if self._is_account_locked(username):
             self.audit_logger.log_login(
-                username, "failure", ip_address, {"reason": "account_locked"}
+                username,
+                "failure",
+                ip_address or "unknown",
+                {"reason": "account_locked"},
             )
             return None
 
@@ -353,7 +360,7 @@ class UserManagementSystem:
         auth_result = self.auth_manager.authenticate(username, password)
         if not auth_result:
             self._record_failed_attempt(username)
-            self.audit_logger.log_login(username, "failure", ip_address)
+            self.audit_logger.log_login(username, "failure", ip_address or "unknown")
             return None
 
         # Get user data
@@ -364,12 +371,17 @@ class UserManagementSystem:
         # Check user status
         if user["status"] != UserStatus.ACTIVE.value:
             self.audit_logger.log_login(
-                username, "failure", ip_address, {"reason": f'account_{user["status"]}'}
+                username,
+                "failure",
+                ip_address or "unknown",
+                {"reason": f'account_{user["status"]}'},
             )
             return None
 
         # Create session
-        session = self._create_session(user["user_id"], ip_address, user_agent)
+        session = self._create_session(
+            user["user_id"], ip_address or "unknown", user_agent or "unknown"
+        )
 
         # Generate tokens
         access_token, refresh_token = self.auth_manager.generate_token(
@@ -384,7 +396,7 @@ class UserManagementSystem:
         self._clear_failed_attempts(username)
 
         # Log successful login
-        self.audit_logger.log_login(username, "success", ip_address)
+        self.audit_logger.log_login(username, "success", ip_address or "unknown")
 
         return {
             "session_id": session.session_id,
@@ -663,7 +675,7 @@ class UserManagementSystem:
         policy_config = self.config.get("password_policy", {})
         return PasswordPolicy(**policy_config)
 
-    def _validate_password(self, password: str, user_id: str = None) -> bool:
+    def _validate_password(self, password: str, user_id: Optional[str] = None) -> bool:
         """Validate password against policy."""
         if len(password) < self.password_policy.min_length:
             return False
@@ -930,7 +942,7 @@ class UserManagementSystem:
 _user_management = None
 
 
-def get_user_management(config: Dict = None) -> UserManagementSystem:
+def get_user_management(config: Optional[Dict] = None) -> UserManagementSystem:
     """Get or create the singleton UserManagementSystem instance."""
     global _user_management
     if _user_management is None:

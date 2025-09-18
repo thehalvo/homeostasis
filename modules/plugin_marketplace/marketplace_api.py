@@ -12,7 +12,7 @@ import shutil
 import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional
 
 import jwt
 import redis
@@ -422,7 +422,7 @@ class MarketplaceAPI:
                 return jsonify({"error": "Plugin not available for download"}), 403
 
             # Update download count
-            plugin.downloads += 1
+            plugin.downloads = Plugin.downloads + 1  # type: ignore[assignment]
             session.commit()
 
             # Get package file
@@ -462,7 +462,9 @@ class MarketplaceAPI:
             # Save uploaded file temporarily
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_path = Path(temp_dir)
-                package_path = temp_path / secure_filename(package_file.filename or "package.tar.gz")
+                package_path = temp_path / secure_filename(
+                    package_file.filename or "package.tar.gz"
+                )
                 package_file.save(package_path)
 
                 # Extract and validate
@@ -657,7 +659,7 @@ class MarketplaceAPI:
                 )
 
             # Mark as deprecated
-            plugin.status = "deprecated"
+            plugin.status = "deprecated"  # type: ignore[assignment]
             session.commit()
 
             # Clear cache
@@ -781,8 +783,8 @@ class MarketplaceAPI:
                 .scalar()
             )
 
-            plugin.rating = float(avg_rating or 0)
-            plugin.rating_count = rating_count
+            plugin.rating = float(avg_rating or 0)  # type: ignore[assignment]
+            plugin.rating_count = rating_count  # type: ignore[assignment]
 
             session.commit()
 
@@ -875,8 +877,8 @@ class MarketplaceAPI:
                     fingerprint = self.security_manager.signer.import_public_key(
                         data["gpg_public_key"]
                     )
-                    author.gpg_fingerprint = fingerprint
-                    author.gpg_public_key = data["gpg_public_key"]
+                    author.gpg_fingerprint = fingerprint  # type: ignore[assignment]
+                    author.gpg_public_key = data["gpg_public_key"]  # type: ignore[assignment]
                 except Exception as e:
                     logger.warning(f"Failed to import GPG key: {e}")
 
@@ -1045,7 +1047,7 @@ class MarketplaceAPI:
             "license": plugin.license,
             "homepage": plugin.homepage,
             "repository": plugin.repository,
-            "keywords": json.loads(plugin.keywords) if plugin.keywords else [],
+            "keywords": json.loads(plugin.keywords) if plugin.keywords else [],  # type: ignore[arg-type]
             "icon_url": plugin.icon_url,
             "downloads": plugin.downloads,
             "rating": plugin.rating,

@@ -603,7 +603,9 @@ class AdaptiveZeroShotClassifier:
         """Initialize adaptive classifier."""
         self.base_classifier = ZeroShotErrorClassifier()
         self.usage_history = []
-        self.performance_metrics: Dict[str, Dict[str, int]] = defaultdict(lambda: {"correct": 0, "total": 0})
+        self.performance_metrics: Dict[str, Dict[str, int]] = defaultdict(
+            lambda: {"correct": 0, "total": 0}
+        )
 
     def classify(self, error_data: Dict[str, Any]) -> Dict[str, Any]:
         """

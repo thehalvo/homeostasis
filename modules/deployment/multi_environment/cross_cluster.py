@@ -174,7 +174,10 @@ class KubernetesConnector(ClusterConnector):
             }
             self.k8s_manager = KubernetesManager(config)
             # Test connection by checking if kubectl is available
-            if hasattr(self.k8s_manager, "_check_kubectl_available") and self.k8s_manager is not None:
+            if (
+                hasattr(self.k8s_manager, "_check_kubectl_available")
+                and self.k8s_manager is not None
+            ):
                 if self.k8s_manager._check_kubectl_available():
                     self.logger.info("Connected to Kubernetes cluster")
                     return True
@@ -345,7 +348,7 @@ spec:
 
             # KubernetesDeployment doesn't have list_pods, so we'll return basic info
             # In real implementation, this would call kubectl to list pods
-            pods = []
+            pods: List[Dict[str, Any]] = []
 
             return {
                 "exists": deployment is not None,
@@ -421,7 +424,7 @@ class ServiceMeshController:
         self, service: Service, traffic_split: Dict[str, float]
     ) -> bool:
         """Configure Istio VirtualService for traffic splitting"""
-        virtual_service = {
+        virtual_service: Dict[str, Any] = {
             "apiVersion": "networking.istio.io/v1beta1",
             "kind": "VirtualService",
             "metadata": {
@@ -461,7 +464,7 @@ class ServiceMeshController:
         self, service: Service, traffic_split: Dict[str, float]
     ) -> bool:
         """Configure Linkerd TrafficSplit for traffic splitting"""
-        traffic_split_resource = {
+        traffic_split_resource: Dict[str, Any] = {
             "apiVersion": "split.smi-spec.io/v1alpha1",
             "kind": "TrafficSplit",
             "metadata": {
@@ -494,7 +497,7 @@ class ServiceMeshController:
     ) -> bool:
         """Enable circuit breaking for cross-cluster calls"""
         if self.mesh_type == ServiceMeshType.ISTIO:
-            destination_rule = {
+            destination_rule: Dict[str, Any] = {
                 "apiVersion": "networking.istio.io/v1beta1",
                 "kind": "DestinationRule",
                 "metadata": {
@@ -1060,7 +1063,9 @@ class CrossClusterOrchestrator:
             }
             total_replicas = view["health_summary"]["total_replicas"]
             if isinstance(total_replicas, int):
-                view["health_summary"]["total_replicas"] = total_replicas + sum(service.replicas.values())
+                view["health_summary"]["total_replicas"] = total_replicas + sum(
+                    service.replicas.values()
+                )
 
         # Include policies
         for policy_name, policy in self.policies.items():

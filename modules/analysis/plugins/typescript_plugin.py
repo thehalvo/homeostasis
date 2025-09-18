@@ -101,10 +101,9 @@ class TypeScriptExceptionHandler:
                     pattern = rule.get("pattern", "")
                     if pattern:
                         compiled = re.compile(pattern, re.IGNORECASE | re.MULTILINE)
-                        self.compiled_patterns[category].append({
-                            "pattern": compiled,
-                            "rule": rule
-                        })
+                        self.compiled_patterns[category].append(
+                            {"pattern": compiled, "rule": rule}
+                        )
                 except re.error as e:
                     logger.warning(
                         f"Invalid regex pattern in TypeScript rule {rule.get('id', 'unknown')}: {e}"

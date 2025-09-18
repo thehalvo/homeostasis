@@ -1233,19 +1233,18 @@ class EmberLanguagePlugin(LanguagePlugin):
             source_code = context.get("source_code", "")
 
             if self.patch_generator:
-                return self.patch_generator.generate_patch(
+                patch = self.patch_generator.generate_patch(
                     error_data, analysis, source_code
                 )
+                if patch:
+                    return patch
             return {
                 "type": "suggestion",
-                "description": "Unable to generate automatic fix"
+                "description": "Unable to generate automatic fix",
             }
         except Exception as e:
             logger.error(f"Error generating Ember fix: {e}")
-            return {
-                "type": "error",
-                "description": f"Failed to generate fix: {str(e)}"
-            }
+            return {"type": "error", "description": f"Failed to generate fix: {str(e)}"}
 
     def get_language_info(self) -> Dict[str, Any]:
         """

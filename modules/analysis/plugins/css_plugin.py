@@ -84,7 +84,9 @@ class CSSExceptionHandler:
 
     def _compile_patterns(self):
         """Pre-compile regex patterns for better performance."""
-        self.compiled_patterns: Dict[str, List[Tuple[Pattern[str], Dict[str, Any]]]] = {}
+        self.compiled_patterns: Dict[str, List[Tuple[Pattern[str], Dict[str, Any]]]] = (
+            {}
+        )
 
         for category, rule_list in self.rules.items():
             self.compiled_patterns[category] = []
@@ -1035,19 +1037,18 @@ class CSSLanguagePlugin(LanguagePlugin):
             source_code = context.get("source_code", "")
 
             if self.patch_generator:
-                return self.patch_generator.generate_patch(
+                patch = self.patch_generator.generate_patch(
                     error_data, analysis, source_code
                 )
+                if patch:
+                    return patch
             return {
                 "type": "suggestion",
-                "description": "Unable to generate automatic fix"
+                "description": "Unable to generate automatic fix",
             }
         except Exception as e:
             logger.error(f"Error generating CSS fix: {e}")
-            return {
-                "type": "error",
-                "description": f"Failed to generate fix: {str(e)}"
-            }
+            return {"type": "error", "description": f"Failed to generate fix: {str(e)}"}
 
     def get_language_info(self) -> Dict[str, Any]:
         """

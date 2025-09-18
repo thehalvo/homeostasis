@@ -358,12 +358,17 @@ class TimeSeriesPredictor(PredictiveModel):
                 X.append(window_features)
 
                 # Target is whether failure occurred
-                failure_occurred = any(
-                    event.get("component_id") == component_id
-                    and event.get("timestamp") >= target.timestamp
-                    and event.get("timestamp") < target.timestamp + timedelta(hours=1)
-                    for event in failure_events
-                )
+                failure_occurred = False
+                for event in failure_events:
+                    event_timestamp = event.get("timestamp")
+                    if (
+                        event.get("component_id") == component_id
+                        and event_timestamp is not None
+                        and event_timestamp >= target.timestamp
+                        and event_timestamp < target.timestamp + timedelta(hours=1)
+                    ):
+                        failure_occurred = True
+                        break
                 y.append(1.0 if failure_occurred else 0.0)
 
         if X:

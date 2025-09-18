@@ -7,7 +7,7 @@ Provides quantum-specific error detection and healing capabilities
 import json
 import os
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 from ...emerging_tech.quantum_computing import (
     QuantumError,
@@ -104,7 +104,9 @@ class QuantumPlugin(LanguagePlugin):
             return {
                 "type": "gate_optimization",
                 "description": "Optimize gate implementation",
-                "code": self._get_optimized_gate(framework, context.get("gate_type", "")),
+                "code": self._get_optimized_gate(
+                    framework or "", str(context.get("gate_type", ""))
+                ),
             }
 
         return {
@@ -128,7 +130,9 @@ class QuantumPlugin(LanguagePlugin):
         else:
             self.rules = {"rules": [], "framework_specific": {}}
 
-    def detect_errors(self, code: str, file_path: Optional[str] = None) -> List[Dict[str, Any]]:
+    def detect_errors(
+        self, code: str, file_path: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """Detect quantum-specific errors in code"""
         errors: List[Dict[str, Any]] = []
 
@@ -190,8 +194,16 @@ class QuantumPlugin(LanguagePlugin):
                 "confidence": quantum_error.confidence,
                 "mitigation_strategies": [
                     {
-                        "name": s.get("name") if isinstance(s, dict) else getattr(s, "name", ""),
-                        "effectiveness": s.get("effectiveness") if isinstance(s, dict) else getattr(s, "effectiveness", 0)
+                        "name": (
+                            s.get("name")
+                            if isinstance(s, dict)
+                            else getattr(s, "name", "")
+                        ),
+                        "effectiveness": (
+                            s.get("effectiveness")
+                            if isinstance(s, dict)
+                            else getattr(s, "effectiveness", 0)
+                        ),
                     }
                     for s in mitigation_strategies
                 ],
@@ -278,7 +290,9 @@ class QuantumPlugin(LanguagePlugin):
 
         return True
 
-    def get_framework_info(self, code: str, file_path: Optional[str] = None) -> Dict[str, Any]:
+    def get_framework_info(
+        self, code: str, file_path: Optional[str] = None
+    ) -> Dict[str, Any]:
         """Get information about the quantum framework being used"""
         framework = self.error_mitigator.detect_framework(code, file_path or "")
 
@@ -341,32 +355,35 @@ class QuantumPlugin(LanguagePlugin):
         """Detect which quantum backends are referenced"""
         backends = []
 
-        backend_patterns = {
+        backend_patterns: Dict[QuantumFramework, List[Any]] = {
             QuantumFramework.QISKIT: [
                 (r"backend\s*=\s*['\"]([^'\"]+)['\"]", 1),
                 (r"get_backend\(['\"]([^'\"]+)['\"]\)", 1),
                 (r"IBMQ\.get_backend\(['\"]([^'\"]+)['\"]\)", 1),
             ],
             QuantumFramework.CIRQ: [
-                (r"engine\s*=\s*cirq\.google\.Engine", "google_engine"),
-                (r"cirq\.Simulator", "simulator"),
-                (r"cirq\.DensityMatrixSimulator", "density_matrix_simulator"),
+                (r"engine\s*=\s*cirq\.google\.Engine", None, "google_engine"),
+                (r"cirq\.Simulator", None, "simulator"),
+                (r"cirq\.DensityMatrixSimulator", None, "density_matrix_simulator"),
             ],
         }
 
         patterns = backend_patterns.get(framework, [])
         for pattern_info in patterns:
             if isinstance(pattern_info, tuple):
-                pattern, group = pattern_info
-                matches = re.finditer(pattern, code)
-                for match in matches:
-                    backend = match.group(group)
-                    if backend and backend not in backends:
-                        backends.append(backend)
-            else:
-                pattern, backend_name = pattern_info
-                if re.search(pattern, code):
-                    backends.append(backend_name)
+                if len(pattern_info) == 2:
+                    # Pattern with capture group
+                    pattern, group = pattern_info
+                    matches = re.finditer(pattern, code)
+                    for match in matches:
+                        backend = match.group(group)
+                        if backend and backend not in backends:
+                            backends.append(backend)
+                elif len(pattern_info) == 3:
+                    # Pattern with no capture group, just backend name
+                    pattern, _, backend_name = pattern_info
+                    if re.search(pattern, code) and backend_name not in backends:
+                        backends.append(backend_name)
 
         return backends
 
@@ -456,25 +473,17 @@ circuit.append(cirq.ISWAP(q0, q1) ** 0.5)""",
             gate_type, "// Add optimized gate implementation"
         )
 
-    def get_capabilities(self) -> Dict[str, Any]:
+    def get_capabilities(self) -> Set[str]:
         """Return plugin capabilities"""
         return {
-            "name": self.name,
-            "version": self.version,
-            "supported_frameworks": self.supported_frameworks,
-            "supported_extensions": self.supported_extensions,
-            "features": [
-                "error_detection",
-                "error_mitigation",
-                "circuit_validation",
-                "backend_analysis",
-                "optimization_suggestions",
-            ],
-            "mitigation_techniques": [
-                "zero_noise_extrapolation",
-                "measurement_error_mitigation",
-                "dynamical_decoupling",
-                "circuit_optimization",
-                "circuit_cutting",
-            ],
+            "error_detection",
+            "error_mitigation",
+            "circuit_validation",
+            "backend_analysis",
+            "optimization_suggestions",
+            "zero_noise_extrapolation",
+            "measurement_error_mitigation",
+            "dynamical_decoupling",
+            "circuit_optimization",
+            "circuit_cutting",
         }

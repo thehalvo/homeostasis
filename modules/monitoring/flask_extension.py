@@ -35,7 +35,9 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-def extract_error_context(exc: Exception, error_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def extract_error_context(
+    exc: Exception, error_data: Dict[str, Any]
+) -> Optional[Dict[str, Any]]:
     """Extract additional context from an error for enhanced debugging.
 
     Args:
@@ -48,9 +50,9 @@ def extract_error_context(exc: Exception, error_data: Dict[str, Any]) -> Optiona
     context = {}
 
     # Extract exception attributes if available
-    if hasattr(exc, '__dict__'):
+    if hasattr(exc, "__dict__"):
         for key, value in exc.__dict__.items():
-            if not key.startswith('_'):
+            if not key.startswith("_"):
                 try:
                     # Only include JSON-serializable values
                     json.dumps(value)
@@ -59,11 +61,11 @@ def extract_error_context(exc: Exception, error_data: Dict[str, Any]) -> Optiona
                     context[key] = str(value)
 
     # Extract HTTP status code if it's an HTTPException
-    if hasattr(exc, 'code'):
-        context['http_status_code'] = getattr(exc, 'code', None)
+    if hasattr(exc, "code"):
+        context["http_status_code"] = getattr(exc, "code", None)
 
-    if hasattr(exc, 'description'):
-        context['description'] = getattr(exc, 'description', None)
+    if hasattr(exc, "description"):
+        context["description"] = getattr(exc, "description", None)
 
     return context if context else None
 
@@ -163,11 +165,13 @@ class Homeostasis:
         if self.config["BLUEPRINT_SPECIFIC_HANDLERS"]:
             # Register a blueprint-specific handler setup function
             # Note: Adding custom method to Flask app for blueprint handler registration
-            setattr(app, 'register_blueprint_handlers', self.register_blueprint_handlers)
+            setattr(
+                app, "register_blueprint_handlers", self.register_blueprint_handlers
+            )
 
             # Update any existing blueprints
             for bp_name, bp in app.blueprints.items():
-                self._setup_blueprint_handlers(bp)
+                self._setup_blueprint_handlers(cast(Blueprint, bp))
 
         # Register general error handler
         app.errorhandler(Exception)(self._handle_exception)
@@ -574,7 +578,8 @@ class Homeostasis:
             # Log the exception
             if self.monitoring_logger:
                 self.monitoring_logger.error(
-                    f"Exception in request: {exc_type}: {exc_message}", exception=error_data
+                    f"Exception in request: {exc_type}: {exc_message}",
+                    exception=error_data,
                 )
 
             return error_data

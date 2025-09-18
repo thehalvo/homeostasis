@@ -23,7 +23,12 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from .audit import get_audit_logger
-from .compliance_reporting import ComplianceControl, ComplianceFramework, ControlStatus, get_compliance_reporting
+from .compliance_reporting import (
+    ComplianceControl,
+    ComplianceFramework,
+    ControlStatus,
+    get_compliance_reporting,
+)
 from .policy_enforcement import PolicyScope, PolicyType, get_policy_engine
 from .rbac import get_rbac_manager
 
@@ -149,7 +154,7 @@ class RegulatedIndustriesSupport:
             config: Configuration dictionary
         """
         self.config = config or {}
-        self.storage_path = Path(config.get("storage_path", "data/regulated"))
+        self.storage_path = Path(self.config.get("storage_path", "data/regulated"))
         self.storage_path.mkdir(parents=True, exist_ok=True)
 
         # Get managers
@@ -1655,7 +1660,7 @@ class RegulatedIndustriesSupport:
         self, action: Dict, context: Dict, industry: RegulatedIndustry
     ) -> List[str]:
         """Collect evidence for compliance validation."""
-        evidence = []
+        evidence: List[str] = []
 
         # Collect audit logs
         # TODO: Implement search_events method in AuditLogger for production use
@@ -1810,10 +1815,12 @@ class RegulatedIndustriesSupport:
                     evidence_types=control.get("evidence_types", []),
                     automated=control.get("automated", True),
                     frequency=control.get("frequency", "continuous"),
-                    status=ControlStatus.ACTIVE,
-                    metadata=control.get("metadata", {})
+                    status=ControlStatus.UNDER_REVIEW,
+                    metadata=control.get("metadata", {}),
                 )
-                self.compliance_reporting.controls[control["control_id"]] = compliance_control
+                self.compliance_reporting.controls[control["control_id"]] = (
+                    compliance_control
+                )
 
                 # Configure automated checks
                 for check in control.get("validation_checks", []):
@@ -2012,7 +2019,9 @@ class RegulatedIndustriesSupport:
         with open(industry_file, "w") as f:
             json.dump(data, f, indent=2)
 
-    def _get_industry_controls(self, industry: RegulatedIndustry) -> List[Dict[Any, Any]]:
+    def _get_industry_controls(
+        self, industry: RegulatedIndustry
+    ) -> List[Dict[Any, Any]]:
         """Get stored industry controls."""
         industry_file = self.storage_path / f"{industry.value}_controls.json"
 
@@ -2165,7 +2174,9 @@ class RegulatedIndustriesSupport:
 _regulated_industries = None
 
 
-def get_regulated_industries(config: Optional[Dict] = None) -> RegulatedIndustriesSupport:
+def get_regulated_industries(
+    config: Optional[Dict] = None,
+) -> RegulatedIndustriesSupport:
     """Get or create the singleton RegulatedIndustriesSupport instance."""
     global _regulated_industries
     if _regulated_industries is None:

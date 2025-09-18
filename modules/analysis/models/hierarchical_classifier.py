@@ -135,22 +135,15 @@ def secure_torch_load(
 
     # Fall back to restricted unpickling
     with open(filepath, "rb") as f:
-        # Override the default unpickler used by torch.load
-        original_unpickler = pickle.Unpickler
+        # Use weights_only=True for additional security when possible
         try:
-            pickle.Unpickler = RestrictedUnpickler
-            # Use weights_only=True for additional security when possible
-            try:
-                return torch.load(
-                    filepath, map_location=map_location, weights_only=True
-                )
-            except (TypeError, pickle.UnpicklingError):
-                # Fallback to restricted unpickler if weights_only fails
-                return torch.load(
-                    filepath, map_location=map_location
-                )  # nosec: B614 - Using RestrictedUnpickler for safety
-        finally:
-            pickle.Unpickler = original_unpickler
+            return torch.load(
+                filepath, map_location=map_location, weights_only=True
+            )
+        except (TypeError, pickle.UnpicklingError):
+            # Fallback with custom unpickler if weights_only fails
+            with open(filepath, 'rb') as f:
+                return RestrictedUnpickler(f).load()
 
 
 @dataclass
@@ -450,7 +443,7 @@ class HierarchicalClassificationPipeline:
 
         # Label encoders for each level
         self.level1_encoder = LabelEncoder()
-        self.level2_encoders = {}
+        self.level2_encoders: Dict[str, LabelEncoder] = {}
         self.level3_encoder = LabelEncoder()
 
         self._initialize_label_encoders()

@@ -73,6 +73,15 @@ from modules.security.validators import (
     validate_url,
     validate_username,
 )
+from modules.security.mlflow_security import (
+    MLflowSecurityConfig,
+    ModelSandbox,
+    SecurityError,
+    create_secure_mlflow_config,
+    load_model_securely,
+    predict_securely,
+    secure_model_loader,
+)
 
 __all__ = [
     # Authentication
@@ -134,4 +143,12 @@ __all__ = [
     "sanitize_input",
     "sanitize_filename",
     "validate_and_sanitize_json",
+    # MLflow Security
+    "MLflowSecurityConfig",
+    "ModelSandbox",
+    "SecurityError",
+    "create_secure_mlflow_config",
+    "load_model_securely",
+    "predict_securely",
+    "secure_model_loader",
 ]

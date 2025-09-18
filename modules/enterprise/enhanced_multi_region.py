@@ -173,7 +173,9 @@ class EnhancedMultiRegionFailover:
         # Configuration
         self.auto_failover_enabled = config.get("auto_failover_enabled", True)
         self.min_healthy_regions = config.get("min_healthy_regions", 2)
-        self.failover_cooldown_seconds = int(config.get("failover_cooldown_seconds", 300))
+        self.failover_cooldown_seconds = int(
+            config.get("failover_cooldown_seconds", 300)
+        )
         self.consistency_check_interval = config.get("consistency_check_interval", 60)
 
         # Initialize components
@@ -313,8 +315,11 @@ class EnhancedMultiRegionFailover:
                         extra={
                             "metric_name": f"region.health.{region_id}",
                             "metric_value": 1 if healthy else 0,
-                            "tags": {"region": region_id, "status": region.status.value},
-                        }
+                            "tags": {
+                                "region": region_id,
+                                "status": region.status.value,
+                            },
+                        },
                     )
 
                     # Wait for next check
@@ -534,7 +539,9 @@ class EnhancedMultiRegionFailover:
             return False
 
         last_failover = self.failover_decisions[-1]
-        elapsed: float = (datetime.datetime.utcnow() - last_failover.timestamp).total_seconds()
+        elapsed: float = (
+            datetime.datetime.utcnow() - last_failover.timestamp
+        ).total_seconds()
 
         return elapsed < self.failover_cooldown_seconds
 
@@ -590,7 +597,7 @@ class EnhancedMultiRegionFailover:
                             "from_region": decision.from_region,
                             "to_regions": ",".join(decision.to_regions),
                         },
-                    }
+                    },
                 )
             else:
                 logger.error("Failover verification failed")

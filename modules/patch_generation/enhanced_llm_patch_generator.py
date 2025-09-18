@@ -327,7 +327,7 @@ class EnhancedLLMPatchGenerator(LLMPatchGenerator):
     def _determine_task_type(self, error_context: Dict[str, Any]) -> str:
         """Determine task type for prompt selection."""
         if error_context.get("task_type"):
-            return error_context["task_type"]
+            return str(error_context["task_type"])
 
         error_type = error_context.get("error_type", "")
 

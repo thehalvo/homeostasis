@@ -191,19 +191,25 @@ class RegionHealthMonitor:
         """Calculate average availability across environments"""
         if not env_healths:
             return 0.0
-        return sum(float(h.get("availability", 0)) for h in env_healths) / len(env_healths)
+        return sum(float(h.get("availability", 0)) for h in env_healths) / len(
+            env_healths
+        )
 
     def _calculate_average_latency(self, env_healths: List[Dict[str, Any]]) -> float:
         """Calculate average latency across environments"""
         if not env_healths:
             return 99999.0
-        return sum(float(h.get("latency_ms", 99999)) for h in env_healths) / len(env_healths)
+        return sum(float(h.get("latency_ms", 99999)) for h in env_healths) / len(
+            env_healths
+        )
 
     def _calculate_error_rate(self, env_healths: List[Dict[str, Any]]) -> float:
         """Calculate average error rate across environments"""
         if not env_healths:
             return 1.0
-        return sum(float(h.get("error_rate", 1.0)) for h in env_healths) / len(env_healths)
+        return sum(float(h.get("error_rate", 1.0)) for h in env_healths) / len(
+            env_healths
+        )
 
     def _calculate_capacity_usage(
         self, region: Region, env_healths: List[Dict[str, Any]]

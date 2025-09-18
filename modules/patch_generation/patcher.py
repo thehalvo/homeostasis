@@ -322,7 +322,9 @@ class PatchGenerator:
                 print(f"LLM patch generation failed: {e}, falling back to templates")
 
         # Fall back to template-based patch generation
-        template_name = self.error_template_mapping.get(root_cause) if root_cause else None
+        template_name = (
+            self.error_template_mapping.get(root_cause) if root_cause else None
+        )
         if not template_name:
             # If no template and LLM is disabled/failed, return None
             return None
@@ -400,7 +402,9 @@ class PatchGenerator:
         framework = bug_info.get("framework")
 
         # Try to find the template using the hierarchical template system
-        template: Optional[Union[BaseTemplate, PatchTemplate]] = self.template_manager.get_template(template_name)
+        template: Optional[Union[BaseTemplate, PatchTemplate]] = (
+            self.template_manager.get_template(template_name)
+        )
 
         # If not found and it's a legacy template name, try the legacy templates
         if (
@@ -413,7 +417,10 @@ class PatchGenerator:
             return None
 
         # Render the template with the provided variables
-        variables = dict(bug_info["variables"]) if bug_info.get("variables") else {}
+        variables_raw = bug_info.get("variables", {})
+        variables: Dict[str, Any] = (
+            dict(variables_raw) if isinstance(variables_raw, dict) else {}
+        )
         if isinstance(template, BaseTemplate):
             rendered_code = template.render(variables)
         else:

@@ -172,7 +172,8 @@ class DeploymentMonitor:
         for fix_id, deployment in list(self.active_deployments.items()):
             # Skip if recently checked
             if (
-                current_time - deployment.last_checked
+                deployment.last_checked is not None
+                and current_time - deployment.last_checked
                 < self.check_interval.total_seconds()
             ):
                 continue
@@ -203,13 +204,16 @@ class DeploymentMonitor:
 
     def get_deployment_stats(self) -> Dict[str, Any]:
         """Get statistics on deployment outcomes."""
+        outcome_distribution: defaultdict[str, int] = defaultdict(int)
+        fix_type_success_rates: defaultdict[str, Dict[str, int]] = defaultdict(lambda: {"success": 0, "total": 0})
+
         stats = {
             "active_deployments": len(self.active_deployments),
             "completed_deployments": len(self.completed_deployments),
             "success_rate": 0.0,
             "avg_monitoring_duration": 0.0,
-            "outcome_distribution": defaultdict(int),
-            "fix_type_success_rates": defaultdict(lambda: {"success": 0, "total": 0}),
+            "outcome_distribution": outcome_distribution,
+            "fix_type_success_rates": fix_type_success_rates,
         }
 
         if self.outcome_history:
@@ -224,11 +228,11 @@ class DeploymentMonitor:
             )
 
             for report in self.outcome_history:
-                stats["outcome_distribution"][report.outcome.value] += 1
+                outcome_distribution[report.outcome.value] += 1
 
         # Calculate success rates by fix type
         for deployment in self.completed_deployments.values():
-            fix_type_stats = stats["fix_type_success_rates"][deployment.fix_type]
+            fix_type_stats = fix_type_success_rates[deployment.fix_type]
             fix_type_stats["total"] += 1
 
             # Find corresponding outcome
@@ -542,11 +546,11 @@ class OutcomeTracker:
 
         if failure_times:
             return {
-                "mean_hours": np.mean(failure_times),
-                "median_hours": np.median(failure_times),
-                "min_hours": np.min(failure_times),
-                "max_hours": np.max(failure_times),
-                "std_hours": np.std(failure_times),
+                "mean_hours": float(np.mean(failure_times)),
+                "median_hours": float(np.median(failure_times)),
+                "min_hours": float(np.min(failure_times)),
+                "max_hours": float(np.max(failure_times)),
+                "std_hours": float(np.std(failure_times)),
             }
 
         return {"mean_hours": float("inf")}
