@@ -63,6 +63,7 @@ jobs:
       env:
         UPDATE_PERFORMANCE_BASELINE: ${{ github.event.inputs.update_baseline || 'false' }}
         PYTHONPATH: ${{ github.workspace }}
+        USE_MOCK_TESTS: true
       run: |
         python -m pytest tests/test_performance_regression.py -v -s --tb=short
     

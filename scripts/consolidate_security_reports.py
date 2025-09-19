@@ -109,19 +109,44 @@ class SecurityReportConsolidator:
 
     def parse_checkov_report(self, report: Dict[str, Any]):
         """Parse Checkov IaC report."""
-        for check in report.get("results", {}).get("failed_checks", []):
-            self.vulnerabilities.append(
-                {
-                    "tool": "checkov",
-                    "severity": "medium",  # Checkov doesn't provide severity
-                    "category": "iac",
-                    "title": check.get("check_name", ""),
-                    "file": check.get("file_path", ""),
-                    "line": check.get("file_line_range", [0])[0],
-                    "resource": check.get("resource", ""),
-                    "guideline": check.get("guideline", ""),
-                }
-            )
+        # Handle both dict and list formats (checkov output can vary)
+        if isinstance(report, list):
+            # If it's a list, it might be a list of results
+            for item in report:
+                if isinstance(item, dict) and item.get("check_type") == "checkov":
+                    self._parse_checkov_item(item)
+        elif isinstance(report, dict):
+            # Standard checkov JSON format
+            results = report.get("results", {})
+            if isinstance(results, dict):
+                for check in results.get("failed_checks", []):
+                    self.vulnerabilities.append(
+                        {
+                            "tool": "checkov",
+                            "severity": "medium",  # Checkov doesn't provide severity
+                            "category": "iac",
+                            "title": check.get("check_name", ""),
+                            "file": check.get("file_path", ""),
+                            "line": check.get("file_line_range", [0])[0] if check.get("file_line_range") else 0,
+                            "resource": check.get("resource", ""),
+                            "guideline": check.get("guideline", ""),
+                        }
+                    )
+
+    def _parse_checkov_item(self, item: Dict[str, Any]):
+        """Parse a single checkov item from list format."""
+        self.vulnerabilities.append(
+            {
+                "tool": "checkov",
+                "severity": "medium",
+                "category": "iac",
+                "title": item.get("check_name", ""),
+                "file": item.get("file_path", ""),
+                "line": item.get("file_line_range", [0])[0] if item.get("file_line_range") else 0,
+                "resource": item.get("resource", ""),
+                "guideline": item.get("guideline", ""),
+            }
+        )
 
     def consolidate(self):
         """Consolidate all loaded reports."""
