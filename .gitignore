@@ -117,6 +117,7 @@ governance/
 # Temporary files
 tmp/
 temp/
+failed_tests.txt
 
 # Deployment
 .netlify
