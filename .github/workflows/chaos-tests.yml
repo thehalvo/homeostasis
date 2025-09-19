@@ -103,6 +103,7 @@ jobs:
       timeout-minutes: 60
       env:
         USE_MOCK_TESTS: true
+        DISABLE_PERFORMANCE_TRACKING: true
       run: |
         # Run pytest chaos tests with appropriate markers
         python -m pytest tests/chaos/ \

@@ -87,6 +87,7 @@ jobs:
     - name: Run E2E healing scenario tests
       env:
         USE_MOCK_TESTS: true
+        DISABLE_PERFORMANCE_TRACKING: true
       run: |
         # Run the same way as the local test script
         PYTHONPATH=$PWD python -m pytest tests/e2e/healing_scenarios/test_basic_healing_scenarios.py -v \

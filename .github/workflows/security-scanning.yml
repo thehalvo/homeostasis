@@ -270,6 +270,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: security-scan
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout code

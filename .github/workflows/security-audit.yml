@@ -28,4 +28,5 @@ jobs:
       run: |
         # Note: safety check is deprecated, but we use it with specific ignores
         # Ignoring known MLflow CVEs that we've mitigated in code (see requirements.txt for mitigation steps)
+        # These MLflow CVEs have no available patches and require code-level mitigations
         safety check -r requirements.txt --ignore 71691,71693,71578,71577,71587,71692,71579,71584

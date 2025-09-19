@@ -4,7 +4,14 @@ Security module for Homeostasis.
 This module provides security features for production deployments of Homeostasis,
 including authentication, authorization, encryption, API security, audit logging,
 and approval workflows.
+
+CRITICAL: This module includes MLflow security patches for CVE-2024-37052 through
+CVE-2024-37060. The import hook is automatically applied when this module is imported.
 """
+
+# Apply MLflow security patches immediately
+from modules.security.mlflow_import_hook import ensure_mlflow_security
+ensure_mlflow_security()
 
 from modules.security.api_security import (
     APISecurityManager,
@@ -151,4 +158,8 @@ __all__ = [
     "load_model_securely",
     "predict_securely",
     "secure_model_loader",
+    # MLflow Import Hook
+    "ensure_mlflow_security",
+    "disable_mlflow_imports",
+    "SecurityWarning",
 ]

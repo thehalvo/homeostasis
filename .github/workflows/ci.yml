@@ -30,5 +30,6 @@ jobs:
     - name: Run tests
       env:
         USE_MOCK_TESTS: true
+        DISABLE_PERFORMANCE_TRACKING: true
       run: |
         python -m pytest tests/

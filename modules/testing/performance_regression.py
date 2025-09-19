@@ -87,10 +87,12 @@ class PerformanceTracker:
         self.cpu_samples = []
         self.monitoring = True
 
-        # Start CPU monitoring thread
-        self.monitor_thread = threading.Thread(target=self._monitor_cpu)
-        self.monitor_thread.daemon = True
-        self.monitor_thread.start()
+        # Skip CPU monitoring thread if disabled (e.g., during tests)
+        if os.environ.get("DISABLE_PERFORMANCE_TRACKING", "false").lower() != "true":
+            # Start CPU monitoring thread
+            self.monitor_thread = threading.Thread(target=self._monitor_cpu)
+            self.monitor_thread.daemon = True
+            self.monitor_thread.start()
 
     def stop(self) -> Tuple[float, float, float]:
         """Stop tracking and return metrics."""
