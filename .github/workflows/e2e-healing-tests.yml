@@ -54,9 +54,11 @@ jobs:
     - name: Install system dependencies
       run: |
         # Docker is pre-installed on GitHub Actions runners
-        # Just install other dependencies needed for cross-language testing
+        # Install dependencies needed for python-ldap and cross-language testing
         sudo apt-get update
         sudo apt-get install -y \
+          libldap2-dev \
+          libsasl2-dev \
           nodejs \
           npm \
           golang-go \

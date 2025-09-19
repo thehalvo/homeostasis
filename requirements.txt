@@ -3,9 +3,10 @@ fastapi==0.116.2
 uvicorn==0.23.2
 pydantic==2.6.0
 pyyaml==6.0.1
-requests==2.32.3
+requests==2.32.4
 defusedxml==0.7.1
-urllib3==2.5.0
+urllib3==2.2.3 ; python_version < '3.9'
+urllib3==2.5.0 ; python_version >= '3.9'
 
 # Monitoring
 loguru==0.7.2
@@ -47,14 +48,14 @@ python-ldap==3.4.3
 # 5. Disable model loading from external sources
 # 6. Monitor MLflow GitHub for security patches - no fix available as of Sept 2025
 # 7. Consider using alternative model serving solutions for untrusted models
-mlflow==3.3.2
+mlflow==3.1.4
 setuptools==80.9.0
 pandas==2.2.0
 geopy==2.4.1
 flask-socketio==5.3.6
 wandb==0.21.1
 seaborn==0.13.2
-torch==2.8.0
-torchvision==0.23.0
-torchaudio==2.8.0
-transformers==4.55.4
+torch==2.1.2
+torchvision==0.16.2
+torchaudio==2.1.2
+transformers==4.30.2
