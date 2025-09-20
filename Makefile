@@ -28,7 +28,7 @@ test:
 	$(VENV)/bin/pytest tests/
 
 test-all:
-	@./run_all_tests_local.sh
+	@./test_github_actions_locally.sh
 
 lint:
 	flake8 modules/ services/ orchestrator/ tests/

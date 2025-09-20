@@ -32,6 +32,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+**/venv/
 .pytest_cache/
 .coverage
 htmlcov/
@@ -118,6 +119,12 @@ governance/
 tmp/
 temp/
 failed_tests.txt
+
+# Test-generated files and directories
+test_env_*/
+test_output.log
+test_results/
+Dockerfile.test
 
 # Deployment
 .netlify

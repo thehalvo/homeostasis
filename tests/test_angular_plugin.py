@@ -146,7 +146,8 @@ class TestAngularLanguagePlugin:
         }
         """
 
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        context = {"source_code": source_code, "error_data": error_data}
+        fix = self.plugin.generate_fix(analysis, context)
 
         assert fix is not None
         assert fix["type"] == "suggestion"
@@ -369,7 +370,8 @@ class TestAngularIntegration:
         }
         """
 
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        context = {"source_code": source_code, "error_data": error_data}
+        fix = self.plugin.generate_fix(analysis, context)
         assert fix is not None
         assert (
             "HttpClient" in fix["description"]
@@ -406,7 +408,8 @@ class TestAngularIntegration:
         };
         """
 
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        context = {"source_code": source_code, "error_data": error_data}
+        fix = self.plugin.generate_fix(analysis, context)
         assert fix is not None
         assert "createAction" in fix["fix_code"] or "type" in fix["description"].lower()
 

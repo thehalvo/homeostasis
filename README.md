@@ -248,6 +248,48 @@ The demo will:
    - Test and validate the fixes
    - Restart your service with the fixes applied
 
+### Testing Before GitHub Push
+
+To ensure your code passes all GitHub Actions tests, we provide comprehensive local testing:
+
+#### Quick Test
+```bash
+# Run basic pytest suite with mock infrastructure (fast)
+USE_MOCK_TESTS=true make test
+```
+
+#### Full Test Suite (Recommended before pushing)
+```bash
+# Runs the same tests as GitHub Actions with all Python versions
+USE_MOCK_TESTS=true make test-all
+```
+
+This command:
+- Tests with Python 3.9, 3.10, and 3.11 in isolated environments
+- Runs flake8 linting with the same rules as CI
+- Executes the full pytest suite
+- Checks for workflow compatibility issues
+- Validates Docker syntax if Docker is available
+
+#### Automatic Pre-Push Validation
+A git pre-push hook automatically runs validation before pushing:
+- Python syntax checks
+- Workflow compatibility (no Python 3.8, correct docker compose syntax)
+- Flake8 linting
+- Black formatting check
+- Quick unit tests
+- Option to run full test suite
+
+To skip the pre-push hook (not recommended):
+```bash
+git push --no-verify
+```
+
+To always skip the full test prompt:
+```bash
+export SKIP_FULL_TESTS=1
+```
+
 ### Command Line Options
 
 ```bash
@@ -367,6 +409,7 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
    - Use mock infrastructure for faster development: `USE_MOCK_TESTS=true make test`
    - This avoids starting real services and uses simulated responses
    - Reduces test execution time from minutes to seconds
+   - For full GitHub Actions simulation: `USE_MOCK_TESTS=true make test-all`
 
 6. **Platform-specific issues:**
    - Mac with Apple Silicon (M1/M2/M3): You might need additional dependencies

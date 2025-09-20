@@ -180,24 +180,24 @@ jobs:
     - name: Build test images
       run: |
         docker build -t homeostasis-test:latest .
-        docker-compose -f tests/e2e/docker-compose.yml build
+        docker compose -f tests/e2e/docker-compose.yml build
     
     - name: Run integration tests with Docker
       run: |
-        docker-compose -f tests/e2e/docker-compose.yml up -d
+        docker compose -f tests/e2e/docker-compose.yml up -d
         
         # Wait for services to be ready
         sleep 30
         
         # Run tests against dockerized services
-        docker-compose -f tests/e2e/docker-compose.yml \
+        docker compose -f tests/e2e/docker-compose.yml \
           run --rm test-runner \
           python run_e2e_tests.py --suite all --ci
     
     - name: Collect Docker logs
       if: failure()
       run: |
-        docker-compose -f tests/e2e/docker-compose.yml logs > docker-logs.txt
+        docker compose -f tests/e2e/docker-compose.yml logs > docker-logs.txt
     
     - name: Upload Docker logs
       if: failure()
@@ -209,4 +209,4 @@ jobs:
     - name: Clean up
       if: always()
       run: |
-        docker-compose -f tests/e2e/docker-compose.yml down -v
+        docker compose -f tests/e2e/docker-compose.yml down -v

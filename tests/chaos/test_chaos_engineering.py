@@ -10,7 +10,10 @@ import pytest
 from modules.reliability.chaos_engineering import (
     ChaosEngineer,
     ChaosExperiment,
+    FaultInjection,
     FaultType,
+    ImpactLevel,
+    SteadyStateHypothesis,
 )
 
 
@@ -47,15 +50,33 @@ class TestChaosEngineering:
     @pytest.mark.asyncio
     async def test_network_latency_injection(self, chaos_engineer, mock_monitoring):
         """Test network latency injection and system response"""
+        hypothesis = SteadyStateHypothesis(
+            name="Response Time SLA",
+            description="System should maintain <1s response time",
+            metrics=["response_time_p99", "error_rate"],
+            thresholds={
+                "response_time_p99": (0, 1000),  # milliseconds
+                "error_rate": (0, 0.05),  # 5% max error rate
+            },
+        )
+
+        fault_injection = FaultInjection(
+            fault_type=FaultType.NETWORK_LATENCY,
+            target="api-gateway",
+            duration=timedelta(seconds=30),
+            intensity=0.5,  # Affect 50% of requests
+            parameters={"latency_ms": 500, "jitter_ms": 50},
+        )
+
         experiment = ChaosExperiment(
             name="Network Latency Test",
             description="Inject 500ms latency on service communication",
-            hypothesis="System should maintain <1s response time with healing",
-            fault_type=FaultType.NETWORK_LATENCY,
-            target_service="api-gateway",
-            parameters={"latency_ms": 500, "jitter_ms": 50, "affected_percentage": 50},
-            duration=timedelta(seconds=30),
+            hypothesis=hypothesis,
+            fault_injections=[fault_injection],
+            impact_level=ImpactLevel.LOW,
+            target_environment="staging",
             rollback_on_failure=True,
+            max_duration=timedelta(minutes=5),
         )
 
         # Run experiment
