@@ -11,15 +11,16 @@ CVE-2024-37060. The import hook is automatically applied when this module is imp
 
 # Apply MLflow security patches immediately
 from modules.security.mlflow_import_hook import ensure_mlflow_security
+
 ensure_mlflow_security()
 
-from modules.security.api_security import (
+from modules.security.api_security import (  # noqa: E402
     APISecurityManager,
     RateLimitExceededError,
     get_api_security_manager,
     secure_endpoint,
 )
-from modules.security.approval import (
+from modules.security.approval import (  # noqa: E402
     ApprovalError,
     ApprovalManager,
     ApprovalRequest,
@@ -29,14 +30,14 @@ from modules.security.approval import (
     get_approval_manager,
     needs_approval,
 )
-from modules.security.audit import (
+from modules.security.audit import (  # noqa: E402
     AuditLogger,
     get_audit_logger,
     log_event,
     log_fix,
     log_login,
 )
-from modules.security.auth import (
+from modules.security.auth import (  # noqa: E402
     AuthenticationError,
     AuthenticationManager,
     authenticate,
@@ -44,7 +45,7 @@ from modules.security.auth import (
     get_auth_manager,
     verify_token,
 )
-from modules.security.encryption import (
+from modules.security.encryption import (  # noqa: E402
     EncryptionError,
     EncryptionManager,
     decrypt,
@@ -53,7 +54,7 @@ from modules.security.encryption import (
     encrypt,
     get_encryption_manager,
 )
-from modules.security.mlflow_security import (
+from modules.security.mlflow_security import (  # noqa: E402
     MLflowSecurityConfig,
     ModelSandbox,
     SecurityError,
@@ -62,14 +63,14 @@ from modules.security.mlflow_security import (
     predict_securely,
     secure_model_loader,
 )
-from modules.security.rbac import (
+from modules.security.rbac import (  # noqa: E402
     PermissionDeniedError,
     RBACManager,
     get_rbac_manager,
     has_permission,
     require_permission,
 )
-from modules.security.security_config import (
+from modules.security.security_config import (  # noqa: E402
     SecurityConfig,
     SecurityConfigError,
     get_config,
@@ -77,7 +78,7 @@ from modules.security.security_config import (
     save_config,
     set_config,
 )
-from modules.security.validators import (
+from modules.security.validators import (  # noqa: E402
     check_for_sql_injection,
     check_for_xss,
     sanitize_filename,

@@ -31,6 +31,7 @@ class TestMLflowImportHook(unittest.TestCase):
 
         # Import hook should patch it
         from modules.security.mlflow_import_hook import ensure_mlflow_security
+
         ensure_mlflow_security()
 
         # Verify original function was wrapped
@@ -46,12 +47,11 @@ class TestMLflowImportHook(unittest.TestCase):
         original_func.__doc__ = "Original function"
 
         # Create secure wrapper
-        with patch("modules.security.mlflow_security.load_model_securely") as mock_secure:
+        with patch(
+            "modules.security.mlflow_security.load_model_securely"
+        ) as mock_secure:
             mock_secure.return_value = "secure_model"
-            wrapper = _mlflow_patcher._create_secure_wrapper(
-                original_func,
-                mock_secure
-            )
+            wrapper = _mlflow_patcher._create_secure_wrapper(original_func, mock_secure)
 
             # Call wrapper and check warning
             with warnings.catch_warnings(record=True) as w:
@@ -76,7 +76,7 @@ class TestMLflowImportHook(unittest.TestCase):
 
         # Try to import mlflow
         with self.assertRaises(ImportError) as cm:
-            import mlflow
+            import mlflow  # noqa: F401
 
         self.assertIn("blocked for security reasons", str(cm.exception))
         self.assertIn("CVE-2024-37052", str(cm.exception))
@@ -97,7 +97,9 @@ class TestMLflowImportHook(unittest.TestCase):
         patcher = SecureMLflowImporter()
 
         # Force an error during patching
-        with patch.object(patcher, "_patch_existing_mlflow", side_effect=Exception("Test error")):
+        with patch.object(
+            patcher, "_patch_existing_mlflow", side_effect=Exception("Test error")
+        ):
             with self.assertRaises(RuntimeError) as cm:
                 patcher.patch_mlflow()
 
@@ -117,6 +119,7 @@ class TestMLflowImportHook(unittest.TestCase):
 
         with patch.dict(sys.modules, {"mlflow": mock_mlflow}):
             from modules.security.mlflow_import_hook import ensure_mlflow_security
+
             ensure_mlflow_security()
 
             # Check all flavors were patched

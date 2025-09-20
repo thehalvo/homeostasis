@@ -141,7 +141,7 @@ jobs:
           
           # Python dependencies
           if [ -f requirements.txt ]; then
-            safety check -r requirements.txt --json > python-vuln-report.json || true
+            safety scan --output json > python-vuln-report.json || true
           fi
           
           # Node.js dependencies
@@ -207,6 +207,11 @@ jobs:
             --output security-report.html \
             --format html \
             --severity-threshold medium
+
+          # Generate empty SARIF file if it doesn't exist to prevent upload error
+          if [ ! -f security-results.sarif ]; then
+            echo '{"version": "2.1.0", "runs": []}' > security-results.sarif
+          fi
       
       - name: Comment PR with security summary
         if: github.event_name == 'pull_request' && always()
@@ -260,7 +265,7 @@ jobs:
       
       - name: Upload SARIF results
         if: always() && github.event_name != 'pull_request'
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: security-results.sarif
         continue-on-error: true

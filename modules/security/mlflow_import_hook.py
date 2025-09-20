@@ -11,8 +11,6 @@ This hook MUST be imported before any MLflow imports in the application.
 import logging
 import sys
 import warnings
-from types import ModuleType
-from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -54,11 +52,13 @@ class SecureMLflowImporter:
             return
 
         # Import our secure wrapper
-        from .mlflow_security import load_model_securely, predict_securely
+        from .mlflow_security import load_model_securely
 
         # Patch mlflow.pyfunc if it exists
         if hasattr(mlflow, "pyfunc") and hasattr(mlflow.pyfunc, "load_model"):
-            self._original_modules["mlflow.pyfunc.load_model"] = mlflow.pyfunc.load_model
+            self._original_modules["mlflow.pyfunc.load_model"] = (
+                mlflow.pyfunc.load_model
+            )
             mlflow.pyfunc.load_model = self._create_secure_wrapper(
                 mlflow.pyfunc.load_model, load_model_securely
             )
@@ -66,8 +66,14 @@ class SecureMLflowImporter:
 
         # Patch other model loading functions
         model_modules = [
-            "sklearn", "tensorflow", "pytorch", "lightgbm",
-            "xgboost", "catboost", "h2o", "spark"
+            "sklearn",
+            "tensorflow",
+            "pytorch",
+            "lightgbm",
+            "xgboost",
+            "catboost",
+            "h2o",
+            "spark",
         ]
 
         for module_name in model_modules:
@@ -75,16 +81,19 @@ class SecureMLflowImporter:
                 module = getattr(mlflow, module_name)
                 if hasattr(module, "load_model"):
                     original_func = getattr(module, "load_model")
-                    self._original_modules[f"mlflow.{module_name}.load_model"] = original_func
+                    self._original_modules[f"mlflow.{module_name}.load_model"] = (
+                        original_func
+                    )
                     setattr(
                         module,
                         "load_model",
-                        self._create_secure_wrapper(original_func, load_model_securely)
+                        self._create_secure_wrapper(original_func, load_model_securely),
                     )
                     logger.info(f"Patched mlflow.{module_name}.load_model")
 
     def _create_secure_wrapper(self, original_func, secure_func):
         """Create a wrapper that uses the secure loading function."""
+
         def wrapper(*args, **kwargs):
             # Extract model_uri from args
             model_uri = args[0] if args else kwargs.get("model_uri", "")
@@ -95,7 +104,7 @@ class SecureMLflowImporter:
                 f"Loading model from: {model_uri}. "
                 f"Using secure wrapper to mitigate CVE-2024-37052 through CVE-2024-37060.",
                 SecurityWarning,
-                stacklevel=2
+                stacklevel=2,
             )
 
             # Use secure loading function
@@ -114,7 +123,9 @@ class SecureMLflowImporter:
     def _install_import_hook(self):
         """Install import hook for future mlflow imports."""
         # Add our custom meta path finder
-        if not any(isinstance(finder, MLflowSecurityFinder) for finder in sys.meta_path):
+        if not any(
+            isinstance(finder, MLflowSecurityFinder) for finder in sys.meta_path
+        ):
             sys.meta_path.insert(0, MLflowSecurityFinder(self))
 
 
@@ -139,6 +150,7 @@ class MLflowSecurityFinder:
 
 class SecurityWarning(UserWarning):
     """Warning issued when security controls are applied."""
+
     pass
 
 
@@ -161,6 +173,7 @@ def disable_mlflow_imports():
 
     This is the most secure option if MLflow model loading is not needed.
     """
+
     class MLflowBlocker:
         def find_spec(self, fullname, path, target=None):
             if fullname == "mlflow" or fullname.startswith("mlflow."):
@@ -181,6 +194,7 @@ def disable_mlflow_imports():
 
 
 # Auto-patch on import if MLFLOW_SECURITY_PATCH environment variable is set
-import os
+import os  # noqa: E402
+
 if os.environ.get("MLFLOW_SECURITY_PATCH", "true").lower() == "true":
     ensure_mlflow_security()
