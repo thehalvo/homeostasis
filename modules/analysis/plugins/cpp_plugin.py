@@ -372,7 +372,178 @@ class CPPExceptionHandler:
         # Extract message from error_data
         error_message = error_data.get("message", str(error_data))
         context = error_data
-        return self.analyze_error(error_message, context)
+
+        # Call analyze_error to get the base analysis
+        analysis = self.analyze_error(error_message, context)
+
+        # Map the fields to match expected format
+        root_cause = self._determine_root_cause(error_data, analysis)
+        category = analysis.get("primary_category", "unknown")
+
+        # For specific errors, ensure proper categorization
+        if root_cause == "cpp_makefile_error" and category == "unknown":
+            category = "makefile"
+        elif (
+            root_cause
+            in [
+                "cpp_memory_error",
+                "cpp_memory_leak",
+                "cpp_use_after_free",
+                "cpp_segmentation_fault",
+                "cpp_stack_overflow",
+            ]
+            and category == "unknown"
+        ):
+            category = "memory"
+
+        # Get suggestions, with defaults for specific error types
+        suggestions = analysis.get("fix_suggestions", [])
+        if not suggestions and root_cause == "cpp_makefile_error":
+            suggestions = [
+                "Check Makefile rules and targets",
+                "Verify target dependencies are correct",
+            ]
+        elif not suggestions and root_cause == "cpp_stack_overflow":
+            suggestions = [
+                "Check for infinite recursion",
+                "Add proper base case to recursive functions",
+            ]
+        elif not suggestions and root_cause == "cpp_memory_error":
+            suggestions = ["Check array bounds", "Verify buffer size before access"]
+        elif not suggestions and root_cause == "cpp_use_after_free":
+            suggestions = [
+                "Avoid using pointers after free/delete",
+                "Consider using smart pointers",
+            ]
+
+        result = {
+            "root_cause": root_cause,
+            "category": category,
+            "severity": analysis.get("severity", "medium"),
+            "suggestion": " ".join(suggestions),
+        }
+
+        # Preserve any additional fields from analysis
+        for key, value in analysis.items():
+            if key not in result:
+                result[key] = value
+
+        return result
+
+    def _determine_root_cause(
+        self, error_data: Dict[str, Any], analysis: Dict[str, Any]
+    ) -> str:
+        """Determine the root cause based on error data and analysis."""
+        error_type = error_data.get("error_type", "").lower()
+        message = error_data.get("message", "").lower()
+        signal = error_data.get("signal", "").lower()
+        tool = error_data.get("tool", "").lower()
+
+        # Handle valgrind memory leak detection
+        if error_type == "memoryleak" or (
+            tool == "valgrind" and "bytes_lost" in error_data
+        ):
+            return "cpp_memory_leak"
+
+        # Handle valgrind invalid read
+        if error_type == "invalidread" or (
+            tool == "valgrind" and "invalid read" in message
+        ):
+            return "cpp_memory_error"
+
+        # Handle AddressSanitizer errors
+        if error_type == "heapuseafterfree" or (
+            tool == "addresssanitizer" and "heap-use-after-free" in message
+        ):
+            return "cpp_use_after_free"
+
+        # Check for specific error patterns - order matters!
+        # Check stack overflow before general segfault
+        if "stack overflow" in message or error_type == "stackoverflow":
+            return "cpp_stack_overflow"
+        elif (
+            error_type == "segmentationfault"
+            or signal == "sigsegv"
+            or "segmentation fault" in message
+        ):
+            return "cpp_segmentation_fault"
+        elif "undefined reference" in message:
+            return "cpp_undefined_reference"
+        elif "memory leak" in message:
+            return "cpp_memory_leak"
+        elif error_type == "templateinstantiationerror" or (
+            "template" in message and ("instantiation" in message or "error" in message)
+        ):
+            return "cpp_template_error"
+        elif "race condition" in message or "data race" in message:
+            return "cpp_race_condition"
+        elif "double free" in message or "double delete" in message:
+            return "cpp_double_free"
+        elif "use after free" in message or "heap-use-after-free" in message:
+            return "cpp_use_after_free"
+        elif "valgrind" in message and "invalid read" in message:
+            return "cpp_memory_error"
+        elif "format string" in message and "not a string literal" in message:
+            return "c_format_string_vulnerability"
+        elif "malloc" in message and ("failed" in message or "null" in message):
+            return "c_allocation_failure"
+        elif (
+            "string" in message and "null" in message and "terminat" in message
+        ) or "non-null-terminated" in message:
+            return "c_string_null_termination"
+        elif "kernel" in message:
+            if "null pointer" in message:
+                return "c_kernel_null_pointer"
+            else:
+                return "c_kernel_module_error"
+        elif (
+            any(stl in message for stl in ["std::", "vector", "map", "iterator"])
+            and "template" not in message
+        ):
+            return "cpp_stl_error"
+        elif "null pointer" in message or "nullptr" in message:
+            return "cpp_null_pointer"
+        elif "buffer overflow" in message or "buffer overrun" in message:
+            return "cpp_buffer_overflow"
+        elif "uninitialized" in message:
+            return "cpp_uninitialized_variable"
+        elif "deadlock" in message:
+            return "cpp_deadlock"
+        elif (
+            "dead code" in message
+            or "code will never be executed" in message
+            or "never read" in message
+        ):
+            return "clang_dead_code"
+        elif "macro" in message and "redefined" in message:
+            return "c_macro_redefinition"
+        elif (
+            "include guard" in message
+            or "header guard" in message
+            or ("header" in message and "guard" in message)
+        ):
+            return "cpp_missing_include_guard"
+        elif "circular" in message and (
+            "include" in message or "dependency" in message
+        ):
+            return "c_circular_include"
+        elif "cmake" in message:
+            return "cpp_cmake_error"
+        elif "makefile" in message or "make:" in message:
+            return "cpp_makefile_error"
+
+        # Check analysis results for clues
+        primary_category = analysis.get("primary_category", "")
+        if primary_category == "memory":
+            return "cpp_memory_error"
+        elif primary_category == "compilation":
+            return "cpp_compilation_error"
+        elif primary_category == "linking":
+            return "cpp_linking_error"
+        elif primary_category == "runtime":
+            return "cpp_runtime_error"
+
+        return "cpp_unknown"
 
     def analyze_error(
         self,

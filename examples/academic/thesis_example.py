@@ -5,10 +5,16 @@ This example demonstrates how to use the academic module for thesis research
 on formal verification of self-healing systems.
 """
 
-from modules.academic import (AcademicFormalVerificationFramework,
-                              ProofAssistantInterface, PropertyType,
-                              ResearchFocus, ResearchModelChecker, SystemModel,
-                              ThesisVerificationTools, VerificationProperty)
+from modules.academic import (
+    AcademicFormalVerificationFramework,
+    ProofAssistantInterface,
+    PropertyType,
+    ResearchFocus,
+    ResearchModelChecker,
+    SystemModel,
+    ThesisVerificationTools,
+    VerificationProperty,
+)
 
 
 def create_distributed_healing_model():

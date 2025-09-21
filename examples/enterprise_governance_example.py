@@ -9,11 +9,17 @@ import json
 from datetime import datetime
 
 from modules.security.governance_framework import (
-    ComplianceFramework, EnterpriseGovernanceFramework, GovernanceCapability,
-    GovernanceConfig, HealingActionRequest)
-from modules.security.regulated_industries import (ComplianceRequirement,
-                                                   RegulatedIndustry,
-                                                   ValidationLevel)
+    ComplianceFramework,
+    EnterpriseGovernanceFramework,
+    GovernanceCapability,
+    GovernanceConfig,
+    HealingActionRequest,
+)
+from modules.security.regulated_industries import (
+    ComplianceRequirement,
+    RegulatedIndustry,
+    ValidationLevel,
+)
 
 
 def setup_enterprise_governance():

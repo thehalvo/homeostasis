@@ -59,7 +59,7 @@ class IoTPlugin(LanguagePlugin):
         error_message = error_data.get("message", "")
         code = error_data.get("code", "")
         file_path = error_data.get("file_path", "")
-        device_metrics = error_data.get("device_metrics")
+        device_metrics = error_data.get("device_metrics") or error_data.get("metrics")
 
         # Convert metrics if provided
         metrics = None
@@ -78,13 +78,23 @@ class IoTPlugin(LanguagePlugin):
         )
 
         if iot_error:
-            return {
+            result = {
                 "error_type": iot_error.error_type.value,
                 "platform": iot_error.platform.value,
                 "description": iot_error.description,
                 "suggested_fix": iot_error.suggested_fix,
                 "severity": iot_error.severity,
             }
+
+            # Add resource usage info if metrics were provided
+            if metrics:
+                result["resource_usage"] = {
+                    "cpu": metrics.cpu_usage,
+                    "memory": metrics.memory_usage,
+                    "temperature": metrics.temperature,
+                }
+
+            return result
 
         return {"error_type": "unknown", "description": "Could not analyze IoT error"}
 

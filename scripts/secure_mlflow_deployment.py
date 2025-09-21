@@ -29,6 +29,7 @@ def check_mlflow_installation():
     """Check if MLflow is installed and get version."""
     try:
         import mlflow
+
         version = mlflow.__version__
         logger.info(f"MLflow version {version} detected")
         return version

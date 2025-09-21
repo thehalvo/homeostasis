@@ -460,7 +460,9 @@ class TestSwiftPluginIntegration(unittest.TestCase):
         self.assertEqual(analysis["confidence"], "high")
 
         # Generate fix
-        error_data["source_code"] = """struct ContentView: View {
+        error_data[
+            "source_code"
+        ] = """struct ContentView: View {
     var body: some View {
         Text(user!.name)  // Line 67
     }

@@ -16,6 +16,7 @@ sys.path.insert(0, str(project_root))
 
 from modules.analysis.rule_cli import create_parser as create_rule_parser
 from modules.analysis.rule_cli import main as rule_main
+
 # Import CLI modules
 from modules.llm_integration.llm_cli import create_llm_cli_parser
 from modules.llm_integration.llm_cli import main as llm_main
@@ -230,10 +231,13 @@ def create_main_parser() -> argparse.ArgumentParser:
 
 def handle_llm_commands(args: argparse.Namespace) -> None:
     """Handle LLM module commands."""
-    from modules.llm_integration.llm_cli import (cmd_list_keys, cmd_remove_key,
-                                                 cmd_set_key,
-                                                 cmd_test_providers,
-                                                 cmd_validate_key)
+    from modules.llm_integration.llm_cli import (
+        cmd_list_keys,
+        cmd_remove_key,
+        cmd_set_key,
+        cmd_test_providers,
+        cmd_validate_key,
+    )
 
     if args.llm_command == "set-key":
         cmd_set_key(args)
@@ -300,8 +304,7 @@ def handle_dev_commands(args: argparse.Namespace) -> None:
     from datetime import datetime
 
     if args.dev_command == "simulate":
-        from modules.developer_tools.sandbox import (HealingSimulator,
-                                                     SimulationConfig)
+        from modules.developer_tools.sandbox import HealingSimulator, SimulationConfig
 
         # Prepare simulation config
         config = SimulationConfig(
@@ -338,8 +341,9 @@ def handle_dev_commands(args: argparse.Namespace) -> None:
                         print(f"  {log}")
 
     elif args.dev_command == "effectiveness":
-        from modules.developer_tools.effectiveness_calculator import \
-            EffectivenessCalculator
+        from modules.developer_tools.effectiveness_calculator import (
+            EffectivenessCalculator,
+        )
 
         calculator = EffectivenessCalculator()
 
@@ -368,8 +372,7 @@ def handle_dev_commands(args: argparse.Namespace) -> None:
             print(output)
 
     elif args.dev_command == "validate":
-        from modules.developer_tools.template_validator import \
-            TemplateValidator
+        from modules.developer_tools.template_validator import TemplateValidator
 
         validator = TemplateValidator()
 

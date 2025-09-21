@@ -16,8 +16,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 # USHS imports (these would be provided by the host system)
 from ushs_core import PluginContext, PluginInput, PluginOutput, USHSPlugin
-from ushs_core.analysis import (AnalysisResult, CodeContext, FixSuggestion,
-                                Pattern)
+from ushs_core.analysis import AnalysisResult, CodeContext, FixSuggestion, Pattern
 
 logger = logging.getLogger(__name__)
 

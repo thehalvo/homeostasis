@@ -8,10 +8,16 @@ and manage a complete university course.
 import json
 from datetime import datetime, timedelta
 
-from modules.academic import (AcademicAssessment, AssessmentType, CourseModule,
-                              EducationLevel, LearningObjective,
-                              SelfHealingCurriculum, create_workshop_materials,
-                              generate_interactive_exercise)
+from modules.academic import (
+    AcademicAssessment,
+    AssessmentType,
+    CourseModule,
+    EducationLevel,
+    LearningObjective,
+    SelfHealingCurriculum,
+    create_workshop_materials,
+    generate_interactive_exercise,
+)
 
 
 def create_custom_course():

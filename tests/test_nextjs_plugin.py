@@ -138,21 +138,24 @@ class TestNextjsPlugin(unittest.TestCase):
         """Test fix generation for Next.js errors."""
         # Data fetching error
         analysis = self.plugin.analyze_error(self.getserversideprops_error)
-        fix = self.plugin.generate_fix(self.getserversideprops_error, analysis)
+        context = {"error_data": self.getserversideprops_error, "source_code": ""}
+        fix = self.plugin.generate_fix(analysis, context)
 
         self.assertIsNotNone(fix)
         self.assertIn("props", str(fix))
 
         # API route error
         analysis = self.plugin.analyze_error(self.api_route_error)
-        fix = self.plugin.generate_fix(self.api_route_error, analysis)
+        context = {"error_data": self.api_route_error, "source_code": ""}
+        fix = self.plugin.generate_fix(analysis, context)
 
         self.assertIsNotNone(fix)
         self.assertIn("res.status", str(fix))
 
         # App router error
         analysis = self.plugin.analyze_error(self.app_router_error)
-        fix = self.plugin.generate_fix(self.app_router_error, analysis)
+        context = {"error_data": self.app_router_error, "source_code": ""}
+        fix = self.plugin.generate_fix(analysis, context)
 
         self.assertIsNotNone(fix)
         self.assertIn("children", str(fix))

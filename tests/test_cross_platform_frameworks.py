@@ -107,7 +107,7 @@ class TestReactNativePlugin(unittest.TestCase):
             "category": "react_native",
         }
 
-        fix = self.plugin.generate_fix(error_data, analysis, "")
+        fix = self.plugin.generate_fix(analysis, {"source_code": ""})
 
         self.assertIsNotNone(fix)
         self.assertIn("link", str(fix).lower())
@@ -191,7 +191,7 @@ class TestFlutterPlugin(unittest.TestCase):
 
         analysis = {"root_cause": "flutter_widget_overflow", "category": "flutter"}
 
-        fix = self.plugin.generate_fix(error_data, analysis, "")
+        fix = self.plugin.generate_fix(analysis, {"source_code": ""})
 
         self.assertIsNotNone(fix)
         self.assertIn("expanded", str(fix).lower())
@@ -276,7 +276,7 @@ class TestXamarinPlugin(unittest.TestCase):
             "category": "xamarin",
         }
 
-        fix = self.plugin.generate_fix(error_data, analysis, "")
+        fix = self.plugin.generate_fix(analysis, {"source_code": ""})
 
         self.assertIsNotNone(fix)
         self.assertIn("dependency", str(fix).lower())
@@ -381,7 +381,7 @@ class TestUnityPlugin(unittest.TestCase):
 
         analysis = {"root_cause": "unity_null_reference_error", "category": "unity"}
 
-        fix = self.plugin.generate_fix(error_data, analysis, "")
+        fix = self.plugin.generate_fix(analysis, {"source_code": ""})
 
         self.assertIsNotNone(fix)
         self.assertIn("null", str(fix).lower())
@@ -495,7 +495,7 @@ class TestCapacitorCordovaPlugin(unittest.TestCase):
             "category": "capacitor_cordova",
         }
 
-        fix = self.plugin.generate_fix(error_data, analysis, "")
+        fix = self.plugin.generate_fix(analysis, {"source_code": ""})
 
         self.assertIsNotNone(fix)
         self.assertIn("install", str(fix).lower())
@@ -603,13 +603,13 @@ class TestCrossPlatformIntegration(unittest.TestCase):
 
         for plugin in self.plugins:
             # Test with empty source code
-            fix = plugin.generate_fix(test_error, test_analysis, "")
+            fix = plugin.generate_fix(test_analysis, {"source_code": ""})
             # Should either return a fix or None, not raise an exception
             self.assertTrue(fix is None or isinstance(fix, dict))
 
             # Test with malformed analysis
             malformed_analysis = {"invalid": "data"}
-            fix = plugin.generate_fix(test_error, malformed_analysis, "test code")
+            fix = plugin.generate_fix(malformed_analysis, {"source_code": "test code"})
             self.assertTrue(fix is None or isinstance(fix, dict))
 
     def test_plugin_language_info(self):
@@ -662,7 +662,7 @@ class TestCrossPlatformErrorScenarios(unittest.TestCase):
         }
 
         analysis = self.rn_plugin.analyze_error(error_data)
-        fix = self.rn_plugin.generate_fix(error_data, analysis, "")
+        fix = self.rn_plugin.generate_fix(analysis, {"source_code": ""})
 
         self.assertEqual(analysis["category"], "react_native")
         self.assertIsNotNone(fix)
@@ -679,7 +679,7 @@ class TestCrossPlatformErrorScenarios(unittest.TestCase):
         }
 
         analysis = self.flutter_plugin.analyze_error(error_data)
-        fix = self.flutter_plugin.generate_fix(error_data, analysis, "")
+        fix = self.flutter_plugin.generate_fix(analysis, {"source_code": ""})
 
         self.assertEqual(analysis["category"], "flutter")
         self.assertIsNotNone(fix)
@@ -695,7 +695,9 @@ class TestCrossPlatformErrorScenarios(unittest.TestCase):
         }
 
         analysis = self.xamarin_plugin.analyze_error(error_data)
-        fix = self.xamarin_plugin.generate_fix(error_data, analysis, "")
+        fix = self.xamarin_plugin.generate_fix(
+            analysis, {"source_code": "", "error_data": error_data}
+        )
 
         self.assertEqual(analysis["category"], "xamarin")
         self.assertIsNotNone(fix)
@@ -710,7 +712,7 @@ class TestCrossPlatformErrorScenarios(unittest.TestCase):
         }
 
         analysis = self.unity_plugin.analyze_error(error_data)
-        fix = self.unity_plugin.generate_fix(error_data, analysis, "")
+        fix = self.unity_plugin.generate_fix(analysis, {"source_code": ""})
 
         self.assertEqual(analysis["category"], "unity")
         self.assertIsNotNone(fix)
@@ -726,7 +728,7 @@ class TestCrossPlatformErrorScenarios(unittest.TestCase):
         }
 
         analysis = self.capacitor_plugin.analyze_error(error_data)
-        fix = self.capacitor_plugin.generate_fix(error_data, analysis, "")
+        fix = self.capacitor_plugin.generate_fix(analysis, {"source_code": ""})
 
         self.assertEqual(analysis["category"], "capacitor_cordova")
         self.assertIsNotNone(fix)

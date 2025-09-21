@@ -28,23 +28,26 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from modules.deployment.canary import CanaryStatus, get_canary_deployment
-from modules.llm_integration.api_key_manager import (APIKeyManager,
-                                                     KeyValidationError)
-from modules.monitoring.cost_tracker import (Budget, BudgetPeriod, CostTracker,
-                                             default_alert_callback)
-from modules.monitoring.llm_metrics import (AlertConfig, LLMMetricsCollector,
-                                            UsageQuota)
+from modules.llm_integration.api_key_manager import APIKeyManager, KeyValidationError
+from modules.monitoring.cost_tracker import (
+    Budget,
+    BudgetPeriod,
+    CostTracker,
+    default_alert_callback,
+)
+from modules.monitoring.llm_metrics import AlertConfig, LLMMetricsCollector, UsageQuota
+
 # Import Homeostasis modules
 from modules.monitoring.metrics_collector import MetricsCollector
-from modules.monitoring.security_guardrails import (SecurityGuardrails,
-                                                    SecurityLevel)
-from modules.security.api_security import (get_api_security_manager,
-                                           secure_endpoint)
+from modules.monitoring.security_guardrails import SecurityGuardrails, SecurityLevel
+from modules.security.api_security import get_api_security_manager, secure_endpoint
 from modules.security.auth import authenticate, get_auth_manager
 from modules.security.rbac import get_rbac_manager, has_permission
 from modules.suggestion.diff_viewer import create_diff as generate_diff
-from modules.suggestion.suggestion_manager import (SuggestionStatus,
-                                                   get_suggestion_manager)
+from modules.suggestion.suggestion_manager import (
+    SuggestionStatus,
+    get_suggestion_manager,
+)
 
 # Initialize Flask app
 app = Flask(__name__, static_folder="static", template_folder="templates")

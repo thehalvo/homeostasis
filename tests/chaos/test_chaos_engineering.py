@@ -673,9 +673,7 @@ class TestChaosEngineering:
             target_environment="testing",
         )
 
-        # Add experiment to the engine for tracking
-        self.experiment_engine.add_experiment(experiment)
-
+        # Experiment is used for context but the test simulates degradation manually
         latency_samples = []
         degradation_detected = False
         detection_time = None

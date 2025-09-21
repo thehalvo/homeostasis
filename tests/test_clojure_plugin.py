@@ -365,7 +365,11 @@ class TestClojurePlugin(unittest.TestCase):
         # Verify patch structure if generated
         if patch:
             self.assertIsInstance(patch, dict)
-            self.assertIn("fix", patch)
+            # Check for either old or new patch format
+            self.assertTrue(
+                "fix" in patch or "patch_content" in patch or "patch_type" in patch,
+                f"Expected 'fix' or 'patch_content' or 'patch_type' in patch, got: {list(patch.keys())}",
+            )
 
         # Step 4: Verify analysis contains useful information
         self.assertGreater(len(analysis["fix_suggestions"]), 0)

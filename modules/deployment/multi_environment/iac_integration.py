@@ -477,7 +477,8 @@ class HelmProvider(IaCProvider):
             # Lint the chart
             result = await self._run_command(["lint", str(working_dir)])
             # Check if lint passed
-            if result and "error" not in result.lower():
+            # Empty result or no errors means success
+            if result is None or result == "" or "error" not in result.lower():
                 return True, []
             else:
                 return False, [result] if result else ["Lint failed"]

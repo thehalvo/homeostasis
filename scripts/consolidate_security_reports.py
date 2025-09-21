@@ -127,7 +127,11 @@ class SecurityReportConsolidator:
                             "category": "iac",
                             "title": check.get("check_name", ""),
                             "file": check.get("file_path", ""),
-                            "line": check.get("file_line_range", [0])[0] if check.get("file_line_range") else 0,
+                            "line": (
+                                check.get("file_line_range", [0])[0]
+                                if check.get("file_line_range")
+                                else 0
+                            ),
                             "resource": check.get("resource", ""),
                             "guideline": check.get("guideline", ""),
                         }
@@ -142,7 +146,11 @@ class SecurityReportConsolidator:
                 "category": "iac",
                 "title": item.get("check_name", ""),
                 "file": item.get("file_path", ""),
-                "line": item.get("file_line_range", [0])[0] if item.get("file_line_range") else 0,
+                "line": (
+                    item.get("file_line_range", [0])[0]
+                    if item.get("file_line_range")
+                    else 0
+                ),
                 "resource": item.get("resource", ""),
                 "guideline": item.get("guideline", ""),
             }

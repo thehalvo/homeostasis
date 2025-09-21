@@ -1797,6 +1797,17 @@ class RegulatedIndustriesSupport:
         self, industry: RegulatedIndustry, requirements: List[ComplianceRequirement]
     ):
         """Configure compliance controls for industry."""
+        # Map industries to compliance frameworks
+        industry_framework_map = {
+            RegulatedIndustry.HEALTHCARE: ComplianceFramework.HIPAA,
+            RegulatedIndustry.FINANCIAL_SERVICES: ComplianceFramework.SOX,
+            RegulatedIndustry.GOVERNMENT_DEFENSE: ComplianceFramework.NIST,
+            RegulatedIndustry.PHARMACEUTICAL: ComplianceFramework.CUSTOM,
+            RegulatedIndustry.TELECOM_UTILITIES: ComplianceFramework.CUSTOM,
+        }
+
+        framework = industry_framework_map.get(industry, ComplianceFramework.CUSTOM)
+
         # Get industry controls from storage
         controls = self._get_industry_controls(industry)
 
@@ -1807,7 +1818,7 @@ class RegulatedIndustriesSupport:
                 # Add control to compliance reporting system
                 compliance_control = ComplianceControl(
                     control_id=control["control_id"],
-                    framework=ComplianceFramework[industry.value.upper()],
+                    framework=framework,
                     title=control.get("title", ""),
                     description=control.get("description", ""),
                     category=control.get("category", ""),

@@ -143,6 +143,17 @@ class BlockchainPlugin(LanguagePlugin):
                     "Validate inputs before processing",
                 ],
             }
+        elif error_type == "gas_estimation_error":
+            return {
+                "type": "gas_estimation",
+                "description": "Fix gas estimation issues",
+                "suggestions": [
+                    "Increase gas limit for transaction",
+                    "Use estimateGas() before sending transaction",
+                    "Consider dynamic gas pricing",
+                    "Check for infinite loops or excessive computation",
+                ],
+            }
 
         return {
             "type": "suggestion",

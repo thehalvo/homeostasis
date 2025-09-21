@@ -9,10 +9,12 @@ pharmaceutical, and telecommunications sectors.
 import json
 from datetime import datetime
 
-from modules.security.regulated_industries import (ComplianceRequirement,
-                                                   RegulatedIndustry,
-                                                   ValidationLevel,
-                                                   get_regulated_industries)
+from modules.security.regulated_industries import (
+    ComplianceRequirement,
+    RegulatedIndustry,
+    ValidationLevel,
+    get_regulated_industries,
+)
 
 
 def setup_healthcare_compliance():

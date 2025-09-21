@@ -12,8 +12,12 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import requests
 
-from dashboard.api.errors import (APIError, AuthenticationError,
-                                  ConnectionError, NotFoundError)
+from dashboard.api.errors import (
+    APIError,
+    AuthenticationError,
+    ConnectionError,
+    NotFoundError,
+)
 
 logger = logging.getLogger(__name__)
 

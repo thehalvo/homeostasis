@@ -229,7 +229,7 @@ class TestSelfTrainingIntegration:
         time.sleep(0.02)  # Wait for monitoring duration
 
         health_checker = Mock()
-        health_checker.check_health = Mock(
+        health_checker.run_checks = Mock(
             return_value={
                 "status": "healthy",
                 "cpu_usage": 45,

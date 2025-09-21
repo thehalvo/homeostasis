@@ -323,7 +323,9 @@ class TestReactIntegration(unittest.TestCase):
         self.assertIn("hook", analysis["subcategory"])
 
         # Test fix generation with source code
-        error_data["source_code"] = """
+        error_data[
+            "source_code"
+        ] = """
 function MyComponent() {
     if (condition) {
         const [state, setState] = useState(0);
@@ -352,7 +354,9 @@ function MyComponent() {
         self.assertEqual(analysis["plugin"], "react")
         self.assertIn("hook", analysis["subcategory"])
 
-        error_data["source_code"] = """
+        error_data[
+            "source_code"
+        ] = """
 function Counter() {
     const [count, setCount] = useState(0);
 

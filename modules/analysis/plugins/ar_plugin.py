@@ -68,6 +68,39 @@ class ARPlugin(LanguagePlugin):
         error_message = error_data.get("message", "")
         code = error_data.get("code", "")
         file_path = error_data.get("file_path", "")
+        metrics = error_data.get("metrics", {})
+
+        # Check if this is a performance issue based on metrics
+        if metrics:
+            fps = metrics.get("fps", 60)
+            cpu_usage = metrics.get("cpu_usage", 0)
+            gpu_usage = metrics.get("gpu_usage", 0)
+            thermal_state = metrics.get("thermal_state", "nominal")
+
+            if (
+                fps < 30
+                or cpu_usage > 0.85
+                or gpu_usage > 0.85
+                or thermal_state == "serious"
+            ):
+                return {
+                    "error_type": "performance_degradation",
+                    "platform": "arkit",
+                    "description": "Performance degradation detected",
+                    "suggested_fix": "Reduce scene complexity or optimize rendering",
+                    "severity": "critical" if fps < 15 else "high",
+                    "confidence": 0.9,
+                    "healing_strategies": [
+                        {
+                            "name": "optimize_rendering",
+                            "description": "Optimize rendering pipeline",
+                        },
+                        {
+                            "name": "reduce_complexity",
+                            "description": "Reduce scene complexity",
+                        },
+                    ],
+                }
 
         ar_error = self.resilience_manager.analyze_ar_error(
             error_message, code, file_path
