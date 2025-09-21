@@ -82,7 +82,7 @@ def mock_config(mock_repositories):
 @pytest.fixture
 def integration(mock_config):
     """Create IaC integration instance for testing"""
-    with patch("modules.deployment.multi_environment.iac_integration.SecurityAuditor"):
+    with patch("modules.deployment.multi_environment.iac_integration.AuditLogger"):
         with patch(
             "modules.deployment.multi_environment.iac_integration.DistributedMonitor"
         ):

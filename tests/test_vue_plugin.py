@@ -395,9 +395,9 @@ class TestVuePluginIntegration(unittest.TestCase):
         error_data = {"error_type": "ReferenceError", "message": "ref is not defined"}
 
         analysis = self.plugin.analyze_error(error_data)
-        source_code = "export default { setup() { const count = ref(0) } }"
+        error_data["source_code"] = "export default { setup() { const count = ref(0) } }"
 
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        fix = self.plugin.generate_fix(error_data, analysis)
 
         self.assertIsNotNone(fix)
         if fix:  # Only test if fix was generated

@@ -276,7 +276,6 @@ class DeepErrorClassifier(nn.Module):
         # Use specific revision for security and reproducibility
         self.encoder = AutoModel.from_pretrained(
             "microsoft/codebert-base",
-            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30",
         )
 
         # Freeze lower layers to prevent overfitting
@@ -362,7 +361,6 @@ class HierarchicalErrorClassifier(nn.Module):
         # Use specific revision for security and reproducibility
         self.encoder = AutoModel.from_pretrained(
             "microsoft/codebert-base",
-            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30",
         )
 
         # Coarse-grained classifier
@@ -431,7 +429,6 @@ class ErrorPatternRecognizer:
         # Use specific revision for security and reproducibility
         self.tokenizer = AutoTokenizer.from_pretrained(
             "microsoft/codebert-base",
-            revision="1b2e0bfe5003709471fb6e04c0943470cf4a5b30",
         )
         self.model = None
         self.label_encoder = None

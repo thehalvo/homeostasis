@@ -138,33 +138,21 @@ class TestNextjsPlugin(unittest.TestCase):
         """Test fix generation for Next.js errors."""
         # Data fetching error
         analysis = self.plugin.analyze_error(self.getserversideprops_error)
-        fix = self.plugin.generate_fix(
-            self.getserversideprops_error,
-            analysis,
-            "export function getServerSideProps() { return data; }",
-        )
+        fix = self.plugin.generate_fix(self.getserversideprops_error, analysis)
 
         self.assertIsNotNone(fix)
         self.assertIn("props", str(fix))
 
         # API route error
         analysis = self.plugin.analyze_error(self.api_route_error)
-        fix = self.plugin.generate_fix(
-            self.api_route_error,
-            analysis,
-            "export default function handler(req, res) { const data = process(req.body); }",
-        )
+        fix = self.plugin.generate_fix(self.api_route_error, analysis)
 
         self.assertIsNotNone(fix)
         self.assertIn("res.status", str(fix))
 
         # App router error
         analysis = self.plugin.analyze_error(self.app_router_error)
-        fix = self.plugin.generate_fix(
-            self.app_router_error,
-            analysis,
-            "'use client'\nimport ServerComponent from '../ServerComponent';",
-        )
+        fix = self.plugin.generate_fix(self.app_router_error, analysis)
 
         self.assertIsNotNone(fix)
         self.assertIn("children", str(fix))

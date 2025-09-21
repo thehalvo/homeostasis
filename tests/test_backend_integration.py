@@ -191,10 +191,26 @@ class TestBackendLanguageIntegration:
 
                 # Check expected analysis fields if provided
                 for key, expected_value in case.expected_analysis.items():
-                    assert key in analysis, f"Missing expected field {key} in analysis"
-                    assert (
-                        analysis[key] == expected_value
-                    ), f"Expected {key}={expected_value}, got {analysis[key]}"
+                    # Handle confidence vs confidence_score field name difference
+                    if key == "confidence" and "confidence_score" in analysis:
+                        # Convert numeric confidence_score to string confidence
+                        score = analysis["confidence_score"]
+                        if score >= 0.8:
+                            actual_confidence = "high"
+                        elif score >= 0.5:
+                            actual_confidence = "medium"
+                        else:
+                            actual_confidence = "low"
+                        assert (
+                            actual_confidence == expected_value
+                        ), f"Expected confidence={expected_value}, got {actual_confidence} (score={score})"
+                    else:
+                        assert (
+                            key in analysis
+                        ), f"Missing expected field {key} in analysis"
+                        assert (
+                            analysis[key] == expected_value
+                        ), f"Expected {key}={expected_value}, got {analysis[key]}"
 
     def test_cross_language_conversion(self, test_suite):
         """Test converting errors between languages."""

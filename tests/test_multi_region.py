@@ -167,7 +167,7 @@ def mock_config(mock_regions, mock_policies):
 def strategy(mock_config):
     """Create strategy instance for testing"""
     with patch("modules.deployment.multi_environment.multi_region.DistributedMonitor"):
-        with patch("modules.deployment.multi_environment.multi_region.SecurityAuditor"):
+        with patch("modules.deployment.multi_environment.multi_region.AuditLogger"):
             return MultiRegionResilienceStrategy(mock_config)
 
 
@@ -274,7 +274,7 @@ async def test_failover_orchestrator_active_passive():
         geo_restrictions=None,
     )
 
-    with patch("modules.deployment.multi_environment.multi_region.SecurityAuditor"):
+    with patch("modules.deployment.multi_environment.multi_region.AuditLogger"):
         orchestrator = FailoverOrchestrator(regions, policy)
 
         # Mock methods
@@ -318,7 +318,7 @@ async def test_failover_pre_checks():
         geo_restrictions=["region1"],
     )
 
-    with patch("modules.deployment.multi_environment.multi_region.SecurityAuditor"):
+    with patch("modules.deployment.multi_environment.multi_region.AuditLogger"):
         orchestrator = FailoverOrchestrator(regions, policy)
 
         # Test failover to unhealthy region
@@ -583,7 +583,7 @@ async def test_auto_failback():
         geo_restrictions=None,
     )
 
-    with patch("modules.deployment.multi_environment.multi_region.SecurityAuditor"):
+    with patch("modules.deployment.multi_environment.multi_region.AuditLogger"):
         orchestrator = FailoverOrchestrator(regions, policy)
         orchestrator.primary_region = "region2"
         orchestrator.active_regions = {"region2"}

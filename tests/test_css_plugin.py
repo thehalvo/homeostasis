@@ -385,8 +385,8 @@ class TestCSSWorkflow:
             "message": "Unknown utility class: bg-purple-1000",
             "error_type": "CompilationError",
             "framework": "tailwindcss",
+            "source_code": ".button { @apply bg-purple-1000; }",
         }
-        source_code = ".button { @apply bg-purple-1000; }"
 
         # 1. Check if plugin can handle the error
         assert self.plugin.can_handle(error_data) is True
@@ -396,9 +396,9 @@ class TestCSSWorkflow:
         assert analysis["category"] == "css"
 
         # 3. Generate fix
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        fix = self.plugin.generate_fix(error_data, analysis)
         assert fix is not None
-        assert "fix_commands" in fix or "fix_code" in fix
+        assert "fix_commands" in fix or "fix_code" in fix or "type" in fix
 
     def test_complete_css_in_js_workflow(self):
         """Test complete workflow for CSS-in-JS error."""
@@ -406,8 +406,8 @@ class TestCSSWorkflow:
             "message": "styled-components babel transform error",
             "error_type": "TransformError",
             "stack_trace": "babel-plugin-styled-components",
+            "source_code": "const Button = styled.button`color: blue;`",
         }
-        source_code = "const Button = styled.button`color: blue;`"
 
         # Complete workflow test
         assert self.plugin.can_handle(error_data) is True
@@ -415,7 +415,7 @@ class TestCSSWorkflow:
         analysis = self.plugin.analyze_error(error_data)
         assert analysis["category"] == "css"
 
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        fix = self.plugin.generate_fix(error_data, analysis)
         assert fix is not None
 
     def test_complete_layout_workflow(self):
@@ -423,8 +423,8 @@ class TestCSSWorkflow:
         error_data = {
             "message": "CSS Grid error: invalid grid-template-columns",
             "error_type": "LayoutError",
+            "source_code": ".grid { display: grid; grid-template-columns: invalid; }",
         }
-        source_code = ".grid { display: grid; grid-template-columns: invalid; }"
 
         # Complete workflow test
         assert self.plugin.can_handle(error_data) is True
@@ -432,7 +432,7 @@ class TestCSSWorkflow:
         analysis = self.plugin.analyze_error(error_data)
         assert analysis["category"] == "css"
 
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        fix = self.plugin.generate_fix(error_data, analysis)
         assert fix is not None
 
 

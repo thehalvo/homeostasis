@@ -146,41 +146,41 @@ jobs:
       if: always()
       run: |
         # Parse and analyze chaos test results
-        python -c "
-import json
-import xml.etree.ElementTree as ET
-import sys
+        python <<EOF
+        import json
+        import xml.etree.ElementTree as ET
+        import sys
 
-# Parse JUnit XML results
-try:
-    tree = ET.parse('chaos-test-results.xml')
-    root = tree.getroot()
-    
-    total_tests = int(root.attrib.get('tests', 0))
-    failures = int(root.attrib.get('failures', 0))
-    errors = int(root.attrib.get('errors', 0))
-    skipped = int(root.attrib.get('skipped', 0))
-    
-    success_rate = ((total_tests - failures - errors) / total_tests * 100) if total_tests > 0 else 0
-    
-    print(f'Chaos Test Summary:')
-    print(f'  Total Tests: {total_tests}')
-    print(f'  Passed: {total_tests - failures - errors - skipped}')
-    print(f'  Failed: {failures}')
-    print(f'  Errors: {errors}')
-    print(f'  Skipped: {skipped}')
-    print(f'  Success Rate: {success_rate:.1f}%')
-    
-    # Set exit code based on results
-    if success_rate < 80:
-        print('\nChaos tests show system resilience below threshold!')
-        sys.exit(1)
-    else:
-        print('\nSystem demonstrated acceptable resilience to chaos.')
-        
-except Exception as e:
-    print(f'Error analyzing results: {e}')
-        "
+        # Parse JUnit XML results
+        try:
+            tree = ET.parse('chaos-test-results.xml')
+            root = tree.getroot()
+
+            total_tests = int(root.attrib.get('tests', 0))
+            failures = int(root.attrib.get('failures', 0))
+            errors = int(root.attrib.get('errors', 0))
+            skipped = int(root.attrib.get('skipped', 0))
+
+            success_rate = ((total_tests - failures - errors) / total_tests * 100) if total_tests > 0 else 0
+
+            print(f'Chaos Test Summary:')
+            print(f'  Total Tests: {total_tests}')
+            print(f'  Passed: {total_tests - failures - errors - skipped}')
+            print(f'  Failed: {failures}')
+            print(f'  Errors: {errors}')
+            print(f'  Skipped: {skipped}')
+            print(f'  Success Rate: {success_rate:.1f}%')
+
+            # Set exit code based on results
+            if success_rate < 80:
+                print('\nChaos tests show system resilience below threshold!')
+                sys.exit(1)
+            else:
+                print('\nSystem demonstrated acceptable resilience to chaos.')
+
+        except Exception as e:
+            print(f'Error analyzing results: {e}')
+        EOF
     
     - name: Upload chaos test results
       if: always()
@@ -258,42 +258,42 @@ except Exception as e:
     - name: Analyze chaos test trends
       run: |
         # Analyze trends across Python versions and generate summary
-        python -c "
-import os
-import json
-import xml.etree.ElementTree as ET
-from pathlib import Path
+        python <<EOF
+        import os
+        import json
+        import xml.etree.ElementTree as ET
+        from pathlib import Path
 
-results = []
+        results = []
 
-# Parse all test results
-for artifact_dir in Path('.').glob('chaos-test-results-*'):
-    xml_file = artifact_dir / 'chaos-test-results.xml'
-    if xml_file.exists():
-        tree = ET.parse(xml_file)
-        root = tree.getroot()
-        
-        version = artifact_dir.name.split('-')[-1]
-        results.append({
-            'python_version': version,
-            'total': int(root.attrib.get('tests', 0)),
-            'failures': int(root.attrib.get('failures', 0)),
-            'errors': int(root.attrib.get('errors', 0))
-        })
+        # Parse all test results
+        for artifact_dir in Path('.').glob('chaos-test-results-*'):
+            xml_file = artifact_dir / 'chaos-test-results.xml'
+            if xml_file.exists():
+                tree = ET.parse(xml_file)
+                root = tree.getroot()
 
-# Generate summary
-if results:
-    print('## Chaos Engineering Test Summary Across Python Versions\n')
-    print('| Python | Total | Passed | Failed | Success Rate |')
-    print('|--------|-------|--------|--------|--------------|')
-    
-    for r in sorted(results, key=lambda x: x['python_version']):
-        total = r['total']
-        failed = r['failures'] + r['errors']
-        passed = total - failed
-        rate = (passed / total * 100) if total > 0 else 0
-        print(f\"| {r['python_version']} | {total} | {passed} | {failed} | {rate:.1f}% |\")
-        "
+                version = artifact_dir.name.split('-')[-1]
+                results.append({
+                    'python_version': version,
+                    'total': int(root.attrib.get('tests', 0)),
+                    'failures': int(root.attrib.get('failures', 0)),
+                    'errors': int(root.attrib.get('errors', 0))
+                })
+
+        # Generate summary
+        if results:
+            print('## Chaos Engineering Test Summary Across Python Versions\n')
+            print('| Python | Total | Passed | Failed | Success Rate |')
+            print('|--------|-------|--------|--------|--------------|')
+
+            for r in sorted(results, key=lambda x: x['python_version']):
+                total = r['total']
+                failed = r['failures'] + r['errors']
+                passed = total - failed
+                rate = (passed / total * 100) if total > 0 else 0
+                print(f"| {r['python_version']} | {total} | {passed} | {failed} | {rate:.1f}% |")
+        EOF
     
     - name: Post summary to PR
       if: github.event_name == 'pull_request'

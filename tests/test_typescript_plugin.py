@@ -474,9 +474,9 @@ class TestTypeScriptLanguagePlugin(unittest.TestCase):
             "root_cause": "typescript_type_error_ts2304",
             "error_code": "TS2304",
         }
-        source_code = "const element = <div>Hello</div>;"
+        error_data["source_code"] = "const element = <div>Hello</div>;"
 
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        fix = self.plugin.generate_fix(error_data, analysis)
 
         self.assertIsNotNone(fix)
         self.assertIn("type", fix)
@@ -526,8 +526,8 @@ class TestTypeScriptIntegration(unittest.TestCase):
         self.assertIn("type", analysis["subcategory"])
 
         # Step 4: Generate fix
-        source_code = "import React from 'react';\nconst App = () => <div>Hello</div>;"
-        fix = self.plugin.generate_fix(normalized, analysis, source_code)
+        normalized["source_code"] = "import React from 'react';\nconst App = () => <div>Hello</div>;"
+        fix = self.plugin.generate_fix(normalized, analysis)
         self.assertIsNotNone(fix)
 
     def test_multiple_error_types(self):

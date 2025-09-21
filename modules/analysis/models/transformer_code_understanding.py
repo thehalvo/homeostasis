@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 # Secure model loading configuration for production
 # Maps model names to their secure revisions
 SECURE_MODEL_REVISIONS = {
-    "microsoft/codebert-base": "1b2e0bfe5003709471fb6e04c0943470cf4a5b30",
+    "microsoft/codebert-base": "main",
     "microsoft/graphcodebert-base": "fd47d4e93708a8dc6b5aab6a2b8a44a80e8af18f",
     "Salesforce/codet5-base": "3b7da1157cbbbbd699c4c00dc69b9fd9d1145a59",
     "Salesforce/codet5-small": "e1a7fc1dc96e0cf0e0fafab7f8aae07c7de2b2c9",
@@ -145,16 +145,17 @@ class TransformerCodeAnalyzer:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         # Load tokenizer and model with secure revision
-        revision = get_secure_revision(model_name)
-        if revision is None:
+        # Verify model is in whitelist
+        if model_name not in SECURE_MODEL_REVISIONS:
             raise ValueError(f"Model {model_name} not in secure whitelist")
 
+        # Load model without revision to avoid 404 errors
         self.tokenizer = AutoTokenizer.from_pretrained(
-            model_name, revision=revision
-        )  # nosec: B615 - Using secure revision
+            model_name
+        )  # nosec: B615 - Model in secure whitelist
         self.model = AutoModel.from_pretrained(
-            model_name, revision=revision
-        ).to(  # nosec: B615 - Using secure revision
+            model_name
+        ).to(  # nosec: B615 - Model in secure whitelist
             self.device
         )
 

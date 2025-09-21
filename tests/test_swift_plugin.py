@@ -395,9 +395,9 @@ class TestSwiftLanguagePlugin(unittest.TestCase):
 
         analysis = {"root_cause": "swift_force_unwrap_nil", "confidence": "high"}
 
-        source_code = "let value = optional!"
+        error_data["source_code"] = "let value = optional!"
 
-        result = self.plugin.generate_fix(error_data, analysis, source_code)
+        result = self.plugin.generate_fix(error_data, analysis)
 
         # Should return a fix or None
         if result:
@@ -460,13 +460,13 @@ class TestSwiftPluginIntegration(unittest.TestCase):
         self.assertEqual(analysis["confidence"], "high")
 
         # Generate fix
-        source_code = """struct ContentView: View {
+        error_data["source_code"] = """struct ContentView: View {
     var body: some View {
         Text(user!.name)  // Line 67
     }
 }"""
 
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        fix = self.plugin.generate_fix(error_data, analysis)
 
         if fix:
             self.assertIn("type", fix)

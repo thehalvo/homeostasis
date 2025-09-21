@@ -408,23 +408,32 @@ class ModelSandbox:
         try:
             # Set resource limits
             if hasattr(resource, "RLIMIT_AS"):
-                resource.setrlimit(
-                    resource.RLIMIT_AS,
-                    (
-                        self.memory_limit_mb * 1024 * 1024,
-                        self.memory_limit_mb * 1024 * 1024,
-                    ),
-                )
+                try:
+                    # Get current limits
+                    soft_limit, hard_limit = resource.getrlimit(resource.RLIMIT_AS)
+                    new_limit = self.memory_limit_mb * 1024 * 1024
+                    # Only set if not exceeding hard limit
+                    if new_limit <= hard_limit or hard_limit == resource.RLIM_INFINITY:
+                        resource.setrlimit(
+                            resource.RLIMIT_AS,
+                            (new_limit, hard_limit),
+                        )
+                except (ValueError, OSError) as e:
+                    logger.warning(f"Could not set memory limit: {e}")
 
             # Set CPU limit (simplified - use cgroups in production)
             if hasattr(resource, "RLIMIT_CPU"):
-                resource.setrlimit(
-                    resource.RLIMIT_CPU,
-                    (
-                        int(self.timeout_seconds * self.cpu_limit),
-                        resource.RLIM_INFINITY,
-                    ),
-                )
+                try:
+                    soft_limit, hard_limit = resource.getrlimit(resource.RLIMIT_CPU)
+                    new_limit = int(self.timeout_seconds * self.cpu_limit)
+                    # Only set if not exceeding hard limit
+                    if new_limit <= hard_limit or hard_limit == resource.RLIM_INFINITY:
+                        resource.setrlimit(
+                            resource.RLIMIT_CPU,
+                            (new_limit, hard_limit),
+                        )
+                except (ValueError, OSError) as e:
+                    logger.warning(f"Could not set CPU limit: {e}")
 
             # Run in restricted environment
             with self.sandboxed_environment():

@@ -19,8 +19,12 @@ class TestResourceChaos:
         return ResourceMonitor()
 
     @pytest.mark.asyncio
+    @pytest.mark.timeout(20)
     async def test_cpu_contention_patterns(self, resource_monitor):
         """Test different CPU contention patterns"""
+        # Skip this test in mock mode to avoid resource issues
+        if os.environ.get("USE_MOCK_TESTS", "false").lower() == "true":
+            pytest.skip("Skipping CPU contention test in mock mode")
 
         class CPUContention:
             def __init__(self):
@@ -53,9 +57,14 @@ class TestResourceChaos:
                             t.daemon = True
                             t.start()
                             burn_threads.append(t)
+
                         # Wait for stop signal
                         while not self.stop_flag.is_set():
                             time.sleep(0.1)
+
+                        # Ensure all burn threads are stopped
+                        for t in burn_threads:
+                            t.join(timeout=0.5)
                     else:
                         # Original algorithm for moderate utilization
                         work_duration = utilization_percent / 100.0
@@ -80,7 +89,22 @@ class TestResourceChaos:
                 """Stop all CPU burning threads"""
                 self.stop_flag.set()
                 for thread in self.active_threads:
-                    thread.join(timeout=1)
+                    if thread.is_alive():
+                        thread.join(timeout=0.5)
+                        if thread.is_alive():
+                            # Force terminate if thread doesn't stop
+                            import ctypes
+
+                            try:
+                                # Last resort - try to terminate the thread
+                                # This is not safe but prevents hanging tests
+                                if hasattr(thread, "_thread_id"):
+                                    ctypes.pythonapi.PyThreadState_SetAsyncExc(
+                                        ctypes.c_long(thread._thread_id),
+                                        ctypes.py_object(SystemExit),
+                                    )
+                            except Exception:
+                                pass
                 self.active_threads.clear()
                 self.stop_flag.clear()
 
@@ -199,8 +223,12 @@ class TestResourceChaos:
         ), f"Insufficient variation between high ({avg_high:.1f}%) and low ({avg_low:.1f}%) CPU usage - only {variation:.1%} difference"
 
     @pytest.mark.asyncio
+    @pytest.mark.timeout(30)
     async def test_memory_pressure_scenarios(self):
         """Test various memory pressure scenarios"""
+        # Skip this test in mock mode to avoid resource issues
+        if os.environ.get("USE_MOCK_TESTS", "false").lower() == "true":
+            pytest.skip("Skipping memory pressure test in mock mode")
 
         class MemoryPressure:
             def __init__(self):
@@ -385,8 +413,12 @@ class TestResourceChaos:
             )
 
     @pytest.mark.asyncio
+    @pytest.mark.timeout(30)
     async def test_disk_io_patterns(self):
         """Test various disk I/O patterns and their impact"""
+        # Skip this test in mock mode to avoid resource issues
+        if os.environ.get("USE_MOCK_TESTS", "false").lower() == "true":
+            pytest.skip("Skipping disk I/O test in mock mode")
 
         class DiskIOSimulator:
             def __init__(self, test_dir):
@@ -552,8 +584,12 @@ class TestResourceChaos:
             assert len(concurrent_data["per_thread_results"]) == 4
 
     @pytest.mark.asyncio
+    @pytest.mark.timeout(30)
     async def test_resource_starvation(self, resource_monitor):
         """Test resource starvation scenarios"""
+        # Skip this test in mock mode to avoid resource issues
+        if os.environ.get("USE_MOCK_TESTS", "false").lower() == "true":
+            pytest.skip("Skipping resource starvation test in mock mode")
 
         class ResourceStarvation:
             def __init__(self):

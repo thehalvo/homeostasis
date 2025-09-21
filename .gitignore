@@ -98,6 +98,7 @@ logs/backups/
 logs/patches/
 data/
 governance/
+llm_contexts/
 
 # Sensitive information
 .env

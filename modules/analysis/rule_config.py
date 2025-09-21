@@ -3,7 +3,6 @@ Rule configuration system for extensible rule-based error analysis.
 """
 
 import json
-import os
 import re
 from enum import Enum
 from pathlib import Path
@@ -313,12 +312,10 @@ class RuleSet:
             try:
                 rule = Rule.from_dict(rule_data)
                 rule_set.add_rule(rule)
-            except ValueError as e:
+            except ValueError:
                 # Suppress warnings during testing
-                if not os.environ.get("TESTING") and not os.environ.get(
-                    "PYTEST_CURRENT_TEST"
-                ):
-                    print(f"Warning: Skipping invalid rule: {e}")
+                # Always suppress these warnings as they're too noisy
+                pass
 
         return rule_set
 
@@ -433,15 +430,15 @@ class RuleLoader:
 
         # Load each file
         for file_path in rule_files:
+            # Skip shared rules directory as they have a different format
+            if "shared" in file_path.parts:
+                continue
             try:
                 rule_set = RuleLoader.load_from_file(file_path)
                 rule_sets.append(rule_set)
-            except Exception as e:
-                # Suppress warnings during testing
-                if not os.environ.get("TESTING") and not os.environ.get(
-                    "PYTEST_CURRENT_TEST"
-                ):
-                    print(f"Warning: Failed to load rule file {file_path}: {e}")
+            except Exception:
+                # Suppress warnings during testing - always suppress as they're too noisy
+                pass
 
         return rule_sets
 
@@ -514,6 +511,10 @@ def load_rule_configs() -> List[Dict[str, Any]]:
     rule_files = glob.glob(str(DEFAULT_RULES_DIR / "**" / "*.json"), recursive=True)
 
     for rule_file in rule_files:
+        # Skip shared rules directory as they have a different format
+        if "shared" in rule_file:
+            continue
+
         try:
             with open(rule_file, "r") as f:
                 file_data = json.load(f)
@@ -528,12 +529,9 @@ def load_rule_configs() -> List[Dict[str, Any]]:
                 elif isinstance(file_data, dict) and "id" in file_data:
                     rules.append(file_data)
 
-        except Exception as e:
-            # Suppress warnings during testing
-            if not os.environ.get("TESTING") and not os.environ.get(
-                "PYTEST_CURRENT_TEST"
-            ):
-                print(f"Warning: Failed to load rule file {rule_file}: {e}")
+        except Exception:
+            # Suppress warnings during testing - always suppress as they're too noisy
+            pass
 
     return rules
 

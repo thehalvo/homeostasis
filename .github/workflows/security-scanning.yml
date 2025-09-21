@@ -298,10 +298,5 @@ jobs:
             --results security-scan-results.json \
             --baseline-file security-baselines.json
       
-      - name: Commit baseline updates
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add security-baselines.json
-          git diff --staged --quiet || git commit -m "Update security baselines [skip ci]"
-          git push
+      # Skip auto-commit due to branch protection
+      # Baseline updates should be done via PR

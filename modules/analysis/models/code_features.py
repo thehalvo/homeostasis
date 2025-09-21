@@ -394,13 +394,16 @@ class MultiLanguageFeatureExtractor:
         self.tokenizer = None
         if TRANSFORMERS_AVAILABLE:
             try:
-                # Use specific revision for security and reproducibility
-                model_revision = "1b2e0bfe5003709471fb6e04c0943470cf4a5b30"
-                self.tokenizer = AutoTokenizer.from_pretrained(  # nosec: B615 - Using specific revision for security
-                    "microsoft/codebert-base", revision=model_revision
+                # Load model without revision to avoid 404 errors
+                self.tokenizer = (
+                    AutoTokenizer.from_pretrained(  # nosec: B615 - Model loading
+                        "microsoft/codebert-base"
+                    )
                 )
-                self.semantic_model = AutoModel.from_pretrained(  # nosec: B615 - Using specific revision for security
-                    "microsoft/codebert-base", revision=model_revision
+                self.semantic_model = (
+                    AutoModel.from_pretrained(  # nosec: B615 - Model loading
+                        "microsoft/codebert-base"
+                    )
                 )
                 self.semantic_model.eval()
             except Exception as e:

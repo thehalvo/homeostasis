@@ -360,8 +360,8 @@ class TestSvelteIntegration(unittest.TestCase):
         self.assertEqual(analysis["plugin"], "svelte")
 
         # Test fix generation
-        source_code = "$: result = input; $: input = result + 1;"
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        error_data["source_code"] = "$: result = input; $: input = result + 1;"
+        fix = self.plugin.generate_fix(error_data, analysis)
         self.assertIsNotNone(fix)
         self.assertEqual(fix["type"], "suggestion")
 
@@ -381,8 +381,8 @@ class TestSvelteIntegration(unittest.TestCase):
         self.assertEqual(analysis["subcategory"], "stores")
 
         # Test fix generation
-        source_code = "export const count = writable(0);"
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        error_data["source_code"] = "export const count = writable(0);"
+        fix = self.plugin.generate_fix(error_data, analysis)
         self.assertIsNotNone(fix)
         self.assertIn("import", fix["line_to_add"])
 
@@ -402,8 +402,8 @@ class TestSvelteIntegration(unittest.TestCase):
         self.assertEqual(analysis["subcategory"], "sveltekit")
 
         # Test fix generation
-        source_code = "export async function load() { return data; }"
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        error_data["source_code"] = "export async function load() { return data; }"
+        fix = self.plugin.generate_fix(error_data, analysis)
         self.assertIsNotNone(fix)
         self.assertIn("props", fix["fix_code"])
 

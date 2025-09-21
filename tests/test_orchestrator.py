@@ -102,10 +102,28 @@ def orchestrator(temp_config_file):
     with patch("orchestrator.orchestrator.MonitoringLogger"):
         with patch("orchestrator.orchestrator.Analyzer"):
             with patch("orchestrator.orchestrator.PatchGenerator"):
-                orchestrator = Orchestrator(temp_config_file, log_level="DEBUG")
-                # Mock the directories creation
-                with patch.object(orchestrator, "_create_directories"):
-                    yield orchestrator
+                with patch("orchestrator.orchestrator.ParallelTestRunner"):
+                    with patch("orchestrator.orchestrator.ContainerManager"):
+                        with patch("orchestrator.orchestrator.RegressionTestGenerator"):
+                            with patch("orchestrator.orchestrator.MetricsCollector"):
+                                with patch("orchestrator.orchestrator.FeedbackLoop"):
+                                    with patch(
+                                        "orchestrator.orchestrator.PostDeploymentMonitor"
+                                    ):
+                                        with patch(
+                                            "orchestrator.orchestrator.AlertManager"
+                                        ):
+                                            with patch(
+                                                "orchestrator.orchestrator.AnomalyDetector"
+                                            ):
+                                                orchestrator = Orchestrator(
+                                                    temp_config_file, log_level="DEBUG"
+                                                )
+                                                # Mock the directories creation
+                                                with patch.object(
+                                                    orchestrator, "_create_directories"
+                                                ):
+                                                    yield orchestrator
 
 
 def test_orchestrator_initialization(orchestrator):
@@ -129,8 +147,8 @@ def test_start_service(orchestrator):
     mock_process = MagicMock()
     mock_process.poll.return_value = None  # Process is running
 
-    with patch("subprocess.Popen", return_value=mock_process):
-        with patch("time.sleep"):
+    with patch("orchestrator.orchestrator.subprocess.Popen", return_value=mock_process):
+        with patch("orchestrator.orchestrator.time.sleep"):
             orchestrator.start_service()
             assert orchestrator.service_process is not None
 
@@ -141,8 +159,8 @@ def test_start_service_failure(orchestrator):
     mock_process.poll.return_value = 1  # Process failed to start
     mock_process.stderr.read.return_value = "Error starting service"
 
-    with patch("subprocess.Popen", return_value=mock_process):
-        with patch("time.sleep"):
+    with patch("orchestrator.orchestrator.subprocess.Popen", return_value=mock_process):
+        with patch("orchestrator.orchestrator.time.sleep"):
             orchestrator.start_service()
             assert (
                 orchestrator.service_process is not None
@@ -155,7 +173,7 @@ def test_stop_service(orchestrator):
     mock_process = MagicMock()
     orchestrator.service_process = mock_process
 
-    with patch("subprocess.run"):
+    with patch("orchestrator.orchestrator.subprocess.run"):
         orchestrator.stop_service()
         mock_process.terminate.assert_called_once()
         assert orchestrator.service_process is None
@@ -167,7 +185,7 @@ def test_stop_service_with_timeout(orchestrator):
     mock_process.wait.side_effect = subprocess.TimeoutExpired("cmd", 5)
     orchestrator.service_process = mock_process
 
-    with patch("subprocess.run"):
+    with patch("orchestrator.orchestrator.subprocess.run"):
         orchestrator.stop_service()
         mock_process.terminate.assert_called_once()
         mock_process.kill.assert_called_once()  # Should force kill
@@ -291,7 +309,7 @@ def test_run_tests_success(orchestrator):
     mock_process = MagicMock()
     mock_process.returncode = 0  # Tests passed
 
-    with patch("subprocess.run", return_value=mock_process):
+    with patch("orchestrator.orchestrator.subprocess.run", return_value=mock_process):
         assert orchestrator.run_tests() is True
 
 
@@ -301,7 +319,7 @@ def test_run_tests_failure(orchestrator):
     mock_process.returncode = 1  # Tests failed
     mock_process.stderr = "Test failures"
 
-    with patch("subprocess.run", return_value=mock_process):
+    with patch("orchestrator.orchestrator.subprocess.run", return_value=mock_process):
         assert orchestrator.run_tests() is False
 
 

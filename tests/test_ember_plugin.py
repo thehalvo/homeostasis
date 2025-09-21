@@ -449,7 +449,8 @@ class TestEmberPluginIntegration(unittest.TestCase):
         analysis = self.plugin.analyze_error(error_data)
         source_code = "export default class MyComponent extends Component { fetchData() { this.store.findAll('user'); } }"
 
-        fix = self.plugin.generate_fix(error_data, analysis, source_code)
+        context = {"source_code": source_code}
+        fix = self.plugin.generate_fix(analysis, context)
 
         self.assertIsNotNone(fix)
         if fix:  # Only test if fix was generated

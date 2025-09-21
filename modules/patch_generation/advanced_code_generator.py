@@ -13,6 +13,7 @@ This module implements advanced code generation capabilities including:
 import ast
 import json
 import logging
+import os
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -105,7 +106,8 @@ class AdvancedCodeGenerator:
         self.context_manager = context_manager
         self.language_detector = MultiLanguageFrameworkDetector()
         self.style_analyzer = CodeStyleAnalyzer()
-        self.transformer_analyzer = TransformerCodeUnderstanding()
+        # Initialize transformer analyzer only when needed
+        self._transformer_analyzer = None
 
         # Configuration
         self.config = config or {}
@@ -126,6 +128,26 @@ class AdvancedCodeGenerator:
         }
 
         logger.info("Initialized Advanced Code Generator with Phase 13.3 capabilities")
+
+    @property
+    def transformer_analyzer(self):
+        """Lazy-load transformer analyzer to avoid loading models during import."""
+        if self._transformer_analyzer is None:
+            # Skip loading transformer in mock test mode
+            if os.environ.get("USE_MOCK_TESTS", "false").lower() == "true":
+                from unittest.mock import Mock
+
+                self._transformer_analyzer = Mock()
+                self._transformer_analyzer.analyze_error_context = Mock(
+                    return_value={
+                        "semantic_similarity": 0.8,
+                        "code_patterns": [],
+                        "error_propagation": [],
+                    }
+                )
+            else:
+                self._transformer_analyzer = TransformerCodeUnderstanding()
+        return self._transformer_analyzer
 
     def generate_with_context(
         self,

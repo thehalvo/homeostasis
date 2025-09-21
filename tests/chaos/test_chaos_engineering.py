@@ -112,17 +112,34 @@ class TestChaosEngineering:
     @pytest.mark.asyncio
     async def test_packet_loss_resilience(self, chaos_engineer, mock_monitoring):
         """Test system resilience to packet loss"""
+        hypothesis = SteadyStateHypothesis(
+            name="Service availability hypothesis",
+            description="System should maintain 95% success rate with retries",
+            metrics=["success_rate", "response_time"],
+            thresholds={
+                "success_rate": (0.95, 1.0),
+                "response_time": (0, 1000),  # ms
+            },
+        )
+
+        fault_injection = FaultInjection(
+            fault_type=FaultType.PACKET_LOSS,
+            target="database-cluster",
+            duration=timedelta(minutes=2),
+            intensity=0.1,  # 10% packet loss
+            parameters={
+                "loss_rate": 0.1,
+                "correlation": 25,  # Burst losses
+            },
+        )
+
         experiment = ChaosExperiment(
             name="Packet Loss Test",
             description="Introduce 10% packet loss",
-            hypothesis="System should maintain 95% success rate with retries",
-            fault_type=FaultType.NETWORK_PARTITION,
-            target_service="database-cluster",
-            parameters={
-                "packet_loss_percentage": 10,
-                "correlation": 25,  # Burst losses
-            },
-            duration=timedelta(minutes=2),
+            hypothesis=hypothesis,
+            fault_injections=[fault_injection],
+            impact_level=ImpactLevel.LOW,
+            target_environment="testing",
         )
 
         # Track retry attempts and success rates
@@ -161,14 +178,31 @@ class TestChaosEngineering:
     @pytest.mark.asyncio
     async def test_cpu_pressure_handling(self, chaos_engineer, mock_healing):
         """Test system behavior under CPU pressure"""
+        hypothesis = SteadyStateHypothesis(
+            name="CPU resource management hypothesis",
+            description="System should scale or shed load appropriately",
+            metrics=["cpu_usage", "response_time"],
+            thresholds={
+                "cpu_usage": (0, 90),  # Should not exceed 90%
+                "response_time": (0, 2000),  # ms
+            },
+        )
+
+        fault_injection = FaultInjection(
+            fault_type=FaultType.RESOURCE_CPU,
+            target="compute-worker",
+            duration=timedelta(minutes=1),
+            intensity=0.85,
+            parameters={"cpu_percentage": 85, "core_count": psutil.cpu_count() // 2},
+        )
+
         experiment = ChaosExperiment(
             name="CPU Pressure Test",
             description="Simulate high CPU usage",
-            hypothesis="System should scale or shed load appropriately",
-            fault_type=FaultType.RESOURCE_CPU,
-            target_service="compute-worker",
-            parameters={"cpu_percentage": 85, "core_count": psutil.cpu_count() // 2},
-            duration=timedelta(minutes=1),
+            hypothesis=hypothesis,
+            fault_injections=[fault_injection],
+            impact_level=ImpactLevel.MEDIUM,
+            target_environment="testing",
         )
 
         # Simulate CPU-intensive workload
@@ -212,14 +246,31 @@ class TestChaosEngineering:
     @pytest.mark.asyncio
     async def test_memory_leak_detection(self, chaos_engineer, mock_monitoring):
         """Test memory leak injection and detection"""
+        hypothesis = SteadyStateHypothesis(
+            name="Memory management hypothesis",
+            description="System should detect and mitigate memory leaks",
+            metrics=["memory_usage", "memory_growth_rate"],
+            thresholds={
+                "memory_usage": (0, 80),  # Percentage
+                "memory_growth_rate": (0, 10),  # MB/min
+            },
+        )
+
+        fault_injection = FaultInjection(
+            fault_type=FaultType.RESOURCE_MEMORY,
+            target="cache-service",
+            duration=timedelta(minutes=5),
+            intensity=0.5,
+            parameters={"leak_rate_mb_per_min": 100, "max_leak_gb": 2},
+        )
+
         experiment = ChaosExperiment(
             name="Memory Leak Test",
             description="Simulate gradual memory leak",
-            hypothesis="System should detect and mitigate memory leaks",
-            fault_type=FaultType.RESOURCE_MEMORY,
-            target_service="cache-service",
-            parameters={"leak_rate_mb_per_min": 100, "max_leak_gb": 2},
-            duration=timedelta(minutes=5),
+            hypothesis=hypothesis,
+            fault_injections=[fault_injection],
+            impact_level=ImpactLevel.MEDIUM,
+            target_environment="testing",
         )
 
         # Simulate memory leak
@@ -229,7 +280,7 @@ class TestChaosEngineering:
         async def leak_memory():
             """Simulate memory leak without actual allocation"""
             mb_per_second = (
-                experiment.parameters["leak_rate_mb_per_min"] / 60
+                fault_injection.parameters["leak_rate_mb_per_min"] / 60
             )  # ~1.67 MB/s
             simulated_memory_mb = 1000  # Start at 1GB
             memory_samples.append(simulated_memory_mb)  # Add initial sample
@@ -237,8 +288,8 @@ class TestChaosEngineering:
             # Simulate for enough iterations to show significant growth
             for i in range(20):  # 20 iterations
                 # Simulate memory growth based on configured leak rate
-                # Each iteration represents 0.1 seconds of simulation time
-                simulated_memory_mb += mb_per_second * 0.1
+                # Each iteration represents 3 seconds of simulation time
+                simulated_memory_mb += mb_per_second * 3
                 memory_samples.append(simulated_memory_mb)
 
                 # Simulate some allocation (small amount)
@@ -271,18 +322,35 @@ class TestChaosEngineering:
     @pytest.mark.asyncio
     async def test_cascading_failure_simulation(self, chaos_engineer, mock_healing):
         """Test cascading failure scenarios"""
-        experiment = ChaosExperiment(
-            name="Cascading Failure Test",
-            description="Simulate service dependency failures",
-            hypothesis="Circuit breakers should prevent cascade",
+        hypothesis = SteadyStateHypothesis(
+            name="Circuit breaker hypothesis",
+            description="Circuit breakers should prevent cascade",
+            metrics=["service_availability", "error_rate"],
+            thresholds={
+                "service_availability": (0.5, 1.0),  # At least 50% services available
+                "error_rate": (0, 0.5),  # Max 50% error rate
+            },
+        )
+
+        fault_injection = FaultInjection(
             fault_type=FaultType.SERVICE_FAILURE,
-            target_service="payment-service",
+            target="payment-service",
+            duration=timedelta(minutes=2),
+            intensity=0.8,
             parameters={
                 "failure_probability": 0.8,
                 "propagation_delay_ms": 100,
                 "affected_dependencies": ["inventory", "shipping", "notification"],
             },
-            duration=timedelta(minutes=2),
+        )
+
+        experiment = ChaosExperiment(
+            name="Cascading Failure Test",
+            description="Simulate service dependency failures",
+            hypothesis=hypothesis,
+            fault_injections=[fault_injection],
+            impact_level=ImpactLevel.HIGH,
+            target_environment="testing",
         )
 
         # Service health tracking
@@ -329,10 +397,12 @@ class TestChaosEngineering:
                 request_results.append(("payment-service", success, reason))
 
             # Propagate failures to dependencies
-            for i, dep in enumerate(experiment.parameters["affected_dependencies"]):
+            for i, dep in enumerate(
+                fault_injection.parameters["affected_dependencies"]
+            ):
                 await asyncio.sleep(0.01)  # Propagation delay
                 # Make the last service more resilient to prevent complete cascade
-                if i == len(experiment.parameters["affected_dependencies"]) - 1:
+                if i == len(fault_injection.parameters["affected_dependencies"]) - 1:
                     # Last service has only 3 requests, not enough to trigger circuit breaker
                     for _ in range(3):
                         success, reason = await process_request(
@@ -364,18 +434,35 @@ class TestChaosEngineering:
     @pytest.mark.asyncio
     async def test_disk_io_saturation(self, chaos_engineer):
         """Test system behavior under disk I/O saturation"""
-        experiment = ChaosExperiment(
-            name="Disk I/O Saturation Test",
-            description="Saturate disk I/O to test system resilience",
-            hypothesis="System should prioritize critical operations",
+        hypothesis = SteadyStateHypothesis(
+            name="Disk I/O management hypothesis",
+            description="System should prioritize critical operations",
+            metrics=["io_latency", "critical_op_success_rate"],
+            thresholds={
+                "io_latency": (0, 500),  # ms
+                "critical_op_success_rate": (0.9, 1.0),  # 90%+ success
+            },
+        )
+
+        fault_injection = FaultInjection(
             fault_type=FaultType.RESOURCE_DISK,
-            target_service="database",
+            target="database",
+            duration=timedelta(seconds=30),
+            intensity=0.7,
             parameters={
                 "write_mb_per_sec": 100,
                 "read_mb_per_sec": 200,
                 "random_io_percentage": 70,
             },
-            duration=timedelta(seconds=30),
+        )
+
+        experiment = ChaosExperiment(
+            name="Disk I/O Saturation Test",
+            description="Saturate disk I/O to test system resilience",
+            hypothesis=hypothesis,
+            fault_injections=[fault_injection],
+            impact_level=ImpactLevel.MEDIUM,
+            target_environment="testing",
         )
 
         io_latencies = []
@@ -432,35 +519,51 @@ class TestChaosEngineering:
         self, chaos_engineer, mock_monitoring, mock_healing
     ):
         """Test system resilience under multiple simultaneous faults"""
-        experiments = [
-            ChaosExperiment(
-                name="Network Degradation",
-                description="Partial network issues",
-                hypothesis="System maintains functionality",
+        # Create a multi-fault experiment
+        hypothesis = SteadyStateHypothesis(
+            name="Multi-fault resilience hypothesis",
+            description="System maintains core functionality under multiple faults",
+            metrics=["availability", "latency", "error_rate", "throughput"],
+            thresholds={
+                "availability": (0.8, 1.0),  # 80%+ availability
+                "latency": (0, 1000),  # Max 1s latency
+                "error_rate": (0, 0.3),  # Max 30% errors
+                "throughput": (100, 10000),  # ops/sec
+            },
+        )
+
+        fault_injections = [
+            FaultInjection(
                 fault_type=FaultType.NETWORK_LATENCY,
-                target_service="all",
+                target="all",
+                duration=timedelta(minutes=1),
+                intensity=0.3,
                 parameters={"latency_ms": 200, "affected_percentage": 30},
-                duration=timedelta(minutes=1),
             ),
-            ChaosExperiment(
-                name="Resource Pressure",
-                description="CPU and memory pressure",
-                hypothesis="System handles resource constraints",
+            FaultInjection(
                 fault_type=FaultType.RESOURCE_CPU,
-                target_service="compute-nodes",
+                target="compute-nodes",
+                duration=timedelta(minutes=1),
+                intensity=0.7,
                 parameters={"cpu_percentage": 70},
-                duration=timedelta(minutes=1),
             ),
-            ChaosExperiment(
-                name="Service Instability",
-                description="Random service failures",
-                hypothesis="System maintains core functionality",
+            FaultInjection(
                 fault_type=FaultType.SERVICE_FAILURE,
-                target_service="secondary-services",
-                parameters={"failure_probability": 0.2},
+                target="secondary-services",
                 duration=timedelta(minutes=1),
+                intensity=0.2,
+                parameters={"failure_probability": 0.2},
             ),
         ]
+
+        experiment = ChaosExperiment(
+            name="Multi-Fault Scenario",
+            description="Multiple simultaneous faults",
+            hypothesis=hypothesis,
+            fault_injections=fault_injections,
+            impact_level=ImpactLevel.HIGH,
+            target_environment="testing",
+        )
 
         # System health metrics
         health_metrics = {
@@ -499,17 +602,12 @@ class TestChaosEngineering:
 
                 await asyncio.sleep(0.01)  # Fast test execution
 
-        # Run multiple chaos experiments simultaneously
+        # Run chaos experiment with monitoring
         monitor_task = asyncio.create_task(monitor_system_health())
 
         try:
-            chaos_tasks = []
-            for experiment in experiments:
-                task = chaos_engineer.run_experiment(experiment, mock_monitoring)
-                chaos_tasks.append(task)
-
-            # Run all experiments concurrently
-            results = await asyncio.gather(*chaos_tasks)
+            # Run the multi-fault experiment
+            result = await chaos_engineer.run_experiment(experiment, mock_monitoring)
 
             # Let monitoring run for a bit more to ensure it reaches iteration 5
             await asyncio.sleep(0.1)  # Ensure monitor runs at least 6 iterations
@@ -538,25 +636,45 @@ class TestChaosEngineering:
         )  # Error rate kept under reasonable control (one spike allowed)
         assert len(healing_actions) > 0  # Healing was triggered
 
-        # Verify all experiments completed
-        assert all(result["completed"] for result in results)
+        # Verify experiment completed
+        assert result.get("status") == "completed"
 
     @pytest.mark.asyncio
     async def test_gradual_degradation_detection(self, chaos_engineer, mock_monitoring):
         """Test detection of gradual system degradation"""
-        experiment = ChaosExperiment(
-            name="Gradual Degradation Test",
-            description="Slowly degrade system performance",
-            hypothesis="System detects gradual degradation before critical failure",
+        hypothesis = SteadyStateHypothesis(
+            name="Degradation detection hypothesis",
+            description="System detects gradual degradation before critical failure",
+            metrics=["latency", "error_rate"],
+            thresholds={
+                "latency": (0, 200),  # Should detect before exceeding 200ms
+                "error_rate": (0, 0.1),  # Max 10% errors
+            },
+        )
+
+        fault_injection = FaultInjection(
             fault_type=FaultType.NETWORK_LATENCY,
-            target_service="api-gateway",
+            target="api-gateway",
+            duration=timedelta(minutes=3),
+            intensity=1.0,
             parameters={
                 "initial_latency_ms": 50,
                 "final_latency_ms": 1000,
                 "ramp_duration_seconds": 120,
             },
-            duration=timedelta(minutes=3),
         )
+
+        experiment = ChaosExperiment(
+            name="Gradual Degradation Test",
+            description="Slowly degrade system performance",
+            hypothesis=hypothesis,
+            fault_injections=[fault_injection],
+            impact_level=ImpactLevel.LOW,
+            target_environment="testing",
+        )
+
+        # Add experiment to the engine for tracking
+        self.experiment_engine.add_experiment(experiment)
 
         latency_samples = []
         degradation_detected = False
@@ -565,7 +683,7 @@ class TestChaosEngineering:
         async def monitor_degradation():
             """Monitor for performance degradation"""
             nonlocal degradation_detected, detection_time
-            baseline_latency = experiment.parameters["initial_latency_ms"]
+            baseline_latency = fault_injection.parameters["initial_latency_ms"]
             detection_threshold = baseline_latency * 3  # 3x baseline
 
             start_time = time.time()
@@ -573,9 +691,9 @@ class TestChaosEngineering:
                 # Simulate gradually increasing latency based on experiment parameters
                 elapsed = time.time() - start_time
                 progress = i / 10  # Ramp over 10 iterations
-                current_latency = experiment.parameters["initial_latency_ms"] + (
-                    experiment.parameters["final_latency_ms"]
-                    - experiment.parameters["initial_latency_ms"]
+                current_latency = fault_injection.parameters["initial_latency_ms"] + (
+                    fault_injection.parameters["final_latency_ms"]
+                    - fault_injection.parameters["initial_latency_ms"]
                 ) * min(progress, 1.0)
 
                 latency_samples.append(

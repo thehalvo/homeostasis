@@ -63,7 +63,7 @@ def orchestrator(mock_config):
         "modules.deployment.multi_environment.hybrid_orchestrator.DistributedMonitor"
     ):
         with patch(
-            "modules.deployment.multi_environment.hybrid_orchestrator.SecurityAuditor"
+            "modules.deployment.multi_environment.hybrid_orchestrator.AuditLogger"
         ):
             return HybridCloudOrchestrator(mock_config)
 
