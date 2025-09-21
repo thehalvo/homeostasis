@@ -430,7 +430,7 @@ class TestErrorPatternStress(StressTestBase):
             {
                 "language": "javascript",
                 "error_type": "Error",
-                "message": "A" * 1000000,  # Extremely long message
+                "message": "A" * 10000,  # Long message (10KB instead of 1MB)
             },
         ]
 

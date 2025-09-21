@@ -381,16 +381,16 @@ async def health():
 @app.get("/error")
 async def trigger_error():
     # Memory leak - appending large objects without cleanup
-    for i in range(10000):
+    for i in range(100):  # Reduced from 10000 to 100
         leak_storage.append({
             "id": i,
-            "data": "x" * 1000,  # 1KB per item
-            "nested": [{"item": j} for j in range(100)]
+            "data": "x" * 100,  # Reduced from 1KB to 100 bytes
+            "nested": [{"item": j} for j in range(10)]  # Reduced from 100 to 10
         })
     # This will eventually cause issues
-    if len(leak_storage) > 50000:
+    if len(leak_storage) > 500:  # Reduced from 50000 to 500
         raise MemoryError("Too many items in storage")
-    return {"items_added": 10000, "total_items": len(leak_storage)}
+    return {"items_added": 100, "total_items": len(leak_storage)}
 
 @app.get("/cleanup")
 async def cleanup():

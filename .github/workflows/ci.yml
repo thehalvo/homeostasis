@@ -32,4 +32,4 @@ jobs:
         USE_MOCK_TESTS: true
         DISABLE_PERFORMANCE_TRACKING: true
       run: |
-        python -m pytest tests/ -k "not test_concurrent_error_processing_performance"
+        python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance"
