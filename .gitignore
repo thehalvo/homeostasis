@@ -125,7 +125,6 @@ failed_tests.txt
 test_env_*/
 test_output.log
 test_results/
-Dockerfile.test
 
 # Deployment
 .netlify

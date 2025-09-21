@@ -151,7 +151,7 @@ class ContainerManager:
                     del self.container_cache[cache_key]
 
         # Build the command
-        cmd = ["docker-compose", "run", "-d"]
+        cmd = ["docker", "compose", "run", "-d"]
 
         # Add resource limits if specified
         if resource_limits:

@@ -34,10 +34,16 @@ sys.modules["modules.security.mlflow_security"] = mock_mlflow_security
 try:
     # Import the mlflow_import_hook module directly to avoid security.__init__.py
     import importlib.util
+    from pathlib import Path
+
+    # Get the path relative to this test file
+    test_dir = Path(__file__).parent
+    repo_root = test_dir.parent
+    mlflow_hook_path = repo_root / "modules" / "security" / "mlflow_import_hook.py"
 
     spec = importlib.util.spec_from_file_location(
         "modules.security.mlflow_import_hook",
-        "/Users/halvo/Dropbox/current/homeostasis/repo/modules/security/mlflow_import_hook.py",
+        str(mlflow_hook_path),
     )
     mlflow_import_hook = importlib.util.module_from_spec(spec)
     mlflow_import_hook.__package__ = "modules.security"
