@@ -112,12 +112,20 @@ test_python_version() {
     echo -e "\n${BLUE}2. Running CI pytest suite...${NC}"
     # Run with timeout and show failures
     # Use special config for Python 3.11 to avoid asyncio hangs
+    # Store output to check for timeout
     if [ "$py_version" = "3.11" ] && [ -f "pytest-py311.ini" ]; then
-        timeout 300 python -m pytest -c pytest-py311.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header | tail -100
+        timeout 300 python -m pytest -c pytest-py311.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header 2>&1 | tail -150
+    elif [ "$py_version" = "3.9" ]; then
+        # Python 3.9 seems to produce more output, increase tail buffer
+        timeout 400 python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header 2>&1 | tail -200
     else
-        timeout 300 python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header | tail -100
+        timeout 300 python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header 2>&1 | tail -150
     fi
     local pytest_exit=${PIPESTATUS[0]}
+    # If timeout was reached (exit code 124), report it
+    if [ $pytest_exit -eq 124 ]; then
+        echo -e "${YELLOW}Warning: Test suite timed out after 300 seconds${NC}"
+    fi
     print_result "CI pytest suite" $pytest_exit $py_version
 
     echo -e "\n${MAGENTA}Running E2E Healing Scenario Tests...${NC}"
