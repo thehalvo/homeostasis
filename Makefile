@@ -7,8 +7,8 @@ help:
 	@echo "Available commands:"
 	@echo "  make setup       - Create virtual environment and install dev dependencies"
 	@echo "  make install     - Install package in development mode"
-	@echo "  make test        - Run basic pytest tests"
-	@echo "  make test-all    - Run ALL tests (same as GitHub Actions)"
+	@echo "  make test        - Run basic pytest tests (development only)"
+	@echo "  make test-all    - Run ALL tests with Python 3.9, 3.10, 3.11 (REQUIRED before push)"
 	@echo "  make lint        - Run linting checks"
 	@echo "  make format      - Auto-format code with black and isort"
 	@echo "  make security    - Run security checks"
@@ -28,7 +28,7 @@ test:
 	$(VENV)/bin/pytest tests/
 
 test-all:
-	@./test_github_actions_locally.sh
+	@./test_github_actions.sh
 
 lint:
 	flake8 modules/ services/ orchestrator/ tests/

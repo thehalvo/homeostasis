@@ -167,14 +167,9 @@ class TestMLflowImportHook(unittest.TestCase):
         # Skip this test since we're mocking the security module
         self.skipTest("Skipping auto-patch test as we're mocking the security module")
 
-    @patch("modules.security.mlflow_import_hook.logger")
-    def test_patch_error_handling(self, mock_logger):
+    def test_patch_error_handling(self):
         """Test error handling in patching."""
         with patch.dict(os.environ, {"MLFLOW_SECURITY_PATCH": "false"}):
-            # Clear any cached imports
-            if "modules.security.mlflow_import_hook" in sys.modules:
-                del sys.modules["modules.security.mlflow_import_hook"]
-
             # Create a fresh patcher instance that hasn't been patched yet
             patcher = mlflow_import_hook.SecureMLflowImporter()
             patcher._patched = False  # Reset patched state
@@ -189,13 +184,15 @@ class TestMLflowImportHook(unittest.TestCase):
                     "_patch_existing_mlflow",
                     side_effect=Exception("Test error"),
                 ):
-                    with self.assertRaises(RuntimeError) as cm:
-                        patcher.patch_mlflow()
+                    # Patch logger locally
+                    with patch.object(mlflow_import_hook, "logger") as mock_logger:
+                        with self.assertRaises(RuntimeError) as cm:
+                            patcher.patch_mlflow()
 
-                self.assertIn(
-                    "Failed to apply MLflow security patches", str(cm.exception)
-                )
-                mock_logger.error.assert_called()
+                        self.assertIn(
+                            "Failed to apply MLflow security patches", str(cm.exception)
+                        )
+                        mock_logger.error.assert_called()
 
     def test_multiple_model_flavors_patched(self):
         """Test that multiple MLflow model flavors are patched."""
