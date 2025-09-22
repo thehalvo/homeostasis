@@ -33,6 +33,9 @@ ENV/
 env.bak/
 venv.bak/
 **/venv/
+# IMPORTANT: DO NOT DELETE venv_* or test_env_* directories!
+# These are used for local testing and are needed for test_github_actions.sh
+# They are ignored by Docker and Git but MUST remain on disk
 venv_py*/
 .pytest_cache/
 .coverage

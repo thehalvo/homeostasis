@@ -295,18 +295,30 @@ check_docker_build() {
         return
     fi
 
+    # Clean up Docker before build to prevent I/O errors
+    echo -e "${BLUE}Cleaning up Docker containers and images...${NC}"
+    docker container prune -f >/dev/null 2>&1
+    docker image prune -f >/dev/null 2>&1
+    # Remove any existing test images
+    docker rmi homeostasis-test:local-test homeostasis-test:latest 2>/dev/null || true
+
     # Check if Dockerfile exists
     if [ -f "Dockerfile" ]; then
         echo "Building Docker image..."
-        # Capture output to show errors if build fails
-        local docker_output=$(docker build -t homeostasis-test:local-test . 2>&1)
-        local docker_exit=$?
+        # Use legacy builder to avoid buildx issues
+        export DOCKER_BUILDKIT=0
+        echo -e "${BLUE}Running Docker build...${NC}"
+        # Show build output so we can see what's happening
+        docker build -t homeostasis-test:local-test . 2>&1 | tail -30
+        local docker_exit=${PIPESTATUS[0]}
+
         if [ $docker_exit -ne 0 ]; then
-            echo -e "${RED}Docker build failed with error:${NC}"
-            echo "$docker_output" | tail -20
+            echo -e "${RED}Docker build failed - check the output above for errors${NC}"
+            echo -e "${RED}Docker must work locally to pass on GitHub Actions${NC}"
             FAILED_TESTS+=("docker-build-failed")
+        else
+            print_result "Docker build" $docker_exit "N/A"
         fi
-        print_result "Docker build" $docker_exit "N/A"
 
         # Clean up if successful
         if [ $docker_exit -eq 0 ]; then
@@ -333,7 +345,15 @@ check_integration_tests() {
         return
     fi
 
-    if ! command -v docker compose &> /dev/null 2>&1; then
+    # Check for Docker Compose - try both 'docker compose' and 'docker-compose'
+    local has_compose=false
+    if docker compose version &> /dev/null; then
+        has_compose=true
+    elif command -v docker-compose &> /dev/null && docker-compose --version &> /dev/null; then
+        has_compose=true
+    fi
+
+    if [ "$has_compose" = false ]; then
         echo -e "${RED}✗ Docker Compose not available${NC}"
         echo -e "${YELLOW}Docker Compose is required for integration tests${NC}"
         FAILED_TESTS+=("docker-compose-not-available")
@@ -343,32 +363,55 @@ check_integration_tests() {
     if [ -f "tests/e2e/docker-compose.yml" ]; then
         echo -e "${BLUE}Running Docker integration tests (as GitHub Actions does)${NC}"
 
+        # Use the EXACT same compose file as GitHub Actions
+        local compose_file="tests/e2e/docker-compose.yml"
+
         # First validate the compose file
-        docker compose -f tests/e2e/docker-compose.yml config >/dev/null 2>&1
+        docker compose -f "$compose_file" config >/dev/null 2>&1
         local compose_valid=$?
         print_result "Docker Compose validation" $compose_valid "N/A"
         if [ $compose_valid -ne 0 ]; then
             FAILED_TESTS+=("docker-compose-invalid")
         fi
 
+        # Clean up before building to prevent conflicts
+        echo -e "${BLUE}Cleaning up existing containers...${NC}"
+        docker compose -f "$compose_file" down --volumes --remove-orphans || true
+
         # Build test images (matching GitHub Actions)
         echo -e "\n${BLUE}Building test images...${NC}"
-        docker build -t homeostasis-test:latest . >/dev/null 2>&1
-        local main_build=$?
+        export DOCKER_BUILDKIT=0
+        echo -e "${BLUE}Building main Docker image (this may take a moment)...${NC}"
+        echo -e "${YELLOW}Showing last 30 lines of build output for brevity${NC}"
+        docker build -t homeostasis-test:latest . 2>&1 | tail -30
+        local main_build=${PIPESTATUS[0]}
+
         print_result "Main Docker build" $main_build "N/A"
         if [ $main_build -ne 0 ]; then
+            echo -e "${RED}Docker build failed - check the output above for errors${NC}"
             FAILED_TESTS+=("docker-main-build-failed")
         fi
 
-        docker compose -f tests/e2e/docker-compose.yml build >/dev/null 2>&1
-        local compose_build=$?
+        echo -e "\n${BLUE}Building Docker Compose services...${NC}"
+        if [ "$compose_file" = "tests/e2e/docker-compose.test.yml" ]; then
+            echo -e "${YELLOW}Using lightweight test compose file for faster pre-push testing${NC}"
+        fi
+        echo -e "${YELLOW}Showing last 30 lines of build output for brevity${NC}"
+        docker compose -f "$compose_file" build 2>&1 | tail -30
+        local compose_build=${PIPESTATUS[0]}
+
         print_result "Docker Compose build" $compose_build "N/A"
         if [ $compose_build -ne 0 ]; then
+            echo -e "${RED}Docker Compose build failed - check the output above for errors${NC}"
             FAILED_TESTS+=("docker-compose-build-failed")
         fi
 
         echo -e "${YELLOW}Note: Full integration test run skipped locally (resource intensive)${NC}"
         echo -e "${YELLOW}GitHub Actions will run: docker compose run --rm test-runner${NC}"
+
+        # Clean up after testing
+        echo -e "\\n${BLUE}Cleaning up Docker resources...${NC}"
+        docker compose -f "$compose_file" down --volumes --remove-orphans || true
     else
         echo -e "${YELLOW}No docker-compose.yml found, skipping integration tests${NC}"
     fi
