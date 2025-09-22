@@ -111,8 +111,13 @@ test_python_version() {
     # 2. Basic pytest suite (from CI workflow) with pytest-ci.ini
     echo -e "\n${BLUE}2. Running CI pytest suite...${NC}"
     # Run with timeout and show failures
-    timeout 300 python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header | tail -100
-    local pytest_exit=$?
+    # Use special config for Python 3.11 to avoid asyncio hangs
+    if [ "$py_version" = "3.11" ] && [ -f "pytest-py311.ini" ]; then
+        timeout 300 python -m pytest -c pytest-py311.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header | tail -100
+    else
+        timeout 300 python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header | tail -100
+    fi
+    local pytest_exit=${PIPESTATUS[0]}
     print_result "CI pytest suite" $pytest_exit $py_version
 
     echo -e "\n${MAGENTA}Running E2E Healing Scenario Tests...${NC}"
@@ -147,7 +152,12 @@ test_python_version() {
     # 6. Chaos engineering tests (if they exist)
     if [ -d "tests/chaos" ]; then
         echo -e "\n${BLUE}6. Running chaos engineering tests...${NC}"
-        python -m pytest tests/chaos/ -v >/dev/null 2>&1
+        # Use special config for Python 3.11 to avoid asyncio hangs
+        if [ "$py_version" = "3.11" ] && [ -f "pytest-py311.ini" ]; then
+            python -m pytest -c pytest-py311.ini tests/chaos/ -v >/dev/null 2>&1
+        else
+            python -m pytest tests/chaos/ -v >/dev/null 2>&1
+        fi
         print_result "Chaos engineering" $? $py_version
     fi
 

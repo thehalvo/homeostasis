@@ -1,0 +1,16 @@
+analysis:
+  rule_based:
+    enabled: true
+deployment:
+  backup_dir: backups/
+  enabled: false
+general:
+  environment: test
+  project_name: test
+monitoring:
+  log_file: test.log
+patch_generation:
+  backup_original_files: true
+  generated_patches_dir: patches
+testing:
+  enabled: false
