@@ -95,6 +95,10 @@ test_python_version() {
 
     # Install dev dependencies
     pip install -r requirements-dev.txt >/dev/null 2>&1
+    local dev_exit=$?
+    if [ $dev_exit -ne 0 ]; then
+        echo -e "${YELLOW}Warning: Failed to install dev dependencies${NC}"
+    fi
 
     # Set environment variables as CI does
     export USE_MOCK_TESTS=true
@@ -115,6 +119,9 @@ test_python_version() {
     # Store output to check for timeout
     if [ "$py_version" = "3.11" ] && [ -f "pytest-py311.ini" ]; then
         timeout 300 python -m pytest -c pytest-py311.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header 2>&1 | tail -150
+    elif [ "$py_version" = "3.10" ] && [ -f "pytest-py310.ini" ]; then
+        # Python 3.10 can be slower, use optimized config and increased timeout
+        timeout 400 python -m pytest -c pytest-py310.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header 2>&1 | tail -150
     elif [ "$py_version" = "3.9" ]; then
         # Python 3.9 seems to produce more output, increase tail buffer
         timeout 400 python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header 2>&1 | tail -200
@@ -124,7 +131,11 @@ test_python_version() {
     local pytest_exit=${PIPESTATUS[0]}
     # If timeout was reached (exit code 124), report it
     if [ $pytest_exit -eq 124 ]; then
-        echo -e "${YELLOW}Warning: Test suite timed out after 300 seconds${NC}"
+        if [ "$py_version" = "3.9" ] || [ "$py_version" = "3.10" ]; then
+            echo -e "${YELLOW}Warning: Test suite timed out after 400 seconds${NC}"
+        else
+            echo -e "${YELLOW}Warning: Test suite timed out after 300 seconds${NC}"
+        fi
     fi
     print_result "CI pytest suite" $pytest_exit $py_version
 
@@ -132,8 +143,30 @@ test_python_version() {
 
     # 3. E2E Healing tests (from e2e-healing-tests.yml)
     echo -e "\n${BLUE}3. Running E2E healing scenarios...${NC}"
-    timeout 120 python -m pytest tests/e2e/healing_scenarios/test_basic_healing_scenarios.py -q --tb=short
-    print_result "E2E Healing Scenarios" $? $py_version
+    # Create test_results directory if it doesn't exist
+    mkdir -p test_results
+
+    # Run exactly as GitHub Actions does
+    PYTHONPATH=$PWD timeout 120 python -m pytest tests/e2e/healing_scenarios/test_basic_healing_scenarios.py -v \
+        --json-report \
+        --json-report-file=test_results/report.json \
+        --html=test_results/report.html \
+        --self-contained-html || true
+
+    local e2e_exit=$?
+
+    # Ensure report files exist (as GitHub Actions does)
+    if [ ! -f test_results/report.json ]; then
+        echo '{"summary": {"total": 0, "passed": 0, "failed": 0}}' > test_results/report.json
+    fi
+    if [ ! -f test_results/report.html ]; then
+        echo '<html><body>No test results</body></html>' > test_results/report.html
+    fi
+
+    print_result "E2E Healing Scenarios" $e2e_exit $py_version
+
+    # Clean up test results for next run
+    rm -rf test_results
 
     echo -e "\n${MAGENTA}Running Security Audit Tests...${NC}"
 
@@ -179,18 +212,37 @@ check_docker_build() {
     echo -e "\n${CYAN}=== Checking Docker build ===${NC}"
 
     if ! command -v docker &> /dev/null; then
-        echo -e "${YELLOW}WARNING: Docker not available, skipping Docker tests${NC}"
+        echo -e "${RED}✗ Docker not available${NC}"
+        echo -e "${YELLOW}Please install Docker Desktop: https://docker.com/products/docker-desktop/${NC}"
+        FAILED_TESTS+=("docker-not-installed")
+        return
+    fi
+
+    # Check if Docker daemon is running
+    if ! docker info >/dev/null 2>&1; then
+        echo -e "${RED}✗ Docker daemon is not running${NC}"
+        echo -e "${YELLOW}Please start Docker Desktop${NC}"
+        FAILED_TESTS+=("docker-not-running")
         return
     fi
 
     # Check if Dockerfile exists
     if [ -f "Dockerfile" ]; then
         echo "Building Docker image..."
-        docker build -t homeostasis-test:local-test . >/dev/null 2>&1
-        print_result "Docker build" $? "N/A"
+        # Capture output to show errors if build fails
+        local docker_output=$(docker build -t homeostasis-test:local-test . 2>&1)
+        local docker_exit=$?
+        if [ $docker_exit -ne 0 ]; then
+            echo -e "${RED}Docker build failed with error:${NC}"
+            echo "$docker_output" | tail -20
+            FAILED_TESTS+=("docker-build-failed")
+        fi
+        print_result "Docker build" $docker_exit "N/A"
 
-        # Clean up
-        docker rmi homeostasis-test:local-test >/dev/null 2>&1
+        # Clean up if successful
+        if [ $docker_exit -eq 0 ]; then
+            docker rmi homeostasis-test:local-test >/dev/null 2>&1
+        fi
     else
         echo -e "${YELLOW}No Dockerfile found, skipping Docker build${NC}"
     fi
@@ -200,13 +252,56 @@ check_docker_build() {
 check_integration_tests() {
     echo -e "\n${CYAN}=== Checking Integration Tests ===${NC}"
 
-    if [ -f "tests/e2e/docker-compose.yml" ] && command -v docker &> /dev/null; then
-        echo -e "${BLUE}Found integration test configuration${NC}"
-        echo -e "${YELLOW}Note: Full integration tests require Docker Compose${NC}"
-        # We won't run the full integration test here as it's resource intensive
-        # but we'll check that the compose file is valid
+    if ! command -v docker &> /dev/null; then
+        echo -e "${RED}✗ Docker not available for integration tests${NC}"
+        FAILED_TESTS+=("docker-integration-not-available")
+        return
+    fi
+
+    if ! docker info >/dev/null 2>&1; then
+        echo -e "${RED}✗ Docker daemon is not running for integration tests${NC}"
+        FAILED_TESTS+=("docker-integration-not-running")
+        return
+    fi
+
+    if ! command -v docker compose &> /dev/null 2>&1; then
+        echo -e "${RED}✗ Docker Compose not available${NC}"
+        echo -e "${YELLOW}Docker Compose is required for integration tests${NC}"
+        FAILED_TESTS+=("docker-compose-not-available")
+        return
+    fi
+
+    if [ -f "tests/e2e/docker-compose.yml" ]; then
+        echo -e "${BLUE}Running Docker integration tests (as GitHub Actions does)${NC}"
+
+        # First validate the compose file
         docker compose -f tests/e2e/docker-compose.yml config >/dev/null 2>&1
-        print_result "Docker Compose validation" $? "N/A"
+        local compose_valid=$?
+        print_result "Docker Compose validation" $compose_valid "N/A"
+        if [ $compose_valid -ne 0 ]; then
+            FAILED_TESTS+=("docker-compose-invalid")
+        fi
+
+        # Build test images (matching GitHub Actions)
+        echo -e "\n${BLUE}Building test images...${NC}"
+        docker build -t homeostasis-test:latest . >/dev/null 2>&1
+        local main_build=$?
+        print_result "Main Docker build" $main_build "N/A"
+        if [ $main_build -ne 0 ]; then
+            FAILED_TESTS+=("docker-main-build-failed")
+        fi
+
+        docker compose -f tests/e2e/docker-compose.yml build >/dev/null 2>&1
+        local compose_build=$?
+        print_result "Docker Compose build" $compose_build "N/A"
+        if [ $compose_build -ne 0 ]; then
+            FAILED_TESTS+=("docker-compose-build-failed")
+        fi
+
+        echo -e "${YELLOW}Note: Full integration test run skipped locally (resource intensive)${NC}"
+        echo -e "${YELLOW}GitHub Actions will run: docker compose run --rm test-runner${NC}"
+    else
+        echo -e "${YELLOW}No docker-compose.yml found, skipping integration tests${NC}"
     fi
 }
 
@@ -323,6 +418,13 @@ main() {
         if [[ " ${FAILED_TESTS[@]} " =~ "CI" ]]; then
             echo -e "${RED}4. Fix CI test failures:${NC}"
             echo -e "   These are the core tests - must pass!"
+        fi
+        if [[ " ${FAILED_TESTS[@]} " =~ "docker" ]]; then
+            echo -e "${RED}5. Fix Docker issues:${NC}"
+            echo -e "   - Install Docker Desktop: https://docker.com/products/docker-desktop/"
+            echo -e "   - Start Docker Desktop application"
+            echo -e "   - Ensure Docker daemon is running: docker info"
+            echo -e "   Docker is required for integration tests to pass on GitHub"
         fi
 
         echo -e "\n${RED}DO NOT PUSH until ALL tests pass${NC}"

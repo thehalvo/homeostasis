@@ -1,0 +1,45 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Monitor the orchestrator
+  - job_name: 'orchestrator'
+    static_configs:
+      - targets: ['orchestrator:8080']
+        labels:
+          component: 'orchestrator'
+          environment: 'test'
+
+  # Monitor test services
+  - job_name: 'test-services'
+    static_configs:
+      - targets:
+          - 'test-service-python:8000'
+          - 'test-service-node:8001'
+          - 'test-service-go:8002'
+        labels:
+          environment: 'test'
+    metrics_path: '/metrics'
+
+  # Monitor the monitoring stack itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          component: 'monitoring'
+
+  # Monitor grafana if needed
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+        labels:
+          component: 'monitoring'
+
+  # Monitor elasticsearch
+  - job_name: 'elasticsearch'
+    static_configs:
+      - targets: ['elasticsearch:9200']
+        labels:
+          component: 'logging'
+    metrics_path: '/_prometheus/metrics'
