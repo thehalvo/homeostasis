@@ -202,7 +202,7 @@ jobs:
     
     - name: Create issue for failures
       if: failure() && github.event_name == 'schedule'
-      uses: actions/github-script@v6
+      uses: actions/github-script@v8
       with:
         script: |
           const date = new Date().toISOString().split('T')[0];
@@ -297,7 +297,7 @@ jobs:
     
     - name: Post summary to PR
       if: github.event_name == 'pull_request'
-      uses: actions/github-script@v6
+      uses: actions/github-script@v8
       with:
         script: |
           const fs = require('fs');
