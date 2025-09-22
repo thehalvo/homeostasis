@@ -35,10 +35,19 @@ print_result() {
     local python_version=$3
 
     if [ $exit_code -eq 0 ]; then
-        echo -e "${GREEN}✓ $test_name (Python $python_version) passed${NC}"
+        if [ "$python_version" = "N/A" ]; then
+            echo -e "${GREEN}✓ $test_name passed${NC}"
+        else
+            echo -e "${GREEN}✓ $test_name (Python $python_version) passed${NC}"
+        fi
     else
-        echo -e "${RED}✗ $test_name (Python $python_version) failed${NC}"
-        FAILED_TESTS+=("$test_name-py$python_version")
+        if [ "$python_version" = "N/A" ]; then
+            echo -e "${RED}✗ $test_name failed${NC}"
+            FAILED_TESTS+=("$test_name")
+        else
+            echo -e "${RED}✗ $test_name (Python $python_version) failed${NC}"
+            FAILED_TESTS+=("$test_name-py$python_version")
+        fi
     fi
 }
 
@@ -117,25 +126,80 @@ test_python_version() {
     # Run with timeout and show failures
     # Use special config for Python 3.11 to avoid asyncio hangs
     # Store output to check for timeout
-    if [ "$py_version" = "3.11" ] && [ -f "pytest-py311.ini" ]; then
-        timeout 300 python -m pytest -c pytest-py311.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header 2>&1 | tail -150
-    elif [ "$py_version" = "3.10" ] && [ -f "pytest-py310.ini" ]; then
-        # Python 3.10 can be slower, use optimized config and increased timeout
-        timeout 400 python -m pytest -c pytest-py310.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header 2>&1 | tail -150
-    elif [ "$py_version" = "3.9" ]; then
-        # Python 3.9 seems to produce more output, increase tail buffer
-        timeout 400 python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header 2>&1 | tail -200
-    else
-        timeout 300 python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --no-header 2>&1 | tail -150
-    fi
-    local pytest_exit=${PIPESTATUS[0]}
-    # If timeout was reached (exit code 124), report it
-    if [ $pytest_exit -eq 124 ]; then
-        if [ "$py_version" = "3.9" ] || [ "$py_version" = "3.10" ]; then
-            echo -e "${YELLOW}Warning: Test suite timed out after 400 seconds${NC}"
+
+    if [ "$py_version" = "3.9" ]; then
+        # Python 3.9 is slower on M1 Macs, split tests into batches
+        echo -e "${YELLOW}Running tests in batches for Python 3.9 to avoid timeouts${NC}"
+
+        # Batch 1: Core tests (excluding slow directories)
+        echo -e "\n${BLUE}Batch 1/2: Core tests...${NC}"
+        # Run without timeout and capture full output to file for debugging
+        local test_log="logs/pytest_${py_version}_batch1_$(date +%s).log"
+        python -m pytest -c pytest-ci.ini tests/ \
+            -k "not test_concurrent_error_processing_performance" \
+            --ignore=tests/test_emerging_tech \
+            --ignore=tests/unit \
+            -v --tb=short 2>&1 | tee "$test_log"
+        local batch1_exit=${PIPESTATUS[0]}
+
+        # Show summary of what happened
+        echo -e "\n${YELLOW}Test Summary:${NC}"
+        grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
+
+        if [ $batch1_exit -eq 0 ] || [ $batch1_exit -eq 124 ]; then
+            # If batch 1 passed or had partial success, run batch 2
+            echo -e "\n${BLUE}Batch 2/2: Emerging tech and unit tests...${NC}"
+            local test_log2="logs/pytest_${py_version}_batch2_$(date +%s).log"
+            python -m pytest -c pytest-ci.ini \
+                tests/test_emerging_tech tests/unit \
+                -v --tb=short 2>&1 | tee "$test_log2"
+            local batch2_exit=${PIPESTATUS[0]}
+
+            # Show summary
+            echo -e "\n${YELLOW}Test Summary:${NC}"
+            grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log2" | tail -20 || true
+
+            local pytest_exit=$((batch1_exit + batch2_exit))
         else
-            echo -e "${YELLOW}Warning: Test suite timed out after 300 seconds${NC}"
+            local pytest_exit=$batch1_exit
         fi
+    elif [ "$py_version" = "3.11" ] && [ -f "pytest-py311.ini" ]; then
+        echo -e "${YELLOW}Running Python 3.11 tests without timeout...${NC}"
+        local test_log="logs/pytest_${py_version}_$(date +%s).log"
+        python -m pytest -c pytest-py311.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
+        local pytest_exit=${PIPESTATUS[0]}
+
+        # Show summary
+        echo -e "\n${YELLOW}Test Summary:${NC}"
+        grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
+    elif [ "$py_version" = "3.10" ] && [ -f "pytest-py310.ini" ]; then
+        # Python 3.10 can be slower, use optimized config
+        echo -e "${YELLOW}Running Python 3.10 tests without timeout...${NC}"
+        local test_log="logs/pytest_${py_version}_$(date +%s).log"
+        python -m pytest -c pytest-py310.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
+        local pytest_exit=${PIPESTATUS[0]}
+
+        # Show summary
+        echo -e "\n${YELLOW}Test Summary:${NC}"
+        grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
+    else
+        echo -e "${YELLOW}Running tests without timeout...${NC}"
+        local test_log="logs/pytest_${py_version}_$(date +%s).log"
+        python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
+        local pytest_exit=${PIPESTATUS[0]}
+
+        # Show summary
+        echo -e "\n${YELLOW}Test Summary:${NC}"
+        grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
+    fi
+    # Report test status
+    if [ $pytest_exit -eq 0 ]; then
+        echo -e "${GREEN}All tests passed${NC}"
+    elif [ $pytest_exit -eq 5 ]; then
+        echo -e "${YELLOW}No tests were collected (exit code 5)${NC}"
+    else
+        echo -e "${RED}Tests failed with exit code: $pytest_exit${NC}"
+        echo -e "${YELLOW}Check the log files in logs/ directory for details${NC}"
     fi
     print_result "CI pytest suite" $pytest_exit $py_version
 
@@ -146,12 +210,17 @@ test_python_version() {
     # Create test_results directory if it doesn't exist
     mkdir -p test_results
 
-    # Run exactly as GitHub Actions does
-    PYTHONPATH=$PWD timeout 120 python -m pytest tests/e2e/healing_scenarios/test_basic_healing_scenarios.py -v \
+    # Run exactly as GitHub Actions does (but without timeout)
+    local e2e_log="logs/e2e_${py_version}_$(date +%s).log"
+    PYTHONPATH=$PWD python -m pytest tests/e2e/healing_scenarios/test_basic_healing_scenarios.py -v \
         --json-report \
         --json-report-file=test_results/report.json \
         --html=test_results/report.html \
-        --self-contained-html || true
+        --self-contained-html 2>&1 | tee "$e2e_log" || true
+
+    # Show E2E summary
+    echo -e "\n${YELLOW}E2E Test Summary:${NC}"
+    grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$e2e_log" | tail -10 || true
 
     local e2e_exit=$?
 
