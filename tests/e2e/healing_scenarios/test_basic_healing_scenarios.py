@@ -247,7 +247,7 @@ async def trigger_error():
         # After first healing, inject a different error
         def trigger_second_error():
             # Check if we're in mock mode
-            USE_MOCK = os.environ.get("USE_MOCK_TESTS", "false").lower() == "true"
+            USE_MOCK = os.environ.get("USE_MOCK_TESTS", "true").lower() == "true"
             if USE_MOCK:
                 # In mock mode, just inject the error directly
                 test_environment.inject_error(

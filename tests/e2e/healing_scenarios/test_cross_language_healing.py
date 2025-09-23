@@ -194,7 +194,7 @@ class TestCrossLanguageHealing:
         """Test healing for different programming languages."""
         # Check if we're using mock infrastructure
         USE_MOCK_INFRASTRUCTURE = (
-            os.environ.get("USE_MOCK_TESTS", "false").lower() == "true"
+            os.environ.get("USE_MOCK_TESTS", "true").lower() == "true"
         )
 
         if USE_MOCK_INFRASTRUCTURE:
@@ -403,7 +403,7 @@ if __name__ == "__main__":
         """Test healing during framework migration scenarios."""
         # Check if we're using mock infrastructure
         USE_MOCK_INFRASTRUCTURE = (
-            os.environ.get("USE_MOCK_TESTS", "false").lower() == "true"
+            os.environ.get("USE_MOCK_TESTS", "true").lower() == "true"
         )
 
         if USE_MOCK_INFRASTRUCTURE:

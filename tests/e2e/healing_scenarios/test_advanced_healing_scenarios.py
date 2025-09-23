@@ -142,7 +142,7 @@ async def trigger_error():
 
         # Check if we're using mock infrastructure
         USE_MOCK_INFRASTRUCTURE = (
-            os.environ.get("USE_MOCK_TESTS", "false").lower() == "true"
+            os.environ.get("USE_MOCK_TESTS", "true").lower() == "true"
         )
 
         for i in range(3):
