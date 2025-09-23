@@ -82,6 +82,9 @@ services:
       - PORT=8002
 
   # Test runner container
+  # NOTE: On local development, if you encounter "fork/exec docker-buildx: no such file or directory"
+  # error, use the legacy Docker builder instead: docker build -f Dockerfile.test .
+  # GitHub Actions runners have buildx pre-installed, so this is only a local issue.
   test-runner:
     build:
       context: ../..
@@ -100,11 +103,7 @@ services:
       - test-service-python
       - test-service-node
       - test-service-go
-    command: |
-      bash -c "
-        cd /app/tests/e2e/healing_scenarios &&
-        python run_e2e_tests.py --suite all --output-dir /app/test_results
-      "
+    command: ["python", "/app/tests/e2e/healing_scenarios/run_e2e_tests.py", "--suite", "all", "--output-dir", "/app/test_results", "--ci"]
 
   # Monitoring stack for observability
   prometheus:

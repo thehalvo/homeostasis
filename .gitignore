@@ -134,3 +134,10 @@ test_results/
 .netlify
 **/.claude/settings.local.json
 
+# E2E test service generated files
+tests/e2e/go_service/go.mod
+tests/e2e/go_service/go.sum
+tests/e2e/node_service/package.json
+tests/e2e/node_service/package-lock.json
+tests/e2e/node_service/node_modules/
+

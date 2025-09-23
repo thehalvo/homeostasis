@@ -1,2 +1,31 @@
 FROM python:3.9-slim
-RUN echo "test"
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    libldap2-dev \
+    libsasl2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements files
+COPY requirements.txt requirements-dev.txt ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r requirements-dev.txt
+
+# Copy the entire project
+COPY . .
+
+# Set PYTHONPATH to include the app directory
+ENV PYTHONPATH=/app
+
+# Create necessary directories
+RUN mkdir -p test_results logs
+
+# Default command (can be overridden)
+CMD ["python", "tests/e2e/healing_scenarios/run_e2e_tests.py", "--suite", "all", "--ci"]

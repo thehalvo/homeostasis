@@ -45,6 +45,7 @@ class E2ETestRunner:
             f"--timeout={timeout}",
             "--json-report",
             f"--json-report-file={self.output_dir / 'report.json'}",
+            "--junit-xml=" + str(self.output_dir / "report.xml"),
             "--html=" + str(self.output_dir / "report.html"),
             "--self-contained-html",
         ]

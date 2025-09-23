@@ -215,6 +215,7 @@ test_python_version() {
     PYTHONPATH=$PWD python -m pytest tests/e2e/healing_scenarios/test_basic_healing_scenarios.py -v \
         --json-report \
         --json-report-file=test_results/report.json \
+        --junit-xml=test_results/report.xml \
         --html=test_results/report.html \
         --self-contained-html 2>&1 | tee "$e2e_log" || true
 
@@ -397,6 +398,9 @@ check_integration_tests() {
             echo -e "${YELLOW}Using lightweight test compose file for faster pre-push testing${NC}"
         fi
         echo -e "${YELLOW}Showing last 30 lines of build output for brevity${NC}"
+        # NOTE: If you see "fork/exec docker-buildx: no such file or directory" locally,
+        # that's a local Docker issue. GitHub Actions has buildx pre-installed.
+        # Workaround: docker build -f Dockerfile.test -t e2e-test-runner .
         docker compose -f "$compose_file" build 2>&1 | tail -30
         local compose_build=${PIPESTATUS[0]}
 
@@ -406,8 +410,22 @@ check_integration_tests() {
             FAILED_TESTS+=("docker-compose-build-failed")
         fi
 
-        echo -e "${YELLOW}Note: Full integration test run skipped locally (resource intensive)${NC}"
-        echo -e "${YELLOW}GitHub Actions will run: docker compose run --rm test-runner${NC}"
+        if [ "$SKIP_DOCKER_INTEGRATION" = "1" ]; then
+            echo -e "${YELLOW}Skipping Docker integration tests (SKIP_DOCKER_INTEGRATION=1)${NC}"
+            echo -e "${YELLOW}WARNING: GitHub Actions WILL run these tests!${NC}"
+        else
+            echo -e "\n${BLUE}Running Docker integration tests (as GitHub Actions does)${NC}"
+            # Run the exact same command that GitHub Actions runs
+            docker compose -f "$compose_file" run --rm test-runner \
+                python /app/tests/e2e/healing_scenarios/run_e2e_tests.py --suite all --ci
+            local integration_result=$?
+
+            print_result "Docker Compose integration tests" $integration_result "N/A"
+            if [ $integration_result -ne 0 ]; then
+                echo -e "${RED}Docker integration tests failed${NC}"
+                FAILED_TESTS+=("docker-integration-tests-failed")
+            fi
+        fi
 
         # Clean up after testing
         echo -e "\\n${BLUE}Cleaning up Docker resources...${NC}"
@@ -501,7 +519,7 @@ main() {
     check_integration_tests
 
     # Summary
-    echo -e "\n${BLUE}=== COMPREHENSIVE TEST SUMMARY ===${NC}"
+    echo -e "\n${BLUE}=== TEST SUMMARY ===${NC}"
     if [ ${#FAILED_TESTS[@]} -eq 0 ]; then
         echo -e "${GREEN}✓ ALL TESTS PASSED WITH ALL PYTHON VERSIONS!${NC}"
         echo -e "${GREEN}✓ Your code WILL pass on GitHub Actions${NC}"
@@ -549,7 +567,6 @@ if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
     echo "Usage: $0"
     echo ""
     echo "Runs ALL GitHub Actions tests with Python 3.9, 3.10, and 3.11"
-    echo "NO OPTIONS - Comprehensive testing only"
     echo ""
     echo "This script ensures your code will pass on GitHub"
     exit 0
