@@ -27,9 +27,26 @@ import pytest  # noqa: E402
 pytest_plugins = ["pytest_asyncio"]
 
 
+
+
 @pytest.fixture(scope="session")
 def event_loop_policy():
     """Set event loop policy for asyncio tests."""
     import asyncio
 
     return asyncio.DefaultEventLoopPolicy()
+
+
+# Simple test progress reporting for CI
+def pytest_runtest_logstart(nodeid, location):
+    """Called when a test starts."""
+    if os.environ.get('CI') or os.environ.get('GITHUB_ACTIONS'):
+        print(f"\n[TEST START] {nodeid}", flush=True)
+
+
+def pytest_runtest_logfinish(nodeid, location):
+    """Called when a test finishes."""
+    if os.environ.get('CI') or os.environ.get('GITHUB_ACTIONS'):
+        print(f"[TEST DONE] {nodeid}", flush=True)
+
+
