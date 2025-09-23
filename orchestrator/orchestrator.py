@@ -475,7 +475,7 @@ class Orchestrator:
         for i, result in enumerate(analysis_results):
             self.logger.info(
                 f"Analysis result {i + 1}/{len(analysis_results)}: {result['root_cause']}",
-                confidence=result["confidence"],
+                confidence=result.get("confidence", "unknown"),
             )
 
         return analysis_results
@@ -589,13 +589,16 @@ class Orchestrator:
         applied_patches = []
 
         for patch in patches:
-            if patch["patch_type"] != "specific":
+            if patch.get("patch_type", "specific") != "specific":
                 self.logger.warning(
                     f"Cannot automatically apply patch type: {patch['patch_type']}"
                 )
                 continue
 
-            file_path = patch["file_path"]
+            file_path = patch.get("file_path")
+            if not file_path:
+                self.logger.warning("Patch missing file_path, skipping")
+                continue
             self.logger.info(f"Applying patch to {file_path}")
 
             # Check file-specific rate limit if rate limiter is enabled
