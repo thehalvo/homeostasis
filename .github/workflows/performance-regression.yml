@@ -23,7 +23,7 @@ jobs:
         python-version: ['3.9', '3.10', '3.11']
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
       with:
         fetch-depth: 0  # Need full history for git commit info
     
@@ -132,7 +132,7 @@ jobs:
     if: github.event_name == 'pull_request'
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     
     - name: Download current results
       uses: actions/download-artifact@v4

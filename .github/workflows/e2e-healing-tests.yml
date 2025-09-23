@@ -44,7 +44,7 @@ jobs:
       fail-fast: false
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
 
     - name: Free Disk Space (Ubuntu)
       uses: jlumbroso/free-disk-space@main
@@ -269,7 +269,7 @@ jobs:
     if: success()
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
 
     - name: Free Disk Space (Ubuntu)
       uses: jlumbroso/free-disk-space@main
