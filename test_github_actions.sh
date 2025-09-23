@@ -3,6 +3,10 @@
 # test_github_actions.sh - GitHub Actions Testing
 # This script runs ALL tests EXACTLY as GitHub Actions does
 # Complete testing with Python 3.9, 3.10, and 3.11
+#
+# WARNING: This script runs the FULL test suite and takes approximately 50 minutes to complete!
+# It tests with multiple Python versions and runs all test categories.
+# For quick testing during development, consider running individual test commands instead.
 
 set -e  # Exit on error
 

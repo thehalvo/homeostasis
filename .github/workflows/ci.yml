@@ -54,14 +54,18 @@ jobs:
       run: |
         echo "Starting tests at $(date)"
         echo "Total test files: $(find tests -name 'test_*.py' | wc -l)"
+        echo "Initial memory usage:"
+        free -h
 
         # Start a background monitor that reports every 60 seconds
         (
           while true; do
             sleep 60
             echo "[MONITOR] Still running at $(date)"
-            # Show pytest processes
-            ps aux | grep pytest | grep -v grep || true
+            echo "[MONITOR] Memory usage:"
+            free -h
+            # Show pytest processes with memory usage
+            ps aux --sort=-%mem | head -10 | grep -E 'pytest|python' || true
           done
         ) &
         MONITOR_PID=$!
@@ -80,5 +84,8 @@ jobs:
 
         # Kill the monitor
         kill $MONITOR_PID 2>/dev/null || true
+
+        echo "Final memory usage:"
+        free -h
 
         exit $TEST_EXIT

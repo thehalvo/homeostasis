@@ -43,6 +43,33 @@ class Analyzer:
     Enhanced unified analyzer that combines different analysis approaches.
     """
 
+    # Class-level cache for singleton instances per configuration
+    _instances: Dict[str, "Analyzer"] = {}
+
+    def __new__(cls, strategy: str = AnalysisStrategy.RULE_BASED_ONLY, **kwargs):
+        """Create or return existing instance based on strategy."""
+        # Handle legacy use_ai parameter
+        use_ai = kwargs.get('use_ai')
+        if use_ai is not None:
+            if use_ai:
+                strategy = AnalysisStrategy.AI_FALLBACK
+            else:
+                strategy = AnalysisStrategy.RULE_BASED_ONLY
+
+        # Create a unique key for this configuration including all parameters
+        ai_model_type = kwargs.get('ai_model_type', 'stub')
+        ml_mode = kwargs.get('ml_mode', 'parallel')
+        use_llm = kwargs.get('use_llm', False)
+
+        cache_key = f"{strategy}_{ai_model_type}_{ml_mode}_{use_llm}_{use_ai}"
+
+        # Return existing instance if available
+        if cache_key not in cls._instances:
+            instance = super().__new__(cls)
+            cls._instances[cache_key] = instance
+
+        return cls._instances[cache_key]
+
     def __init__(
         self,
         strategy: str = AnalysisStrategy.RULE_BASED_ONLY,
@@ -63,6 +90,10 @@ class Analyzer:
             use_llm: Whether to use LLM in hybrid strategy
             use_ai: Legacy parameter for backward compatibility. If True, uses AI_FALLBACK strategy
         """
+        # Skip initialization if already initialized
+        if hasattr(self, '_initialized'):
+            return
+        self._initialized = True
         # Handle legacy use_ai parameter for backward compatibility
         if use_ai is not None:
             self.use_ai = use_ai
@@ -305,6 +336,11 @@ class Analyzer:
             List of analysis results
         """
         return [self.analyze_error(error_data) for error_data in error_data_list]
+
+    @classmethod
+    def clear_cache(cls):
+        """Clear the singleton instance cache. Useful for testing."""
+        cls._instances.clear()
 
 
 def analyze_error_from_log(

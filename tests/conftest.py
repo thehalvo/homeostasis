@@ -50,3 +50,15 @@ def pytest_runtest_logfinish(nodeid, location):
         print(f"[TEST DONE] {nodeid}", flush=True)
 
 
+@pytest.fixture(autouse=True)
+def clear_analyzer_cache():
+    """Clear analyzer singleton cache before each test to ensure isolation."""
+    from modules.analysis.analyzer import Analyzer
+
+    # Clear before test
+    Analyzer.clear_cache()
+    yield
+    # Clear after test
+    Analyzer.clear_cache()
+
+
