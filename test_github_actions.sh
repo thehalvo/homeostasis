@@ -4,7 +4,7 @@
 # This script runs ALL tests EXACTLY as GitHub Actions does
 # Complete testing with Python 3.9, 3.10, and 3.11
 #
-# WARNING: This script runs the FULL test suite and takes approximately 3 hours to complete!
+# WARNING: This script runs the FULL test suite and takes approximately an hour to complete!
 # It tests with multiple Python versions and runs all test categories.
 # For quick testing during development, consider running individual test commands instead.
 
@@ -36,6 +36,12 @@ init_logging() {
     mkdir -p "$LOG_DIR"
     # Clean up old logs (keep only last 5 runs)
     ls -t "$LOG_DIR"/github_actions_test_*.log 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null || true
+
+    # Clean up old pytest logs (keep only last 10)
+    ls -t "$LOG_DIR"/pytest_*.log 2>/dev/null | tail -n +11 | xargs rm -f 2>/dev/null || true
+
+    # Clean up old e2e logs (keep only last 10)
+    ls -t "$LOG_DIR"/e2e_*.log 2>/dev/null | tail -n +11 | xargs rm -f 2>/dev/null || true
 
     # Start new log
     echo "=== GitHub Actions Test Suite ===" > "$MAIN_LOG"
@@ -182,61 +188,47 @@ test_python_version() {
     # Store output to check for timeout
 
     if [ "$py_version" = "3.9" ]; then
-        # Run all tests in one batch for Python 3.9
-        echo -e "${YELLOW}Running tests...${NC}"
-        echo "Running pytest suite for Python $py_version" >> "$MAIN_LOG"
-        python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short >> "$MAIN_LOG" 2>&1 &
-        local pid=$!
-
-        # Show progress dots while tests run
-        while kill -0 $pid 2>/dev/null; do
-            echo -n "."
-            sleep 2
-        done
-        wait $pid
-        local pytest_exit=$?
-        echo ""  # New line after dots
-
-        # Show brief summary
-        echo -e "\n${YELLOW}Test Summary:${NC}"
-        grep -E "(passed|failed|error)" "$MAIN_LOG" | tail -5 || true
-    elif [ "$py_version" = "3.11" ] && [ -f "pytest-py311.ini" ]; then
-        echo -e "${YELLOW}Running Python 3.11 tests without timeout...${NC}"
-        local test_log="logs/pytest_${py_version}_$(date +%s).log"
-        python -m pytest -c pytest-py311.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
+        # Python 3.9 with progress display like 3.10
+        echo -e "${YELLOW}Running Python 3.9 tests...${NC}"
+        local test_log="$LOG_DIR/pytest_${py_version}_$(date +%s).log"
+        python -m pytest -c pytest-py39-timeout.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
         local pytest_exit=${PIPESTATUS[0]}
 
         # Show summary
         echo -e "\n${YELLOW}Test Summary:${NC}"
         grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
-    elif [ "$py_version" = "3.10" ] && [ -f "pytest-py310.ini" ]; then
+    elif [ "$py_version" = "3.11" ] && [ -f "pytest-py311-timeout.ini" ]; then
+        echo -e "${YELLOW}Running Python 3.11 tests with timeout...${NC}"
+        local test_log="$LOG_DIR/pytest_${py_version}_$(date +%s).log"
+        # Run pytest but show only test collection and item progress
+        python -m pytest -c pytest-py311-timeout.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | \
+            tee "$test_log" | \
+            grep -E "^(platform|rootdir|configfile|plugins|collected|tests/.*::|===|PASSED|FAILED|SKIPPED|ERROR|WARNING|%)" || true
+        local pytest_exit=${PIPESTATUS[0]}
+
+        # Show summary
+        echo -e "\n${YELLOW}Test Summary:${NC}"
+        grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
+    elif [ "$py_version" = "3.10" ] && [ -f "pytest-py310-timeout.ini" ]; then
         # Python 3.10 can be slower, use optimized config
-        echo -e "${YELLOW}Running Python 3.10 tests without timeout...${NC}"
-        local test_log="logs/pytest_${py_version}_$(date +%s).log"
-        python -m pytest -c pytest-py310.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
+        echo -e "${YELLOW}Running Python 3.10 tests with timeout...${NC}"
+        local test_log="$LOG_DIR/pytest_${py_version}_$(date +%s).log"
+        python -m pytest -c pytest-py310-timeout.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
         local pytest_exit=${PIPESTATUS[0]}
 
         # Show summary
         echo -e "\n${YELLOW}Test Summary:${NC}"
         grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
     else
+        # Default case with progress display
         echo -e "${YELLOW}Running tests...${NC}"
-        echo "Running pytest suite for Python $py_version" >> "$MAIN_LOG"
-        python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short >> "$MAIN_LOG" 2>&1 &
-        local pid=$!
+        local test_log="$LOG_DIR/pytest_${py_version}_$(date +%s).log"
+        python -m pytest -c pytest-ci-timeout.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --timeout=300 --timeout-method=thread 2>&1 | tee "$test_log"
+        local pytest_exit=${PIPESTATUS[0]}
 
-        # Show progress dots while tests run
-        while kill -0 $pid 2>/dev/null; do
-            echo -n "."
-            sleep 2
-        done
-        wait $pid
-        local pytest_exit=$?
-        echo ""  # New line after dots
-
-        # Show brief summary
+        # Show summary
         echo -e "\n${YELLOW}Test Summary:${NC}"
-        grep -E "(passed|failed|error)" "$MAIN_LOG" | tail -5 || true
+        grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
     fi
     # Report test status
     if [ $pytest_exit -eq 0 ]; then
@@ -258,22 +250,14 @@ test_python_version() {
 
     # Run exactly as GitHub Actions does (but without timeout)
     echo -e "\n${BLUE}3. Running E2E healing scenarios...${NC}"
+    local e2e_log="$LOG_DIR/e2e_${py_version}_$(date +%s).log"
     PYTHONPATH=$PWD python -m pytest tests/e2e/healing_scenarios/test_basic_healing_scenarios.py -v \
         --json-report \
         --json-report-file=test_results/report.json \
         --junit-xml=test_results/report.xml \
         --html=test_results/report.html \
-        --self-contained-html >> "$MAIN_LOG" 2>&1 &
-    local pid=$!
-
-    # Show progress dots while tests run
-    while kill -0 $pid 2>/dev/null; do
-        echo -n "."
-        sleep 2
-    done
-    wait $pid
-    local e2e_exit=$?
-    echo ""  # New line after dots
+        --self-contained-html 2>&1 | tee "$e2e_log" | grep -E "^(tests/.*::|PASSED|FAILED|SKIPPED|ERROR|===)" || true
+    local e2e_exit=${PIPESTATUS[0]}
 
     # Ensure report files exist (as GitHub Actions does)
     if [ ! -f test_results/report.json ]; then
@@ -361,18 +345,34 @@ check_docker_build() {
         # Use legacy builder to avoid buildx issues
         export DOCKER_BUILDKIT=0
         echo -e "${BLUE}Running Docker build...${NC}"
-        # Log full output, show progress on console
-        docker build -t homeostasis-test:local-test . >> "$MAIN_LOG" 2>&1 &
+        # Create a temporary file for Docker output
+        local docker_log=$(mktemp)
+
+        # Run Docker build with progress tracking
+        docker build -t homeostasis-test:local-test . > "$docker_log" 2>&1 &
         local pid=$!
 
-        # Show progress dots while build runs
+        # Monitor Docker build progress
+        local last_step=""
         while kill -0 $pid 2>/dev/null; do
-            echo -n "."
-            sleep 2
+            # Extract current step from Docker output
+            local current_step=$(grep -E "^Step [0-9]+/[0-9]+" "$docker_log" | tail -1 | cut -d: -f1 || echo "")
+            if [ "$current_step" != "$last_step" ] && [ -n "$current_step" ]; then
+                echo -e "\r${BLUE}Docker build: $current_step${NC}                    "
+                last_step="$current_step"
+            else
+                echo -ne "\r${BLUE}Docker build in progress...${NC}     "
+            fi
+            sleep 1
         done
         wait $pid
         local docker_exit=$?
-        echo ""  # New line after dots
+
+        # Copy full output to main log
+        cat "$docker_log" >> "$MAIN_LOG"
+        rm -f "$docker_log"
+
+        echo -e "\r${BLUE}Docker build completed${NC}                    "
 
         if [ $docker_exit -ne 0 ]; then
             echo -e "${RED}Docker build failed - check the output above for errors${NC}"

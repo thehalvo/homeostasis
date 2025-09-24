@@ -50,12 +50,15 @@ jobs:
         DISABLE_PERFORMANCE_TRACKING: true
         CI: true
         GITHUB_ACTIONS: true
-      timeout-minutes: 30
+      timeout-minutes: 120
       run: |
         echo "Starting tests at $(date)"
         echo "Total test files: $(find tests -name 'test_*.py' | wc -l)"
         echo "Initial memory usage:"
         free -h
+
+        # Install pytest-timeout if not already installed
+        pip install pytest-timeout
 
         # Start a background monitor that reports every 60 seconds
         (
@@ -70,8 +73,8 @@ jobs:
         ) &
         MONITOR_PID=$!
 
-        # Run tests with real-time output
-        python -m pytest -c pytest-ci.ini tests/ \
+        # Run tests with real-time output and timeout configuration for Python 3.10
+        python -m pytest -c pytest-py310-timeout.ini tests/ \
           -k "not test_concurrent_error_processing_performance" \
           --tb=short \
           -v \

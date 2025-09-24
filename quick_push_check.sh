@@ -64,8 +64,8 @@ if [ -d "venv_py39" ]; then
     export USE_MOCK_TESTS=true
     export DISABLE_PERFORMANCE_TRACKING=true
 
-    # Just run a few quick tests
-    if python -m pytest tests/e2e/healing_scenarios/test_basic_healing_scenarios.py::TestBasicHealingScenarios::test_keyerror_healing -v; then
+    # Just run a few quick tests with timeout
+    if python -m pytest -c pytest-py39-timeout.ini tests/e2e/healing_scenarios/test_basic_healing_scenarios.py::TestBasicHealingScenarios::test_keyerror_healing -v; then
         echo -e "${GREEN}✓ Smoke test passed${NC}"
     else
         echo -e "${RED}✗ Smoke test failed${NC}"
