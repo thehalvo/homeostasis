@@ -50,32 +50,35 @@ def pytest_runtest_logfinish(nodeid, location):
         print(f"[TEST DONE] {nodeid}", flush=True)
 
 
-@pytest.fixture(autouse=True)
-def clear_analyzer_cache(request):
-    """Clear analyzer singleton cache before each test to ensure isolation."""
-    from modules.analysis.analyzer import Analyzer
+# Commented out autouse fixtures that were causing performance issues
+# Uncomment only if you experience test isolation or memory issues
 
-    # Skip cache clearing for stress tests to avoid memory issues
-    if "stress" in request.node.nodeid or "test_concurrent_high_volume" in request.node.nodeid:
-        yield
-        return
+# @pytest.fixture(autouse=True)
+# def clear_analyzer_cache(request):
+#     """Clear analyzer singleton cache before each test to ensure isolation."""
+#     from modules.analysis.analyzer import Analyzer
+#
+#     # Skip cache clearing for stress tests to avoid memory issues
+#     if "stress" in request.node.nodeid or "test_concurrent_high_volume" in request.node.nodeid:
+#         yield
+#         return
+#
+#     # Clear before test
+#     Analyzer.clear_cache()
+#     yield
+#     # Clear after test
+#     Analyzer.clear_cache()
 
-    # Clear before test
-    Analyzer.clear_cache()
-    yield
-    # Clear after test
-    Analyzer.clear_cache()
 
-
-@pytest.fixture(autouse=True)
-def limit_memory_usage():
-    """Limit memory usage for tests to prevent OOM on GitHub Actions."""
-    import gc
-
-    # Force garbage collection before each test
-    gc.collect()
-    yield
-    # Force garbage collection after each test
-    gc.collect()
+# @pytest.fixture(autouse=True)
+# def limit_memory_usage():
+#     """Limit memory usage for tests to prevent OOM on GitHub Actions."""
+#     import gc
+#
+#     # Force garbage collection before each test
+#     gc.collect()
+#     yield
+#     # Force garbage collection after each test
+#     gc.collect()
 
 

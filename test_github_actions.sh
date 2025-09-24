@@ -4,7 +4,7 @@
 # This script runs ALL tests EXACTLY as GitHub Actions does
 # Complete testing with Python 3.9, 3.10, and 3.11
 #
-# WARNING: This script runs the FULL test suite and takes approximately 50 minutes to complete!
+# WARNING: This script runs the FULL test suite and takes approximately 3 hours to complete!
 # It tests with multiple Python versions and runs all test categories.
 # For quick testing during development, consider running individual test commands instead.
 
@@ -26,10 +26,60 @@ NC='\033[0m' # No Color
 FAILED_TESTS=()
 PYTHON_VERSIONS=("3.9" "3.10" "3.11")
 
+# Log configuration
+LOG_DIR="$SCRIPT_DIR/test_logs"
+MAIN_LOG="$LOG_DIR/github_actions_test_$(date +%Y%m%d_%H%M%S).log"
+LATEST_LOG="$LOG_DIR/latest.log"
+
+# Initialize logging
+init_logging() {
+    mkdir -p "$LOG_DIR"
+    # Clean up old logs (keep only last 5 runs)
+    ls -t "$LOG_DIR"/github_actions_test_*.log 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null || true
+
+    # Start new log
+    echo "=== GitHub Actions Test Suite ===" > "$MAIN_LOG"
+    echo "Started at: $(date)" >> "$MAIN_LOG"
+    echo "" >> "$MAIN_LOG"
+
+    # Create symlink to latest log
+    ln -sf "$MAIN_LOG" "$LATEST_LOG"
+}
+
+# Function to run command with progress
+run_with_progress() {
+    local description=$1
+    local command=$2
+    echo -ne "${BLUE}$description...${NC}"
+    echo "\n=== $description ===" >> "$MAIN_LOG"
+    echo "Command: $command" >> "$MAIN_LOG"
+
+    local temp_file=$(mktemp)
+    local start_time=$(date +%s)
+
+    # Run command and capture output to log only
+    eval "$command" >> "$MAIN_LOG" 2>&1
+    local exit_code=$?
+
+    local end_time=$(date +%s)
+    local duration=$((end_time - start_time))
+
+    if [ $exit_code -eq 0 ]; then
+        echo -e "\r${BLUE}$description... ${GREEN}✓${NC} (${duration}s)"
+    else
+        echo -e "\r${BLUE}$description... ${RED}✗${NC} (${duration}s)"
+    fi
+
+    return $exit_code
+}
+
+# Initialize logging
+init_logging
+
 echo -e "${BLUE}=== GitHub Actions Test Suite ===${NC}"
 echo -e "${BLUE}Testing with Python versions: ${PYTHON_VERSIONS[*]}${NC}"
-echo -e "${YELLOW}This runs EVERY test that GitHub Actions runs${NC}"
-echo -e "${YELLOW}Full testing ensures GitHub success${NC}"
+echo -e "${YELLOW}Verbose output is being logged to:${NC}"
+echo -e "${CYAN}$LATEST_LOG${NC}"
 echo ""
 
 # Function to print test results
@@ -92,11 +142,13 @@ test_python_version() {
 
     # Activate and upgrade pip
     source "$venv_name/bin/activate"
-    pip install --upgrade pip setuptools wheel >/dev/null 2>&1
+    echo -n "Upgrading pip..."
+    pip install --upgrade pip setuptools wheel >> "$MAIN_LOG" 2>&1
+    echo -e "\r${GREEN}✓${NC} Pip upgraded"
 
     # Install dependencies (simulating CI)
-    echo "Installing dependencies..."
-    pip install -r requirements.txt >/dev/null 2>&1
+    run_with_progress "Installing dependencies" \
+        "pip install -r requirements.txt"
     local req_exit=$?
     print_result "Requirements installation" $req_exit $py_version
 
@@ -107,11 +159,8 @@ test_python_version() {
     fi
 
     # Install dev dependencies
-    pip install -r requirements-dev.txt >/dev/null 2>&1
-    local dev_exit=$?
-    if [ $dev_exit -ne 0 ]; then
-        echo -e "${YELLOW}Warning: Failed to install dev dependencies${NC}"
-    fi
+    run_with_progress "Installing dev dependencies" \
+        "pip install -r requirements-dev.txt || true"
 
     # Set environment variables as CI does
     export USE_MOCK_TESTS=true
@@ -122,7 +171,8 @@ test_python_version() {
 
     # 1. Flake8 syntax check (from CI workflow)
     echo -e "\n${BLUE}1. Running flake8 syntax checks...${NC}"
-    flake8 modules/ services/ orchestrator/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics >/dev/null 2>&1
+    run_with_progress "Flake8 syntax check" \
+        "flake8 modules/ services/ orchestrator/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics"
     print_result "Flake8 syntax check (CI)" $? $py_version
 
     # 2. Basic pytest suite (from CI workflow) with pytest-ci.ini
@@ -132,41 +182,24 @@ test_python_version() {
     # Store output to check for timeout
 
     if [ "$py_version" = "3.9" ]; then
-        # Python 3.9 is slower on M1 Macs, split tests into batches
-        echo -e "${YELLOW}Running tests in batches for Python 3.9 to avoid timeouts${NC}"
+        # Run all tests in one batch for Python 3.9
+        echo -e "${YELLOW}Running tests...${NC}"
+        echo "Running pytest suite for Python $py_version" >> "$MAIN_LOG"
+        python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short >> "$MAIN_LOG" 2>&1 &
+        local pid=$!
 
-        # Batch 1: Core tests (excluding slow directories)
-        echo -e "\n${BLUE}Batch 1/2: Core tests...${NC}"
-        # Run without timeout and capture full output to file for debugging
-        local test_log="logs/pytest_${py_version}_batch1_$(date +%s).log"
-        python -m pytest -c pytest-ci.ini tests/ \
-            -k "not test_concurrent_error_processing_performance" \
-            --ignore=tests/test_emerging_tech \
-            --ignore=tests/unit \
-            -v --tb=short 2>&1 | tee "$test_log"
-        local batch1_exit=${PIPESTATUS[0]}
+        # Show progress dots while tests run
+        while kill -0 $pid 2>/dev/null; do
+            echo -n "."
+            sleep 2
+        done
+        wait $pid
+        local pytest_exit=$?
+        echo ""  # New line after dots
 
-        # Show summary of what happened
+        # Show brief summary
         echo -e "\n${YELLOW}Test Summary:${NC}"
-        grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
-
-        if [ $batch1_exit -eq 0 ] || [ $batch1_exit -eq 124 ]; then
-            # If batch 1 passed or had partial success, run batch 2
-            echo -e "\n${BLUE}Batch 2/2: Emerging tech and unit tests...${NC}"
-            local test_log2="logs/pytest_${py_version}_batch2_$(date +%s).log"
-            python -m pytest -c pytest-ci.ini \
-                tests/test_emerging_tech tests/unit \
-                -v --tb=short 2>&1 | tee "$test_log2"
-            local batch2_exit=${PIPESTATUS[0]}
-
-            # Show summary
-            echo -e "\n${YELLOW}Test Summary:${NC}"
-            grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log2" | tail -20 || true
-
-            local pytest_exit=$((batch1_exit + batch2_exit))
-        else
-            local pytest_exit=$batch1_exit
-        fi
+        grep -E "(passed|failed|error)" "$MAIN_LOG" | tail -5 || true
     elif [ "$py_version" = "3.11" ] && [ -f "pytest-py311.ini" ]; then
         echo -e "${YELLOW}Running Python 3.11 tests without timeout...${NC}"
         local test_log="logs/pytest_${py_version}_$(date +%s).log"
@@ -187,14 +220,23 @@ test_python_version() {
         echo -e "\n${YELLOW}Test Summary:${NC}"
         grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
     else
-        echo -e "${YELLOW}Running tests without timeout...${NC}"
-        local test_log="logs/pytest_${py_version}_$(date +%s).log"
-        python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
-        local pytest_exit=${PIPESTATUS[0]}
+        echo -e "${YELLOW}Running tests...${NC}"
+        echo "Running pytest suite for Python $py_version" >> "$MAIN_LOG"
+        python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short >> "$MAIN_LOG" 2>&1 &
+        local pid=$!
 
-        # Show summary
+        # Show progress dots while tests run
+        while kill -0 $pid 2>/dev/null; do
+            echo -n "."
+            sleep 2
+        done
+        wait $pid
+        local pytest_exit=$?
+        echo ""  # New line after dots
+
+        # Show brief summary
         echo -e "\n${YELLOW}Test Summary:${NC}"
-        grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
+        grep -E "(passed|failed|error)" "$MAIN_LOG" | tail -5 || true
     fi
     # Report test status
     if [ $pytest_exit -eq 0 ]; then
@@ -215,19 +257,23 @@ test_python_version() {
     mkdir -p test_results
 
     # Run exactly as GitHub Actions does (but without timeout)
-    local e2e_log="logs/e2e_${py_version}_$(date +%s).log"
+    echo -e "\n${BLUE}3. Running E2E healing scenarios...${NC}"
     PYTHONPATH=$PWD python -m pytest tests/e2e/healing_scenarios/test_basic_healing_scenarios.py -v \
         --json-report \
         --json-report-file=test_results/report.json \
         --junit-xml=test_results/report.xml \
         --html=test_results/report.html \
-        --self-contained-html 2>&1 | tee "$e2e_log" || true
+        --self-contained-html >> "$MAIN_LOG" 2>&1 &
+    local pid=$!
 
-    # Show E2E summary
-    echo -e "\n${YELLOW}E2E Test Summary:${NC}"
-    grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$e2e_log" | tail -10 || true
-
+    # Show progress dots while tests run
+    while kill -0 $pid 2>/dev/null; do
+        echo -n "."
+        sleep 2
+    done
+    wait $pid
     local e2e_exit=$?
+    echo ""  # New line after dots
 
     # Ensure report files exist (as GitHub Actions does)
     if [ ! -f test_results/report.json ]; then
@@ -247,12 +293,11 @@ test_python_version() {
     # 4. Security checks
     echo -e "\n${BLUE}4. Running security vulnerability scan...${NC}"
     if command -v safety &> /dev/null; then
-        safety scan --policy-file /dev/null >/dev/null 2>&1 || true
-        echo -e "${GREEN}✓ Security scan completed${NC}"
+        run_with_progress "Security scan" \
+            "safety scan --policy-file /dev/null || true"
     else
-        pip install safety >/dev/null 2>&1
-        safety scan --policy-file /dev/null >/dev/null 2>&1 || true
-        echo -e "${GREEN}✓ Security scan completed${NC}"
+        run_with_progress "Installing safety and scanning" \
+            "pip install safety && safety scan --policy-file /dev/null || true"
     fi
 
     echo -e "\n${MAGENTA}Running Additional GitHub Action Tests...${NC}"
@@ -260,7 +305,8 @@ test_python_version() {
     # 5. Performance regression tests (if they exist)
     if [ -f "tests/performance/test_performance_regression.py" ]; then
         echo -e "\n${BLUE}5. Running performance regression tests...${NC}"
-        python -m pytest tests/performance/test_performance_regression.py -v >/dev/null 2>&1
+        run_with_progress "Performance regression tests" \
+            "python -m pytest tests/performance/test_performance_regression.py -v"
         print_result "Performance regression" $? $py_version
     fi
 
@@ -269,9 +315,11 @@ test_python_version() {
         echo -e "\n${BLUE}6. Running chaos engineering tests...${NC}"
         # Use special config for Python 3.11 to avoid asyncio hangs
         if [ "$py_version" = "3.11" ] && [ -f "pytest-py311.ini" ]; then
-            python -m pytest -c pytest-py311.ini tests/chaos/ -v >/dev/null 2>&1
+            run_with_progress "Chaos engineering tests" \
+                "python -m pytest -c pytest-py311.ini tests/chaos/ -v"
         else
-            python -m pytest tests/chaos/ -v >/dev/null 2>&1
+            run_with_progress "Chaos engineering tests" \
+                "python -m pytest tests/chaos/ -v"
         fi
         print_result "Chaos engineering" $? $py_version
     fi
@@ -293,7 +341,7 @@ check_docker_build() {
     fi
 
     # Check if Docker daemon is running
-    if ! docker info >/dev/null 2>&1; then
+    if ! docker info >> "$MAIN_LOG" 2>&1; then
         echo -e "${RED}✗ Docker daemon is not running${NC}"
         echo -e "${YELLOW}Please start Docker Desktop${NC}"
         FAILED_TESTS+=("docker-not-running")
@@ -302,10 +350,10 @@ check_docker_build() {
 
     # Clean up Docker before build to prevent I/O errors
     echo -e "${BLUE}Cleaning up Docker containers and images...${NC}"
-    docker container prune -f >/dev/null 2>&1
-    docker image prune -f >/dev/null 2>&1
+    docker container prune -f >> "$MAIN_LOG" 2>&1
+    docker image prune -f >> "$MAIN_LOG" 2>&1
     # Remove any existing test images
-    docker rmi homeostasis-test:local-test homeostasis-test:latest 2>/dev/null || true
+    docker rmi homeostasis-test:local-test homeostasis-test:latest >> "$MAIN_LOG" 2>&1 || true
 
     # Check if Dockerfile exists
     if [ -f "Dockerfile" ]; then
@@ -313,9 +361,18 @@ check_docker_build() {
         # Use legacy builder to avoid buildx issues
         export DOCKER_BUILDKIT=0
         echo -e "${BLUE}Running Docker build...${NC}"
-        # Show build output so we can see what's happening
-        docker build -t homeostasis-test:local-test . 2>&1 | tail -30
-        local docker_exit=${PIPESTATUS[0]}
+        # Log full output, show progress on console
+        docker build -t homeostasis-test:local-test . >> "$MAIN_LOG" 2>&1 &
+        local pid=$!
+
+        # Show progress dots while build runs
+        while kill -0 $pid 2>/dev/null; do
+            echo -n "."
+            sleep 2
+        done
+        wait $pid
+        local docker_exit=$?
+        echo ""  # New line after dots
 
         if [ $docker_exit -ne 0 ]; then
             echo -e "${RED}Docker build failed - check the output above for errors${NC}"
@@ -327,7 +384,7 @@ check_docker_build() {
 
         # Clean up if successful
         if [ $docker_exit -eq 0 ]; then
-            docker rmi homeostasis-test:local-test >/dev/null 2>&1
+            docker rmi homeostasis-test:local-test >> "$MAIN_LOG" 2>&1
         fi
     else
         echo -e "${YELLOW}No Dockerfile found, skipping Docker build${NC}"
@@ -344,7 +401,7 @@ check_integration_tests() {
         return
     fi
 
-    if ! docker info >/dev/null 2>&1; then
+    if ! docker info >> "$MAIN_LOG" 2>&1; then
         echo -e "${RED}✗ Docker daemon is not running for integration tests${NC}"
         FAILED_TESTS+=("docker-integration-not-running")
         return
@@ -352,9 +409,9 @@ check_integration_tests() {
 
     # Check for Docker Compose - try both 'docker compose' and 'docker-compose'
     local has_compose=false
-    if docker compose version &> /dev/null; then
+    if docker compose version >> "$MAIN_LOG" 2>&1; then
         has_compose=true
-    elif command -v docker-compose &> /dev/null && docker-compose --version &> /dev/null; then
+    elif command -v docker-compose &> /dev/null && docker-compose --version >> "$MAIN_LOG" 2>&1; then
         has_compose=true
     fi
 
@@ -372,24 +429,23 @@ check_integration_tests() {
         local compose_file="tests/e2e/docker-compose.yml"
 
         # First validate the compose file
-        docker compose -f "$compose_file" config >/dev/null 2>&1
+        run_with_progress "Docker Compose validation" \
+            "docker compose -f '$compose_file' config"
         local compose_valid=$?
-        print_result "Docker Compose validation" $compose_valid "N/A"
         if [ $compose_valid -ne 0 ]; then
             FAILED_TESTS+=("docker-compose-invalid")
         fi
 
         # Clean up before building to prevent conflicts
-        echo -e "${BLUE}Cleaning up existing containers...${NC}"
-        docker compose -f "$compose_file" down --volumes --remove-orphans || true
+        run_with_progress "Cleaning up existing containers" \
+            "docker compose -f '$compose_file' down --volumes --remove-orphans || true"
 
         # Build test images (matching GitHub Actions)
         echo -e "\n${BLUE}Building test images...${NC}"
         export DOCKER_BUILDKIT=0
-        echo -e "${BLUE}Building main Docker image (this may take a moment)...${NC}"
-        echo -e "${YELLOW}Showing last 30 lines of build output for brevity${NC}"
-        docker build -t homeostasis-test:latest . 2>&1 | tail -30
-        local main_build=${PIPESTATUS[0]}
+        run_with_progress "Building main Docker image" \
+            "docker build -t homeostasis-test:latest ."
+        local main_build=$?
 
         print_result "Main Docker build" $main_build "N/A"
         if [ $main_build -ne 0 ]; then
@@ -401,12 +457,9 @@ check_integration_tests() {
         if [ "$compose_file" = "tests/e2e/docker-compose.test.yml" ]; then
             echo -e "${YELLOW}Using lightweight test compose file for faster pre-push testing${NC}"
         fi
-        echo -e "${YELLOW}Showing last 30 lines of build output for brevity${NC}"
-        # NOTE: If you see "fork/exec docker-buildx: no such file or directory" locally,
-        # that's a local Docker issue. GitHub Actions has buildx pre-installed.
-        # Workaround: docker build -f Dockerfile.test -t e2e-test-runner .
-        docker compose -f "$compose_file" build 2>&1 | tail -30
-        local compose_build=${PIPESTATUS[0]}
+        run_with_progress "Docker Compose build" \
+            "docker compose -f '$compose_file' build"
+        local compose_build=$?
 
         print_result "Docker Compose build" $compose_build "N/A"
         if [ $compose_build -ne 0 ]; then
@@ -420,8 +473,8 @@ check_integration_tests() {
         else
             echo -e "\n${BLUE}Running Docker integration tests (as GitHub Actions does)${NC}"
             # Run the exact same command that GitHub Actions runs
-            docker compose -f "$compose_file" run --rm test-runner \
-                python /app/tests/e2e/healing_scenarios/run_e2e_tests.py --suite all --ci
+            run_with_progress "Docker integration tests" \
+                "docker compose -f '$compose_file' run --rm test-runner python /app/tests/e2e/healing_scenarios/run_e2e_tests.py --suite all --ci"
             local integration_result=$?
 
             print_result "Docker Compose integration tests" $integration_result "N/A"
@@ -432,8 +485,9 @@ check_integration_tests() {
         fi
 
         # Clean up after testing
-        echo -e "\\n${BLUE}Cleaning up Docker resources...${NC}"
-        docker compose -f "$compose_file" down --volumes --remove-orphans || true
+        echo -e "\n${BLUE}Cleaning up Docker resources...${NC}"
+        run_with_progress "Docker cleanup" \
+            "docker compose -f '$compose_file' down --volumes --remove-orphans || true"
     else
         echo -e "${YELLOW}No docker-compose.yml found, skipping integration tests${NC}"
     fi
@@ -444,7 +498,7 @@ check_workflows() {
     echo -e "\n${CYAN}=== Pre-flight Workflow Checks ===${NC}"
 
     # Check for Python 3.8 references
-    if grep -r "'3.8'\|\"3.8\"" .github/workflows/*.yml >/dev/null 2>&1; then
+    if grep -r "'3.8'\|\"3.8\"" .github/workflows/*.yml >> "$MAIN_LOG" 2>&1; then
         echo -e "${RED}✗ Found Python 3.8 references in workflows${NC}"
         FAILED_TESTS+=("workflow-python38-check")
     else
@@ -452,7 +506,7 @@ check_workflows() {
     fi
 
     # Check for docker-compose (should be docker compose)
-    if grep -r "docker-compose " .github/workflows/*.yml | grep -v "docker-compose.yml" >/dev/null 2>&1; then
+    if grep -r "docker-compose " .github/workflows/*.yml | grep -v "docker-compose.yml" >> "$MAIN_LOG" 2>&1; then
         echo -e "${RED}✗ Found 'docker-compose' commands (should be 'docker compose')${NC}"
         FAILED_TESTS+=("workflow-docker-compose-check")
     else
@@ -487,7 +541,7 @@ check_workflows() {
         local yaml_errors=0
         for workflow in .github/workflows/*.yml; do
             if [ -f "$workflow" ]; then
-                "$python_with_yaml" -c "import yaml; yaml.safe_load(open('$workflow'))" 2>/dev/null
+                "$python_with_yaml" -c "import yaml; yaml.safe_load(open('$workflow'))" >> "$MAIN_LOG" 2>&1
                 if [ $? -ne 0 ]; then
                     echo -e "${RED}✗ Invalid YAML in $workflow${NC}"
                     FAILED_TESTS+=("workflow-yaml-$(basename $workflow)")
@@ -505,7 +559,7 @@ check_workflows() {
 # Main execution
 main() {
     # Create necessary directories
-    mkdir -p logs test_results
+    mkdir -p test_results
 
     # Pre-flight checks
     echo -e "${CYAN}=== Running Pre-flight Checks ===${NC}"
@@ -524,16 +578,23 @@ main() {
 
     # Summary
     echo -e "\n${BLUE}=== TEST SUMMARY ===${NC}"
+    echo "\n=== FINAL TEST SUMMARY ===" >> "$MAIN_LOG"
+    echo "Total failed tests: ${#FAILED_TESTS[@]}" >> "$MAIN_LOG"
+    echo "Failed tests: ${FAILED_TESTS[*]}" >> "$MAIN_LOG"
+    echo "Log file: $MAIN_LOG" >> "$MAIN_LOG"
+    echo "Completed at: $(date)" >> "$MAIN_LOG"
+
     if [ ${#FAILED_TESTS[@]} -eq 0 ]; then
         echo -e "${GREEN}✓ ALL TESTS PASSED WITH ALL PYTHON VERSIONS!${NC}"
         echo -e "${GREEN}✓ Your code WILL pass on GitHub Actions${NC}"
         echo -e "${GREEN}✓ Safe to push with confidence${NC}"
+        echo -e "\n${CYAN}Full test log saved to: ${LATEST_LOG}${NC}"
 
         # Clean up Docker images before exit
         echo -e "\n${CYAN}=== Cleaning up Docker images ===${NC}"
         if docker images | grep -q "homeostasis-test"; then
             echo "Removing homeostasis-test Docker images..."
-            docker rmi homeostasis-test:latest homeostasis-test:local-test 2>/dev/null || true
+            docker rmi homeostasis-test:latest homeostasis-test:local-test >> "$MAIN_LOG" 2>&1 || true
             echo -e "${GREEN}✓ Docker cleanup completed${NC}"
         fi
 
@@ -570,12 +631,13 @@ main() {
         fi
 
         echo -e "\n${RED}DO NOT PUSH until ALL tests pass${NC}"
+        echo -e "\n${CYAN}Full error details in: ${LATEST_LOG}${NC}"
 
         # Clean up Docker images even on failure
         echo -e "\n${CYAN}=== Cleaning up Docker images ===${NC}"
         if docker images | grep -q "homeostasis-test"; then
             echo "Removing homeostasis-test Docker images..."
-            docker rmi homeostasis-test:latest homeostasis-test:local-test 2>/dev/null || true
+            docker rmi homeostasis-test:latest homeostasis-test:local-test >> "$MAIN_LOG" 2>&1 || true
             echo -e "${GREEN}✓ Docker cleanup completed${NC}"
         fi
 
