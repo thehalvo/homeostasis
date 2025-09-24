@@ -130,6 +130,12 @@ test_env_*/
 test_output.log
 test_results/
 
+# ML training data (auto-generated)
+modules/analysis/models/training_data/error_data.jsonl
+modules/analysis/models/training_data/dataset_metadata.json
+modules/analysis/models/training_data/error_labels.jsonl
+modules/analysis/models/training_data/fix_feedback.jsonl
+
 # Deployment
 .netlify
 **/.claude/settings.local.json

@@ -529,6 +529,14 @@ main() {
         echo -e "${GREEN}✓ Your code WILL pass on GitHub Actions${NC}"
         echo -e "${GREEN}✓ Safe to push with confidence${NC}"
 
+        # Clean up Docker images before exit
+        echo -e "\n${CYAN}=== Cleaning up Docker images ===${NC}"
+        if docker images | grep -q "homeostasis-test"; then
+            echo "Removing homeostasis-test Docker images..."
+            docker rmi homeostasis-test:latest homeostasis-test:local-test 2>/dev/null || true
+            echo -e "${GREEN}✓ Docker cleanup completed${NC}"
+        fi
+
         exit 0
     else
         echo -e "${RED}✗ FAILED TESTS: ${FAILED_TESTS[*]}${NC}"
@@ -562,6 +570,15 @@ main() {
         fi
 
         echo -e "\n${RED}DO NOT PUSH until ALL tests pass${NC}"
+
+        # Clean up Docker images even on failure
+        echo -e "\n${CYAN}=== Cleaning up Docker images ===${NC}"
+        if docker images | grep -q "homeostasis-test"; then
+            echo "Removing homeostasis-test Docker images..."
+            docker rmi homeostasis-test:latest homeostasis-test:local-test 2>/dev/null || true
+            echo -e "${GREEN}✓ Docker cleanup completed${NC}"
+        fi
+
         exit 1
     fi
 }
