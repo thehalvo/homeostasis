@@ -28,14 +28,12 @@ PYTHON_VERSIONS=("3.9" "3.10" "3.11")
 
 # Log configuration
 LOG_DIR="$SCRIPT_DIR/test_logs"
-MAIN_LOG="$LOG_DIR/github_actions_test_$(date +%Y%m%d_%H%M%S).log"
+MAIN_LOG="$LOG_DIR/latest.log"
 LATEST_LOG="$LOG_DIR/latest.log"
 
 # Initialize logging
 init_logging() {
     mkdir -p "$LOG_DIR"
-    # Clean up old logs (keep only last 5 runs)
-    ls -t "$LOG_DIR"/github_actions_test_*.log 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null || true
 
     # Clean up old pytest logs (keep only last 10)
     ls -t "$LOG_DIR"/pytest_*.log 2>/dev/null | tail -n +11 | xargs rm -f 2>/dev/null || true
@@ -43,13 +41,10 @@ init_logging() {
     # Clean up old e2e logs (keep only last 10)
     ls -t "$LOG_DIR"/e2e_*.log 2>/dev/null | tail -n +11 | xargs rm -f 2>/dev/null || true
 
-    # Start new log
+    # Start new log (overwrite existing)
     echo "=== GitHub Actions Test Suite ===" > "$MAIN_LOG"
     echo "Started at: $(date)" >> "$MAIN_LOG"
     echo "" >> "$MAIN_LOG"
-
-    # Create symlink to latest log
-    ln -sf "$MAIN_LOG" "$LATEST_LOG"
 }
 
 # Function to run command with progress
