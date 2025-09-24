@@ -10,6 +10,7 @@ This module provides a comprehensive interface for error analysis, supporting:
 
 import logging
 import os
+import threading
 from typing import Any, Dict, List, Optional, Union
 
 from .ai_stub import (
@@ -45,6 +46,8 @@ class Analyzer:
 
     # Class-level cache for singleton instances per configuration
     _instances: Dict[str, "Analyzer"] = {}
+    # Thread lock for thread-safe singleton creation
+    _lock = threading.Lock()
 
     def __new__(cls, strategy: str = AnalysisStrategy.RULE_BASED_ONLY, **kwargs):
         """Create or return existing instance based on strategy."""
@@ -63,12 +66,17 @@ class Analyzer:
 
         cache_key = f"{strategy}_{ai_model_type}_{ml_mode}_{use_llm}_{use_ai}"
 
-        # Return existing instance if available
-        if cache_key not in cls._instances:
-            instance = super().__new__(cls)
-            cls._instances[cache_key] = instance
+        # Check cache first without lock for performance
+        if cache_key in cls._instances:
+            return cls._instances[cache_key]
 
-        return cls._instances[cache_key]
+        # Use lock for thread-safe singleton creation
+        with cls._lock:
+            # Double-check pattern to avoid race conditions
+            if cache_key not in cls._instances:
+                instance = super().__new__(cls)
+                cls._instances[cache_key] = instance
+            return cls._instances[cache_key]
 
     def __init__(
         self,
@@ -340,7 +348,8 @@ class Analyzer:
     @classmethod
     def clear_cache(cls):
         """Clear the singleton instance cache. Useful for testing."""
-        cls._instances.clear()
+        with cls._lock:
+            cls._instances.clear()
 
 
 def analyze_error_from_log(

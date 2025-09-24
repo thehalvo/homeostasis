@@ -123,7 +123,8 @@ class TestHighVolumeProcessing(StressTestBase):
     def test_sequential_high_volume(self):
         """Test processing a high volume of errors sequentially."""
         languages = ["python", "javascript", "java", "cpp", "go"]
-        error_count = 10000
+        # Reduce error count for GitHub Actions to avoid memory issues
+        error_count = 500 if os.environ.get("GITHUB_ACTIONS") else 10000
         errors = []
 
         # Generate errors
@@ -176,8 +177,10 @@ class TestHighVolumeProcessing(StressTestBase):
             "ruby",
             "php",
         ]
-        error_count = 50000
-        max_workers = 16
+        # Reduce error count for GitHub Actions to avoid memory issues
+        error_count = 1000 if os.environ.get("GITHUB_ACTIONS") else 50000
+        # Reduce workers on GitHub Actions
+        max_workers = 2 if os.environ.get("GITHUB_ACTIONS") else 16
 
         errors = [
             self.generate_random_error(random.choice(languages))
