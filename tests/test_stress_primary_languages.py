@@ -164,6 +164,7 @@ class TestHighVolumeProcessing(StressTestBase):
         assert processed > error_count * 0.95  # At least 95% success rate
         assert duration < error_count * 0.01  # Less than 10ms per error average
 
+    @pytest.mark.timeout(3600)  # 60 minutes timeout for this stress test
     def test_concurrent_high_volume(self):
         """Test processing high volume of errors concurrently."""
         languages = [
@@ -178,9 +179,9 @@ class TestHighVolumeProcessing(StressTestBase):
             "php",
         ]
         # Reduce error count for GitHub Actions to avoid memory issues
-        error_count = 1000 if os.environ.get("GITHUB_ACTIONS") else 50000
-        # Reduce workers on GitHub Actions
-        max_workers = 2 if os.environ.get("GITHUB_ACTIONS") else 16
+        error_count = 100 if os.environ.get("GITHUB_ACTIONS") else 50000
+        # Reduce workers on GitHub Actions - use only 1 worker to avoid thread creation issues
+        max_workers = 1 if os.environ.get("GITHUB_ACTIONS") else 16
 
         errors = [
             self.generate_random_error(random.choice(languages))
@@ -570,14 +571,16 @@ class TestResourceExhaustion(StressTestBase):
         # Should complete in reasonable time
         assert duration < 60  # Less than 1 minute
 
+    @pytest.mark.timeout(3600)  # 60 minutes timeout for this stress test
     def test_parallel_resource_competition(self):
         """Test parallel processing with resource competition."""
         # Use multiprocessing.get_context to fix hanging on Linux/GitHub Actions
         # The default 'fork' method can cause deadlocks with certain libraries
         ctx = multiprocessing.get_context('spawn')
 
-        num_processes = multiprocessing.cpu_count()
-        errors_per_process = 1000
+        # Limit processes on GitHub Actions
+        num_processes = 2 if os.environ.get("GITHUB_ACTIONS") else multiprocessing.cpu_count()
+        errors_per_process = 100 if os.environ.get("GITHUB_ACTIONS") else 1000
 
         # Generate test data before spawning processes to avoid pickling issues
         test_errors = []
