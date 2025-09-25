@@ -57,7 +57,7 @@ ERROR_PATTERNS = [
         "pattern": r"ZeroDivisionError: division by zero",
         "type": "ZeroDivisionError",
         "description": "Dividing by zero",
-        "root_cause": "division_by_zero",
+        "root_cause": "go_divide_by_zero",
         "suggestion": "Check if the denominator is zero before dividing",
     },
     {

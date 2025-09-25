@@ -373,6 +373,12 @@ async def trigger_error():
 
     def cleanup(self):
         """Clean up the test environment."""
+        # Close logger handlers before cleanup to avoid I/O errors
+        if hasattr(self, 'logger'):
+            for handler in self.logger.logger.handlers[:]:
+                handler.close()
+                self.logger.logger.removeHandler(handler)
+
         self.stop_service()
         if self.base_path.exists():
             shutil.rmtree(self.base_path)

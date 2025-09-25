@@ -401,7 +401,8 @@ class ModelSandbox:
         logger.info("Running model in sandbox environment")
 
         # Set up timeout (disable in test environments to prevent signal conflicts)
-        if not os.environ.get("USE_MOCK_TESTS"):
+        # Also disable if running under pytest-xdist workers
+        if not os.environ.get("USE_MOCK_TESTS") and not os.environ.get("PYTEST_XDIST_WORKER"):
             def timeout_handler(signum, frame):
                 raise TimeoutError(
                     f"Model execution exceeded {self.timeout_seconds}s timeout"
@@ -452,7 +453,7 @@ class ModelSandbox:
             raise
         finally:
             # Cancel timeout if it was set
-            if not os.environ.get("USE_MOCK_TESTS"):
+            if not os.environ.get("USE_MOCK_TESTS") and not os.environ.get("PYTEST_XDIST_WORKER"):
                 signal.alarm(0)
 
 

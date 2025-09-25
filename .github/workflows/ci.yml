@@ -13,7 +13,7 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-22.04
-    timeout-minutes: 240  # 2 hour safety limit
+    timeout-minutes: 240  # 4 hour safety limit DO NOT DECREASE
     steps:
     - uses: actions/checkout@v3
 
@@ -54,7 +54,7 @@ jobs:
         DISABLE_PERFORMANCE_TRACKING: true
         CI: true
         GITHUB_ACTIONS: true
-      timeout-minutes: 230
+      timeout-minutes: 230 # DO NOT DECREASE
       run: |
         echo "Starting tests at $(date)"
         echo "Total test files: $(find tests -name 'test_*.py' | wc -l)"
