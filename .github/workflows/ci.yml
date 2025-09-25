@@ -6,10 +6,14 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-20.04
-    timeout-minutes: 120  # 2 hour safety limit
+    timeout-minutes: 70  # 1 hour safety limit
     steps:
     - uses: actions/checkout@v3
 
@@ -50,16 +54,20 @@ jobs:
         DISABLE_PERFORMANCE_TRACKING: true
         CI: true
         GITHUB_ACTIONS: true
-      timeout-minutes: 120
+      timeout-minutes: 60
       run: |
         echo "Starting tests at $(date)"
         echo "Total test files: $(find tests -name 'test_*.py' | wc -l)"
         echo "Initial memory usage:"
         free -h
-
-        # Install pytest-timeout if not already installed
-        pip install pytest-timeout
-
+        
+        # Install parallel testing and timeout dependencies
+        pip install pytest-xdist pytest-timeout
+        
+        # Detect number of CPUs for parallel execution
+        CPUS=$(python -c "import os; print(os.cpu_count())")
+        echo "Detected CPUs: $CPUS"
+        
         # Start a background monitor that reports every 60 seconds
         (
           while true; do
@@ -69,26 +77,51 @@ jobs:
             free -h
             # Show pytest processes with memory usage
             ps aux --sort=-%mem | head -10 | grep -E 'pytest|python' || true
+            # Show number of active pytest workers
+            echo "[MONITOR] Active pytest workers: $(pgrep -c pytest || echo 0)"
           done
         ) &
         MONITOR_PID=$!
-
-        # Run tests with real-time output and timeout configuration for Python 3.10
-        python -m pytest -c pytest-py310-timeout.ini tests/ \
+        
+        # Run tests in parallel with xdist
+        # -n auto: automatically detect optimal number of workers
+        # --dist loadscope: groups tests by module for better efficiency
+        # --timeout=300: 5 minutes max per individual test
+        # --timeout-method=thread: use thread-based timeout (more reliable in CI)
+        # --maxfail=10: stop after 10 failures to save CI time
+        echo "Running tests with $CPUS parallel workers..."
+        
+        python -m pytest tests/ \
+          -n auto \
+          --dist loadscope \
+          --timeout=300 \
+          --timeout-method=thread \
+          --maxfail=10 \
           -k "not test_concurrent_error_processing_performance" \
           --tb=short \
           -v \
+          --color=yes \
           2>&1 | while IFS= read -r line; do
             echo "[$(date '+%H:%M:%S')] $line"
-        done
-
+          done
+        
         # Store exit code
         TEST_EXIT=${PIPESTATUS[0]}
-
+        
         # Kill the monitor
         kill $MONITOR_PID 2>/dev/null || true
-
+        
+        echo "Tests completed at $(date)"
         echo "Final memory usage:"
         free -h
-
+        
+        # Report test exit status
+        if [ $TEST_EXIT -eq 0 ]; then
+          echo "All tests passed!"
+        elif [ $TEST_EXIT -eq 5 ]; then
+          echo "No tests were collected"
+        else
+          echo "Tests failed with exit code: $TEST_EXIT"
+        fi
+        
         exit $TEST_EXIT

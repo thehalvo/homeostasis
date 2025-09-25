@@ -8,6 +8,10 @@ on:
   schedule:
     - cron: '0 12 * * 0'  # Run at 12:00 UTC every Sunday
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   security-check:
     runs-on: ubuntu-20.04

@@ -22,6 +22,10 @@ on:
           - container
           - iac
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   security-scan:
     name: Security Vulnerability Scan
@@ -224,7 +228,7 @@ jobs:
             if (fs.existsSync(reportPath)) {
               const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
               
-              let comment = '## 🔒 Security Scan Results\n\n';
+              let comment = '## Security Scan Results\n\n';
               
               if (report.summary) {
                 comment += `**Total Vulnerabilities Found:** ${report.summary.total_vulnerabilities}\n\n`;
@@ -236,12 +240,12 @@ jobs:
                 comment += `| Info | ${report.summary.by_severity.info || 0} |\n\n`;
                 
                 if (report.summary.by_severity.critical > 0 || report.summary.by_severity.high > 0) {
-                  comment += '⚠️ **Action Required:** Critical or high severity vulnerabilities detected!\n\n';
+                  comment += '**Action Required:** Critical or high severity vulnerabilities detected!\n\n';
                 }
                 
                 comment += 'View the full security report in the workflow artifacts.';
               } else {
-                comment += '✅ No security issues found!';
+                comment += 'No security issues found!';
               }
               
               github.rest.issues.createComment({
@@ -258,7 +262,7 @@ jobs:
           if [ -f security-scan-results.json ]; then
             critical_count=$(jq -r '.summary.by_severity.critical // 0' security-scan-results.json)
             if [ "$critical_count" -gt 0 ]; then
-              echo "❌ Critical vulnerabilities found: $critical_count"
+              echo "Critical vulnerabilities found: $critical_count"
               exit 1
             fi
           fi

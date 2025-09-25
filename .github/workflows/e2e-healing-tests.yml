@@ -15,7 +15,6 @@ on:
       - 'orchestrator/**'
       - 'tests/e2e/**'
   schedule:
-    # Run daily at 2 AM UTC
     - cron: '0 2 * * *'
   workflow_dispatch:
     inputs:
@@ -29,6 +28,10 @@ on:
           - basic
           - advanced
           - cross-language
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -104,6 +107,7 @@ jobs:
       env:
         USE_MOCK_TESTS: true
         DISABLE_PERFORMANCE_TRACKING: true
+      timeout-minutes: 30
       run: |
         # Debug: Show current directory and Python path
         echo "Current directory: $PWD"
@@ -238,8 +242,8 @@ jobs:
             const duration = summary.duration || 0;
 
             comment += `- **Total Tests**: ${total}\n`;
-            comment += `- **Passed**: ${passed} ✅\n`;
-            comment += `- **Failed**: ${failed} ❌\n`;
+            comment += `- **Passed**: ${passed} \n`;
+            comment += `- **Failed**: ${failed} \n`;
             comment += `- **Success Rate**: ${successRate}%\n`;
             comment += `- **Duration**: ${duration.toFixed(2)}s\n\n`;
 
@@ -253,7 +257,7 @@ jobs:
               comment += '\n';
             }
           } else {
-            comment += `⚠️ Test report could not be parsed. Check the workflow logs for details.\n`;
+            comment += `Test report could not be parsed. Check the workflow logs for details.\n`;
           }
 
           github.rest.issues.createComment({

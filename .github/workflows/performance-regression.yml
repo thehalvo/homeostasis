@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    # Run nightly at 2 AM UTC
     - cron: '0 2 * * *'
   workflow_dispatch:
     inputs:
@@ -14,6 +13,10 @@ on:
         description: 'Update performance baselines'
         required: false
         default: 'false'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   performance-regression:
@@ -107,7 +110,7 @@ jobs:
             comment += `Python ${process.env.pythonLocation}\n\n`;
             
             if (report.regressions && report.regressions.length > 0) {
-              comment += '⚠️ **Performance Regressions Detected:**\n\n';
+              comment += '**Performance Regressions Detected:**\n\n';
               comment += '| Test | Metric | Baseline | Current | Factor |\n';
               comment += '|------|--------|----------|---------|--------|\n';
               
@@ -115,7 +118,7 @@ jobs:
                 comment += `| ${reg.test_name} | ${reg.metric_type} | ${reg.baseline_value.toFixed(3)} | ${reg.current_value.toFixed(3)} | ${reg.regression_factor.toFixed(2)}x |\n`;
               });
             } else {
-              comment += '✅ **No performance regressions detected!**\n';
+              comment += '**No performance regressions detected!**\n';
             }
             
             github.rest.issues.createComment({

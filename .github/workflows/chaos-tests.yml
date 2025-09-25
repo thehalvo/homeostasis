@@ -24,6 +24,10 @@ on:
         required: false
         default: '15'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   chaos-tests:
     runs-on: ubuntu-20.04
