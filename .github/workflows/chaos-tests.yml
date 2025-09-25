@@ -30,7 +30,7 @@ concurrency:
 
 jobs:
   chaos-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     
     permissions:
       contents: read
@@ -250,7 +250,7 @@ jobs:
 
   analyze-trends:
     needs: chaos-tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     if: always()
     
     steps:

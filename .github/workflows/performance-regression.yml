@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   performance-regression:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: ['3.9', '3.10', '3.11']
@@ -130,7 +130,7 @@ jobs:
           }
 
   benchmark-comparison:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: performance-regression
     if: github.event_name == 'pull_request'
     

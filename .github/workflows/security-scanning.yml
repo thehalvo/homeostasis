@@ -29,7 +29,7 @@ concurrency:
 jobs:
   security-scan:
     name: Security Vulnerability Scan
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       security-events: write
@@ -276,7 +276,7 @@ jobs:
 
   security-baseline:
     name: Update Security Baselines
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: security-scan
     permissions:
