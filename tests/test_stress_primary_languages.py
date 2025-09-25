@@ -15,7 +15,7 @@ import sys
 import threading
 import time
 import unittest
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from typing import Any, Dict
 
 import pytest
@@ -199,7 +199,9 @@ class TestHighVolumeProcessing(StressTestBase):
                 future = executor.submit(self._process_error, error)
                 futures.append(future)
 
-            for future in as_completed(futures):
+            # Avoid using as_completed() as it can cause hanging on GitHub Actions
+            # Process futures directly
+            for future in futures:
                 try:
                     if future.result():
                         processed += 1
