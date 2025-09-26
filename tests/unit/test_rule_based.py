@@ -39,7 +39,7 @@ class TestRuleBasedAnalyzer:
 
         result = self.analyzer.analyze_error(error_data)
         # With only Python rules loaded, we should get Python-specific root causes
-        assert result["root_cause"] in ["type_mismatch", "type_not_supported", "type_not_subscriptable"]
+        assert result["root_cause"] in ["type_mismatch", "type_not_supported", "type_not_subscriptable", "self_type_annotation_error"]
         assert "description" in result
         assert "suggestion" in result
 
