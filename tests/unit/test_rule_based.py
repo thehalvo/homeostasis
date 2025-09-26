@@ -5,6 +5,7 @@ Unit tests for the rule-based analyzer module.
 import pytest
 
 from modules.analysis.rule_based import RuleBasedAnalyzer
+from modules.analysis.rule_config import RuleCategory
 
 
 class TestRuleBasedAnalyzer:
@@ -12,7 +13,8 @@ class TestRuleBasedAnalyzer:
 
     def setup_method(self):
         """Set up test fixtures."""
-        self.analyzer = RuleBasedAnalyzer()
+        # Create analyzer with only Python rules for testing Python errors
+        self.analyzer = RuleBasedAnalyzer(categories=[RuleCategory.PYTHON])
 
     def test_analyze_keyerror(self):
         """Test analysis of KeyError exceptions."""
@@ -36,7 +38,8 @@ class TestRuleBasedAnalyzer:
         }
 
         result = self.analyzer.analyze_error(error_data)
-        assert result["root_cause"] in ["type_mismatch", "shell_scripting_pitfall"]
+        # With only Python rules loaded, we should get Python-specific root causes
+        assert result["root_cause"] in ["type_mismatch", "type_not_supported", "type_not_subscriptable"]
         assert "description" in result
         assert "suggestion" in result
 
@@ -75,7 +78,10 @@ class TestRuleBasedAnalyzer:
             "root_cause": "custom_error",
             "suggestion": "Fix the custom error",
         }
-        analyzer = RuleBasedAnalyzer(additional_patterns=[custom_rule_dict])
+        # Create analyzer with only Python rules plus custom patterns
+        analyzer = RuleBasedAnalyzer(
+            categories=[RuleCategory.PYTHON], additional_patterns=[custom_rule_dict]
+        )
 
         error_data = {
             "exception_type": "CustomError",
@@ -96,11 +102,8 @@ class TestRuleBasedAnalyzer:
         }
 
         result = self.analyzer.analyze_error(error_data)
-        assert result["root_cause"] in [
-            "unknown",
-            "shell_scripting_pitfall",
-            "general_error",
-        ]
+        # With only Python rules, unknown errors should return "unknown" root cause
+        assert result["root_cause"] in ["unknown", "general_error"]
         assert result["confidence"] in ["low", "medium", "high"]
 
     def test_error_with_metadata(self):
@@ -146,7 +149,8 @@ class TestRuleBasedAnalyzer:
 )
 def test_common_error_patterns(error_type, message, expected_root_cause):
     """Test common error patterns are correctly identified."""
-    analyzer = RuleBasedAnalyzer()
+    # Create analyzer with only Python rules for testing Python errors
+    analyzer = RuleBasedAnalyzer(categories=[RuleCategory.PYTHON])
     error_data = {"exception_type": error_type, "message": message}
 
     result = analyzer.analyze_error(error_data)

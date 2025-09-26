@@ -36,55 +36,19 @@ jobs:
         python-version: ['3.10']  # Start with one, expand if needed
         test-group:
           - name: "Core Tests"
-            tests: |
-              tests/test_analysis.py
-              tests/test_app.py
-              tests/test_ast_patcher.py
-              tests/test_audit_monitoring.py
-              tests/test_config_manager.py
-              tests/test_dashboard_llm_integration.py
-              tests/test_healing_rate_limiter.py
-              tests/test_import_analyzer.py
-              tests/test_indent_utils.py
-              tests/test_monitoring.py
-              tests/test_orchestrator.py
-              tests/test_patches.py
-              tests/test_template_system.py
-              tests/test_wrapper.py
-              tests/unit/
+            tests: "tests/test_analysis.py tests/test_app.py tests/test_ast_patcher.py tests/test_audit_monitoring.py tests/test_config_manager.py tests/test_dashboard_llm_integration.py tests/test_healing_rate_limiter.py tests/test_import_analyzer.py tests/test_indent_utils.py tests/test_monitoring.py tests/test_orchestrator.py tests/test_patches.py tests/test_template_system.py tests/test_wrapper.py tests/unit/"
             workers: 4
 
           - name: "Language Edge Cases"
-            tests: |
-              tests/test_primary_languages_edge_cases.py
-              tests/test_regression_primary_languages.py
-              tests/test_fuzz_primary_languages.py
-              tests/test_stress_primary_languages.py
-              tests/test_llm_language_detection.py
-              tests/test_llm_full_spectrum_patch_generation.py
-              tests/test_performance_benchmarks.py
+            tests: "tests/test_primary_languages_edge_cases.py tests/test_regression_primary_languages.py tests/test_fuzz_primary_languages.py tests/test_stress_primary_languages.py tests/test_llm_language_detection.py tests/test_llm_full_spectrum_patch_generation.py tests/test_performance_benchmarks.py"
             workers: 2
 
           - name: "Cross-Platform"
-            tests: |
-              tests/test_cross_platform_frameworks.py
-              tests/test_cross_cluster.py
-              tests/test_hybrid_orchestrator.py
-              tests/test_multi_region.py
-              tests/test_emerging_tech/
+            tests: "tests/test_cross_platform_frameworks.py tests/test_cross_cluster.py tests/test_hybrid_orchestrator.py tests/test_multi_region.py tests/test_emerging_tech/"
             workers: 3
 
           - name: "Specialized Tests"
-            tests: |
-              tests/test_academic.py
-              tests/test_regulated_industries.py
-              tests/test_self_training_integration.py
-              tests/test_llm_cli.py
-              tests/test_mlflow_import_hook.py
-              tests/test_mlflow_security.py
-              tests/test_backend_integration.py
-              tests/test_iac_integration.py
-              tests/test_cross_language_integration.py
+            tests: "tests/test_academic.py tests/test_regulated_industries.py tests/test_self_training_integration.py tests/test_llm_cli.py tests/test_mlflow_import_hook.py tests/test_mlflow_security.py tests/test_backend_integration.py tests/test_iac_integration.py tests/test_cross_language_integration.py"
             workers: 2
 
     steps:
