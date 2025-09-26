@@ -1,0 +1,165 @@
+name: Other Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Quick sanity check first
+  quick-lint:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Quick lint
+      run: |
+        python -m pip install --upgrade pip flake8
+        flake8 modules/ services/ orchestrator/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
+
+  # Main test suite - excludes tests covered by other workflows
+  main-tests:
+    needs: quick-lint
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120  # 2 hour safety limit DO NOT DECREASE
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10']  # Start with one, expand if needed
+        test-group:
+          - name: "Core Tests"
+            tests: |
+              tests/test_analysis.py
+              tests/test_app.py
+              tests/test_ast_patcher.py
+              tests/test_audit_monitoring.py
+              tests/test_config_manager.py
+              tests/test_dashboard_llm_integration.py
+              tests/test_healing_rate_limiter.py
+              tests/test_import_analyzer.py
+              tests/test_indent_utils.py
+              tests/test_monitoring.py
+              tests/test_orchestrator.py
+              tests/test_patches.py
+              tests/test_template_system.py
+              tests/test_wrapper.py
+              tests/unit/
+            workers: 4
+
+          - name: "Language Edge Cases"
+            tests: |
+              tests/test_primary_languages_edge_cases.py
+              tests/test_regression_primary_languages.py
+              tests/test_fuzz_primary_languages.py
+              tests/test_stress_primary_languages.py
+              tests/test_llm_language_detection.py
+              tests/test_llm_full_spectrum_patch_generation.py
+              tests/test_performance_benchmarks.py
+            workers: 2
+
+          - name: "Cross-Platform"
+            tests: |
+              tests/test_cross_platform_frameworks.py
+              tests/test_cross_cluster.py
+              tests/test_hybrid_orchestrator.py
+              tests/test_multi_region.py
+              tests/test_emerging_tech/
+            workers: 3
+
+          - name: "Specialized Tests"
+            tests: |
+              tests/test_academic.py
+              tests/test_regulated_industries.py
+              tests/test_self_training_integration.py
+              tests/test_llm_cli.py
+              tests/test_mlflow_import_hook.py
+              tests/test_mlflow_security.py
+              tests/test_backend_integration.py
+              tests/test_iac_integration.py
+              tests/test_cross_language_integration.py
+            workers: 2
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        tool-cache: false
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('requirements*.txt') }}
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libldap2-dev libsasl2-dev
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install pytest pytest-xdist pytest-timeout
+
+    - name: Run ${{ matrix.test-group.name }}
+      env:
+        USE_MOCK_TESTS: true
+        DISABLE_PERFORMANCE_TRACKING: true
+        CI: true
+        GITHUB_ACTIONS: true
+      run: |
+        echo "Running ${{ matrix.test-group.name }} with ${{ matrix.test-group.workers }} workers..."
+        python -m pytest ${{ matrix.test-group.tests }} \
+          -n ${{ matrix.test-group.workers }} \
+          --dist loadscope \
+          --timeout=180 \
+          --timeout-method=thread \
+          --tb=short \
+          -v \
+          --maxfail=10 \
+          -k "not test_concurrent_error_processing_performance"
+
+  # Summary check
+  test-results:
+    needs: main-tests
+    if: always()
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Check test results
+      run: |
+        if [ "${{ needs.main-tests.result }}" == "failure" ]; then
+          echo "Main tests failed"
+          exit 1
+        else
+          echo "All main tests passed!"
+          echo ""
+          echo "Other test workflows run separately:"
+          echo "  - Language Plugin Tests (ci-language-plugins.yml)"
+          echo "  - E2E & Integration Tests (e2e-healing-tests.yml)"
+          echo "  - Performance Tests (performance-regression.yml)"
+          echo "  - Security Tests (security-scanning.yml)"
+          echo "  - Chaos Tests (chaos-tests.yml)"
+        fi

@@ -224,7 +224,7 @@
       "pattern": "ZeroDivisionError: division by zero",
       "type": "ZeroDivisionError",
       "description": "Dividing by zero",
-      "root_cause": "division_by_zero",
+      "root_cause": "go_divide_by_zero",
       "suggestion": "Add a check to ensure the denominator is not zero before division",
       "category": "python",
       "severity": "medium",

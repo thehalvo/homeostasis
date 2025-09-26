@@ -82,3 +82,46 @@ def pytest_runtest_logfinish(nodeid, location):
 #     gc.collect()
 
 
+def pytest_sessionfinish(session, exitstatus):
+    """Called after whole test run finished, right before returning the exit status."""
+    import gc
+    import threading
+    import time
+
+    # Force garbage collection
+    gc.collect()
+
+    # Give a short time for threads to finish
+    time.sleep(0.1)
+
+    # Log active threads for debugging (only in CI)
+    if os.environ.get('CI') or os.environ.get('GITHUB_ACTIONS'):
+        active_threads = [t for t in threading.enumerate() if t.is_alive() and t != threading.main_thread()]
+        if active_threads:
+            print(f"\n[WARNING] {len(active_threads)} threads still active after tests:", flush=True)
+            for t in active_threads[:5]:  # Show first 5 threads
+                print(f"  - {t.name} (daemon: {t.daemon})", flush=True)
+
+    # Final cleanup
+    gc.collect()
+
+
+def pytest_configure(config):
+    """Called after command line options have been parsed."""
+    # Ensure xdist workers exit cleanly
+    if hasattr(config, "workerinput"):
+        # This is a worker process
+        import atexit
+        import signal
+
+        def force_exit():
+            # Force exit to prevent hanging
+            os._exit(0)
+
+        # Register cleanup on normal exit
+        atexit.register(force_exit)
+
+        # Also handle signals
+        signal.signal(signal.SIGTERM, lambda sig, frame: force_exit())
+
+

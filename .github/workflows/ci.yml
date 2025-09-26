@@ -11,117 +11,63 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  # Quick lint check first
+  lint:
     runs-on: ubuntu-22.04
-    timeout-minutes: 240  # 4 hour safety limit DO NOT DECREASE
+    timeout-minutes: 5
     steps:
     - uses: actions/checkout@v3
-
-    - name: Free Disk Space (Ubuntu)
-      uses: jlumbroso/free-disk-space@main
-      with:
-        tool-cache: false
-        android: true
-        dotnet: true
-        haskell: true
-        large-packages: true
-        docker-images: true
-        swap-storage: true
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-
-    - name: Install system dependencies
+    - name: Lint check
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libldap2-dev libsasl2-dev
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
-
-    - name: Run linting
-      run: |
+        python -m pip install --upgrade pip flake8
         flake8 modules/ services/ orchestrator/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
 
-    - name: Run tests with monitoring
-      env:
-        USE_MOCK_TESTS: true
-        DISABLE_PERFORMANCE_TRACKING: true
-        CI: true
-        GITHUB_ACTIONS: true
-      timeout-minutes: 230 # DO NOT DECREASE
+  # Trigger quick tests
+  quick-tests:
+    needs: lint
+    uses: ./.github/workflows/ci-quick-tests.yml
+
+  # Trigger parallel test workflows
+  language-tests:
+    needs: lint
+    uses: ./.github/workflows/ci-language-plugins.yml
+
+  e2e-integration:
+    needs: lint
+    uses: ./.github/workflows/e2e-healing-tests.yml
+
+  main-suite:
+    needs: lint
+    uses: ./.github/workflows/ci-other.yml
+
+  # Final status check
+  ci-complete:
+    needs: [quick-tests, language-tests, e2e-integration, main-suite]
+    if: always()
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+    - name: Check all test results
       run: |
-        echo "Starting tests at $(date)"
-        echo "Total test files: $(find tests -name 'test_*.py' | wc -l)"
-        echo "Initial memory usage:"
-        free -h
-        
-        # Install parallel testing and timeout dependencies
-        pip install pytest-xdist pytest-timeout
-        
-        # Detect number of CPUs for parallel execution
-        CPUS=$(python -c "import os; print(os.cpu_count())")
-        echo "Detected CPUs: $CPUS"
-        
-        # Start a background monitor that reports every 60 seconds
-        (
-          while true; do
-            sleep 60
-            echo "[MONITOR] Still running at $(date)"
-            echo "[MONITOR] Memory usage:"
-            free -h
-            # Show pytest processes with memory usage
-            ps aux --sort=-%mem | head -10 | grep -E 'pytest|python' || true
-            # Show number of active pytest workers
-            echo "[MONITOR] Active pytest workers: $(pgrep -c pytest || echo 0)"
-          done
-        ) &
-        MONITOR_PID=$!
-        
-        # Run tests in parallel with xdist
-        # -n auto: automatically detect optimal number of workers
-        # --dist loadscope: groups tests by module for better efficiency
-        # --timeout=300: 5 minutes max per individual test
-        # --timeout-method=thread: use thread-based timeout (more reliable in CI)
-        # --maxfail=10: stop after 10 failures to save CI time
-        echo "Running tests with $CPUS parallel workers..."
-        
-        python -m pytest tests/ \
-          -n auto \
-          --dist loadscope \
-          --timeout=300 \
-          --timeout-method=thread \
-          --maxfail=10 \
-          -k "not test_concurrent_error_processing_performance" \
-          --tb=short \
-          -v \
-          --color=yes \
-          2>&1 | while IFS= read -r line; do
-            echo "[$(date '+%H:%M:%S')] $line"
-          done
-        
-        # Store exit code
-        TEST_EXIT=${PIPESTATUS[0]}
-        
-        # Kill the monitor
-        kill $MONITOR_PID 2>/dev/null || true
-        
-        echo "Tests completed at $(date)"
-        echo "Final memory usage:"
-        free -h
-        
-        # Report test exit status
-        if [ $TEST_EXIT -eq 0 ]; then
-          echo "All tests passed!"
-        elif [ $TEST_EXIT -eq 5 ]; then
-          echo "No tests were collected"
+        echo "Test Results Summary:"
+        echo "===================="
+        echo "Quick Tests: ${{ needs.quick-tests.result }}"
+        echo "Language Tests: ${{ needs.language-tests.result }}"
+        echo "E2E/Integration: ${{ needs.e2e-integration.result }}"
+        echo "Main Suite: ${{ needs.main-suite.result }}"
+
+        # Fail if any test suite failed
+        if [[ "${{ needs.quick-tests.result }}" == "failure" ]] || \
+           [[ "${{ needs.language-tests.result }}" == "failure" ]] || \
+           [[ "${{ needs.e2e-integration.result }}" == "failure" ]] || \
+           [[ "${{ needs.main-suite.result }}" == "failure" ]]; then
+          echo ""
+          echo "One or more test suites failed!"
+          exit 1
         else
-          echo "Tests failed with exit code: $TEST_EXIT"
+          echo ""
+          echo "All test suites passed!"
         fi
-        
-        exit $TEST_EXIT

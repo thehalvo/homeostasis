@@ -1,0 +1,142 @@
+name: Language Plugin Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  language-tests:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120  # 2 hour safety limit DO NOT DECREASE
+    strategy:
+      fail-fast: false
+      matrix:
+        language-group:
+          - "python-js-ts"  # Python, JavaScript, TypeScript
+          - "java-kotlin-android"  # Java, Kotlin, Android
+          - "csharp-fsharp-dotnet"  # C#, F#, .NET
+          - "go-rust-c-cpp"  # Go, Rust, C, C++
+          - "web-frameworks"  # React, Angular, Vue, Svelte, etc.
+          - "other-languages"  # Ruby, PHP, Swift, etc.
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libldap2-dev libsasl2-dev
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install pytest pytest-timeout pytest-xdist
+
+    - name: Run Python/JS/TS tests
+      if: matrix.language-group == 'python-js-ts'
+      env:
+        USE_MOCK_TESTS: true
+        DISABLE_PERFORMANCE_TRACKING: true
+      run: |
+        python -m pytest \
+          tests/test_python_error_handling.py \
+          tests/test_javascript_plugin.py \
+          tests/test_typescript_plugin.py \
+          -n 2 --timeout=120 --tb=short -v
+
+    - name: Run Java/Kotlin/Android tests
+      if: matrix.language-group == 'java-kotlin-android'
+      env:
+        USE_MOCK_TESTS: true
+        DISABLE_PERFORMANCE_TRACKING: true
+      run: |
+        python -m pytest \
+          tests/test_java_plugin.py \
+          tests/test_kotlin_plugin.py \
+          tests/test_java_android_plugin.py \
+          -n 2 --timeout=120 --tb=short -v
+
+    - name: Run C#/F#/.NET tests
+      if: matrix.language-group == 'csharp-fsharp-dotnet'
+      env:
+        USE_MOCK_TESTS: true
+        DISABLE_PERFORMANCE_TRACKING: true
+      run: |
+        python -m pytest \
+          tests/test_csharp_plugin.py \
+          tests/test_fsharp_plugin.py \
+          -n 2 --timeout=120 --tb=short -v
+
+    - name: Run Go/Rust/C/C++ tests
+      if: matrix.language-group == 'go-rust-c-cpp'
+      env:
+        USE_MOCK_TESTS: true
+        DISABLE_PERFORMANCE_TRACKING: true
+      run: |
+        python -m pytest \
+          tests/test_go_plugin.py \
+          tests/test_rust_plugin.py \
+          tests/test_c_specific.py \
+          tests/test_cpp_plugin.py \
+          -n 2 --timeout=120 --tb=short -v
+
+    - name: Run Web Framework tests
+      if: matrix.language-group == 'web-frameworks'
+      env:
+        USE_MOCK_TESTS: true
+        DISABLE_PERFORMANCE_TRACKING: true
+      run: |
+        python -m pytest \
+          tests/test_react_plugin.py \
+          tests/test_angular_plugin.py \
+          tests/test_vue_plugin.py \
+          tests/test_svelte_plugin.py \
+          tests/test_nextjs_plugin.py \
+          tests/test_ember_plugin.py \
+          -n 2 --timeout=120 --tb=short -v
+
+    - name: Run Other Language tests
+      if: matrix.language-group == 'other-languages'
+      env:
+        USE_MOCK_TESTS: true
+        DISABLE_PERFORMANCE_TRACKING: true
+      run: |
+        python -m pytest \
+          tests/test_ruby_plugin.py \
+          tests/test_php_plugin.py \
+          tests/test_swift_plugin.py \
+          tests/test_scala_plugin.py \
+          tests/test_elixir_plugin.py \
+          tests/test_clojure_plugin.py \
+          tests/test_crystal_plugin.py \
+          tests/test_erlang_plugin.py \
+          tests/test_haskell_plugin.py \
+          tests/test_julia_plugin.py \
+          tests/test_lua_plugin.py \
+          tests/test_matlab_plugin.py \
+          tests/test_nim_plugin.py \
+          tests/test_r_plugin.py \
+          tests/test_zig_plugin.py \
+          tests/test_bash_plugin.py \
+          tests/test_powershell_plugin.py \
+          tests/test_dockerfile_plugin.py \
+          tests/test_terraform_plugin.py \
+          tests/test_ansible_plugin.py \
+          tests/test_yaml_json_plugin.py \
+          tests/test_sql_plugin.py \
+          tests/test_css_plugin.py \
+          tests/test_web_component_plugin.py \
+          -n 2 --timeout=120 --tb=short -v
