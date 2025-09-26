@@ -452,9 +452,43 @@ check_integration_tests() {
         if [ "$compose_file" = "tests/e2e/docker-compose.test.yml" ]; then
             echo -e "${YELLOW}Using lightweight test compose file for faster pre-push testing${NC}"
         fi
-        run_with_progress "Docker Compose build" \
-            "docker compose -f '$compose_file' build"
+
+        # Create a temporary file for Docker Compose output
+        local compose_log=$(mktemp)
+
+        # Run Docker Compose build with progress tracking
+        docker compose -f "$compose_file" build > "$compose_log" 2>&1 &
+        local pid=$!
+
+        # Monitor Docker Compose build progress
+        local last_service=""
+        local last_step=""
+        while kill -0 $pid 2>/dev/null; do
+            # Extract current service being built
+            local current_service=$(grep -E "^\[.+\] Building" "$compose_log" | tail -1 | sed -E 's/^\[([^]]+)\].*/\1/' || echo "")
+            # Extract current step from Docker output
+            local current_step=$(grep -E "Step [0-9]+/[0-9]+" "$compose_log" | tail -1 | grep -o "Step [0-9]\+/[0-9]\+" || echo "")
+
+            if [ -n "$current_service" ] && [ -n "$current_step" ]; then
+                if [ "$current_service" != "$last_service" ] || [ "$current_step" != "$last_step" ]; then
+                    echo -e "\r${BLUE}Docker Compose build: [$current_service] $current_step${NC}                    "
+                    last_service="$current_service"
+                    last_step="$current_step"
+                fi
+            else
+                echo -ne "\r${BLUE}Docker Compose build in progress...${NC}     "
+            fi
+            sleep 1
+        done
+        wait $pid
         local compose_build=$?
+
+        # Copy full output to main log
+        echo "\n=== Docker Compose Build Output ===" >> "$MAIN_LOG"
+        cat "$compose_log" >> "$MAIN_LOG"
+        rm -f "$compose_log"
+
+        echo -e "\r${BLUE}Docker Compose build completed${NC}                    "
 
         print_result "Docker Compose build" $compose_build "N/A"
         if [ $compose_build -ne 0 ]; then
