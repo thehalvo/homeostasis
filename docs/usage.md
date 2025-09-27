@@ -49,10 +49,10 @@ Homeostasis includes a demo service with intentional bugs that the framework can
 
 ```bash
 # Make the demo script executable
-chmod +x demo.sh
+chmod +x scripts/demo.sh
 
 # Run the demo script
-./demo.sh
+./scripts/demo.sh
 ```
 
 The demo will:
@@ -331,7 +331,7 @@ summary = get_error_summary(days_back=7)
 
 1. **Permission errors**:
    ```bash
-   chmod +x demo.sh
+   chmod +x scripts/demo.sh
    ```
 
 2. **Missing directories**:

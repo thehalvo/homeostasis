@@ -2,6 +2,11 @@
 
 # check_python_versions.sh - Verify Python installation status for GitHub Actions testing
 
+# Get the script directory and repo root
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPO_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+cd "$REPO_ROOT"
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -56,7 +61,7 @@ echo -e "\n${BLUE}=== Summary ===${NC}"
 
 if [ ${#MISSING_VERSIONS[@]} -eq 0 ]; then
     echo -e "${GREEN}✓ All required Python versions are installed!${NC}"
-    echo -e "${GREEN}✓ You can run: ./test_github_actions.sh${NC}"
+    echo -e "${GREEN}✓ You can run: ./scripts/test_github_actions.sh${NC}"
     echo -e "${GREEN}✓ Git push will work with comprehensive testing${NC}"
 else
     echo -e "${RED}Missing Python versions: ${MISSING_VERSIONS[*]}${NC}"
@@ -113,10 +118,10 @@ fi
 
 # Test command availability
 echo -e "\n${BLUE}=== Test Infrastructure ===${NC}"
-if [ -f "test_github_actions.sh" ]; then
-    echo -e "${GREEN}✓ test_github_actions.sh found${NC}"
+if [ -f "scripts/test_github_actions.sh" ]; then
+    echo -e "${GREEN}✓ scripts/test_github_actions.sh found${NC}"
 else
-    echo -e "${RED}✗ test_github_actions.sh NOT FOUND${NC}"
+    echo -e "${RED}✗ scripts/test_github_actions.sh NOT FOUND${NC}"
 fi
 
 if [ -f ".git/hooks/pre-push" ]; then

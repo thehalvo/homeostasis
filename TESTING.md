@@ -1,6 +1,6 @@
 # Testing Guide
 
-This project enforces testing that EXACTLY matches GitHub Actions. When you run `git push origin main`, ALL tests that GitHub would run MUST pass locally first. No shortcuts, no exceptions.
+This project enforces testing that matches GitHub Actions. When you run `git push origin main`, ALL tests that GitHub would run should pass locally first.
 
 ## Overview
 
@@ -9,7 +9,7 @@ This project enforces testing that EXACTLY matches GitHub Actions. When you run 
 ## Pre-requisites
 
 ### Required Python Versions
-GitHub Actions tests with Python 3.9, 3.10, and 3.11. You MUST have all three installed:
+GitHub Actions tests with Python 3.9, 3.10, and 3.11. You should have all three installed:
 
 ```bash
 # Using pyenv (recommended)
@@ -40,9 +40,9 @@ When you run `git push origin main`, the pre-push hook automatically runs:
 
 ## Manual Testing Commands
 
-### Run ALL GitHub Actions Tests (REQUIRED before push)
+### Run ALL GitHub Actions Tests
 ```bash
-./test_github_actions.sh
+./scripts/test_github_actions.sh
 ```
 
 This runs:
@@ -84,7 +84,7 @@ python -m pytest tests/chaos/ -v
 
 - `pytest-ci.ini` - Pytest configuration matching GitHub Actions
 - `.github/workflows/` - GitHub Actions workflow definitions
-- `test_github_actions.sh` - Comprehensive local test runner
+- `scripts/test_github_actions.sh` - Comprehensive local test runner
 
 ## Common Issues and Solutions
 
@@ -96,7 +96,7 @@ ERROR: Python 3.9 not found
 
 ### Parse Errors on GitHub but Not Locally
 This means you're testing with a different Python version than GitHub uses.
-**Solution**: Run `./test_github_actions.sh` to test with ALL required versions.
+**Solution**: Run `./scripts/test_github_actions.sh` to test with ALL required versions.
 
 ### Tests Pass Individually but Fail in CI
 Environment variables or configuration differences.
@@ -133,7 +133,7 @@ When tests fail:
 
 **BEFORE EVERY PUSH:**
 ```bash
-./test_github_actions.sh
+./scripts/test_github_actions.sh
 ```
 
-If this passes, your push WILL succeed on GitHub. If it fails, fix the issues before pushing.
+All tests should succeed locally first. If it fails, fix the issues before pushing.

@@ -1,9 +1,14 @@
 #!/bin/bash
 
 # Quick push check - Essential tests only
-# For comprehensive testing, use ./test_github_actions.sh
+# For comprehensive testing, use ./scripts/test_github_actions.sh
 
 set -e
+
+# Get the script directory and repo root
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPO_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+cd "$REPO_ROOT"
 
 # Colors
 RED='\033[0;31m'
@@ -65,7 +70,7 @@ if [ -d "venv_py39" ]; then
     export DISABLE_PERFORMANCE_TRACKING=true
 
     # Just run a few quick tests with timeout
-    if python -m pytest -c pytest-py39-timeout.ini tests/e2e/healing_scenarios/test_basic_healing_scenarios.py::TestBasicHealingScenarios::test_keyerror_healing -v; then
+    if python -m pytest -c pytest-py39.ini tests/e2e/healing_scenarios/test_basic_healing_scenarios.py::TestBasicHealingScenarios::test_keyerror_healing -v; then
         echo -e "${GREEN}✓ Smoke test passed${NC}"
     else
         echo -e "${RED}✗ Smoke test failed${NC}"
@@ -78,5 +83,5 @@ else
 fi
 
 echo -e "\n${GREEN}✓ Quick checks passed!${NC}"
-echo -e "${YELLOW}Note: For full validation, run ./test_github_actions.sh${NC}"
+echo -e "${YELLOW}Note: For full validation, run ./scripts/test_github_actions.sh${NC}"
 exit 0

@@ -11,7 +11,8 @@
 set -e  # Exit on error
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$SCRIPT_DIR"
+REPO_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+cd "$REPO_ROOT"
 
 # Colors for output
 RED='\033[0;31m'
@@ -186,17 +187,17 @@ test_python_version() {
         # Python 3.9 with progress display like 3.10
         echo -e "${YELLOW}Running Python 3.9 tests...${NC}"
         local test_log="$LOG_DIR/pytest_${py_version}_$(date +%s).log"
-        python -m pytest -c pytest-py39-timeout.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
+        python -m pytest -c pytest-py39.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
         local pytest_exit=${PIPESTATUS[0]}
 
         # Show summary
         echo -e "\n${YELLOW}Test Summary:${NC}"
         grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
-    elif [ "$py_version" = "3.11" ] && [ -f "pytest-py311-timeout.ini" ]; then
+    elif [ "$py_version" = "3.11" ] && [ -f "pytest-py311.ini" ]; then
         echo -e "${YELLOW}Running Python 3.11 tests with timeout...${NC}"
         local test_log="$LOG_DIR/pytest_${py_version}_$(date +%s).log"
         # Run pytest but show only test collection and item progress
-        python -m pytest -c pytest-py311-timeout.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | \
+        python -m pytest -c pytest-py311.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | \
             tee "$test_log" | \
             grep -E "^(platform|rootdir|configfile|plugins|collected|tests/.*::|===|PASSED|FAILED|SKIPPED|ERROR|WARNING|%)" || true
         local pytest_exit=${PIPESTATUS[0]}
@@ -204,11 +205,11 @@ test_python_version() {
         # Show summary
         echo -e "\n${YELLOW}Test Summary:${NC}"
         grep -E "(passed|failed|error|warnings summary|FAILURES|ERROR)" "$test_log" | tail -20 || true
-    elif [ "$py_version" = "3.10" ] && [ -f "pytest-py310-timeout.ini" ]; then
+    elif [ "$py_version" = "3.10" ] && [ -f "pytest-py310.ini" ]; then
         # Python 3.10 can be slower, use optimized config
         echo -e "${YELLOW}Running Python 3.10 tests with timeout...${NC}"
         local test_log="$LOG_DIR/pytest_${py_version}_$(date +%s).log"
-        python -m pytest -c pytest-py310-timeout.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
+        python -m pytest -c pytest-py310.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short 2>&1 | tee "$test_log"
         local pytest_exit=${PIPESTATUS[0]}
 
         # Show summary
@@ -218,7 +219,7 @@ test_python_version() {
         # Default case with progress display
         echo -e "${YELLOW}Running tests...${NC}"
         local test_log="$LOG_DIR/pytest_${py_version}_$(date +%s).log"
-        python -m pytest -c pytest-ci-timeout.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --timeout=300 --timeout-method=thread 2>&1 | tee "$test_log"
+        python -m pytest -c pytest-ci.ini tests/ -k "not test_concurrent_error_processing_performance" -v --tb=short --timeout=300 --timeout-method=thread 2>&1 | tee "$test_log"
         local pytest_exit=${PIPESTATUS[0]}
 
         # Show summary
@@ -292,10 +293,17 @@ test_python_version() {
     # 6. Chaos engineering tests (if they exist)
     if [ -d "tests/chaos" ]; then
         echo -e "\n${BLUE}6. Running chaos engineering tests...${NC}"
-        # Use special config for Python 3.11 to avoid asyncio hangs
-        if [ "$py_version" = "3.11" ] && [ -f "pytest-py311.ini" ]; then
+        # Use special config for Python 3.11 for chaos tests
+        if [ "$py_version" = "3.11" ] && [ -f "pytest-py311-chaos.ini" ]; then
             run_with_progress "Chaos engineering tests" \
-                "python -m pytest -c pytest-py311.ini tests/chaos/ -v"
+                "python -m pytest -c pytest-py311-chaos.ini tests/chaos/ -v"
+        # Use version-specific configs for other Python versions
+        elif [ "$py_version" = "3.10" ] && [ -f "pytest-py310.ini" ]; then
+            run_with_progress "Chaos engineering tests" \
+                "python -m pytest -c pytest-py310.ini tests/chaos/ -v"
+        elif [ "$py_version" = "3.9" ] && [ -f "pytest-py39.ini" ]; then
+            run_with_progress "Chaos engineering tests" \
+                "python -m pytest -c pytest-py39.ini tests/chaos/ -v"
         else
             run_with_progress "Chaos engineering tests" \
                 "python -m pytest tests/chaos/ -v"

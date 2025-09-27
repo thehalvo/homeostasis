@@ -1,6 +1,11 @@
 #!/bin/bash
 # Demo script for running the orchestrator in demo mode
 
+# Get the script directory and repo root
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPO_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+cd "$REPO_ROOT"
+
 # Ensure we have the necessary directories
 mkdir -p logs
 mkdir -p logs/patches

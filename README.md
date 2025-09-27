@@ -192,10 +192,10 @@ Homeostasis includes a demo service with intentional bugs that the framework can
 
 ```bash
 # Make the demo script executable
-chmod +x demo.sh
+chmod +x scripts/demo.sh
 
 # Run the demo script to see self-healing in action
-./demo.sh
+./scripts/demo.sh
 ```
 
 If you encounter any issues, you can run the commands manually:
@@ -221,7 +221,7 @@ The demo will:
 
 #### Troubleshooting Demo Issues
 
-- If you get permission errors, make sure the demo script is executable with `chmod +x demo.sh`
+- If you get permission errors, make sure the demo script is executable with `chmod +x scripts/demo.sh`
 - If you get "command not found" errors, try running with `python3` explicitly
 - Ensure all dependencies are installed with `pip install -e ".[dev]"`
 - If you're using a Mac with Apple Silicon (M1/M2/M3), you might need to install additional dependencies: `pip install pytest-asyncio httpx`
@@ -386,7 +386,7 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 ### Common Issues
 
 1. **Demo script fails to run:**
-   - Make sure the script is executable: `chmod +x demo.sh`
+   - Make sure the script is executable: `chmod +x scripts/demo.sh`
    - Try running with explicit Python path: `python3 orchestrator/orchestrator.py --demo`
    - Ensure all required directories exist: `mkdir -p logs logs/patches logs/backups sessions`
 

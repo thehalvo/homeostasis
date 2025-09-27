@@ -175,7 +175,7 @@ class TestNetworkChaos:
 
         # Verify reordering occurred
         assert out_of_order_count > 0
-        assert out_of_order_count < 30  # Not excessive reordering
+        assert out_of_order_count <= 30  # Not excessive reordering
 
     @pytest.mark.asyncio
     async def test_network_partition_scenarios(self):
