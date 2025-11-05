@@ -4,7 +4,7 @@
   "rules": [
     {
       "id": "ansible_undefined_variable",
-      "pattern": "'.*' is undefined|variable .* is not defined|undefined variable|AnsibleUndefinedVariable|object has no attribute|referenced before assignment|Unable to look up a name|is not a valid variable name",
+      "pattern": "'.*' is undefined|variable .* is not defined|undefined variable|AnsibleUndefinedVariable|referenced before assignment|Unable to look up a name|is not a valid variable name",
       "type": "variable",
       "description": "Undefined variable in playbook or template",
       "root_cause": "ansible_variable_error",
@@ -60,7 +60,7 @@
     },
     {
       "id": "ansible_dict_attribute_error",
-      "pattern": "'dict object' has no attribute|attribute .* not found|no attribute|no such attribute|not an attribute of|has no element|cannot be accessed|Key .* not found",
+      "pattern": "'dict object' has no attribute|ansible.*attribute .* not found",
       "type": "AttributeError",
       "description": "Attempting to access non-existent dictionary attribute",
       "root_cause": "ansible_variable_error",
