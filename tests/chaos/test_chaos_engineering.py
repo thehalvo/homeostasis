@@ -48,6 +48,8 @@ class TestChaosEngineering:
         return mock
 
     @pytest.mark.asyncio
+    @pytest.mark.chaos_low
+    @pytest.mark.chaos_network
     async def test_network_latency_injection(self, chaos_engineer, mock_monitoring):
         """Test network latency injection and system response"""
         hypothesis = SteadyStateHypothesis(
@@ -110,6 +112,8 @@ class TestChaosEngineering:
             assert result["hypothesis_validated"] is True
 
     @pytest.mark.asyncio
+    @pytest.mark.chaos_low
+    @pytest.mark.chaos_network
     async def test_packet_loss_resilience(self, chaos_engineer, mock_monitoring):
         """Test system resilience to packet loss"""
         hypothesis = SteadyStateHypothesis(
@@ -176,6 +180,8 @@ class TestChaosEngineering:
         assert sum(retry_counts) / len(retry_counts) < 1.5  # Average retries
 
     @pytest.mark.asyncio
+    @pytest.mark.chaos_medium
+    @pytest.mark.chaos_resource
     async def test_cpu_pressure_handling(self, chaos_engineer, mock_healing):
         """Test system behavior under CPU pressure"""
         hypothesis = SteadyStateHypothesis(
@@ -244,6 +250,8 @@ class TestChaosEngineering:
         assert max(load_samples) > 80  # Verify pressure was applied
 
     @pytest.mark.asyncio
+    @pytest.mark.chaos_medium
+    @pytest.mark.chaos_resource
     async def test_memory_leak_detection(self, chaos_engineer, mock_monitoring):
         """Test memory leak injection and detection"""
         hypothesis = SteadyStateHypothesis(
@@ -320,6 +328,8 @@ class TestChaosEngineering:
         assert memory_samples[-1] > memory_samples[0] + 50  # At least 50MB growth
 
     @pytest.mark.asyncio
+    @pytest.mark.chaos_high
+    @pytest.mark.chaos_service
     async def test_cascading_failure_simulation(self, chaos_engineer, mock_healing):
         """Test cascading failure scenarios"""
         hypothesis = SteadyStateHypothesis(
@@ -432,6 +442,8 @@ class TestChaosEngineering:
         mock_healing.handle_circuit_open.assert_called()
 
     @pytest.mark.asyncio
+    @pytest.mark.chaos_medium
+    @pytest.mark.chaos_resource
     async def test_disk_io_saturation(self, chaos_engineer):
         """Test system behavior under disk I/O saturation"""
         hypothesis = SteadyStateHypothesis(
@@ -515,6 +527,7 @@ class TestChaosEngineering:
         assert critical_ops_success / 40 > 0.95  # 95% of critical ops succeed
 
     @pytest.mark.asyncio
+    @pytest.mark.chaos_high
     async def test_multi_fault_scenario(
         self, chaos_engineer, mock_monitoring, mock_healing
     ):
@@ -640,6 +653,8 @@ class TestChaosEngineering:
         assert result.get("status") == "completed"
 
     @pytest.mark.asyncio
+    @pytest.mark.chaos_low
+    @pytest.mark.chaos_network
     async def test_gradual_degradation_detection(self, chaos_engineer, mock_monitoring):
         """Test detection of gradual system degradation"""
         hypothesis = SteadyStateHypothesis(
