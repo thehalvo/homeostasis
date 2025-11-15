@@ -244,10 +244,14 @@ jobs:
       run: |
         # Stop test infrastructure
         docker compose -f tests/docker-compose.test.yml down || true
-        
+
         # Clean up any remaining chaos artifacts
         sudo pkill -f stress-ng || true
-        sudo tc qdisc del dev lo root || true
+
+        # Clean up network traffic control (only if qdisc exists)
+        if sudo tc qdisc show dev lo | grep -q "qdisc"; then
+          sudo tc qdisc del dev lo root || true
+        fi
 
   analyze-trends:
     needs: chaos-tests
