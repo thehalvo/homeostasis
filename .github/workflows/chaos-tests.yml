@@ -161,10 +161,23 @@ jobs:
             tree = ET.parse('chaos-test-results.xml')
             root = tree.getroot()
 
-            total_tests = int(root.attrib.get('tests', 0))
-            failures = int(root.attrib.get('failures', 0))
-            errors = int(root.attrib.get('errors', 0))
-            skipped = int(root.attrib.get('skipped', 0))
+            # Handle both <testsuites> (pytest default) and <testsuite> root elements
+            # pytest generates <testsuites><testsuite>...</testsuite></testsuites>
+            if root.tag == 'testsuites':
+                # Find the testsuite child element that contains the actual test counts
+                testsuite = root.find('testsuite')
+                if testsuite is not None:
+                    source = testsuite
+                else:
+                    # Fallback: aggregate from all testsuite children
+                    source = root
+            else:
+                source = root
+
+            total_tests = int(source.attrib.get('tests', 0))
+            failures = int(source.attrib.get('failures', 0))
+            errors = int(source.attrib.get('errors', 0))
+            skipped = int(source.attrib.get('skipped', 0))
 
             success_rate = ((total_tests - failures - errors) / total_tests * 100) if total_tests > 0 else 0
 
@@ -282,12 +295,22 @@ jobs:
                 tree = ET.parse(xml_file)
                 root = tree.getroot()
 
+                # Handle both <testsuites> (pytest default) and <testsuite> root elements
+                if root.tag == 'testsuites':
+                    testsuite = root.find('testsuite')
+                    if testsuite is not None:
+                        source = testsuite
+                    else:
+                        source = root
+                else:
+                    source = root
+
                 version = artifact_dir.name.split('-')[-1]
                 results.append({
                     'python_version': version,
-                    'total': int(root.attrib.get('tests', 0)),
-                    'failures': int(root.attrib.get('failures', 0)),
-                    'errors': int(root.attrib.get('errors', 0))
+                    'total': int(source.attrib.get('tests', 0)),
+                    'failures': int(source.attrib.get('failures', 0)),
+                    'errors': int(source.attrib.get('errors', 0))
                 })
 
         # Generate summary
