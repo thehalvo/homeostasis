@@ -169,7 +169,7 @@ jobs:
     
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: e2e-test-results-py${{ matrix.python-version }}
         path: |
@@ -178,7 +178,7 @@ jobs:
     
     - name: Upload test report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: e2e-test-report-py${{ matrix.python-version }}
         path: test_results/report.html
@@ -313,7 +313,7 @@ jobs:
     
     - name: Upload Docker logs
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: docker-logs
         path: docker-logs.txt

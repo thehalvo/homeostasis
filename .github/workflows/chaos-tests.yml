@@ -202,7 +202,7 @@ jobs:
     
     - name: Upload chaos test results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: chaos-test-results-${{ matrix.python-version }}
         path: |
@@ -213,7 +213,7 @@ jobs:
     
     - name: Upload test report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: chaos-engineering-report
         path: chaos_reports/
